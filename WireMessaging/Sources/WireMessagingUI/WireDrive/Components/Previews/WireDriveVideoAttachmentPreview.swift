@@ -30,7 +30,7 @@ struct WireDriveVideoAttachmentPreview: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview() {
+        WireDriveAttachmentPreview {
             ZStack(alignment: .center) {
                 if let thumbnail {
                     GeometryReader { geometry in
@@ -41,12 +41,12 @@ struct WireDriveVideoAttachmentPreview: View {
                             .overlay {
                                 if case .notLoaded = state {
                                     PlayIcon()
-                                } else if case .loading(let progress, _) = state {
+                                } else if case let .loading(progress, _) = state {
                                     ZStack {
                                         PlayIcon()
-                                        
+
                                         Color.black.opacity(0.7)
-                                        
+
                                         ProgressView(value: progress)
                                             .progressViewStyle(.wireDriveAsset(strokeColor: .white))
                                             .frame(height: 30)
@@ -55,15 +55,14 @@ struct WireDriveVideoAttachmentPreview: View {
                             }
                     }
                 }
-                
+
                 stateView
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-    
-    @ViewBuilder
-    private var stateView: some View {
+
+    @ViewBuilder private var stateView: some View {
         switch state {
         case .loaded where thumbnail != nil:
             PlayIcon()

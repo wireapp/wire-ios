@@ -40,7 +40,7 @@ struct WireDriveDocumentAttachmentPreview: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview() {
+        WireDriveAttachmentPreview {
             WireDriveDocumentHeaderView(
                 headerIcon: headerIcon,
                 headerText: headerText,

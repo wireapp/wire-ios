@@ -31,7 +31,7 @@ struct WireDriveSmallVideoPreviewView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview() {
+        WireDriveAttachmentPreview {
             ZStack(alignment: .center) {
                 if let url {
                     asyncImage(url: url)
@@ -71,12 +71,12 @@ struct WireDriveSmallVideoPreviewView: View {
                         if case .notLoaded = state {
                             PlayIcon()
                                 .disabled(false)
-                        } else if case .loading(let progress, _) = state {
+                        } else if case let .loading(progress, _) = state {
                             ZStack {
                                 PlayIcon()
-                                
+
                                 Color.black.opacity(0.7)
-                                
+
                                 ProgressView(value: progress)
                                     .progressViewStyle(.wireDriveAsset(strokeColor: .white))
                                     .frame(height: 30)

@@ -174,15 +174,24 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask = nil
     }
 
-    func open() async {
-        // TODO: to handle tap to cancel
+    func onTap() async {
         guard !isDeleted else { return }
+        
+        switch fileTracker.state {
+        case .loading:
+            // cancels asset download.
+            await getAssetUseCase.cancelDownload(nodeID: nodeID)
+        case .notLoaded, .failed, .loaded:
+            // downloads / opens asset.
+            await openAsset()
+        }
 
-        lastOpenRequest.nodeID = nodeID
-
+    }
+    
+    private func openAsset() async {
         do {
             let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            if lastOpenRequest.nodeID == nodeID, canOpen {
+            if canOpen {
                 QuickLookPreviewPresenter.present(url: url)
             }
         } catch {
@@ -259,7 +268,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var canOpen: Bool {
         switch fileTracker.state {
-        case .loaded(let showReadyToOpen):
+        case let .loaded(showReadyToOpen):
             !showReadyToOpen
         default:
             false

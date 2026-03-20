@@ -119,7 +119,7 @@ private struct AttachmentsCarouselItemView: View {
             )
         }
     }
-    
+
     private func fileTrackerState(for item: AttachmentsCarouselItem) -> WireDriveFileUITracker.State {
         let fileTracker = WireDriveFileUITracker()
         fileTracker.handleDownloadState(fromCarouselItem: item)
@@ -185,7 +185,7 @@ private extension AttachmentsCarouselItem.State {
             false
         }
     }
-    
+
 }
 
 private struct CornerButtonStyle: ButtonStyle {

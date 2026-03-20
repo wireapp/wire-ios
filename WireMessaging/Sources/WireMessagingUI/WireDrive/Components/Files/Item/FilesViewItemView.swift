@@ -119,9 +119,9 @@ struct FilesItemView: View {
     @ViewBuilder
     private func icon() -> some View {
         let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
-        //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
-        //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
+        // let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
+        // let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
+        // let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
         switch state {
         case .notLoaded, .loaded(showReadyToOpen: false), .failed:
@@ -132,7 +132,7 @@ struct FilesItemView: View {
             progressIcon(progress: progress, readyToOpen: false)
         }
     }
-    
+
     @ViewBuilder
     private func fileTypeIcon() -> some View {
         Image(viewModel.icon.imageResource)
@@ -147,7 +147,7 @@ struct FilesItemView: View {
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight)
     }
-    
+
     @ViewBuilder
     private func progressIcon(progress: Double, readyToOpen: Bool) -> some View {
         ProgressView(value: progress)
@@ -163,7 +163,7 @@ struct FilesItemView: View {
             }
             .foregroundStyle(wireAccentColor)
     }
-    
+
     @ViewBuilder
     private func tagsInfo() -> some View {
         let tagsInfo = viewModel.tagsInfo
@@ -181,7 +181,7 @@ struct FilesItemView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
                     }
-                
+
                 if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
                     Text(additionalTagsIndicator)
                         .font(for: .subline1)
@@ -193,7 +193,7 @@ struct FilesItemView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func infoRowTextLine(_ text: String, error: Bool = false) -> some View {
         let color = error ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color
@@ -202,13 +202,13 @@ struct FilesItemView: View {
             .lineLimit(1)
             .foregroundStyle(color)
     }
-    
+
     @ViewBuilder
     private func infoRow() -> some View {
         let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
-        //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
-        //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
+        // let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
+        // let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
+        // let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
         switch state {
         case .notLoaded, .loaded(showReadyToOpen: false):

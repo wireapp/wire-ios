@@ -57,7 +57,7 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
             }
         }
     }
-    
+
     public enum FileSize: Sendable, Equatable {
         case large
         case small
@@ -92,7 +92,7 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
     /// The download state of the asset.
 
     public var downloadState: DownloadState
-    
+
     /// Whether the file is considered as `large` or `small`
 
     public var fileSize: FileSize = .small
