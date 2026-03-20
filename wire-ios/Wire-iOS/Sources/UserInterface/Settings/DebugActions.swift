@@ -40,8 +40,7 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBadgeCount(_ type: any SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func findUnreadConversationContributingToBadgeCount(userSession: ZMUserSession) {
         let predicate = ZMConversation.predicateForConversationConsideredUnread()
 
         let uiMOC = userSession.managedObjectContext
@@ -63,10 +62,8 @@ enum DebugActions {
     }
 
     /// Shows the user ID of the self user
-    static func showUserId(_ type: any SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared(),
-              let selfUser = (userSession.providedSelfUser as? ZMUser)
-        else { return }
+    static func showUserId(userSession: ZMUserSession) {
+        guard let selfUser = (userSession.providedSelfUser as? ZMUser) else { return }
 
         alert(
             selfUser.remoteIdentifier.uuidString,
@@ -76,8 +73,7 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBackArrowDot(_ type: any SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func findUnreadConversationContributingToBackArrowDot(userSession: ZMUserSession) {
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
         if let convo = ConversationList.conversations(inUserSession: userSession).items
@@ -95,8 +91,8 @@ enum DebugActions {
         }
     }
 
-    static func deleteInvalidConversations(_ type: any SettingsCellDescriptorType) {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else { return }
+    static func deleteInvalidConversations(userSession: ZMUserSession) {
+        let context = userSession.managedObjectContext
 
         let predicate = NSPredicate(format: "domain = ''")
         try? context.batchDeleteEntities(named: ZMConversation.entityName(), matching: predicate)
@@ -104,9 +100,8 @@ enum DebugActions {
     }
 
     /// Sends a message that will fail to decode on every other device, on the first conversation of the list
-    static func sendBrokenMessage(_ type: any SettingsCellDescriptorType) {
+    static func sendBrokenMessage(userSession: ZMUserSession) {
         guard
-            let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
         else {
             return
@@ -122,10 +117,9 @@ enum DebugActions {
     }
 
     /// Sends a number of messages to the top conversation in the list, in an asynchronous fashion
-    static func spamWithMessages(amount: Int) {
+    static func spamWithMessages(amount: Int, userSession: ZMUserSession) {
         guard
             amount > 0,
-            let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
         else {
             return
@@ -146,23 +140,20 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
-    static func triggerResyncResources() {
+    static func triggerResyncResources(userSession: ZMUserSession) {
         Task {
-            await ZMUserSession.shared()?.triggerResourcesSync()
+            await userSession.triggerResourcesSync()
         }
     }
 
-    static func triggerSlowSync(_ type: any SettingsCellDescriptorType) {
+    static func triggerSlowSync(userSession: ZMUserSession) {
         Task {
-            await ZMUserSession.shared()?.triggerInitialSync()
+            await userSession.triggerInitialSync()
         }
     }
 
-    static func showTrackingID(_ type: any SettingsCellDescriptorType) {
-        guard
-            let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-            let userSession = ZMUserSession.shared()
-        else {
+    static func showTrackingID(userSession: ZMUserSession) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
 
@@ -233,7 +224,7 @@ enum DebugActions {
     }
 
     /// Accepts a debug command
-    static func enterDebugCommand(_ type: any SettingsCellDescriptorType) {
+    static func enterDebugCommand(userSession: ZMUserSession) {
         askString(title: "Debug command") { string in
             guard let command = DebugCommand(string: string) else {
                 alert("Command not recognized")
@@ -242,19 +233,18 @@ enum DebugActions {
 
             switch command {
             case .repairInvalidAccessRoles:
-                DebugActions.updateInvalidAccessRoles()
+                DebugActions.updateInvalidAccessRoles(userSession: userSession)
 
             case .resyncResources:
-                DebugActions.triggerResyncResources()
+                DebugActions.triggerResyncResources(userSession: userSession)
 
             case .repairFaultyMLSRemovalKeys:
-                DebugActions.repairFaultyMLSRemovalKeys()
+                DebugActions.repairFaultyMLSRemovalKeys(userSession: userSession)
             }
         }
     }
 
-    static func updateInvalidAccessRoles() {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func updateInvalidAccessRoles(userSession: ZMUserSession) {
         let predicate = NSPredicate(
             format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
             [ConversationAccessRoleV2.teamMember.rawValue]
@@ -277,12 +267,7 @@ enum DebugActions {
         }
     }
 
-    static func repairFaultyMLSRemovalKeys() {
-        guard let userSession = ZMUserSession.shared() else {
-            alert("Error: No user session available")
-            return
-        }
-
+    static func repairFaultyMLSRemovalKeys(userSession: UserSession) {
         guard let useCase = userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
             alert("Error: Repair use case not available")
             return
@@ -306,8 +291,7 @@ enum DebugActions {
         }
     }
 
-    static func appendMessagesToDatabase(count: Int) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func appendMessagesToDatabase(count: Int, userSession: ZMUserSession) {
         let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
@@ -336,8 +320,7 @@ enum DebugActions {
         }
     }
 
-    static func recalculateBadgeCount(_ type: any SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func recalculateBadgeCount(userSession: ZMUserSession) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
 
         var conversations: [ZMConversation]?
@@ -396,7 +379,7 @@ enum DebugActions {
         controllerToPresentOver.present(controller, animated: true, completion: nil)
     }
 
-    static func appendMessagesInBatches(count: Int) {
+    static func appendMessagesInBatches(count: Int, userSession: ZMUserSession) {
         var left = count
         let step = 10_000
 
@@ -405,11 +388,11 @@ enum DebugActions {
 
             left -= toAppendInThisStep
 
-            appendMessages(count: toAppendInThisStep)
+            appendMessages(count: toAppendInThisStep, userSession: userSession)
         } while left > 0
     }
 
-    static func appendMessages(count: Int) {
+    static func appendMessages(count: Int, userSession: ZMUserSession) {
         let batchSize = 5000
 
         var currentCount = count
@@ -417,7 +400,7 @@ enum DebugActions {
         repeat {
             let thisBatchCount = currentCount > batchSize ? batchSize : currentCount
 
-            appendMessagesToDatabase(count: thisBatchCount)
+            appendMessagesToDatabase(count: thisBatchCount, userSession: userSession)
 
             currentCount -= thisBatchCount
         } while currentCount > 0

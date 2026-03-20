@@ -106,7 +106,7 @@ struct WireDriveDocumentHeaderView: View {
     @ViewBuilder
     private func progressView(progress: Double) -> some View {
         ProgressView(value: progress)
-            .progressViewStyle(.wireDriveAsset)
+            .progressViewStyle(.wireDriveAsset())
             .frame(height: Constants.headerIconSize)
     }
 

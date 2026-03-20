@@ -30,7 +30,7 @@ final class FederationTests: WireUITestCase {
     }
 
     @MainActor
-    func testConnectFederatedUsers() async throws {
+    func testConnectFederatedUsers_TC_9459() async throws {
 
         defer {
             BackendContext.current = .staging

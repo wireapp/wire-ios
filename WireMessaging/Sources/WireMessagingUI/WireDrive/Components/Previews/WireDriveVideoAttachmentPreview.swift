@@ -48,7 +48,7 @@ struct WireDriveVideoAttachmentPreview: View {
                                         Color.black.opacity(0.7)
 
                                         ProgressView(value: progress)
-                                            .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
+                                            .progressViewStyle(.wireDriveAsset(strokeColor: .white))
                                             .frame(height: 30)
                                     }
                                 }

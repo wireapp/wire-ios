@@ -151,7 +151,7 @@ struct FilesItemView: View {
     @ViewBuilder
     private func progressIcon(progress: Double, readyToOpen: Bool) -> some View {
         ProgressView(value: progress)
-            .progressViewStyle(.wireDriveAsset)
+            .progressViewStyle(.wireDriveAsset())
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight + 3)
@@ -231,17 +231,10 @@ struct FilesItemView: View {
             Button {
                 viewModel.performAction(item)
             } label: {
-                // TODO: show "cancel download" if it's currently downloading
-                Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
-            }
-            .disabled(viewModel.isDownloading)
-
-            // TODO: maybe remove this case?
-            if viewModel.isDownloadOptionAvailable {
-                Button {
-                    Task { await viewModel.download() }
-                } label: {
-                    Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+                if viewModel.isDownloading {
+                    Label(Strings.Files.Item.Menu.cancelDownload, systemImage: "xmark")
+                } else {
+                    Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                 }
             }
         }

@@ -133,6 +133,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
 
+    // these properties will only be used for legacy services (bots)
+    var providerIdentifier: String? { get }
+    var serviceIdentifier: String? { get }
+
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()
 

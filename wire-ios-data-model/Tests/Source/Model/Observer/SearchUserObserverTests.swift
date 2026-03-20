@@ -142,6 +142,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
             handle: name.lowercased(),
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
+            providerIdentifier: nil,
             user: user,
             searchUsersCache: nil
         )
