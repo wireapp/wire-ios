@@ -193,14 +193,14 @@ public protocol ConversationRepositoryProtocol: Sendable {
     ) async throws -> String?
 
     /// Checks if selfUser is still in a given conversation
-    /// - Parameter groupID: mlsGroupID of the conversation
+    /// - Parameter conversationID: QualifiedID of the conversation
     /// - Returns: true if selfUser belongs to the conversation, false otherwise
     func isSelfAnActiveMember(
-        in groupID: WireDataModel.MLSGroupID
+        in conversationID: WireDataModel.QualifiedID
     ) async -> Bool
 
     /// Reset the pendingProposalDate for the conversation
-    /// - Parameter groupID: mlsGroupID of the conversation
-    func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async
+    /// - Parameter groupID: QualifiedID of the conversation
+    func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async
 
 }
