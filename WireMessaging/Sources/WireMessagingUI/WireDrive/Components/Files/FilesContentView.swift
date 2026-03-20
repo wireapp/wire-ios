@@ -18,6 +18,7 @@
 
 package import SwiftUI
 import WireDesign
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -148,6 +149,7 @@ private extension FilesContentView {
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
                 .onTapGesture { Task { await viewModel.openItem(item: item) } }
+                .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }
 
@@ -178,7 +180,7 @@ private extension FilesContentView {
     }
 
     var loadMoreRow: some View {
-        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
+        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMoreTask)
     }
 }
 
@@ -188,6 +190,7 @@ private extension FilesContentView {
 
     var confirmButton: some View {
         Button(L10n.Localizable.General.confirm, action: {})
+            .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.confirm)
     }
 }
 
@@ -203,7 +206,7 @@ private extension FilesContentView {
         Task { await viewModel.loadMoreIfNeeded(index: index) }
     }
 
-    func loadMore() {
+    func loadMoreTask() {
         let lastRowIndex = viewModel.state.items.count - 1
         Task { await viewModel.loadMoreIfNeeded(index: lastRowIndex) }
     }
@@ -234,6 +237,7 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
+        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 
