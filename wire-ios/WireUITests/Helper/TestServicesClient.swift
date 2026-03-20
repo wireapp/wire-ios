@@ -225,6 +225,41 @@ class TestServicesClient {
             throw RuntimeError("Error \(pureResponse.description)")
         }
     }
+
+    func getMyMessages(
+        user: UserInfo,
+        convoId: UUID,
+        domain: String,
+    ) async throws -> Data {
+
+        let instanceId = try await getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil,
+            deviceName: nil
+        )
+
+        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/getMessages")
+        guard let requestUrl = url else { fatalError("Invalid URL") }
+
+        var body: [String: Any] = [
+            "conversationId": convoId.uuidString.lowercased(),
+            "conversationDomain": domain
+        ]
+
+        let (responseData, response) = try await sendHttpRequest(
+            url: String(describing: requestUrl),
+            body: body,
+            requestType: "POST"
+        )
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+        return responseData
+    }
 }
 
 private struct CreateInstaceResponse: Decodable {

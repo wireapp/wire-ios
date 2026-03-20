@@ -76,6 +76,7 @@ public enum Locators {
         case textFilteredByFavourites = "Filtered by Favorites"
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
         case connectionRequestsCell
+        case unreadMessageCount
     }
 
     public enum SettingsPage: String {
