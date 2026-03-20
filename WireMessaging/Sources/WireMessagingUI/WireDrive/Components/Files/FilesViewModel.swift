@@ -569,6 +569,8 @@ package final class FilesViewModel: ObservableObject {
             case .downloading:
                 await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
             }
+        } catch is CancellationError {
+            // Cancelled by the user, ignore.
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
         } catch {
