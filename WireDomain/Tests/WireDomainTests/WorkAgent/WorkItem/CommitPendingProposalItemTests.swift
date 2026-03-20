@@ -48,6 +48,7 @@ class CommitPendingProposalItemTests {
             repository: repository,
             conversationID: conversationID,
             groupID: mlsGroupID,
+            isSubconversation: false,
             mlsService: mlsService
         )
     }
