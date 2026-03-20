@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireTestingPackage
+import WireMessagingDomain
 import XCTest
 
 @testable import WireMessagingUI
@@ -37,18 +38,23 @@ final class WireDriveImageAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(thumbnail: Image?, progress: Double?, isError: Bool)] = [
-            (thumbnail: nil, progress: nil, isError: false),
-            (thumbnail: nil, progress: 0.5, isError: true),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: false),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: true)
+        let testCases: [(thumbnail: Image?, state: WireDriveFileUITracker.State)] = [
+            (thumbnail: nil, state: .notLoaded),
+            (thumbnail: nil, state: .loading(progress: 0.5, isLargeFile: true)),
+            (thumbnail: nil, state: .loaded(showReadyToOpen: true)),
+            (thumbnail: nil, state: .loaded(showReadyToOpen: false)),
+            (thumbnail: nil, state: .failed),
+            (thumbnail: Image(.rectangularPlaceholder), state: .notLoaded),
+            (thumbnail: Image(.rectangularPlaceholder), state: .loading(progress: 0.5, isLargeFile: true)),
+            (thumbnail: Image(.rectangularPlaceholder), state: .loaded(showReadyToOpen: true)),
+            (thumbnail: Image(.rectangularPlaceholder), state: .loaded(showReadyToOpen: false)),
+            (thumbnail: Image(.rectangularPlaceholder), state: .failed),
         ]
 
         for (index, testCase) in testCases.enumerated() {
             let view = WireDriveImageAttachmentPreview(
                 thumbnail: testCase.thumbnail,
-                progress: testCase.progress,
-                isError: testCase.isError
+                state: testCase.state
             )
             .frame(width: 74, height: 74)
 

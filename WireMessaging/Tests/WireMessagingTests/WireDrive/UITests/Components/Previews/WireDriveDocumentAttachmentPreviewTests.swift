@@ -67,18 +67,18 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
 
         for (index, testCase) in testCases.enumerated() {
             let state: WireDriveFileUITracker.State = if let progress = testCase.progress {
-                .downloading(progress: progress, isLargeFile: false)
+                .loading(progress: progress, isLargeFile: false)
             } else if testCase.isError {
-                .failed(error: nil)
+                .failed
             } else {
-                .downloaded(showReadyToOpen: false)
+                .loaded(showReadyToOpen: false)
             }
             let view = WireDriveDocumentAttachmentPreview(
                 headerIcon: testCase.headerIcon,
                 headerText: testCase.headerText,
                 labelText: testCase.labelText,
                 state: state,
-                isDownloading: false
+                isDraftPreview: false
             )
             .frame(width: 222, height: 74)
             snapshotHelper
