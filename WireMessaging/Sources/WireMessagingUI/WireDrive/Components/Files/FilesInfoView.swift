@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -110,23 +111,26 @@ struct FilesInfoView: View {
         }
 
         var accessibilityIdentifiers: (title: String, message: String) {
+            typealias Identifiers = Locators.WireDrive.FilesInfoPage
+
             switch self {
             case .preparingFiles:
-                ("preparing-files-title", "preparing-files-message")
+                return (Identifiers.preparingFilesTitle.rawValue, Identifiers.preparingFilesMessage.rawValue)
             case let .noFilesFound(scope, isSearch):
                 if isSearch {
-                    (
-                        "no-files-search-title",
-                        "no-files-search-message"
+                    return (
+                        Identifiers.noFilesSearchTitle.rawValue,
+                        Identifiers.noFilesSearchMessage.rawValue
                     )
                 } else {
-                    (
-                        "no-files-title",
-                        scope == .allConversations ? "no-files-all-conversations-message" : "no-files-message"
+                    return (
+                        Identifiers.noFilesTitle.rawValue,
+                        scope == .allConversations ? Identifiers.noFilesAllConversationsMessage.rawValue : Identifiers
+                            .noFilesMessage.rawValue
                     )
                 }
             case .error:
-                ("error-title", "error-message")
+                return (Identifiers.errorTitle.rawValue, Identifiers.errorMessage.rawValue)
             }
         }
     }
@@ -206,9 +210,8 @@ struct FilesInfoView: View {
                 )
         }
         .accessibilityLabel(Strings.Files.Error.retry)
-        .accessibilityIdentifier("filesBrowser.retryButton")
+        .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.retryButton)
     }
-
 }
 
 #Preview("no files found - single conversation") {
@@ -239,7 +242,7 @@ struct LoadMoreView: View {
             } else {
                 Button(Strings.Files.LoadMore.title, action: onLoadMore)
                     .accessibilityLabel(Accessibility.Files.LoadMore.title)
-                    .accessibilityIdentifier("load-more")
+                    .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.loadMore.rawValue)
                     .buttonStyle(.borderless)
                     .font(for: .body3)
                     .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
