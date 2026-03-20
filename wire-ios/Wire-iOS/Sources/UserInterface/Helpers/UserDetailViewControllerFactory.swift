@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 import WireMainNavigationUI
 import WireMessagingDomain
-import WireNetwork
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
@@ -38,7 +37,6 @@ enum UserDetailViewControllerFactory {
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         userSession: UserSession,
-        teamsAPI: some TeamsAPI,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
@@ -49,7 +47,6 @@ enum UserDetailViewControllerFactory {
                 user: user,
                 actionType: .removeParticipant(conversation),
                 userSession: userSession,
-                teamsAPI: teamsAPI,
                 completion: { _ in }
             )
 

@@ -251,8 +251,7 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     func presentDetails(for user: UserType) {
         guard
             !user.isSelfUser,
-            let conversation = viewModel.conversation as? ZMConversation,
-            let teamsAPI = viewModel.userSession.clientSessionComponent?.teamsAPI
+            let conversation = viewModel.conversation as? ZMConversation
         else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
@@ -260,7 +259,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             conversation: conversation,
             profileViewControllerDelegate: self,
             userSession: viewModel.userSession,
-            teamsAPI: teamsAPI,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository

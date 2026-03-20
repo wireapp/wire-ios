@@ -209,10 +209,12 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isBot: Bool {
-        providerIdentifier?.isEmpty == false && serviceIdentifier?.isEmpty == false
+        providerIdentifier?.isEmpty == false && serviceIdentifier?.isEmpty == false || (user?.type ?? internalType) == .bot
     }
 
-    public var isAppOrBot: Bool { isApp || isBot }
+    public var isAppOrBot: Bool {
+        isApp || isBot
+    }
 
     public var usesCompanyLogin: Bool {
         user?.usesCompanyLogin == true

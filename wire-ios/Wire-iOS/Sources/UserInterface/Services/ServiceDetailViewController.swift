@@ -67,7 +67,6 @@ final class ServiceDetailViewController: UIViewController {
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
-    private let teamsAPI: any TeamsAPI
 
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
@@ -81,13 +80,11 @@ final class ServiceDetailViewController: UIViewController {
         user: any WireDataModel.UserType,
         actionType: ActionType,
         userSession: UserSession,
-        teamsAPI: any TeamsAPI,
         completion: @escaping (AddBotResult) -> Void
     ) {
         self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
-        self.teamsAPI = teamsAPI
 
         self.detailView = ServiceDetailView(
             service: service,

@@ -21,10 +21,7 @@ import WireSyncEngine
 extension ConversationViewController {
 
     func createUserDetailViewController() -> UIViewController {
-        guard
-            let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser),
-            let teamsAPI = userSession.clientSessionComponent?.teamsAPI
-        else {
+        guard let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser) else {
             fatal("no firstActiveParticipantOtherThanSelf!")
         }
 
@@ -33,7 +30,6 @@ extension ConversationViewController {
             conversation: conversation,
             profileViewControllerDelegate: self,
             userSession: userSession,
-            teamsAPI: teamsAPI,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
@@ -44,7 +40,6 @@ extension ConversationViewController {
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
-            // TODO: [WPB-11956] what if the conversation exists but is archived? will it work?
             await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }

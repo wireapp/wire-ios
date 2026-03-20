@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
@@ -29,7 +28,6 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
-    private var teamsAPIMock: MockTeamsAPI!
 
     @MainActor
     override func setUp() async throws {
@@ -39,11 +37,9 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         bot = .createBot(name: "AppUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
-        teamsAPIMock = MockTeamsAPI()
     }
 
     override func tearDown() {
-        teamsAPIMock = nil
         snapshotHelper = nil
         sut = nil
         bot = nil
@@ -58,7 +54,6 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             user: bot,
             actionType: .removeParticipant(groupConversation),
             userSession: UserSessionMock(mockUser: mockSelfUser),
-            teamsAPI: teamsAPIMock,
             completion: { _ in }
         )
     }

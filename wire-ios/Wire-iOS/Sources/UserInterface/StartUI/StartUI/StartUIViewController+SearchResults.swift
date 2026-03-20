@@ -90,15 +90,10 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnApp app: any UserType
     ) {
-        guard let teamsAPI = userSession.clientSessionComponent?.teamsAPI else {
-            return WireLogger.ui.error("clientSessionComponent is nil", attributes: .safePublic)
-        }
-
         let detail = ServiceDetailViewController(
             user: app,
             actionType: .openConversation,
-            userSession: userSession,
-            teamsAPI: teamsAPI
+            userSession: userSession
         ) { [weak self] result in
             guard let self else { return }
 
