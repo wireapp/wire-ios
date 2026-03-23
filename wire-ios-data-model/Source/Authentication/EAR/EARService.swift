@@ -50,54 +50,17 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Life cycle
 
-    /// Create a new `EARService`.
-    ///
-    /// - Parameters:
-    ///   - accountID: The id of the self user.
-    ///   - databaseContexts: A list of database contexts that require access to the database key.
-    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when
-    /// the service is running in app extensions.
-    ///   - sharedUserDefaults: The shared user defaults in which to keep track of whether EAR is enabled.
-    ///   - authenticationContext: The authentication context used to access encryption keys.
-
-    public convenience init(
-        accountID: UUID,
-        databaseContexts: [NSManagedObjectContext] = [],
-        coreDataStack: CoreDataStackProtocol,
-        canPerformKeyMigration: Bool = false,
-        sharedUserDefaults: UserDefaults,
-        authenticationContext: any AuthenticationContextProtocol
-    ) async {
-        let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
-        let messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
-        let migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
-
-        await self.init(
-            accountID: accountID,
-            keyRepository: EARKeyRepository(),
-            keyEncryptor: EARKeyEncryptor(),
-            databaseContexts: databaseContexts,
-            coreDataStack: coreDataStack,
-            canPerformKeyMigration: canPerformKeyMigration,
-            earStorage: earStorage,
-            messageEncryptionService: messageEncryptionService,
-            migrator: migrator,
-            authenticationContext: authenticationContext
-        )
-    }
-
     init(
         accountID: UUID,
         keyRepository: EARKeyRepositoryInterface = EARKeyRepository(),
         keyEncryptor: EARKeyEncryptorInterface = EARKeyEncryptor(),
-        databaseContexts: [NSManagedObjectContext],
         coreDataStack: CoreDataStackProtocol,
         canPerformKeyMigration: Bool,
         earStorage: EARStorage,
         messageEncryptionService: EARMessageEncryptionServiceProtocol,
         migrator: EARMigratorProtocol,
         authenticationContext: AuthenticationContextProtocol
-    ) async {
+    ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
@@ -114,14 +77,16 @@ public class EARService: EARServiceInterface {
 
         coreDataStack.setEARMessageEncryptionService(messageEncryptionService)
 
-        for context in databaseContexts {
-            await context.perform {
-                context.earMessageEncryptionService = messageEncryptionService
-            }
-        }
-
         if canPerformKeyMigration {
             migrateKeysIfNeeded()
+        }
+    }
+
+    func setupDatabaseContexts(databaseContexts: [NSManagedObjectContext]) async {
+        for context in databaseContexts {
+            await context.perform { [service = earMessageEncryptionService] in
+                context.earMessageEncryptionService = service
+            }
         }
     }
 
