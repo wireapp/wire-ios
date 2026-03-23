@@ -18,9 +18,9 @@
 
 import Foundation
 import WireFoundation
-import WireNetwork
+@preconcurrency import WireNetwork
 
-public protocol IsBuildBlacklistedUseCase {
+public protocol IsBuildBlacklistedUseCase: Sendable {
 
     func invoke() async -> (isBuildBlacklisted: Bool, error: Error?)
 
