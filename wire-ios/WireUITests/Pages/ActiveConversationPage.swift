@@ -65,10 +65,6 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
 
-    var senderNames: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "author.name")
-    }
-
     var selfDeletingMessageButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
     }
@@ -108,15 +104,6 @@ class ActiveConversationPage: PageModel {
             }
         }
         return messages
-    }
-
-    func fetchSenders() -> [String] {
-        var senders: [String] = []
-        for i in 0 ..< senderNames.count {
-            let element = senderNames.element(boundBy: i)
-            senders.append(element.label)
-        }
-        return senders
     }
 
     func fetchFileNames() -> [String] {

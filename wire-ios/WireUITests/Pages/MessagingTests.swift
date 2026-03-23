@@ -63,6 +63,9 @@ final class MessagingTests: WireUITestCase {
             receivedMessages.contains(messageFromMember1),
             "Expected message '\(messageFromMember1)' not found in sent messages: \(receivedMessages)"
         )
+        
+        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
+        XCTAssertEqual(senderName, teamMembers[0].name, "Sender info didn't match expected value \(teamOwner.name)")
     }
     
     @MainActor
@@ -110,12 +113,8 @@ final class MessagingTests: WireUITestCase {
             activeConversationPage.fileTypeIcons.firstMatch.exists,
             "Expected image attachment not found"
         )
-        
-        let senders = activeConversationPage.fetchSenders()
-        XCTAssertEqual(
-            senders.first,
-            teamMembers[0].name,
-            "Expected sender '\(teamMembers[0].name)' but found '\(senders.first ?? "nil")'"
-        )
+
+        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
+        XCTAssertEqual(senderName, teamMembers[0].name, "Sender info didn't match expected value \(teamOwner.name)")
     }
 }
