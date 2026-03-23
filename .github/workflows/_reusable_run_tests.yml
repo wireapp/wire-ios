@@ -19,18 +19,15 @@ on:
       run_critical_flows:
         type: boolean
         required: true
-<<<<<<< HEAD
       testiny_run_name:
         type: string
         required: false
         default: ''
-=======
       notify:
         type: string
         required: true
         default: 'failure' # values: always | failure | never
 
->>>>>>> 13919ac7e9 (chore: update github action notify on Wire - WPB-24093 🍒 (#4469))
     secrets:
       ZENKINS_USERNAME:
         required: true
