@@ -232,10 +232,6 @@ class TestServicesClient {
         type: String,
         convoId: UUID,
         domain: String,
-//        width: Int = 0,
-//        height: Int = 0,
-//        timeoutMillis: Int = 0,
-//        expectsReadConfirmation: Bool = true
     ) async throws {
 
         let instanceId = try await getInstanceId(
@@ -254,22 +250,7 @@ class TestServicesClient {
             "data": try fileToBase64String(fileURL: fileURL),
             "conversationDomain": domain,
             "type": type
-//            "width": width,
-//            "height": height,
-//            "legalHoldStatus": 0
         ]
-
-//        if domain != "staging.zinfra.io" {
-//            body["conversationDomain"] = domain
-//        }
-//
-//        if timeoutMillis > 0 {
-//            body["messageTimer"] = timeoutMillis
-//        }
-//
-//        if expectsReadConfirmation {
-//            body["expectsReadConfirmation"] = true
-//        }
 
         let (_, response) = try await sendHttpRequest(
             url: requestUrl.absoluteString,
