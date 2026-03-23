@@ -27,6 +27,14 @@ class PhotosAppPage: PageModel {
         photosApp.windows.firstMatch
     }
 
+    deinit {
+        if let token = handler?.1 {
+            handler?.0.removeUIInterruptionMonitor(token)
+        }
+    }
+
+    var handler: (XCTestCase, any NSObjectProtocol)?
+
     init(photosApp: XCUIApplication) throws {
         self.photosApp = photosApp
         try super.init()
@@ -73,7 +81,8 @@ class PhotosAppPage: PageModel {
     }
 
     @discardableResult
-    func openFirstImage() throws -> PhotosAppPage {
+    func openFirstImage(with testCase: XCTestCase) throws -> PhotosAppPage {
+        handleNotificationPermissionAlert(testCase: testCase)
         try continueWhatsNewIfPresent()
         XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
         // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
@@ -110,4 +119,16 @@ class PhotosAppPage: PageModel {
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
     }
 
+    private func handleNotificationPermissionAlert(testCase: XCTestCase) {
+        let handler = testCase
+            .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                if alertElement.label.contains(notifPermission) {
+                    alertElement.buttons["Allow"].tap()
+                }
+
+                return true
+            }
+        self.handler = (testCase, handler)
+    }
 }

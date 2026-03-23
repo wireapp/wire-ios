@@ -70,9 +70,16 @@ class FirstTimePage: PageModel {
     func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
         handleNotificationPermissionAlert(testCase: testCase)
         // Sometimes the OK button take longer to disappear after tapping.
-        if conversationsButton.exists || conversationsButton.waitForExistence(timeout: 10) {
-            conversationsButton.tap()
+        guard conversationsButton.waitForExistence(timeout: 15) else {
+            throw NSError(
+                domain: "XCUITest Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "OK button loader shown longer...conversationsButton could not be shown within 15 seconds"
+                ]
+            )
         }
+        conversationsButton.tap()
         return try ConversationsPage()
     }
 
