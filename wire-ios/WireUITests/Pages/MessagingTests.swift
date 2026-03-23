@@ -22,7 +22,7 @@ import XCTest
 final class MessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendAndReceiveTextInGroupConversation_TC_0000() async throws {
+    func testSendAndReceiveTextInGroupConversation_TC_8833_8840() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomGroupName()
@@ -63,13 +63,13 @@ final class MessagingTests: WireUITestCase {
             receivedMessages.contains(messageFromMember1),
             "Expected message '\(messageFromMember1)' not found in sent messages: \(receivedMessages)"
         )
-        
+
         let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamMembers[0].name, "Sender info didn't match expected value \(teamOwner.name)")
     }
-    
+
     @MainActor
-    func testSendAndReceiveImageInGroupConversation_TC_0000() async throws {
+    func testSendAndReceiveImageInGroupConversation_TC_8834_8841() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomGroupName()
@@ -91,7 +91,7 @@ final class MessagingTests: WireUITestCase {
             .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData/Img/testImage.jpg")
         let imageExtension = imageURL.pathExtension
-        
+
         // WHEN member1 send image
         try await testServicesClient.sendImage(
             user: teamMembers[0],

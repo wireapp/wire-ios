@@ -253,7 +253,7 @@ class TestServicesClient {
             "conversationId": convoId.uuidString.lowercased(),
             "data": try fileToBase64String(fileURL: fileURL),
             "conversationDomain": domain,
-            "type": type,
+            "type": type
 //            "width": width,
 //            "height": height,
 //            "legalHoldStatus": 0
