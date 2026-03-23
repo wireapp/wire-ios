@@ -402,6 +402,18 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker = {
+        CheckBlacklistWorker(
+            isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+            onIsBuildBlacklisted: { [weak self] in
+                guard let self else { return }
+
+                isBuildBlacklisted = true
+                delegate?.userSessionDidDiscoverBuildIsBlacklisted()
+            }
+        )
+    }()
+
     let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
@@ -580,6 +592,10 @@ public final class ZMUserSession: NSObject {
         startEphemeralTimers()
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        Task {
+            await checkBlacklistWorker.start()
+        }
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
@@ -870,7 +886,6 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {

@@ -113,16 +113,4 @@ extension ZMUserSession {
         }
     }
 
-    var checkBuildBlacklistAction: RecurringAction {
-        .init(id: #function, interval: .oneHour * 6) { [weak self] in
-            guard let self else { return }
-            let useCase = userSessionComponent.makeIsBuildBlacklistedUseCase()
-            let isBuildBlacklisted = await useCase.invoke().isBuildBlacklisted
-            if isBuildBlacklisted {
-                self.isBuildBlacklisted = true
-                delegate?.userSessionDidDiscoverBuildIsBlacklisted()
-            }
-        }
-    }
-
 }
