@@ -36,6 +36,27 @@ public actor CheckBlacklistWorker {
 
     public init(
         isBuildBlacklistedUseCase: any IsBuildBlacklistedUseCase,
+        onIsBuildBlacklisted: @escaping @Sendable () -> Void
+    ) {
+        self.init(
+            isBuildBlacklistedUseCase: isBuildBlacklistedUseCase,
+            trigger: CheckBlacklistWorker.makeTrigger(),
+            onIsBuildBlacklisted: onIsBuildBlacklisted
+        )
+    }
+
+    deinit {
+        triggerTask?.cancel()
+    }
+
+    nonisolated public func start() {
+        Task { await self.startAndWait() }
+    }
+
+    // MARK: - Private
+
+    init(
+        isBuildBlacklistedUseCase: any IsBuildBlacklistedUseCase,
         trigger: AsyncStream<Void> = CheckBlacklistWorker.makeTrigger(),
         onIsBuildBlacklisted: @escaping @Sendable () -> Void
     ) {
@@ -44,11 +65,7 @@ public actor CheckBlacklistWorker {
         self.onIsBuildBlacklisted = onIsBuildBlacklisted
     }
 
-    deinit {
-        triggerTask?.cancel()
-    }
-
-    public func start() {
+    func startAndWait() async {
         guard triggerTask == nil else { return }
 
         triggerTask = Task {
@@ -56,9 +73,8 @@ public actor CheckBlacklistWorker {
                 await self.performCheckIfNeeded()
             }
         }
+        await triggerTask?.value
     }
-
-    // MARK: - Private
 
     private func isStale() -> Bool {
         guard let lastSuccess else { return true }
@@ -81,9 +97,9 @@ public actor CheckBlacklistWorker {
         }
     }
 
-    // MARK: - Publishers
+    // MARK: - Trigger
 
-    public static func makeTrigger() -> AsyncStream<Void> {
+    static func makeTrigger() -> AsyncStream<Void> {
         AsyncStream { continuation in
             continuation.yield()
 
