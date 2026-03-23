@@ -21,12 +21,13 @@ import WireMessagingDomain
 
 extension WireDriveLocalAsset {
 
+    /// Builds a key that acts as an identifier for the particular version of the downloaded file.
+    /// This cache key is also used to build the URL which points to the downloaded file.
+    /// The file name of the URL path will be shown as the title in the QuickLook preview when the file os opened,
+    /// so it's important to make it readable and correspond to the actual file name, rather than a generated id.
     static func cacheKey(nodeID: UUID, eTag: String, path: String) -> String {
-        var result = "\(nodeID.uuidString)-\(eTag)"
-        if let pathExtension = URL(string: path)?.pathExtension, !pathExtension.isEmpty {
-            result.append(".\(pathExtension)")
-        }
-        return result
+        let filename = URL(fileURLWithPath: path).lastPathComponent
+        return "\(nodeID.uuidString)-\(eTag)/\(filename)"
     }
 
 }

@@ -151,6 +151,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil, // introduced with API v15
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
         )

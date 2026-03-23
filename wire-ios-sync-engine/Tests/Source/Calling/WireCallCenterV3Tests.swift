@@ -2444,6 +2444,7 @@ extension WireCallCenterV3Tests {
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
+        let conferenceInfo = MLSConferenceInfo.random()
 
         createsMLSConferenceSnapshot(
             conversationID: conversationID,
@@ -2457,10 +2458,19 @@ extension WireCallCenterV3Tests {
             uiMOC.zm_sync.mlsService = mlsService
         }
 
-        let didGenereateNewEpoch = customExpectation(description: "didGenerateNewEpoch")
-        mlsService.generateNewEpochGroupID_MockMethod = {
-            XCTAssertEqual($0, subconversationGroupID)
-            didGenereateNewEpoch.fulfill()
+        let didGenerateConferenceInfo = customExpectation(description: "didGenerateConferenceInfo")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
+            defer { didGenerateConferenceInfo.fulfill() }
+            XCTAssertEqual($0, parentGroupID)
+            XCTAssertEqual($1, subconversationGroupID)
+            return conferenceInfo
+        }
+
+        let didSetConferenceInfo = customExpectation(description: "didSetConferenceInfo")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            defer { didSetConferenceInfo.fulfill() }
+            XCTAssertEqual($0, conversationID)
+            XCTAssertEqual($1, conferenceInfo)
         }
 
         // When
@@ -2468,6 +2478,69 @@ extension WireCallCenterV3Tests {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNothing_WhenSnapshotIsMissing() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        // No snapshot added for conversationID
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            XCTFail("generateConferenceInfo should not be called when snapshot is missing")
+            return .random()
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNotSetConferenceInfo_WhenGenerateFails() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        createsMLSConferenceSnapshot(
+            conversationID: conversationID,
+            qualifiedID: qualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        struct FakeError: Error {}
+        let didAttemptGenerate = customExpectation(description: "didAttemptGenerate")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            didAttemptGenerate.fulfill()
+            throw FakeError()
+        }
+
+        mockAVSWrapper.mockSetMLSConferenceInfo = { _, _ in
+            XCTFail("setMLSConferenceInfo should not be called when generateConferenceInfo throws")
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(
+            mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations.count,
+            1
+        )
     }
 
     private func createsMLSConferenceSnapshot(
@@ -2629,89 +2702,6 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
-    func test_EndsCall_WhenOtherParticipantDropsFromEstablishedToConnecting() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: true)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .established)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
-    }
-
-    func test_DoesNotEndCall_WhenCallIsNotEstablished() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: true)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-
-        // Then
-        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
-    }
-
-    func test_DoesNotEndCall_WhenUseSFTForOneToOneCallsIsFalse() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: false)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .established)
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-
-        // Then
-        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
-    }
-
 }
 
 // MARK: - Helpers
@@ -2730,34 +2720,4 @@ private extension AVSActiveSpeakersChange {
         let encoded = try! JSONEncoder().encode(self)
         return String(decoding: encoded, as: UTF8.self)
     }
-}
-
-private extension WireCallCenterV3Tests {
-
-    func handleParticipantChange(
-        selfAudioState: AudioState,
-        otherAudioState: AudioState
-    ) {
-        let selfMember = AVSParticipantsChange.Member(
-            userid: selfUserID.serialized,
-            clientid: clientID,
-            aestab: selfAudioState,
-            vrecv: .stopped,
-            muted: .unmuted
-        )
-        let otherMember = AVSParticipantsChange.Member(
-            userid: otherUserID.serialized,
-            clientid: otherUserClientID,
-            aestab: otherAudioState,
-            vrecv: .stopped,
-            muted: .unmuted
-        )
-        let change = AVSParticipantsChange(
-            convid: oneOnOneConversationID.serialized,
-            members: [selfMember, otherMember]
-        )
-        let data = String(decoding: try! JSONEncoder().encode(change), as: UTF8.self)
-        sut.handleParticipantChange(conversationId: oneOnOneConversationID.serialized, data: data)
-    }
-
 }

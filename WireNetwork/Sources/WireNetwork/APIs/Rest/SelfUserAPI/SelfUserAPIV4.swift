@@ -91,6 +91,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil, // introduced with API v15
             service: service?.toAPIModel(),
             supportedProtocols: Set(supportedProtocols)
         )

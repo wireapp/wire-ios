@@ -500,44 +500,7 @@ extension WireCallCenterV3 {
             return false
         }
 
-        switch conversation.messageProtocol {
-        case .mls:
-            return shouldEndCallForMLS(
-                previousParticipants: previousParticipants,
-                newParticipants: newParticipants
-            )
-        case .mixed, .proteus:
-            return shouldEndCallForProteus(
-                previousParticipants: previousParticipants,
-                newParticipants: newParticipants
-            )
-        }
-    }
-
-    private func shouldEndCallForMLS(
-        previousParticipants: [AVSCallMember],
-        newParticipants: [AVSCallMember]
-    ) -> Bool {
-        /// We assume that the 2nd participant is the other user.
-        /// If the other user's audio state changes from `established` to `connecting`,
-        /// it means the call connection was dropped and the call should be ended.
-        ///  https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
-        guard
-            previousParticipants.count == 2,
-            newParticipants.count == 2,
-            previousParticipants[1].audioState == .established,
-            newParticipants[1].audioState == .connecting
-        else {
-            return false
-        }
-        return true
-    }
-
-    private func shouldEndCallForProteus(
-        previousParticipants: [AVSCallMember],
-        newParticipants: [AVSCallMember]
-    ) -> Bool {
-        previousParticipants.count == 2 && newParticipants.count == 1
+        return previousParticipants.count == 2 && newParticipants.count == 1
     }
 
 }

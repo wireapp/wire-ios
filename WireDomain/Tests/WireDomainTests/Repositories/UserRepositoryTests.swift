@@ -470,6 +470,7 @@ final class UserRepositoryTests: XCTestCase {
             deleted: false,
             email: "john.doe@example.com",
             expiresAt: nil,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
@@ -489,6 +490,7 @@ final class UserRepositoryTests: XCTestCase {
             deleted: false,
             email: "username@wire.com",
             expiresAt: .now,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls]
         )
