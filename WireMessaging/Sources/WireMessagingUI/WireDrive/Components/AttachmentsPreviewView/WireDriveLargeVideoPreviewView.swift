@@ -48,7 +48,7 @@ struct WireDriveLargeVideoPreviewView: View {
             progressColor: downloadError
                 ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
-            VStack {
+            VStack(spacing: 0) {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
@@ -76,7 +76,7 @@ struct WireDriveLargeVideoPreviewView: View {
                         durationView(duration: duration)
                     }
                 }
-            }
+            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
