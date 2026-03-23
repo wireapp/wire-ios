@@ -114,6 +114,7 @@ public enum Locators {
         case imageCell = "ImageCell"
         case mentionButton
         case userCellName
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {
