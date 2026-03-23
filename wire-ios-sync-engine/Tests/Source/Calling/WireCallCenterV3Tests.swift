@@ -1887,6 +1887,52 @@ extension WireCallCenterV3Tests {
         )
     }
 
+    func testThatClosingAGroupCallResetsVideoState() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .started)
+
+        // when
+        sut.closeCall(conversationId: groupConversationID)
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
+    func testThatRejoiningGroupCallAfterEnablingVideoStartsWithVideoDisabled() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        sut.closeCall(conversationId: groupConversationID)
+
+        // when
+        sut.handleEstablishedCall(conversationId: groupConversationID.serialized)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
     func testThatItWhenClosingAOneOnOneCallItDoesNotSetTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
