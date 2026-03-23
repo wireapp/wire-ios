@@ -21,4 +21,5 @@ jobs:
       branch: ${{ matrix.branch }}
       notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
       run_critical_flows: true
+      notify: always
     secrets: inherit
