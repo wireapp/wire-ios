@@ -26,5 +26,9 @@ jobs:
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
+<<<<<<< HEAD
       testiny_run_name: ${{ inputs.testiny_run_name }}
+=======
+      notify: always
+>>>>>>> 13919ac7e9 (chore: update github action notify on Wire - WPB-24093 🍒 (#4469))
     secrets: inherit
