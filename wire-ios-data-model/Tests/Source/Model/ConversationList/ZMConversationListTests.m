@@ -602,43 +602,6 @@
 
 }
 
-- (void)testThatAddingMessageToClearedConversationMovesItToActiveConversationsList
-{
-    // given
-    ZMConversation *c1 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
-    c1.lastModifiedDate = [NSDate date];
-    ZMMessage *message = (id)[c1 appendMessageWithText:@"message"];
-    message.serverTimestamp = [NSDate date];
-    
-    c1.lastServerTimeStamp = message.serverTimestamp;
-    
-    [c1 clearMessageHistory];
-    XCTAssert([self.uiMOC saveOrRollback]);
-
-    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
-    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
-    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
-    
-    XCTAssertEqual(activeList.items.count, 0u);
-    XCTAssertEqual(archivedList.items.count, 0u);
-    XCTAssertEqual(clearedList.items.count, 1u);
-    XCTAssertEqualObjects(clearedList.items.firstObject, c1);
-
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-
-    // when
-    //UI should call this when opening cleared conversation first time
-    [c1 revealClearedConversation];
-
-    // then
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-
-    XCTAssertEqual(activeList.items.count, 1u);
-    XCTAssertEqualObjects(activeList.items.firstObject, c1);
-    XCTAssertEqual(archivedList.items.count, 0u);
-    XCTAssertEqual(clearedList.items.count, 0u);
-}
-
 @end
 
 

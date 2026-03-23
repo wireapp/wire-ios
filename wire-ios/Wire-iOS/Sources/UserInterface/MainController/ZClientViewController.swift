@@ -638,16 +638,20 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Setup methods
 
+    @available(*, deprecated, renamed: "transitionToList", message: "prefered method is `transitionToList()")
     func transitionToList(
         animated: Bool,
-        leftViewControllerRevealed: Bool = true,
         completion: Completion?
     ) {
         Task {
-            let currentFilter = conversationListViewController.conversationFilter
-            await mainCoordinator.showConversationList(conversationFilter: currentFilter)
+            await transitionToList()
             completion?()
         }
+    }
+    
+    func transitionToList() async {
+        let currentFilter = conversationListViewController.conversationFilter
+        await mainCoordinator.showConversationList(conversationFilter: currentFilter)
     }
 
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {

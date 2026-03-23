@@ -270,7 +270,12 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
-
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(clearedContent),
+                                               name: .clearContentNotification,
+                                               object: userSession.contextProvider.viewContext.notificationContext)
+        
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
@@ -279,6 +284,13 @@ final class ConversationContentViewController: UIViewController {
             }
     }
 
+    
+    
+    @objc
+    private func clearedContent() {
+        dataSource.resetSectionControllers()
+    }
+    
     private func updateBackgroundColor(color: ZMAccentColor?) {
         func set(color: UIColor) {
             tableView.backgroundColor = color
@@ -327,6 +339,8 @@ final class ConversationContentViewController: UIViewController {
         startRefreshTimerIfNeeded()
     }
 
+
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onScreen = true

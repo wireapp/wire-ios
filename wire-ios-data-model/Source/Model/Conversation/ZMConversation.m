@@ -801,21 +801,3 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 }
 
 @end
-
-
-@implementation ZMConversation (History)
-
-
-- (void)clearMessageHistory
-{
-    self.isArchived = YES;
-    self.clearedTimeStamp = self.lastServerTimeStamp; // the setter of this deletes all messages
-    self.lastReadServerTimeStamp = self.lastServerTimeStamp;
-}
-
-- (void)revealClearedConversation
-{
-    self.isArchived = NO;
-}
-
-@end

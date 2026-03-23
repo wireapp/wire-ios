@@ -432,4 +432,32 @@ extension ZMConversation {
 
         return managedObjectContext.fetchOrAssert(request: fetchRequest).filter { $0.shouldGenerateUnreadCount() }
     }
+    
+    
+    /// This will reset the message history to the last message in the conversation.
+    @MainActor
+    public func clearMessageHistory() async {
+        guard let syncContext = self.managedObjectContext?.zm_sync else {
+            assertionFailure("missing sync context")
+            return
+        }
+        let objectID = self.objectID
+        let timestamp = self.lastServerTimeStamp
+        await syncContext.perform {
+            let object = try? syncContext.existingObject(with: objectID) as? ZMConversation
+            object?.clearedTimeStamp = timestamp // the setter of this deletes all messages
+            syncContext.saveOrRollback()
+        }
+
+        self.lastReadServerTimeStamp = timestamp
+    
+        NotificationCenter.default.post(name: .clearContentNotification, object: syncContext.notificationContext)
+    }
+
+
 }
+
+public extension Notification.Name {
+    static let clearContentNotification = Notification.Name("clearContentNotification")
+}
+

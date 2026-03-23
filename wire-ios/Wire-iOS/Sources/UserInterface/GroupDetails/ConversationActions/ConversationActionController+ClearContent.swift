@@ -74,10 +74,15 @@ extension ConversationActionController {
             return
         }
 
-        transitionToListAndEnqueue {
-            conversation.clearMessageHistory()
+        Task {
+            await conversation.clearMessageHistory()
             if leave {
-                conversation.removeOrShowError(participant: user)
+                await ZClientViewController.shared?.transitionToList()
+                await MainActor.run {
+                    userSession.enqueue {
+                        conversation.removeOrShowError(participant: user)
+                    }
+                }
             }
         }
     }
