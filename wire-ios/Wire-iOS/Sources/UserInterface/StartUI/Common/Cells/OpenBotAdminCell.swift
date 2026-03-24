@@ -16,8 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
-@testable import WireData
+import UIKit
 
-@Test
-func example() async throws {}
+final class OpenBotAdminCell: StartUIIconCell {
+
+    override func setupViews() {
+        super.setupViews()
+
+        icon = .bot
+        title = PeoplePicker.QuickAction.adminApps
+        isAccessibilityElement = true
+        accessibilityLabel = title
+        accessibilityIdentifier = "button.searchui.open-apps"
+    }
+
+}
