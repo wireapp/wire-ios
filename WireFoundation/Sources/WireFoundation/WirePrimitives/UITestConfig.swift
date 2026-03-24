@@ -18,7 +18,6 @@
 
 import Foundation
 
-#if DEBUG
 /// Configuration values for UITests.
 public struct UITestConfig: Codable {
 
@@ -40,8 +39,9 @@ public struct UITestConfig: Codable {
         try! JSONEncoder().encode(self).base64EncodedString()
     }
 
+    #if DEBUG
     /// Returns `UITestConfig` decoded from base64 app environment or default config if none is set.
-    public static func fromEnvironment() -> UITestConfig {
+    public static var environment: UITestConfig {
         guard
             let value = ProcessInfo.processInfo.environment[Self.environmentKey],
             let data = Data(base64Encoded: value),
@@ -52,5 +52,6 @@ public struct UITestConfig: Codable {
 
         return config
     }
+    #endif
 }
-#endif
+
