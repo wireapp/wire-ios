@@ -31,6 +31,9 @@ public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked 
     let baseURL: URL
 
     private let serverTrustValidator: ServerTrustValidator
+    // This must be a `var` because of a cyclic dependency: the session needs
+    // `self` as its delegate, but `self` isn't available until after `super.init()`.
+    // This mutable state is why the class can only be marked `@unchecked Sendable`.
     private var urlSession: URLSession?
     private let webSocketStore = WebSocketStore()
 
