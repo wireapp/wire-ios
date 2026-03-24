@@ -357,29 +357,33 @@ final class SearchResultsViewController: UIViewController {
 
     func updateSections(withSearchResult searchResult: SearchResult) {
 
-        var contacts = searchResult.contacts
-        var teamContacts = searchResult.teamMembers
+        var filteredContacts = searchResult.contacts
+        var filteredTeamContacts = searchResult.teamMembers
+        var filteredApps = searchResult.apps
 
-        if let filteredParticpants = filterConversation?.localParticipants {
-            contacts = contacts.filter {
+        if let filteredParticipants = filterConversation?.localParticipants {
+            filteredContacts = filteredContacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
-                return !filteredParticpants.contains(user)
+                return !filteredParticipants.contains(user)
             }
-            teamContacts = teamContacts.filter {
+            filteredTeamContacts = filteredTeamContacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
-                return !filteredParticpants.contains(user)
+                return !filteredParticipants.contains(user)
             }
+            filteredApps = filteredApps
+                .compactMap { $0 as? ZMUser }
+                .filter { !filteredParticipants.contains($0) }
         }
 
-        contactsSection.contacts = contacts
+        contactsSection.contacts = filteredContacts
 
         // Access mode is not set, or the guests are allowed.
         if shouldIncludeGuests {
-            teamMemberAndContactsSection.contacts = Set(teamContacts + contacts).sorted {
+            teamMemberAndContactsSection.contacts = Set(filteredTeamContacts + filteredContacts).sorted {
                 let name0 = $0.name ?? ""
                 let name1 = $1.name ?? ""
 
@@ -391,12 +395,12 @@ final class SearchResultsViewController: UIViewController {
                 return name0.compare(name1) == .orderedAscending
             }
         } else {
-            teamMemberAndContactsSection.contacts = teamContacts
+            teamMemberAndContactsSection.contacts = filteredTeamContacts
         }
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        appsSection.apps = searchResult.apps
+        appsSection.apps = filteredApps
         botsSection.apps = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
