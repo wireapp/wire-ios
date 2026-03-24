@@ -459,7 +459,7 @@ public final class SearchTask {
                     user: localUser,
                     searchUsersCache: searchUsersCache,
                     type: localUser?.type,
-                    summary: localUser?.appInfo?.description,
+                    summary: localUser?.appInfo?.appDescription,
                     isDeleted: result.deleted ?? false
                 )
             }
