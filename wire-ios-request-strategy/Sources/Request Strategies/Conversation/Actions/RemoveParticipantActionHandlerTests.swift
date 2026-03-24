@@ -238,8 +238,9 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             message.serverTimestamp = Date()
             self.conversation.mutableMessages.add(message)
             self.conversation.lastServerTimeStamp = message.serverTimestamp?.addingTimeInterval(5)
-
-            self.conversation.clearMessageHistory()
+            
+            self.conversation.clearedTimeStamp = Date()
+            syncMOC.delete(message)
             self.syncMOC.saveOrRollback()
 
             let action = RemoveParticipantAction(user: selfUser, conversation: self.conversation)

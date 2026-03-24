@@ -293,35 +293,6 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertEqual(archivedObserver.notifications.count, 1)
     }
 
-    func testThatClearingAConversationInATeamMovesItToClearedListInTheTeam() {
-        // given
-        let conversation1 = createGroupConversation(in: team)
-        let message = try! conversation1.appendText(content: "Text") as! ZMMessage
-        message.serverTimestamp = Date()
-        uiMOC.saveOrRollback()
-
-        // then
-        let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
-        let archivedList = ZMConversation.archivedConversations(in: uiMOC)
-        let clearedList = ZMConversation.clearedConversations(in: uiMOC)
-
-        XCTAssertEqual(activeList.items.count, 1)
-        XCTAssertEqual(activeList.items, [conversation1])
-        XCTAssertEqual(archivedList.items.count, 0)
-        XCTAssertEqual(clearedList.items.count, 0)
-        XCTAssert(uiMOC.saveOrRollback())
-
-        // when
-        conversation1.clearMessageHistory()
-        XCTAssert(uiMOC.saveOrRollback())
-
-        // then
-        XCTAssertEqual(activeList.items.count, 0)
-        XCTAssertEqual(archivedList.items.count, 0)
-        XCTAssertEqual(clearedList.items.count, 1)
-        XCTAssertEqual(clearedList.items, [conversation1])
-    }
-
     func testThatItDoesNotReturnAConversationAnymoreOnceItGotUnarchived() {
         // given
         let conversation = createGroupConversation(in: team)

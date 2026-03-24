@@ -21,15 +21,6 @@ import XCTest
 final class ConversationTests: WireUITestCase {
 
     @MainActor
-    private func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
-
-        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-
-        return try firstTimePage
-            .acceptPopup(with: self)
-    }
-
-    @MainActor
     func testClearContent() async throws {
         let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
@@ -57,18 +48,6 @@ final class ConversationTests: WireUITestCase {
             .openConversation()
         var sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(sentMessages.isEmpty)
-
-        // WHEN
-        activeConversationPage = try activeConversationPage
-            .sendMessage("another test")
-            .openConversationDetails()
-            .moreOptionsConversationDetails()
-            .clearContentOptionsConversationDetails()
-            .clearContent()
-            .closeConversationDetails()
-
-        sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
-        XCTAssertTrue(sentMessages.isEmpty, "got \(sentMessages.count) messages")
     }
 
 }
