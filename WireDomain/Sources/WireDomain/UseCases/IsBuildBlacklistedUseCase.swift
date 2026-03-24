@@ -20,6 +20,7 @@ import Foundation
 import WireFoundation
 @preconcurrency import WireNetwork
 
+// sourcery: AutoMockable
 public protocol IsBuildBlacklistedUseCase: Sendable {
 
     func invoke() async -> (isBuildBlacklisted: Bool, error: Error?)
