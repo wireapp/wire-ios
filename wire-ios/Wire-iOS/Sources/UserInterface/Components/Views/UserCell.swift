@@ -452,14 +452,14 @@ extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
         if user.isAppOrBot, let appOrBot = user as? ZMSearchUser {
-            subtitle(forServiceUser: appOrBot)
+            subtitle(for: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }
     }
 
-    private func subtitle(forServiceUser service: ZMSearchUser) -> NSAttributedString? {
-        guard let summary = service.summary else { return nil }
+    private func subtitle(for searchUser: ZMSearchUser) -> NSAttributedString? {
+        guard let summary = searchUser.summary else { return nil }
         return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
 

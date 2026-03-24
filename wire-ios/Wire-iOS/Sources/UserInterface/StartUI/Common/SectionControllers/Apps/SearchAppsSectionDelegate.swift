@@ -16,17 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-final class OpenServicesAdminCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-
-        icon = .bot
-        title = PeoplePicker.QuickAction.adminApps
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityIdentifier = "button.searchui.open-apps"
-    }
+protocol SearchAppsSectionDelegate: SearchSectionControllerDelegate {
+    func addBotsSectionDidRequestOpenBotsAdmin()
 }

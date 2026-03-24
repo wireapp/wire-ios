@@ -174,7 +174,8 @@ final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     private func makeSearchUser(
         name: String,
-        user: ZMUser? = nil
+        user: ZMUser? = nil,
+        type: TypeOfUser = .regular
     ) -> ZMSearchUser {
         ZMSearchUser(
             viewContext: coreDataStack.viewContext,
@@ -184,7 +185,8 @@ final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
             remoteIdentifier: UUID(),
             providerIdentifier: nil,
             user: user,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: type
         )
     }
 
