@@ -446,7 +446,7 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-            ? ColorTheme.Backgrounds.chatBackground
+            ? ColorTheme.Backgrounds.backgroundVariant
             : ColorTheme.Backgrounds.surface
     }
 
