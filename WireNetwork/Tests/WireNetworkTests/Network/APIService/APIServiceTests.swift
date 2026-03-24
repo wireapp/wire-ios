@@ -44,7 +44,6 @@ final class APIServiceTests: XCTestCase {
             ),
             makeURLSession: { _ in .mockURLSession() }
         )
-        networkService.configure(with: .mockURLSession())
         sut = APIService(
             networkService: networkService,
             authenticationManager: authenticationManager

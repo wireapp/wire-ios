@@ -46,9 +46,8 @@ final class NetworkServiceTests: XCTestCase {
                 ],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { _ in session }
+            makeURLSession: { [session] _ in session }
         )
-        sut.configure(with: session)
     }
 
     override func tearDown() async throws {

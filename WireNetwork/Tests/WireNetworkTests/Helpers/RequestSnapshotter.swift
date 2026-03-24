@@ -43,7 +43,6 @@ final class RequestSnapshotter {
             ),
             makeURLSession: { _ in .mockURLSession() }
         )
-        networkService.configure(with: .mockURLSession())
 
         let authenticationManager = MockAuthenticationManagerProtocol()
         authenticationManager.getValidAccessToken_MockValue = AccessToken(

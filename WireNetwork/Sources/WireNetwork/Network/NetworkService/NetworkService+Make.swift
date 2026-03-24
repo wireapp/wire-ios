@@ -71,14 +71,6 @@ extension NetworkService {
             }
         )
 
-        let restSession = URLSession(
-            configuration: configFactory.makeRESTAPISessionConfiguration(),
-            delegate: restService,
-            delegateQueue: nil
-        )
-
-        restService.configure(with: restSession)
-
         let webSocketService = NetworkService(
             baseURL: backendConfig.endpoints.websocketURL,
             serverTrustValidator: ServerTrustValidator(
@@ -94,14 +86,6 @@ extension NetworkService {
             }
         )
 
-        let webSocketSession = URLSession(
-            configuration: configFactory.makeWebSocketSessionConfiguration(),
-            delegate: webSocketService,
-            delegateQueue: nil
-        )
-
-        webSocketService.configure(with: webSocketSession)
-
         let blacklistService = NetworkService(
             baseURL: backendConfig.endpoints.blacklistURL,
             serverTrustValidator: ServerTrustValidator(
@@ -116,14 +100,6 @@ extension NetworkService {
                 )
             }
         )
-
-        let blacklistSession = URLSession(
-            configuration: configFactory.makeBlacklistSessionConfiguration(),
-            delegate: blacklistService,
-            delegateQueue: nil
-        )
-
-        blacklistService.configure(with: blacklistSession)
 
         return (
             rest: restService,

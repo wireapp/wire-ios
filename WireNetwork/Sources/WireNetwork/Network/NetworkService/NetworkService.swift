@@ -20,15 +20,16 @@ import WireLogging
 public import Foundation
 
 // sourcery: AutoMockable
-public protocol NetworkServiceProtocol {
+public protocol NetworkServiceProtocol: Sendable {
 
     func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 
 }
 
-public final class NetworkService: NSObject, NetworkServiceProtocol {
+public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked Sendable {
 
     let baseURL: URL
+
     private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private let webSocketStore = WebSocketStore()
@@ -36,7 +37,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
     public init(
         baseURL: URL,
         serverTrustValidator: ServerTrustValidator,
-        makeURLSession: ((any URLSessionDelegate)?) -> URLSession
+        makeURLSession: @Sendable ((any URLSessionDelegate)?) -> URLSession
     ) {
         // Make sure the base url is a directory path,
         // i.e www.wire.com -> www.wire.com/ and
@@ -57,14 +58,13 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         }
 
         self.serverTrustValidator = serverTrustValidator
+        super.init()
+        self.urlSession = makeURLSession(self)
+
     }
 
     deinit {
         urlSession?.invalidateAndCancel()
-    }
-
-    public func configure(with urlSession: URLSession) {
-        self.urlSession = urlSession
     }
 
     public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {

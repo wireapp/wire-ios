@@ -44,7 +44,6 @@ final class AuthenticationManagerTests: XCTestCase {
             ),
             makeURLSession: { _ in .mockURLSession() }
         )
-        networkService.configure(with: .mockURLSession())
 
         sut = AuthenticationManager(
             clientID: Scaffolding.clientID,

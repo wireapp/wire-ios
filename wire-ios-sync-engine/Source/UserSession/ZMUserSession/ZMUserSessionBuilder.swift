@@ -127,12 +127,6 @@ struct ZMUserSessionBuilder {
                 )
             }
         )
-        let restSession = URLSession(
-            configuration: restConfig,
-            delegate: restNetworkService,
-            delegateQueue: nil
-        )
-        restNetworkService.configure(with: restSession)
 
         let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let webSocketNetworkService = NetworkService(
@@ -146,12 +140,6 @@ struct ZMUserSessionBuilder {
                 )
             }
         )
-        let webSocketSession = URLSession(
-            configuration: webSocketConfig,
-            delegate: webSocketNetworkService,
-            delegateQueue: nil
-        )
-        webSocketNetworkService.configure(with: webSocketSession)
 
         let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
         let blacklistNetworkService = NetworkService(
@@ -165,12 +153,6 @@ struct ZMUserSessionBuilder {
                 )
             }
         )
-        let blacklistSession = URLSession(
-            configuration: blacklistConfig,
-            delegate: blacklistNetworkService,
-            delegateQueue: nil
-        )
-        blacklistNetworkService.configure(with: blacklistSession)
 
         let backendMetadata = ResolvedBackendMetadata(
             apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
