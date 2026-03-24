@@ -155,7 +155,7 @@ final class TeamTests: ZMConversationTestsBase {
         user2.name = "Zygfried Watson"
 
         // when
-        let result = team.members(matchingQuery: "")
+        let result = team.members(matchingQuery: "", filteredBy: .regular)
 
         // then
         XCTAssertEqual(result, [member1, member2])
@@ -173,7 +173,7 @@ final class TeamTests: ZMConversationTestsBase {
         user2.name = "UserB"
 
         // when
-        let result = team.members(matchingQuery: "userA")
+        let result = team.members(matchingQuery: "userA", filteredBy: .regular)
 
         // then
         XCTAssertEqual(result, [membership])
@@ -193,7 +193,7 @@ final class TeamTests: ZMConversationTestsBase {
         user2.handle = "another"
 
         // when
-        let result = team.members(matchingQuery: "098")
+        let result = team.members(matchingQuery: "098", filteredBy: .regular)
 
         // then
         XCTAssertEqual(result, [membership])
@@ -210,7 +210,7 @@ final class TeamTests: ZMConversationTestsBase {
         selfUser.name = "UserB"
 
         // when
-        let result = team.members(matchingQuery: "user")
+        let result = team.members(matchingQuery: "user", filteredBy: .regular)
 
         // then
         XCTAssertEqual(result, [membership])

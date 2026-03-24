@@ -95,7 +95,8 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
     func createSearchUser(
         name: String,
         remoteIdentifier: UUID?,
-        teamIdentifier: UUID?
+        teamIdentifier: UUID?,
+        type: TypeOfUser = .regular
     ) -> ZMSearchUser {
         ZMSearchUser(
             viewContext: coreDataStack.viewContext,
@@ -105,7 +106,8 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
             remoteIdentifier: remoteIdentifier,
             teamIdentifier: teamIdentifier,
             providerIdentifier: nil,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: type
         )
     }
 
