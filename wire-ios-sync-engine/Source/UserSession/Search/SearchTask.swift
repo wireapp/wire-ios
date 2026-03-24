@@ -172,7 +172,7 @@ public final class SearchTask {
 
             /// search for the local user with matching user ID and active
             let activeMembers = self.teamMembers(
-                matchingQuery: "",
+                matchingQuery: "", // no query for lookup
                 team: selfUser.team,
                 searchOptions: options,
                 in: searchContext

@@ -137,7 +137,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
 
-    // these property are used for apps
+    // these properties are used for apps
     var appInfo: AppInfo? { get }
 
     // these properties are used for legacy services (bots)

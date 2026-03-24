@@ -172,7 +172,7 @@ final class URLActionTests: ZMTBaseTest {
         }
     }
 
-    func testThatIt() throws {
+    func testThatURLConvertsToConnectBotAction() throws {
         // given
         let url =
             URL(

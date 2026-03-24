@@ -333,13 +333,17 @@ final class ServiceDetailViewController: UIViewController {
         Task {
             guard let userID = user.qualifiedID(
                 localDomain: userSession.resolvedBackendMetadata.domain
-            ) else { return }
+            ) else {
+                return completion(.failure(error: AddBotError.general))
+            }
 
             let conversation = user.oneToOneConversation
             do {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
                 if isReady {
-                    guard let conversation else { return }
+                    guard let conversation else {
+                        return completion(.failure(error: AddBotError.general))
+                    }
                     completion(.success(conversation: conversation))
                 } else {
                     userSession.createTeamOneOnOne(with: user) { result in
