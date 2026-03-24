@@ -68,7 +68,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         mediaManager: ZMMockAVSMediaManager
     ) -> CallViewController {
 
-        let proximityManager = ProximityMonitorManager()
+        let proximityManager = ProximityMonitorManager(userSession: userSession)
         return CallViewController(
             voiceChannel: mockVoiceChannel,
             selfUser: selfUser,
@@ -124,7 +124,8 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         let viewController = CallGridViewController(
             voiceChannel: mockVoiceChannel,
             configuration: configuration,
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),

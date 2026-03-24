@@ -51,7 +51,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         accentColor = .green
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg")))
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))),
+            userSession: UserSessionMock()
         )
         sut.previewTitle = "Matterhorn"
 
@@ -63,7 +64,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         accentColor = .red
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg")))
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))),
+            userSession: UserSessionMock()
         )
         sut.previewTitle = "Burger & Beer"
 
@@ -78,7 +80,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
                 .Context(asset: .image(
                     mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg")
                         .imageScaled(with: 0.5)!
-                ))
+                )),
+            userSession: UserSessionMock()
         )
         sut.previewTitle = "Sea Food"
 
@@ -91,7 +94,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         // GIVEN & WHEN
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif"))),
+            userSession: UserSessionMock()
         )
 
         // THEN
@@ -103,7 +107,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         let data = dataInTestBundleNamed("animated.gif")
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data)))
+                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))),
+            userSession: UserSessionMock()
         )
 
         // THEN

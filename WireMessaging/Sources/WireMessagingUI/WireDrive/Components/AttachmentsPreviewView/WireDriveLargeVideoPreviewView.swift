@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 struct WireDriveLargeVideoPreviewView: View {
     private static let errorMessage = L10n.Localizable.Conversation.Message
@@ -47,7 +48,7 @@ struct WireDriveLargeVideoPreviewView: View {
             progressColor: downloadError
                 ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
-            VStack {
+            VStack(spacing: 0) {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
@@ -75,7 +76,7 @@ struct WireDriveLargeVideoPreviewView: View {
                         durationView(duration: duration)
                     }
                 }
-            }
+            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
@@ -156,7 +157,7 @@ struct WireDriveLargeVideoPreviewView: View {
 
 #Preview {
     WireDriveLargeVideoPreviewView(
-        headerIcon: Image(FileIcon.pdf.resource),
+        headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,

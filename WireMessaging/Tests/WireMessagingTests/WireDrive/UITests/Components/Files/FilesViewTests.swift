@@ -44,6 +44,7 @@ final class FilesViewTests: XCTestCase {
     private var deletePublicLink: WireDriveDeletePublicLinkUseCase!
     private var updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase!
     private var updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase!
+    private var driveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
 
     private let record: Bool? = nil
 
@@ -89,6 +90,13 @@ final class FilesViewTests: XCTestCase {
             editingURLRepository: editingURLRepository
         )
 
+        nodesApi.getDriveConversations_MockValue = [
+            .mocked(),
+            .mocked()
+        ]
+
+        driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
+
         getPublicLinkData = WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesApi)
         createPublicLink = WireDriveCreatePublicLinkUseCase(nodesAPI: nodesApi)
         deletePublicLink = WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi)
@@ -110,6 +118,7 @@ final class FilesViewTests: XCTestCase {
         deletePublicLink = nil
         updatePublicLinkExpiration = nil
         updatePublicLinkPassword = nil
+        driveConversationsUseCase = nil
     }
 
     @MainActor
@@ -126,7 +135,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -154,7 +164,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -182,7 +193,8 @@ final class FilesViewTests: XCTestCase {
             tags: ["important"],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -210,7 +222,8 @@ final class FilesViewTests: XCTestCase {
             tags: ["tag1", "tag2", "abcdef"],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -238,7 +251,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -268,7 +282,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
@@ -304,7 +319,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
@@ -405,6 +421,7 @@ final class FilesViewTests: XCTestCase {
                 deletePublicLink: deletePublicLink,
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
+                getDriveConversations: driveConversationsUseCase,
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
@@ -439,6 +456,7 @@ private extension FilesItemViewModel {
 
         return FilesItemViewModel(
             item: item,
+            selectedSortingKey: .date,
             conversationName: "Conversation 1",
             localAssetRepository: localAssetRepository,
             onItemAction: { _, _ in },

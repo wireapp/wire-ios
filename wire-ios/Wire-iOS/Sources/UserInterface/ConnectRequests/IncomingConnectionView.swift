@@ -46,6 +46,7 @@ final class IncomingConnectionView: UIView {
         cornerRadius: 16,
         fontSpec: .normalSemiboldFont
     )
+    private let userSession: UserSession
     private let classificationProvider: SecurityClassificationProviding?
 
     var user: UserType {
@@ -62,14 +63,16 @@ final class IncomingConnectionView: UIView {
 
     init(
         user: UserType,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
+        userSession: UserSession,
+        classificationProvider: SecurityClassificationProviding? = nil
     ) {
         self.user = user
+        self.userSession = userSession
         self.classificationProvider = classificationProvider
 
         super.init(frame: .zero)
 
-        userImageView.userSession = ZMUserSession.shared()
+        userImageView.userSession = userSession
         userImageView.initialsFont = UIFont.systemFont(ofSize: 55, weight: .semibold).monospaced()
         setup()
         createConstraints()

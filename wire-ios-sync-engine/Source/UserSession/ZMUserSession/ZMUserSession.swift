@@ -681,9 +681,19 @@ public final class ZMUserSession: NSObject {
             WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
         }
 
+        await startWorkAgentAndGenerators()
+    }
+
+    private func startWorkAgentAndGenerators() async {
         guard let clientSessionComponent else {
+            WireLogger.session.warn(
+                "no client session component, skipping startWorkAgentAndGenerators",
+                attributes: .safePublic
+            )
             return
         }
+
+        WireLogger.session.info("start work agent and generators", attributes: .safePublic)
 
         await clientSessionComponent.workAgent.setAutoStartEnabled(true)
         await clientSessionComponent.workAgent.start()
@@ -698,7 +708,6 @@ public final class ZMUserSession: NSObject {
         }.store(in: &cancellables)
         // Initialize the generator to enqueue repair work item if needed
         clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
-
     }
 
     public func migrateToConsumableNotificationsIfNeeded() async throws {
@@ -820,7 +829,7 @@ public final class ZMUserSession: NSObject {
                 metadata: resolvedBackendMetadata
             ),
             ConnectToBotURLActionProcessor(
-                contextprovider: coreDataStack,
+                contextProvider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers,
@@ -1403,6 +1412,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
             Task {
+                await startWorkAgentAndGenerators()
                 WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
             }
@@ -1578,20 +1588,30 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         var migrations: [any AppVersionMigration] = [
-            AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_1_1(
+                journal: journal,
+                logFilesProvider: logFilesProvider
+            ),
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_10_0(journal: journal),
+            AppVersionMigration_4_3_0(
+                coreCryptoProvider: coreCryptoProvider
+            ),
+            AppVersionMigration_4_10_0(
+                journal: journal
+            ),
             AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             ),
-            AppVersionMigration_4_12_2(coreDataStack: coreDataStack, coreCryptoProvider: coreCryptoProvider)
+            AppVersionMigration_4_12_2(
+                coreDataStack: coreDataStack,
+                coreCryptoProvider: coreCryptoProvider
+            )
         ]
 
         if let clientSessionComponent {

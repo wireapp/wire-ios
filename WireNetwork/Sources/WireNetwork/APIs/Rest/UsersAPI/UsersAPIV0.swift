@@ -114,6 +114,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
             legalholdStatus: legalholdStatus.toAPIModel()

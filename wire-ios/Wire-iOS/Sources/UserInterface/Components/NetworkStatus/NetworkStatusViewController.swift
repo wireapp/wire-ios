@@ -52,24 +52,28 @@ final class NetworkStatusViewController: UIViewController {
     private var device: DeviceAbstraction
     private var application: ApplicationProtocol
 
-    /// default init method with a parameter for injecting mock device and mock application
+    let userSession: UserSession
+
+    /// Convenience init for injecting mock device and mock application in tests.
     ///
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
+    /// - Parameter userSession: The user session to observe network state from
     convenience init(
         device: DeviceAbstraction,
-        application: ApplicationProtocol
+        application: ApplicationProtocol,
+        userSession: UserSession
     ) {
-        self.init(nibName: nil, bundle: nil)
-
+        self.init(userSession: userSession)
         self.device = device
         self.application = application
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         self.device = .current
         self.application = UIApplication.shared
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        super.init(nibName: nil, bundle: nil)
 
         NotificationCenter.default.addObserver(
             self,
@@ -81,6 +85,11 @@ final class NetworkStatusViewController: UIViewController {
         view.addSubview(networkStatusView)
 
         createConstraints()
+    }
+
+    @available(*, unavailable)
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        fatalError("Use init(userSession:)")
     }
 
     private func createConstraints() {
@@ -109,8 +118,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-
-        if let userSession = ZMUserSession.shared() {
+        // The cast is not needed for compilation but is a necessary hack for tests
+        if let userSession = userSession as? ZMUserSession {
             enqueue(state: viewState(from: userSession.networkState))
             networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
                 self,
@@ -132,9 +141,7 @@ final class NetworkStatusViewController: UIViewController {
         guard !finishedViewWillAppear else { return }
 
         finishedViewWillAppear = true
-        if let userSession = ZMUserSession.shared() {
-            enqueue(state: viewState(from: userSession.networkState))
-        }
+        enqueue(state: viewState(from: userSession.networkState))
     }
 
     func showOfflineAlert() {

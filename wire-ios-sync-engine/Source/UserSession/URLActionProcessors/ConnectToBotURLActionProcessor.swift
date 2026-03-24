@@ -27,13 +27,13 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     let metadata: BackendMetadataProvider
 
     init(
-        contextprovider: ContextProvider,
+        contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         searchUsersCache: SearchUsersCache?,
         metadata: BackendMetadataProvider
     ) {
-        self.contextProvider = contextprovider
+        self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
         self.metadata = metadata
@@ -42,7 +42,6 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         guard case let .connectBot(serviceUserData) = urlAction else { return }
 
-        let providerIdentifier = serviceUserData.provider.transportString()
         let serviceUser = ZMSearchUser(
             viewContext: contextProvider.viewContext,
             name: "",
@@ -50,10 +49,10 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             accentColor: .blue,
             remoteIdentifier: serviceUserData.service,
             teamIdentifier: nil,
+            providerIdentifier: serviceUserData.provider.transportString(),
             user: nil,
             searchUsersCache: searchUsersCache
         )
-        serviceUser.providerIdentifier = providerIdentifier
         serviceUser.createConversation(
             transportSession: transportSession,
             eventProcessor: eventProcessor,

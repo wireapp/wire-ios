@@ -19,7 +19,7 @@
 import Foundation
 import WireTesting
 
-extension MockServiceUserType {
+extension MockUserType {
 
     /// Creates a service user with the specified name.
     ///
@@ -28,8 +28,8 @@ extension MockServiceUserType {
     ///
     /// - Returns: A standard mock service user object with default values.
 
-    class func createServiceUser(name: String) -> MockServiceUserType {
-        let serviceUser = MockServiceUserType()
+    class func createServiceUser(name: String) -> MockUserType {
+        let serviceUser = MockUserType()
         serviceUser.name = name
         serviceUser.displayName = name
         serviceUser.initials = PersonName.person(withName: name, schemeTagger: nil).initials
@@ -37,6 +37,8 @@ extension MockServiceUserType {
         serviceUser.zmAccentColor = .amber
         serviceUser.providerIdentifier = UUID.create().transportString()
         serviceUser.serviceIdentifier = UUID.create().transportString()
+        serviceUser.mockedIsBot = true
         return serviceUser
     }
+
 }

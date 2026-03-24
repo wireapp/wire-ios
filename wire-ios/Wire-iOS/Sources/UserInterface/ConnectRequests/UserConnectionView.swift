@@ -25,7 +25,7 @@ import WireSyncEngine
 final class UserConnectionView: UIView, Copyable {
 
     convenience init(instance: UserConnectionView) {
-        self.init(user: instance.user)
+        self.init(user: instance.user, userSession: instance.userSession)
     }
 
     private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
@@ -41,6 +41,7 @@ final class UserConnectionView: UIView, Copyable {
     private let guestIndicator = LabelIndicator(context: .guest)
     private let guestWarningView = GuestAccountWarningView()
     private let guestWarningContainer = UIView()
+    private let userSession: UserSession
 
     var user: UserType {
         didSet {
@@ -49,10 +50,11 @@ final class UserConnectionView: UIView, Copyable {
         }
     }
 
-    init(user: UserType) {
+    init(user: UserType, userSession: UserSession) {
         self.user = user
+        self.userSession = userSession
         super.init(frame: .zero)
-        userImageView.userSession = ZMUserSession.shared()
+        userImageView.userSession = userSession
         setup()
         createConstraints()
     }

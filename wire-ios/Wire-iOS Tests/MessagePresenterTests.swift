@@ -38,7 +38,7 @@ final class MessagePresenterTests: XCTestCase {
         super.setUp()
         userSession = UserSessionMock()
         mediaPlaybackManager = MediaPlaybackManager(name: nil, userSession: userSession)
-        sut = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        sut = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         UIView.setAnimationsEnabled(false)
 
         if originalRootViewController == nil {

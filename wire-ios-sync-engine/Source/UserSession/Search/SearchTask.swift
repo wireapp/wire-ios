@@ -156,9 +156,8 @@ public final class SearchTask {
             return result
         }
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     /// Look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() async -> SearchResultAggregator {
@@ -414,9 +413,7 @@ extension SearchTask {
         return matching + nonMatching
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performUserLookup() async throws -> SearchResultAggregator {
         guard case var .lookup(qualifiedID) = type else {
@@ -444,6 +441,7 @@ extension SearchTask {
                     remoteIdentifier: qualifiedID.uuid,
                     domain: qualifiedID.domain,
                     teamIdentifier: result.teamID,
+                    providerIdentifier: result.service?.provider.transportString(),
                     user: localUser,
                     searchUsersCache: searchUsersCache,
                     isDeleted: result.deleted ?? false
@@ -469,9 +467,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
@@ -525,6 +521,7 @@ extension SearchTask {
                         remoteIdentifier: filteredContact.id,
                         domain: domain,
                         teamIdentifier: filteredContact.team,
+                        providerIdentifier: nil,
                         user: localUser,
                         searchUsersCache: searchUsersCache
                     )
@@ -594,9 +591,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
@@ -687,9 +682,8 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForServices() async throws -> SearchResultAggregator {
 
@@ -744,11 +738,11 @@ extension SearchTask {
                             remoteIdentifier: profile.id,
                             domain: profile.qualifiedID?.domain,
                             teamIdentifier: profile.teamID,
+                            providerIdentifier: profile.provider.transportString(),
                             user: localUser,
                             searchUsersCache: searchUsersCache,
                             isDeleted: profile.isDeleted
                         )
-                        searchUser.providerIdentifier = profile.provider.uuidString
                         searchUser.summary = profile.summary
                         searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
                         return searchUser

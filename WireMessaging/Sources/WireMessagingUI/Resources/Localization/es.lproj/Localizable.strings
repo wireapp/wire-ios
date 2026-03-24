@@ -187,12 +187,30 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "This folder \"%@\" with all files and subfolders will be restored and available again to everyone in this conversation.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Restore Parent Folder";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "You can’t restore folders or files from a deleted folder. To restore the desired item, you must restore its parent folder.\n\nThe folder \"%@\" with all files and subfolders will be restored and available to everyone in this conversation.";
-"conversation.wireCells.allFiles.filters.clearAll" = "Clear all";
-"conversation.wireCells.allFiles.filters.apply" = "Apply";
-"conversation.wireCells.allFiles.filters.tags.sectionTitle" = "Tags";
-"conversation.wireCells.allFiles.filters.tags.loadMore" = "Cargar más";
-"conversation.wireCells.allFiles.filters.navigationTitle" = "Filters";
-"conversation.wireCells.allFiles.filters.tags.emptyTitle" = "No tags were created yet.";
+"conversation.wireCells.filter.clearAll" = "Clear all";
+"conversation.wireCells.filter.tags.navigationTitle" = "Filter by tags";
+"conversation.wireCells.filter.tags.emptyTitle" = "No tags were created yet.";
+"conversation.wireCells.filter.tags.notFoundBySearch" = "No tags found.";
+"conversation.wireCells.filter.tags.searchPrompt" = "Search tags";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Filter by conversation";
+"conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Filter by link sharing";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "Has public link";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Shared by me outside Wire";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "No public link";
+"conversation.wireCells.filter.fileType.navigationTitle" = "Filter by file type";
+"conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
+"conversation.wireCells.filter.fileType.typeName.doc" = "Documents";
+"conversation.wireCells.filter.fileType.typeName.image" = "Imágenes";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Spreadsheets";
+"conversation.wireCells.filter.fileType.typeName.presentation" = "Presentations";
+"conversation.wireCells.filter.fileType.typeName.video" = "Vídeos";
+"conversation.wireCells.filter.fileType.typeName.audio" = "Audio files";
+"conversation.wireCells.filter.fileType.typeName.folder" = "Carpetas";
+"conversation.wireCells.filter.fileType.typeName.other" = "Other";
+"conversation.wireCells.filter.fileType.typeName.code" = "Code";
+"conversation.wireCells.filter.fileType.typeName.archive" = "Archives";
+"conversation.wireCells.filter.fileType.typeName.text" = "Text files";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Add or remove tags";
@@ -271,3 +289,25 @@
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Reintentar";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
+
+// MARK: - Sorting
+"conversation.wireCells.sorting.title" = "Sort by";
+"conversation.wireCells.sorting.key.date" = "Modified";
+"conversation.wireCells.sorting.key.name" = "Nombre";
+"conversation.wireCells.sorting.key.size" = "Tamaño";
+"conversation.wireCells.sorting.order.date.recentFirst" = "Newest first";
+"conversation.wireCells.sorting.order.date.oldestFirst" = "Oldest first";
+"conversation.wireCells.sorting.order.name.az" = "A to Z";
+"conversation.wireCells.sorting.order.name.za" = "Z to A";
+"conversation.wireCells.sorting.order.size.smallestFirst" = "Smallest first";
+"conversation.wireCells.sorting.order.size.largestFirst" = "Largest first";
+"conversation.wireCells.sorting.results" = "Results in Shared Drive";
+"conversation.wireCells.sorting.subfolder.results" = "Results in %@";
+
+// MARK: - Filtering
+"conversation.wireCells.filtering.tags" = "Tags";
+"conversation.wireCells.filtering.type" = "File type";
+"conversation.wireCells.filtering.conversation" = "Chat";
+"conversation.wireCells.filtering.owner" = "Created by";
+"conversation.wireCells.filtering.sharedLink" = "Shared via link";
+"conversation.wireCells.filtering.removeAllFilters" = "Remove all filters";
