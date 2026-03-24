@@ -36,12 +36,12 @@ final class ZCallingTests: WireUITestCase {
         memberCount: Int,
         groupName: String? = nil
     ) async throws -> GroupCallSetupResponse {
-        let groupName = groupName ?? UserGenerator.generateRandomGroupName()
+        let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
             .registerTeam(
                 withMemberCount: memberCount,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
