@@ -92,12 +92,17 @@ class FirstTimePage: PageModel {
         let handler = testCase
             .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
                 let notifPermission = "Would Like to Send You Notifications"
-                if alertElement.label.contains(notifPermission) {
-                    alertElement.buttons["Allow"].tap()
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
                 }
 
+                allowButton.tap()
                 return true
             }
+
         self.handler = (testCase, handler)
     }
 

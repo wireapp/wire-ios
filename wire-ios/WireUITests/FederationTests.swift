@@ -60,6 +60,7 @@ final class FederationTests: WireUITestCase {
             .acceptConnectionRequest()
 
         // THEN
+        XCTAssertTrue(activeConversationPage.classifiedBanner.exists)
         _ = try activeConversationPage.goBackToConversationPage()
 
         XCTAssertTrue(conversationsPage.conversationCell.exists)
