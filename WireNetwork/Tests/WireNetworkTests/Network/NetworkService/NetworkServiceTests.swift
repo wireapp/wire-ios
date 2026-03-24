@@ -45,7 +45,8 @@ final class NetworkServiceTests: XCTestCase {
                     try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
                 ],
                 currentDateProvider: mockDateProvider
-            )
+            ),
+            makeURLSession: { _ in session }
         )
         sut.configure(with: session)
     }
@@ -69,7 +70,8 @@ final class NetworkServiceTests: XCTestCase {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            )
+            ),
+            makeURLSession: { _ in .mockURLSession() }
         )
 
         // Then
@@ -86,7 +88,8 @@ final class NetworkServiceTests: XCTestCase {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            )
+            ),
+            makeURLSession: { _ in .mockURLSession() }
         )
 
         // Then

@@ -61,7 +61,14 @@ extension NetworkService {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            )
+            ),
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: configFactory.makeRESTAPISessionConfiguration(),
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
 
         let restSession = URLSession(
@@ -77,7 +84,14 @@ extension NetworkService {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            )
+            ),
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: configFactory.makeWebSocketSessionConfiguration(),
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
 
         let webSocketSession = URLSession(
@@ -93,7 +107,14 @@ extension NetworkService {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            )
+            ),
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: configFactory.makeBlacklistSessionConfiguration(),
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
 
         let blacklistSession = URLSession(

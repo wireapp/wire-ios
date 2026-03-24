@@ -40,7 +40,8 @@ final class RequestSnapshotter {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: currentDateProvider
-            )
+            ),
+            makeURLSession: { _ in .mockURLSession() }
         )
         networkService.configure(with: .mockURLSession())
 

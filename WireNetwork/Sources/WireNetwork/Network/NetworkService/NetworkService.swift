@@ -35,7 +35,8 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
 
     public init(
         baseURL: URL,
-        serverTrustValidator: ServerTrustValidator
+        serverTrustValidator: ServerTrustValidator,
+        makeURLSession: ((any URLSessionDelegate)?) -> URLSession
     ) {
         // Make sure the base url is a directory path,
         // i.e www.wire.com -> www.wire.com/ and

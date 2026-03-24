@@ -41,7 +41,8 @@ final class APIServiceTests: XCTestCase {
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            )
+            ),
+            makeURLSession: { _ in .mockURLSession() }
         )
         networkService.configure(with: .mockURLSession())
         sut = APIService(

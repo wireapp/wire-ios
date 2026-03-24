@@ -53,8 +53,12 @@ public final class Assembly {
     )
 
     public lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        let service = NetworkService(
+            baseURL: backendEnvironment.url,
+            serverTrustValidator: serverTrustValidator,
+            makeURLSession: { delegate in URLSession(configuration: config, delegate: delegate, delegateQueue: nil) }
+        )
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
         return service
