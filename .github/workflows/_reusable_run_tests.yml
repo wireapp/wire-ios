@@ -315,13 +315,8 @@ jobs:
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-<<<<<<< HEAD
-
-      - name: Notify on Wire for iOS CI
-=======
       
       - name: Only Notify on Wire failures
->>>>>>> 13919ac7e9 (chore: update github action notify on Wire - WPB-24093 🍒 (#4469))
         uses: 8398a7/action-slack@v3
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
