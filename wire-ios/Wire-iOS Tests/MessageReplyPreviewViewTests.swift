@@ -234,11 +234,8 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
-<<<<<<< HEAD
-        let previewView = try XCTUnwrap(message.replyPreview(userSession: UserSessionMock()))
-=======
-        let previewView = message.replyPreview()!
->>>>>>> 53af83d50b (revert: phone numbers in own and others messages should be underlined/clickable - WPB-23799 (#4430))
+        let previewView = message.replyPreview(userSession: UserSessionMock())!
+
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
