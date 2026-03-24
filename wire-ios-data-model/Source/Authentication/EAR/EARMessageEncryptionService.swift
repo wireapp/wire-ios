@@ -200,8 +200,6 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             throw EncryptionError.missingDatabaseKey
         }
 
-        WireLogger.ear.debug("encrypting data for EAR")
-
         do {
             let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(
                 message: data,
@@ -230,8 +228,6 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             WireLogger.ear.error("failed to decrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
         }
-
-        WireLogger.ear.debug("decrypting data for EAR")
 
         do {
             return try ChaCha20Poly1305.AEADEncryption.decrypt(
