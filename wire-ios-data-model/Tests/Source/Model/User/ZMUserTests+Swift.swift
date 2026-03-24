@@ -18,6 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
+import WireData
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -1277,6 +1278,93 @@ extension ZMUserTests_Swift {
             // Then
             let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: viewContext)
             XCTAssertEqual(user?.type, .bot)
+        }
+    }
+
+    func testAppInfoIsStoredAndRetrieved() async throws {
+        let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
+        let viewContext = coreDataStack.viewContext
+        let syncContext = coreDataStack.syncContext
+        let userID = QualifiedID(uuid: UUID(), domain: "wire.com")
+
+        try await syncContext.perform { [syncContext] in
+            // Given
+            let user = ZMUser(context: syncContext)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
+            let appInfo = AppInfo(context: syncContext)
+            appInfo.appDescription = "desc"
+            appInfo.category = "cat"
+            user.appInfo = appInfo
+
+            // When
+            try syncContext.save()
+        }
+
+        await viewContext.perform { [viewContext] in
+            // Then
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: viewContext)
+            XCTAssertEqual(user?.appInfo?.appDescription, "desc")
+            XCTAssertEqual(user?.appInfo?.category, "cat")
+        }
+    }
+
+    func testDeletingAppInfoNilsUserAppInfo() async throws {
+        let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
+        let viewContext = coreDataStack.viewContext
+        let syncContext = coreDataStack.syncContext
+        let userID = QualifiedID(uuid: UUID(), domain: "wire.com")
+
+        try await syncContext.perform { [syncContext] in
+            // Given
+            let user = ZMUser(context: syncContext)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
+            let appInfo = AppInfo(context: syncContext)
+            appInfo.appDescription = "desc"
+            appInfo.category = "cat"
+            user.appInfo = appInfo
+            try syncContext.save()
+
+            // When
+            syncContext.delete(appInfo)
+            try syncContext.save()
+        }
+
+        await viewContext.perform { [viewContext] in
+            // Then
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: viewContext)
+            XCTAssertNotNil(user)
+            XCTAssertNil(user?.appInfo)
+        }
+    }
+
+    func testDeletingUserDeletesAppInfoCascaded() async throws {
+        let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
+        let viewContext = coreDataStack.viewContext
+        let syncContext = coreDataStack.syncContext
+        let userID = QualifiedID(uuid: UUID(), domain: "wire.com")
+
+        try await syncContext.perform { [syncContext] in
+            // Given
+            let user = ZMUser(context: syncContext)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
+            let appInfo = AppInfo(context: syncContext)
+            appInfo.appDescription = "desc"
+            appInfo.category = "cat"
+            user.appInfo = appInfo
+            try syncContext.save()
+
+            // When
+            syncContext.delete(user)
+            try syncContext.save()
+        }
+
+        try await viewContext.perform { [viewContext] in
+            // Then
+            let appInfos = try viewContext.fetch(AppInfo.fetchRequest()) as! [AppInfo]
+            XCTAssert(appInfos.isEmpty)
         }
     }
 
