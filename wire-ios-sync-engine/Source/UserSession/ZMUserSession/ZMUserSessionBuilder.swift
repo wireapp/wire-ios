@@ -115,11 +115,18 @@ struct ZMUserSessionBuilder {
             proxySettings: wireAPIBackendEnvironment.proxySettings
         )
 
+        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let restNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.url,
-            serverTrustValidator: serverTrustValidator
+            serverTrustValidator: serverTrustValidator,
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: restConfig,
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
-        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let restSession = URLSession(
             configuration: restConfig,
             delegate: restNetworkService,
@@ -127,11 +134,18 @@ struct ZMUserSessionBuilder {
         )
         restNetworkService.configure(with: restSession)
 
+        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let webSocketNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
+            serverTrustValidator: serverTrustValidator,
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: webSocketConfig,
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
-        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let webSocketSession = URLSession(
             configuration: webSocketConfig,
             delegate: webSocketNetworkService,
@@ -139,11 +153,18 @@ struct ZMUserSessionBuilder {
         )
         webSocketNetworkService.configure(with: webSocketSession)
 
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
         let blacklistNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.blacklistURL,
-            serverTrustValidator: serverTrustValidator
+            serverTrustValidator: serverTrustValidator,
+            makeURLSession: { delegate in
+                URLSession(
+                    configuration: blacklistConfig,
+                    delegate: delegate,
+                    delegateQueue: nil
+                )
+            }
         )
-        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
         let blacklistSession = URLSession(
             configuration: blacklistConfig,
             delegate: blacklistNetworkService,
