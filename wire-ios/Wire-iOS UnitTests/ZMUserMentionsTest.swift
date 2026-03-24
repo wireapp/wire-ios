@@ -24,18 +24,18 @@ final class ZMUserMentionsTest: XCTestCase {
 
     var selfUser: MockUserType!
     var otherUser: MockUserType!
-    var serviceUser: MockUserType!
+    var bot: MockUserType!
 
     override func setUp() {
         selfUser = MockUserType.createSelfUser(name: "selfUser")
         otherUser = MockUserType.createUser(name: "Bruno")
-        serviceUser = MockUserType.createServiceUser(name: "Mr. Bot")
+        bot = MockUserType.createBot(name: "Mr. Bot")
     }
 
     override func tearDown() {
         selfUser = nil
         otherUser = nil
-        serviceUser = nil
+        bot = nil
     }
 
     func testThatItSearchesByName() {
@@ -98,33 +98,33 @@ final class ZMUserMentionsTest: XCTestCase {
 
     func testThatConversationWithServiceUserDoesntReturnUsersWithEmptyQuery() {
         // given
-        let users: [UserType] = [selfUser, serviceUser]
+        let users: [UserType] = [selfUser, bot]
 
         // when
         let results = users.searchForMentions(withQuery: "").map(HashBox.init)
 
         // then
         XCTAssertEqual(results.count, 0)
-        XCTAssertFalse(results.contains(HashBox(value: serviceUser)))
+        XCTAssertFalse(results.contains(HashBox(value: bot)))
         XCTAssertFalse(results.contains(HashBox(value: selfUser)))
     }
 
     func testThatConversationWithServiceUserDoesntReturnUsersWithQuery() {
         // given
-        let users: [UserType] = [selfUser, serviceUser]
+        let users: [UserType] = [selfUser, bot]
 
         // when
         let results = users.searchForMentions(withQuery: "u").map(HashBox.init)
 
         // then
         XCTAssertEqual(results.count, 0)
-        XCTAssertFalse(results.contains(HashBox(value: serviceUser)))
+        XCTAssertFalse(results.contains(HashBox(value: bot)))
         XCTAssertFalse(results.contains(HashBox(value: selfUser)))
     }
 
     func testThatSelfAndServiceUsersAreNotIncludedWithEmptyQuery() {
         // given
-        let users: [UserType] = [selfUser, otherUser, serviceUser]
+        let users: [UserType] = [selfUser, otherUser, bot]
 
         // when
         let results = users.searchForMentions(withQuery: "").map(HashBox.init)
@@ -137,7 +137,7 @@ final class ZMUserMentionsTest: XCTestCase {
 
     func testThatSelfAndServiceUsersAreNotIncludedWithQuery() {
         // given
-        let users: [UserType] = [selfUser, otherUser, serviceUser]
+        let users: [UserType] = [selfUser, otherUser, bot]
 
         // when
         let results = users.searchForMentions(withQuery: "u").map(HashBox.init)
