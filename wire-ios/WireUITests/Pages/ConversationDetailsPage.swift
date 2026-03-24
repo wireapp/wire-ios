@@ -84,7 +84,6 @@ class ConversationDetailsPage: PageModel {
     @discardableResult
     func clearContent() throws -> ConversationDetailsPage {
         clearButtonOnBottomSheet.tap()
-        clearButtonOnBottomSheet.tap()
         clearButtonOnBottomSheet.waitToDisappear()
         return try ConversationDetailsPage()
     }

@@ -29,7 +29,7 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private let conversationID = QualifiedID(uuid: UUID(), domain: "wire.com")
-    
+
     private var context: NSManagedObjectContext { stack.syncContext }
 
     // MARK: - Life cycle
@@ -49,7 +49,6 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
         modelHelper = nil
     }
 
-
     // MARK: - Tests
 
     func testInvoke_SetsClearedTimestampToLastServerTimestamp() async throws {
@@ -62,7 +61,7 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
             let conversation = modelHelper.createGroupConversation(id: id, domain: domain, in: context)
             conversation.lastServerTimeStamp = lastServerTimestamp
         }
-        
+
         // When
         await sut.invoke()
 
@@ -79,7 +78,11 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
         let lastServerTimestamp = Date()
 
         await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(id: conversationID.uuid, domain: conversationID.domain, in: context)
+            let conversation = modelHelper.createGroupConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
             conversation.lastServerTimeStamp = lastServerTimestamp
         }
 
@@ -88,7 +91,8 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
 
         // Then
         let lastReadTimestamp = await context.perform { [self] in
-            ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context)?.lastReadServerTimeStamp
+            ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context)?
+                .lastReadServerTimeStamp
         }
 
         XCTAssertEqual(lastReadTimestamp, lastServerTimestamp)
@@ -99,7 +103,11 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
         let baseDate = Date()
 
         let (olderMessageID, exactMessageID) = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(id: conversationID.uuid  , domain: conversationID.domain, in: context)
+            let conversation = modelHelper.createGroupConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
             conversation.lastServerTimeStamp = baseDate
 
             let older = ZMClientMessage(context: context)
@@ -113,7 +121,7 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
             try? context.save()
             return (older.objectID, exact.objectID)
         }
-        
+
         // When
         await sut.invoke()
 
@@ -133,7 +141,11 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
         let baseDate = Date()
 
         let newerMessageID = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(id: conversationID.uuid, domain: conversationID.domain, in: context)
+            let conversation = modelHelper.createGroupConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
             conversation.lastServerTimeStamp = baseDate
 
             let newer = ZMClientMessage(context: context)
@@ -155,12 +167,26 @@ final class ClearConversationContentUseCaseTests: XCTestCase {
         XCTAssertFalse(newerDeleted)
     }
 
+    func testInvoke_DoesNotArchiveConversation() async throws {
+        // Given
+        await context.perform { [self] in
+            _ = modelHelper.createGroupConversation(id: conversationID.uuid, domain: conversationID.domain, in: context)
+        }
+
+        // When
+        await sut.invoke()
+
+        // Then
+        let isArchived = await context.perform { [self] in
+            ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context)?.isArchived
+        }
+        XCTAssertEqual(isArchived, false)
+    }
+
     func testInvoke_PostsClearContentNotification() async throws {
         // Given
-        let id = UUID()
-
         await context.perform { [self] in
-            modelHelper.createGroupConversation(id: conversationID.uuid, domain: conversationID.domain, in: context)
+            _ = modelHelper.createGroupConversation(id: conversationID.uuid, domain: conversationID.domain, in: context)
         }
 
         let expectation = XCTNSNotificationExpectation(
