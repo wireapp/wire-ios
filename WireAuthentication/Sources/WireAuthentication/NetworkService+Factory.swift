@@ -29,7 +29,7 @@ extension NetworkService {
             proxySettings: backendEnvironment.proxySettings
         ).makeRESTAPISessionConfiguration()
 
-        let service = NetworkService(
+        return NetworkService(
             baseURL: backendEnvironment.url,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendEnvironment.pinnedKeys,
@@ -39,8 +39,6 @@ extension NetworkService {
                 URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
             }
         )
-
-        return service
     }
 
 }
