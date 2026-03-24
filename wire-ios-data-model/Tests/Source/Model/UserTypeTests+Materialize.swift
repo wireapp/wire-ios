@@ -107,7 +107,7 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
             teamIdentifier: teamIdentifier,
             providerIdentifier: nil,
             searchUsersCache: nil,
-            type: .regular
+            type: type
         )
     }
 
