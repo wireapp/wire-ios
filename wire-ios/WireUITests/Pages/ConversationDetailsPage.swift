@@ -41,6 +41,10 @@ class ConversationDetailsPage: PageModel {
         app.buttons.matching(identifier: Locators.ConversationDetailsActions.archive.rawValue).element(boundBy: 0)
     }
 
+    var clearContentOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.clearContent.rawValue).element(boundBy: 0)
+    }
+
     var userCells: XCUIElementQuery {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
@@ -51,6 +55,7 @@ class ConversationDetailsPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeConversationDetails() throws -> ActiveConversationPage {
         closeConversationDetailsButton.tap()
         return try ActiveConversationPage()
@@ -66,9 +71,26 @@ class ConversationDetailsPage: PageModel {
         return try ConversationsPage()
     }
 
+    func clearContentOptionsConversationDetails() throws -> Self {
+        clearContentOptionConversationDetailsButton.tap()
+        return self
+    }
+
     func appParticipantToConversation() throws -> SelectParticipantsPage {
         addParticipantsButton.tap()
         return try SelectParticipantsPage()
+    }
+
+    @discardableResult
+    func clearContent() throws -> ConversationDetailsPage {
+        clearButtonOnBottomSheet.tap()
+        clearButtonOnBottomSheet.tap()
+        clearButtonOnBottomSheet.waitToDisappear()
+        return try ConversationDetailsPage()
+    }
+
+    var clearButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
     }
 
 }

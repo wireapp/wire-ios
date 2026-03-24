@@ -403,9 +403,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [self willChangeValueForKey:ZMConversationClearedTimeStampKey];
     [self setPrimitiveValue:clearedTimeStamp forKey:ZMConversationClearedTimeStampKey];
     [self didChangeValueForKey:ZMConversationClearedTimeStampKey];
-    if (self.managedObjectContext.zm_isSyncContext) {
-        [self deleteOlderMessages];
-    }
 }
 
 - (void)setLastReadServerTimeStamp:(NSDate *)lastReadServerTimeStamp

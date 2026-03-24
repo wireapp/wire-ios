@@ -648,7 +648,7 @@ final class ZClientViewController: UIViewController {
             completion?()
         }
     }
-    
+
     func transitionToList() async {
         let currentFilter = conversationListViewController.conversationFilter
         await mainCoordinator.showConversationList(conversationFilter: currentFilter)

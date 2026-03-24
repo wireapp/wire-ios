@@ -246,9 +246,15 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             assertionFailure("expected conversation!")
             return
         }
-        
+
+        guard let conversationID = conversation.qualifiedID,
+              let useCase = userSession.clientSessionComponent?
+              .clearConversationContentUseCase(conversationID: conversationID) else {
+            return
+        }
+
         Task {
-            await conversation.clearMessageHistory()
+            await useCase.invoke()
             if leave {
                 await ZClientViewController.shared?.transitionToList()
                 await MainActor.run {

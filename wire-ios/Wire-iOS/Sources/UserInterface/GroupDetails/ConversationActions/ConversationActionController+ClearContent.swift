@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum ClearContentResult {
     case delete(leave: Bool)
@@ -37,7 +38,14 @@ enum ClearContentResult {
     }
 
     func action(_ handler: @escaping (ClearContentResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        if case .delete(leave: false) = self {
+            action.setValue(
+                Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
+        }
+        return action
     }
 
     static var title: String {
@@ -74,8 +82,14 @@ extension ConversationActionController {
             return
         }
 
+        guard let conversationID = conversation.qualifiedID,
+              let useCase = userSession.clientSessionComponent?
+              .clearConversationContentUseCase(conversationID: conversationID) else {
+            return
+        }
+
         Task {
-            await conversation.clearMessageHistory()
+            await useCase.invoke()
             if leave {
                 await ZClientViewController.shared?.transitionToList()
                 await MainActor.run {
