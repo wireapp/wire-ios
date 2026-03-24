@@ -282,9 +282,13 @@ final class ServiceDetailViewController: UIViewController {
                 try await syncContext.perform {
                     try syncContext.save()
                 }
-                completion(.success(conversation: conversation))
+                await MainActor.run {
+                    completion(.success(conversation: conversation))
+                }
             } catch {
-                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                await MainActor.run {
+                    completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                }
             }
         }
     }
@@ -334,7 +338,9 @@ final class ServiceDetailViewController: UIViewController {
             guard let userID = user.qualifiedID(
                 localDomain: userSession.resolvedBackendMetadata.domain
             ) else {
-                return completion(.failure(error: AddBotError.general))
+                return await MainActor.run {
+                    completion(.failure(error: AddBotError.general))
+                }
             }
 
             let conversation = user.oneToOneConversation
@@ -342,7 +348,9 @@ final class ServiceDetailViewController: UIViewController {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
                 if isReady {
                     guard let conversation else {
-                        return completion(.failure(error: AddBotError.general))
+                        return await MainActor.run {
+                            completion(.failure(error: AddBotError.general))
+                        }
                     }
                     completion(.success(conversation: conversation))
                 } else {
@@ -360,7 +368,9 @@ final class ServiceDetailViewController: UIViewController {
             } catch {
                 WireLogger.conversation
                     .warn("failed to check if one on one conversation is ready: \(error)")
-                completion(.failure(error: AddBotError.general))
+                await MainActor.run {
+                    completion(.failure(error: AddBotError.general))
+                }
             }
         }
     }
