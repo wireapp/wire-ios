@@ -182,7 +182,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
         }
 
-        if epoch == 0, conversationID.domain == mlsService.localDomain {
+        // we only establish oneOnOnes
+        if epoch == 0 {
             try await establishMLSGroupIfNeeded(
                 userID: userID,
                 mlsGroupID: mlsGroupID,
