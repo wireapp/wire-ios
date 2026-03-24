@@ -105,6 +105,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
 
     // MARK: - Private
 
+    // TODO: [WPB-23967] - Pass flag whether the asset is available offline or not..
     @MainActor
     private func _downloadAsset(nodeID: UUID) async throws {
         do {
@@ -118,6 +119,11 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                     path: node.path,
                     contentType: node.mimeType,
                     size: node.size,
+                    conversationName: node.conversation?.name,
+                    ownerName: node.ownerUserName,
+                    modified: node.modified,
+                    isAvailableOffline: false,
+                    // TODO: [WPB-23967] - Once asset is downloaded, this will need to be set to true if the asset is available offline for the user.
                     downloadState: .pending
                 )
             )
@@ -170,6 +176,10 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             path: node.path,
             contentType: node.mimeType,
             size: node.size,
+            conversationName: node.conversation?.name,
+            ownerName: node.ownerUserName,
+            modified: node.modified,
+            isAvailableOffline: false,
             downloadState: .pending
         )
 

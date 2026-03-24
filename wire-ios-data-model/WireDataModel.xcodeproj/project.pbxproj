@@ -437,6 +437,7 @@
 		BFE764431ED5AAE500C65C3E /* ZMConversation+TeamsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE764421ED5AAE400C65C3E /* ZMConversation+TeamsTests.swift */; };
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
+		C93082672F72D4C000C02AD9 /* store2-135-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = C93082662F72D4C000C02AD9 /* store2-135-0.wiredatabase */; };
 		C9B82AAF2E60640000183723 /* store2-129-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = C9B82AAE2E60640000183723 /* store2-129-0.wiredatabase */; };
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
 		CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */; };
@@ -1174,6 +1175,7 @@
 		BFE764421ED5AAE400C65C3E /* ZMConversation+TeamsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+TeamsTests.swift"; sourceTree = "<group>"; };
 		BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Deletion.swift"; sourceTree = "<group>"; };
 		BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Deletion.swift"; sourceTree = "<group>"; };
+		C93082662F72D4C000C02AD9 /* store2-135-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-135-0.wiredatabase"; sourceTree = "<group>"; };
 		C9B82AAE2E60640000183723 /* store2-129-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-129-0.wiredatabase"; sourceTree = "<group>"; };
 		CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSource.swift; sourceTree = "<group>"; };
 		CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSourceTests.swift; sourceTree = "<group>"; };
@@ -3053,6 +3055,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C93082662F72D4C000C02AD9 /* store2-135-0.wiredatabase */,
 				594C592F2F69A1D0004207B4 /* store2-134-0.wiredatabase */,
 				88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */,
 				884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */,
@@ -3409,6 +3412,7 @@
 				0153CA932B8554EC000000CA /* store2-113-0.wiredatabase in Resources */,
 				E68D9FF12B0F595100EFE04F /* store2-108-0.wiredatabase in Resources */,
 				5947923D2EA7A576006BEC0A /* store2-131-0.wiredatabase in Resources */,
+				C93082672F72D4C000C02AD9 /* store2-135-0.wiredatabase in Resources */,
 				01943A0D2E01A9B50005CD1E /* store2-127-0.wiredatabase in Resources */,
 				EE3C07E32698737D00CCB6FD /* store2-93-0.wiredatabase in Resources */,
 				EE6CB3DC24E2A4E500B0EADD /* store2-83-0.wiredatabase in Resources */,
