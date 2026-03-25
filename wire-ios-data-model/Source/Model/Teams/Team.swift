@@ -90,14 +90,16 @@ public class Team: ZMManagedObject, TeamType {
 
 public extension Team {
 
-    func members(matchingQuery query: String) -> [Member] {
+    func members(
+        matchingQuery query: String,
+        filteredBy type: TypeOfUser?
+    ) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
         return members
             .filter { member in
-                guard let user = member.user else {
-                    return false
-                }
+                guard let user = member.user else { return false }
+                if let type, user.type != type { return false }
                 return !user.isSelfUser && searchPredicate.evaluate(with: user)
             }
             .sortedAscendingPrependingNil { $0.user?.normalizedName }

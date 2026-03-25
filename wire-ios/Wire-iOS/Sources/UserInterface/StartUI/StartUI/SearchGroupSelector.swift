@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 import WireDesign
 
 final class SearchGroupSelector: UIView {
@@ -36,8 +37,8 @@ final class SearchGroupSelector: UIView {
 
     // MARK: - Init
 
-    init() {
-        self.groups = SearchGroup.all
+    init(for messageProtocol: MessageProtocol) {
+        self.groups = SearchGroup.all(for: messageProtocol)
 
         let groupItems: [String] = groups.map(\.name)
 

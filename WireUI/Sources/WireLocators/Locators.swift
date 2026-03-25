@@ -175,6 +175,13 @@ public enum Locators {
         case sharedDriveSwitch
     }
 
+    public enum CreateChannelPage: String {
+
+        case channelNameField
+        case newChannelNextButton
+        case sharedDriveSwitch
+    }
+
     public enum CreatePersonalAccountFormPage: String {
 
         case enterNameField
@@ -198,6 +205,7 @@ public enum Locators {
         case cancelUserSearch = "Cancel"
         case cancel
         case usernameCell
+        case createNewChannelButton
     }
 
     public enum OnMyiPhonePage: String {

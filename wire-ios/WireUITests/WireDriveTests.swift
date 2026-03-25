@@ -32,14 +32,14 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func test_CreateGroupConversationWithDrive_TC_8955() async throws {
+    func testCreateGroupConversationWithDrive_TC_8955() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
-
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-
         try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
 
+        // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
@@ -49,6 +49,32 @@ final class WireDriveTests: WireUITestCase {
             .tapMemberCells(withLabelPrefixes: [teamMembers[0].name, teamMembers[1].name])
             .doneSelectingMembers()
 
+        // THEN
+        verifyDriveEnabledConversation(on: activeConversationPage)
+    }
+
+    @MainActor
+    func testCreateChannelConversationWithDrive_TC_8954() async throws {
+
+        // GIVEN
+        let channelName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(
+            withMemberCount: 2,
+            conversation: .channel(channelName)
+        )
+        try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
+
+        // WHEN
+        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .tapPlusButtonToCreateGroup()
+            .tapNewChannelButton()
+            .enableShareDriveSwitch()
+            .enterChannelName(channelName)
+            .tapMemberCells(withLabelPrefixes: [teamMembers[0].name, teamMembers[1].name])
+            .doneSelectingMembers()
+
+        // THEN
         verifyDriveEnabledConversation(on: activeConversationPage)
     }
 

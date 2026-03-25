@@ -135,12 +135,12 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_AddConversationAsFavourite_TC_8869() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testAddConversationAsFavourite_TC_8869() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
@@ -156,12 +156,12 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_FilterConversationByFavourite_TC_8874() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testFilterConversationByFavourite_TC_8874() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
