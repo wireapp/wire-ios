@@ -179,6 +179,8 @@ final class AppStateCalculator {
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        let appState = validAppState(from: appState)
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -199,6 +201,15 @@ final class AppStateCalculator {
         )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
+        }
+    }
+
+    private func validAppState(from appState: AppState) -> AppState {
+        switch appState {
+        case .authenticated(let session) where session.isBuildBlacklisted:
+            .blacklisted(reason: .appVersionBlacklisted)
+        default:
+            appState
         }
     }
 }
@@ -323,9 +334,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
-        if session.isBuildBlacklisted {
-            transition(to: .blacklisted(reason: .appVersionBlacklisted))
-        } else if session.isLocked {
+        if session.isLocked {
             transition(to: .locked(session))
         } else {
             transition(to: .authenticated(session))

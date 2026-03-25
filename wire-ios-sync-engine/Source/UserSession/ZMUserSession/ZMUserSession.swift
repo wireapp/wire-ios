@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
-    public internal(set) var isBuildBlacklisted = false
+    public private(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
