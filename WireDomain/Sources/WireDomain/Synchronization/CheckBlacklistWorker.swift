@@ -18,13 +18,13 @@
 
 import Combine
 import Foundation
+import Network
 import UIKit
 import WireNetwork
-import Network
 
 public actor CheckBlacklistWorker {
 
-    private static let checkInterval: TimeInterval = TimeInterval.oneHour * 6
+    private static let checkInterval: TimeInterval = .oneHour * 6
 
     private let useCase: any IsBuildBlacklistedUseCase
     private let trigger: AsyncStream<Void>
@@ -49,7 +49,7 @@ public actor CheckBlacklistWorker {
         triggerTask?.cancel()
     }
 
-    nonisolated public func start() {
+    public nonisolated func start() {
         Task { await self.startAndWait() }
     }
 
@@ -82,7 +82,7 @@ public actor CheckBlacklistWorker {
     }
 
     private func performCheckIfNeeded() async {
-        guard isStale() && !isChecking else { return }
+        guard isStale(), !isChecking else { return }
 
         isChecking = true
         let (isBuildBlacklisted, error) = await useCase.invoke()

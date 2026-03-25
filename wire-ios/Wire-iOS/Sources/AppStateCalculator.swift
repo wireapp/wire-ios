@@ -206,7 +206,7 @@ final class AppStateCalculator {
 
     private func validAppState(from appState: AppState) -> AppState {
         switch appState {
-        case .authenticated(let session) where session.isBuildBlacklisted:
+        case let .authenticated(session) where session.isBuildBlacklisted:
             .blacklisted(reason: .appVersionBlacklisted)
         default:
             appState

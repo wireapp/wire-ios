@@ -402,17 +402,15 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var checkBlacklistWorker: CheckBlacklistWorker = {
-        CheckBlacklistWorker(
-            isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
-            onIsBuildBlacklisted: { [weak self] in
-                guard let self else { return }
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker = .init(
+        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+        onIsBuildBlacklisted: { [weak self] in
+            guard let self else { return }
 
-                isBuildBlacklisted = true
-                delegate?.userSessionDidDiscoverBuildIsBlacklisted()
-            }
-        )
-    }()
+            isBuildBlacklisted = true
+            delegate?.userSessionDidDiscoverBuildIsBlacklisted()
+        }
+    )
 
     let logFilesProvider: LogFilesProviding
 

@@ -88,7 +88,7 @@ struct CheckBlacklistWorkerTests {
         await sut.startAndWait()
 
         // Then
-        #expect(callbackCounter.count == 0)
+        #expect(callbackCounter.isEmpty)
     }
 
     @Test
