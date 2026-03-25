@@ -35,15 +35,15 @@ extension ConversationContentViewController {
             conversation.firstActiveParticipantOtherThanSelf
         }
 
-        let connectionOrOneOnOne = [.connection, .oneOnOne /* , .group */ ]
-            .contains(where: { $0 == conversation.conversationType })
+        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
+            .conversationType == .oneOnOne
 
         if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
             headerView = connectionViewController?.view
         } else {
-            noUserConnectionViewController = NoUserConnectionViewController(userSession: userSession)
-            headerView = noUserConnectionViewController?.view
+            defaultConversationHeaderViewController = DefaultConversationHeaderViewController(userSession: userSession)
+            headerView = defaultConversationHeaderViewController?.view
         }
 
         if let headerView {

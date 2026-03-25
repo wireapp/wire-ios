@@ -119,7 +119,7 @@ final class ConversationContentViewController: UIViewController {
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
-    var noUserConnectionViewController: NoUserConnectionViewController?
+    var             defaultConversationHeaderViewController: DefaultConversationHeaderViewController?
     var digitalSignatureToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 

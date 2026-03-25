@@ -19,7 +19,7 @@
 import WireDesign
 import WireSyncEngine
 
-final class NoUserConnectionView: UIView {
+final class DefaultConversationHeaderView: UIView {
 
     private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
         lightFont: FontSpec(.small, .light),

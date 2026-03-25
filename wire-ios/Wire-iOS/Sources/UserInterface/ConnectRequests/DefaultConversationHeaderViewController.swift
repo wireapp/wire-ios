@@ -19,9 +19,9 @@
 import UIKit
 import WireSyncEngine
 
-final class NoUserConnectionViewController: UIViewController {
+final class DefaultConversationHeaderViewController: UIViewController {
 
-    fileprivate var noUserConnectionView: NoUserConnectionView!
+    fileprivate var defaultConversationHeaderView: DefaultConversationHeaderView!
 
     let userSession: ZMUserSession
 
@@ -36,7 +36,7 @@ final class NoUserConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        noUserConnectionView = NoUserConnectionView()
-        view = noUserConnectionView
+        defaultConversationHeaderView = DefaultConversationHeaderView()
+        view = defaultConversationHeaderView
     }
 }
