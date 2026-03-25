@@ -112,4 +112,14 @@ class WireUITestCase: XCTestCase {
             alert.buttons["Allow"].tap()
         }
     }
+
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
+
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup(with: self)
+    }
+
 }

@@ -53,5 +53,4 @@ final class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
             XCTAssertFalse(conversation.needsToCalculateUnreadMessages)
         }
     }
-
 }
