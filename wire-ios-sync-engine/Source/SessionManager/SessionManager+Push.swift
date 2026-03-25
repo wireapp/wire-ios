@@ -124,8 +124,8 @@ extension SessionManager: UNUserNotificationCenterDelegate {
 
         var foundSession = false
         for (accountId, backgroundSession) in backgroundUserSessions {
-            if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
-                _ = await self.select(account)
+            if session == backgroundSession, let account = accountManager.account(with: accountId) {
+                _ = await select(account)
                 foundSession = true
                 break
             }
