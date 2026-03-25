@@ -715,11 +715,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     public func addAccount(userInfo: [String: Any]? = nil) async {
         let isConfirmed = await confirmSwitchingAccount()
-        guard isConfirmed else { return }
+        guard isConfirmed, let delegate else { return }
 
         let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
         await withCheckedContinuation { continuation in
-            delegate?.sessionManagerWillLogout(
+            delegate.sessionManagerWillLogout(
                 accountID: nil,
                 environment: nil,
                 error: error
