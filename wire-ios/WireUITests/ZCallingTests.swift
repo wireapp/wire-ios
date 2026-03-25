@@ -36,12 +36,12 @@ final class ZCallingTests: WireUITestCase {
         memberCount: Int,
         groupName: String? = nil
     ) async throws -> GroupCallSetupResponse {
-        let groupName = groupName ?? UserGenerator.generateRandomGroupName()
+        let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
             .registerTeam(
                 withMemberCount: memberCount,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
@@ -89,10 +89,9 @@ final class ZCallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
-    func test_MultipleUsersJoiningGroupCall() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 

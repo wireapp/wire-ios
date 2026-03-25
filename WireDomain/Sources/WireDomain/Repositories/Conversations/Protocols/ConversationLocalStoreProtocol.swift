@@ -45,6 +45,12 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation
 
+    func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?,
+        setNeedsToBeUpdatedFromBackend: Bool
+    ) async -> ZMConversation
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter timestamp: The date the conversation was created or last modified.
@@ -486,8 +492,14 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchServerTimeDelta() async -> TimeInterval
 
+    /// Fetches the conversation matching the given qualified ID and executes a block,
+    /// providing the conversation (if found) and the context.
+    /// - Parameters:
+    ///   - conversationID: The qualified conversation ID used to look up the conversation.
+    ///   - block: Some code that should be invoked with the fetched conversation and the managed object context.
     func execute(
-        identifier: MLSGroupID,
+        conversationID: QualifiedID,
         block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async
+
 }

@@ -18,10 +18,12 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 final class TopPeopleLineCollectionViewController: NSObject {
 
     var topPeople = [ZMConversation]()
+    var userSession: UserSession?
 
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
 
@@ -44,6 +46,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: TopPeopleCell.self, for: indexPath)
         cell.conversation = conversation(at: indexPath)
+        cell.userSession = userSession
         return cell
     }
 }

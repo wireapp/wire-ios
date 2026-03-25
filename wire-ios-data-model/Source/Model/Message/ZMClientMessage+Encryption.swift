@@ -209,9 +209,7 @@ public extension GenericMessage {
                 }
             }
 
-            let authorizedServices = ZMUser.servicesMustBeMentioned ? mentionedServices() : services
-
-            return otherUsers.union(authorizedServices).union([selfUser])
+            return otherUsers.union(services).union([selfUser])
         }
 
         var recipientUsers = Set<ZMUser>()

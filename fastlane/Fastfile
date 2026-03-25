@@ -182,7 +182,6 @@ platform :ios do
     lane :development do |options|
         options[:build_type] = "Development"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -195,7 +194,6 @@ platform :ios do
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -208,7 +206,6 @@ platform :ios do
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
@@ -233,6 +230,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 1 Restricted')
         build_and_upload_app(options)
     end
@@ -244,6 +242,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 2 Restricted')
         build_and_upload_app(options)
     end
@@ -255,6 +254,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 3 Restricted')
         build_and_upload_app(options)
     end
@@ -356,10 +356,6 @@ platform :ios do
         sha256(options)
         upload_s3(options)
         save_changelog_to_env(options)
-       
-        if options[:upload_dsyms_to_datadog] || false
-            upload_dsyms_to_datadog(options)
-        end
     end
 
     def save_app_name(name)
@@ -706,19 +702,6 @@ platform :ios do
         build = Build.new(options: options)
         changelog = changelog(build)
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
-    end
-
-    # Upload dsyms to Datadog
-    def upload_dsyms_to_datadog(options)
-        build = Build.new(options: options)
-        
-        upload_symbols_to_datadog(
-            api_key: ENV["DATADOG_API_KEY"],
-            dsym_paths: [
-                "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-            ],
-            site: "datadoghq.eu"
-        )
     end
 end
 

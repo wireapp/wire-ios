@@ -4204,17 +4204,17 @@ public class MockMLSClientManagerProtocol: MLSClientManagerProtocol {
 
     // MARK: - initializeMLSClientIfNeeded
 
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool)] = []
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod: ((QualifiedClientID, Bool, Feature.MLS, Bool) async -> Void)?
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabledIsE2EIRequired_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool, isE2EIRequired: Bool)] = []
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabledIsE2EIRequired_MockMethod: ((QualifiedClientID, Bool, Feature.MLS, Bool, Bool) async -> Void)?
 
-    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool) async {
-        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature, isBackendMLSEnabled: isBackendMLSEnabled))
+    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool, isE2EIRequired: Bool) async {
+        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabledIsE2EIRequired_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature, isBackendMLSEnabled: isBackendMLSEnabled, isE2EIRequired: isE2EIRequired))
 
-        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod else {
-            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled`")
+        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabledIsE2EIRequired_MockMethod else {
+            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabledIsE2EIRequired`")
         }
 
-        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature, isBackendMLSEnabled)
+        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature, isBackendMLSEnabled, isE2EIRequired)
     }
 
 }
@@ -4914,26 +4914,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         await mock(groupID)
-    }
-
-    // MARK: - generateNewEpoch
-
-    public var generateNewEpochGroupID_Invocations: [MLSGroupID] = []
-    public var generateNewEpochGroupID_MockError: Error?
-    public var generateNewEpochGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
-
-    public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        generateNewEpochGroupID_Invocations.append(groupID)
-
-        if let error = generateNewEpochGroupID_MockError {
-            throw error
-        }
-
-        guard let mock = generateNewEpochGroupID_MockMethod else {
-            fatalError("no mock for `generateNewEpochGroupID`")
-        }
-
-        try await mock(groupID)
     }
 
     // MARK: - epochChanges

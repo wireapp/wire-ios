@@ -173,6 +173,7 @@ final class AddParticipantsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
@@ -222,7 +223,8 @@ final class AddParticipantsViewController: UIViewController {
 
         self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
-        self.searchGroupSelector = SearchGroupSelector()
+        let messageProtocol = viewModel.filterConversation?.messageProtocol ?? userSession.defaultProtocol
+        self.searchGroupSelector = SearchGroupSelector(for: messageProtocol)
 
         guard let searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
@@ -267,7 +269,7 @@ final class AddParticipantsViewController: UIViewController {
             }
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
-            if group == .services {
+            if group == .apps {
                 searchHeaderViewController.clearInput()
                 confirmButton.isHidden = true
             } else {
@@ -310,7 +312,7 @@ final class AddParticipantsViewController: UIViewController {
         updateSelectionValues()
 
         if searchResultsViewController.isResultEmpty {
-            emptyResultView.updateStatus(searchingForServices: false, hasFilter: false)
+            emptyResultView.updateStatus(searchingForApps: false, hasFilter: false)
         }
     }
 
@@ -464,15 +466,18 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForServices = searchResultsViewController.searchGroup == .services
+        let searchingForAppsOrBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
-        emptyResultView.updateStatus(searchingForServices: searchingForServices, hasFilter: hasFilter)
+        emptyResultView.updateStatus(searchingForApps: searchingForAppsOrBots, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
-        case (.services, _):
+        case (.apps, _):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForApps(withQuery: searchHeaderViewController.tokenField.filterText)
+        case (.bots, _):
+            searchResultsViewController.mode = .search
+            searchResultsViewController.searchForBots(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
@@ -544,48 +549,67 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnUser user: UserType,
-        indexPath: IndexPath,
-        section: SearchResultsViewControllerSection
+        _: SearchResultsViewController,
+        didTapOnUser _: UserType,
+        indexPath _: IndexPath,
+        section _: SearchResultsViewControllerSection
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didDoubleTapOnUser user: UserType,
-        indexPath: IndexPath
+        _: SearchResultsViewController,
+        didDoubleTapOnUser _: UserType,
+        indexPath _: IndexPath
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnConversation conversation: ZMConversation
+        _: SearchResultsViewController,
+        didTapOnConversation _: ZMConversation
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        _: SearchResultsViewController,
+        didTapOnApp app: any UserType
     ) {
+        didTapOnAppOrBot(user: app, isApp: true)
+    }
 
-        guard case let .add(conversation) = viewModel.context else { return }
+    func searchResultsViewController(
+        _: SearchResultsViewController,
+        didTapOnBot bot: any UserType
+    ) {
+        didTapOnAppOrBot(user: bot, isApp: false)
+    }
+
+    private func didTapOnAppOrBot(
+        user: any UserType,
+        isApp: Bool
+    ) {
+        guard
+            case let .add(conversation) = viewModel.context,
+            let conversation = conversation as? ZMConversation
+        else { return }
 
         let detail = ServiceDetailViewController(
-            serviceUser: user,
-            actionType: .addService(conversation as! ZMConversation),
+            user: user,
+            actionType: isApp ? .addApp(conversation) : .addBot(conversation),
             userSession: userSession
         ) { [weak self] result in
-            guard let self, let result else { return }
+            guard let self else { return }
+
             switch result {
             case .success:
                 dismiss(animated: true)
             case let .failure(error):
                 guard let controller = navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
+            case .cancelled:
+                break
             }
         }
 

@@ -17,18 +17,48 @@
 //
 
 import Foundation
+import WireAnalytics
+package import WireFoundation
 
 package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
+    private var analyticsProvider: () -> (any AnalyticsEventTrackerProtocol)?
 
-    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
+    package init(
+        cellName: String,
+        draftRepository: any DraftsRepositoryProtocol,
+        analyticsProvider: @escaping () -> (any AnalyticsEventTrackerProtocol)?
+    ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
+        self.analyticsProvider = analyticsProvider
     }
 
-    package func invoke() async throws {
-        try await draftRepository.publishAll(for: cellName)
+    package func invoke(containsText: Bool) async throws {
+        let drafts = try await draftRepository.publishAll(for: cellName)
+
+        let mixedTypes = Set(drafts.map(\.fileType)).count > 1
+
+        analyticsProvider()?.trackEvent(
+            .WireDriveSendFiles.shareFileNumber(
+                containsText: containsText,
+                numberOfAttachments: drafts.count,
+                mixedTypes: mixedTypes
+            )
+        )
+
+        for draft in drafts {
+            let fileExtension = "." + draft.assetURL.pathExtension
+            let fileSize = UInt64(draft.bytes)
+
+            analyticsProvider()?.trackEvent(
+                .WireDriveSendFiles.shareFile(
+                    fileExtension: fileExtension,
+                    fileSize: fileSize
+                )
+            )
+        }
     }
 }

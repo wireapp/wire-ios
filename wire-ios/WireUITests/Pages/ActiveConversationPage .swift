@@ -58,15 +58,31 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationTitleButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue]
+        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
 
+    var selfDeletingMessageButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
+    }
+
     var imageCell: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    }
+
+    var labelSharedDriveIsOn: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+    }
+
+    var sharedDriveButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sharedDriveButton.rawValue]
+    }
+
+    var labelSelfDeletingMessageIsOFF: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.labelSelfDeletingMessagesOFF.rawValue]
     }
 
     func fetchMessages() -> [String] {

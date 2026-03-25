@@ -71,6 +71,7 @@ public protocol SessionActivationObserver: AnyObject {
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
@@ -253,8 +254,6 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    static let logger = Logger(subsystem: "VoIP Push", category: "SessionManager")
-
     public enum AccountError: Error {
         case accountLimitReached
     }
@@ -343,6 +342,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private var reachability: ReachabilityWrapper
 
+    private let defaultEnvironment: BackendEnvironment2
+
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             reachability.tearDown()
@@ -398,7 +399,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
     /// for the same account concurrently.
-    private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession?, Never>()
+    private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession, any Error>()
 
     // MARK: - Life cycle
 
@@ -415,6 +416,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -471,6 +473,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delegate: delegate,
             application: application,
             dispatchGroup: dispatchGroup,
+            defaultEnvironment: defaultEnvironment,
             environment: environment,
             configuration: configuration,
             detector: detector,
@@ -534,6 +537,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -550,6 +554,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         logFilesProvider: LogFilesProviding
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
+        self.defaultEnvironment = defaultEnvironment
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
@@ -654,10 +659,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
                 session.application(application, didFinishLaunching: launchOptions)
+            } else {
+                WireLogger.sessionManager.critical("Failed to load session for selected account")
             }
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: nil,
                 userSessionCanBeTornDown: nil
@@ -761,6 +769,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error
             ) { [weak self] in
@@ -836,13 +845,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: nil)
     }
 
-    #if DEBUG
-        /// This method is only used in tests and should be deleted. See [WPB-10404].
-        func logoutCurrentSessionWithoutDeletingCookie() {
-            logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
-        }
-    #endif
-
     fileprivate func deleteTemporaryData() {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
@@ -878,6 +880,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -895,6 +898,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
         delegate?.sessionManagerWillLogout(
+            accountID: account.userIdentifier,
             environment: environment,
             error: error
         ) { [weak self] in
@@ -916,7 +920,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func loadSession(for account: Account) async -> ZMUserSession? {
         if environment.isAuthenticated(account) {
-            return await activateSession(for: account)
+            do {
+                return try await activateSession(for: account)
+            } catch {
+                WireLogger.sessionManager.error("Failed to activate session for account: \(error)")
+                return nil
+            }
         } else if configuration.wipeOnCookieInvalid {
             delete(account: account, reason: .sessionExpired)
         } else {
@@ -930,6 +939,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
             delegate?.sessionManagerWillLogout(
+                accountID: account.userIdentifier,
                 environment: environment,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -943,15 +953,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(
         for account: Account,
         newEnvironment: NewEnvironment? = nil
-    ) async -> ZMUserSession? {
-        guard let session = await withSession(
-            for: account,
-            newEnvironment: newEnvironment,
-            notifyAboutMigration: true
-        ) else {
-            return nil
-        }
-
+    ) async throws -> ZMUserSession {
+        let session = try await withSession(for: account, newEnvironment: newEnvironment)
         setActiveUserSession(session)
 
         WireLogger.sessionManager.debug(
@@ -964,9 +967,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
+            await session.triggerSync()
             delegate?.sessionManagerDidReportLockChange(forSession: session)
             performPostUnlockActionsIfPossible(for: session)
-
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
         } else {
@@ -1001,9 +1004,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
-        newEnvironment: NewEnvironment? = nil,
-        notifyAboutMigration: Bool = false
-    ) async -> ZMUserSession? {
+        newEnvironment: NewEnvironment? = nil
+    ) async throws -> ZMUserSession {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
@@ -1011,12 +1013,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             return session
         }
 
-        return await withSessionTaskManager.performIfNeeded { @MainActor [self] in
+        return try await withSessionTaskManager.performIfNeeded { @MainActor [self] in
             do {
                 let loader = try UserSessionLoader(
                     account: account,
                     accountManager: accountManager,
                     sharedContainerURL: sharedContainerURL,
+                    defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
                     minTLSVersion: minTLSVersion,
                     dispatchGroup: dispatchGroup,
@@ -1037,78 +1040,79 @@ public final class SessionManager: NSObject, SessionManagerType {
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
+
+                await userSession.start()
+
                 return userSession
 
-            } catch UserSessionLoader.Failure.buildIsBlacklisted {
-                WireLogger.sessionManager.warn(
-                    "build is blacklisted: \(currentBuildNumber)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .buildIsBlacklisted
-                )
-                return nil
-            } catch NetworkStackError.backendAPIVersionObsolete {
-                WireLogger.sessionManager.warn(
-                    "backend API version is obsolete",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .backendIsObsolete
-                )
-                return nil
-            } catch NetworkStackError.clientAPIVersionObsolete {
-                WireLogger.sessionManager.warn(
-                    "client API version is obsolete",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .clientIsObsolete
-                )
-                return nil
-            } catch let error as URLError {
-                WireLogger.sessionManager.error(
-                    "failed to load user session due to url error code: \(error.errorCode)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .networkError(code: error.errorCode)
-                )
-                return nil
-            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
-                WireLogger.sessionManager.error(
-                    "failed to load user session: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .databaseError(error)
-                )
-                return nil
-            } catch let error as SafeForLoggingStringConvertible {
-                WireLogger.sessionManager.error(
-                    "failed to load user session: \(error.safeForLoggingDescription)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .genericError
-                )
-                return nil
             } catch {
-                WireLogger.sessionManager.error(
-                    "failed to load user session",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .genericError
-                )
-                return nil
+                switch error {
+                case UserSessionLoader.Failure.buildIsBlacklisted:
+                    WireLogger.sessionManager.warn(
+                        "build is blacklisted: \(currentBuildNumber)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .buildIsBlacklisted
+                    )
+                case NetworkStackError.backendAPIVersionObsolete:
+                    WireLogger.sessionManager.warn(
+                        "backend API version is obsolete",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .backendIsObsolete
+                    )
+                case NetworkStackError.clientAPIVersionObsolete:
+                    WireLogger.sessionManager.warn(
+                        "client API version is obsolete",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .clientIsObsolete
+                    )
+                case let error as URLError:
+                    WireLogger.sessionManager.error(
+                        "failed to load user session due to url error code: \(error.errorCode)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .networkError(code: error.errorCode)
+                    )
+                case let UserSessionLoader.Failure.failedToLoadPersistenceStack(error):
+                    WireLogger.sessionManager.error(
+                        "failed to load user session: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .databaseError(error)
+                    )
+                case let error as SafeForLoggingStringConvertible:
+                    WireLogger.sessionManager.error(
+                        "failed to load user session: \(error.safeForLoggingDescription)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .genericError
+                    )
+                default:
+                    WireLogger.sessionManager.error(
+                        "failed to load user session",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .genericError
+                    )
+                }
+
+                throw error
             }
         }
     }
@@ -1265,32 +1269,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // Creates the user session for @c account given, calls @c completion when done.
-    @MainActor
-    private func startBackgroundSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) async -> ZMUserSession {
-        guard let newSession = await createUserSession(
-            for: account,
-            with: coreDataStack,
-            journal: journal,
-            logFilesProvider: logFilesProvider
-        ) else {
-            preconditionFailure("Unable to create session for \(account)")
-        }
-
-        finishSettingUpUserSession(
-            account: account,
-            newSession: newSession,
-            coreDataStack: coreDataStack
-        )
-
-        return newSession
-    }
-
     @MainActor
     private func createUserSession(
         for account: Account,
@@ -1424,7 +1402,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func checkJailbreakIfNeeded() {
+    private func checkJailbreakIfNeeded() {
         guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
 
         if jailbreakDetector?.isJailbroken() == true {
@@ -1441,7 +1419,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func shouldPerformPostRebootLogout() -> Bool {
+    private func shouldPerformPostRebootLogout() -> Bool {
         guard configuration.authenticateAfterReboot,
               accountManager.selectedAccount != nil,
               let systemBootTime = ProcessInfo.processInfo.bootTime(),
@@ -1456,7 +1434,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         return true
     }
 
-    func performPostRebootLogout() {
+    private func performPostRebootLogout() {
         let error = NSError(
             userSessionErrorCode: .needsAuthenticationAfterReboot,
             userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation
@@ -1465,7 +1443,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 
-    func updateSystemBootTimeIfNeeded() {
+    private func updateSystemBootTimeIfNeeded() {
         guard configuration.authenticateAfterReboot, let bootTime = ProcessInfo.processInfo.bootTime() else {
             return
         }
@@ -1615,13 +1593,22 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             return
         }
 
+        // The journal may have old values for the same user
+        // from a previous installation or login session.
+        var journal = Journal(
+            userID: account.userIdentifier,
+            storage: sharedUserDefaults
+        )
+        journal[.isInitialSyncRequired] = true
+
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            guard let userSession = await activateSession(
-                for: account,
-                newEnvironment: newEnvironment
-            ) else {
+            let userSession: ZMUserSession
+            do {
+                userSession = try await activateSession(for: account, newEnvironment: newEnvironment)
+            } catch {
+                WireLogger.sessionManager.error("Failed to activate session for newly created account: \(error)")
                 return
             }
 

@@ -177,4 +177,5 @@ public extension Member {
     func setTeamRole(_ role: TeamRole) {
         permissions = role.permissions
     }
+
 }

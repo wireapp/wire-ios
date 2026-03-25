@@ -45,7 +45,7 @@ public final class SearchTask {
     ///
     /// The closure is used because there are four different ways of aggregating search results:
     /// - union(withLocalResult:)
-    /// - union(withBotResult:)
+    /// - union(withBotsResult:)
     /// - union(withDirectoryResult:)
     /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
@@ -77,11 +77,7 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        guard case let .started(taskGroup) = status else {
-            assertionFailure()
-            return
-        }
-
+        guard case let .started(taskGroup) = status else { return }
         taskGroup.cancelAll()
     }
 
@@ -99,13 +95,13 @@ public final class SearchTask {
 
             status = .started(taskGroup: taskGroup)
 
-            // search services
+            // search bots
             taskGroup.addTask {
                 do {
-                    return try await self.performRemoteSearchForServices()
+                    return try await self.performRemoteSearchForBots()
                 } catch {
                     let errorType = Swift.type(of: error)
-                    WireLogger.search.error("failed to search for services: \(String(describing: errorType))")
+                    WireLogger.search.error("failed to search for bots: \(String(describing: errorType))")
                     return { _ in }
                 }
             }
@@ -156,9 +152,8 @@ public final class SearchTask {
             return result
         }
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     /// Look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() async -> SearchResultAggregator {
@@ -177,7 +172,7 @@ extension SearchTask {
 
             /// search for the local user with matching user ID and active
             let activeMembers = self.teamMembers(
-                matchingQuery: "",
+                matchingQuery: "", // no query for lookup
                 team: selfUser.team,
                 searchOptions: options,
                 in: searchContext
@@ -234,7 +229,7 @@ extension SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
+        let (connectedUserIDs, teamMemberIDs, appIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
@@ -254,6 +249,7 @@ extension SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
+            let apps = request.searchOptions.contains(.apps) ? apps(in: team) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -264,6 +260,7 @@ extension SearchTask {
             return (
                 connectedUsers.map(\.objectID),
                 teamMembers.map(\.objectID),
+                apps.map(\.objectID),
                 conversations.map(\.objectID)
             )
 
@@ -272,7 +269,11 @@ extension SearchTask {
         let viewContext = contextProvider.viewContext
         return await viewContext.perform { [self] in
 
+            let copiedConversations = conversationIDs
+                .compactMap { viewContext.object(with: $0) as? ZMConversation }
             let copiedConnectedUsers = connectedUserIDs
+                .compactMap { viewContext.object(with: $0) as? ZMUser }
+            let copiedApps = appIDs
                 .compactMap { viewContext.object(with: $0) as? ZMUser }
             let searchConnectedUsers = copiedConnectedUsers
                 .map {
@@ -302,8 +303,8 @@ extension SearchTask {
                 contacts: searchConnectedUsers,
                 teamMembers: searchTeamMembers,
                 directory: [],
-                conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
-                apps: [],
+                conversations: copiedConversations,
+                apps: copiedApps,
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -333,7 +334,10 @@ extension SearchTask {
         searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [Member] {
-        var partialResult = team?.members(matchingQuery: query) ?? []
+        var partialResult = team?.members(
+            matchingQuery: query,
+            filteredBy: .regular
+        ) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             partialResult = filterNonActiveTeamMembers(
@@ -359,6 +363,15 @@ extension SearchTask {
         }
 
         return partialResult
+    }
+
+    private func apps(
+        in team: WireDataModel.Team?
+    ) -> [ZMUser] {
+        team?.members(
+            matchingQuery: "",
+            filteredBy: .app
+        ).compactMap(\.user) ?? []
     }
 
     private func connectedUsers(
@@ -414,9 +427,7 @@ extension SearchTask {
         return matching + nonMatching
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performUserLookup() async throws -> SearchResultAggregator {
         guard case var .lookup(qualifiedID) = type else {
@@ -444,8 +455,11 @@ extension SearchTask {
                     remoteIdentifier: qualifiedID.uuid,
                     domain: qualifiedID.domain,
                     teamIdentifier: result.teamID,
+                    providerIdentifier: result.service?.provider.transportString(),
                     user: localUser,
                     searchUsersCache: searchUsersCache,
+                    type: localUser?.type,
+                    summary: localUser?.appInfo?.appDescription,
                     isDeleted: result.deleted ?? false
                 )
             }
@@ -469,9 +483,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
@@ -480,7 +492,7 @@ extension SearchTask {
             case let .search(searchRequest) = type,
             !searchRequest.query.string.isEmpty, // backend won't return anything for empty queries
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
+            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated, .apps])
         else {
             return { _ in }
         }
@@ -525,8 +537,10 @@ extension SearchTask {
                         remoteIdentifier: filteredContact.id,
                         domain: domain,
                         teamIdentifier: filteredContact.team,
+                        providerIdentifier: nil,
                         user: localUser,
-                        searchUsersCache: searchUsersCache
+                        searchUsersCache: searchUsersCache,
+                        type: .init(filteredContact.type)
                     )
                 }
             }
@@ -537,7 +551,6 @@ extension SearchTask {
         let searchOptions = searchRequest.searchOptions
         let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
             searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-        // TODO: [WPB-20362] fix for searching apps
         let partialResult = await viewContext.perform { [searchUsersCache] in
             SearchResult(
                 context: viewContext,
@@ -545,7 +558,7 @@ extension SearchTask {
                 teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
                 directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
                 conversations: [],
-                apps: [],
+                apps: searchUsers.filter(\.isApp),
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -555,6 +568,8 @@ extension SearchTask {
 
         if searchRequest.searchOptions.contains(.teamMembers) {
             return try await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+        } else if searchForApps {
+            return { $0 = $0.union(withAppsResult: partialResult) }
         } else {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
@@ -594,9 +609,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
@@ -687,11 +700,10 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
-    func performRemoteSearchForServices() async throws -> SearchResultAggregator {
+    func performRemoteSearchForBots() async throws -> SearchResultAggregator {
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
@@ -744,12 +756,13 @@ extension SearchTask {
                             remoteIdentifier: profile.id,
                             domain: profile.qualifiedID?.domain,
                             teamIdentifier: profile.teamID,
+                            providerIdentifier: profile.provider.transportString(),
                             user: localUser,
                             searchUsersCache: searchUsersCache,
+                            type: localUser?.type,
+                            summary: profile.summary,
                             isDeleted: profile.isDeleted
                         )
-                        searchUser.providerIdentifier = profile.provider.uuidString
-                        searchUser.summary = profile.summary
                         searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
                         return searchUser
                     }
@@ -757,7 +770,7 @@ extension SearchTask {
             }
         }
 
-        return { $0 = $0.union(withBotResult: partialResult) }
+        return { $0 = $0.union(withBotsResult: partialResult) }
     }
 
 }
@@ -800,6 +813,21 @@ private extension SearchUserAssetKeys {
             complete: complete
         )
 
+    }
+
+}
+
+private extension TypeOfUser {
+
+    init(_ type: WireNetwork.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
     }
 
 }

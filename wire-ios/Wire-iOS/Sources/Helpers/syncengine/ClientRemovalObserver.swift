@@ -33,6 +33,7 @@ protocol ClientRemovalObserverDelegate: AnyObject {
 
 final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     var userClientToDelete: UserClient
+    private let userSession: UserSession
     private weak var delegate: ClientRemovalObserverDelegate?
     private let completion: ((Error?) -> Void)?
     private var credentials: UserEmailCredentials?
@@ -57,22 +58,24 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     init(
         userClientToDelete: UserClient,
         delegate: ClientRemovalObserverDelegate,
+        userSession: UserSession,
         credentials: UserEmailCredentials?,
         completion: ((Error?) -> Void)? = nil
     ) {
         self.userClientToDelete = userClientToDelete
         self.delegate = delegate
+        self.userSession = userSession
         self.credentials = credentials
         self.completion = completion
 
         super.init()
 
-        self.observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.observerToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
     }
 
     func startRemoval() {
         delegate?.setIsLoadingViewVisible(self, isVisible: true)
-        ZMUserSession.shared()?.deleteClient(userClientToDelete, credentials: credentials)
+        (userSession as? ZMUserSession)?.deleteClient(userClientToDelete, credentials: credentials)
     }
 
     private func endRemoval(result: Error?) {

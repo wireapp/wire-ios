@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview() -> FilesViewModel {
+    static func preview(isBrowsing: Bool = false) -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireDriveLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -94,6 +94,9 @@ extension FilesViewModel {
                 ),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
+                ),
+                getDriveConversations: WireDriveGetConversationsUseCase(
+                    nodesAPI: previewConversationsApi()
                 )
             ),
             setNavigation: { _ in },
@@ -102,7 +105,7 @@ extension FilesViewModel {
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isBrowsing: false,
+            isBrowsing: isBrowsing,
             accentColorProvider: { .default }
         )
     }
@@ -137,7 +140,7 @@ extension FilesItemViewModel {
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
     static func preview(
         kind: FilesViewItem.Kind = .file,
-        icon: FileIcon = .image,
+        icon: WireDriveFileType = .image,
         tags: [String] = [],
         publicLinkID: String? = nil
     ) -> FilesItemViewModel {
@@ -155,7 +158,9 @@ extension FilesItemViewModel {
                 isEditable: false,
                 publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
+                size: nil
             ),
+            selectedSortingKey: .date,
             conversationName: "Test",
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
@@ -182,20 +187,18 @@ extension FileVersionItemViewModel {
     }
 }
 
-extension FilesFiltersViewModel {
+extension FilesFilterBy.TagsView.ViewModel {
 
-    /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
-    static func preview() -> FilesFiltersViewModel {
+    /// A stubbed instance for SwiftUI previews.
+    static func preview() -> FilesFilterBy.TagsView.ViewModel {
         let nodesAPI = MockNodesAPIProtocol()
         nodesAPI.getAllTags_MockValue = mockTags
 
-        return FilesFiltersViewModel(
-            fetchTagsUseCase:
-            WireDriveGetTagSuggestionsUseCase(
+        return FilesFilterBy.TagsView.ViewModel(
+            fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
                 nodesAPI: nodesAPI
             ),
-            savedTags: nil,
-            accentColorProvider: { .default }
+            selectedTags: []
         )
     }
 
@@ -238,7 +241,7 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
     let nodes = (0 ... 150).map { index in
         WireDriveNode(
             uuid: UUID(),
-            conversation: .init(id: UUID().uuidString, name: "Conversation 1", participants: []),
+            conversation: .mocked(),
             path: "root/foo-\(index).jpg",
             modified: Date().addingTimeInterval(Double(-index * 60)),
             mimeType: "image/jpeg",
@@ -263,6 +266,14 @@ private func previewTagsApi() -> some NodesAPIProtocol {
         mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
+}
+
+private func previewConversationsApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    mock.getDriveConversations_MockMethod = {
+        .mocked()
+    }
     return mock
 }
 
@@ -315,11 +326,7 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
     ) async throws -> (node: WireDriveNode, asset: WireDriveLocalAsset) {
         let node = WireDriveNode(
             uuid: .init(),
-            conversation: .init(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: .mocked(),
             path: ""
         )
 

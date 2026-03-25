@@ -104,5 +104,5 @@ struct DeveloperDebugActionsView: View {
 // MARK: - Previews
 
 #Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
+    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(userSession: nil, selfClient: nil))
 }

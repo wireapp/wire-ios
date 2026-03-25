@@ -153,7 +153,7 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
-        Image(viewModel.icon.resource)
+        Image(viewModel.icon.imageResource)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .overlay(alignment: .bottomTrailing) {
@@ -273,6 +273,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }
 
@@ -297,7 +298,7 @@ extension FilesItemView {
         @ScaledMetric private var offsetX: CGFloat
         @ScaledMetric private var offsetY: CGFloat
 
-        init(forIcon icon: FileIcon) {
+        init(forIcon icon: WireDriveFileType) {
             switch icon {
             case .folder:
                 _offsetX = .init(wrappedValue: 5)

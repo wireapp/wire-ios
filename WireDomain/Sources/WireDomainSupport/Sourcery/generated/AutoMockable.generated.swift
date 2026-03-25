@@ -695,6 +695,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_Invocations: [(id: UUID, domain: String?, setNeedsToBeUpdatedFromBackend: Bool)] = []
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockMethod: ((UUID, String?, Bool) async -> ZMConversation)?
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(id: UUID, domain: String?, setNeedsToBeUpdatedFromBackend: Bool) async -> ZMConversation {
+        fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_Invocations.append((id: id, domain: domain, setNeedsToBeUpdatedFromBackend: setNeedsToBeUpdatedFromBackend))
+
+        if let mock = fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockMethod {
+            return await mock(id, domain, setNeedsToBeUpdatedFromBackend)
+        } else if let mock = fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend`")
+        }
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
@@ -1565,17 +1583,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - execute
 
-    public var executeIdentifierBlock_Invocations: [(identifier: MLSGroupID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
-    public var executeIdentifierBlock_MockMethod: ((MLSGroupID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
+    public var executeConversationIDBlock_Invocations: [(conversationID: QualifiedID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
+    public var executeConversationIDBlock_MockMethod: ((QualifiedID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
 
-    public func execute(identifier: MLSGroupID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
-        executeIdentifierBlock_Invocations.append((identifier: identifier, block: block))
+    public func execute(conversationID: QualifiedID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
+        executeConversationIDBlock_Invocations.append((conversationID: conversationID, block: block))
 
-        guard let mock = executeIdentifierBlock_MockMethod else {
-            fatalError("no mock for `executeIdentifierBlock`")
+        guard let mock = executeConversationIDBlock_MockMethod else {
+            fatalError("no mock for `executeConversationIDBlock`")
         }
 
-        await mock(identifier, block)
+        await mock(conversationID, block)
     }
 
 }
@@ -1993,15 +2011,15 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - isSelfAnActiveMember
 
-    public var isSelfAnActiveMemberIn_Invocations: [WireDataModel.MLSGroupID] = []
-    public var isSelfAnActiveMemberIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Bool)?
+    public var isSelfAnActiveMemberIn_Invocations: [WireDataModel.QualifiedID] = []
+    public var isSelfAnActiveMemberIn_MockMethod: ((WireDataModel.QualifiedID) async -> Bool)?
     public var isSelfAnActiveMemberIn_MockValue: Bool?
 
-    public func isSelfAnActiveMember(in groupID: WireDataModel.MLSGroupID) async -> Bool {
-        isSelfAnActiveMemberIn_Invocations.append(groupID)
+    public func isSelfAnActiveMember(in conversationID: WireDataModel.QualifiedID) async -> Bool {
+        isSelfAnActiveMemberIn_Invocations.append(conversationID)
 
         if let mock = isSelfAnActiveMemberIn_MockMethod {
-            return await mock(groupID)
+            return await mock(conversationID)
         } else if let mock = isSelfAnActiveMemberIn_MockValue {
             return mock
         } else {
@@ -2011,17 +2029,17 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - clearPendingProposals
 
-    public var clearPendingProposalsIn_Invocations: [WireDataModel.MLSGroupID] = []
-    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Void)?
+    public var clearPendingProposalsIn_Invocations: [WireDataModel.QualifiedID] = []
+    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.QualifiedID) async -> Void)?
 
-    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
-        clearPendingProposalsIn_Invocations.append(groupID)
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        clearPendingProposalsIn_Invocations.append(conversationID)
 
         guard let mock = clearPendingProposalsIn_MockMethod else {
             fatalError("no mock for `clearPendingProposalsIn`")
         }
 
-        await mock(groupID)
+        await mock(conversationID)
     }
 
 }
