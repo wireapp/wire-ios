@@ -88,7 +88,8 @@ struct CheckBlacklistWorkerTests {
         await sut.startAndWait()
 
         // Then
-        #expect(callbackCounter.isEmpty)
+        // swiftformat:disable:next isEmpty
+        #expect(callbackCounter.count == 0)
     }
 
     @Test
