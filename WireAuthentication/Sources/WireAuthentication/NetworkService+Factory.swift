@@ -31,13 +31,11 @@ extension NetworkService {
 
         return NetworkService(
             baseURL: backendEnvironment.url,
+            urlSessionConfiguration: config,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendEnvironment.pinnedKeys,
                 currentDateProvider: .system
-            ),
-            makeURLSession: { delegate in
-                URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
-            }
+            )
         )
     }
 

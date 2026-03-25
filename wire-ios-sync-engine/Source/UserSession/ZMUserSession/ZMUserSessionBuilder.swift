@@ -118,40 +118,22 @@ struct ZMUserSessionBuilder {
         let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let restNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.url,
-            serverTrustValidator: serverTrustValidator,
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: restConfig,
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: restConfig,
+            serverTrustValidator: serverTrustValidator
         )
 
         let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let webSocketNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator,
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: webSocketConfig,
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: webSocketConfig,
+            serverTrustValidator: serverTrustValidator
         )
 
         let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
         let blacklistNetworkService = NetworkService(
             baseURL: wireAPIBackendEnvironment.blacklistURL,
-            serverTrustValidator: serverTrustValidator,
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: blacklistConfig,
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: blacklistConfig,
+            serverTrustValidator: serverTrustValidator
         )
 
         let backendMetadata = ResolvedBackendMetadata(

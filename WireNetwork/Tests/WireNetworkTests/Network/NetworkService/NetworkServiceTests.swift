@@ -37,13 +37,13 @@ final class NetworkServiceTests: XCTestCase {
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         sut = NetworkService(
             baseURL: backendURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [
                     try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
                 ],
                 currentDateProvider: mockDateProvider
-            ),
-            urlSessionConfiguration: .mock
+            )
         )
     }
 
@@ -62,11 +62,11 @@ final class NetworkServiceTests: XCTestCase {
         // When
         let sut = NetworkService(
             baseURL: baseURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            ),
-            urlSessionConfiguration: .mock
+            )
         )
 
         // Then
@@ -80,11 +80,11 @@ final class NetworkServiceTests: XCTestCase {
         // When
         let sut = NetworkService(
             baseURL: baseURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            ),
-            urlSessionConfiguration: .mock
+            )
         )
 
         // Then

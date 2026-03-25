@@ -38,11 +38,11 @@ final class APIServiceTests: XCTestCase {
         authenticationManager = MockAuthenticationManagerProtocol()
         let networkService = NetworkService(
             baseURL: backendURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
-            ),
-            urlSessionConfiguration: .mock
+            )
         )
         sut = APIService(
             networkService: networkService,

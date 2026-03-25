@@ -58,29 +58,29 @@ extension NetworkService {
 
         let restService = NetworkService(
             baseURL: backendConfig.endpoints.restAPIURL,
+            urlSessionConfiguration: configFactory.makeRESTAPISessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            ),
-            urlSessionConfiguration: configFactory.makeRESTAPISessionConfiguration()
+            )
         )
 
         let webSocketService = NetworkService(
             baseURL: backendConfig.endpoints.websocketURL,
+            urlSessionConfiguration: configFactory.makeWebSocketSessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            ),
-            urlSessionConfiguration: configFactory.makeWebSocketSessionConfiguration()
+            )
         )
 
         let blacklistService = NetworkService(
             baseURL: backendConfig.endpoints.blacklistURL,
+            urlSessionConfiguration: configFactory.makeBlacklistSessionConfiguration(),
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
-            ),
-            urlSessionConfiguration: configFactory.makeBlacklistSessionConfiguration()
+            )
         )
 
         return (

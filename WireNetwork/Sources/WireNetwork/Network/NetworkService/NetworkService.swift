@@ -36,8 +36,8 @@ public final class NetworkService: NetworkServiceProtocol, Sendable {
 
     public init(
         baseURL: URL,
-        serverTrustValidator: ServerTrustValidator,
-        urlSessionConfiguration configuration: URLSessionConfiguration
+        urlSessionConfiguration configuration: URLSessionConfiguration,
+        serverTrustValidator: ServerTrustValidator
     ) {
         // Make sure the base url is a directory path,
         // i.e www.wire.com -> www.wire.com/ and

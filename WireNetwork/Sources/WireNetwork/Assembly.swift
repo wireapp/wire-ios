@@ -54,8 +54,8 @@ public final class Assembly {
 
     public lazy var apiNetworkService = NetworkService(
         baseURL: backendEnvironment.url,
-        serverTrustValidator: serverTrustValidator,
-        urlSessionConfiguration: urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        urlSessionConfiguration: urlSessionConfigurationFactory.makeRESTAPISessionConfiguration(),
+        serverTrustValidator: serverTrustValidator
     )
 
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
