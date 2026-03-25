@@ -23,7 +23,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
     func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(

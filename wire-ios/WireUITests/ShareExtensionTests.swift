@@ -78,7 +78,7 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     func testShareImageToGroupConversation_TC_8919() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
