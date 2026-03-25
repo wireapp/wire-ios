@@ -99,6 +99,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.text = text
         textField.autocorrectionType = .no
+        textField.font = UIFont.preferredFont(forTextStyle: .body)
         textField.adjustsFontForContentSizeCategory = true
         textField.textAlignment = textAlignment
         textField.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
