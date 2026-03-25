@@ -18,43 +18,49 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-private let zmLog = ZMSLog(tag: "Services")
-
-public struct ServiceUserData: Equatable {
-    let provider: UUID
-    let service: UUID
-
-    public init(provider: UUID, service: UUID) {
-        self.provider = provider
-        self.service = service
-    }
+private struct ServiceUserData: Equatable {
+    let providerIdentifier: String
+    let serviceIdentifier: String
 }
 
-extension UserType {
+private extension UserType {
+
     var serviceUserData: ServiceUserData? {
-        guard let providerIdentifier,
-              let serviceIdentifier,
-              let provider = UUID(uuidString: providerIdentifier),
-              let service = UUID(uuidString: serviceIdentifier)
-        else {
-            return nil
-        }
+        guard
+            let providerIdentifier, !providerIdentifier.isEmpty,
+            let serviceIdentifier, !serviceIdentifier.isEmpty
+        else { return nil }
 
         return ServiceUserData(
-            provider: provider,
-            service: service
+            providerIdentifier: providerIdentifier,
+            serviceIdentifier: serviceIdentifier
         )
     }
 }
 
-public final class ServiceProvider: NSObject {
-    public let identifier: String
+public final class ServiceProvider {
 
+    public let identifier: String
     public let name: String
     public let email: String
     public let url: String
     public let providerDescription: String
+
+    public init(
+        identifier: String,
+        name: String,
+        email: String,
+        url: String,
+        providerDescription: String
+    ) {
+        self.identifier = identifier
+        self.name = name
+        self.email = email
+        self.url = url
+        self.providerDescription = providerDescription
+    }
 
     init?(payload: [AnyHashable: Any]) {
         guard let identifier  = payload["id"] as? String,
@@ -70,43 +76,47 @@ public final class ServiceProvider: NSObject {
         self.email       = email
         self.url         = url
         self.providerDescription = description
-
-        super.init()
     }
+
 }
 
-public final class ServiceDetails: NSObject {
+public final class ServiceDetails {
+
     public let serviceIdentifier: String
     public let providerIdentifier: String
 
     public let name: String
     public let serviceDescription: String
-    public let assets: [[String: Any]]
-    public let tags: [String]
 
-    init?(payload: [AnyHashable: Any]) {
+    public init(
+        serviceIdentifier: String,
+        providerIdentifier: String,
+        name: String,
+        serviceDescription: String
+    ) {
+        self.serviceIdentifier = serviceIdentifier
+        self.providerIdentifier = providerIdentifier
+        self.name = name
+        self.serviceDescription = serviceDescription
+    }
+
+    fileprivate init?(payload: [AnyHashable: Any]) {
         guard let serviceIdentifier   = payload["id"] as? String,
               let providerIdentifier  = payload["provider"] as? String,
               let name                = payload["name"] as? String,
-              let description         = payload["description"] as? String,
-              let assets              = payload["assets"] as? [[String: Any]],
-              let tags                = payload["tags"] as? [String]
-        else {
-            return nil
-        }
+              let description         = payload["description"] as? String
+        else { return nil }
 
-        self.serviceIdentifier  = serviceIdentifier
+        self.serviceIdentifier = serviceIdentifier
         self.providerIdentifier = providerIdentifier
-        self.name               = name
+        self.name = name
         self.serviceDescription = description
-        self.assets             = assets
-        self.tags               = tags
-
-        super.init()
     }
+
 }
 
 private extension ServiceUserData {
+
     func requestToAddService(to conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let remoteIdentifier = conversation.remoteIdentifier
         else {
@@ -118,8 +128,8 @@ private extension ServiceUserData {
             : "/conversations/\(remoteIdentifier.transportString())/bots"
 
         let payload: NSDictionary = [
-            "provider": provider.transportString(),
-            "service": service.transportString(),
+            "provider": providerIdentifier,
+            "service": serviceIdentifier,
             "locale": NSLocale.formattedLocaleIdentifier()!
         ]
 
@@ -132,19 +142,23 @@ private extension ServiceUserData {
     }
 
     func requestToFetchProvider(apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = "/providers/\(provider.transportString())/"
+        let path = "/providers/\(providerIdentifier)/"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     func requestToFetchDetails(apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = "/providers/\(provider.transportString())/services/\(service.transportString())"
+        let path = "/providers/\(providerIdentifier)/services/\(serviceIdentifier)"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
+
 }
 
 public extension UserType {
 
-    func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
+    func fetchProvider(
+        in userSession: ZMUserSession,
+        completion: @escaping (ServiceProvider?) -> Void
+    ) {
         guard let serviceUserData else {
             fatal("Not a service user")
         }
@@ -155,18 +169,18 @@ public extension UserType {
 
         let request = serviceUserData.requestToFetchProvider(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext) { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let provider = ServiceProvider(payload: responseDictionary) else {
-                zmLog.error("Wrong response for fetching a provider: \(response)")
+                WireLogger.messaging.error("Wrong response for fetching a provider: \(response)")
                 completion(nil)
                 return
             }
 
             completion(provider)
-        }))
+        })
 
         userSession.transportSession.enqueueOneTime(request)
     }
@@ -182,18 +196,18 @@ public extension UserType {
 
         let request = serviceUserData.requestToFetchDetails(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext) { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let serviceDetails = ServiceDetails(payload: responseDictionary) else {
-                zmLog.error("Wrong response for fetching a service: \(response)")
+                WireLogger.messaging.error("Wrong response for fetching a service: \(response)")
                 completion(nil)
                 return
             }
 
             completion(serviceDetails)
-        }))
+        })
 
         userSession.transportSession.enqueueOneTime(request)
     }
@@ -202,7 +216,6 @@ public extension UserType {
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
-
         createConversation(
             transportSession: userSession.transportSession,
             eventProcessor: userSession.conversationEventProcessor,
@@ -238,8 +251,8 @@ public extension UserType {
             allowApps: true,
             enableReceipts: false,
             messageProtocol: .proteus
-        ) {
-            switch $0 {
+        ) { result in
+            switch result {
             case let .success(conversation):
                 conversation.add(
                     serviceUser: serviceUserData,
@@ -278,8 +291,13 @@ public enum AddBotError: Int, Error {
 }
 
 public enum AddBotResult {
+
     case success(conversation: ZMConversation)
     case failure(error: AddBotError)
+
+    /// The user decided not to proceed with creating a conversation with or adding a bot to an existing conversation.
+    case cancelled
+
 }
 
 extension AddBotError {
@@ -297,21 +315,21 @@ extension AddBotError {
     }
 }
 
-public extension ZMConversation {
+extension ZMConversation {
 
-    func add(
-        serviceUser: UserType,
+    public func add(
+        bot: any UserType,
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {
-        guard let serviceUserData = serviceUser.serviceUserData else {
-            fatal("Not a service user")
+        guard let serviceUserData = bot.serviceUserData else {
+            fatal("Not a bot")
         }
 
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    func add(
+    fileprivate func add(
         serviceUser serviceUserData: ServiceUserData,
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<Void, Error>) -> Void
@@ -326,7 +344,7 @@ public extension ZMConversation {
         )
     }
 
-    internal func add(
+    fileprivate func add(
         serviceUser serviceUserData: ServiceUserData,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
@@ -366,4 +384,5 @@ public extension ZMConversation {
 
         transportSession.enqueueOneTime(request)
     }
+
 }

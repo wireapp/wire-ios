@@ -59,9 +59,7 @@ final class EmptyPlaceholderContainerView: UIView {
             connectWithPeopleAction: action
         )
 
-        backgroundColor = isIPadRegular() ?
-            ColorTheme.Backgrounds.chatBackground :
-            ColorTheme.Backgrounds
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds
             .surfaceVariant
 
         setupConstraints()
