@@ -32,7 +32,6 @@ enum AppState: Equatable {
     case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
-    case loading(account: Account, from: Account?)
     case syncFailure(error: any Error, onRetry: () -> Void)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
@@ -41,8 +40,8 @@ enum AppState: Equatable {
             true
         case (.locked, .locked):
             true
-        case (.authenticated, .authenticated):
-            true
+        case let (.authenticated(userSession1), .authenticated(userSession2)):
+            userSession1 === userSession2
         case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
             id1 == id2 &&
                 env1 == env2 &&
@@ -57,8 +56,6 @@ enum AppState: Equatable {
             true
         case (migrating, migrating):
             true
-        case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
             true
         default:
@@ -91,8 +88,6 @@ extension AppState: CustomDebugStringConvertible {
             "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
-        case .loading:
-            "loading"
         case let .syncFailure(error, _):
             "syncFailure: \(error.localizedDescription)"
         }
@@ -122,8 +117,6 @@ extension AppState: SafeForLoggingStringConvertible {
             "databaseFailure \(reason)"
         case .migrating:
             "migrating"
-        case let .loading(account, from):
-            "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
         case let .syncFailure(error, _):
             "syncFailure \(error.localizedDescription)"
         }
@@ -301,21 +294,6 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
-    }
-
-    func sessionManagerWillOpenAccount(
-        _ account: Account,
-        from selectedAccount: Account?,
-        userSessionCanBeTornDown: @escaping () -> Void
-    ) {
-        let appState: AppState = .loading(
-            account: account,
-            from: selectedAccount
-        )
-        transition(
-            to: appState,
-            completion: userSessionCanBeTornDown
-        )
     }
 
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {

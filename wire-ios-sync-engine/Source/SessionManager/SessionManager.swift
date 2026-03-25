@@ -76,11 +76,6 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     )
-    func sessionManagerWillOpenAccount(
-        _ account: Account,
-        from selectedAccount: Account?,
-        userSessionCanBeTornDown: @escaping () -> Void
-    )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
 
     func sessionManagerDidFailToLoadSession(
@@ -709,34 +704,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         isSelectingAccount = true
-        let selectedAccount = accountManager.selectedAccount
+        activeUserSession = nil
+        accountManager.select(account)
+        let session = await loadSession(for: account)
+        isSelectingAccount = false
 
-        guard let delegate = delegate else {
-            return nil
-        }
-
-        return await withCheckedContinuation { continuation in
-            delegate.sessionManagerWillOpenAccount(
-                account,
-                from: selectedAccount,
-                userSessionCanBeTornDown: { [weak self] in
-                    self?.activeUserSession = nil
-
-                    Task { @MainActor [weak self] in
-                        guard let self else {
-                            continuation.resume(returning: nil)
-                            return
-                        }
-
-                        accountManager.select(account)
-                        let session = await loadSession(for: account)
-                        isSelectingAccount = false
-
-                        continuation.resume(returning: session)
-                    }
-                }
-            )
-        }
+        return session
     }
 
     @MainActor
