@@ -96,6 +96,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
     private let keyboardType: UIKeyboardType
     private let textContentType: UITextContentType?
     private let autocapitalizationType: UITextAutocapitalizationType
+    private let textColor: UIColor?
 
     public init(
         text: Binding<String>,
@@ -106,7 +107,8 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textAlignment: NSTextAlignment = .natural,
         keyboardType: UIKeyboardType = .default,
         textContentType: UITextContentType? = nil,
-        autocapitalizationType: UITextAutocapitalizationType = .none
+        autocapitalizationType: UITextAutocapitalizationType = .none,
+        textColor: UIColor? = nil
     ) {
         self._text = text
         self.placeholder = placeholder
@@ -117,6 +119,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         self.keyboardType = keyboardType
         self.textContentType = textContentType
         self.autocapitalizationType = autocapitalizationType
+        self.textColor = textColor
     }
 
     public func makeUIView(context: Context) -> UITextField {
@@ -145,6 +148,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         uiView.keyboardType = keyboardType
         uiView.textContentType = textContentType
         uiView.autocapitalizationType = autocapitalizationType
+        uiView.textColor = textColor ?? .label
     }
 
     public func makeCoordinator() -> Coordinator {

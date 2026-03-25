@@ -74,11 +74,11 @@ public struct LabeledTextField: View {
                     isContextMenuAllowed: isClipboardEnabled,
                     keyboardType: keyboardType,
                     textContentType: textContentType,
-                    autocapitalizationType: autocapitalizationType
+                    autocapitalizationType: autocapitalizationType,
+                    textColor: UIColor(labelColor)
                 )
                 .font(for: .body1)
                 .focused($isFocused)
-                .foregroundStyle(labelColor)
                 .frame(height: fieldHeight)
                 if !string.isEmpty, isEnabled {
                     Button(action: {
