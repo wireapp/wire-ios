@@ -148,7 +148,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             try await coreCryptoContext.deleteStaleKeyPackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite
             )
-            
+
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
