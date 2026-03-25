@@ -131,6 +131,7 @@ final class MessageToolboxView: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.accessibilityIgnoresInvertColors = true
         imageView.tintColor = color
+        imageView.backgroundColor = .clear
         return imageView
     }()
 

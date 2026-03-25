@@ -456,7 +456,7 @@
     <key>content.system.call.missed-call.groups</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@missed_call_from@</string>
+      <string>%2$@ %#@missed_call_from@</string>
       <key>missed_call_from</key>
       <dict>
         <key>zero</key>
@@ -466,15 +466,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call from %2$@</string>
+        <string>مكالمة مفقودة منة مفقودة من</string>
         <key>two</key>
-        <string>Missed calls from %2$@</string>
+        <string>مكالمة مفقودة منة مفقودة من</string>
         <key>few</key>
-        <string>Missed calls from %2$@</string>
+        <string>مكالمة مفقودة منة مفقودة من</string>
         <key>many</key>
-        <string>Missed calls from %2$@</string>
+        <string>مكالمة مفقودة منة مفقودة من</string>
         <key>other</key>
-        <string>Missed calls from %2$@</string>
+        <string>مكالمة مفقودة منة مفقودة من</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
