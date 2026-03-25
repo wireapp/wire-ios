@@ -52,18 +52,21 @@ struct WireDriveDocumentAttachmentPreview: View {
                 isError: isError,
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
 
 #Preview {
-    WireDriveDocumentAttachmentPreview(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        isError: false
-    )
-    .frame(width: 222, height: 74)
+    VStack {
+        WireDriveDocumentAttachmentPreview(
+            headerIcon: Image(WireDriveFileType.pdf.imageResource),
+            headerText: "PDF (336 KB)",
+            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
+            progress: 0.7,
+            isError: false
+        )
+        .frame(width: 222)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }
