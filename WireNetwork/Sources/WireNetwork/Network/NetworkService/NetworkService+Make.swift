@@ -62,13 +62,7 @@ extension NetworkService {
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             ),
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: configFactory.makeRESTAPISessionConfiguration(),
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: configFactory.makeRESTAPISessionConfiguration()
         )
 
         let webSocketService = NetworkService(
@@ -77,13 +71,7 @@ extension NetworkService {
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             ),
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: configFactory.makeWebSocketSessionConfiguration(),
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: configFactory.makeWebSocketSessionConfiguration()
         )
 
         let blacklistService = NetworkService(
@@ -92,13 +80,7 @@ extension NetworkService {
                 pinnedKeys: backendConfig.pinnedKeys,
                 currentDateProvider: .system
             ),
-            makeURLSession: { delegate in
-                URLSession(
-                    configuration: configFactory.makeBlacklistSessionConfiguration(),
-                    delegate: delegate,
-                    delegateQueue: nil
-                )
-            }
+            urlSessionConfiguration: configFactory.makeBlacklistSessionConfiguration()
         )
 
         return (

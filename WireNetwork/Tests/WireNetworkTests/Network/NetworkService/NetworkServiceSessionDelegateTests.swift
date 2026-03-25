@@ -33,7 +33,7 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
         mockDateProvider = .init()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
         webSocketStore = .init()
-        session = .mockURLSession()
+        session = URLSession(configuration: .mock)
 
         let serverTrustValidator = ServerTrustValidator(
             pinnedKeys: [

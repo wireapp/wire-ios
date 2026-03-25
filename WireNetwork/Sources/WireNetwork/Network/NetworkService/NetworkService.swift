@@ -37,7 +37,7 @@ public final class NetworkService: NetworkServiceProtocol, Sendable {
     public init(
         baseURL: URL,
         serverTrustValidator: ServerTrustValidator,
-        makeURLSession: @Sendable ((any URLSessionDelegate)?) -> URLSession
+        urlSessionConfiguration configuration: URLSessionConfiguration
     ) {
         // Make sure the base url is a directory path,
         // i.e www.wire.com -> www.wire.com/ and
@@ -63,7 +63,7 @@ public final class NetworkService: NetworkServiceProtocol, Sendable {
             webSocketStore: webSocketStore
         )
         self.sessionDelegate = delegate
-        self.urlSession = makeURLSession(delegate)
+        self.urlSession = URLSession(configuration: configuration, delegate: delegate, delegateQueue: .none)
         self.webSocketStore = webSocketStore
     }
 

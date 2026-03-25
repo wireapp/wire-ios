@@ -42,7 +42,7 @@ final class APIServiceTests: XCTestCase {
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { _ in .mockURLSession() }
+            urlSessionConfiguration: .mock
         )
         sut = APIService(
             networkService: networkService,

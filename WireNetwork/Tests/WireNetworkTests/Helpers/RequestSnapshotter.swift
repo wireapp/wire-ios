@@ -41,7 +41,7 @@ final class RequestSnapshotter {
                 pinnedKeys: [],
                 currentDateProvider: currentDateProvider
             ),
-            makeURLSession: { _ in .mockURLSession() }
+            urlSessionConfiguration: .mock
         )
 
         let authenticationManager = MockAuthenticationManagerProtocol()

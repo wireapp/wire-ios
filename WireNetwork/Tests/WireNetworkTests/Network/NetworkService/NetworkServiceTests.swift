@@ -25,7 +25,6 @@ import XCTest
 
 final class NetworkServiceTests: XCTestCase {
 
-    private var session: URLSession!
     private var sut: NetworkService!
     private var backendURL: URL!
     private var mockDateProvider: CurrentDateProvidingMock!
@@ -35,7 +34,6 @@ final class NetworkServiceTests: XCTestCase {
         mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
 
-        session = .mockURLSession()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         sut = NetworkService(
             baseURL: backendURL,
@@ -45,12 +43,11 @@ final class NetworkServiceTests: XCTestCase {
                 ],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { [session] _ in session }
+            urlSessionConfiguration: .mock
         )
     }
 
     override func tearDown() async throws {
-        session = nil
         backendURL = nil
         sut = nil
         mockDateProvider = nil
@@ -69,7 +66,7 @@ final class NetworkServiceTests: XCTestCase {
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { _ in .mockURLSession() }
+            urlSessionConfiguration: .mock
         )
 
         // Then
@@ -87,7 +84,7 @@ final class NetworkServiceTests: XCTestCase {
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { _ in .mockURLSession() }
+            urlSessionConfiguration: .mock
         )
 
         // Then

@@ -42,7 +42,7 @@ final class AuthenticationManagerTests: XCTestCase {
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
             ),
-            makeURLSession: { _ in .mockURLSession() }
+            urlSessionConfiguration: .mock
         )
 
         sut = AuthenticationManager(
