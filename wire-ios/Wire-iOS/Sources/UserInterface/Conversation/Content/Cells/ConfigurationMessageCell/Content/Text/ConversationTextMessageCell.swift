@@ -80,10 +80,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         didSet {
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
-            let userColor = message.senderUser?.wireAccentColor ?? .default
-            let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
-            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
-            configureTextColor(forOwnMessage: isOwnMessage)
+            let userColor = message.senderUser?.accentColor ?? .clear
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            if let currentConfig = currentConfiguration {
+                configure(with: currentConfig, animated: false)
+            }
         }
     }
 
@@ -150,6 +151,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        currentConfiguration = object
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = 0
         paragraphStyle.lineSpacing = 3
@@ -187,10 +190,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     private func updateContainerStyle() {
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
-        let userColor = message.senderUser?.wireAccentColor ?? .default
-        let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
-        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
-
+        let userColor = message.senderUser?.accentColor ?? .clear
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
