@@ -330,4 +330,11 @@ public enum Locators {
             case removeFilterButton
         }
     }
+
+    public enum BlockerPage: String {
+
+        case mainContent
+        case clientObsoleteAlertTitle = "Update required"
+
+    }
 }
