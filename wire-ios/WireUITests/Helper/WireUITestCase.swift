@@ -25,15 +25,21 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let userHelper = UserHelper()
+    var userHelper: UserHelper!
+    var callingServiceClient: CallingServiceClient!
 
     override func setUpWithError() throws {
+        // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
+        dismissAllowIfPresent()
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
 
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
         ]
+
+        userHelper = UserHelper()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
@@ -49,7 +55,9 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
+        userHelper = nil
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -94,5 +102,14 @@ class WireUITestCase: XCTestCase {
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
         // need to change for Inbucket
         BackendContext.current = target
+    }
+
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
     }
 }

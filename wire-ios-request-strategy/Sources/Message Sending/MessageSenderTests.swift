@@ -736,6 +736,11 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.messageProtocol = .mls
             self.groupConversation.mlsStatus = .pendingJoinAfterReset
         }
+
+        let domain = await syncMOC.perform {
+            self.groupConversation.domain
+        }
+        let localDomain = try XCTUnwrap(domain)
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,
@@ -753,7 +758,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
-            .withMLServiceConfigured()
+            .withMLServiceConfigured(domain: localDomain)
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
@@ -894,7 +899,7 @@ final class MessageSenderTests: MessagingTestBase {
             encoding: .utf8
         ))
         arrangement.mlsService.commitPendingProposalsInSkipRetry_MockError = CoreCryptoError
-            .Mls(.MessageRejected(reason: errorString))
+            .Mls(mlsError: .MessageRejected(reason: errorString))
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
@@ -1038,11 +1043,12 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withMLServiceConfigured() -> Arrangement {
+        func withMLServiceConfigured(domain: String = "local.domain") -> Arrangement {
             coreDataStack.syncContext.performAndWait {
                 coreDataStack.syncContext.mlsService = mlsService
             }
             mlsService.commitPendingProposalsInSkipRetry_MockMethod = { _, _ in }
+            mlsService.underlyingLocalDomain = domain
             return self
         }
 

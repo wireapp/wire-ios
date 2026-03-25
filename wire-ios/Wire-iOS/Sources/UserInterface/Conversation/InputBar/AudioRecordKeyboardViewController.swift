@@ -85,7 +85,8 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             audioRecorder: AudioRecorder(
                 format: .wav,
                 maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize
+                maxFileSize: userSession.maxUploadFileSize,
+                userSession: userSession
             ),
             userSession: userSession
         )

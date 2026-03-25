@@ -63,7 +63,7 @@ extension SessionManager: CallKitManagerDelegate {
                 let userSession = try await withSession(for: account)
                 let conversation = try await fetchConversation(id: handle.conversationID, account: account)
                 await requestCallConfigIfNeeded(for: userSession)
-                await userSession.processPendingCallEvents()
+                await userSession.processPendingCallEvents(only: false)
 
                 WireLogger.calling.info("did process call events, returning conversation...")
                 completionHandler(.success(conversation))
@@ -109,6 +109,7 @@ extension SessionManager: CallKitManagerDelegate {
 
     // MARK: - Private helpers
 
+    @MainActor
     private func fetchConversation(id: UUID, account: Account) async throws -> ZMConversation {
         let userSession = try await withSession(for: account)
         guard let conversation = ZMConversation.fetch(with: id, in: userSession.managedObjectContext) else {

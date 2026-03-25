@@ -6405,6 +6405,10 @@ internal enum L10n {
         /// Website URL:
         internal static let websiteUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.website_url", fallback: "Website URL:")
       }
+      internal enum UserProfileQrFeatureFlag {
+        /// Using profile links or QR codes is not allowed in your team. Contact your admin
+        internal static let message = L10n.tr("Localizable", "url_action.user_profile_qr_feature_flag.message", fallback: "Using profile links or QR codes is not allowed in your team. Contact your admin")
+      }
     }
     internal enum UserCell {
       internal enum Title {

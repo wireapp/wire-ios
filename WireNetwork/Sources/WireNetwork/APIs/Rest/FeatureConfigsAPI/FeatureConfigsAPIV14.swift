@@ -60,6 +60,7 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
     let assetAuditLog: FeatureWithoutConfig
+    let simplifiedUserConnectionRequestQRCode: FeatureWithoutConfig
 
     // added in v14
     let cellsInternal: FeatureWithConfig<FeatureConfigResponse.CellsInternalV14>
@@ -145,6 +146,12 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
                 .toAPIModel()
         )
         featureConfigs.append(.consumableNotifications(consumableNotifications))
+
+        let simplifiedUserConnectionRequestQRCode = SimplifiedUserConnectionRequestQRCodeConfig(
+            status: simplifiedUserConnectionRequestQRCode.status
+                .toAPIModel()
+        )
+        featureConfigs.append(.simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCode))
 
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()

@@ -55,7 +55,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    var coreCrypto: SafeCoreCryptoProtocol {
+    var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -75,7 +75,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ) async throws -> Data {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try await coreCrypto.perform { try await $0.encryptMessage(
+            return try await coreCrypto.transaction { try await $0.encryptMessage(
                 conversationId: groupID.conversationId,
                 message: message
             ) }

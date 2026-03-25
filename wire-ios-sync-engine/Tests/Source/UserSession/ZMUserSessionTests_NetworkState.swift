@@ -40,9 +40,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
-        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let coreDataStack = try await createCoreDataStack()

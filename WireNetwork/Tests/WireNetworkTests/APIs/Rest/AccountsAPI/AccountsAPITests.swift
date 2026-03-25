@@ -58,10 +58,14 @@ final class AccountsAPITests: XCTestCase {
 
     func testUpgradeToTeam_Request_Generation_V7_Onwards() async throws {
         // Given
-        let apiVersions = APIVersion.v7.andNextVersions
+        let apiVersions =
+            APIVersion.v7.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "UpgradeToTeamSuccessResponse"), count: apiVersions.count)
+        )
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.upgradeToTeam(teamName: Scaffolding.teamName)
         }

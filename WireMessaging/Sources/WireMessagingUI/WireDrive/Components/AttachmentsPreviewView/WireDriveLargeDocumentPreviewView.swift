@@ -19,12 +19,14 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 struct WireDriveLargeDocumentPreviewView: View {
     private static let imageAspectRatio = CGFloat(8.0 / 3.0)
     private static let errorMessage = L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable
     private static let downloadErrorMessage = L10n.Localizable.Conversation.Message.Attachment.unableToDownload
     private static let loadingMessage = L10n.Localizable.Conversation.Message.Attachment.loadingContent
+    private static let previewCornerRadius = 10.0
 
     let headerIcon: Image
     let headerText: String
@@ -41,7 +43,7 @@ struct WireDriveLargeDocumentPreviewView: View {
             progressColor: downloadError
                 ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
-            VStack {
+            VStack(spacing: 0) {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
@@ -64,7 +66,7 @@ struct WireDriveLargeDocumentPreviewView: View {
                         }
                     }
                 }
-            }
+            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
@@ -94,7 +96,7 @@ struct WireDriveLargeDocumentPreviewView: View {
             .background(alignment: .top) {
                 content()
             }
-            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: Self.previewCornerRadius))
     }
 
     @ViewBuilder
@@ -126,7 +128,7 @@ struct WireDriveLargeDocumentPreviewView: View {
 
 #Preview {
     WireDriveLargeDocumentPreviewView(
-        headerIcon: Image(FileIcon.pdf.resource),
+        headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,

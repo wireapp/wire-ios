@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class UserLocalStoreTests: XCTestCase {
@@ -102,6 +103,8 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
             XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.isDeleted)
             XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
+            XCTAssertEqual(user.appInfo?.appDescription, "desc")
+            XCTAssertEqual(user.appInfo?.category, "cat")
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
@@ -396,6 +399,8 @@ final class UserLocalStoreTests: XCTestCase {
             isDeleted: false,
             email: "john.doe@example.com",
             expiresAt: .now,
+            appDescription: "desc",
+            appCategory: "cat",
             serviceID: nil,
             serviceProvider: nil,
             supportedProtocols: [.mls]

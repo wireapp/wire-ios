@@ -9,6 +9,11 @@
         "status": "enabled",
         "ttl": "unlimited"
     },
+    "apps": {
+      "lockStatus": "locked",
+      "status": "enabled",
+      "ttl": "unlimited"
+    },
     "assetAuditLog": {
         "lockStatus": "locked",
         "status": "enabled",
@@ -187,6 +192,11 @@
     "consumableNotifications": {
       "lockStatus": "locked",
       "status": "enabled",
+      "ttl": "unlimited"
+    },
+    "simplifiedUserConnectionRequestQRCode": {
+      "lockStatus": "locked",
+      "status": "disabled",
       "ttl": "unlimited"
     }
 }

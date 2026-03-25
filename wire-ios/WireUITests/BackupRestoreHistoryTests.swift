@@ -21,10 +21,9 @@ import XCTest
 
 final class BackupRestoreHistoryTests: WireUITestCase {
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8582
     @MainActor
-    func test_CreateBackupAndRestoreHistory() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(

@@ -64,7 +64,7 @@ package struct FilesViewItem: Identifiable, Hashable {
     let modifiedAt: Date?
 
     /// The icon representing the item's type.
-    let icon: FileIcon
+    let icon: WireDriveFileType
 
     /// The tags that users have added for that file.
     let tags: [String]
@@ -77,6 +77,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The name of the conversation the node is attached to.
     let conversationName: String?
+
+    /// The size of of this item
+    let size: UInt64?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -100,7 +103,6 @@ package final class FilesViewModel: ObservableObject {
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case create(view: CreateFileView)
-        case filters(view: FilesFiltersView)
         case versionHistory(view: FileVersioningView)
 
         var id: String {
@@ -115,8 +117,6 @@ package final class FilesViewModel: ObservableObject {
                 "create(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
-            case let .filters(view):
-                "filters(\(view.id))"
             case let .versionHistory(view):
                 "versionHistory(\(view.id))"
             }
@@ -172,7 +172,8 @@ package final class FilesViewModel: ObservableObject {
             createPublicLink: WireDriveCreatePublicLinkUseCase,
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
-            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
+            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
         ) {
 
             self.fetchNodes = fetchNodes
@@ -191,6 +192,7 @@ package final class FilesViewModel: ObservableObject {
             self.deletePublicLink = deletePublicLink
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
+            self.getDriveConversations = getDriveConversations
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -209,6 +211,7 @@ package final class FilesViewModel: ObservableObject {
         let deletePublicLink: WireDriveDeletePublicLinkUseCase
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+        let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -220,13 +223,13 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
+    private var sortingSelection: FilesSortingViewModel.SortingSelection = .default
 
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     var shouldReload: Bool = false
-    var filterWithTags: [String] = []
     let title: String?
     var showSearchBar: Bool {
         switch state {
@@ -254,6 +257,10 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
+    var shouldShowOfflineBar: Bool {
+        connectionState == .offline && !state.items.isEmpty
+    }
+
     enum ConnectionState {
         case offline
         case online
@@ -270,7 +277,15 @@ package final class FilesViewModel: ObservableObject {
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
+    @Published var conversations: [WireDriveConversation] = []
     @Published var connectionState: ConnectionState = .online
+    @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
+
+    private var selfUserID: String? {
+        conversations
+            .flatMap(\.participants)
+            .first(where: \.isSelfUser)?.id
+    }
 
     package init(
         useCases: UseCases,
@@ -304,6 +319,7 @@ package final class FilesViewModel: ObservableObject {
         bindSearch()
         bindNetworkConnection()
         fetchTemplates()
+        fetchConversations()
     }
 
     private func fetchTemplates() {
@@ -333,12 +349,24 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    private func fetchConversations() {
+        Task {
+            let allDriveConversations = await useCases.getDriveConversations.invoke()
+
+            if let cellName {
+                self.conversations = allDriveConversations.filter { $0.id == cellName }
+            } else {
+                self.conversations = allDriveConversations
+            }
+        }
+    }
+
     private func bindNetworkConnection() {
         NetworkMonitor.shared.statusPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
-                guard let self, !state.items.isEmpty else { return }
+                guard let self else { return }
 
                 switch status {
                 case .connected:
@@ -395,6 +423,7 @@ package final class FilesViewModel: ObservableObject {
     func itemViewModel(index: Int) -> FilesItemViewModel {
         FilesItemViewModel(
             item: state.items[index],
+            selectedSortingKey: sortingSelection.sortingKey,
             conversationName: isBrowsing ? state.items[index].conversationName : nil,
             localAssetRepository: localAssetRepository,
             onItemAction: { [weak self] action, item in
@@ -424,25 +453,6 @@ package final class FilesViewModel: ObservableObject {
             },
             isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
-        )
-    }
-
-    func openFilters() {
-        let filesFiltersViewModel = FilesFiltersViewModel(
-            fetchTagsUseCase: useCases.getTagSuggestions,
-            savedTags: filterWithTags,
-            accentColorProvider: accentColorProvider
-        )
-
-        filesFiltersViewModel.$savedTags
-            .sink { [weak self] tags in
-                guard let self else { return }
-                shouldReload = filterWithTags != tags
-                filterWithTags = tags
-            }.store(in: &subscriptions)
-
-        sheetNavigation = .filters(
-            view: FilesFiltersView(viewModel: filesFiltersViewModel)
         )
     }
 
@@ -639,7 +649,9 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
-            tags: filterWithTags,
+            metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
+            sortField: sortingSelection.sortingKey?.sortField,
+            sortDirDesc: sortingSelection.sortingOrder == .descending,
             offset: offset
         )
 
@@ -690,7 +702,8 @@ package final class FilesViewModel: ObservableObject {
             tags: node.tags,
             isEditable: node.isEditable,
             publicLinkID: node.publicLinkID?.string,
-            conversationName: node.conversation?.name
+            conversationName: node.conversation?.name,
+            size: node.size
         )
     }
 
@@ -815,6 +828,41 @@ package final class FilesViewModel: ObservableObject {
         return FileVersioningView(viewModel: viewModel)
     }
 
+    // MARK: - Sorting & Filtering
+
+    func makeFilesSortingViewModel() -> FilesSortingViewModel {
+        FilesSortingViewModel(
+            isBrowsing: isBrowsing,
+            subfolderName: navigationPath.last?.name
+        ) { [weak self] sortingSelection in
+            self?.sortingSelection = sortingSelection
+            Task { await self?.reload() }
+        }
+    }
+
+    func resetFilters() {
+        filtersSelection = .empty
+        sortingSelection = .default
+    }
+
+    func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
+        guard filters != filtersSelection else { return }
+        filtersSelection = filters
+        Task { await reload() }
+    }
+}
+
+private extension FilesSortingViewModel.SortingKey {
+    var sortField: String {
+        switch self {
+        case .date:
+            "mtime"
+        case .name:
+            "name"
+        case .size:
+            "size"
+        }
+    }
 }
 
 extension WireDriveFileTemplate.Kind {

@@ -1942,6 +1942,7 @@
 "url_action.confirm" = "Kinnita";
 "url_action.title" = "Kinnita see toiming";
 "url_action.connect_to_bot.message" = "Kas soovid teenusega ühenduda?";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";

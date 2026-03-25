@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -220,6 +221,7 @@ struct ShareLinkView: View {
                         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                 }
             }
+            .accessibilityIdentifier(Locators.WireDrive.ShareLinkPage.sharePassword.rawValue)
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
@@ -233,6 +235,7 @@ struct ShareLinkView: View {
                 ShareLink(item: Strings.ShareLink.sharedMessage(link.absoluteString)) {
                     shareLinkContent()
                 }
+                .accessibilityIdentifier(Locators.WireDrive.ShareLinkPage.shareLink.rawValue)
             } else {
                 shareLinkContent()
             }
@@ -307,7 +310,8 @@ struct ShareLinkView: View {
         tags: [],
         isEditable: false,
         publicLinkID: UUID().uuidString,
-        conversationName: "Conversation 1"
+        conversationName: "Conversation 1",
+        size: nil
     )
 
     let mockAPI = {

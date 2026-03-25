@@ -395,7 +395,8 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true {
+            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
+               conversationID.domain == mlsService.localDomain {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 
@@ -436,7 +437,7 @@ public final class MessageSender: MessageSenderInterface {
                     mlsService: mlsService
                 )
             } else {
-                throw CoreCryptoError.Mls(.MessageRejected(reason: reason))
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: reason))
             }
 
         }

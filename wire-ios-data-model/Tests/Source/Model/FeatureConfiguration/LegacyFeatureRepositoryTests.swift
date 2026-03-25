@@ -23,16 +23,7 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        deleteFeatureIfNeeded(name: .appLock)
-        deleteFeatureIfNeeded(name: .classifiedDomains)
-        deleteFeatureIfNeeded(name: .conferenceCalling)
-        deleteFeatureIfNeeded(name: .conversationGuestLinks)
-        deleteFeatureIfNeeded(name: .digitalSignature)
-        deleteFeatureIfNeeded(name: .fileSharing)
-        deleteFeatureIfNeeded(name: .mls)
-        deleteFeatureIfNeeded(name: .selfDeletingMessages)
-        deleteFeatureIfNeeded(name: .e2ei)
-        deleteFeatureIfNeeded(name: .consumableNotifications)
+        Feature.Name.allCases.forEach(deleteFeatureIfNeeded)
     }
 
     // MARK: - Helpers
@@ -992,7 +983,6 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }
 
 private extension Data {

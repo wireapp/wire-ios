@@ -23,6 +23,7 @@ import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
@@ -118,7 +119,7 @@ final class ConversationListViewController: UIViewController {
 
     weak var accountImageView: AccountImageView?
 
-    let networkStatusViewController = NetworkStatusViewController()
+    let networkStatusViewController: NetworkStatusViewController
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
 
     var mainSplitViewState: MainSplitViewState = .expanded {
@@ -198,6 +199,7 @@ final class ConversationListViewController: UIViewController {
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
+        self.networkStatusViewController = NetworkStatusViewController(userSession: viewModel.userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -445,7 +447,7 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-            ? ColorTheme.Backgrounds.backgroundVariant
+            ? ColorTheme.Backgrounds.chatBackground
             : ColorTheme.Backgrounds.surface
     }
 
@@ -601,7 +603,10 @@ final class ConversationListViewController: UIViewController {
 
     private func presentConnectUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, view controller is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)

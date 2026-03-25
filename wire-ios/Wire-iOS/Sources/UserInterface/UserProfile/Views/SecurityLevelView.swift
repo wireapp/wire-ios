@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class SecurityLevelView: UIView {
@@ -76,13 +77,15 @@ final class SecurityLevelView: UIView {
             levelText
         ].joined(separator: " ")
 
-        accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
+        accessibilityLabel = securityLevelLabel.text
+        accessibilityIdentifier = Locators.SecurityLevelView.classificationBanner.rawValue + classification
+            .accessibilitySuffix
     }
 
     func configure(
         with otherUsers: [UserType],
         conversationDomain: String?,
-        provider: SecurityClassificationProviding? = ZMUserSession.shared()
+        provider: SecurityClassificationProviding?
     ) {
         guard let classification = provider?.classification(
             users: otherUsers,

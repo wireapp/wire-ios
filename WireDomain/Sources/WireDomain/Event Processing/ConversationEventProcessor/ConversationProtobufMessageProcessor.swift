@@ -124,21 +124,19 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 buttonID: buttonAction.buttonID,
                 referenceMessageID: buttonAction.referenceMessageID,
                 in: conversation,
-                senderID: senderID.id
+                senderID: senderID.id,
+                ensureSenderIsSelfUser: true
             )
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
-            // [WPB-17921]: handling ButtonActionConfirmation is currently not needed.
-            // It might come back when we can send targeted messages using MLS.
-            #if false
-                await messageLocalStore.updateButtonStates(
-                    buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
-                    referenceMessageID: buttonActionConfirmation.referenceMessageID,
-                    in: conversation,
-                    senderID: senderID.id
-                )
-            #endif
+            await messageLocalStore.updateButtonStates(
+                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
+                referenceMessageID: buttonActionConfirmation.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id,
+                ensureSenderIsSelfUser: false // the assumption is that no real users, only apps send this event
+            )
 
         case let .edited(edited):
 

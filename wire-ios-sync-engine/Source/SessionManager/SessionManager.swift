@@ -71,6 +71,7 @@ public protocol SessionActivationObserver: AnyObject {
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
@@ -318,6 +319,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
+    private let defaultEnvironment: BackendEnvironment2
+
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             reachability.tearDown()
@@ -394,6 +397,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -450,6 +454,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delegate: delegate,
             application: application,
             dispatchGroup: dispatchGroup,
+            defaultEnvironment: defaultEnvironment,
             environment: environment,
             configuration: configuration,
             detector: detector,
@@ -513,6 +518,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -529,6 +535,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         logFilesProvider: LogFilesProviding
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
+        self.defaultEnvironment = defaultEnvironment
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
@@ -636,11 +643,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                 updateCurrentAccount(in: session.managedObjectContext)
                 session.application(application, didFinishLaunching: launchOptions)
             } else {
-                WireLogger.sessionManager.error("Failed to load session for selected account")
+                WireLogger.sessionManager.critical("Failed to load session for selected account")
             }
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: nil,
                 userSessionCanBeTornDown: nil
@@ -739,6 +747,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
         await withCheckedContinuation { continuation in
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error
             ) { [weak self] in
@@ -849,6 +858,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -866,6 +876,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
         delegate?.sessionManagerWillLogout(
+            accountID: account.userIdentifier,
             environment: environment,
             error: error
         ) { [weak self] in
@@ -906,6 +917,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
             delegate?.sessionManagerWillLogout(
+                accountID: account.userIdentifier,
                 environment: environment,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -934,9 +946,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
+            await session.triggerSync()
             delegate?.sessionManagerDidReportLockChange(forSession: session)
             performPostUnlockActionsIfPossible(for: session)
-
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
         } else {
@@ -986,6 +998,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     account: account,
                     accountManager: accountManager,
                     sharedContainerURL: sharedContainerURL,
+                    defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
                     minTLSVersion: minTLSVersion,
                     dispatchGroup: dispatchGroup,
@@ -1006,6 +1019,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
+
+                await userSession.start()
+
                 return userSession
 
             } catch {
@@ -1233,12 +1249,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         with coreDataStack: CoreDataStack,
         journal: Journal,
         logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession? {
+    ) async -> ZMUserSession? {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
         )
 
-        return authenticatedSessionFactory.session(
+        return await authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
@@ -1551,6 +1567,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             loginDelegate?.authenticationDidFail(error)
             return
         }
+
+        // The journal may have old values for the same user
+        // from a previous installation or login session.
+        var journal = Journal(
+            userID: account.userIdentifier,
+            storage: sharedUserDefaults
+        )
+        journal[.isInitialSyncRequired] = true
 
         accountManager.addAndSelect(account)
 

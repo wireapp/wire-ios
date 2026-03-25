@@ -28,7 +28,7 @@ import XCTest
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     var sut: MLSActionExecutor!
@@ -38,9 +38,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         super.setUp()
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
         mockCoreCryptoContext.e2eiIsEnabledCiphersuite_MockValue = false
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
 
         sut = MLSActionExecutor(
@@ -51,7 +52,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     override func tearDown() {
         mockCoreCryptoContext = nil
-        mockSafeCoreCrypto = nil
+        mockCoreCrypto = nil
         mockCoreCryptoProvider = nil
         cancellable = nil
         sut = nil
@@ -232,7 +233,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count,
             1
         )
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
     }
 
     func test_processWelcomeMessage_PublishesNewDistributionPoints() async throws {
@@ -281,7 +282,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count,
             1
         )
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 
     // MARK: - Add members
@@ -500,13 +501,13 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
         try await internalTest_decryptMessage_swallowsError(
-            CoreCryptoError.Mls(.BufferedFutureMessage)
+            CoreCryptoError.Mls(mlsError: .BufferedFutureMessage)
         )
     }
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withBufferedCommit() async throws {
         try await internalTest_decryptMessage_swallowsError(
-            CoreCryptoError.Mls(.BufferedCommit)
+            CoreCryptoError.Mls(mlsError: .BufferedCommit)
         )
     }
 
@@ -550,7 +551,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result?.message, decryptedMessage.message)
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
     }
 
     func test_decryptMessage_transcationIsNotCreatedWhenProvided() async throws {
@@ -576,6 +577,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result?.message, decryptedMessage.message)
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 }

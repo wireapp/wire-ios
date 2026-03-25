@@ -38,12 +38,12 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var accountIdentifier: UUID!
 
     // Lazy Proteus/CoreCrypto properties - only initialized when accessed
-    private var _coreCrypto: SafeCoreCrypto?
+    private var _coreCrypto: CoreCrypto?
     private var _proteusService: ProteusServiceInterface?
     private var _proteusClientSimulator: ProteusClientSimulator?
     private var _isProteusInitialized = false
 
-    var coreCrypto: SafeCoreCrypto {
+    var coreCrypto: CoreCrypto {
         get async throws {
             try await ensureProteusInitialized()
             return _coreCrypto!
@@ -117,6 +117,15 @@ class MessagingTestBase: ZMTBaseTest {
     }
 
     override func tearDown() async throws {
+        // Wait for all async tasks (WaitingGroupTask) to complete before tearing down
+        // This prevents tasks from accessing contexts after they've been torn down
+        if let syncGroup = syncMOC?.dispatchGroup {
+            _ = syncGroup.wait(forInterval: 2.0)
+        }
+        if let uiGroup = uiMOC?.dispatchGroup {
+            _ = uiGroup.wait(forInterval: 2.0)
+        }
+
         BackgroundActivityFactory.shared.activityManager = nil
 
         await syncMOC.perform { [syncMOC] in
@@ -131,7 +140,6 @@ class MessagingTestBase: ZMTBaseTest {
         // Only clean up Proteus if it was initialized
         if _isProteusInitialized {
             _proteusClientSimulator?.cleanup()
-            try _coreCrypto?.tearDown()
         }
 
         _proteusService = nil
@@ -565,7 +573,7 @@ extension MessagingTestBase {
         )
 
         // Initialize CoreCrypto (this calls proteusInit internally)
-        _coreCrypto = try await coreCryptoProvider.coreCrypto() as? SafeCoreCrypto
+        _coreCrypto = try await coreCryptoProvider.coreCrypto() as? CoreCrypto
 
         // Create ProteusService with the provider
         _proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)

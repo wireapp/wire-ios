@@ -41,11 +41,14 @@ private enum UserNotificationHandlingError: Error {
     case missingAccount
 }
 
+/// **note**: `UNUserNotificationCenterDelegate` methods are annotated as `@MainActor`. This seems to be an undocumented
+/// requirement. Without this annotation, the app may crash even with empty delegate method implementations.
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
 
     // Called by the OS when the app receives a notification while in the
     // foreground.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
@@ -53,22 +56,18 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // route to user session
         do {
             let userSession = try await loadSession(userInfo: notification.userInfo)
-            return await withCheckedContinuation { continuation in
-                userSession.userNotificationCenter(
-                    center,
-                    willPresent: notification,
-                    withCompletionHandler: { options in
-                        continuation.resume(returning: options)
-                    }
-                )
-            }
-        } catch {
-            WireLogger.notifications.error("Will present notification failed: \(error)")
+            return await userSession.userNotificationCenter(center, willPresent: notification)
+        } catch let error as NSError {
+            WireLogger.notifications.error(
+                "Will present notification failed: \(error.safeForLoggingDescription)",
+                attributes: .safePublic
+            )
             return []
         }
     }
 
     // Called when the user engages a notification action.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
@@ -78,17 +77,14 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // route to user session
         do {
             let userSession = try await loadSession(userInfo: response.notification.userInfo)
-            await withCheckedContinuation { continuation in
-                userSession.userNotificationCenter(
-                    center,
-                    didReceive: response,
-                    withCompletionHandler: {
-                        continuation.resume()
-                    }
-                )
-            }
-        } catch {
-            WireLogger.notifications.error("Did receive notification response failed: \(error)")
+            return await userSession.userNotificationCenter(center, didReceive: response)
+        } catch let error as NSError {
+            let errorString = error.safeForLoggingDescription
+            let responseString = response.safeForLoggingDescription
+            WireLogger.notifications.error(
+                "Did receive notification response failed: \(errorString), response: \(responseString)",
+                attributes: .safePublic
+            )
         }
     }
 
@@ -108,9 +104,10 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
     }
 
+    @MainActor
     func loadSession(userInfo: NotificationUserInfo) async throws -> ZMUserSession {
         guard let selfID = userInfo.selfUserID else {
-            WireLogger.notifications.critical("userInfo has no self ID")
+            WireLogger.notifications.error("userInfo has no self ID")
             throw UserNotificationHandlingError.missingSelfID
         }
         guard let account = accountManager.account(with: selfID) else {

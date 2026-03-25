@@ -33,6 +33,7 @@ final class UserSessionLoader {
     private let account: Account
     private let accountManager: AccountManager
     private let sharedContainerURL: URL
+    private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
     private let minTLSVersion: String?
     private let dispatchGroup: ZMSDispatchGroup
@@ -56,6 +57,7 @@ final class UserSessionLoader {
         account: Account,
         accountManager: AccountManager,
         sharedContainerURL: URL,
+        defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
         minTLSVersion: String?,
         dispatchGroup: ZMSDispatchGroup,
@@ -72,6 +74,7 @@ final class UserSessionLoader {
         self.account = account
         self.accountManager = accountManager
         self.sharedContainerURL = sharedContainerURL
+        self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
         self.minTLSVersion = minTLSVersion
         self.dispatchGroup = dispatchGroup
@@ -103,10 +106,21 @@ final class UserSessionLoader {
         }
 
         // Get the environment for this account.
-        let backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
+        var backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
             environment
         } else {
             try fetchBackendEnvironment()
+        }
+
+        // Update stored default environment if needed.
+        // See WPB-23624 for more info.
+        if backendEnvironment.environmentType == .default, journal[.isDefaultEnvironmentRefreshRequired] {
+            try backendStore.storeBackendEnvironment(
+                defaultEnvironment,
+                for: accountID
+            )
+            journal[.isDefaultEnvironmentRefreshRequired] = false
+            backendEnvironment = defaultEnvironment
         }
 
         // Update account metadata.
@@ -145,10 +159,25 @@ final class UserSessionLoader {
             isFederationEnabled: metadata.isFederationEnabled
         )
 
+        let contextStorage = LAContextStorage()
+
+        let earService = await EARService(
+            accountID: accountID,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
+
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
             metadata: metadata,
-            eventContext: coreDataStack.eventContext
+            eventContext: coreDataStack.eventContext,
+            earService: earService
         )
 
         // Load network stack.
@@ -167,12 +196,13 @@ final class UserSessionLoader {
         }
 
         // Check if this backend supports MLS.
-        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+        if let isBackendMLSEnabled = try await isBackendMLSEnabled(
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
-        )
-        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        ) {
+            journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        }
 
         // Create user session.
         let userSession = await createUserSession(
@@ -183,7 +213,9 @@ final class UserSessionLoader {
             blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack,
-            cookieStorage: cookieStorage
+            earService: earService,
+            cookieStorage: cookieStorage,
+            contextStorage: contextStorage
         )
 
         // Check if this build is blacklisted.
@@ -289,13 +321,8 @@ final class UserSessionLoader {
         // Get new metadata.
         let newMetadata: ResolvedBackendMetadata
         do {
-            let metadata = try await networkStack.resolvedBackendMetadata()
-            newMetadata = ResolvedBackendMetadata(
-                apiVersion: metadata.apiVersion,
-                domain: metadata.domain,
-                isFederationEnabled: metadata.isFederationEnabled
-            )
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch is URLError {
             // To allow offline browsing fallback to previous metadata if possible.
             if let prevMetadata {
                 newMetadata = prevMetadata
@@ -354,7 +381,8 @@ final class UserSessionLoader {
 
     private func enableSyncV2IfNeeded(
         metadata: ResolvedBackendMetadata,
-        eventContext: NSManagedObjectContext
+        eventContext: NSManagedObjectContext,
+        earService: EARServiceInterface
     ) async throws {
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         let shouldEnable = !isAlreadyEnabled
@@ -371,15 +399,16 @@ final class UserSessionLoader {
 
         let migrator = UpdateEventMigrator(
             dao: dao,
-            localDomain: metadata.domain
+            localDomain: metadata.domain,
+            earService: earService
         )
 
         do {
             if try await migrator.isMigrationNeeded() {
                 try await migrator.migrateLegacyUpdateEvents()
-                // Since we only migrate some events, we require an
-                // initial sync to ensure we didn't miss updates.
-                journal[.isInitialSyncRequired] = true
+                // Since we only migrate some events, we require a
+                // resources sync to ensure we didn't miss updates.
+                journal[.isResourcesSyncRequired] = true
             } else {
                 WireLogger.sync.debug("no migration needed")
             }
@@ -401,7 +430,9 @@ final class UserSessionLoader {
         blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
-        cookieStorage: CookieStorage
+        earService: EARServiceInterface,
+        cookieStorage: CookieStorage,
+        contextStorage: LAContextStorage
     ) async -> ZMUserSession {
         let selfClientID = await coreDataStack.viewContext.perform {
             ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
@@ -440,8 +471,6 @@ final class UserSessionLoader {
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
 
-        let contextStorage = LAContextStorage()
-
         let appLock = AppLockController(
             userId: accountID,
             selfUser: selfUser,
@@ -463,17 +492,6 @@ final class UserSessionLoader {
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: accountID,
             sharedUserDefaults: sharedUserDefaults
-        )
-
-        let earService = EARService(
-            accountID: accountID,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext
-            ],
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
@@ -571,7 +589,7 @@ final class UserSessionLoader {
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
-    ) async throws -> Bool {
+    ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
                 clientID: nil,
@@ -586,13 +604,11 @@ final class UserSessionLoader {
             let api = MLSAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
             let keys = try await api.getBackendMLSPublicKeys()
             return keys.removal.isValid
-        } catch
-        URLError.notConnectedToInternet,
-            URLError.networkConnectionLost,
+        } catch is URLError,
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
-            return false
+            return nil
         }
     }
 
@@ -643,20 +659,14 @@ final class UserSessionLoader {
         }
 
         // Perform consumable notifications migration.
-        var shouldTriggerSync = true
         do {
             try await userSession.migrateToConsumableNotificationsIfNeeded()
         } catch ZMUserSessionError.selfClientNotReady {
             // We skip trigger sync, because in this case (fresh login),
             // we don't have a registered client yet, so no consumable capability
             WireLogger.sync.warn("No consumable-notifications migrator available")
-            shouldTriggerSync = false
         } catch {
             throw Failure.failedToMigrationToConsumableNotifications(error)
-        }
-
-        if shouldTriggerSync {
-            await userSession.triggerSync()
         }
     }
 

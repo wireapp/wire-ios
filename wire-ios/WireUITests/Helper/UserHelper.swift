@@ -27,6 +27,9 @@ struct Member {
 }
 
 class UserHelper {
+    private let httpClient = HttpClient()
+
+    let backendURL: URL
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
@@ -42,11 +45,15 @@ class UserHelper {
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!) {
+    init(
+        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
+        environment: BackendEnvironment = BackendContext.backendEnvironment
+    ) {
         self.apiVersion = apiVersion
+        self.backendURL = environment.url
         self.createdUsers = []
         self.networkStack = NetworkStack(
-            backendEnvironment: BackendContext.backendEnvironment,
+            backendEnvironment: environment,
             minTLSVersion: .v1_2,
             cookieEncryptionKey: Data(),
             authenticationManager: authenticationManager
@@ -76,6 +83,12 @@ class UserHelper {
         case .anta:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
                 fatalError("Missing BASIC_AUTH_ANTA environment variable")
+            }
+            return auth
+
+        case .bella:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
+                fatalError("Missing BASIC_AUTH_BELLA environment variable")
             }
             return auth
         }
@@ -148,7 +161,7 @@ class UserHelper {
     /// - Returns: qualifiedIds Object
     func getConversationIds() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs
@@ -176,6 +189,10 @@ class UserHelper {
         return response.teamId
     }
 
+    func getVerificationCode(user: UserInfo) async throws -> String {
+        try await InbucketClient.getVerificationCode(email: user.email)
+    }
+
     /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
@@ -198,6 +215,7 @@ class UserHelper {
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
@@ -246,6 +264,45 @@ class UserHelper {
         return accessToken
     }
 
+    /// Disable GDPR consent popup
+    /// - Parameter user: userInfo
+    func disableConsentPopup(for user: UserInfo) async throws {
+
+        let baseURL = BackendContext.backendEnvironment.url
+        let versionedURL = baseURL
+            .appendingPathComponent(String(describing: apiVersion))
+            .appendingPathComponent("properties")
+            .appendingPathComponent("webapp")
+
+        let accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        let body: [String: Any] = [
+            "settings": [
+                "privacy": [
+                    "improve_wire": false,
+                    "marketing_consent": false,
+                    "telemetry_data_sharing": false
+                ]
+            ]
+        ]
+
+        let jsonBody = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        let (_, response) = try await httpClient.send(
+            url: versionedURL,
+            method: .put,
+            body: jsonBody,
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
+            ]
+        )
+        guard response.statusCode == 200 else {
+            throw RuntimeError("disableConsentPopup failed with code \(response.statusCode)")
+        }
+    }
+
     /// Register user in team as member
     /// - Parameters:
     ///   - ownerAccessToken: ownerAccessToken
@@ -267,7 +324,8 @@ class UserHelper {
 
         let invitationCode = try await authenticationAPI.getInvitationCode(
             teamID: teamID,
-            invitationID: invitationID
+            invitationID: invitationID,
+            basicAuth: basicAuth()
         )
 
         let qualifiedID = try await authenticationAPI.registerTeamMember(
@@ -280,12 +338,53 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
+    func registerUsersAsTeamMemberWithUserHandleSet(
+        ownerAccessToken: String,
+        teamID: UUID
+    ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
+
+        let teamMember = UserGenerator.generateUniqueUserInfo()
+
+        let invitationID = try await teamsAPI.inviteMemberToTeam(
+            access_token: ownerAccessToken,
+            teamID: teamID,
+            memberName: teamMember.name,
+            memberEmail: teamMember.email
+        )
+
+        let invitationCode = try await authenticationAPI.getInvitationCode(
+            teamID: teamID,
+            invitationID: invitationID,
+            basicAuth: basicAuth()
+        )
+
+        let qualifiedID = try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
+            invitationCode: invitationCode
+        )
+
+        // get access token
+        authenticationManager.accessToken = try await fetchAccessToken(
+            email: teamMember.email,
+            password: teamMember.password
+        )
+
+        // Set handle
+        try await selfUserAPI.updateHandle(handle: teamMember.username)
+
+        createdUsers.append(teamMember)
+
+        return (qualifiedID, teamMember)
+    }
+
     /// fetch qualified id from conversations
     /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs
@@ -295,7 +394,7 @@ class UserHelper {
     /// - Parameter criteria: pass the criteria to filter conversations
     /// - Returns: conversation UUID and domain info
     func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (conversationID: UUID?, domain: String?) {
+        -> (conversationID: UUID, domain: String?) {
         let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
@@ -309,10 +408,10 @@ class UserHelper {
             }
         }
 
-        if let match = filtered.first {
-            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        if let match = filtered.first, let id = match.qualifiedID?.id {
+            return (id, match.qualifiedID?.domain)
         }
-        return (nil, nil)
+        throw RuntimeError("getConversationId: no matching conversation found")
     }
 
     /// Create group conversation
@@ -333,6 +432,42 @@ class UserHelper {
             qualifiedUserIDs: qualifiedIds,
             unqualifiedUserIDs: [],
             name: groupName,
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
+            legacyAccessRole: nil,
+            teamID: owner.teamID,
+            isReadReceiptsEnabled: true
+        )
+
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: owner.email,
+            password: owner.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+
+        _ = try await conversationsAPI.createGroupConversation(parameters: params)
+    }
+
+    /// Create channel conversation
+    /// - Parameters:
+    ///   - qualifiedIds: qualifiedIds for members of the channel
+    ///   - owner: group owner
+    ///   - groupName: groupName
+    func createChannelConversations(
+        qualifiedIds: [QualifiedID],
+        owner: UserInfo,
+        channelName: String
+    ) async throws {
+
+        let params = CreateGroupConversationParameters(
+            groupType: .channel,
+            messageProtocol: .mls,
+            creatorClientID: "deprecated",
+            qualifiedUserIDs: qualifiedIds,
+            unqualifiedUserIDs: [],
+            name: channelName,
             accessMode: [.invite, .code],
             accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
@@ -377,6 +512,94 @@ class UserHelper {
         return [teamMember1.name, teamMember2.name]
     }
 
+    /// Registers a team with a given number of members and optionally creates a group or channel conversation
+    /// - Parameters:
+    ///   - memberCount: count of members
+    ///   - conversation: optional group or channel conversation to create
+    /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
+    func registerTeam(
+        withMemberCount memberCount: Int,
+        conversation: CreateConversationOption? = nil
+    ) async throws
+        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
+
+        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        guard let teamID = teamOwner.teamID else {
+            throw RuntimeError("registerTeam: teamOwner.teamID is nil")
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        var qualifiedIDs: [QualifiedID] = []
+        qualifiedIDs.reserveCapacity(memberCount)
+
+        var teamMembers: [UserInfo] = []
+        teamMembers.reserveCapacity(memberCount)
+
+        for _ in 0 ..< memberCount {
+            let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
+                ownerAccessToken: ownerAccessToken.token,
+                teamID: teamID
+            )
+            qualifiedIDs.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        // if conversation creation is requested
+        var conversationId: UUID?
+        if let conversation {
+            switch conversation {
+            case let .group(name):
+                try await createGroupConversations(
+                    qualifiedIds: qualifiedIDs,
+                    owner: teamOwner,
+                    groupName: name
+                )
+
+                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                conversationId = resolvedConversationId
+
+            case let .channel(name):
+                // unlock and enable Channels
+                let backOffice = BackOffice(backendURL: backendURL)
+                let basicAuth = basicAuth()
+                try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+                try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+
+                try await createChannelConversations(
+                    qualifiedIds: qualifiedIDs,
+                    owner: teamOwner,
+                    channelName: name
+                )
+
+                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                conversationId = resolvedConversationId
+            }
+        }
+
+        // unlock and enable ConferenceCalling
+        let backOffice = BackOffice(backendURL: backendURL)
+        try await backOffice.unlockConferenceCallingFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
+        try await backOffice.enableConferenceCallingFeature(
+            teamId: teamID.uuidString,
+            basicAuth: basicAuth()
+        )
+
+        return (
+            teamOwner: teamOwner,
+            teamMembers: teamMembers,
+            qualifiedIDs: qualifiedIDs,
+            conversationId: conversationId
+        )
+    }
+
+    /// Send connection request
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userId: userId info
     func sendConnectionRequestToUser(
         domain: String,
         userId: String
@@ -406,11 +629,32 @@ class UserHelper {
 
         try await connectionsAPI.acceptConnectionRequest(domain: domain, userId: userId)
     }
+
+    /// Unlock and Enable Drive feature
+    /// - Parameter teamID: teamID where this needs to be enabled
+    func unlockAndEnableDriveFeature(teamID: UUID) async throws {
+        let backOffice = BackOffice(backendURL: backendURL)
+        let basicAuth = basicAuth()
+        try await backOffice.getCellsInternal(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.unlockCellsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enableCellsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
+
+    /// Unlock and Enable Channel feature
+    /// - Parameter teamID: teamID where this needs to be enabled
+    func unlockAndEnableChannelFeature(teamID: UUID) async throws {
+        let backOffice = BackOffice(backendURL: backendURL)
+        let basicAuth = basicAuth()
+        try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
 }
 
 extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
     static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
+    static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
+
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
         webSocketURL: URL(string: backendURL)!,
@@ -426,6 +670,19 @@ extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+
+    static let bella = BackendEnvironment(
+        url: URL(string: backendURLBella)!,
+        webSocketURL: URL(string: backendURLBella)!,
+        blacklistURL: URL(string: backendURLBella)!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+}
+
+enum CreateConversationOption {
+    case group(String)
+    case channel(String)
 }
 
 enum FilterConversationsByCriteria {

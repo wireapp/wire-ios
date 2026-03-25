@@ -52,7 +52,7 @@ final class SelfProfileViewController: UIViewController {
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
     private var profileLayoutGuideBannerTopConstraint = NSLayoutConstraint()
     private let profileHeaderViewController: ProfileHeaderViewController
-    private let profileImagePicker = ProfileImagePickerManager()
+    private let profileImagePicker: ProfileImagePickerManager
     private var teamMigrationBanner: UIViewController?
 
     private let accountSelector: AccountSelector?
@@ -96,7 +96,8 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
             localDomain: userSession.resolvedBackendMetadata.domain,
-            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
@@ -119,6 +120,7 @@ final class SelfProfileViewController: UIViewController {
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
+        self.profileImagePicker = ProfileImagePickerManager(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {

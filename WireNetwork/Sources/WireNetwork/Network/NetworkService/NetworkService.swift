@@ -31,7 +31,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
     let baseURL: URL
     private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
-    private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
+    private let webSocketStore = WebSocketStore()
 
     public init(
         baseURL: URL,
@@ -97,7 +97,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         return (data, httpURLResponse)
     }
 
-    func executeWebSocketRequest(_ request: URLRequest) throws -> WebSocket {
+    func executeWebSocketRequest(_ request: URLRequest) async throws -> WebSocket {
         guard let urlSession else {
             throw NetworkServiceError.serviceNotConfigured
         }
@@ -114,7 +114,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
 
         let task = urlSession.webSocketTask(with: request)
         let webSocket = WebSocket(connection: task)
-        webSocketsByTask[task] = webSocket
+        await webSocketStore.store(webSocket, for: task)
         return webSocket
     }
 
@@ -144,8 +144,8 @@ extension NetworkService: URLSessionWebSocketDelegate {
                 "web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")"
             )
         Task {
-            await webSocketsByTask[webSocketTask]?.close()
-            webSocketsByTask[webSocketTask] = nil
+            await webSocketStore.retrieve(for: webSocketTask)?.close()
+            await webSocketStore.remove(for: webSocketTask)
         }
     }
 
@@ -191,4 +191,23 @@ extension NetworkService: URLSessionTaskDelegate {
         }
     }
 
+}
+
+// MARK: - WebSocketStore
+
+/// Actor to manage web socket state safely across concurrent access
+private actor WebSocketStore {
+    private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
+
+    func store(_ webSocket: WebSocket, for task: URLSessionWebSocketTask) {
+        webSocketsByTask[task] = webSocket
+    }
+
+    func retrieve(for task: URLSessionWebSocketTask) -> WebSocket? {
+        webSocketsByTask[task]
+    }
+
+    func remove(for task: URLSessionWebSocketTask) {
+        webSocketsByTask[task] = nil
+    }
 }

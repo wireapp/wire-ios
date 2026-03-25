@@ -21,9 +21,8 @@ import XCTest
 
 final class TeamManageTests: WireUITestCase {
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1299/tc/8625
     @MainActor
-    func test_Migrate_PersonalUserToTeam() async throws {
+    func testMigratePersonalUserToTeam_TC_9452() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
@@ -42,9 +41,8 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
-    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1287/tc/8800
     @MainActor
-    func test_PersonalUser_InvitedToTeam() async throws {
+    func testPersonalUserInvitedToTeam_TC_9453() async throws {
         let teamOwner = try await userHelper.createPersonalUser()
         let teamID = try await userHelper.upgradePersonalToTeam(
             teamName: teamOwner.teamName
@@ -75,11 +73,10 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
-    ///  testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8579
     @MainActor
-    func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
+    func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -105,11 +102,10 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1302/tc/8656
     @MainActor
-    func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
+    func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
@@ -165,10 +161,9 @@ final class TeamManageTests: WireUITestCase {
     }
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
-    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
     @MainActor
-    func test_ArchivedConversationUnarchivesWhenOpened() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
@@ -190,5 +185,44 @@ final class TeamManageTests: WireUITestCase {
             .openArchived()
 
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
+    }
+
+    @MainActor
+    func testMentionUserInGroup_TC_8865() async throws {
+
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 4,
+                conversation: .group(UserGenerator.generateRandomConversationName())
+            )
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+            .mentionUserAndSendMessage(nameOfUser: teamMembers[1].name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamMembers[1].name)
+
+        XCTAssertEqual(
+            conversationPage.mentionStatus.value as? String,
+            "You are mentioned",
+            "'@' value not found in conversation cell"
+        )
+
+        let activeConversationPage = try conversationPage.openConversation()
+
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertTrue(
+            fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
+            "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
+        )
     }
 }

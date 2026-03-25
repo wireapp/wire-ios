@@ -22,7 +22,7 @@ package import Foundation
 package protocol DraftsRepositoryProtocol: Sendable {
 
     func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
+    func publishAll(for cellName: String) async throws -> [WireDriveDraft]
     func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
     func addDraft(_ draft: WireDriveDraft, for cellName: String) async
     func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?

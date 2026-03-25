@@ -115,6 +115,7 @@ package struct ConversationTypePicker: View {
                 chevronView()
             }
         })
+        .accessibilityIdentifier(Locators.NewConversationPage.createNewChannelButton.rawValue)
     }
 
     func groupItem() -> some View {

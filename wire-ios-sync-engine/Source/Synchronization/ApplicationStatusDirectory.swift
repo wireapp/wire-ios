@@ -85,7 +85,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         switch operationStatus.operationState {
         case .foreground:
             .foreground
-        case .background, .backgroundCall, .backgroundFetch, .backgroundTask:
+        case .background, .backgroundCall, .backgroundTask:
             .background
         }
     }
