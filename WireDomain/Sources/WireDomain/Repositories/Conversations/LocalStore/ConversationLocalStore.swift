@@ -1162,20 +1162,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
 
         await context.perform { [self] in
-            if isInitialFetch {
-                // we just got a new conversation, we display new conversation header
-                localConversation.appendNewConversationSystemMessage(
-                    at: .distantPast,
-                    users: localConversation.localParticipants
-                )
-
-                // Slow synced conversations should be considered read from the start
-                localConversation.lastReadServerTimeStamp = localConversation.lastModifiedDate
-
-                Flow.createGroup.checkpoint(
-                    description: "new system message for conversation inserted"
-                )
-            }
 
             // If we discover this group is actually a fake one on one,
             // then we should link the one on one user.

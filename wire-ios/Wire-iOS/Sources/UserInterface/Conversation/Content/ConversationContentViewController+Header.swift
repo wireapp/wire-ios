@@ -21,9 +21,7 @@ import WireSyncEngine
 
 extension ConversationContentViewController {
     func updateTableViewHeaderView() {
-        guard let userSession = userSession as? ZMUserSession,
-              dataSource.hasOlderMessagesToLoad == false ||
-              conversation.conversationType == .connection else {
+        guard let userSession = ZMUserSession.shared()  else {
             // Don't display the conversation header if the message window doesn't include the first message and it is
             // not a connection
             return
@@ -37,12 +35,15 @@ extension ConversationContentViewController {
             conversation.firstActiveParticipantOtherThanSelf
         }
 
-        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
-            .conversationType == .oneOnOne
+        let connectionOrOneOnOne = [.connection, .oneOnOne /* , .group */ ]
+            .contains(where: { $0 == conversation.conversationType })
 
         if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
             headerView = connectionViewController?.view
+        } else {
+            noUserConnectionViewController = NoUserConnectionViewController(userSession: userSession)
+            headerView = noUserConnectionViewController?.view
         }
 
         if let headerView {
