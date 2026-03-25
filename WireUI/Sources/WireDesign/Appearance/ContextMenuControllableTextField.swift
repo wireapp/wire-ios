@@ -72,19 +72,22 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
     private let isSecureTextEntry: Bool
     private let placeholderColor: Color?
     private let isContextMenuAllowed: Bool
+    private let textAlignment: NSTextAlignment
 
     public init(
         text: Binding<String>,
         placeholder: String,
         isSecureTextEntry: Bool = false,
         placeholderColor: Color? = nil,
-        isContextMenuAllowed: Bool
+        isContextMenuAllowed: Bool,
+        textAlignment: NSTextAlignment = .natural
     ) {
         self._text = text
         self.placeholder = placeholder
         self.isSecureTextEntry = isSecureTextEntry
         self.placeholderColor = placeholderColor
         self.isContextMenuAllowed = isContextMenuAllowed
+        self.textAlignment = textAlignment
     }
 
     public func makeUIView(context: Context) -> UITextField {
@@ -97,6 +100,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textField.text = text
         textField.autocorrectionType = .no
         textField.adjustsFontForContentSizeCategory = true
+        textField.textAlignment = textAlignment
         textField.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
         if isSecureTextEntry {
             textField.isSecureTextEntry = true
