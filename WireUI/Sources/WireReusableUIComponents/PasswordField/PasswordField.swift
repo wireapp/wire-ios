@@ -65,10 +65,9 @@ public struct PasswordField: View {
                         text: $password,
                         placeholder: placeholder,
                         isSecureTextEntry: false,
-                        isContextMenuAllowed: isClipboardEnabled
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
                     )
-                    .autocorrectionDisabled()
-                    .textContentType(.password)
                     .font(for: .body1)
                     .frame(height: fieldHeight)
                     .focused($isFocused)
@@ -77,10 +76,9 @@ public struct PasswordField: View {
                         text: $password,
                         placeholder: placeholder,
                         isSecureTextEntry: true,
-                        isContextMenuAllowed: isClipboardEnabled
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
                     )
-                    .autocorrectionDisabled()
-                    .textContentType(.password)
                     .frame(height: fieldHeight)
                     .focused($isFocused)
                 }

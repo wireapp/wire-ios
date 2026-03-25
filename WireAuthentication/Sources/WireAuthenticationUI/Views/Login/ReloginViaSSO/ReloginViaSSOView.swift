@@ -99,11 +99,10 @@ package struct ReloginViaSSOView: View {
         LabeledTextField(
             placeholder: Strings.InputCode.placeholder,
             title: Strings.InputCode.title,
-            string: $viewModel.rawSSOCode
+            string: $viewModel.rawSSOCode,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
     }
 
     @ViewBuilder private var submitButton: some View {

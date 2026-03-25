@@ -111,7 +111,8 @@ package struct VerificationCodeView: View {
                     text: $viewModel.code[index],
                     placeholder: "",
                     isContextMenuAllowed: isClipboardEnabled,
-                    textAlignment: .center
+                    textAlignment: .center,
+                    keyboardType: .numberPad
                 )
                 .frame(width: 50, height: 50)
                 .background(
@@ -122,7 +123,6 @@ package struct VerificationCodeView: View {
                         )
                 )
                 .font(for: .h2)
-                .keyboardType(.numberPad)
                 .foregroundColor(.primary)
                 .focused($focusedIndex, equals: index)
                 .onChange(of: viewModel.code[index]) { newValue in
