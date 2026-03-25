@@ -33,7 +33,6 @@ public final class NetworkService: NetworkServiceProtocol {
 
     private let urlSession: URLSession
     private let webSocketStore: WebSocketStore
-    private let sessionDelegate: NetworkServiceSessionDelegate
 
     public init(
         baseURL: URL,
@@ -59,13 +58,13 @@ public final class NetworkService: NetworkServiceProtocol {
         }
 
         let webSocketStore = WebSocketStore()
+        self.webSocketStore = webSocketStore
+
         let delegate = NetworkServiceSessionDelegate(
             serverTrustValidator: serverTrustValidator,
             webSocketStore: webSocketStore
         )
-        self.sessionDelegate = delegate
         self.urlSession = URLSession(configuration: configuration, delegate: delegate, delegateQueue: .none)
-        self.webSocketStore = webSocketStore
     }
 
     deinit {
