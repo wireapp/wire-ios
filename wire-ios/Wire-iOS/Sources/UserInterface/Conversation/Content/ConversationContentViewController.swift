@@ -275,7 +275,7 @@ final class ConversationContentViewController: UIViewController {
             self,
             selector: #selector(clearedContent),
             name: .clearContentNotification,
-            object: userSession.contextProvider.viewContext.notificationContext
+            object: userSession.notificationContext
         )
 
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
