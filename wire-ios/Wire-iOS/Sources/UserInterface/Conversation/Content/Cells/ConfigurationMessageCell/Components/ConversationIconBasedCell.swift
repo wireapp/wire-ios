@@ -144,10 +144,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
                 equalTo: trailingAnchor
             )
         } else {
-            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: 5.0
-            )
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
             containerWidthConstraint = imageContainer.widthAnchor
                 .constraint(equalToConstant: conversationHorizontalMargins.left)
             textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
