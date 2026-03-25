@@ -151,6 +151,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        currentConfiguration = object
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = 0
         paragraphStyle.lineSpacing = 3
