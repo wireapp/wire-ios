@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 public import Foundation
+
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol NetworkServiceProtocol: Sendable {
@@ -26,7 +27,7 @@ public protocol NetworkServiceProtocol: Sendable {
 
 }
 
-public final class NetworkService: NetworkServiceProtocol, Sendable {
+public final class NetworkService: NetworkServiceProtocol {
 
     let baseURL: URL
 
