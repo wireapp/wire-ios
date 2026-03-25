@@ -30,6 +30,8 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
 
     override func setUpWithError() throws {
 
+        mockDateProvider = .init()
+        mockDateProvider.now = .now
         webSocketStore = .init()
         session = .mockURLSession()
 
@@ -50,6 +52,7 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
         sut = nil
         session = nil
         webSocketStore = nil
+        mockDateProvider = nil
     }
 
     // MARK: - URLAuthenticationChallenge
