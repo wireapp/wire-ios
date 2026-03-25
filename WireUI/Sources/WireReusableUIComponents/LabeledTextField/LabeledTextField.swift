@@ -28,6 +28,7 @@ public struct LabeledTextField: View {
     private let placeholder: String?
     private let title: String?
 
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState var isFocused: Bool
     @Binding private var string: String
 
@@ -57,11 +58,15 @@ public struct LabeledTextField: View {
                 .font(for: .h4)
             }
             HStack(spacing: 0) {
-                TextField(placeholder ?? "", text: $string)
-                    .font(for: .body1)
-                    .focused($isFocused)
-                    .foregroundStyle(labelColor)
-                    .frame(height: fieldHeight)
+                ContextMenuControllableTextField(
+                    text: $string,
+                    placeholder: placeholder ?? "",
+                    isContextMenuAllowed: isClipboardEnabled
+                )
+                .font(for: .body1)
+                .focused($isFocused)
+                .foregroundStyle(labelColor)
+                .frame(height: fieldHeight)
                 if !string.isEmpty, isEnabled {
                     Button(action: {
                         string = ""
