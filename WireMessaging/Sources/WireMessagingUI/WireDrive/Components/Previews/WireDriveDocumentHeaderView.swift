@@ -33,6 +33,7 @@ struct WireDriveDocumentHeaderView: View {
     let labelText: String
     let progress: Double?
     let isError: Bool
+    var minHeight: CGFloat?
 
     var body: some View {
         header()
@@ -70,6 +71,7 @@ struct WireDriveDocumentHeaderView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.horizontal, .bottom], 8)
         }
+        .frame(minHeight: minHeight)
     }
 }
 
@@ -80,7 +82,8 @@ struct WireDriveDocumentHeaderView: View {
             headerText: "PDF (336 KB)",
             labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
             progress: 0.7,
-            isError: false
+            isError: false,
+            minHeight: nil
         )
         .frame(width: 222)
         .background(.background)

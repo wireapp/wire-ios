@@ -36,6 +36,7 @@ struct WireDriveDocumentAttachmentPreview: View {
     let labelText: String
     let progress: Double?
     let isError: Bool
+    var minHeight: CGFloat?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -50,6 +51,7 @@ struct WireDriveDocumentAttachmentPreview: View {
                 labelText: labelText,
                 progress: progress,
                 isError: isError,
+                minHeight: minHeight
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
@@ -63,7 +65,8 @@ struct WireDriveDocumentAttachmentPreview: View {
             headerText: "PDF (336 KB)",
             labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
             progress: 0.7,
-            isError: false
+            isError: false,
+            minHeight: nil
         )
         .frame(width: 222)
     }
