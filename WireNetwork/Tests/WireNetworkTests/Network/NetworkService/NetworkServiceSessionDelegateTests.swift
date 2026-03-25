@@ -31,7 +31,7 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
     override func setUpWithError() throws {
 
         mockDateProvider = .init()
-        mockDateProvider.now = .now
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
         webSocketStore = .init()
         session = .mockURLSession()
 
