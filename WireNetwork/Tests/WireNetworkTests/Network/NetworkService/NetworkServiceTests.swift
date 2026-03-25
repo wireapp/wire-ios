@@ -164,28 +164,4 @@ private enum Scaffolding {
         URLCredential(user: "user", password: "password", persistence: .none)
     }
 
-    static func makeAuthenticationChallenge(
-        authenticationMethod: String,
-        serverTrust: SecTrust
-    ) throws -> URLAuthenticationChallenge {
-        let protectionSpace = MockURLProtectionSpace(
-            host: "prod-nginz-https.wire.com",
-            port: 8080,
-            protocol: nil,
-            realm: nil,
-            authenticationMethod: authenticationMethod
-        )
-
-        protectionSpace.mockServerTrust = serverTrust
-
-        return URLAuthenticationChallenge(
-            protectionSpace: protectionSpace,
-            proposedCredential: Scaffolding.makeCredential(),
-            previousFailureCount: 0,
-            failureResponse: nil,
-            error: nil,
-            sender: MockURLAuthenticationChallengeSender()
-        )
-    }
-
 }

@@ -186,12 +186,6 @@ private enum Scaffolding {
         .withAcceptType(.json)
         .build()
 
-    static let invalidRequest: URLRequest = {
-        var request = getRequest
-        request.url = nil
-        return request
-    }()
-
     static func makeCredential() -> URLCredential {
         URLCredential(user: "user", password: "password", persistence: .none)
     }
