@@ -18,15 +18,20 @@
 import WireDataModel
 
 // sourcery: AutoMockable
-/// Calculates the supported protocols.
+/// Clear content of a conversation
 public protocol ClearConversationContentUseCaseProtocol {
     func invoke() async
 }
 
 public struct ClearConversationContentUseCase: ClearConversationContentUseCaseProtocol {
 
-    var conversationID: WireDataModel.QualifiedID
-    var syncContext: NSManagedObjectContext
+    private var conversationID: WireDataModel.QualifiedID
+    private var syncContext: NSManagedObjectContext
+
+    init(conversationID: WireDataModel.QualifiedID, syncContext: NSManagedObjectContext) {
+        self.conversationID = conversationID
+        self.syncContext = syncContext
+    }
 
     public func invoke() async {
         await syncContext.perform { [syncContext] in
