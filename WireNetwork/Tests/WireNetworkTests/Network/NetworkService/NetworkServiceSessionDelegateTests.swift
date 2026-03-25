@@ -122,36 +122,19 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
         // where concurrent access to webSocketsByTask causes memory corruption
 
         let iterations = 100
+        guard let session, let webSocketStore, let sut else { return XCTFail() }
 
         // Create multiple web socket requests concurrently
         await withTaskGroup(of: Void.self) { group in
             for i in 0 ..< iterations {
                 // Simulate executeWebSocketRequest (writes to dictionary)
-                group.addTask {
+                group.addTask { [webSocketStore] in
                     do {
-                        let request = try URLRequestBuilder(path: "/websocket-\(i)")
-                            .withMethod(.get)
-                            .build()
-
-                        let baseURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-                        func executeWebSocketRequest(_ request: URLRequest) async throws -> WebSocket {
-                            guard let url = request.url else {
-                                throw NetworkServiceError.invalidRequest
-                            }
-
-                            var request = request
-                            request.url = URL(
-                                string: url.absoluteString,
-                                relativeTo: baseURL
-                            )
-
-                            let task = self.session.webSocketTask(with: request)
-                            let webSocket = WebSocket(connection: task)
-                            await self.webSocketStore.store(webSocket, for: task)
-                            return webSocket
-                        }
-
-                        _ = try? await executeWebSocketRequest(request)
+                        let url = try XCTUnwrap(URL(string: "https://www.example.com/websocket-\(i)"))
+                        let request = URLRequest(url: url)
+                        let task = session.webSocketTask(with: request)
+                        let webSocket = WebSocket(connection: task)
+                        await webSocketStore.store(webSocket, for: task)
 
                     } catch {
                         // Ignore errors - we're just testing for crashes
@@ -159,13 +142,13 @@ final class NetworkServiceSessionDelegateTests: XCTestCase {
                 }
 
                 // Simulate delegate callback (reads/writes to dictionary)
-                group.addTask {
+                group.addTask { [sut, session] in
                     // Create a mock web socket task
-                    let mockTask = self.session.webSocketTask(with: URLRequest(url: URL(string: "wss://example.com")!))
+                    let mockTask = session.webSocketTask(with: URLRequest(url: URL(string: "wss://example.com")!))
 
                     // Simulate the delegate callback that accesses webSocketsByTask
-                    self.sut.urlSession(
-                        self.session,
+                    sut.urlSession(
+                        session,
                         webSocketTask: mockTask,
                         didCloseWith: .normalClosure,
                         reason: nil
