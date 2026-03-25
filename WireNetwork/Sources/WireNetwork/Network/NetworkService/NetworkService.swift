@@ -26,16 +26,13 @@ public protocol NetworkServiceProtocol: Sendable {
 
 }
 
-public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked Sendable {
+public final class NetworkService: NetworkServiceProtocol, Sendable {
 
     let baseURL: URL
 
-    private let serverTrustValidator: ServerTrustValidator
-    // This must be a `var` because of a cyclic dependency: the session needs
-    // `self` as its delegate, but `self` isn't available until after `super.init()`.
-    // This mutable state is why the class can only be marked `@unchecked Sendable`.
-    private var urlSession: URLSession?
-    private let webSocketStore = WebSocketStore()
+    private let urlSession: URLSession
+    private let webSocketStore: WebSocketStore
+    private let sessionDelegate: NetworkServiceSessionDelegate
 
     public init(
         baseURL: URL,
@@ -60,21 +57,21 @@ public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked 
             self.baseURL = baseURL
         }
 
-        self.serverTrustValidator = serverTrustValidator
-        super.init()
-        self.urlSession = makeURLSession(self)
-
+        let webSocketStore = WebSocketStore()
+        let delegate = NetworkServiceSessionDelegate(
+            serverTrustValidator: serverTrustValidator,
+            webSocketStore: webSocketStore
+        )
+        self.sessionDelegate = delegate
+        self.urlSession = makeURLSession(delegate)
+        self.webSocketStore = webSocketStore
     }
 
     deinit {
-        urlSession?.invalidateAndCancel()
+        urlSession.invalidateAndCancel()
     }
 
     public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        guard let urlSession else {
-            throw NetworkServiceError.serviceNotConfigured
-        }
-
         guard let url = request.url else {
             throw NetworkServiceError.invalidRequest
         }
@@ -102,10 +99,6 @@ public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked 
     }
 
     func executeWebSocketRequest(_ request: URLRequest) async throws -> WebSocket {
-        guard let urlSession else {
-            throw NetworkServiceError.serviceNotConfigured
-        }
-
         guard let url = request.url else {
             throw NetworkServiceError.invalidRequest
         }
@@ -122,96 +115,4 @@ public final class NetworkService: NSObject, NetworkServiceProtocol, @unchecked 
         return webSocket
     }
 
-}
-
-extension NetworkService: URLSessionWebSocketDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didOpenWithProtocol protocol: String?
-    ) {
-        WireLogger.network.debug("web socket task did open")
-        if let request = webSocketTask.currentRequest {
-            WireLogger.network.log(request)
-        }
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    ) {
-        WireLogger.network
-            .debug(
-                "web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")"
-            )
-        Task {
-            await webSocketStore.retrieve(for: webSocketTask)?.close()
-            await webSocketStore.remove(for: webSocketTask)
-        }
-    }
-
-}
-
-extension NetworkService: URLSessionTaskDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didCompleteWithError error: (any Error)?
-    ) {
-        // NOTE: This method is not called when when using async/await APIs.
-        if let error {
-            WireLogger.network.error("task did complete with error: \(error)")
-        } else {
-            WireLogger.network.debug("task did complete")
-        }
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge:
-        URLAuthenticationChallenge
-    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
-        let protectionSpace = challenge.protectionSpace
-
-        if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            guard let trust = challenge.protectionSpace.serverTrust else {
-                // If this is missing it is Apple breaking its API contract so crash.
-                fatalError("Missing server trust")
-            }
-
-            do {
-                try await serverTrustValidator.validate(trust: trust, host: protectionSpace.host)
-                return (.performDefaultHandling, challenge.proposedCredential)
-            } catch {
-                return (.cancelAuthenticationChallenge, nil)
-            }
-        } else {
-            return (.performDefaultHandling, challenge.proposedCredential)
-        }
-    }
-
-}
-
-// MARK: - WebSocketStore
-
-/// Actor to manage web socket state safely across concurrent access
-private actor WebSocketStore {
-    private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
-
-    func store(_ webSocket: WebSocket, for task: URLSessionWebSocketTask) {
-        webSocketsByTask[task] = webSocket
-    }
-
-    func retrieve(for task: URLSessionWebSocketTask) -> WebSocket? {
-        webSocketsByTask[task]
-    }
-
-    func remove(for task: URLSessionWebSocketTask) {
-        webSocketsByTask[task] = nil
-    }
 }

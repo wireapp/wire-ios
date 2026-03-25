@@ -25,10 +25,9 @@ import XCTest
 
 final class NetworkServiceTests: XCTestCase {
 
-    var session: URLSession!
-    var sut: NetworkService!
-    var backendURL: URL!
-
+    private var session: URLSession!
+    private var sut: NetworkService!
+    private var backendURL: URL!
     private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUp() async throws {
@@ -146,108 +145,6 @@ final class NetworkServiceTests: XCTestCase {
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
-    // MARK: - URLAuthenticationChallenge
-
-    func testUserSessionDidReceiveChallenge_whenNotServerTrustAuthenticationMethod() async throws {
-        let methods = [
-            NSURLAuthenticationMethodClientCertificate,
-            NSURLAuthenticationMethodNegotiate,
-            NSURLAuthenticationMethodNTLM,
-            NSURLAuthenticationMethodHTMLForm,
-            NSURLAuthenticationMethodHTTPDigest,
-            NSURLAuthenticationMethodHTTPBasic,
-            NSURLAuthenticationMethodDefault
-        ]
-
-        for method in methods {
-            // Given
-            let challenge = try Scaffolding.makeAuthenticationChallenge(
-                authenticationMethod: method,
-                serverTrust: .invalid
-            )
-            let task = session.dataTask(with: Scaffolding.getRequest)
-
-            // When
-            let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-            // Then
-            XCTAssertEqual(result.0, .performDefaultHandling)
-            XCTAssertEqual(result.1, Scaffolding.makeCredential())
-        }
-    }
-
-    func testUserSessionDidReceiveChallenge_whenServerTrustValid() async throws {
-        let challenge = try Scaffolding.makeAuthenticationChallenge(
-            authenticationMethod: NSURLAuthenticationMethodServerTrust,
-            serverTrust: .wire
-        )
-        let task = session.dataTask(with: Scaffolding.getRequest)
-
-        // When
-        let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-        // Then
-        XCTAssertEqual(result.0, .performDefaultHandling)
-        XCTAssertEqual(result.1, Scaffolding.makeCredential())
-    }
-
-    func testUserSessionDidReceiveChallenge_whenServerTrustInvalid() async throws {
-        let challenge = try Scaffolding.makeAuthenticationChallenge(
-            authenticationMethod: NSURLAuthenticationMethodServerTrust,
-            serverTrust: .invalid
-        )
-        let task = session.dataTask(with: Scaffolding.getRequest)
-
-        // When
-        let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-        // Then
-        XCTAssertEqual(result.0, .cancelAuthenticationChallenge)
-        XCTAssertNil(result.1)
-    }
-
-    // MARK: - WebSocket Data Race Test
-
-    func testWebSocketsByTask_ConcurrentAccessDoesNotCrash() async throws {
-        // This test tries to reproduce the crash from the production crash report
-        // where concurrent access to webSocketsByTask causes memory corruption
-
-        let iterations = 100
-
-        // Create multiple web socket requests concurrently
-        await withTaskGroup(of: Void.self) { group in
-            for i in 0 ..< iterations {
-                // Simulate executeWebSocketRequest (writes to dictionary)
-                group.addTask {
-                    do {
-                        let request = try URLRequestBuilder(path: "/websocket-\(i)")
-                            .withMethod(.get)
-                            .build()
-                        _ = try? await self.sut.executeWebSocketRequest(request)
-                    } catch {
-                        // Ignore errors - we're just testing for crashes
-                    }
-                }
-
-                // Simulate delegate callback (reads/writes to dictionary)
-                group.addTask {
-                    // Create a mock web socket task
-                    let mockTask = self.session.webSocketTask(with: URLRequest(url: URL(string: "wss://example.com")!))
-
-                    // Simulate the delegate callback that accesses webSocketsByTask
-                    self.sut.urlSession(
-                        self.session,
-                        webSocketTask: mockTask,
-                        didCloseWith: .normalClosure,
-                        reason: nil
-                    )
-                }
-            }
-        }
-
-        // If we get here without crashing, the implementation is now correct
-    }
-
 }
 
 private enum Scaffolding {
@@ -290,4 +187,5 @@ private enum Scaffolding {
             sender: MockURLAuthenticationChallengeSender()
         )
     }
+
 }

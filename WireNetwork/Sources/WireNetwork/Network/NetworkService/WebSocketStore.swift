@@ -16,9 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum NetworkServiceError: Error {
+import Foundation
 
-    case invalidRequest
-    case notAHTTPURLResponse
+/// Actor to manage web socket state safely across concurrent access
+actor WebSocketStore {
+
+    private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
+
+    func store(_ webSocket: WebSocket, for task: URLSessionWebSocketTask) {
+        webSocketsByTask[task] = webSocket
+    }
+
+    func retrieve(for task: URLSessionWebSocketTask) -> WebSocket? {
+        webSocketsByTask[task]
+    }
+
+    func remove(for task: URLSessionWebSocketTask) {
+        webSocketsByTask[task] = nil
+    }
 
 }
