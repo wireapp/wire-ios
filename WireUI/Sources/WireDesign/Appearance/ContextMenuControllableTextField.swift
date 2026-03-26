@@ -38,6 +38,11 @@ open class ContextMenuControllableUITextField: UITextField {
     }
 
     open override func drawPlaceholder(in rect: CGRect) {
+        if attributedPlaceholder != nil {
+            super.drawPlaceholder(in: rect)
+            return
+        }
+        
         guard let placeholder else { return }
         let font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: traitCollection)
         let color = customPlaceholderColor ?? .placeholderText
