@@ -36,7 +36,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForApps: false,
             hasFilter: true
         )
     }
@@ -59,7 +59,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: true,
-            searchingForServices: false,
+            searchingForApps: false,
             hasFilter: true
         )
 
@@ -72,7 +72,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForApps: false,
             hasFilter: false
         )
 
@@ -80,40 +80,38 @@ final class EmptySearchResultsViewTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
-//    func testNoResultsForServices() {
-//        // GIVEN && WHEN
-//        sut = setupEmptySearchResultsView(
-//            isSelfUserAdmin: false,
-//            isFederationEnabled: false,
-//            searchingForServices: true,
-//            hasFilter: true
-//        )
-//
-//        // THEN
-//        snapshotHelper.verify(matching: sut)
-//    }
+    func testNoResultsForServices() {
+        // GIVEN && WHEN
+        sut = setupEmptySearchResultsView(
+            isSelfUserAdmin: false,
+            isFederationEnabled: false,
+            searchingForApps: true,
+            hasFilter: true
+        )
 
-    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
-//    func testServicesNotEnabled() {
-//        // GIVEN && WHEN
-//        sut = setupEmptySearchResultsView(
-//            isSelfUserAdmin: false,
-//            isFederationEnabled: false,
-//            searchingForServices: true,
-//            hasFilter: false
-//        )
-//
-//        // THEN
-//        snapshotHelper.verify(matching: sut)
-//    }
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testServicesNotEnabled() {
+        // GIVEN && WHEN
+        sut = setupEmptySearchResultsView(
+            isSelfUserAdmin: false,
+            isFederationEnabled: false,
+            searchingForApps: true,
+            hasFilter: false
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
 
     func testServicesNotEnabled_WhenAdmin() {
         // GIVEN && WHEN
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: true,
             isFederationEnabled: false,
-            searchingForServices: true,
+            searchingForApps: true,
             hasFilter: false
         )
 
@@ -126,7 +124,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     func setupEmptySearchResultsView(
         isSelfUserAdmin: Bool,
         isFederationEnabled: Bool,
-        searchingForServices: Bool,
+        searchingForApps: Bool,
         hasFilter: Bool
     ) -> EmptySearchResultsView {
 
@@ -136,7 +134,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         sut.overrideUserInterfaceStyle = .dark
         sut.updateStatus(
-            searchingForServices: searchingForServices,
+            searchingForApps: searchingForApps,
             hasFilter: hasFilter
         )
         configureBounds(for: sut)

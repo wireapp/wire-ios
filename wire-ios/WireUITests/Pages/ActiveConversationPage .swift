@@ -85,6 +85,22 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.labelSelfDeletingMessagesOFF.rawValue]
     }
 
+    var sketchButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sketchButton.rawValue]
+    }
+
+    var canvas: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.canvas.rawValue]
+    }
+
+    var sendCanvasButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.canvasSendButton.rawValue]
+    }
+
+    var attachmentImagePreview: XCUIElement {
+        app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -129,6 +145,15 @@ class ActiveConversationPage: PageModel {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tap()
+        return self
+    }
+
+    @discardableResult
+    func typeMessageAndAttachSketch(_ message: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
+        sketchButton.tap()
+        canvas.tap()
+        sendCanvasButton.tap()
         return self
     }
 }

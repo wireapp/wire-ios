@@ -236,7 +236,8 @@ final class CoreDataFixture {
 // MARK: - mock service user
 
 extension CoreDataFixture {
-    func createServiceUser() -> ZMUser {
+
+    func createBot() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
