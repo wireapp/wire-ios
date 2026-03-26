@@ -42,7 +42,7 @@ open class ContextMenuControllableUITextField: UITextField {
             super.drawPlaceholder(in: rect)
             return
         }
-        
+
         guard let placeholder else { return }
         let font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: traitCollection)
         let color = customPlaceholderColor ?? .placeholderText
