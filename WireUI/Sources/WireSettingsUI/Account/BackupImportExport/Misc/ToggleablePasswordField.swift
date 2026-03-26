@@ -81,10 +81,9 @@ struct ToggleablePasswordField: View {
             placeholder: placeholder,
             isSecureTextEntry: false,
             placeholderColor: placeholderColor,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
-        .autocapitalization(.none)
         .focused($focusedField, equals: .textField)
         .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
@@ -95,9 +94,9 @@ struct ToggleablePasswordField: View {
             placeholder: placeholder,
             isSecureTextEntry: true,
             placeholderColor: placeholderColor,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
         .focused($focusedField, equals: .secureField)
         .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
