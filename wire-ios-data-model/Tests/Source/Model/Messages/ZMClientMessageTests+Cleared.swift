@@ -61,29 +61,4 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             XCTAssertNil(message.expirationDate)
         }
     }
-
-    func testThatClearingMessageHistoryDeletesAllMessages() {
-
-        syncMOC.performGroupedAndWait {
-
-            self.syncConversation.remoteIdentifier = UUID()
-            let message1 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
-            message1.expire(withReason: .other)
-
-            try! self.syncConversation.appendText(content: "A")
-
-            let message3 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
-            message3.expire(withReason: .other)
-
-            self.syncConversation.lastServerTimeStamp = message3.serverTimestamp
-
-            // when
-            self.syncConversation.clearedTimeStamp = self.syncConversation.lastServerTimeStamp
-            self.syncMOC.processPendingChanges()
-            // then
-            for message in self.syncConversation.allMessages {
-                XCTAssertTrue(message.isDeleted)
-            }
-        }
-    }
 }

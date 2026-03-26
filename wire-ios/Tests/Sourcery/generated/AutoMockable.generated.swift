@@ -1342,17 +1342,17 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - transitionToListAndEnqueue
 
-    var transitionToListAndEnqueueLeftViewControllerRevealed_Invocations: [(leftViewControllerRevealed: Bool, block: () -> Void)] = []
-    var transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod: ((Bool, @escaping () -> Void) -> Void)?
+    var transitionToListAndEnqueue_Invocations: [() -> Void] = []
+    var transitionToListAndEnqueue_MockMethod: ((@escaping () -> Void) -> Void)?
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void) {
-        transitionToListAndEnqueueLeftViewControllerRevealed_Invocations.append((leftViewControllerRevealed: leftViewControllerRevealed, block: block))
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
+        transitionToListAndEnqueue_Invocations.append(block)
 
-        guard let mock = transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod else {
-            fatalError("no mock for `transitionToListAndEnqueueLeftViewControllerRevealed`")
+        guard let mock = transitionToListAndEnqueue_MockMethod else {
+            fatalError("no mock for `transitionToListAndEnqueue`")
         }
 
-        mock(leftViewControllerRevealed, block)
+        mock(block)
     }
 
     // MARK: - setConversationTransitionClosure
