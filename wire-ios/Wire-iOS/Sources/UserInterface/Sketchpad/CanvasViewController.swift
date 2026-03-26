@@ -20,6 +20,7 @@ import UIKit
 import WireCanvas
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - CanvasViewControllerDelegate - didExportImage
@@ -97,7 +98,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         canvas.delegate = self
         canvas.backgroundColor = .white
         canvas.isAccessibilityElement = true
-        canvas.accessibilityIdentifier = "canvas"
+        canvas.accessibilityIdentifier = Locators.ActiveConversationPage.canvas.rawValue
 
         emojiKeyboardViewController.delegate = self
 
@@ -155,6 +156,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         sendButton.isEnabled = false
         sendButton.hitAreaPadding = hitAreaPadding
         sendButton.accessibilityLabel = Sketch.SendButton.description
+        sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.canvasSendButton.rawValue
 
         drawButton.setIcon(.brush, size: .tiny, for: .normal)
         drawButton.addTarget(self, action: #selector(toggleDrawTool), for: .touchUpInside)

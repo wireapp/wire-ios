@@ -419,10 +419,12 @@ class UserHelper {
     ///   - qualifiedIds: qualifiedIds for members of the group
     ///   - owner: group owner
     ///   - groupName: groupName
+    ///   - driveEnabled: bool
     func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
-        groupName: String
+        groupName: String,
+        driveEnabled: Bool = false
     ) async throws {
 
         let params = CreateGroupConversationParameters(
@@ -436,7 +438,8 @@ class UserHelper {
             accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
             teamID: owner.teamID,
-            isReadReceiptsEnabled: true
+            isReadReceiptsEnabled: true,
+            cells: driveEnabled
         )
 
         let (_, accessToken) = try await authenticationAPI.login(
@@ -516,10 +519,12 @@ class UserHelper {
     /// - Parameters:
     ///   - memberCount: count of members
     ///   - conversation: optional group or channel conversation to create
+    ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
         withMemberCount memberCount: Int,
-        conversation: CreateConversationOption? = nil
+        conversation: CreateConversationOption? = nil,
+        driveEnabled: Bool = false
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
@@ -553,10 +558,14 @@ class UserHelper {
         if let conversation {
             switch conversation {
             case let .group(name):
+                if driveEnabled {
+                    try await unlockAndEnableDriveFeature(teamID: teamID)
+                }
                 try await createGroupConversations(
                     qualifiedIds: qualifiedIDs,
                     owner: teamOwner,
-                    groupName: name
+                    groupName: name,
+                    driveEnabled: driveEnabled
                 )
 
                 let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
