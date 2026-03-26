@@ -115,6 +115,35 @@ class ConversationStatusStrategyTests: MessagingTest {
         }
     }
 
+    func testThatItDeletesOlderMessagesButKeepsNewerOnes_WhenClearedTimestampIsSet() {
+
+        syncMOC.performGroupedAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let baseDate = Date()
+            let clearedDate = baseDate.addingTimeInterval(10)
+
+            let older = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            older.serverTimestamp = baseDate
+            older.visibleInConversation = conversation
+
+            let newer = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            newer.serverTimestamp = clearedDate.addingTimeInterval(10)
+            newer.visibleInConversation = conversation
+
+            conversation.clearedTimeStamp = clearedDate
+            conversation.remoteIdentifier = UUID.create()
+            conversation.setLocallyModifiedKeys(["clearedTimeStamp"])
+
+            // when
+            self.sut.objectsDidChange([conversation])
+
+            // then
+            XCTAssertTrue(older.isZombieObject)
+            XCTAssertFalse(newer.isZombieObject)
+        }
+    }
+
     func testThatItAddsUnsyncedConversationsToTrackedObjects() {
         syncMOC.performGroupedAndWait {
             // given
