@@ -129,12 +129,11 @@ package struct LoginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
     }
 
@@ -232,12 +231,11 @@ package struct LoginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,
