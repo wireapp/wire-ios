@@ -53,6 +53,7 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
+                .accessibilitySortPriority(1)
 
                 VStack {
                     if viewModel.isPasswordEnabled, let password = viewModel.getPassword() {
