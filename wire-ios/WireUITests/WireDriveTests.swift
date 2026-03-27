@@ -78,4 +78,28 @@ final class WireDriveTests: WireUITestCase {
         verifyDriveEnabledConversation(on: activeConversationPage)
     }
 
+    @MainActor
+    func testShareSketchImageWithTextMessageInDriveEnabledGroup_TC_8956() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let message = "Attachment with Text"
+        let (teamOwner, _, _, _) = try await userHelper.registerTeam(
+            withMemberCount: 2,
+            conversation: .group(groupName),
+            driveEnabled: true
+        )
+
+        // WHEN
+        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .openConversation()
+            .typeMessageAndAttachSketch(message)
+
+        // THEN
+        XCTAssertTrue(activeConversationPage.attachmentImagePreview.waitForExistence(timeout: 2))
+        XCTAssertEqual(activeConversationPage.inputMessageField.value as? String, message)
+        XCTAssertTrue(activeConversationPage.sendButton.waitForExistence(timeout: 2) && activeConversationPage
+            .sendButton.isHittable)
+    }
 }
