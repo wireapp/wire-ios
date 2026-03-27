@@ -29,9 +29,12 @@ struct WireDriveDocumentHeaderView: View {
         static let headerIconSize: CGFloat = 16
     }
 
-    @ScaledMetric private var readyToOpenIconPadding: CGFloat = 3.8
     @ScaledMetric private var scale: CGFloat = 1
     @Environment(\.wireAccentColor) private var wireAccentColor
+
+    var iconSize: CGSize {
+        .init(width: Constants.headerIconSize * scale, height: Constants.headerIconSize * scale)
+    }
 
     let headerIcon: Image
     let headerText: String
@@ -53,6 +56,7 @@ struct WireDriveDocumentHeaderView: View {
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .font(for: .subline1)
                     .lineLimit(1)
+                    .layoutPriority(1)
 
                 Spacer()
 
@@ -65,7 +69,7 @@ struct WireDriveDocumentHeaderView: View {
             }
             .padding([.horizontal, .top], 8)
 
-            Spacer(minLength: 0)
+            Spacer(minLength: 4)
 
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
@@ -91,11 +95,13 @@ struct WireDriveDocumentHeaderView: View {
         case let .loaded(showReadyToOpen):
             if showReadyToOpen {
                 Text(Strings.Files.readyToOpenAfterDownload)
+                    .minimumScaleFactor(0.5)
             } else {
                 EmptyView()
             }
         case .failed:
             Text(Strings.Files.downloadFailed)
+                .minimumScaleFactor(0.5)
         case .notLoaded:
             EmptyView()
         case .loading:
@@ -108,7 +114,7 @@ struct WireDriveDocumentHeaderView: View {
     private func progressView(progress: Double) -> some View {
         ProgressView(value: progress)
             .progressViewStyle(.wireDriveAsset())
-            .frame(height: Constants.headerIconSize)
+            .frame(width: iconSize.width, height: iconSize.height)
     }
 
     @ViewBuilder
@@ -116,14 +122,20 @@ struct WireDriveDocumentHeaderView: View {
         switch state {
         case let .loaded(showReadyToOpen):
             if showReadyToOpen {
-                Image(systemName: "checkmark.circle")
-                    .foregroundStyle(.blue)
-                    .frame(width: Constants.headerIconSize * scale, height: Constants.headerIconSize * scale)
+                progressView(progress: 1)
+                    .overlay {
+                        Image(systemName: "checkmark")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .fontWeight(.black)
+                            .foregroundStyle(.blue)
+                            .padding(4 * scale)
+                    }
             } else {
                 headerIcon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: Constants.headerIconSize * scale)
+                    .frame(width: iconSize.width, height: iconSize.height)
             }
         case .failed:
             if isDraftPreview {
@@ -131,17 +143,18 @@ struct WireDriveDocumentHeaderView: View {
                     .fontWeight(.semibold)
                     .font(.system(size: 14 * scale))
                     .foregroundStyle(Constants.errorColor)
+                    .frame(width: iconSize.width, height: iconSize.height)
             } else {
                 headerIcon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: Constants.headerIconSize * scale)
+                    .frame(width: iconSize.width, height: iconSize.height)
             }
         case .notLoaded:
             headerIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: Constants.headerIconSize * scale)
+                .frame(width: iconSize.width, height: iconSize.height)
         case let .loading(progress, _):
             progressView(progress: progress)
         }
@@ -150,12 +163,58 @@ struct WireDriveDocumentHeaderView: View {
 }
 
 #Preview {
-    WireDriveDocumentHeaderView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        isDraftPreview: false,
-        state: .loading(progress: 0.7, isLargeFile: false)
-    )
-    .frame(width: 300, height: 74)
+    let headerIcon = Image(WireDriveFileType.pdf.imageResource)
+    let headerText = "PDF (336 KB)"
+    let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
+
+    ScrollView {
+        VStack {
+            Group {
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelText,
+                    isDraftPreview: false,
+                    state: .loading(progress: 0.7, isLargeFile: false)
+                )
+
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelText,
+                    isDraftPreview: false,
+                    state: .loaded(showReadyToOpen: true)
+                )
+
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelText,
+                    isDraftPreview: false,
+                    state: .notLoaded
+                )
+
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelText,
+                    isDraftPreview: false,
+                    state: .failed
+                )
+
+                WireDriveDocumentHeaderView(
+                    headerIcon: headerIcon,
+                    headerText: headerText,
+                    labelText: labelText,
+                    isDraftPreview: true,
+                    state: .failed
+                )
+            }
+            .background(.background)
+            .frame(width: 200)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+    .background(.gray)
 }
