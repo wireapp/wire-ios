@@ -14,4 +14,5 @@ jobs:
       all: true
       notify_secret: WIRE_IOS_CI_WEBHOOK
       run_critical_flows: true
+      notify: always
     secrets: inherit

@@ -21,4 +21,5 @@ jobs:
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
+      notify: always
     secrets: inherit
