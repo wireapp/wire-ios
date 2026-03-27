@@ -26,7 +26,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(activeConversationPage.labelSelfDeletingMessageIsOFF.exists)
         XCTAssertFalse(activeConversationPage.selfDeletingMessageButton.isHittable)
 
-        activeConversationPage.conversationTitleButton.tap()
+        activeConversationPage.conversationTitleButton.waitAndTap()
 
         XCTAssertTrue(activeConversationPage.sharedDriveButton.exists)
     }
@@ -58,10 +58,8 @@ final class WireDriveTests: WireUITestCase {
 
         // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(
-            withMemberCount: 2,
-            conversation: .channel(channelName)
-        )
+        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
+        try await userHelper.unlockAndEnableChannelFeature(teamID: teamOwner.teamID!)
         try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
 
         // WHEN
