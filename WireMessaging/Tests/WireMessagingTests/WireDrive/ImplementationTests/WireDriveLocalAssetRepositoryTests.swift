@@ -87,10 +87,16 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
+            conversation: WireDriveConversation(
+                id: UUID().uuidString,
+                name: "Conversation 1",
+                participants: []
+            ),
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            ownerUserName: "User 1",
             downloadURL: URL(string: "https://example.com/file.png")!
         )
         nodesAPI.getNodeNodeID_MockValue = node
@@ -106,6 +112,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .pending
             )
         )
@@ -122,6 +132,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .pending,
             )
         )
@@ -136,6 +150,10 @@ final class WireDriveLocalAssetRepositoryTests {
             path: "path/file.png",
             contentType: "image/png",
             size: 1234,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .downloaded(cacheKey: "some-cache-key")
         )
 
@@ -159,6 +177,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .pending
             )
         )
@@ -175,6 +197,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .pending,
             )
         )
@@ -187,10 +213,16 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
+            conversation: WireDriveConversation(
+                id: UUID().uuidString,
+                name: "Conversation 1",
+                participants: []
+            ),
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            ownerUserName: "User 1",
             downloadURL: URL(string: "https://example.com/file.png")!
         )
         nodesAPI.getNodeNodeID_MockValue = node
@@ -215,6 +247,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
             )
         )
@@ -227,6 +263,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .pending,
                 ),
                 WireDriveLocalAsset(
@@ -235,6 +275,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 0.5)
                 ),
                 WireDriveLocalAsset(
@@ -243,6 +287,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 1.0)
                 ),
                 WireDriveLocalAsset(
@@ -251,6 +299,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             ]
@@ -264,10 +316,16 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
+            conversation: WireDriveConversation(
+                id: UUID().uuidString,
+                name: "Conversation 1",
+                participants: []
+            ),
             path: "path/fileWithoutExtension",
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            ownerUserName: "User 1",
             downloadURL: URL(string: "https://example.com/fileWithoutExtension")!
         )
         nodesAPI.getNodeNodeID_MockValue = node
@@ -292,6 +350,10 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/fileWithoutExtension",
                 contentType: "image/png",
                 size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
             )
         )
@@ -304,6 +366,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/fileWithoutExtension",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .pending,
                 ),
                 WireDriveLocalAsset(
@@ -312,6 +378,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/fileWithoutExtension",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 0.5)
                 ),
                 WireDriveLocalAsset(
@@ -320,6 +390,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/fileWithoutExtension",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 1.0)
                 ),
                 WireDriveLocalAsset(
@@ -328,6 +402,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/fileWithoutExtension",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
                 )
             ]
@@ -341,10 +419,16 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
+            conversation: WireDriveConversation(
+                id: UUID().uuidString,
+                name: "Conversation 1",
+                participants: []
+            ),
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            ownerUserName: "User 1",
             downloadURL: URL(string: "https://example.com/file.png")!
         )
         nodesAPI.getNodeNodeID_MockValue = node
@@ -391,6 +475,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             }
@@ -404,6 +492,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .pending,
                 ),
                 WireDriveLocalAsset(
@@ -412,6 +504,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 0.5)
                 ),
                 WireDriveLocalAsset(
@@ -420,6 +516,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloading(progress: 1.0)
                 ),
                 WireDriveLocalAsset(
@@ -428,6 +528,10 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
+                    conversationName: "Conversation 1",
+                    ownerName: "User 1",
+                    modified: nil,
+                    isAvailableOffline: false,
                     downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             ]
