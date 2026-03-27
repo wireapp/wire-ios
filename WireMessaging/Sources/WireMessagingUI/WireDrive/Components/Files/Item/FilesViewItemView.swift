@@ -167,6 +167,7 @@ struct FilesItemView: View {
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight)
+            .accessibilityLabel(viewModel.icon.accessibilityIconLabel)
     }
 
     @ViewBuilder
