@@ -37,7 +37,8 @@ final class WireDriveTests: WireUITestCase {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
@@ -59,8 +60,9 @@ final class WireDriveTests: WireUITestCase {
         // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
         let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-        try await userHelper.unlockAndEnableChannelFeature(teamID: teamOwner.teamID!)
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        try await userHelper.unlockAndEnableChannelFeature(teamID: teamID)
+        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
