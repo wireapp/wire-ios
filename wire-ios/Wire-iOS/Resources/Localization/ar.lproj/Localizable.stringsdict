@@ -466,15 +466,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>مكالمة مفقودة منة مفقودة من</string>
+        <string>Missed call from %2$@</string>
         <key>two</key>
-        <string>مكالمة مفقودة منة مفقودة من</string>
+        <string>Missed call from %2$@</string>
         <key>few</key>
-        <string>مكالمة مفقودة منة مفقودة من</string>
+        <string>Missed call from %2$@</string>
         <key>many</key>
-        <string>مكالمة مفقودة منة مفقودة من</string>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>مكالمة مفقودة منة مفقودة من</string>
+        <string>Missed call from %2$@</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
