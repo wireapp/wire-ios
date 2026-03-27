@@ -25,13 +25,13 @@ final class MessagingTests: WireUITestCase {
     func testSendAndReceiveTextInGroupConversation_TC_8833_8840() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromMember1 = UserGenerator.generateRandomMessage()
 
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil")
@@ -42,7 +42,7 @@ final class MessagingTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup(with: self)
 
-        // WHEN member1 send text
+        // WHEN member send text
         try await testServicesClient.sendText(
             user: teamMembers[0],
             text: messageFromMember1,
@@ -58,25 +58,29 @@ final class MessagingTests: WireUITestCase {
         let activeConversationPage = try conversationsPage.openConversation()
 
         // THEN
-        let receivedMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let receivedMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             receivedMessages.contains(messageFromMember1),
             "Expected message '\(messageFromMember1)' not found in sent messages: \(receivedMessages)"
         )
 
-        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
-        XCTAssertEqual(senderName, teamMembers[0].name, "Sender info didn't match expected value \(teamOwner.name)")
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamMembers[0].name,
+            "Sender info didn't match expected value \(teamMembers[0].name)"
+        )
     }
 
     @MainActor
     func testSendAndReceiveImageInGroupConversation_TC_8834_8841() async throws {
 
         // GIVEN
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil")
@@ -92,7 +96,7 @@ final class MessagingTests: WireUITestCase {
             .appendingPathComponent("TestServicesData/Img/testImage.jpg")
         let imageExtension = imageURL.pathExtension
 
-        // WHEN member1 send image
+        // WHEN member send image
         try await testServicesClient.sendImage(
             user: teamMembers[0],
             fileURL: imageURL,
@@ -114,7 +118,11 @@ final class MessagingTests: WireUITestCase {
             "Expected image attachment not found"
         )
 
-        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
-        XCTAssertEqual(senderName, teamMembers[0].name, "Sender info didn't match expected value \(teamOwner.name)")
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamMembers[0].name,
+            "Sender info didn't match expected value \(teamMembers[0].name)"
+        )
     }
 }

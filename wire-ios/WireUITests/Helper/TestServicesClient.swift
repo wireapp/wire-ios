@@ -31,7 +31,7 @@ class TestServicesClient {
         request.httpMethod = requestType
         request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.timeoutInterval = CONNECT_TIMEOUT
-        request.setValue("UTF-8", forHTTPHeaderField: "Accept-Encoding")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let config = URLSessionConfiguration.default
@@ -73,8 +73,11 @@ class TestServicesClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
 
-        let Data: CreateInstaceResponse = try JSONDecoder().decode(CreateInstaceResponse.self, from: responseData)
-        return Data.instanceId
+        let instanceResponse: CreateInstanceResponse = try JSONDecoder().decode(
+            CreateInstanceResponse.self,
+            from: responseData
+        )
+        return instanceResponse.instanceId
     }
 
     func createConversation(
@@ -110,11 +113,11 @@ class TestServicesClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
 
-        let Data: CreateConversationResponse = try JSONDecoder().decode(
+        let conversationResponse: CreateConversationResponse = try JSONDecoder().decode(
             CreateConversationResponse.self,
             from: responseData
         )
-        return Data.conversationId
+        return conversationResponse.conversationId
     }
 
     func sendText(
@@ -300,7 +303,7 @@ class TestServicesClient {
     }
 }
 
-private struct CreateInstaceResponse: Decodable {
+private struct CreateInstanceResponse: Decodable {
     let instanceId: String
 }
 

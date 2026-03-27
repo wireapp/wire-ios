@@ -181,12 +181,12 @@ class ConversationsPage: PageModel {
         loadBar.waitToDisappear()
     }
 
-    func waitUntilLastMessageReceivedByTestServiceOnConversationList(with sentBy: String) throws -> Bool {
-        let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
-        let button = app.staticTexts.containing(predicate).firstMatch
-        return button.waitForExistence(timeout: 5)
-
-    }
+//    func waitUntilLastMessageReceivedByTestServiceOnConversationList(with sentBy: String) -> Bool {
+//        let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
+//        let button = app.staticTexts.containing(predicate).firstMatch
+//        return button.waitForExistence(timeout: 5)
+//
+//    }
 
     func markConversationAsFavourite() throws -> ConversationsPage {
         addFavouriteButtonOnMoreOptions.tap()
@@ -205,7 +205,7 @@ class ConversationsPage: PageModel {
         return self
     }
 
-    func getunreadMessageCountValue() throws -> String {
+    func getUnreadMessageCountValue() throws -> String {
         unreadMessagesCount.value as! String
     }
 

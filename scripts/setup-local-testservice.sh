@@ -132,4 +132,8 @@ READY_PID=$!
 cd "$REPO_ROOT"
 java -jar "$JAR_FILE" server "$CONFIG_PATH" 2>&1 | tee "$LOG_FILE"
 
-wait "$READY_PID" || true
+if ! wait "$READY_PID"; then
+  READINESS_STATUS=$?
+  echo "ERROR: Kalium Testservice readiness check failed (exit code: $READINESS_STATUS)"
+  exit "$READINESS_STATUS"
+fi

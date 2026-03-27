@@ -53,7 +53,7 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
 
-    func getSenderName() -> String? {
+    func getSenderName() -> String {
         senderNameLabel.label
     }
 
@@ -74,11 +74,11 @@ class ActiveConversationPage: PageModel {
     }
 
     var fileLabels: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "FileTransferTopLabel")
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
 
     var fileTypeIcons: XCUIElementQuery {
-        app.images.matching(identifier: "FileTransferFileTypeIcon")
+        app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
     var labelSharedDriveIsOn: XCUIElement {
