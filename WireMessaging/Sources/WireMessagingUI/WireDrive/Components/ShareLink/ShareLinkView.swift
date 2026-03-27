@@ -124,6 +124,8 @@ struct ShareLinkView: View {
             }
             .tint(wireAccentColor.color)
             .disabled(!viewModel.isLinkToggleEnabled)
+            // We need this so VoiceOver reads the correct state AFTER it changes!
+            .accessibilityAddTraits(.updatesFrequently)
         }
     }
 
