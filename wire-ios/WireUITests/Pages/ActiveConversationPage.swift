@@ -85,6 +85,7 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.labelSelfDeletingMessagesOFF.rawValue]
     }
 
+<<<<<<< HEAD:wire-ios/WireUITests/Pages/ActiveConversationPage.swift
     var sketchButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.sketchButton.rawValue]
     }
@@ -99,6 +100,10 @@ class ActiveConversationPage: PageModel {
 
     var attachmentImagePreview: XCUIElement {
         app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
+=======
+    var classifiedBanner: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
+>>>>>>> a9cbbdeb1c (fix: critical flow fixes - WPB-24211 (#4472)):wire-ios/WireUITests/Pages/ActiveConversationPage .swift
     }
 
     func fetchMessages() -> [String] {

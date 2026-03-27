@@ -83,7 +83,7 @@ final class ZCallingTests: WireUITestCase {
         let incomingCallPage = try IncomingCallPage()
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
-        let ongoingCallPage = try incomingCallPage.acceptIncommingCall(with: self)
+        let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
         XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
@@ -91,6 +91,7 @@ final class ZCallingTests: WireUITestCase {
 
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
+<<<<<<< HEAD
     func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
@@ -102,7 +103,21 @@ final class ZCallingTests: WireUITestCase {
         _ = try firstTimePage.acceptPopup(with: self)
 
         let instances: [CallingServiceInstance]
+=======
+    func test_MultipleUsersJoiningGroupCall() async throws {
+>>>>>>> a9cbbdeb1c (fix: critical flow fixes - WPB-24211 (#4472))
         do {
+
+            let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
+
+            let firstTimePage = try app.loginUser(
+                email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
+                password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
+            )
+            _ = try firstTimePage.acceptPopup()
+
+            let instances: [CallingServiceInstance]
+
             instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
 
             let ownerInstanceId = try requireOwnerInstanceId(from: instances)
@@ -135,7 +150,7 @@ final class ZCallingTests: WireUITestCase {
                 "Conversation List is not showing after ending the call"
             )
         } catch {
-            throw XCTSkip("⚠️ Calling service failed..Skipping this test")
+            throw XCTSkip("⚠️ [Flaky Test] due to Calling service fail to create instance..Skipping this test for now")
         }
     }
 }
