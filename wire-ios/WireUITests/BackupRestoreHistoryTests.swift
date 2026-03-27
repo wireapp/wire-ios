@@ -53,7 +53,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .sendMessage(messageFromOwner)
 
@@ -85,7 +85,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
 
         sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
