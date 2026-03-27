@@ -324,6 +324,7 @@ final class MessageToolboxView: UIView {
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
             editedLabel.isHidden = true
+            statusImageView.isHidden = true
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
