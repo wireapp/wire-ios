@@ -25,12 +25,6 @@ class FirstTimePage: PageModel {
         okButton
     }
 
-    deinit {
-        if let token = handler?.1 {
-            handler?.0.removeUIInterruptionMonitor(token)
-        }
-    }
-
     var okButton: XCUIElement {
         app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
     }
@@ -51,8 +45,6 @@ class FirstTimePage: PageModel {
         app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
     }
 
-    var handler: (XCTestCase, any NSObjectProtocol)?
-
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
@@ -67,8 +59,7 @@ class FirstTimePage: PageModel {
         return self
     }
 
-    func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
-        handleNotificationPermissionAlert(testCase: testCase)
+    func acceptPopup() throws -> ConversationsPage {
         // Sometimes the OK button take longer to disappear after tapping.
         guard conversationsButton.waitForExistence(timeout: 15) else {
             throw NSError(
@@ -83,27 +74,8 @@ class FirstTimePage: PageModel {
         return try ConversationsPage()
     }
 
-    func acceptPopupOnTeamMemberSetup(with testCase: XCTestCase) throws -> SetUsernamePage {
-        handleNotificationPermissionAlert(testCase: testCase)
-        return try SetUsernamePage()
-    }
-
-    private func handleNotificationPermissionAlert(testCase: XCTestCase) {
-        let handler = testCase
-            .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
-                let allowButton = alertElement.buttons["Allow"].firstMatch
-
-                guard alertElement.label.contains(notifPermission),
-                      allowButton.waitForExistence(timeout: 1) else {
-                    return false
-                }
-
-                allowButton.tap()
-                return true
-            }
-
-        self.handler = (testCase, handler)
+    func acceptPopupOnTeamMemberSetup() throws -> SetUsernamePage {
+        try SetUsernamePage()
     }
 
     private func dismissSavePasswordAlertIfPresent() {

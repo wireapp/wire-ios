@@ -83,7 +83,7 @@ final class ZCallingTests: WireUITestCase {
         let incomingCallPage = try IncomingCallPage()
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
-        let ongoingCallPage = try incomingCallPage.acceptIncommingCall(with: self)
+        let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
         XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
@@ -101,7 +101,7 @@ final class ZCallingTests: WireUITestCase {
                 email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
                 password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
             )
-            _ = try firstTimePage.acceptPopup(with: self)
+            _ = try firstTimePage.acceptPopup()
 
             let instances: [CallingServiceInstance]
 

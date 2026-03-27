@@ -27,12 +27,14 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var userHelper: UserHelper!
     var callingServiceClient: CallingServiceClient!
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
         dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
+        registerNotificationPermissionMonitor()
 
         let launchArguments = [
             "-resetData",
@@ -112,4 +114,31 @@ class WireUITestCase: XCTestCase {
             alert.buttons["Allow"].tap()
         }
     }
+
+    func registerNotificationPermissionMonitor() {
+        guard notificationPermissionMonitor == nil else { return }
+
+        notificationPermissionMonitor =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
+    }
+
+//    func tapWithSystemAlertHandling(_ element: XCUIElement) {
+//        if element.waitForExistence(timeout: 2) {
+//            element.tap()
+//            if !element.isSelected && element.isHittable {
+//                element.tap()
+//            }
+//        }
+//    }
 }

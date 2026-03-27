@@ -27,14 +27,6 @@ class PhotosAppPage: PageModel {
         photosApp.windows.firstMatch
     }
 
-    deinit {
-        if let token = handler?.1 {
-            handler?.0.removeUIInterruptionMonitor(token)
-        }
-    }
-
-    var handler: (XCTestCase, any NSObjectProtocol)?
-
     init(photosApp: XCUIApplication) throws {
         self.photosApp = photosApp
         try super.init()
@@ -81,8 +73,7 @@ class PhotosAppPage: PageModel {
     }
 
     @discardableResult
-    func openFirstImage(with testCase: XCTestCase) throws -> PhotosAppPage {
-        handleNotificationPermissionAlert(testCase: testCase)
+    func openFirstImage() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
         XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
         // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
@@ -109,7 +100,7 @@ class PhotosAppPage: PageModel {
         let conversationToSend = selectConversation(name: name)
         XCTAssertTrue(
             conversationToSend.waitForExistence(timeout: timeout),
-            "Tap to chooseConversation, didn't succeed"
+            "Tap to chooseConversation, didn't pass"
         )
         conversationToSend.waitAndTap()
 
@@ -117,23 +108,5 @@ class PhotosAppPage: PageModel {
         sendButton.waitAndTap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
-    }
-
-    private func handleNotificationPermissionAlert(testCase: XCTestCase) {
-        let handler = testCase
-            .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
-                let allowButton = alertElement.buttons["Allow"].firstMatch
-
-                guard alertElement.label.contains(notifPermission),
-                      allowButton.waitForExistence(timeout: 1) else {
-                    return false
-                }
-
-                allowButton.tap()
-                return true
-            }
-
-        self.handler = (testCase, handler)
     }
 }
