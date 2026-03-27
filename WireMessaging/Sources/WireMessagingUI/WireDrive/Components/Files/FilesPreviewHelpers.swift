@@ -336,6 +336,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
             path: "some/path.jpg",
             contentType: nil,
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .pending
         )
 
@@ -363,6 +367,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
                 path: "some/path.jpg",
                 contentType: nil,
                 size: nil,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
                 downloadState: downloadState
             )
 

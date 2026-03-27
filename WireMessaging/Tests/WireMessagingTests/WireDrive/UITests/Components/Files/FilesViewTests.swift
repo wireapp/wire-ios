@@ -291,6 +291,10 @@ final class FilesViewTests: XCTestCase {
             path: "some/path",
             contentType: "some/content/type",
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .downloading(progress: 0.5)
         )
 
@@ -328,6 +332,10 @@ final class FilesViewTests: XCTestCase {
             path: "some/path",
             contentType: "some/content/type",
             size: nil,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: .failed(error: URLError(.notConnectedToInternet))
         )
 

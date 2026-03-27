@@ -35,6 +35,10 @@ extension WireDriveLocalAsset {
             path: path,
             contentType: contentType,
             size: size,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
             downloadState: downloadState
         )
     }

@@ -64,6 +64,10 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
                 stored.path = asset.path
                 stored.contentType = asset.contentType
                 stored.size = asset.size.map { Int64($0) } ?? -1
+                stored.conversationName = asset.conversationName
+                stored.ownerName = asset.ownerName
+                stored.modified = asset.modified
+                stored.isAvailableOffline = asset.isAvailableOffline
                 stored.isDownloaded = asset.isDownloaded
 
                 try context.save()
@@ -115,6 +119,10 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
                     path: managed.path,
                     contentType: managed.contentType,
                     size: managed.size >= 0 ? UInt64(managed.size) : nil,
+                    conversationName: managed.conversationName,
+                    ownerName: managed.ownerName,
+                    modified: managed.modified,
+                    isAvailableOffline: managed.isAvailableOffline,
                     downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
                 )
             }
