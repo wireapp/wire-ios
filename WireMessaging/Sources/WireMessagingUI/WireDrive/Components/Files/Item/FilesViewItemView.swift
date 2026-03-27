@@ -196,6 +196,19 @@ struct FilesItemView: View {
             }
         }
 
+        menuItem(
+            viewModel.isAvailableOffline ? .removeAvailableOffline : .makeAvailableOffline) { item in
+                Button {
+                    viewModel.performMenuAction(item)
+                } label: {
+                    Label(
+                        viewModel.isAvailableOffline ? Strings.Files.unavailableOffline : Strings.Files
+                            .availableOffline,
+                        systemImage: viewModel.isAvailableOffline ? "xmark.circle" : "arrow.down.circle"
+                    )
+                }
+            }
+
         menuItem(.showVersionHistory) { item in
             Button {
                 viewModel.performMenuAction(item)
