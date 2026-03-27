@@ -132,13 +132,4 @@ class WireUITestCase: XCTestCase {
                 return true
             }
     }
-
-//    func tapWithSystemAlertHandling(_ element: XCUIElement) {
-//        if element.waitForExistence(timeout: 2) {
-//            element.tap()
-//            if !element.isSelected && element.isHittable {
-//                element.tap()
-//            }
-//        }
-//    }
 }
