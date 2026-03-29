@@ -51,7 +51,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         setupViews()
         createConstraints()
 
-        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+        self.clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
             searchBar,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )

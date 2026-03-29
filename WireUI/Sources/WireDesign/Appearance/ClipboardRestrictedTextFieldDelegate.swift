@@ -85,14 +85,13 @@ public final class ClipboardRestrictedTextFieldDelegate: NSObject, UITextFieldDe
     ) -> ClipboardRestrictedTextFieldDelegate? {
         guard !isContextMenuAllowed else { return nil }
         let textField = searchBar.searchTextField
-        let restricted: ClipboardRestrictedTextFieldDelegate
-        if let original = textField.delegate {
-            restricted = ClipboardRestrictedTextFieldDelegate(
+        let restricted = if let original = textField.delegate {
+            ClipboardRestrictedTextFieldDelegate(
                 isContextMenuAllowed: false,
                 forwardingTo: original
             )
         } else {
-            restricted = ClipboardRestrictedTextFieldDelegate(isContextMenuAllowed: false)
+            ClipboardRestrictedTextFieldDelegate(isContextMenuAllowed: false)
         }
         textField.delegate = restricted
         return restricted
