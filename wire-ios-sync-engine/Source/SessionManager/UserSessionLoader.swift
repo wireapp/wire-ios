@@ -297,55 +297,14 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Get the last known metadata.
-        var prevMetadata: ResolvedBackendMetadata?
-        if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
-            prevMetadata = storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata.
-            prevMetadata = ResolvedBackendMetadata(
-                apiVersion: .init(legacyAPIVersion),
-                domain: legacyDomain,
-                isFederationEnabled: BackendInfo.isFederationEnabled
-            )
-        }
+        let useCase = UpdateBackendMetadataUseCase(
+            networkStack: networkStack,
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
 
-        // Get new metadata.
-        let newMetadata: ResolvedBackendMetadata
-        do {
-            newMetadata = try await networkStack.resolvedBackendMetadata()
-        } catch is URLError {
-            // To allow offline browsing fallback to previous metadata if possible.
-            if let prevMetadata {
-                newMetadata = prevMetadata
-            } else {
-                throw Failure.noResolvedBackendMetadataAvailable
-            }
-        }
-
-        if let prevMetadata {
-            if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // Now that federation is enabled we'll start storing domains
-                // on entities in the database. We'll therefore need to add
-                // the local domain to all existing entities so they're
-                // fully qualified.
-                journal[.isFederationMigrationRequired] = true
-            }
-        }
-
-        // Store new metadata.
-        do {
-            try backendStore.storeBackendMetadata(
-                newMetadata,
-                for: accountID
-            )
-        } catch {
-            throw Failure.failedToStoreMetadata(error)
-        }
-
-        return newMetadata
+        return try await useCase.invoke()
     }
 
     private func loadPersistenceStack(
