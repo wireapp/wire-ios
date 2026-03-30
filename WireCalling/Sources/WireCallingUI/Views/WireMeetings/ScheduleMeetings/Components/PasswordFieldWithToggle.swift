@@ -59,10 +59,9 @@ struct PasswordFieldWithToggle: View {
             placeholder: placeholder,
             isSecureTextEntry: false,
             placeholderColor: ColorTheme.Base.secondaryText.color,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
-        .autocapitalization(.none)
         .accessibilityIdentifier("passwordInput")
     }
 
@@ -72,9 +71,9 @@ struct PasswordFieldWithToggle: View {
             placeholder: placeholder,
             isSecureTextEntry: true,
             placeholderColor: ColorTheme.Base.secondaryText.color,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
         .accessibilityIdentifier("confirmPasswordInput")
     }
 
