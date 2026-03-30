@@ -118,6 +118,7 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {

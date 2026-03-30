@@ -26,7 +26,7 @@ final class FederationTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
         return try firstTimePage
-            .acceptPopup(with: self)
+            .acceptPopup()
     }
 
     @MainActor
@@ -60,6 +60,7 @@ final class FederationTests: WireUITestCase {
             .acceptConnectionRequest()
 
         // THEN
+        XCTAssertTrue(activeConversationPage.classifiedBanner.exists)
         _ = try activeConversationPage.goBackToConversationPage()
 
         XCTAssertTrue(conversationsPage.conversationCell.exists)
