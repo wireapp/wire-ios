@@ -121,6 +121,11 @@ public enum Locators {
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case sharedFileLabel = "FileTransferTopLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
+        case sketchButton
+        case canvas
+        case canvasSendButton
+        case attachmentImagePreview
+        case attachmentVideoPreview
     }
 
     public enum BackupOrRestorePage: String {
