@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDomain
 import WireNetwork
 
 // MARK: - UpdateBackendMetadataUseCaseProtocol
@@ -31,14 +30,26 @@ public protocol UpdateBackendMetadataUseCaseProtocol {
 
 // MARK: - UpdateBackendMetadataUseCase
 
-struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol {
+public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol {
 
     let networkStack: NetworkStack
     let backendStore: BackendEnvironmentStore
     let journal: Journal
     let accountID: UUID
 
-    func invoke() async throws -> ResolvedBackendMetadata {
+    public init(
+        networkStack: NetworkStack,
+        backendStore: BackendEnvironmentStore,
+        journal: Journal,
+        accountID: UUID
+    ) {
+        self.networkStack = networkStack
+        self.backendStore = backendStore
+        self.journal = journal
+        self.accountID = accountID
+    }
+
+    public func invoke() async throws -> ResolvedBackendMetadata {
         let prevMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)
         let newMetadata = try await networkStack.resolvedBackendMetadata()
 
