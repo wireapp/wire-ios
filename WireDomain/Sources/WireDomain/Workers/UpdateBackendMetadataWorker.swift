@@ -16,16 +16,142 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import Foundation
+import Network
+import UIKit
 import WireNetwork
 
 public actor UpdateBackendMetadataWorker {
 
+    private static let checkInterval: TimeInterval = .oneHour * 12
+
+    private let resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol
+    private let backendEnvironmentStore: BackendEnvironmentStore
+    private let journal: Journal
+    private let accountID: UUID
+    private let trigger: AsyncStream<Void>
+
+    private var triggerTask: Task<Void, Never>?
+    private var isChecking = false
+    private var lastSuccess: Date?
+
     public init(
         resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol,
         backendEnvironmentStore: BackendEnvironmentStore,
-        journal: Journal
+        journal: Journal,
+        accountID: UUID
     ) {
-        // TBD
+        self.init(
+            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
+            backendEnvironmentStore: backendEnvironmentStore,
+            journal: journal,
+            accountID: accountID,
+            trigger: Self.makeTrigger()
+        )
+    }
+
+    deinit {
+        triggerTask?.cancel()
+    }
+
+    public nonisolated func start() {
+        Task { await self.startAndWait() }
+    }
+
+    // MARK: - Private
+
+    init(
+        resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol,
+        backendEnvironmentStore: BackendEnvironmentStore,
+        journal: Journal,
+        accountID: UUID,
+        trigger: AsyncStream<Void>
+    ) {
+        self.resolveBackendMetadataUseCase = resolveBackendMetadataUseCase
+        self.backendEnvironmentStore = backendEnvironmentStore
+        self.journal = journal
+        self.accountID = accountID
+        self.trigger = trigger
+    }
+
+    func startAndWait() async {
+        guard triggerTask == nil else { return }
+
+        triggerTask = Task {
+            for await _ in trigger {
+                await self.updateIfNeeded()
+            }
+        }
+        await triggerTask?.value
+    }
+
+    private func isStale() -> Bool {
+        guard let lastSuccess else { return true }
+        return lastSuccess.addingTimeInterval(Self.checkInterval) < Date()
+    }
+
+    private func updateIfNeeded() async {
+        guard isStale(), !isChecking else { return }
+
+        isChecking = true
+        do {
+            let prevMetadata = try backendEnvironmentStore.fetchBackendMetadata(accountID: accountID)
+            let newMetadata = try await resolveBackendMetadataUseCase.invoke()
+
+            if let prevMetadata, !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
+                // Now that federation is enabled we'll start storing domains
+                // on entities in the database. We'll therefore need to add
+                // the local domain to all existing entities so they're
+                // fully qualified.
+                journal[.isFederationMigrationRequired] = true
+            }
+
+            try backendEnvironmentStore.storeBackendMetadata(
+                newMetadata,
+                for: accountID
+            )
+
+            lastSuccess = Date()
+        } catch {
+            // Failed to update metadata, will retry on next trigger.
+        }
+        isChecking = false
+    }
+
+    // MARK: - Trigger
+
+    static func makeTrigger() -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            continuation.yield()
+
+            let isOnlineTrigger = Task {
+                let monitor = NWPathMonitor()
+                for await path in monitor where path.status == .satisfied {
+                    continuation.yield()
+                }
+            }
+
+            let intervalTrigger = Task {
+                while true {
+                    try await Task.sleep(for: .seconds(60 * 30)) // 30 min
+                    continuation.yield()
+                }
+            }
+
+            let willEnterForegroundTrigger = Task {
+                let notificationCenter = NotificationCenter.default
+                for await _ in notificationCenter.notifications(named: UIApplication.willEnterForegroundNotification) {
+                    continuation.yield()
+                }
+            }
+
+            continuation.onTermination = { _ in
+                isOnlineTrigger.cancel()
+                intervalTrigger.cancel()
+                willEnterForegroundTrigger.cancel()
+            }
+        }
     }
 
 }

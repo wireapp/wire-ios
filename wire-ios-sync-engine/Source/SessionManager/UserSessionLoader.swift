@@ -518,7 +518,8 @@ final class UserSessionLoader {
                 }
             ),
             backendEnvironmentStore: backendStore,
-            journal: journal
+            journal: journal,
+            accountID: accountID
         )
 
         let userSession = ZMUserSession(
