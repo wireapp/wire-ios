@@ -29,9 +29,18 @@ class NewConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.NewConversationPage.createNewGroupButton.rawValue].firstMatch
     }
 
+    var newChannelButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.NewConversationPage.createNewChannelButton.rawValue].firstMatch
+    }
+
     func tapNewGroupButton() throws -> CreateGroupPage {
         newGroupButton.tap()
         return try CreateGroupPage()
+    }
+
+    func tapNewChannelButton() throws -> CreateChannelPage {
+        newChannelButton.tap()
+        return try CreateChannelPage()
     }
 
     var searchByNameOrUsernameSearchBox: XCUIElement {

@@ -1613,6 +1613,9 @@ extension ZMUserSession {
             AppVersionMigration_4_12_2(
                 coreDataStack: coreDataStack,
                 coreCryptoProvider: coreCryptoProvider
+            ),
+            AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
             )
         ]
 

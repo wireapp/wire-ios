@@ -30,7 +30,8 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
             accentColor: .turquoise,
             remoteIdentifier: UUID(),
             providerIdentifier: nil,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: .regular
         )
 
         // expect

@@ -19,15 +19,11 @@
 import UIKit
 import WireDataModel
 
-protocol SearchServicesSectionDelegate: SearchSectionControllerDelegate {
-    func addServicesSectionDidRequestOpenServicesAdmin()
-}
+final class SearchAppsSectionController: SearchSectionController {
 
-final class SearchServicesSectionController: SearchSectionController {
+    weak var delegate: SearchAppsSectionDelegate?
 
-    weak var delegate: SearchServicesSectionDelegate?
-
-    var services: [UserType] = []
+    var apps: [any UserType] = []
 
     let canSelfUserManageTeam: Bool
 
@@ -37,21 +33,21 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        services.isEmpty
+        apps.isEmpty
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         collectionView?.register(
-            OpenServicesAdminCell.self,
-            forCellWithReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier
+            OpenBotAdminCell.self,
+            forCellWithReuseIdentifier: OpenBotAdminCell.zm_reuseIdentifier
         )
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if canSelfUserManageTeam {
-            services.count + 1
+            apps.count + 1
         } else {
-            services.count
+            apps.count
         }
     }
 
@@ -59,11 +55,11 @@ final class SearchServicesSectionController: SearchSectionController {
         L10n.Localizable.Peoplepicker.Header.apps
     }
 
-    func service(for indexPath: IndexPath) -> UserType {
+    func bot(for indexPath: IndexPath) -> any UserType {
         if canSelfUserManageTeam {
-            services[indexPath.row - 1]
+            apps[indexPath.row - 1]
         } else {
-            services[indexPath.row]
+            apps[indexPath.row]
         }
     }
 
@@ -81,11 +77,11 @@ final class SearchServicesSectionController: SearchSectionController {
     ) -> UICollectionViewCell {
         if canSelfUserManageTeam, indexPath.row == 0 {
             return collectionView.dequeueReusableCell(
-                withReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier,
+                withReuseIdentifier: OpenBotAdminCell.zm_reuseIdentifier,
                 for: indexPath
             )
         } else {
-            let service = service(for: indexPath)
+            let bot = bot(for: indexPath)
 
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: UserCell.zm_reuseIdentifier,
@@ -93,14 +89,14 @@ final class SearchServicesSectionController: SearchSectionController {
             ) as! UserCell
             if let selfUser = ZMUser.selfUser() {
                 cell.configure(
-                    user: service,
+                    user: bot,
                     isSelfUserPartOfATeam: selfUser.hasTeam
                 )
             } else {
                 assertionFailure("ZMUser.selfUser() is nil")
             }
             cell.accessoryIconView.isHidden = false
-            cell.showSeparator = (services.count - 1) != indexPath.row
+            cell.showSeparator = (apps.count - 1) != indexPath.row
 
             return cell
         }
@@ -108,10 +104,10 @@ final class SearchServicesSectionController: SearchSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if canSelfUserManageTeam, indexPath.row == 0 {
-            delegate?.addServicesSectionDidRequestOpenServicesAdmin()
+            delegate?.addBotsSectionDidRequestOpenBotsAdmin()
         } else {
-            let service = service(for: indexPath)
-            delegate?.searchSectionController(self, didSelectUser: service, at: indexPath)
+            let bot = bot(for: indexPath)
+            delegate?.searchSectionController(self, didSelectUser: bot, at: indexPath)
         }
     }
 

@@ -80,7 +80,8 @@ final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
             remoteIdentifier: teamIdentifier,
             teamIdentifier: teamIdentifier,
             providerIdentifier: nil,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: .regular
         )
     }
 }

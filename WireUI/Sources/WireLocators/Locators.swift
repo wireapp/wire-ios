@@ -119,6 +119,12 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case sketchButton
+        case canvas
+        case canvasSendButton
+        case attachmentImagePreview
+        case attachmentVideoPreview
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {
@@ -175,6 +181,13 @@ public enum Locators {
         case sharedDriveSwitch
     }
 
+    public enum CreateChannelPage: String {
+
+        case channelNameField
+        case newChannelNextButton
+        case sharedDriveSwitch
+    }
+
     public enum CreatePersonalAccountFormPage: String {
 
         case enterNameField
@@ -198,6 +211,7 @@ public enum Locators {
         case cancelUserSearch = "Cancel"
         case cancel
         case usernameCell
+        case createNewChannelButton
     }
 
     public enum OnMyiPhonePage: String {

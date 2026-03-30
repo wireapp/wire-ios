@@ -31,7 +31,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
         let accountPage = try firstTimePage
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openSettings()
             .openAccountSettings()
 

@@ -19,6 +19,7 @@
 public import SwiftUI
 
 import WireDesign
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -96,6 +97,7 @@ public struct ConversationChannelCreationForm: View {
                     Text(Strings.CreationForm.ChannelName.label)
                 }
             )
+            .accessibilityIdentifier(Locators.CreateChannelPage.channelNameField.rawValue)
         }
     }
 
@@ -210,6 +212,7 @@ public struct ConversationChannelCreationForm: View {
     var fileManagementSection: some View {
         Section(content: {
             Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
+                .accessibilityIdentifier(Locators.CreateChannelPage.sharedDriveSwitch.rawValue)
         }, footer: {
             Text(footerText)
         })
