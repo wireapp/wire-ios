@@ -367,7 +367,7 @@ final class FilesItemViewModel: ObservableObject {
             actions.insert(.open)
             actions.insert(.shareLink)
         }
-        
+
         if !isEditable {
             actions.insert(isAvailableOffline ? .removeAvailableOffline : .makeAvailableOffline)
         }

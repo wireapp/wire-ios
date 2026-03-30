@@ -206,7 +206,7 @@ struct FilesItemView: View {
                 )
             }
         }
-        
+
         menuItem(.removeAvailableOffline) { item in
             Button {
                 viewModel.performMenuAction(item)
