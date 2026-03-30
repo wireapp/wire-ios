@@ -449,6 +449,9 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item
+                case .makeAvailableOffline, .removeAvailableOffline:
+                    // TODO: [WPB-23967] - Call use cases
+                    break
                 }
             },
             isBrowsing: isBrowsing,

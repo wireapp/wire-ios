@@ -130,6 +130,8 @@
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
 "conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.versionHistory" = "Version history";
+"conversation.wireCells.files.item.menu.makeAvailableOffline" = "Make available offline";
+"conversation.wireCells.files.item.menu.removeAvailableOffline" = "Remove available offline";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.delete" = "Delete";

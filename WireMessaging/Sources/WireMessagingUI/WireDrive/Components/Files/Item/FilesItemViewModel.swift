@@ -46,6 +46,8 @@ final class FilesItemViewModel: ObservableObject {
         case restore
         case deleteToRecycleBin
         case deletePermanently
+        case makeAvailableOffline
+        case removeAvailableOffline
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -366,6 +368,10 @@ final class FilesItemViewModel: ObservableObject {
             actions.insert(.shareLink)
         }
 
+        if !isEditable {
+            actions.insert(isAvailableOffline ? .removeAvailableOffline : .makeAvailableOffline)
+        }
+
         if !isBrowsing {
             if isInRecycleBin {
                 actions.insert(.restore)
@@ -386,6 +392,11 @@ final class FilesItemViewModel: ObservableObject {
         }
 
         return actions
+    }
+
+    var isAvailableOffline: Bool {
+        // TODO: [WPB-24208] When PR merged, uncomment code
+        Bool.random() // localAssetRepository.asset(nodeID: nodeID).isAvailableOffline
     }
 }
 

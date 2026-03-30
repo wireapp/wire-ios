@@ -196,6 +196,28 @@ struct FilesItemView: View {
             }
         }
 
+        menuItem(.makeAvailableOffline) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.makeAvailableOffline,
+                    systemImage: "arrow.down.circle"
+                )
+            }
+        }
+
+        menuItem(.removeAvailableOffline) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.removeAvailableOffline,
+                    systemImage: "xmark.circle"
+                )
+            }
+        }
+
         menuItem(.showVersionHistory) { item in
             Button {
                 viewModel.performMenuAction(item)
