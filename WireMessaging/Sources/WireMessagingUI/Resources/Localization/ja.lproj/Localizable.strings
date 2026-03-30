@@ -80,6 +80,8 @@
 "conversation.creationForm.apps.toggle" = "Allow apps";
 "conversation.creationForm.guests.toggle" = "ゲストアクセスを許可";
 "conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
+"conversation.creationForm.appsDisabled.title" = "Your team doesn't use apps yet";
+"conversation.creationForm.appsDisabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 
 "conversation.creationForm.readReceipts.toggle" = "開封通知";
 "conversation.creationForm.readReceipts.description" = "この設定がオンのとき、この会話内のメッセージが読まれたかどうか確認できます。";

@@ -401,7 +401,7 @@ class UserHelper {
 
         let filtered = conversations.found.filter { conversation in
             switch criteria {
-            case let .groupName(name):
+            case let .conversationName(name):
                 conversation.name == name
             case let .conversationType(type):
                 conversation.type == type
@@ -568,7 +568,7 @@ class UserHelper {
                     driveEnabled: driveEnabled
                 )
 
-                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                let (resolvedConversationId, _) = try await getConversationId(matching: .conversationName(name))
                 conversationId = resolvedConversationId
 
             case let .channel(name):
@@ -577,6 +577,9 @@ class UserHelper {
                 let basicAuth = basicAuth()
                 try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
                 try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+                if driveEnabled {
+                    try await unlockAndEnableDriveFeature(teamID: teamID)
+                }
 
                 try await createChannelConversations(
                     qualifiedIds: qualifiedIDs,
@@ -584,7 +587,7 @@ class UserHelper {
                     channelName: name
                 )
 
-                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                let (resolvedConversationId, _) = try await getConversationId(matching: .conversationName(name))
                 conversationId = resolvedConversationId
             }
         }
@@ -695,7 +698,7 @@ enum CreateConversationOption {
 }
 
 enum FilterConversationsByCriteria {
-    case groupName(String)
+    case conversationName(String)
     case conversationType(ConversationType?)
 }
 

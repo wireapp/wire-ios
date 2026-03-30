@@ -132,7 +132,7 @@ private extension FilesContentView {
         List {
             Group {
                 itemsSection
-                if viewModel.hasMore { loadMoreRow }
+                if showLoadMoreRow { loadMoreRow }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
@@ -167,6 +167,16 @@ private extension FilesContentView {
         default:
             EmptyView()
         }
+    }
+
+    private var showLoadMoreRow: Bool {
+        // workaround: when filtering by conversation, BE returns sometimes empty payload with hasMore flag set to true
+        // which wrongly displays the load more row on an empty state screen so we need here to explicitly check that
+        // the items are empty.
+        let hasMore = viewModel.hasMore
+        let isEmptyItems = viewModel.state.items.isEmpty
+
+        return hasMore && !isEmptyItems
     }
 }
 
