@@ -207,7 +207,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 domain: qualifiedID.domain,
                 in: self.syncMOC
             )
-            XCTAssertNil(conversation?.lastMessage?.systemMessageData?.systemMessageType)
+            XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .newConversation)
         }
     }
 
