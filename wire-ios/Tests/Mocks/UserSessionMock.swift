@@ -442,8 +442,10 @@ final class UserSessionMock: UserSession {
 
     // MARK: - Notifications
 
+    private var commonObject = MockNotificationContext()
+
     var notificationContext: any NotificationContext {
-        viewContext.notificationContext
+        commonObject
     }
 
     // MARK: - Context Provider
@@ -473,3 +475,5 @@ extension UserSessionMock: ContextProvider {
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 
 }
+
+class MockNotificationContext: NSObject, NotificationContext {}

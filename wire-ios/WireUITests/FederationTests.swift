@@ -21,6 +21,7 @@ import XCTest
 final class FederationTests: WireUITestCase {
 
     @MainActor
+<<<<<<< HEAD
     private func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
@@ -31,6 +32,9 @@ final class FederationTests: WireUITestCase {
 
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
+=======
+    func testConnectFederatedUsers() async throws {
+>>>>>>> 5691b1a78e (fix: clearing history in a conversation, the conversation disappears from the list - WPB-21258 🍒 (#4495))
 
         defer {
             BackendContext.current = .staging
