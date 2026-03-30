@@ -412,6 +412,8 @@ public final class ZMUserSession: NSObject {
         }
     )
 
+    private let updateBackendMetadataWorker: UpdateBackendMetadataWorker?
+
     let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
@@ -469,7 +471,8 @@ public final class ZMUserSession: NSObject {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         cookieStorage: any CookieStorageProtocol,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        updateBackendMetadataWorker: UpdateBackendMetadataWorker?
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -502,6 +505,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.updateBackendMetadataWorker = updateBackendMetadataWorker
 
         super.init()
 

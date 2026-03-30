@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol ResolveBackendMetadataUseCaseProtocol {
+public protocol ResolveBackendMetadataUseCaseProtocol {
 
     /// Resolve the metadata of the currently connected backend.
     ///

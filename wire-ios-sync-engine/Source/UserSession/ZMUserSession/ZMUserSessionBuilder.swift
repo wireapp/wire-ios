@@ -187,7 +187,8 @@ struct ZMUserSessionBuilder {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:],
+            updateBackendMetadataWorker: nil,
         )
     }
 

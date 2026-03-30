@@ -509,6 +509,18 @@ final class UserSessionLoader {
             )
         )
 
+        let updateBackendMetadataWorker = UpdateBackendMetadataWorker(
+            resolveBackendMetadataUseCase: ResolveBackendMetadataUseCase(
+                backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
+                clientProductionVersions: APIVersion.productionVersions,
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                    WireNetwork.APIVersion($0)
+                }
+            ),
+            backendEnvironmentStore: backendStore,
+            journal: journal
+        )
+
         let userSession = ZMUserSession(
             userId: accountID,
             restNetworkService: restNetworkService,
@@ -539,7 +551,8 @@ final class UserSessionLoader {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            updateBackendMetadataWorker: updateBackendMetadataWorker
         )
 
         userSession.setup(
