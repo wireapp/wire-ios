@@ -21,15 +21,6 @@ import XCTest
 final class FederationTests: WireUITestCase {
 
     @MainActor
-    private func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
-
-        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-
-        return try firstTimePage
-            .acceptPopup()
-    }
-
-    @MainActor
     func testConnectFederatedUsers() async throws {
 
         defer {

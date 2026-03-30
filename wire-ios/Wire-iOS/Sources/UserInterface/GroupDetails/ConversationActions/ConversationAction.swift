@@ -188,6 +188,7 @@ extension ZMConversation.Action {
     var accessibilityIdentifier: String? {
         switch self {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
+        case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         default: nil
         }
     }
