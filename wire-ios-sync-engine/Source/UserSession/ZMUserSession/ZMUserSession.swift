@@ -402,8 +402,8 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var checkBlacklistWorker: CheckBlacklistWorker = .init(
-        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+    private lazy var checkBlacklistWorker: Worker = .checkBlacklist(
+        useCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
         onIsBuildBlacklisted: { [weak self] in
             guard let self else { return }
 
