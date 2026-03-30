@@ -42,7 +42,7 @@ final class WireDriveTests: WireUITestCase {
         try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enableShareDriveSwitch()

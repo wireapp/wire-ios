@@ -49,7 +49,7 @@ struct FlowLayout: Layout {
 
     private func layout(subviews: Subviews, containerWidth: CGFloat) -> (items: [CGRect], size: CGSize) {
         let sizes = subviews.map { subview in
-            let size = subview.sizeThatFits(.unspecified)
+            let size = subview.sizeThatFits(ProposedViewSize(width: containerWidth, height: nil))
             return CGSize(width: min(size.width, containerWidth), height: size.height)
         }
 
