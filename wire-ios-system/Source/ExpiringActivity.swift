@@ -60,34 +60,38 @@ actor ExpiringActivityManager {
     }
 
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            api.performExpiringActivity(withReason: reason) { expiring in
-                if !expiring {
-                    let semaphore = DispatchSemaphore(value: 0)
-                    Task {
-                        do {
-                            WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
-                            try await self.startWork(block: block, semaphore: semaphore).value
-                            WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
-                            continuation.resume()
-                        } catch {
-                            WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
-                            continuation.resume(throwing: error)
-                        }
+        try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                api.performExpiringActivity(withReason: reason) { expiring in
+                    if !expiring {
+                        let semaphore = DispatchSemaphore(value: 0)
+                        Task {
+                            do {
+                                WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
+                                try await self.startWork(block: block, semaphore: semaphore).value
+                                WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
+                                continuation.resume()
+                            } catch {
+                                WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
+                                continuation.resume(throwing: error)
+                            }
 
-                    }
-                    semaphore.wait()
-                } else {
-                    WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
-                    Task {
-                        do {
-                            try await self.stopWork()
-                        } catch {
-                            continuation.resume(throwing: error)
+                        }
+                        semaphore.wait()
+                    } else {
+                        WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
+                        Task {
+                            do {
+                                try await self.stopWork()
+                            } catch {
+                                continuation.resume(throwing: error)
+                            }
                         }
                     }
                 }
             }
+        } onCancel: {
+            Task { try? await self.stopWork() }
         }
     }
 
