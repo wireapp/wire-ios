@@ -36,7 +36,7 @@ final class MessagingTests: WireUITestCase {
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil")
 
-        let (_, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
+        let (_, domain) = try await userHelper.getConversationId(matching: .conversationName(groupName))
         let convoDomain = try XCTUnwrap(domain)
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
@@ -85,7 +85,7 @@ final class MessagingTests: WireUITestCase {
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil")
 
-        let (_, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
+        let (_, domain) = try await userHelper.getConversationId(matching: .conversationName(groupName))
         let convoDomain = try XCTUnwrap(domain)
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
