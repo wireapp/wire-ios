@@ -412,7 +412,7 @@ public final class ZMUserSession: NSObject {
         }
     )
 
-    private let updateBackendMetadataWorker: UpdateBackendMetadataWorker
+    private let updateBackendMetadataWorker: Worker
 
     let logFilesProvider: LogFilesProviding
 
@@ -505,7 +505,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.journal = journal
         self.logFilesProvider = logFilesProvider
-        self.updateBackendMetadataWorker = UpdateBackendMetadataWorker(useCase: updateBackendMetadataUseCase)
+        self.updateBackendMetadataWorker = .updateBackendMetadata(useCase: updateBackendMetadataUseCase)
 
         super.init()
 

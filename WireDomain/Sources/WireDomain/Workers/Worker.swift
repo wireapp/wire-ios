@@ -79,7 +79,7 @@ public actor Worker {
 
     // MARK: - Trigger
 
-    public static func makeDefaultTrigger() -> AsyncStream<Void> {
+    public static func defaultTrigger() -> AsyncStream<Void> {
         AsyncStream { continuation in
             continuation.yield()
 
