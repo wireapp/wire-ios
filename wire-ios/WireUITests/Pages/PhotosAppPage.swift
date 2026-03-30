@@ -100,7 +100,7 @@ class PhotosAppPage: PageModel {
         let conversationToSend = selectConversation(name: name)
         XCTAssertTrue(
             conversationToSend.waitForExistence(timeout: timeout),
-            "Tap to chooseConversation, didn't succeed"
+            "Tap to chooseConversation, didn't pass"
         )
         conversationToSend.waitAndTap()
 
@@ -109,5 +109,4 @@ class PhotosAppPage: PageModel {
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
     }
-
 }
