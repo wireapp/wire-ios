@@ -516,17 +516,21 @@ final class UserSessionLoader {
             )
         )
 
-        let updateBackendMetadataWorker = UpdateBackendMetadataWorker(
-            resolveBackendMetadataUseCase: ResolveBackendMetadataUseCase(
-                backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
-                clientProductionVersions: APIVersion.productionVersions,
-                preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
-                    WireNetwork.APIVersion($0)
-                }
-            ),
-            backendEnvironmentStore: backendStore,
+        let resolveBackendMetadataUseCase = ResolveBackendMetadataUseCase(
+            backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                WireNetwork.APIVersion($0)
+            }
+        )
+        let updateBackendMetadataUseCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
+            backendStore: backendStore,
             journal: journal,
             accountID: accountID
+        )
+        let updateBackendMetadataWorker = UpdateBackendMetadataWorker(
+            useCase: updateBackendMetadataUseCase
         )
 
         let userSession = ZMUserSession(

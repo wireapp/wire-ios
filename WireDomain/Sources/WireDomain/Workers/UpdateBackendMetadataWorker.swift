@@ -20,16 +20,12 @@ import Combine
 import Foundation
 import Network
 import UIKit
-import WireNetwork
 
 public actor UpdateBackendMetadataWorker {
 
     private static let checkInterval: TimeInterval = .oneHour * 12
 
-    private let resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol
-    private let backendEnvironmentStore: BackendEnvironmentStore
-    private let journal: Journal
-    private let accountID: UUID
+    private let useCase: any UpdateBackendMetadataUseCaseProtocol
     private let trigger: AsyncStream<Void>
 
     private var triggerTask: Task<Void, Never>?
@@ -37,16 +33,10 @@ public actor UpdateBackendMetadataWorker {
     private var lastSuccess: Date?
 
     public init(
-        resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol,
-        backendEnvironmentStore: BackendEnvironmentStore,
-        journal: Journal,
-        accountID: UUID
+        useCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         self.init(
-            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
-            backendEnvironmentStore: backendEnvironmentStore,
-            journal: journal,
-            accountID: accountID,
+            useCase: useCase,
             trigger: Self.makeTrigger()
         )
     }
@@ -62,16 +52,10 @@ public actor UpdateBackendMetadataWorker {
     // MARK: - Private
 
     init(
-        resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol,
-        backendEnvironmentStore: BackendEnvironmentStore,
-        journal: Journal,
-        accountID: UUID,
+        useCase: any UpdateBackendMetadataUseCaseProtocol,
         trigger: AsyncStream<Void>
     ) {
-        self.resolveBackendMetadataUseCase = resolveBackendMetadataUseCase
-        self.backendEnvironmentStore = backendEnvironmentStore
-        self.journal = journal
-        self.accountID = accountID
+        self.useCase = useCase
         self.trigger = trigger
     }
 
@@ -96,22 +80,7 @@ public actor UpdateBackendMetadataWorker {
 
         isChecking = true
         do {
-            let prevMetadata = try backendEnvironmentStore.fetchBackendMetadata(accountID: accountID)
-            let newMetadata = try await resolveBackendMetadataUseCase.invoke()
-
-            if let prevMetadata, !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // Now that federation is enabled we'll start storing domains
-                // on entities in the database. We'll therefore need to add
-                // the local domain to all existing entities so they're
-                // fully qualified.
-                journal[.isFederationMigrationRequired] = true
-            }
-
-            try backendEnvironmentStore.storeBackendMetadata(
-                newMetadata,
-                for: accountID
-            )
-
+            _ = try await useCase.invoke()
             lastSuccess = Date()
         } catch {
             // Failed to update metadata, will retry on next trigger.
