@@ -32,18 +32,18 @@ public protocol UpdateBackendMetadataUseCaseProtocol {
 
 public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol {
 
-    let networkStack: NetworkStack
+    let resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol
     let backendStore: BackendEnvironmentStore
     let journal: Journal
     let accountID: UUID
 
     public init(
-        networkStack: NetworkStack,
+        resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol,
         backendStore: BackendEnvironmentStore,
         journal: Journal,
         accountID: UUID
     ) {
-        self.networkStack = networkStack
+        self.resolveBackendMetadataUseCase = resolveBackendMetadataUseCase
         self.backendStore = backendStore
         self.journal = journal
         self.accountID = accountID
@@ -51,7 +51,7 @@ public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol
 
     public func invoke() async throws -> ResolvedBackendMetadata {
         let prevMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)
-        let newMetadata = try await networkStack.resolvedBackendMetadata()
+        let newMetadata = try await resolveBackendMetadataUseCase.invoke()
 
         if let prevMetadata, !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
             // Now that federation is enabled we'll start storing domains
