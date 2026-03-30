@@ -123,6 +123,7 @@ public enum Locators {
         case canvasSendButton
         case attachmentImagePreview
         case attachmentVideoPreview
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {

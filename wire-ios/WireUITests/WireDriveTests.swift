@@ -42,7 +42,7 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enableShareDriveSwitch()
@@ -66,7 +66,7 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewChannelButton()
             .enableShareDriveSwitch()
@@ -92,7 +92,7 @@ final class WireDriveTests: WireUITestCase {
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .typeMessageAndAttachSketch(message)
 
