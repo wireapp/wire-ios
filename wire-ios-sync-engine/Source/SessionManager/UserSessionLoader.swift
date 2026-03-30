@@ -315,14 +315,21 @@ final class UserSessionLoader {
         }
 
         // Otherwise fetch and store new metadata.
-        let useCase = UpdateBackendMetadataUseCase(
-            networkStack: networkStack,
-            backendStore: backendStore,
-            journal: journal,
-            accountID: accountID
-        )
-
-        return try await useCase.invoke()
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch {
+            throw Failure.noResolvedBackendMetadataAvailable
+        }
+        do {
+            try backendStore.storeBackendMetadata(
+                newMetadata,
+                for: accountID
+            )
+        } catch {
+            throw Failure.failedToStoreMetadata(error)
+        }
+        return newMetadata
     }
 
     private func loadPersistenceStack(
