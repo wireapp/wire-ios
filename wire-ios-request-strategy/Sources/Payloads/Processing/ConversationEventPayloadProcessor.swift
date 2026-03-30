@@ -613,6 +613,20 @@ struct ConversationEventPayloadProcessor {
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
 
+            if isInitialFetch {
+                // we just got a new conversation, we display new conversation header
+                conversation.appendNewConversationSystemMessage(
+                    at: .distantPast,
+                    users: conversation.localParticipants
+                )
+
+                if source == .slowSync {
+                    // Slow synced conversations should be considered read from the start
+                    conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+                }
+                Flow.createGroup.checkpoint(description: "new system message for conversation inserted")
+            }
+
             // If we discover this group is actually a fake one on one,
             // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: conversation)
