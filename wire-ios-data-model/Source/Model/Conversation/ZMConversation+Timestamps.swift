@@ -432,4 +432,9 @@ extension ZMConversation {
 
         return managedObjectContext.fetchOrAssert(request: fetchRequest).filter { $0.shouldGenerateUnreadCount() }
     }
+
+}
+
+public extension Notification.Name {
+    static let clearContentNotification = Notification.Name("clearContentNotification")
 }
