@@ -107,25 +107,6 @@ package struct VerificationCodeView: View {
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
             ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
-<<<<<<< HEAD
-                TextField("", text: $viewModel.code[index])
-                    .frame(width: 50, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(
-                                focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
-                                lineWidth: 1
-                            )
-                    )
-                    .multilineTextAlignment(.center)
-                    .font(for: .h2)
-                    .keyboardType(.numberPad)
-                    .foregroundColor(.primary)
-                    .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { _, newValue in
-                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
-                    }
-=======
                 ContextMenuControllableTextField(
                     text: $viewModel.code[index],
                     placeholder: "",
@@ -147,7 +128,6 @@ package struct VerificationCodeView: View {
                 .onChange(of: viewModel.code[index]) { newValue in
                     focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                 }
->>>>>>> cb1dabe444 (fix: disallow copy/paste on WireAuthentication - WPB-24299 (#4487))
             }
         }
         .onAppear {
