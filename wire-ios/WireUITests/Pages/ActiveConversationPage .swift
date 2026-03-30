@@ -156,4 +156,15 @@ class ActiveConversationPage: PageModel {
         sendCanvasButton.tap()
         return self
     }
+
+    func waitToUploadToFinishAndSend() {
+        XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
+        sendButton.waitAndTap()
+    }
+
+    func openSharedDrive() throws -> SharedDriveFilesPage {
+        conversationTitleButton.waitAndTap()
+        sharedDriveButton.tap()
+        return try SharedDriveFilesPage()
+    }
 }
