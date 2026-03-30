@@ -201,7 +201,7 @@ struct FilesItemView: View {
                 viewModel.performMenuAction(item)
             } label: {
                 Label(
-                    Strings.Files.Item.Menu.availableOffline,
+                    Strings.Files.Item.Menu.makeAvailableOffline,
                     systemImage: "arrow.down.circle"
                 )
             }
@@ -212,7 +212,7 @@ struct FilesItemView: View {
                 viewModel.performMenuAction(item)
             } label: {
                 Label(
-                    Strings.Files.Item.Menu.unavailableOffline,
+                    Strings.Files.Item.Menu.removeAvailableOffline,
                     systemImage: "xmark.circle"
                 )
             }
