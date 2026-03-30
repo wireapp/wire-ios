@@ -20,15 +20,6 @@ import Foundation
 
 class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
-    override var basePath: String {
-        "/conversations"
-    }
-
-    // MARK: - Constants
-
-    enum Constants {
-        static let batchSize = 500
-    }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         guard 1 ... 1000 ~= identifiers.count else {

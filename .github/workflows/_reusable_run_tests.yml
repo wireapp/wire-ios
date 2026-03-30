@@ -147,140 +147,6 @@ jobs:
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-
-      - name: Resolve Kalium ref
-        if: ${{ inputs.run_critical_flows }}
-        id: kalium-ref
-        shell: bash
-        env:
-          KALIUM_REF_INPUT: ${{ inputs.kalium_ref }}
-        run: |
-          set -euo pipefail
-
-          if [[ -n "${KALIUM_REF_INPUT:-}" ]]; then
-            KALIUM_REF="$KALIUM_REF_INPUT"
-          else
-            KALIUM_REF="$({
-              git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
-              | awk -F/ '{print $3}' \
-              | sort -V \
-              | tail -n 1
-            })"
-          fi
-
-          if [[ -z "$KALIUM_REF" ]]; then
-            echo "::error::Could not resolve Kalium testservice ref"
-            exit 1
-          fi
-
-          if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::error::Invalid Kalium ref: $KALIUM_REF"
-            exit 1
-          fi
-
-          echo "ref=$KALIUM_REF" >> "$GITHUB_OUTPUT"
-          echo "Using Kalium ref: $KALIUM_REF"
-
-      - name: Clone Kalium
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          KALIUM_DIR="$RUNNER_TEMP/kalium"
-          rm -rf "$KALIUM_DIR"
-          git clone --depth 1 --branch "${{ steps.kalium-ref.outputs.ref }}" \
-            https://github.com/wireapp/kalium.git "$KALIUM_DIR"
-
-      - name: Cache Gradle dependencies
-        if: ${{ inputs.run_critical_flows }}
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
-          restore-keys: |
-            kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
-
-      - name: Restore Kalium fat jar cache
-        if: ${{ inputs.run_critical_flows }}
-        id: jar-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
-          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
-          restore-keys: |
-            kalium-jar-${{ runner.os }}-${{ runner.arch }}-
-
-      - name: Setup Java 17 for Kalium Testservice
-        if: ${{ inputs.run_critical_flows }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Kalium Testservice jar
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "Kalium fat-jar cache hit: ${{ steps.jar-cache.outputs.cache-hit }}"
-
-          LIBS_DIR="$RUNNER_TEMP/kalium/tools/testservice/build/libs"
-          mkdir -p "$LIBS_DIR"
-
-          # Try to find jar (either restored from cache or from a previous build in this run)
-          JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
-
-          if [[ -z "$JAR" ]]; then
-            echo "Jar not found in $LIBS_DIR — so building..."
-            cd "$RUNNER_TEMP/kalium"
-            ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
-            JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
-          fi
-
-          if [[ -z "$JAR" || ! -f "$JAR" ]]; then
-            echo "::error::Kalium fat jar not found in $LIBS_DIR"
-            ls -la "$LIBS_DIR" || true
-            exit 1
-          fi
-
-          echo "JAR=$JAR" >> "$GITHUB_ENV"
-          echo "Using jar: $JAR"
-          ls -la "$LIBS_DIR"
-
-      - name: Save Kalium fat jar cache
-        if: ${{ inputs.run_critical_flows && steps.jar-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
-          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
-
-      - name: Start Kalium Testservice
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          CONFIG="$GITHUB_WORKSPACE/.github/testservice/testservice-config.yml"
-          [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
-          [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
-
-          nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
-          echo $! > "$RUNNER_TEMP/testservice.pid"
-
-          for i in {1..90}; do
-            if curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1; then
-              echo "✅ Kalium Testservice reachable at http://localhost:8080 (after ${i}s)"
-              exit 0
-            fi
-            sleep 1
-          done
-
-          echo "::error::Testservice not reachable"
-          tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-          exit 1
-
           
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
@@ -290,12 +156,23 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
+          
+      - name: Setup Kalium Testservice
+        if: ${{ inputs.run_critical_flows }}
+        uses: ./.github/actions/kalium-testservice/setup
+        with:
+          kalium_ref: ${{ inputs.kalium_ref }}
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane run_uitests
 
+      - name: Stop Kalium Testservice
+        if: ${{ always() && inputs.run_critical_flows }}
+        uses: ./.github/actions/kalium-testservice/stop
+        with:
+          print_logs_on_failure: ${{ job.status != 'success' }}
 
       - name: Upload XCResult results to Testiny
         if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
@@ -331,35 +208,6 @@ jobs:
         if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
-
-      - name: Stop Kalium Testservice
-        if: always() && inputs.run_critical_flows
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          PID_FILE="$RUNNER_TEMP/testservice.pid"
-          LOG_FILE="$RUNNER_TEMP/testservice.log"
-
-          # Stop the service
-          if [[ -f "$PID_FILE" ]]; then
-            PID="$(cat "$PID_FILE" || true)"
-            if [[ -n "$PID" ]]; then
-              kill "$PID" 2>/dev/null || true
-            fi
-            rm -f "$PID_FILE" || true
-          fi
-
-          # Print logs only when the job is failing
-          if [[ "${{ job.status }}" != "success" ]]; then
-            if [[ -f "$LOG_FILE" ]]; then
-              echo "::group::Kalium Testservice log (last 200 lines)"
-              tail -n 200 "$LOG_FILE" || true
-              echo "::endgroup::"
-            else
-              echo "::warning::No testservice.log found"
-            fi
-          fi
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}

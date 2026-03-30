@@ -32,7 +32,6 @@ java -version
 #### Deploy and Start Kalium Testservice
 
 ```bash
-chmod +x ./scripts/setup-local-testservice.sh
 ./scripts/setup-local-testservice.sh
 ```
 

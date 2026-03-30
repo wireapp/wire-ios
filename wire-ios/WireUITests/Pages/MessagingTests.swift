@@ -28,16 +28,15 @@ final class MessagingTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomConversationName()
         let messageFromMember1 = UserGenerator.generateRandomMessage()
 
-        let (teamOwner, teamMembers, _, conversationId) = try await userHelper
+        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
             )
 
-        let convId = try XCTUnwrap(conversationId, "conversationId is nil")
+        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let (_, domain) = try await userHelper.getConversationId(matching: .conversationName(groupName))
-        let convoDomain = try XCTUnwrap(domain)
+        let conversationDomain = BackendContext.current.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup(with: self)
@@ -46,8 +45,8 @@ final class MessagingTests: WireUITestCase {
         try await testServicesClient.sendText(
             user: teamMembers[0],
             text: messageFromMember1,
-            convoId: convId,
-            domain: convoDomain
+            conversationId: conversationId,
+            domain: conversationDomain
         )
 
         XCTAssertTrue(
@@ -77,16 +76,15 @@ final class MessagingTests: WireUITestCase {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, conversationId) = try await userHelper
+        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
             )
 
-        let convId = try XCTUnwrap(conversationId, "conversationId is nil")
+        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let (_, domain) = try await userHelper.getConversationId(matching: .conversationName(groupName))
-        let convoDomain = try XCTUnwrap(domain)
+        let conversationDomain = BackendContext.current.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup(with: self)
@@ -101,8 +99,8 @@ final class MessagingTests: WireUITestCase {
             user: teamMembers[0],
             fileURL: imageURL,
             type: imageExtension,
-            convoId: convId,
-            domain: convoDomain
+            conversationId: conversationId,
+            domain: conversationDomain
         )
 
         XCTAssertTrue(

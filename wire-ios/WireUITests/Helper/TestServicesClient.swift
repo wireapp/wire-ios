@@ -123,7 +123,7 @@ class TestServicesClient {
     func sendText(
         user: UserInfo,
         text: String,
-        convoId: UUID,
+        conversationId: UUID,
         domain: String,
         timeoutMillis: Int = 0,
         expectsReadConfirmation: Bool = true,
@@ -142,12 +142,12 @@ class TestServicesClient {
         guard let requestUrl = url else { fatalError("Invalid URL") }
 
         var body: [String: Any] = [
-            "conversationId": convoId.uuidString.lowercased(),
+            "conversationId": conversationId.uuidString.lowercased(),
             "text": text,
             "legalHoldStatus": 0
         ]
 
-        if domain != "staging.zinfra.io" {
+        if domain != BackendTarget.staging.domainInfo {
             body["conversationDomain"] = domain
         }
 
@@ -209,7 +209,7 @@ class TestServicesClient {
             "type": type
         ]
 
-        if domain != "staging.zinfra.io" {
+        if domain != BackendTarget.staging.domainInfo {
             body["conversationDomain"] = domain
         }
 
@@ -233,7 +233,7 @@ class TestServicesClient {
         user: UserInfo,
         fileURL: URL,
         type: String,
-        convoId: UUID,
+        conversationId: UUID,
         domain: String,
     ) async throws {
 
@@ -249,7 +249,7 @@ class TestServicesClient {
         guard let requestUrl = url else { fatalError("Invalid URL") }
 
         let body: [String: Any] = [
-            "conversationId": convoId.uuidString.lowercased(),
+            "conversationId": conversationId.uuidString.lowercased(),
             "data": try fileToBase64String(fileURL: fileURL),
             "conversationDomain": domain,
             "type": type

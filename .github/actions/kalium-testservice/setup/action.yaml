@@ -1,0 +1,138 @@
+name: "Setup Kalium Testservice"
+
+inputs:
+  kalium_ref:
+    description: Optional Kalium tag to use. If empty, latest test-service-v* tag is resolved.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve Kalium ref
+      id: kalium-ref
+      shell: bash
+      env:
+        KALIUM_REF_INPUT: ${{ inputs.kalium_ref }}
+      run: |
+        set -euo pipefail
+
+        if [[ -n "${KALIUM_REF_INPUT:-}" ]]; then
+          KALIUM_REF="$KALIUM_REF_INPUT"
+        else
+          KALIUM_REF="$({
+            git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
+            | awk -F/ '{print $3}' \
+            | sort -V \
+            | tail -n 1
+          })"
+        fi
+
+        if [[ -z "$KALIUM_REF" ]]; then
+          echo "::error::Could not resolve Kalium testservice ref"
+          exit 1
+        fi
+
+        if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::Invalid Kalium ref: $KALIUM_REF"
+          exit 1
+        fi
+
+        echo "ref=$KALIUM_REF" >> "$GITHUB_OUTPUT"
+        echo "Using Kalium ref: $KALIUM_REF"
+
+    - name: Setup Java 17 for Kalium Testservice
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "17"
+
+    - name: Restore Kalium fat jar cache
+      id: jar-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
+        key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
+        restore-keys: |
+          kalium-jar-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Cache Gradle dependencies
+      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
+        restore-keys: |
+          kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Clone Kalium
+      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        KALIUM_DIR="$RUNNER_TEMP/kalium"
+        rm -rf "$KALIUM_DIR"
+        git clone --depth 1 --branch "${{ steps.kalium-ref.outputs.ref }}" \
+          https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+
+    - name: Build or restore Kalium Testservice jar
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        echo "Kalium fat-jar cache hit: ${{ steps.jar-cache.outputs.cache-hit }}"
+
+        LIBS_DIR="$RUNNER_TEMP/kalium/tools/testservice/build/libs"
+        mkdir -p "$LIBS_DIR"
+
+        JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
+
+        if [[ -z "$JAR" ]]; then
+          echo "Jar not found in $LIBS_DIR, building..."
+          cd "$RUNNER_TEMP/kalium"
+          ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
+          JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
+        fi
+
+        if [[ -z "$JAR" || ! -f "$JAR" ]]; then
+          echo "::error::Kalium fat jar not found in $LIBS_DIR"
+          ls -la "$LIBS_DIR" || true
+          exit 1
+        fi
+
+        echo "JAR=$JAR" >> "$GITHUB_ENV"
+        echo "Using jar: $JAR"
+        ls -la "$LIBS_DIR"
+
+    - name: Save Kalium fat jar cache
+      if: ${{ steps.jar-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
+        key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
+
+    - name: Start Kalium Testservice
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        CONFIG="$GITHUB_WORKSPACE/testservice/testservice-config.yml"
+        [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
+        [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
+
+        nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
+        echo $! > "$RUNNER_TEMP/testservice.pid"
+
+        for i in {1..90}; do
+          if curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1; then
+            echo "Kalium Testservice reachable at http://localhost:8080 after ${i}s"
+            exit 0
+          fi
+          sleep 1
+        done
+
+        echo "::error::Testservice not reachable"
+        tail -n 200 "$RUNNER_TEMP/testservice.log" || true
+        exit 1

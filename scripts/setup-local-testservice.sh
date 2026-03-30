@@ -21,11 +21,11 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
-CONFIG_PATH="${TESTSERVICE_CONFIG:-$REPO_ROOT/.github/testservice/testservice-config.yml}"
+CONFIG_PATH="${TESTSERVICE_CONFIG:-$REPO_ROOT/testservice/testservice-config.yml}"
 
 if [[ ! -f "$CONFIG_PATH" ]]; then
   echo "ERROR: Config not found at $CONFIG_PATH"
-  echo "Expected config at $REPO_ROOT/.github/testservice/testservice-config.yml or set TESTSERVICE_CONFIG"
+  echo "Expected config at $REPO_ROOT/testservice/testservice-config.yml or set TESTSERVICE_CONFIG"
   exit 1
 fi
 

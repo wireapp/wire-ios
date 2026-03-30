@@ -181,13 +181,6 @@ class ConversationsPage: PageModel {
         loadBar.waitToDisappear()
     }
 
-//    func waitUntilLastMessageReceivedByTestServiceOnConversationList(with sentBy: String) -> Bool {
-//        let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
-//        let button = app.staticTexts.containing(predicate).firstMatch
-//        return button.waitForExistence(timeout: 5)
-//
-//    }
-
     func markConversationAsFavourite() throws -> ConversationsPage {
         addFavouriteButtonOnMoreOptions.tap()
         return self
