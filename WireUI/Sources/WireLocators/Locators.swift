@@ -118,15 +118,12 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
-<<<<<<< HEAD
         case sketchButton
         case canvas
         case canvasSendButton
         case attachmentImagePreview
         case attachmentVideoPreview
-=======
         case classifiedBanner = "ClassificationBannerClassified"
->>>>>>> a9cbbdeb1c (fix: critical flow fixes - WPB-24211 (#4472))
     }
 
     public enum BackupOrRestorePage: String {

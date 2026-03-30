@@ -91,23 +91,9 @@ final class ZCallingTests: WireUITestCase {
 
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
-<<<<<<< HEAD
-    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+    func test_MultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
-        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
-
-        let firstTimePage = try app.loginUser(
-            email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
-            password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
-        )
-        _ = try firstTimePage.acceptPopup(with: self)
-
-        let instances: [CallingServiceInstance]
-=======
-    func test_MultipleUsersJoiningGroupCall() async throws {
->>>>>>> a9cbbdeb1c (fix: critical flow fixes - WPB-24211 (#4472))
         do {
-
             let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
             let firstTimePage = try app.loginUser(
