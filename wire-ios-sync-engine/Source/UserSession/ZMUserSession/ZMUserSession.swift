@@ -595,6 +595,7 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
         checkBlacklistWorker.start()
+        updateBackendMetadataWorker?.start()
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
