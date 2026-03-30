@@ -412,7 +412,7 @@ public final class ZMUserSession: NSObject {
         }
     )
 
-    private let updateBackendMetadataWorker: UpdateBackendMetadataWorker?
+    private let updateBackendMetadataWorker: UpdateBackendMetadataWorker
 
     let logFilesProvider: LogFilesProviding
 
@@ -472,7 +472,7 @@ public final class ZMUserSession: NSObject {
         logFilesProvider: LogFilesProviding,
         cookieStorage: any CookieStorageProtocol,
         faultyMLSRemovalKeysByDomain: [String: [String]],
-        updateBackendMetadataWorker: UpdateBackendMetadataWorker?
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -505,7 +505,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.journal = journal
         self.logFilesProvider = logFilesProvider
-        self.updateBackendMetadataWorker = updateBackendMetadataWorker
+        self.updateBackendMetadataWorker = UpdateBackendMetadataWorker(useCase: updateBackendMetadataUseCase)
 
         super.init()
 
@@ -595,7 +595,7 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
         checkBlacklistWorker.start()
-        updateBackendMetadataWorker?.start()
+        updateBackendMetadataWorker.start()
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)

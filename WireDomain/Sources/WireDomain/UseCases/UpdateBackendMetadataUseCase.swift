@@ -22,7 +22,7 @@ import WireNetwork
 // MARK: - UpdateBackendMetadataUseCaseProtocol
 
 // sourcery: AutoMockable
-public protocol UpdateBackendMetadataUseCaseProtocol {
+public protocol UpdateBackendMetadataUseCaseProtocol: Sendable {
 
     func invoke() async throws -> ResolvedBackendMetadata
 
@@ -30,7 +30,7 @@ public protocol UpdateBackendMetadataUseCaseProtocol {
 
 // MARK: - UpdateBackendMetadataUseCase
 
-public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol {
+public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol, @unchecked Sendable {
 
     let resolveBackendMetadataUseCase: any ResolveBackendMetadataUseCaseProtocol
     let backendStore: BackendEnvironmentStore

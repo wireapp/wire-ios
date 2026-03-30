@@ -529,10 +529,6 @@ final class UserSessionLoader {
             journal: journal,
             accountID: accountID
         )
-        let updateBackendMetadataWorker = UpdateBackendMetadataWorker(
-            useCase: updateBackendMetadataUseCase
-        )
-
         let userSession = ZMUserSession(
             userId: accountID,
             restNetworkService: restNetworkService,
@@ -564,7 +560,7 @@ final class UserSessionLoader {
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
-            updateBackendMetadataWorker: updateBackendMetadataWorker
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
 
         userSession.setup(
