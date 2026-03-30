@@ -61,27 +61,8 @@ public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol
             journal[.isFederationMigrationRequired] = true
         }
 
-        // Store new metadata.
-        do {
-            try backendStore.storeBackendMetadata(
-                newMetadata,
-                for: accountID
-            )
-        } catch {
-            throw Failure.failedToStoreMetadata(error)
-        }
+        try backendStore.storeBackendMetadata(newMetadata, for: accountID)
 
         return newMetadata
     }
-
-}
-
-// MARK: - UpdateBackendMetadataUseCase.Failure
-
-extension UpdateBackendMetadataUseCase {
-
-    enum Failure: Error {
-        case failedToStoreMetadata(any Error)
-    }
-
 }
