@@ -37,12 +37,12 @@ struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol {
     let backendStore: BackendEnvironmentStore
     let journal: Journal
     let accountID: UUID
-    let isFederationEnabled: Bool?
 
     func invoke() async throws -> ResolvedBackendMetadata {
+        let prevMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)
         let newMetadata = try await networkStack.resolvedBackendMetadata()
 
-        if let isFederationEnabled, !isFederationEnabled, newMetadata.isFederationEnabled {
+        if let prevMetadata, !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
             // Now that federation is enabled we'll start storing domains
             // on entities in the database. We'll therefore need to add
             // the local domain to all existing entities so they're

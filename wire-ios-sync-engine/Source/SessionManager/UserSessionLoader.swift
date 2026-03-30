@@ -319,8 +319,7 @@ final class UserSessionLoader {
             networkStack: networkStack,
             backendStore: backendStore,
             journal: journal,
-            accountID: accountID,
-            isFederationEnabled: nil
+            accountID: accountID
         )
 
         return try await useCase.invoke()
