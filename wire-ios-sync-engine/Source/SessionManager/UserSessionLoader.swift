@@ -297,21 +297,24 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Return the last known metadata if available.
+        // Return the last stored metadata if available.
         if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
             return storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata.
-            return ResolvedBackendMetadata(
+        }
+
+        // Otherwise store and return legacy metadata if available.
+        if let legacyAPIVersion = BackendInfo.apiVersion, let legacyDomain = BackendInfo.domain {
+            // We're on the update path, use the legacy metadata
+            let legacyMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
+            try backendStore.storeBackendMetadata(legacyMetadata, for: accountID)
+            return legacyMetadata
         }
 
-        // No previous metadata, fetch and store new metadata.
+        // Otherwise fetch and store new metadata.
         let useCase = UpdateBackendMetadataUseCase(
             networkStack: networkStack,
             backendStore: backendStore,
