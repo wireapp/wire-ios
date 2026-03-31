@@ -63,6 +63,7 @@
 		34DC44AD2E01C1E6004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44AC2E01C1E6004D5DD5 /* WireNetwork */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
+		5907FCC12F7BE8D500BC9CA4 /* WireSearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5907FCC02F7BE8D500BC9CA4 /* WireSearchUI */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
 		591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
@@ -947,6 +948,7 @@
 				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
 				06EF6B552E8EBEF200A131A7 /* WireCallingUI in Frameworks */,
 				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
+				5907FCC12F7BE8D500BC9CA4 /* WireSearchUI in Frameworks */,
 				CBE5BB862E2D4A9200AC731F /* WireMessagingAssembly in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */,
@@ -1396,6 +1398,7 @@
 				065CDA942E9E58B90080799B /* WireCallingAssembly */,
 				76EF748D2E9E6366006A1579 /* WireLocators */,
 				5972B0DA2E9EABC8005E6417 /* WireUtilitiesPackage */,
+				5907FCC02F7BE8D500BC9CA4 /* WireSearchUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -2892,6 +2895,10 @@
 		59076F942C934A9800AE7529 /* WireAccountImageUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAccountImageUI;
+		};
+		5907FCC02F7BE8D500BC9CA4 /* WireSearchUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSearchUI;
 		};
 		590DCA072C971A56002D0A2C /* WireSidebarUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -115,8 +115,7 @@ let package = Package(
             dependencies: [
                 "WireDesign",
                 "WireLocators"
-            ],
-            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+            ]
         ),
         .testTarget(name: "WireSearchUITests", dependencies: [
             "WireSearchUI"

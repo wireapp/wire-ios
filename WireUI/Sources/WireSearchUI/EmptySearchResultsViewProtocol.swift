@@ -16,4 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum X {}
+public import UIKit
+
+public protocol EmptySearchResultsViewProtocol: UIView {}

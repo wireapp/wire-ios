@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireSearchUI
 import WireCommonComponents
 import WireDesign
 
@@ -56,7 +57,7 @@ protocol EmptyBotSearchResultsViewDelegate: AnyObject {
 
 // MARK: - EmptyBotSearchResultsView
 
-final class EmptyBotSearchResultsView: UIView {
+final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
 
     typealias LabelColors = SemanticColors.Label
 

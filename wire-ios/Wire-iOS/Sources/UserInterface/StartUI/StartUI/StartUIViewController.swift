@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import UIKit
+import WireSearchUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -102,7 +102,7 @@ final class StartUIViewController: UIViewController {
     let isFederationEnabled: Bool
 
     let profilePresenter: ProfilePresenter
-    private var emptyResultView: EmptyBotSearchResultsView!
+    private var emptyResultView: EmptySearchResultsViewProtocol!
 
     private(set) var activityIndicator: BlockingActivityIndicator!
 
@@ -215,12 +215,12 @@ final class StartUIViewController: UIViewController {
     func setupViews() {
         configGroupSelector()
         configConversationTypePicker()
-        emptyResultView = EmptyBotSearchResultsView(
+        let emptyResultView = EmptyBotSearchResultsView(
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
         )
-
         emptyResultView.delegate = self
+        self.emptyResultView = emptyResultView
 
         searchResultsViewController.mode = .list
         searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
