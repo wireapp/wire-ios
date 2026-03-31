@@ -601,7 +601,7 @@ public final class MLSService: MLSServiceInterface {
         func logWarn(abortedWithReason reason: String) {
             logger.warn("aborting key packages upload: \(reason)")
         }
-        
+
         guard await featureRepository.fetchMLS().isEnabled else {
             return logWarn(abortedWithReason: "MLS is not enabled")
         }
@@ -640,7 +640,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
             logger.info("success: uploaded key packages for client \(clientID)")
-            
+
             userDefaults.set(.now, forKey: .keyPackageQueriedTime)
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
