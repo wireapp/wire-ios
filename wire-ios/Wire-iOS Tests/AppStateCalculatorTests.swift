@@ -98,9 +98,8 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnWillMigrateAccount() {
 
         // GIVEN
-        let account = Account(userName: "dummy", userIdentifier: UUID())
-        let selectedAccount = Account(userName: "selectedDummy", userIdentifier: UUID())
-        sut.testHelper_setAppState(.loading(account: account, from: selectedAccount))
+        let userSession = UserSessionMock()
+        sut.testHelper_setAppState(.authenticated(userSession))
         sut.applicationDidBecomeActive()
 
         // WHEN
