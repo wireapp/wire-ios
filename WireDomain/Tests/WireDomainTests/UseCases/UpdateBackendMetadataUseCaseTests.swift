@@ -77,7 +77,7 @@ final class UpdateBackendMetadataUseCaseTests {
         resolveBackendMetadataUseCase.invoke_MockValue = metadata
 
         // When
-        let _ = try await sut.invoke()
+        _ = try await sut.invoke()
 
         // Then
         let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)

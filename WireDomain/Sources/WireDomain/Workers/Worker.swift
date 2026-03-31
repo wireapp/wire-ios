@@ -32,7 +32,6 @@ public actor Worker {
     private var isRunning = false
     private var lastSuccess: Date?
 
-    
     /// Creates a new Worker.
     ///
     /// - Parameters:

@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension Worker {
+public extension Worker {
 
     /// Creates a `Worker` that periodically fetches and stores the backend metadata.
-    public static func updateBackendMetadata(
+    static func updateBackendMetadata(
         useCase: any UpdateBackendMetadataUseCaseProtocol
     ) -> Worker {
         Worker(
