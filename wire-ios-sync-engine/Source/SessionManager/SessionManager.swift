@@ -76,11 +76,6 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     )
-    func sessionManagerWillOpenAccount(
-        _ account: Account,
-        from selectedAccount: Account?,
-        userSessionCanBeTornDown: @escaping () -> Void
-    )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
 
     func sessionManagerDidFailToLoadSession(
@@ -696,71 +691,41 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// Select the account to be the active account.
-    /// - completion: runs when the user session was loaded
-    /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
-    public func select(
-        _ account: Account,
-        completion: ((ZMUserSession?) -> Void)? = nil,
-        tearDownCompletion: (() -> Void)? = nil
-    ) {
+    @MainActor
+    public func select(_ account: Account) async -> ZMUserSession? {
         guard !isSelectingAccount else {
-            completion?(nil)
-            return
+            return nil
         }
 
-        confirmSwitchingAccount { [weak self] isConfirmed in
+        let isConfirmed = await confirmSwitchingAccount()
 
-            guard isConfirmed else {
-                completion?(nil)
-                return
-            }
-
-            self?.isSelectingAccount = true
-            let selectedAccount = self?.accountManager.selectedAccount
-
-            guard let delegate = self?.delegate else {
-                completion?(nil)
-                return
-            }
-            delegate.sessionManagerWillOpenAccount(
-                account,
-                from: selectedAccount,
-                userSessionCanBeTornDown: { [weak self] in
-                    self?.activeUserSession = nil
-                    tearDownCompletion?()
-
-                    Task { @MainActor [weak self] in
-                        guard let self else {
-                            completion?(nil)
-                            return
-                        }
-
-                        accountManager.select(account)
-                        let session = await loadSession(for: account)
-                        isSelectingAccount = false
-
-                        if let session {
-                            completion?(session)
-                        } else {
-                            completion?(nil)
-                        }
-                    }
-                }
-            )
+        guard isConfirmed else {
+            return nil
         }
+
+        isSelectingAccount = true
+        activeUserSession = nil
+        accountManager.select(account)
+        let session = await loadSession(for: account)
+        isSelectingAccount = false
+
+        return session
     }
 
-    public func addAccount(userInfo: [String: Any]? = nil, completion: (() -> Void)? = nil) {
-        confirmSwitchingAccount { [weak self] isConfirmed in
-            guard isConfirmed else { return }
-            let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-            self?.delegate?.sessionManagerWillLogout(
+    @MainActor
+    public func addAccount(userInfo: [String: Any]? = nil) async {
+        let isConfirmed = await confirmSwitchingAccount()
+        guard isConfirmed, let delegate else { return }
+
+        let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
+        await withCheckedContinuation { continuation in
+            delegate.sessionManagerWillLogout(
                 accountID: nil,
                 environment: nil,
                 error: error
             ) { [weak self] in
                 self?.activeUserSession = nil
-                completion?()
+                continuation.resume()
             }
         }
     }
@@ -787,9 +752,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
         if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
-            select(secondAccount, tearDownCompletion: { [weak self] in
-                self?.tearDownSessionAndDelete(account: account, eraseData: eraseData)
-            })
+            Task {
+                _ = await select(secondAccount)
+                tearDownSessionAndDelete(account: account, eraseData: eraseData)
+            }
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
             tearDownSessionAndDelete(account: account, eraseData: eraseData)
@@ -804,9 +770,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
-        tearDownBackgroundSession(for: account.userIdentifier) {
+        Task {
+            await tearDownBackgroundSession(for: account.userIdentifier)
             if eraseData {
-                self.deleteAccountData(for: account)
+                deleteAccountData(for: account)
             }
         }
     }
@@ -818,7 +785,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session == activeUserSession {
                 logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
+                Task {
+                    await tearDownBackgroundSession(for: account.userIdentifier)
+                }
             }
         }
     }
@@ -1105,27 +1074,24 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// The active user session will be torn down and the app goes into migration state.
-    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
+    @MainActor
+    public func prepareForRestoreWithMigration() async {
         guard let delegate else {
             WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
-            return completion()
+            return
         }
 
         WireLogger.sessionManager.debug("SessionManager.delegate.sessionManagerWillMigrateAccount ...")
-        delegate.sessionManagerWillMigrateAccount { [self] in
+        await delegate.sessionManagerWillMigrateAccount()
 
-            WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
+        WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
 
-            if let accountID = activeUserSession?.account.userIdentifier {
-                tearDownBackgroundSession(for: accountID) { [self] in
-                    activeUserSession = nil
-                    accountTokens.removeValue(forKey: accountID)
-                    completion()
-                }
-            } else {
-                activeUserSession = nil
-                completion()
-            }
+        if let accountID = activeUserSession?.account.userIdentifier {
+            await tearDownBackgroundSession(for: accountID)
+            activeUserSession = nil
+            accountTokens.removeValue(forKey: accountID)
+        } else {
+            activeUserSession = nil
         }
     }
 
@@ -1290,23 +1256,24 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyNewUserSessionCreated(newSession)
     }
 
-    func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
+    @MainActor
+    func tearDownBackgroundSession(for accountId: UUID) async {
         guard let userSession = backgroundUserSessions[accountId] else {
             WireLogger.sessionManager
                 .error("No session to tear down for \(accountId), known sessions: \(backgroundUserSessions)")
-            completion?()
             return
         }
         tearDownObservers(account: accountId)
         backgroundUserSessions[accountId] = nil
 
         dispatchGroup.enter()
-        userSession.close(deleteCookie: false) { [weak self] in
-            self?.notifyUserSessionDestroyed(accountId)
-            completion?()
-            self?.dispatchGroup.leave()
+        await withCheckedContinuation { continuation in
+            userSession.close(deleteCookie: false) { [weak self] in
+                self?.notifyUserSessionDestroyed(accountId)
+                continuation.resume()
+                self?.dispatchGroup.leave()
+            }
         }
-
     }
 
     // Tears down and releases all background user sessions.
@@ -1315,8 +1282,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             activeUserSession != session
         }
 
-        backgroundSessions.keys.forEach {
-            tearDownBackgroundSession(for: $0)
+        Task {
+            for key in backgroundSessions.keys {
+                await tearDownBackgroundSession(for: key)
+            }
         }
     }
 
@@ -1847,22 +1816,28 @@ extension SessionManager: NotificationContext {
 
 public extension SessionManager {
 
-    func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
+    @MainActor
+    func confirmSwitchingAccount() async -> Bool {
         guard
             let switchingDelegate,
             let activeUserSession,
             activeUserSession.isCallOngoing
         else {
             // no confirmation to show if no call is ongoing
-            return completion(true)
+            return true
         }
 
-        switchingDelegate.confirmSwitchingAccount { confirmed in
-            if confirmed {
-                activeUserSession.callCenter?.endAllCalls()
+        let confirmed = await withCheckedContinuation { continuation in
+            switchingDelegate.confirmSwitchingAccount { confirmed in
+                continuation.resume(returning: confirmed)
             }
-            completion(confirmed)
         }
+
+        if confirmed {
+            activeUserSession.callCenter?.endAllCalls()
+        }
+
+        return confirmed
     }
 }
 
