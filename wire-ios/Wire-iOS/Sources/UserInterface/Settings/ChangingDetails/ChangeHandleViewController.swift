@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSettingsUI
@@ -52,8 +53,11 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         return label
     }()
 
-    let handleTextField: UITextField = {
-        let textField = UITextField()
+    let handleTextField: ContextMenuControllableUITextField = {
+        let textField = ContextMenuControllableUITextField(
+            frame: .zero,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
         textField.font = .normalFont
         textField.textColor = SemanticColors.Label.textDefault
 
