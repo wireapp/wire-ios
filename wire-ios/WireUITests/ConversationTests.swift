@@ -21,7 +21,7 @@ import XCTest
 final class ConversationTests: WireUITestCase {
 
     @MainActor
-    func testClearContent() async throws {
+    func testClearContent_TC_9488() async throws {
         let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
@@ -44,9 +44,9 @@ final class ConversationTests: WireUITestCase {
         // THEN
         XCTAssertTrue(conversationsPage.conversationCell.exists)
 
-        var activeConversationPage = try conversationsPage
+        let activeConversationPage = try conversationsPage
             .openConversation()
-        var sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(sentMessages.isEmpty)
     }
 
