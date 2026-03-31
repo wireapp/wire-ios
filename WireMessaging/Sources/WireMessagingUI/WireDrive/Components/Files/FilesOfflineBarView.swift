@@ -20,22 +20,33 @@ import SwiftUI
 
 struct FilesOfflineBarView: View {
     var body: some View {
-        Group {
+        VStack {
             Text(
                 L10n.Localizable.General.NoInternet.title.uppercased()
             )
             .font(for: .subline2)
-            .foregroundColor(.white)
+            .foregroundColor(.white) // TODO: [WPB-24475] use proper color
+            .frame(maxWidth: .infinity)
+            .frame(height: 25)
+            .background {
+                // TODO: [WPB-24475] use proper color
+                Color(
+                    red: 254.0 / 255.0,
+                    green: 191.0 / 255.0,
+                    blue: 2.0 / 255.0,
+                    opacity: 1
+                )
+            }
+            .cornerRadius(6)
+            
+            //TODO: Olga said this design will probably change. don't localise yet.
+            Label {
+                Text("You can only see downloaded files in the offline mode.") //TODO: localize
+                    //.multilineTextAlignment(.center)
+            } icon: {
+                Image(systemName: "wifi.slash")
+            }
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 25)
-        .background(Color(
-            red: 254.0 / 255.0,
-            green: 191.0 / 255.0,
-            blue: 2.0 / 255.0,
-            opacity: 1
-        ))
-        .cornerRadius(6)
         .padding(.horizontal, 16)
     }
 }

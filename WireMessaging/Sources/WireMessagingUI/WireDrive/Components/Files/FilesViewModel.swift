@@ -232,7 +232,11 @@ package final class FilesViewModel: ObservableObject {
     var shouldReload: Bool = false
     let title: String?
     var showSearchBar: Bool {
-        switch state {
+        guard !isOffline else {
+            return false
+        }
+        
+        return switch state {
         case .loading, .received:
             true
         case .pending, .error:
@@ -256,9 +260,13 @@ package final class FilesViewModel: ObservableObject {
     var isLoading: Bool {
         loadMoreTask != nil
     }
+    
+    var isOffline: Bool {
+        connectionState == .offline
+    }
 
     var shouldShowOfflineBar: Bool {
-        connectionState == .offline && !state.items.isEmpty
+        isOffline && !state.items.isEmpty
     }
 
     enum ConnectionState {
