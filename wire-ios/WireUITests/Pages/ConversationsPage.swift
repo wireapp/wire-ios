@@ -56,6 +56,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
+    var clearButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearOptionOnContextMenu.rawValue]
+    }
+
     var addFavouriteButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
     }
@@ -78,6 +82,10 @@ class ConversationsPage: PageModel {
 
     var blockButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
+    }
+
+    var clearButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
     }
 
     var videoCallButton: XCUIElement {
@@ -149,6 +157,7 @@ class ConversationsPage: PageModel {
         return try ActiveConversationPage()
     }
 
+    @discardableResult
     func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
         conversationCell.press(forDuration: 1.0)
         return try ConversationsPage()
@@ -157,6 +166,13 @@ class ConversationsPage: PageModel {
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
+        return self
+    }
+
+    @discardableResult
+    func clearContent() throws -> ConversationsPage {
+        clearButtonOnMoreOptions.tap()
+        clearButtonOnBottomSheet.tap()
         return self
     }
 

@@ -115,8 +115,6 @@ class WireUITestCase: XCTestCase {
         }
     }
 
-<<<<<<< HEAD
-=======
     @MainActor
     func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
 
@@ -126,7 +124,7 @@ class WireUITestCase: XCTestCase {
             .acceptPopup()
     }
 
->>>>>>> 3f85e3ae4e (fix: compilation issue and filename corrected - WPB-24476 (#4510))
+
     func registerNotificationPermissionMonitor() {
         guard notificationPermissionMonitor == nil else { return }
 
