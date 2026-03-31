@@ -178,6 +178,12 @@ final class AppStateCalculator {
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        guard let delegate else {
+            fatalInternal("AppStateCalculator has no delegate")
+            completion?()
+            return
+        }
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -196,7 +202,7 @@ final class AppStateCalculator {
             "transitioning to app state \(appState.safeForLoggingDescription)",
             attributes: .safePublic
         )
-        delegate?.appStateCalculator(self, didCalculate: appState) {
+        delegate.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
     }
