@@ -121,7 +121,7 @@ class WireUITestCase: XCTestCase {
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
         return try firstTimePage
-            .acceptPopup(with: self)
+            .acceptPopup()
     }
 
     func registerNotificationPermissionMonitor() {
