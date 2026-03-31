@@ -36,7 +36,7 @@ final class WireDriveTests: WireUITestCase {
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
         try app
             .loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
     }
 
