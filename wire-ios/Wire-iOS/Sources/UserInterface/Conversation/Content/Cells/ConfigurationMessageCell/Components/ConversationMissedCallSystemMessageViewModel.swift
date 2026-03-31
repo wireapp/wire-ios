@@ -37,28 +37,30 @@ struct ConversationMissedCallSystemMessageViewModel {
     func attributedTitle() -> NSAttributedString? {
         guard
             let systemMessageData = message.systemMessageData,
+            systemMessageData.systemMessageType == systemMessageType,
             let sender = message.senderUser,
             let labelFont = font,
-            let labelTextColor = textColor,
-            systemMessageData.systemMessageType == systemMessageType
+            let labelTextColor = textColor
         else {
             return nil
         }
 
         let numberOfCalls = systemMessageData.childMessages.count + 1
-        var detailKey = "content.system.call.missed-call"
+        typealias Call = L10n.Localizable.Content.System.Call
 
-        if message.conversationLike?.conversationType == .group {
-            detailKey.append(".groups")
-        }
+        let isGroup = message.conversationLike?.conversationType == .group
+        let senderName = sender.name ?? ""
 
-        let senderString = sender.name ?? ""
-        var title = detailKey.localized(args: numberOfCalls, senderString) && labelFont
+        let counterSuffix = numberOfCalls > 1 ? " (\(numberOfCalls))" : ""
+        let finalText = (isGroup ? Call.MissedCall.groups(numberOfCalls, senderName) : Call.missedCall(numberOfCalls)) +
+            counterSuffix
 
-        if numberOfCalls > 1 {
-            title += " (\(numberOfCalls))" && labelFont
-        }
-
-        return title && labelTextColor
+        return NSAttributedString(
+            string: finalText,
+            attributes: [
+                .font: labelFont,
+                .foregroundColor: labelTextColor
+            ]
+        )
     }
 }
