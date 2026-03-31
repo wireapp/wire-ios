@@ -20,6 +20,8 @@ import Foundation
 import Network
 import UIKit
 
+/// Performs a unit of work. Using triggers, allows work to be retried when it fails, or to be performed at specific
+/// intervals or when specific events occur.
 public actor Worker {
 
     private let work: @Sendable () async -> Bool
@@ -30,6 +32,13 @@ public actor Worker {
     private var isRunning = false
     private var lastSuccess: Date?
 
+    
+    /// Creates a new Worker.
+    ///
+    /// - Parameters:
+    ///   - work: The work to be performed. The work should return `true` if it succeeded, otherwise `false`.
+    ///   - interval: The interval after which the work should be performed again if it succeeded.
+    ///   - trigger: The trigger that will cause the work to be performed.
     public init(
         work: @escaping @Sendable () async -> Bool,
         interval: TimeInterval,
@@ -44,6 +53,7 @@ public actor Worker {
         triggerTask?.cancel()
     }
 
+    /// Starts the worker.
     public nonisolated func start() {
         Task { await self.startAndWait() }
     }

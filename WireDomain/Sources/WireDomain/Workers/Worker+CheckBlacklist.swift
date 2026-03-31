@@ -20,6 +20,8 @@ import Foundation
 
 extension Worker {
 
+    /// Creates a `Worker` that checks if the current build is blacklisted and executes `onIsBuildBlacklisted` callback
+    /// if it is.
     public static func checkBlacklist(
         useCase: any IsBuildBlacklistedUseCase,
         onIsBuildBlacklisted: @escaping @Sendable () -> Void
