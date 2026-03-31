@@ -189,6 +189,30 @@ public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedP
 
 }
 
+public class MockClearConversationContentUseCaseProtocol: ClearConversationContentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Void)?
+
+    public func invoke() async {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle
