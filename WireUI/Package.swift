@@ -19,7 +19,6 @@ let package = Package(
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireReusableUIComponentsSupport", targets: ["WireReusableUIComponentsSupport"]),
-        .library(name: "WireSearchUI", targets: ["WireSearchUI"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
@@ -109,17 +108,6 @@ let package = Package(
             ]
         ),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
-
-        .target(
-            name: "WireSearchUI",
-            dependencies: [
-                "WireDesign",
-                "WireLocators"
-            ]
-        ),
-        .testTarget(name: "WireSearchUITests", dependencies: [
-            "WireSearchUI"
-        ]),
 
         .target(
             name: "WireSettingsUI",

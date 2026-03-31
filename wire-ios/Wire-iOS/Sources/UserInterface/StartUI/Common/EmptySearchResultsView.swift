@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireSearchUI
 import WireCommonComponents
 import WireDesign
 
-// MARK: - EmptyBotSearchResultsViewState
+// MARK: - EmptySearchResultsViewState
 
-private enum EmptyBotSearchResultsViewState {
+private enum EmptySearchResultsViewState {
     case initialSearch
     case noUsers
     case everyoneAdded
@@ -31,14 +30,14 @@ private enum EmptyBotSearchResultsViewState {
     case noAppsEnabled
 }
 
-// MARK: - EmptyBotSearchResultsViewAction
+// MARK: - EmptySearchResultsViewAction
 
-enum EmptyBotSearchResultsViewAction {
+enum EmptySearchResultsViewAction {
     case openManageServices
     case openSearchSupportPage
 }
 
-extension EmptyBotSearchResultsViewAction {
+extension EmptySearchResultsViewAction {
     var title: String {
         switch self {
         case .openManageServices:
@@ -49,23 +48,23 @@ extension EmptyBotSearchResultsViewAction {
     }
 }
 
-// MARK: - EmptyBotSearchResultsViewDelegate
+// MARK: - EmptySearchResultsViewDelegate
 
-protocol EmptyBotSearchResultsViewDelegate: AnyObject {
-    func execute(action: EmptyBotSearchResultsViewAction, from: EmptyBotSearchResultsView)
+protocol EmptySearchResultsViewDelegate: AnyObject {
+    func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView)
 }
 
-// MARK: - EmptyBotSearchResultsView
+// MARK: - EmptySearchResultsView
 
-final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
+final class EmptySearchResultsView: UIView {
 
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Computed Properties
 
-    fileprivate var state: EmptyBotSearchResultsViewState = .initialSearch {
+    fileprivate var state: EmptySearchResultsViewState = .initialSearch {
         didSet {
-            updateUIForCurrentEmptyBotSearchResultstate()
+            updateUIForCurrentEmptySearchResultState()
         }
     }
 
@@ -105,7 +104,7 @@ final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
         return icon.makeImage(size: .large, color: iconColor)
     }
 
-    private var buttonAction: EmptyBotSearchResultsViewAction? {
+    private var buttonAction: EmptySearchResultsViewAction? {
         switch state {
         case .noAppsEnabled where isSelfUserAdmin:
             .openManageServices
@@ -129,7 +128,7 @@ final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
     private let actionButton = LinkButton(style: .body1)
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
-    weak var delegate: EmptyBotSearchResultsViewDelegate?
+    weak var delegate: EmptySearchResultsViewDelegate?
 
     // MARK: Init
 
@@ -162,7 +161,7 @@ final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
             delegate?.execute(action: action, from: self)
         }
 
-        updateUIForCurrentEmptyBotSearchResultstate()
+        updateUIForCurrentEmptySearchResultState()
     }
 
     @available(*, unavailable)
@@ -221,7 +220,7 @@ final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
         statusLabel.textAlignment = .center
     }
 
-    private func updateUIForCurrentEmptyBotSearchResultstate() {
+    private func updateUIForCurrentEmptySearchResultState() {
         iconView.image = icon
         iconView.tintColor = iconColor
         statusLabel.text = text
@@ -239,7 +238,7 @@ final class EmptyBotSearchResultsView: UIView, EmptySearchResultsViewProtocol {
 
 @available(iOS 17, *)
 #Preview {
-    let view = EmptyBotSearchResultsView(
+    let view = EmptySearchResultsView(
         isSelfUserAdmin: true,
         isFederationEnabled: false
     )

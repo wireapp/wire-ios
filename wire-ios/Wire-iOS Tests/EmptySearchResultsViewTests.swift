@@ -22,18 +22,18 @@ import XCTest
 
 @testable import Wire
 
-final class EmptyBotSearchResultsViewTests: XCTestCase {
+final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: EmptyBotSearchResultsView!
+    private var sut: EmptySearchResultsView!
 
     // MARK: - setUp
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
             searchingForApps: false,
@@ -56,7 +56,7 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     func testNoResultsForUsers_WhenFederationIsEnabled() {
         // GIVEN && WHEN
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: true,
             searchingForApps: false,
@@ -69,7 +69,7 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     func testNoResultsForUsers_WhenEveryoneHaveBeenAdded() {
         // GIVEN && WHEN
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
             searchingForApps: false,
@@ -82,7 +82,7 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     func testNoResultsForServices() {
         // GIVEN && WHEN
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
             searchingForApps: true,
@@ -95,7 +95,7 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     func testServicesNotEnabled() {
         // GIVEN && WHEN
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
             searchingForApps: true,
@@ -108,7 +108,7 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     func testServicesNotEnabled_WhenAdmin() {
         // GIVEN && WHEN
-        sut = setupEmptyBotSearchResultsView(
+        sut = setupEmptySearchResultsView(
             isSelfUserAdmin: true,
             isFederationEnabled: false,
             searchingForApps: true,
@@ -121,14 +121,14 @@ final class EmptyBotSearchResultsViewTests: XCTestCase {
 
     // MARK: - Helpers
 
-    func setupEmptyBotSearchResultsView(
+    func setupEmptySearchResultsView(
         isSelfUserAdmin: Bool,
         isFederationEnabled: Bool,
         searchingForApps: Bool,
         hasFilter: Bool
-    ) -> EmptyBotSearchResultsView {
+    ) -> EmptySearchResultsView {
 
-        let sut = EmptyBotSearchResultsView(
+        let sut = EmptySearchResultsView(
             isSelfUserAdmin: isSelfUserAdmin,
             isFederationEnabled: isFederationEnabled
         )

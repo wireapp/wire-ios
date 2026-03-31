@@ -120,8 +120,8 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 }
 
-extension StartUIViewController: EmptyBotSearchResultsViewDelegate {
-    func execute(action: EmptyBotSearchResultsViewAction, from: EmptyBotSearchResultsView) {
+extension StartUIViewController: EmptySearchResultsViewDelegate {
+    func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {
         switch action {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).open(from: self)

@@ -23,7 +23,6 @@ import WireDesign
 import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
-import WireSearchUI
 
 extension ConversationLike where Self: SwiftConversationLike {
     var canAddGuest: Bool {
@@ -125,7 +124,7 @@ final class AddParticipantsViewController: UIViewController {
     private let collectionViewLayout: UICollectionViewFlowLayout
     private let confirmButtonHeight: CGFloat = 56.0
     private let confirmButton: IconButton
-    private let emptyResultView: EmptySearchResultsViewProtocol
+    private let emptyResultView: EmptySearchResultsView
     private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
         equalTo: view.bottomAnchor,
         constant: -bottomMargin
@@ -237,7 +236,7 @@ final class AddParticipantsViewController: UIViewController {
         self.searchResultsViewController = searchResultsViewController
 
         let user = SelfUser.provider?.providedSelfUser
-        self.emptyResultView = EmptyBotSearchResultsView(
+        self.emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: user?.canManageTeam == true,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
@@ -618,8 +617,8 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 }
 
-extension AddParticipantsViewController: EmptyBotSearchResultsViewDelegate {
-    func execute(action: EmptyBotSearchResultsViewAction, from: EmptyBotSearchResultsView) {
+extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
+    func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {
         switch action {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).open(from: self)
