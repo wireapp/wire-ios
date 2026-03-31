@@ -18,8 +18,12 @@
 
 @preconcurrency import Combine
 import Network
+import Observation
 
-final class NetworkMonitor: Sendable {
+/// Provides observable changes in internet connection.
+/// Conforms to both, `Observable` and `ObservableObject` to support ViewModels with the old and the new system.
+@MainActor
+final class NetworkMonitor: Sendable, Observable, ObservableObject {
 
     enum NetworkStatus {
         case connected
@@ -31,21 +35,26 @@ final class NetworkMonitor: Sendable {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")
     private let subject = CurrentValueSubject<NetworkStatus, Never>(.disconnected)
+    private var cancellables = Set<AnyCancellable>()
 
-    var statusPublisher: AnyPublisher<NetworkStatus, Never> {
-        subject.eraseToAnyPublisher()
-    }
-
-    var currentStatus: NetworkStatus {
-        subject.value
-    }
+    @Published var currentStatus: NetworkStatus?
 
     private init() {
+        subject
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self else { return }
+                currentStatus = status
+            }
+            .store(in: &cancellables)
+        
         monitor.pathUpdateHandler = { [weak self] path in
-            let status: NetworkStatus =
-                path.status == .satisfied ? .connected : .disconnected
-
-            self?.subject.send(status)
+            guard let self else { return }
+            Task { @MainActor in
+                let status: NetworkStatus = path.status == .satisfied ? .connected : .disconnected
+                subject.send(status)
+            }
         }
 
         monitor.start(queue: queue)

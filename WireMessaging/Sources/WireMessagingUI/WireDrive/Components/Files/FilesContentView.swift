@@ -89,7 +89,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 }
                 Spacer()
             }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
+            .animation(.easeInOut(duration: 0.25), value: viewModel.isOffline)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(navigationTitle)

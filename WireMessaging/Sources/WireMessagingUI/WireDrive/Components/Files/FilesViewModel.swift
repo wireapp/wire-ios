@@ -262,16 +262,11 @@ package final class FilesViewModel: ObservableObject {
     }
     
     var isOffline: Bool {
-        connectionState == .offline
+        networkMonitor.currentStatus == .disconnected
     }
 
     var shouldShowOfflineBar: Bool {
         isOffline && !state.items.isEmpty
-    }
-
-    enum ConnectionState {
-        case offline
-        case online
     }
 
     @Published var hasMore = true
@@ -286,8 +281,9 @@ package final class FilesViewModel: ObservableObject {
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
-    @Published var connectionState: ConnectionState = .online
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
+    
+    @Published private var networkMonitor = NetworkMonitor.shared
 
     private var selfUserID: String? {
         conversations
@@ -325,7 +321,6 @@ package final class FilesViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
 
         bindSearch()
-        bindNetworkConnection()
         fetchTemplates()
         fetchConversations()
     }
@@ -367,24 +362,6 @@ package final class FilesViewModel: ObservableObject {
                 self.conversations = allDriveConversations
             }
         }
-    }
-
-    private func bindNetworkConnection() {
-        NetworkMonitor.shared.statusPublisher
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                guard let self else { return }
-
-                switch status {
-                case .connected:
-                    guard connectionState == .offline else { return }
-                    connectionState = .online
-                case .disconnected:
-                    connectionState = .offline
-                }
-            }
-            .store(in: &subscriptions)
     }
 
     private func bindSearch() {

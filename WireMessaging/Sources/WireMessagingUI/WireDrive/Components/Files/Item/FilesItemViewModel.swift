@@ -52,11 +52,6 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
     
-    enum ConnectionState {
-        case offline
-        case online
-    }
-
     @Published private var asset: WireDriveLocalAsset?
 
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
@@ -66,7 +61,8 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-    @Published var connectionState: ConnectionState = .online
+
+    @Published private var networkMonitor = NetworkMonitor.shared
 
     let fileName: String
     let subtitle: String?
@@ -122,8 +118,6 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
         }.store(in: &cancellables)
-        
-        bindNetworkConnection()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -366,7 +360,7 @@ final class FilesItemViewModel: ObservableObject {
     }
     
     var isOffline: Bool {
-        connectionState == .offline
+        networkMonitor.currentStatus == .disconnected
     }
 
     var menuActions: Set<ItemAction> {
@@ -410,25 +404,6 @@ final class FilesItemViewModel: ObservableObject {
         }
 
         return actions
-    }
-    
-    //TODO: refactor NetworkMonitor to be `@Observable` for more frictionless usage in ViewModels and add debounce.
-    private func bindNetworkConnection() {
-        NetworkMonitor.shared.statusPublisher
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                guard let self else { return }
-
-                switch status {
-                case .connected:
-                    guard connectionState == .offline else { return }
-                    connectionState = .online
-                case .disconnected:
-                    connectionState = .offline
-                }
-            }
-            .store(in: &cancellables)
     }
 
     var isAvailableOffline: Bool {
