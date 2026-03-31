@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import UIKit
 import WireDesign
 import WireFoundation
 
@@ -27,7 +28,11 @@ public struct LabeledTextField: View {
     private let isMandatory: Bool
     private let placeholder: String?
     private let title: String?
+    private let keyboardType: UIKeyboardType
+    private let textContentType: UITextContentType?
+    private let autocapitalizationType: UITextAutocapitalizationType
 
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState var isFocused: Bool
     @Binding private var string: String
 
@@ -35,12 +40,18 @@ public struct LabeledTextField: View {
         isMandatory: Bool = false,
         placeholder: String?,
         title: String?,
-        string: Binding<String>
+        string: Binding<String>,
+        keyboardType: UIKeyboardType = .default,
+        textContentType: UITextContentType? = nil,
+        autocapitalizationType: UITextAutocapitalizationType = .none
     ) {
         self.isMandatory = isMandatory
         self.placeholder = placeholder
         self.title = title
         self._string = string
+        self.keyboardType = keyboardType
+        self.textContentType = textContentType
+        self.autocapitalizationType = autocapitalizationType
     }
 
     public var body: some View {
@@ -57,11 +68,18 @@ public struct LabeledTextField: View {
                 .font(for: .h4)
             }
             HStack(spacing: 0) {
-                TextField(placeholder ?? "", text: $string)
-                    .font(for: .body1)
-                    .focused($isFocused)
-                    .foregroundStyle(labelColor)
-                    .frame(height: fieldHeight)
+                ContextMenuControllableTextField(
+                    text: $string,
+                    placeholder: placeholder ?? "",
+                    isContextMenuAllowed: isClipboardEnabled,
+                    keyboardType: keyboardType,
+                    textContentType: textContentType,
+                    autocapitalizationType: autocapitalizationType,
+                    textColor: UIColor(labelColor)
+                )
+                .font(for: .body1)
+                .focused($isFocused)
+                .frame(height: fieldHeight)
                 if !string.isEmpty, isEnabled {
                     Button(action: {
                         string = ""

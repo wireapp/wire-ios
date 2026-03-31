@@ -109,6 +109,10 @@ class ActiveConversationPage: PageModel {
         app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
     }
 
+    var classifiedBanner: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -138,7 +142,7 @@ class ActiveConversationPage: PageModel {
     }
 
     func goBackToConversationPage() throws -> ConversationsPage {
-        conversationBackButton.tap()
+        conversationBackButton.waitAndTap()
         return try ConversationsPage()
     }
 
