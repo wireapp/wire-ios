@@ -22,6 +22,125 @@ import Foundation
 // NOTE: Some legacy predicates tests already exist in `ZMConversationTests.m`
 
 class ZMConversationTests_Predicates: ZMConversationTestsBase {
+
+    // MARK: - Helpers
+
+    @discardableResult
+    private func appendMessage(to conversation: ZMConversation) -> Date {
+        if conversation.lastServerTimeStamp == nil {
+            conversation.lastServerTimeStamp = Date()
+        }
+        let message = ZMMessage(nonce: NSUUID.create(), managedObjectContext: conversation.managedObjectContext!)
+        message.serverTimestamp = conversation.lastServerTimeStamp!.addingTimeInterval(5)
+        message.visibleInConversation = conversation
+        conversation.lastServerTimeStamp = message.serverTimestamp
+        return message.serverTimestamp!
+    }
+
+    // MARK: - predicateForConversationsIncludingArchived
+
+    func test_itDoesNotFilterOut_Cleared_Archived_Conversations_WithNewMessages() {
+        uiMOC.performAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.conversationType = .group
+            let clearedTimestamp = appendMessage(to: conversation)
+
+            conversation.isArchived = true
+            conversation.clearedTimeStamp = clearedTimestamp
+            appendMessage(to: conversation) // new message after cleared
+
+            // when
+            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+
+            // then
+            XCTAssertTrue(sut.evaluate(with: conversation))
+        }
+    }
+
+    func test_itFiltersOut_Archived_Cleared_Conversations_WithNoNewMessages() {
+        uiMOC.performAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.conversationType = .group
+            let clearedTimestamp = appendMessage(to: conversation)
+
+            conversation.isArchived = true
+            conversation.clearedTimeStamp = clearedTimestamp
+
+            // when
+            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+
+            // then
+            XCTAssertFalse(sut.evaluate(with: conversation))
+        }
+    }
+
+    func test_itDoesNotFilter_Cleared_NotArchived_Conversations() {
+        uiMOC.performAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.conversationType = .group
+            let clearedTimestamp = appendMessage(to: conversation)
+
+            conversation.clearedTimeStamp = clearedTimestamp
+            conversation.isArchived = false
+
+            // when
+            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+
+            // then
+            XCTAssertTrue(sut.evaluate(with: conversation))
+        }
+    }
+
+    func test_itReturns_Cleared_Archived_Conversations_WhereSearchMatchesAndSelfIsActiveMember() {
+        uiMOC.performAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.userDefinedName = "lala"
+            conversation.conversationType = .group
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            let clearedTimestamp = appendMessage(to: conversation)
+            uiMOC.saveOrRollback()
+
+            conversation.isArchived = true
+            conversation.clearedTimeStamp = clearedTimestamp
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+            // when
+            let sut = ZMConversation.predicate(forSearchQuery: "lala", team: nil, moc: uiMOC)
+
+            // then
+            XCTAssertTrue(sut.evaluate(with: conversation))
+        }
+    }
+
+    func test_itDoesNotReturn_Cleared_Archived_Conversations_WhereSelfIsNotActiveMember() {
+        uiMOC.performAndWait {
+            // given
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.userDefinedName = "lala"
+            conversation.conversationType = .group
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            let clearedTimestamp = appendMessage(to: conversation)
+            uiMOC.saveOrRollback()
+
+            conversation.isArchived = true
+            conversation.clearedTimeStamp = clearedTimestamp
+            conversation.removeParticipantAndUpdateConversationState(user: selfUser, initiatingUser: selfUser)
+
+            // when
+            let sut = ZMConversation.predicate(forSearchQuery: "lala", team: nil, moc: uiMOC)
+
+            // then
+            XCTAssertFalse(sut.evaluate(with: conversation))
+        }
+    }
+
+    // MARK: - MLS
+
     func test_itReturnsMlsConversations_withMlsStatusReady() {
         syncMOC.performAndWait {
             // given
