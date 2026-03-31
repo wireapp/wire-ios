@@ -115,6 +115,15 @@ class WireUITestCase: XCTestCase {
         }
     }
 
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
+
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup()
+    }
+
     func registerNotificationPermissionMonitor() {
         guard notificationPermissionMonitor == nil else { return }
 
