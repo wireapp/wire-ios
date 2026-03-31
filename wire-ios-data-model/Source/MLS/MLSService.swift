@@ -602,10 +602,6 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("aborting key packages upload: \(reason)")
         }
 
-        guard await featureRepository.fetchMLS().isEnabled else {
-            return logWarn(abortedWithReason: "MLS is not enabled")
-        }
-
         guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
 
         guard let context else {
@@ -649,6 +645,11 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
+            guard await featureRepository.fetchMLS().isEnabled else {
+                logger.info("shouldn't query unclaimed key packages count: MLS is not enabled")
+                return false
+            }
+
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.transaction {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)

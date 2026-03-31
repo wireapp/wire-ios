@@ -1584,7 +1584,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.isEmpty,
             "shouldn't count key packages when MLS is disabled"
         )
-        
+
         XCTAssertTrue(
             mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations.isEmpty,
             "shouldn't upload key packages when MLS is disabled"
