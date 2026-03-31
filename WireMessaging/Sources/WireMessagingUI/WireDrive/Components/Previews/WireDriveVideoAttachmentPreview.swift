@@ -19,20 +19,18 @@
 import SwiftUI
 import WireDesign
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveVideoAttachmentPreview: View {
 
     let thumbnail: Image?
-    let progress: Double?
-    let isError: Bool
+    let state: WireDriveFileUITracker.State
     let canPlay: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview {
             ZStack(alignment: .center) {
                 if let thumbnail {
                     GeometryReader { geometry in
@@ -40,19 +38,39 @@ struct WireDriveVideoAttachmentPreview: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: geometry.size.width, height: geometry.size.height)
+                            .overlay {
+                                if case .notLoaded = state {
+                                    PlayIcon()
+                                } else if case let .loading(progress, _) = state {
+                                    ZStack {
+                                        PlayIcon()
+
+                                        Color.black.opacity(0.7)
+
+                                        ProgressView(value: progress)
+                                            .progressViewStyle(.wireDriveAsset(strokeColor: .white))
+                                            .frame(height: 30)
+                                    }
+                                }
+                            }
                     }
                 }
 
-                if thumbnail != nil, !isError {
-                    PlayIcon()
-                        .disabled(!canPlay)
-                }
-
-                if isError {
-                    WireDriveAttachmentPreviewErrorCircle()
-                }
+                stateView
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    @ViewBuilder private var stateView: some View {
+        switch state {
+        case .loaded where thumbnail != nil:
+            PlayIcon()
+                .disabled(!canPlay)
+        case .failed:
+            WireDriveAttachmentPreviewErrorCircle()
+        default:
+            EmptyView()
         }
     }
 }
@@ -83,8 +101,7 @@ struct PlayIcon: View {
 #Preview {
     WireDriveVideoAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
-        progress: 0.7,
-        isError: false,
+        state: .loading(progress: 0.7, isLargeFile: false),
         canPlay: true
     ).frame(width: 74, height: 74)
 }

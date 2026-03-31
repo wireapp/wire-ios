@@ -48,7 +48,7 @@ public final class WireDriveFileUITracker {
     public private(set) var state: State = .notLoaded {
         didSet {
             switch (oldValue, state) {
-            case (.loading(_, let isLargeFile), .loaded):
+            case let (.loading(_, isLargeFile), .loaded):
                 // state is changing from loading to loaded:
                 state = .loaded(showReadyToOpen: isLargeFile)
 
@@ -58,7 +58,7 @@ public final class WireDriveFileUITracker {
                         self.state = .loaded(showReadyToOpen: false)
                     }
                 } else {
-                    fileShouldOpen?()
+                    onSmallFileLoaded?()
                 }
             default:
                 break
@@ -67,12 +67,12 @@ public final class WireDriveFileUITracker {
     }
 
     /// This closure will be called when a file should be automatically opened after the download or upload.
-    public var fileShouldOpen: (() -> Void)?
+    public var onSmallFileLoaded: (() -> Void)?
 
     public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
         state = Self.stateFromAsset(asset)
     }
-    
+
     // MARK: - State mapping from `WireDriveLocalAsset` (downloading a Drive file)
 
     private static func stateFromAsset(_ asset: WireDriveLocalAsset) -> State {
@@ -87,16 +87,16 @@ public final class WireDriveFileUITracker {
             .failed
         }
     }
-    
+
     // MARK: - State mapping from `AttachmentsCarouselItem` (uploading a Drive file)
-    
+
     public func handleDownloadState(fromCarouselItem item: AttachmentsCarouselItem) {
         state = Self.stateFromCarouselItem(item)
     }
-    
+
     private static func stateFromCarouselItem(_ carouselItem: AttachmentsCarouselItem) -> State {
         switch carouselItem.state {
-        case .uploading(let progress):
+        case let .uploading(progress):
             .loading(progress: Double(progress), isLargeFile: false)
         case .uploaded:
             .loaded(showReadyToOpen: false)

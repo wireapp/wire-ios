@@ -36,7 +36,8 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
-        case open
+        /// Can be open, download or cancel download, depening on the state of the file
+        case primaryAction
         case showVersionHistory
         case edit
         case rename
@@ -50,16 +51,8 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
-    @Published private var asset: WireDriveLocalAsset? {
-        didSet {
-            if let asset {
-                fileTracker.handleDownloadState(fromAsset: asset)
-            }
-        }
-    }
-
+    @Published private var asset: WireDriveLocalAsset?
     @Published var fileTracker: WireDriveFileUITracker
-
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
@@ -121,15 +114,17 @@ final class FilesItemViewModel: ObservableObject {
         self.isInRecycleBin = isInRecycleBin
 
         self.fileTracker = .init()
-        fileTracker.fileShouldOpen = {
-            // TODO: [WPB-23688] call the function to open the file here, later when we implement the new loading&opening design
-            print("### file should open automatically now")
+        fileTracker.onSmallFileLoaded = { [weak self] in
+            self?.performAction(.primaryAction)
         }
 
         self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
+            if let asset {
+                self?.fileTracker.handleDownloadState(fromAsset: asset)
+            }
         }.store(in: &cancellables)
     }
 
@@ -157,31 +152,11 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    var progress: Double? {
-        switch fileTracker.state {
-        case let .loading(progress, _):
-            progress
-        case .failed:
-            1 // We show a full red progress bar on failure
-        default:
-            nil
-        }
-    }
-
-    var showErrorState: Bool {
-        switch fileTracker.state {
-        case .failed:
-            true
-        default:
-            false
-        }
-    }
-
     var isEditable: Bool {
         item.isEditable
     }
 
-    func performMenuAction(_ action: ItemAction) {
+    func performAction(_ action: ItemAction) {
         switch action {
         case .restore:
             showRestoreConfirmation()
@@ -192,13 +167,6 @@ final class FilesItemViewModel: ObservableObject {
         default:
             Task { await onItemAction(action, item) }
         }
-    }
-
-    func download() async {
-        precondition(item.kind == .file)
-
-        // Ignore errors as these will be reported via the `asset` publisher.
-        try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
 
     func showDeleteConfirmation(deletePermanently: Bool) {
@@ -376,7 +344,7 @@ final class FilesItemViewModel: ObservableObject {
         var actions: Set<ItemAction> = []
 
         if !isInRecycleBin {
-            actions.insert(.open)
+            actions.insert(.primaryAction)
             actions.insert(.shareLink)
         }
 

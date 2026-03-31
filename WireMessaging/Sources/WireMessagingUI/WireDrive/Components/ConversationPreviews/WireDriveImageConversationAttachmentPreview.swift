@@ -20,29 +20,24 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveImageConversationAttachmentPreview: View {
 
     let thumbnailURL: URL?
-    let progress: Double?
-    let isAssetDownloadError: Bool
-    let canShowNoPreviewMessage: Bool
+    let state: WireDriveFileUITracker.State
+    let isLargePreview: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    init(thumbnailURL: URL?, progress: Double?, isAssetDownloadError: Bool, canShowNoPreviewMessage: Bool) {
+    init(thumbnailURL: URL?, state: WireDriveFileUITracker.State, isLargePreview: Bool) {
         self.thumbnailURL = thumbnailURL
-        self.progress = progress
-        self.isAssetDownloadError = isAssetDownloadError
-        self.canShowNoPreviewMessage = canShowNoPreviewMessage
+        self.state = state
+        self.isLargePreview = isLargePreview
     }
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isAssetDownloadError
-                ? ColorTheme.Base.error.color
-                : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview {
             ZStack {
                 if let thumbnailURL {
                     AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
@@ -67,8 +62,36 @@ struct WireDriveImageConversationAttachmentPreview: View {
                     noPreviewMessageView
                 }
 
-                if isAssetDownloadError {
-                    WireDriveAttachmentPreviewErrorCircle()
+                switch state {
+                case let .loading(progress, _):
+                    Color.black.opacity(0.7)
+
+                    VStack(spacing: 12) {
+                        ProgressView(value: progress)
+                            .progressViewStyle(.wireDriveAsset(strokeColor: .white))
+                            .frame(height: 16)
+
+                        if isLargePreview {
+                            Text(Strings.Files.tapToCancelDownload)
+                                .font(for: .subline1)
+                                .foregroundStyle(.white)
+                        }
+
+                    }
+
+                case .failed:
+                    if isLargePreview {
+                        Color.black.opacity(0.7)
+
+                        Text(Strings.Files.downloadFailed)
+                            .font(for: .subline1)
+                            .foregroundStyle(.white)
+                    } else {
+                        WireDriveAttachmentPreviewErrorCircle()
+                    }
+
+                default:
+                    EmptyView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -78,8 +101,17 @@ struct WireDriveImageConversationAttachmentPreview: View {
 
     // MARK: Helpers
 
+    private var isAssetDownloadError: Bool {
+        switch state {
+        case .failed:
+            true
+        default:
+            false
+        }
+    }
+
     @ViewBuilder private var noPreviewMessageView: some View {
-        if canShowNoPreviewMessage {
+        if isLargePreview {
             Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
                 .font(for: .subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
@@ -97,8 +129,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
 #Preview {
     WireDriveImageConversationAttachmentPreview(
         thumbnailURL: nil,
-        progress: 0.5,
-        isAssetDownloadError: false,
-        canShowNoPreviewMessage: true
+        state: .loading(progress: 0.5, isLargeFile: false),
+        isLargePreview: true
     )
 }

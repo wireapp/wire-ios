@@ -122,14 +122,30 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                 )
             )
 
-            let (progress, download) = fileDownloader.download(from: downloadURL)
-            for await progress in progress {
+            let (progress, urlDownloadTask) = fileDownloader.download(from: downloadURL)
+
+            var fileSize: WireDriveLocalAsset.FileSize = .small
+
+            let timerTask = Task {
+                try await Task.sleep(for: .milliseconds(300))
+                fileSize = .large
+            }
+
+            for try await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
+                asset.fileSize = fileSize
                 try store.upsertAsset(asset)
             }
 
-            let (tempURL, _) = try await download.value
+            timerTask.cancel()
+
+            if Task.isCancelled {
+                urlDownloadTask.cancel()
+                try Task.checkCancellation()
+            }
+
+            let (tempURL, _) = try await urlDownloadTask.value
             let key = WireDriveLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: node.path)
             try await fileCache.saveFile(at: tempURL, key: key)
 
@@ -140,7 +156,8 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
-                asset.downloadState = .failed(error: error)
+                // On cancellation error, resets the asset to its initial download state.
+                asset.downloadState = (error is CancellationError) ? .pending : .failed(error: error)
                 try store.upsertAsset(asset)
             }
 
