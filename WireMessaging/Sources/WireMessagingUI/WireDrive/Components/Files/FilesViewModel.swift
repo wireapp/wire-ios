@@ -173,7 +173,9 @@ package final class FilesViewModel: ObservableObject {
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
             updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
-            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
+            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol,
+            makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase,
+            removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -193,6 +195,8 @@ package final class FilesViewModel: ObservableObject {
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
             self.getDriveConversations = getDriveConversations
+            self.makeAssetAvailableOfflineUseCase = makeAssetAvailableOfflineUseCase
+            self.removeAssetAvailableOfflineUseCase = removeAssetAvailableOfflineUseCase
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -212,6 +216,8 @@ package final class FilesViewModel: ObservableObject {
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
         let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
+        let makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase
+        let removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -449,9 +455,10 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item
-                case .makeAvailableOffline, .removeAvailableOffline:
-                    // TODO: [WPB-23967] - Call use cases
-                    break
+                case .makeAvailableOffline:
+                    makeAssetAvailableOffline(item: item)
+                case .removeAvailableOffline:
+                    removeAssetAvailableOffline(item: item)
                 }
             },
             isBrowsing: isBrowsing,
@@ -852,6 +859,28 @@ package final class FilesViewModel: ObservableObject {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
         Task { await reload() }
+    }
+    
+    // MARK: - Offline mode
+    
+    private func makeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try await useCases.makeAssetAvailableOfflineUseCase.invoke(nodeID: item.id)
+            } catch {
+                WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
+            }
+        }
+    }
+    
+    private func removeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try useCases.removeAssetAvailableOfflineUseCase.invoke(nodeID: item.id)
+            } catch {
+                WireLogger.wireDrive.error("Failed to remove asset from available offline: \(String(describing: error))")
+            }
+        }
     }
 }
 

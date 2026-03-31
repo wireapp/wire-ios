@@ -97,6 +97,12 @@ extension FilesViewModel {
                 ),
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
+                ),
+                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
                 )
             ),
             setNavigation: { _ in },
@@ -345,8 +351,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
 
         return (node, localAsset)
     }
+    
+    func updateAsset(_ asset: WireDriveLocalAsset) throws {}
 
-    func downloadAsset(nodeID: UUID) async throws {
+    func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         failIndex += 1
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
