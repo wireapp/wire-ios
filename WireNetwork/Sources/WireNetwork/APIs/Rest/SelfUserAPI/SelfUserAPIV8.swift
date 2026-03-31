@@ -52,4 +52,5 @@ class SelfUserAPIV8: SelfUserAPIV7 {
             }
         }
     }
+
 }

@@ -183,6 +183,7 @@ class ConversationsAPIV8: ConversationsAPIV7 {
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 // MARK: - Encodables
@@ -392,26 +393,5 @@ enum CellsStateV8: String, Decodable, ToAPIModelConvertible {
         case .disabled:
             .disabled
         }
-    }
-}
-
-private struct PaginatedConversationIDsV8: Decodable, ToAPIModelConvertible {
-
-    enum CodingKeys: String, CodingKey {
-        case conversationIDs = "qualified_conversations"
-        case pagingState = "paging_state"
-        case hasMore = "has_more"
-    }
-
-    let conversationIDs: [QualifiedIDV0]
-    let pagingState: String
-    let hasMore: Bool
-
-    func toAPIModel() -> PayloadPager<[QualifiedID]>.Page {
-        PayloadPager<[QualifiedID]>.Page(
-            element: conversationIDs.map { $0.toAPIModel() },
-            hasMore: hasMore,
-            nextStart: pagingState
-        )
     }
 }
