@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -352,6 +353,7 @@ private extension View {
                     role: .destructive,
                     action: confirm
                 )
+                .accessibilityIdentifier(Locators.WireDrive.FilesItemPage.confirmDeleteButton)
             }
         )
     }
@@ -372,6 +374,7 @@ private extension View {
                     buttonText,
                     action: confirm
                 )
+                .accessibilityIdentifier(Locators.WireDrive.FilesItemPage.confirmRestoreButton)
             }
         )
     }

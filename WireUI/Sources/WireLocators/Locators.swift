@@ -438,5 +438,10 @@ public enum Locators {
                 "sortKey.\(key)"
             }
         }
+
+        public enum FilesItemPage: String {
+            case confirmDeleteButton
+            case confirmRestoreButton
+        }
     }
 }
