@@ -485,6 +485,11 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
         }
+        if searchResultsViewController.searchGroup == .apps {
+            showEmptyAppsSearchResultView()
+        } else {
+            hideEmptyAppsSearchResultView()
+        }
     }
 
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
@@ -492,6 +497,16 @@ final class AddParticipantsViewController: UIViewController {
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
     }
+
+    private func showEmptyAppsSearchResultView() {
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView()
+        searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
+    }
+
+    private func hideEmptyAppsSearchResultView() {
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+    }
+
 }
 
 extension AddParticipantsViewController: UserSelectionObserver {
