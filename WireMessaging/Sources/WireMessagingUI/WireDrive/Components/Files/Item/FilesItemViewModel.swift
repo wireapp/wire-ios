@@ -51,6 +51,11 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
+    
+    enum ConnectionState {
+        case offline
+        case online
+    }
 
     @Published private var asset: WireDriveLocalAsset?
 
@@ -61,7 +66,7 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-    @Published var menuActions: Set<ItemAction> = []
+    @Published var connectionState: ConnectionState = .online
 
     let fileName: String
     let subtitle: String?
@@ -114,11 +119,11 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
-        self.menuActions = makeMenuActions()
-
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
         }.store(in: &cancellables)
+        
+        bindNetworkConnection()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -359,20 +364,33 @@ final class FilesItemViewModel: ObservableObject {
             additionalTagsIndicator: formattedNumber
         )
     }
+    
+    var isOffline: Bool {
+        connectionState == .offline
+    }
 
-    private func makeMenuActions() -> Set<ItemAction> {
+    var menuActions: Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
         if !isInRecycleBin {
             actions.insert(.open)
-            actions.insert(.shareLink)
+            
+            if !isOffline {
+                actions.insert(.shareLink)
+            }
         }
 
         if !isEditable {
-            actions.insert(isAvailableOffline ? .removeAvailableOffline : .makeAvailableOffline)
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
         }
 
-        if !isBrowsing {
+        if !isBrowsing && !isOffline {
             if isInRecycleBin {
                 actions.insert(.restore)
                 actions.insert(.deletePermanently)
@@ -393,10 +411,29 @@ final class FilesItemViewModel: ObservableObject {
 
         return actions
     }
+    
+    //TODO: refactor NetworkMonitor to be `@Observable` for more frictionless usage in ViewModels and add debounce.
+    private func bindNetworkConnection() {
+        NetworkMonitor.shared.statusPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self else { return }
+
+                switch status {
+                case .connected:
+                    guard connectionState == .offline else { return }
+                    connectionState = .online
+                case .disconnected:
+                    connectionState = .offline
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     var isAvailableOffline: Bool {
         // TODO: [WPB-24208] When PR merged, uncomment code
-        Bool.random() // localAssetRepository.asset(nodeID: nodeID).isAvailableOffline
+        self.item.hashValue.isMultiple(of: 2) // localAssetRepository.asset(nodeID: nodeID).isAvailableOffline
     }
 }
 
