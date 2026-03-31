@@ -48,8 +48,8 @@ final class EmptyAppsSearchResultView: UIView {
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
-            bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16)
+            trailingAnchor.constraint(greaterThanOrEqualTo: stackView.trailingAnchor, constant: 16),
+            bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16)
         ])
     }
 
