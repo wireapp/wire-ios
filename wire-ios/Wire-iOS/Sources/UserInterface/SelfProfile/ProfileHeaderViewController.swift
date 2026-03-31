@@ -145,7 +145,7 @@ final class ProfileHeaderViewController: UIViewController {
     override func viewDidLoad() {
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
-        imageView.accessibilityIdentifier = "user image"
+        imageView.accessibilityIdentifier = Locators.UserProfilePage.userProfilePicture.rawValue
         imageView.setImageConstraint(resistance: 249, hugging: 750)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -391,8 +391,19 @@ final class ProfileHeaderViewController: UIViewController {
             self?.qrCodeButtonTapped()
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
-        qrCodeButton.isHidden = !user.isSelfUser
+        updateQRCodeButtonIsHidden()
         updateColors()
+    }
+
+    private func updateQRCodeButtonIsHidden() {
+        qrCodeButton.isHidden = !user.isSelfUser
+        guard user.isSelfUser else { return }
+        Task {
+            let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [hasToShow] in
+                qrCodeButton.isHidden = !hasToShow
+            }
+        }
     }
 
     private func updateColors() {

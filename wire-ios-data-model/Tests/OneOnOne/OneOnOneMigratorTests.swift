@@ -28,7 +28,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
     private var syncContext: NSManagedObjectContext!
-
+    private let localDomain = "local.domain"
     private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() async throws {
@@ -38,6 +38,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         syncContext = coreDataStack.syncContext
 
         mockMLSService = MockMLSServiceInterface()
+        mockMLSService.underlyingLocalDomain = localDomain
     }
 
     override func tearDown() async throws {
@@ -58,6 +59,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
+        var conversationID: QualifiedID?
 
         let mlsConversation = await syncContext.perform { [self] in
             let user = ZMUser.insertNewObject(in: syncContext)
@@ -66,13 +68,15 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             let mlsConversation = createMLSConversation(with: mlsGroupID, in: syncContext)
             mlsConversation.oneOnOneUser = user
+            mlsConversation.domain = localDomain
+            conversationID = mlsConversation.qualifiedID
 
             return mlsConversation
         }
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((try XCTUnwrap(conversationID), mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -109,10 +113,15 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupEpoch: 0,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
+        mockMLSService.underlyingLocalDomain = mlsConversationID.domain
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, removalKeys)),
+            result: .success((mlsConversationID, mlsGroupID, removalKeys)),
             context: syncContext.notificationContext
         )
 
@@ -160,10 +169,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupEpoch: 1,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -203,10 +216,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupID: mlsGroupID,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -281,6 +298,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupID: mlsGroupID,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
@@ -299,7 +320,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -406,6 +427,11 @@ final class OneOnOneMigratorTests: XCTestCase {
             in: syncContext
         )
 
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
+
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
             modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
@@ -436,7 +462,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -609,7 +635,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .connection
         conversation.remoteIdentifier = .create()
-        conversation.domain = "local@domain.com"
+        conversation.domain = localDomain
         conversation.oneOnOneUser = connection.to
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -646,7 +672,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
-        mlsConversation.domain = "local@domain.com"
+        mlsConversation.domain = localDomain
         mlsConversation.mlsGroupID = identifier
         mlsConversation.messageProtocol = .mls
         mlsConversation.conversationType = .oneOnOne

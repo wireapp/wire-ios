@@ -34,10 +34,10 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
 
-struct AccountStore {
+struct AccountStore: Sendable {
 
     private let directory: URL
-    private let fileManager = FileManager.default
+    private let fileManager = { @Sendable in FileManager.default }
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -49,7 +49,7 @@ struct AccountStore {
 
     init(directory: URL) throws {
         self.directory = directory
-        try fileManager.createAndProtectDirectory(at: directory)
+        try fileManager().createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Fetch
@@ -118,7 +118,7 @@ struct AccountStore {
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
         do {
-            try fileManager.removeItem(at: url(for: account.userIdentifier))
+            try fileManager().removeItem(at: url(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -151,7 +151,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
+            let paths = try fileManager().contentsOfDirectory(atPath: directory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {

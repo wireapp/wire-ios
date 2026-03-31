@@ -120,7 +120,7 @@ package struct VerificationCodeView: View {
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { newValue in
+                    .onChange(of: viewModel.code[index]) { _, newValue in
                         focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
             }

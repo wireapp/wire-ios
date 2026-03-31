@@ -25,22 +25,29 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let userHelper = UserHelper()
+    var userHelper: UserHelper!
+    var callingServiceClient: CallingServiceClient!
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
     override func setUpWithError() throws {
+        // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
+        dismissAllowIfPresent()
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
+        registerNotificationPermissionMonitor()
 
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
         ]
 
+        userHelper = UserHelper()
+
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
-            .useWireAuthentication: true,
-            .multibackend: true
+            .useWireAuthentication: true
         ])
         app.launch()
 
@@ -50,7 +57,9 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
+        userHelper = nil
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -95,5 +104,32 @@ class WireUITestCase: XCTestCase {
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
         // need to change for Inbucket
         BackendContext.current = target
+    }
+
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
+    }
+
+    func registerNotificationPermissionMonitor() {
+        guard notificationPermissionMonitor == nil else { return }
+
+        notificationPermissionMonitor =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
     }
 }

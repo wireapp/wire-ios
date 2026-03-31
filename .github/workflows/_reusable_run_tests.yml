@@ -19,6 +19,15 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      testiny_run_name:
+        type: string
+        required: false
+        default: ''
+      notify:
+        type: string
+        required: true
+        default: 'failure' # values: always | failure | never
+
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -117,6 +126,11 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Install ImageMagick
+        uses: gerlero/brew-install@v1
+        with:
+          packages: imagemagick ghostscript freetype
+
       - name: Display all fastlane lanes
         if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
         run: |
@@ -143,6 +157,32 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane run_uitests
+
+
+      - name: Upload XCResult results to Testiny
+        if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
+        shell: bash
+        env:
+          TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
+        run: |
+          set -euo pipefail
+          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
+          echo "::add-mask::$TESTINY_API_KEY"
+          export TESTINY_API_KEY
+
+          # Find a xcresult bundle produced by the run
+          XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"
+          if [ -z "$XCRESULT" ]; then
+            echo "[ERROR] No .xcresult found under artifacts/"
+            exit 1
+          fi
+
+          echo "[INFO] Using xcresult: $XCRESULT"
+
+          python3 ./scripts/send_xcresult_to_testiny.py \
+            --xcresult "$XCRESULT" \
+            --run-name "$TESTINY_RUN_NAME" \
+            --require-existing-run
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
@@ -224,7 +264,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${{ github.run_number }}\`";
+            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
@@ -262,10 +302,10 @@ jobs:
             echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
             echo "commit_message=$(git log -1 --pretty=format:"%s")" >> $GITHUB_ENV
 
-      - name: Notify on Wire for iOS Nightly 🤖
+      - name: Always Notify on Wire
         uses: 8398a7/action-slack@v3
         continue-on-error: true
-        if: ${{ inputs.all && always() }}
+        if:  ${{ inputs.notify == 'always'  && always() }}
         with:
           status: ${{ job.status }}
           text: |
@@ -276,10 +316,10 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       
-      - name: Notify on Wire for iOS CI
+      - name: Only Notify on Wire failures
         uses: 8398a7/action-slack@v3
         continue-on-error: true
-        if: ${{ !inputs.all && failure() }}
+        if: ${{ inputs.notify == 'failure' && failure() }}
         with:
           status: ${{ job.status }}
           text: |

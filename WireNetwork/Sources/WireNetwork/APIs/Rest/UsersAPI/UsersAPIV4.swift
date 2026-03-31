@@ -127,6 +127,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
             legalholdStatus: legalholdStatus.toAPIModel()

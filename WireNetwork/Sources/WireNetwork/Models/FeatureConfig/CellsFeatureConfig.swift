@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Cells* feature.
 
-public struct CellsFeatureConfig: Equatable, Sendable {
+public struct CellsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

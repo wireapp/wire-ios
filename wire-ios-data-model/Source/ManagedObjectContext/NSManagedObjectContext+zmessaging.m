@@ -526,10 +526,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     [self.userInfo removeObjectForKey:IsSaveDisabled];
 }
 
-- (void)markAsSyncContext;
+- (void)markAsSyncContext
+{
+    self.userInfo[IsSyncContextKey] = @YES;
+}
+
+- (void)performMarkAsSyncContext
 {
     [self performBlockAndWait:^{
-        self.userInfo[IsSyncContextKey] = @YES;
+        [self markAsSyncContext];
     }];
 }
 

@@ -38,8 +38,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var requestStrategies: [RequestStrategy]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
     public private(set) var clientContextChangeTrackers: [ZMContextChangeTracker] = []
-    public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
-        .InitiateResetMLSConversationUseCaseProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -53,8 +51,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         searchUsersCache: SearchUsersCache?,
-        initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
-            .InitiateResetMLSConversationUseCaseProtocol,
         metadata: BackendMetadataProvider
     ) {
         self.strategies = Self.buildStrategies(
@@ -71,8 +67,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             searchUsersCache: searchUsersCache,
             metadata: metadata
         )
-        self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
-
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
         self.contextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
             if let source = object as? ZMContextChangeTrackerSource {
@@ -200,11 +194,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),
-            SearchUserImageStrategy(
-                applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC,
-                searchUsersCache: searchUsersCache
-            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -317,6 +306,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        initiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol,
         metadata: BackendMetadataProvider
     ) {
         syncContext.performAndWait {
@@ -337,7 +327,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
-                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
                 apiVersion: metadata.apiVersion
             )

@@ -49,6 +49,7 @@
                               apiVersion:(nullable NSNumber *)apiVersion;
 
 - (void)tearDown;
+- (void)resumeEnqueuing;
 
 @end
 

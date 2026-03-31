@@ -54,7 +54,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 14)
+        try XCTAssertCount(storeInvocations, count: 15)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -131,6 +131,9 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             storeInvocations[13].config as? Feature.SelfDeletingMessages.Config,
             Scaffolding.selfDeletingMessagesFeatureConfig.toDomainModel()
         )
+        XCTAssertEqual(storeInvocations[14].name, .simplifiedUserConnectionRequestQRCode)
+        XCTAssertFalse(storeInvocations[14].isEnabled)
+        XCTAssertNil(storeInvocations[14].config)
     }
 
 }
@@ -151,7 +154,8 @@ private enum Scaffolding {
         .fileSharing(fileSharingFeatureConfig),
         .mls(mlsFeatureConfig),
         .mlsMigration(mlsMigrationFeatureConfig),
-        .selfDeletingMessages(selfDeletingMessagesFeatureConfig)
+        .selfDeletingMessages(selfDeletingMessagesFeatureConfig),
+        .simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCodeConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -220,6 +224,10 @@ private enum Scaffolding {
 
     static let consumableNotificationsFeatureConfig = ConsumableNotificationsFeatureConfig(
         status: .enabled
+    )
+
+    static let simplifiedUserConnectionRequestQRCodeConfig = SimplifiedUserConnectionRequestQRCodeConfig(
+        status: .disabled
     )
 
     static let cellsFeatureConfig = CellsFeatureConfig(

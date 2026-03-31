@@ -48,9 +48,14 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions: [APIVersion] = [.v8]
 
+        let responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "testAddChannelPermission_givenV8AndSuccessResponse200")
+        ]
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             try await sut.addChannelPermission(
                 conversationID: Scaffolding.conversationID.uuidString,
                 conversationDomain: Scaffolding.domain,
@@ -63,9 +68,13 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions: [APIVersion] = [.v8]
 
+        let responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "testAddChannelPermission_givenV8AndSuccessResponse200")
+        ]
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             try await sut.addChannelPermission(
                 conversationID: Scaffolding.conversationID.uuidString,
                 conversationDomain: Scaffolding.domain,
@@ -81,9 +90,16 @@ final class ConversationsAPITests: XCTestCase {
         let apiVersions = APIVersion.v5.andNextVersions
         let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
 
+        let responses: [MockAPIServiceProtocol.Response] =
+            Array(
+                repeating: (.ok, "testCreateGroupConversation_givenV5AndSuccessResponse200"),
+                count: apiVersions.count
+            )
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             try await sut.updateConversationAccess(
                 conversationID: conversationID,
                 allowGuests: true,
@@ -220,9 +236,15 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let apiVersions: [APIVersion] = [.v0]
 
+        let responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+        ]
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             let pager = try await sut.getLegacyConversationIdentifiers()
 
             for try await _ in pager {
@@ -236,9 +258,29 @@ final class ConversationsAPITests: XCTestCase {
 
         let apiVersions = APIVersion.v5.andNextVersions
 
+        var responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200")
+        ]
+
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "testGetMLSOneOnOneConversationV6SuccessResponse200"),
+                count: [APIVersion.v6, .v7].count
+            )
+        )
+
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "testGetMLSOneOnOneConversationV8SuccessResponse200"),
+                count: APIVersion.v8.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
 
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
@@ -250,10 +292,15 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationIdentifiers() async throws {
         // given
         let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetConversationIdentifiers_givenV1AndSuccessResponse200"),
+            count: apiVersions.count
+        )
 
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             let pager = try await sut.getConversationIdentifiers()
 
             for try await _ in pager {
@@ -399,9 +446,25 @@ final class ConversationsAPITests: XCTestCase {
             domain: "wire.com"
         )
 
+        var responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "testGetConversations_givenV0AndSuccessResponse200"),
+            (.ok, "testGetConversations_givenV0AndSuccessResponse200"),
+            (.ok, "testGetConversations_givenV2AndSuccessResponse200"),
+            (.ok, "testGetConversations_givenV3AndSuccessResponse200"),
+            (.ok, "testGetConversations_givenV3AndSuccessResponse200")
+        ]
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "testGetConversations_givenV8AndSuccessResponse200"),
+                count: APIVersion.v4.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // when
         // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.getConversations(for: [qualifiedID])
         }
     }
@@ -941,9 +1004,22 @@ final class ConversationsAPITests: XCTestCase {
         let apiVersions = APIVersion.allCases
         let conversationID = Scaffolding.conversationID.uuidString
 
+        var responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetConversationGuestLinkV0SuccessResponse200"),
+            count: APIVersion.allCasesUpTo(.v4).count
+        )
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "testGetConversationGuestLinkV4SuccessResponse200"),
+                count: APIVersion.v4.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
 
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.getConversationGuestLink(
                 conversationID: conversationID

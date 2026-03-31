@@ -30,8 +30,11 @@ extension UISplitViewController.Column: CustomDebugStringConvertible {
             "secondary"
         case .compact:
             "compact"
+        case .inspector:
+            "inspector"
         @unknown default:
             "unknown"
         }
     }
+
 }

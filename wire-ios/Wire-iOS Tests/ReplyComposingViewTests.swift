@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngineSupport
 import XCTest
 @testable import Wire
 
@@ -35,14 +36,14 @@ final class ReplyComposingViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         verifyDeallocation {
-            ReplyComposingView(message: message)
+            ReplyComposingView(message: message, userSession: UserSessionMock())
         }
     }
 
     func testThatItCallsDelegateWhenTapped() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        let view = ReplyComposingView(message: message)
+        let view = ReplyComposingView(message: message, userSession: UserSessionMock())
         let delegate = ReplyComposingViewMockDelegate()
         view.delegate = delegate
         XCTAssertEqual(delegate.composingViewWantsToShowMessage, 0)
@@ -55,7 +56,7 @@ final class ReplyComposingViewTests: XCTestCase {
     func testThatItCallsDelegateWhenXCalled() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        let view = ReplyComposingView(message: message)
+        let view = ReplyComposingView(message: message, userSession: UserSessionMock())
         let delegate = ReplyComposingViewMockDelegate()
         view.delegate = delegate
         XCTAssertEqual(delegate.didCancelCalledCount, 0)

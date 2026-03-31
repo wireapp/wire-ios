@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
@@ -50,6 +51,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The availability of the user
     var availability: Availability { get set }
+
+    /// If the user is part of a team this property returns the team's remote identifier.
+    var teamIdentifier: UUID? { get }
 
     /// Team membership for this user.
     /// This property is `nil` even for users, who are part of a
@@ -132,6 +136,13 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
+
+    // these properties are used for apps
+    var appInfo: AppInfo? { get }
+
+    // these properties are used for legacy services (bots)
+    var providerIdentifier: String? { get }
+    var serviceIdentifier: String? { get }
 
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()

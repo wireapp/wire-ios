@@ -19,6 +19,7 @@
 public import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 public struct AttachmentsCarousel: View {
 
@@ -104,6 +105,7 @@ private struct AttachmentsCarouselItemView: View {
                 progress: item.state.progress,
                 isError: item.state.isFailed
             )
+            .accessibilityIdentifier(Locators.ActiveConversationPage.attachmentImagePreview.rawValue)
         case let .video(thumbnail):
             WireDriveVideoAttachmentPreview(
                 thumbnail: thumbnail.map { Image(uiImage: $0) },
@@ -111,9 +113,10 @@ private struct AttachmentsCarouselItemView: View {
                 isError: item.state.isFailed,
                 canPlay: false
             )
+            .accessibilityIdentifier(Locators.ActiveConversationPage.attachmentVideoPreview.rawValue)
         case .audio, .document:
             WireDriveDocumentAttachmentPreview(
-                headerIcon: Image(item.fileIcon.resource),
+                headerIcon: Image(item.fileIcon.imageResource),
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,
                 progress: item.state.progress,

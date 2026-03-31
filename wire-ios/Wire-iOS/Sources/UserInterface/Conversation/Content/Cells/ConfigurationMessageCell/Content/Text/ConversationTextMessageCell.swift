@@ -72,6 +72,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }()
 
     private var container: ConversationMessageContainerView?
+    private var currentConfiguration: Configuration?
 
     var isSelected = false
 
@@ -81,7 +82,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
-            configureTextColor(forOwnMessage: isOwnMessage)
+            if let currentConfig = currentConfiguration {
+                configure(with: currentConfig, animated: false)
+            }
         }
     }
 
@@ -148,6 +151,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        currentConfiguration = object
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = 0
         paragraphStyle.lineSpacing = 3
@@ -261,7 +266,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
         self.configuration = View.Configuration(
             attributedText: attributedString,
             isObfuscated: isObfuscated,
-            userSession: userSession,
+            userSession: userSession
         )
     }
 }
@@ -321,6 +326,8 @@ extension ConversationTextMessageCellDescription {
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
 
+        let detectedLinks = findDetectedLinks(in: messageText)
+
         // Search queries
         if !searchQueries.isEmpty {
             let highlightStyle: [NSAttributedString.Key: AnyObject] = [.backgroundColor: UIColor.accentDarken]
@@ -379,6 +386,21 @@ extension ConversationTextMessageCellDescription {
         return cells
     }
 
+    static func findDetectedLinks(in messageText: NSAttributedString) -> [NSTextCheckingResult] {
+        let checkingTypes: NSTextCheckingResult.CheckingType = [.link, .phoneNumber, .address]
+        guard let detector = try? NSDataDetector(types: checkingTypes.rawValue) else {
+            return []
+        }
+
+        let textToScan = messageText.string
+        let scanRange = NSRange(location: 0, length: textToScan.utf16.count)
+
+        return detector.matches(
+            in: textToScan,
+            options: [],
+            range: scanRange
+        )
+    }
 }
 
 extension URL {

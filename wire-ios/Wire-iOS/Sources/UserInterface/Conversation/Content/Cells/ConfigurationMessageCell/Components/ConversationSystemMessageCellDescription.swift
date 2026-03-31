@@ -72,7 +72,8 @@ enum ConversationSystemMessageCellDescription {
             let senderCell = ConversationSenderMessageCellDescription(
                 sender: sender,
                 selfUser: selfUser,
-                message: message
+                message: message,
+                userSession: userSession
             )
             return [AnyConversationMessageCellDescription(senderCell)]
 

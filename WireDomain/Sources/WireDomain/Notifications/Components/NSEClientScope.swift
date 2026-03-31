@@ -55,6 +55,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
+    private let earService: EARServiceInterface
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
@@ -68,7 +69,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        earService: EARServiceInterface
     ) {
         self.clientID = clientID
         self.restNetworkService = restNetworkService
@@ -78,6 +80,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.isFederationEnabled = isFederationEnabled
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
+        self.earService = earService
 
         super.init(parent: parent)
     }
@@ -88,6 +91,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     ) async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
+        let publicKeys = try earService.fetchPublicKeys()
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
@@ -144,7 +148,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
         } else {
-            eventStream = try await pullEventsUseCase.invoke()
+            eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
 
         // Generate notifications from events.
@@ -416,7 +420,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
             conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
             conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
-            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder
+            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
         )
     }
 

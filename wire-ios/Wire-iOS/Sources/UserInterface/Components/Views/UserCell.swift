@@ -425,7 +425,7 @@ extension UserCell {
     ///     - overrideSubtitle: Provide a subtitle to override defaults.
     ///     - conversation: The related conversation.
     ///
-    /// - Note: Please consider to use configure(userStatus:[...]) to make refactorings easier in future.
+    /// - Note: Please consider to use configure(userStatus:[...]) to make refactoring easier in future.
     func configure(
         user: UserType,
         isE2EICertified: Bool = false,
@@ -451,15 +451,16 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isAppOrBot, let appOrBot = user as? SearchServiceUser {
-            subtitle(forServiceUser: appOrBot)
+        if user.isAppOrBot, let appOrBot = user as? ZMSearchUser {
+            subtitle(for: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }
     }
 
-    private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
-        guard let summary = service.summary else { return nil }
+    private func subtitle(for searchUser: ZMSearchUser) -> NSAttributedString? {
+        guard let summary = searchUser.summary else { return nil }
         return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
+
 }

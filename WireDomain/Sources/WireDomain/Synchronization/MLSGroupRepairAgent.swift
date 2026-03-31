@@ -59,10 +59,7 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
         }
 
         for (groupID, mlsGroupID) in mlsGroups {
-            await mlsService.fetchAndRepairGroup(
-                with: mlsGroupID,
-                shouldPerformIncrementalSync: false
-            )
+            await mlsService.fetchAndRepairGroup(with: mlsGroupID)
             journal.removeValue(groupID, for: .brokenMLSGroupIDs)
             WireLogger.sync.debug("Successfully repaired group: \(groupID)")
         }

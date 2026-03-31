@@ -90,12 +90,8 @@ public struct FolderPicker: View {
                 url: helpLink
             )
         } else {
-            if #available(iOS 17.0, *) {
-                picker()
-                    .contentMargins(.top, 16)
-            } else {
-                picker()
-            }
+            picker()
+                .contentMargins(.top, 16)
         }
     }
 

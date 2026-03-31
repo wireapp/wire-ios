@@ -18,7 +18,14 @@
 
 import class Security.SecKey
 
-public struct EARPublicKeys {
+/// `EARPublicKeys` is marked as `@unchecked Sendable` because it wraps `SecKey`,
+/// which is not declared `Sendable` by the Security framework. `SecKey` instances
+/// are immutable and documented as thread-safe, and this type only stores them
+/// in `let` properties and never mutates them after initialization. Under these
+/// assumptions, it is safe to pass `EARPublicKeys` across concurrency domains,
+/// and `@unchecked Sendable` is used to express this to the compiler.
+
+public struct EARPublicKeys: @unchecked Sendable {
 
     public let primary: SecKey
     public let secondary: SecKey

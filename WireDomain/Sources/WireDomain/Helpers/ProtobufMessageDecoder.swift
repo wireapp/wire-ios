@@ -18,65 +18,99 @@
 
 import Foundation
 import GenericMessageProtocol
+import WireNetwork
 
 struct ProtobufMessageDecoder {
 
-    private init() {}
+    // MARK: - Error types
 
-    static func getProtobufMessage(
-        from base64Message: String,
-        externalData: String? = nil
-    ) -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        var genericMessage = GenericMessage(from: base64Message, validate: true)
-
-        // If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
-        // message.
-        // See `External` section from https://github.com/wireapp/generic-message-proto
-        // See `External messages` section from
-        // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-        if let externalData,
-           case let .some(.external(external)) = genericMessage?.content {
-
-            // Content message is external, we decrypt the external payload
-            // and turns it back into a generic non-external content message.
-            if let decryptedGenericMessage = decryptExternalMessage(
-                externalData: externalData,
-                external: external
-            ) {
-                genericMessage = decryptedGenericMessage
-            } else {
-                return nil
-            }
-        }
-
-        guard let genericMessage, let content = genericMessage.content else {
-            return nil
-        }
-
-        return (genericMessage, content)
+    enum Failure: Error {
+        case failedToDecodeGenericMessage
+        case unknownMessageContent
+        case failedToDecodeExternalProteusData
+        case failedToDecryptExternalProteusData
+        case externalProteusDataSHAMismatch
+        case externalProteusDataMissing
     }
 
-    private static func decryptExternalMessage(
-        externalData: String,
-        external: External
-    ) -> GenericMessage? {
-        let externalData = Data(base64Encoded: externalData)
-        let externalSha256 = externalData?.zmSHA256Digest()
+    // MARK: - Interface
 
-        guard externalSha256 == external.sha256 else {
-            return nil
+    func extractMLSMessageContent(
+        from base64Message: String
+    ) throws -> GenericMessage {
+        try extractMessageContent(from: base64Message)
+    }
+
+    func extractProteusMessageContent(
+        from base64Message: String,
+        externalData: MessageContent?
+    ) throws -> GenericMessage {
+        var message = try extractMessageContent(from: base64Message)
+
+        // Extra large proteus messages (many recipients) are contained
+        // in external data.
+        if case let .external(externalMessage) = message.content {
+            guard let externalData = externalData?.encryptedMessage else {
+                throw Failure.externalProteusDataMissing
+            }
+
+            message = try decryptExternalProteusData(
+                external: externalMessage,
+                externalData: externalData
+            )
         }
-
-        let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
-            key: external.otrKey
-        )
-
-        guard
-            let base64String = decryptedData?.base64String(),
-            let message = GenericMessage(from: base64String, validate: true)
-        else { return nil }
 
         return message
     }
 
+    // MARK: - Private methods
+
+    private func extractMessageContent(from base64Message: String) throws -> GenericMessage {
+        // Decode the protobuf message.
+        guard let genericMessage = GenericMessage(
+            from: base64Message,
+            validate: true
+        ) else {
+            throw Failure.failedToDecodeGenericMessage
+        }
+
+        // Ensure the content is understood.
+        if genericMessage.content == nil {
+            throw Failure.unknownMessageContent
+        }
+
+        return genericMessage
+    }
+
+    private func decryptExternalProteusData(
+        external: External,
+        externalData: String
+    ) throws -> GenericMessage {
+        // Decode the base64 external data.
+        guard let encryptedData = Data(base64Encoded: externalData) else {
+            throw Failure.failedToDecodeExternalProteusData
+        }
+
+        // Verify SHA256 hash.
+        guard encryptedData.zmSHA256Digest() == external.sha256 else {
+            throw Failure.externalProteusDataSHAMismatch
+        }
+
+        // Decrypt the data.
+        guard let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(
+            key: external.otrKey
+        ) else {
+            throw Failure.failedToDecryptExternalProteusData
+        }
+
+        // Decode the decrypted message.
+        guard let message = GenericMessage(
+            from: decryptedData.base64String(),
+            validate: true
+        ) else {
+            throw Failure.failedToDecryptExternalProteusData
+        }
+
+        return message
+    }
 }

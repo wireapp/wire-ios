@@ -28,6 +28,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var syncMOC: NSManagedObjectContext!
     private var user: ZMUser!
     private var userID: QualifiedID!
@@ -39,8 +40,10 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         syncMOC = coreDataStack.syncContext
 
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,
@@ -55,6 +58,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         coreDataStack = nil
         mockCoreCryptoProvider = nil
         mockCoreCryptoContext = nil
+        mockCoreCrypto = nil
         syncMOC = nil
         user = nil
         super.tearDown()

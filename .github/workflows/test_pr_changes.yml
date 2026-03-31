@@ -103,4 +103,5 @@ jobs:
       notify_secret: WIRE_IOS_CI_WEBHOOK
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
       run_critical_flows: false # separare workflow
+      notify: failure
     secrets: inherit

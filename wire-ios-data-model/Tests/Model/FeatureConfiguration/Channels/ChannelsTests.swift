@@ -29,7 +29,7 @@ final class ChannelsTests: XCTestCase {
     }
 
     func testPermissions_whenStatusEnabledAndReturningTrue() {
-        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
+        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermission)
 
         // given
         let testCases: [TestCase] = [
@@ -61,7 +61,7 @@ final class ChannelsTests: XCTestCase {
     }
 
     func testPermissions_whenStatusEnabledAndReturningFalse() {
-        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
+        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermission)
 
         // given
         let testCases: [TestCase] = [
@@ -93,7 +93,7 @@ final class ChannelsTests: XCTestCase {
         // given
         let status: Feature.Status = .disabled
         let teamRoles: [TeamRole] = [.owner, .admin, .member, .partner, .none]
-        let permissions: [Feature.Channels.Config.ChannelsPermision] = [.everyone, .teamMembers, .admins]
+        let permissions: [Feature.Channels.Config.ChannelsPermission] = [.everyone, .teamMembers, .admins]
 
         for teamRole in teamRoles {
             for permission in permissions {

@@ -45,6 +45,12 @@ extern NSString * _Nonnull const IsEventContextKey;
 /// Returns @c YES if the context is still valid, false if it has been torn down
 @property (readonly) BOOL zm_isValidContext;
 
+/// Marks the context as a sync context (direct assignment, must be called on context's queue)
+- (void)markAsSyncContext;
+
+/// Marks the context as a sync context (wrapped in performBlockAndWait, safe to call from any thread)
+- (void)performMarkAsSyncContext;
+
 /// Returns @c self in case this is a sync context, or attached sync context, if present
 @property (nonatomic, null_unspecified) NSManagedObjectContext* zm_syncContext;
 

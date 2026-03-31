@@ -135,8 +135,12 @@ class TeamsAPIV5: TeamsAPIV4 {
             let prefix = prefix.replacingOccurrences(of: "+", with: "%2B")
             var requestBuilder = try URLRequestBuilder(path: path)
                 .withMethod(.get)
-                .withQueryItem(name: "prefix", value: prefix)
                 .withQueryItem(name: "size", value: "100")
+
+            if !prefix.isEmpty {
+                requestBuilder = requestBuilder
+                    .withQueryItem(name: "prefix", value: prefix)
+            }
 
             if let nextSince {
                 requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)

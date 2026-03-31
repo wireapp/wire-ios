@@ -136,6 +136,10 @@ public actor WorkAgent {
         task = nil
     }
 
+    public func clearSchedulerQueue() async {
+        WireLogger.workAgent.info("clear scheduler queue", attributes: .safePublic)
+        await scheduler.clearAllItems()
+    }
 }
 
 extension LogAttributes {

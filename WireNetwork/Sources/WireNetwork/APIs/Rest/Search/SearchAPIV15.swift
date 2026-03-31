@@ -82,6 +82,7 @@ private struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
             documents: documents.map { $0.toAPIModel() }
         )
     }
+
 }
 
 private struct ContactV15: Decodable, ToAPIModelConvertible {

@@ -29,7 +29,9 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
             handle: "johndoe",
             accentColor: .turquoise,
             remoteIdentifier: UUID(),
-            searchUsersCache: nil
+            providerIdentifier: nil,
+            searchUsersCache: nil,
+            type: .regular
         )
 
         // expect

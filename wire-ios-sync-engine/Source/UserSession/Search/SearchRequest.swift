@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
-public struct SearchOptions: OptionSet {
+public struct SearchOptions: OptionSet, CustomDebugStringConvertible {
+
     public let rawValue: Int
 
     /// Users you are connected to via connection request.
@@ -46,26 +46,49 @@ public struct SearchOptions: OptionSet {
 
     public static let conversations = SearchOptions(rawValue: 1 << 5)
 
-    /// Services which are enabled in your team.
+    /// Apps (new-style services for MLS).
 
-    public static let services = SearchOptions(rawValue: 1 << 6)
-    // TODO: [WPB-20362] consider renaming to `bots` and adding `apps`
+    public static let apps = SearchOptions(rawValue: 1 << 6)
+
+    /// Bots (old-style services for Proteus).
+
+    public static let bots = SearchOptions(rawValue: 1 << 7)
 
     /// Users from federated servers.
 
-    public static let federated = SearchOptions(rawValue: 1 << 7)
+    public static let federated = SearchOptions(rawValue: 1 << 8)
 
     /// Only search the local database.
 
-    public static let localResultsOnly = SearchOptions(rawValue: 1 << 8)
+    public static let localResultsOnly = SearchOptions(rawValue: 1 << 9)
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
+    public var debugDescription: String {
+        let allOptions: [(SearchOptions, String)] = [
+            (.contacts, "contacts"),
+            (.teamMembers, "teamMembers"),
+            (.excludeNonActiveTeamMembers, "excludeNonActiveTeamMembers"),
+            (.excludeNonActivePartners, "excludeNonActivePartners"),
+            (.directory, "directory"),
+            (.conversations, "conversations"),
+            (.apps, "apps"),
+            (.bots, "bots"),
+            (.federated, "federated"),
+            (.localResultsOnly, "localResultsOnly")
+        ]
+        let names = allOptions
+            .filter { contains($0.0) }
+            .map(\.1)
+        return "[\(names.joined(separator: ", "))]"
+    }
+
 }
 
 public extension SearchOptions {
+
     mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
@@ -74,6 +97,7 @@ public extension SearchOptions {
             insert(.excludeNonActivePartners)
         }
     }
+
 }
 
 public struct SearchRequest {
@@ -169,4 +193,5 @@ private extension String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
+
 }

@@ -25,38 +25,55 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
 
-    var description: String {
-        "CommitPendingProposalItem: \(id), mlsGroupID: \(groupID), conversationID: \(conversationID)"
+    let _internalID = UUID()
+
+    var id: String {
+        "commitPendingProposalItem_\(_internalID)_\(groupID)_\(conversationID)"
     }
 
-    let id = UUID()
+    var description: String {
+        "CommitPendingProposalItem: \(_internalID), mlsGroupID: \(groupID), conversationID: \(conversationID)"
+    }
+
     var priority: WorkItemPriority {
         .medium
     }
 
     let conversationID: WireDataModel.QualifiedID
     let groupID: WireDataModel.MLSGroupID
+    let isSubconversation: Bool
     let logger = WireLogger.mls
 
     public init(
         repository: ConversationRepositoryProtocol,
         conversationID: WireDataModel.QualifiedID,
         groupID: WireDataModel.MLSGroupID,
+        isSubconversation: Bool,
         mlsService: MLSServiceInterface
     ) {
         self.repository = repository
         self.conversationID = conversationID
         self.groupID = groupID
+        self.isSubconversation = isSubconversation
         self.mlsService = mlsService
     }
 
     func start() async throws {
-        let logAttributes: LogAttributes = [.mlsGroupID: groupID.safeForLoggingDescription] + LogAttributes.safePublic
+        let logAttributes: LogAttributes = [
+            .mlsGroupID: groupID.safeForLoggingDescription,
+            .isSubconversation: isSubconversation
+        ] + LogAttributes.safePublic
 
-        let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: groupID)
+        let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: conversationID)
 
         guard isSelfAnActiveMember else {
             logger.info("cancelling commit as the user is no longer a member", attributes: logAttributes)
+            return
+        }
+
+        guard try await mlsService.conversationExists(groupID: groupID) else {
+            logger.warn("mls group does not exist, clearing pending proposal", attributes: logAttributes)
+            await repository.clearPendingProposals(in: conversationID)
             return
         }
 

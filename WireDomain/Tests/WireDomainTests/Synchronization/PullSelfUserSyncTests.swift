@@ -83,6 +83,7 @@ private enum Scaffolding {
         deleted: false,
         email: "username@wire.com",
         expiresAt: .now,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls]
     )
