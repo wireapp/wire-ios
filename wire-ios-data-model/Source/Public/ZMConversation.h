@@ -101,16 +101,6 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 
 @end
 
-@interface ZMConversation (History)
-
-/// This will reset the message history to the last message in the conversation.
-- (void)clearMessageHistory;
-
-/// UI should call this method on opening cleared conversation.
-- (void)revealClearedConversation;
-
-@end
-
 @interface ZMConversation (Connections)
 
 /// The message that was sent as part of the connection request.
