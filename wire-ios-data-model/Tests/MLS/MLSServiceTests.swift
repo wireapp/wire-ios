@@ -1576,20 +1576,19 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             config: .init(defaultCipherSuite: defaultCipherSuite)
         )
 
-        // these should not be called
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
-            XCTFail("shouldn't count key packages when MLS is disabled")
-            return 0
-        }
-
-        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
-            XCTFail("shouldn't upload key packages when MLS is disabled")
-        }
-
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
         // Then
+        XCTAssertTrue(
+            mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.isEmpty,
+            "shouldn't count key packages when MLS is disabled"
+        )
+        
+        XCTAssertTrue(
+            mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations.isEmpty,
+            "shouldn't upload key packages when MLS is disabled"
+        )
         XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
