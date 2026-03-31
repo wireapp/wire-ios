@@ -26,7 +26,8 @@ private enum EmptySearchResultsViewState {
     case initialSearch
     case noUsers
     case everyoneAdded
-    case noApps
+    case noBots
+    // case noApps
     case noAppsEnabled
 }
 
@@ -78,7 +79,7 @@ final class EmptySearchResultsView: UIView {
             Message.usersAndFederation
         case .noUsers:
             Message.users
-        case .noApps:
+        case .noBots:
             Message.apps
         case .noAppsEnabled where isSelfUserAdmin:
             Message.appsNotEnabledAdmin
@@ -95,7 +96,7 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .initialSearch:
             return UIImage()
-        case .noApps, .noAppsEnabled:
+        case .noBots, .noAppsEnabled:
             icon = .bot
         default:
             icon = .personalProfile
@@ -171,12 +172,12 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Public Interface
 
-    func updateStatus(searchingForApps: Bool, hasFilter: Bool) {
-        switch (searchingForApps, hasFilter) {
+    func updateStatus(searchingForBots: Bool, hasFilter: Bool) {
+        switch (searchingForBots, hasFilter) {
         case (true, false):
             state = .noAppsEnabled
         case (true, true):
-            state = .noApps
+            state = .noBots
         case (false, true):
             state = .noUsers
         case (false, false):

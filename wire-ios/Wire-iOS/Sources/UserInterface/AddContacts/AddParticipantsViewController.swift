@@ -312,7 +312,7 @@ final class AddParticipantsViewController: UIViewController {
         updateSelectionValues()
 
         if searchResultsViewController.isResultEmpty {
-            emptyResultView.updateStatus(searchingForApps: false, hasFilter: false)
+            emptyResultView.updateStatus(searchingForBots: false, hasFilter: false)
         }
     }
 
@@ -466,10 +466,10 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForAppsOrBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
+        let searchingForBots = searchResultsViewController.searchGroup == .bots
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
-        emptyResultView.updateStatus(searchingForApps: searchingForAppsOrBots, hasFilter: hasFilter)
+        emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
         case (.apps, _):
