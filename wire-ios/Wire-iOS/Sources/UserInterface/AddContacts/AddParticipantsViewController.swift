@@ -124,7 +124,7 @@ final class AddParticipantsViewController: UIViewController {
     private let collectionViewLayout: UICollectionViewFlowLayout
     private let confirmButtonHeight: CGFloat = 56.0
     private let confirmButton: IconButton
-    private let emptyResultView: EmptySearchResultsView
+    private let emptyResultView: EmptyBotSearchResultsView
     private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
         equalTo: view.bottomAnchor,
         constant: -bottomMargin
@@ -236,7 +236,7 @@ final class AddParticipantsViewController: UIViewController {
         self.searchResultsViewController = searchResultsViewController
 
         let user = SelfUser.provider?.providedSelfUser
-        self.emptyResultView = EmptySearchResultsView(
+        self.emptyResultView = EmptyBotSearchResultsView(
             isSelfUserAdmin: user?.canManageTeam == true,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
@@ -617,8 +617,8 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 }
 
-extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
-    func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {
+extension AddParticipantsViewController: EmptyBotSearchResultsViewDelegate {
+    func execute(action: EmptyBotSearchResultsViewAction, from: EmptyBotSearchResultsView) {
         switch action {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).open(from: self)

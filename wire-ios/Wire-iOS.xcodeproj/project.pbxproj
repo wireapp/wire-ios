@@ -682,7 +682,7 @@
 				"EmoticonSubstitution/NSMutableAttributedString+ReplaceEmojiTests.swift",
 				"EmoticonSubstitution/NSString+EmoticonSubstitutionTests.swift",
 				"EmoticonSubstitution/XCTestCase+EmoticonSubstitutionConfiguration.swift",
-				EmptySearchResultsViewTests.swift,
+				EmptyBotSearchResultsViewTests.swift,
 				EphemeralKeyboardViewControllerTests.swift,
 				EphemeralTimeoutFormatterTests.swift,
 				ExtensionSettingsTests.swift,

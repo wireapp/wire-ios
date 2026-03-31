@@ -102,7 +102,7 @@ final class StartUIViewController: UIViewController {
     let isFederationEnabled: Bool
 
     let profilePresenter: ProfilePresenter
-    private var emptyResultView: EmptySearchResultsView!
+    private var emptyResultView: EmptyBotSearchResultsView!
 
     private(set) var activityIndicator: BlockingActivityIndicator!
 
@@ -215,7 +215,7 @@ final class StartUIViewController: UIViewController {
     func setupViews() {
         configGroupSelector()
         configConversationTypePicker()
-        emptyResultView = EmptySearchResultsView(
+        emptyResultView = EmptyBotSearchResultsView(
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
         )
