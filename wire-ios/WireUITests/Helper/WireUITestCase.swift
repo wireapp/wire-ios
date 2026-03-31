@@ -124,7 +124,6 @@ class WireUITestCase: XCTestCase {
             .acceptPopup()
     }
 
-
     func registerNotificationPermissionMonitor() {
         guard notificationPermissionMonitor == nil else { return }
 
