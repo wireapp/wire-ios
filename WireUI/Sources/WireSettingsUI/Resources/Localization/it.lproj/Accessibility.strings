@@ -18,5 +18,5 @@
 
 "exportBackup.cancel.label" = "Cancel backup";
 "importBackup.cancel.label" = "Cancel restore";
-"backup.password.show.label" = "Show password";
-"backup.password.hide.label" = "Hide password";
+"backup.password.show.label" = "Mostra password";
+"backup.password.hide.label" = "Nascondi password";
