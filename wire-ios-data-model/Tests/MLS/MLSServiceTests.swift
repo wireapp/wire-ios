@@ -1567,6 +1567,32 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Key Packages
 
+    func test_UploadKeyPackages_SkipsUpload_WhenMLSIsDisabled() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .disabled,
+            config: .init(defaultCipherSuite: defaultCipherSuite)
+        )
+
+        // these should not be called
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
+            XCTFail("shouldn't count key packages when MLS is disabled")
+            return 0
+        }
+
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
+            XCTFail("shouldn't upload key packages when MLS is disabled")
+        }
+
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
+    }
+
     func test_UploadKeyPackages_IsSuccessful() async {
         // Given
         guard let clientID = await uiMOC.perform({ self.createSelfClient(onMOC: self.uiMOC).remoteIdentifier }) else {
@@ -1690,7 +1716,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
-    func test_CountUnclaimedKeyPackages_SetsKeyPackageQueriedTime_IfItSucceed() async {
+    func test_UploadKeyPackages_SetsKeyPackageQueriedTime_AfterSuccessfulUpload() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 
@@ -1712,6 +1738,32 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
+    }
+
+    func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_WhenGenerationFails() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        // mock that we don't have enough unclaimed kp locally
+        mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            0
+        }
+
+        // mock backend count is 0
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
+            0
+        }
+
+        // mock key package generation fails (e.g. MLS not initialized)
+        mockCoreCryptoContext.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
+            throw TestError.failedToCountUnclaimedKeyPackages
+        }
+
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() async {
@@ -1754,6 +1806,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 1)
+        XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     // MARK: - Update key material

@@ -601,6 +601,10 @@ public final class MLSService: MLSServiceInterface {
         func logWarn(abortedWithReason reason: String) {
             logger.warn("aborting key packages upload: \(reason)")
         }
+        
+        guard await featureRepository.fetchMLS().isEnabled else {
+            return logWarn(abortedWithReason: "MLS is not enabled")
+        }
 
         guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
 
@@ -622,9 +626,9 @@ public final class MLSService: MLSServiceInterface {
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
+                userDefaults.set(.now, forKey: .keyPackageQueriedTime)
                 return
             }
 
@@ -636,6 +640,8 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
             logger.info("success: uploaded key packages for client \(clientID)")
+            
+            userDefaults.set(.now, forKey: .keyPackageQueriedTime)
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
