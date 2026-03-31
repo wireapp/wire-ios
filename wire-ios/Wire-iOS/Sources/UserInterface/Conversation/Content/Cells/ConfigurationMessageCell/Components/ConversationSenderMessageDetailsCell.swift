@@ -44,6 +44,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         var sender: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
+        let userSession: UserSession
     }
 
     // MARK: - Properties
@@ -56,7 +57,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
-        view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
         view.size = .badge
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -118,11 +118,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     func configure(with object: Configuration, animated: Bool) {
         let user = object.sender
+        avatar.userSession = object.userSession
         avatar.user = user
         availabilityIndicatorView.availability = user.availability.mapToAccountImageAvailability()
 
-        if let session = ZMUserSession.shared() {
-            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        if let userSession = object.userSession as? ZMUserSession {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
         configureAuthorLabel(object: object)
@@ -309,7 +310,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     init(
         sender: UserType,
         selfUser: any UserType,
-        message: ZMConversationMessage
+        message: ZMConversationMessage,
+        userSession: UserSession
     ) {
         self.message = message
         let teamRoleIndicator = sender.teamRoleIndicator(selfUser: selfUser)
@@ -321,7 +323,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.configuration = View.Configuration(
             sender: sender,
             indicator: indicator,
-            teamRoleIndicator: teamRoleIndicator
+            teamRoleIndicator: teamRoleIndicator,
+            userSession: userSession
         )
 
         setupAccessibility(sender, selfUser: selfUser)

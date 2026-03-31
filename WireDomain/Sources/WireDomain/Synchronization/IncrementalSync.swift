@@ -361,25 +361,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 attributes: .incrementalSyncV2
             )
 
-            for envelope in envelopes {
-                for event in envelope.events {
-                    do {
-                        logger.debug(
-                            "processing pending event: \(event.name)",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                        )
-                        try await processor.processEvent(event)
-                    } catch {
-                        logger.error(
-                            "failed to process stored event, dropping: \(error)",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                        )
-                    }
-                }
-            }
+            let processed = try await processEventEnvelopes(envelopesWithObjectIDs: envelopesWithObjectIDs)
+            processedEnvelopeIDs.formUnion(processed)
+        }
 
-            processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
+        return processedEnvelopeIDs
+    }
+
+    private typealias EnvelopeWithObjectID = (envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)
+
+    private func processEventEnvelopes(
+        envelopesWithObjectIDs: [EnvelopeWithObjectID]
+    ) async throws -> Set<UUID> {
+
+        func finishProcessing(processedObjectIds: [NSManagedObjectID]) async throws {
+            if processedObjectIds.isEmpty { return }
+
+            try await updateEventsStore.deleteNextPendingEvents(with: processedObjectIds)
             await updateEventsStore.calculateLastUnreadMessages()
 
             do {
@@ -392,7 +390,40 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
         }
 
-        return processedEnvelopeIDs
+        var processedItems: [EnvelopeWithObjectID] = []
+
+        do {
+            for item in envelopesWithObjectIDs {
+
+                guard !earService.isLocked || item.envelope.isBackgroundAccessible else {
+                    throw Failure.databaseLocked
+                }
+
+                for event in item.envelope.events {
+                    do {
+                        logger.debug(
+                            "processing pending event: \(event.name)",
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: item.envelope.id]
+                        )
+                        try await processor.processEvent(event)
+                    } catch {
+                        logger.error(
+                            "failed to process stored event, dropping: \(error)",
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: item.envelope.id]
+                        )
+                    }
+                }
+
+                processedItems.append(item)
+            }
+        } catch {
+            WireLogger.sync.warn("aborting stored event processing: \(String(describing: error))")
+            try await finishProcessing(processedObjectIds: processedItems.map(\.objectID))
+            throw error
+        }
+
+        try await finishProcessing(processedObjectIds: processedItems.map(\.objectID))
+        return Set(processedItems.map(\.envelope.id))
     }
 
     /// A token containing the task that processes live events via the push

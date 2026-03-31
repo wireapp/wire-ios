@@ -68,7 +68,6 @@ final class ProfileViewController: UIViewController {
         viewer: UserType,
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
@@ -93,7 +92,7 @@ final class ProfileViewController: UIViewController {
             conversation: conversation,
             viewer: viewer,
             context: profileViewControllerContext,
-            classificationProvider: classificationProvider,
+            classificationProvider: userSession as? SecurityClassificationProviding,
             userSession: userSession,
             profileActionsFactory: profileActionsFactory
         )
@@ -149,7 +148,7 @@ final class ProfileViewController: UIViewController {
         Task {
             let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
             let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
-            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
             let controller = ConversationCreationController(
                 preSelectedParticipants: viewModel.userSet,
                 userSession: viewModel.userSession,

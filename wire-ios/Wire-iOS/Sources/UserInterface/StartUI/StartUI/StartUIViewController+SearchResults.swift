@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -59,7 +60,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         indexPath: IndexPath,
         section: SearchResultsViewControllerSection
     ) {
-
         if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
@@ -72,10 +72,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         didDoubleTapOnUser user: UserType,
         indexPath: IndexPath
     ) {
-
-        guard user.isConnected, !user.isBlocked else {
-            return
-        }
+        guard user.isConnected, !user.isBlocked else { return }
 
         delegate?.startUIViewController(self, didSelect: user)
     }
@@ -91,29 +88,35 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnApp app: any UserType
     ) {
-
         let detail = ServiceDetailViewController(
-            serviceUser: user,
+            user: app,
             actionType: .openConversation,
             userSession: userSession
         ) { [weak self] result in
             guard let self else { return }
 
-            if let result {
-                switch result {
-                case let .success(conversation):
-                    delegate?.startUIViewController(self, didSelect: conversation)
-                case let .failure(error):
-                    error.displayAddBotError(in: self)
-                }
-            } else {
+            switch result {
+            case let .success(conversation):
+                delegate?.startUIViewController(self, didSelect: conversation)
+            case let .failure(error):
+                error.displayAddBotError(in: navigationController ?? self)
+            case .cancelled:
                 navigationController?.dismiss(animated: true, completion: nil)
             }
         }
-
         navigationController?.pushViewController(detail, animated: true)
+    }
+
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnBot bot: any UserType
+    ) {
+        searchResultsViewController.delegate?.searchResultsViewController(
+            searchResultsViewController,
+            didTapOnApp: bot
+        )
     }
 }
 

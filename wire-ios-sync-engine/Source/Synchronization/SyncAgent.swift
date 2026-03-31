@@ -182,6 +182,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     func performSync() async throws {
         if journal[.isInitialSyncRequired] {
             try await performInitialSync()
+        } else if journal[.isResourcesSyncRequired] {
+            try await performResourceSync()
         } else {
             try await performIncrementalSync()
         }
@@ -204,6 +206,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 WireLogger.sync.debug("did start new resource sync")
                 try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
+                journal[.isResourcesSyncRequired] = false
                 delegate?.syncAgentDidFinishInitialSync(self)
             }
         } catch {
@@ -265,6 +268,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     // swallow error from retrier and start resume
                     resume()
                 } catch IncrementalSync.Failure.databaseLocked {
+                    WireLogger.sync.warn("aborted incremental sync: database is locked")
                     syncStateSubject.send(.suspended)
                     // ignore error and don't retry, the sync will be resumed once the app is unlocked
                 } catch {

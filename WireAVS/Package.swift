@@ -6,7 +6,7 @@ import PackageDescription
 // Temporary local package replacing integration of AVS via Carthage
 let package = Package(
     name: "WireAVS",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(
             name: "WireAVS",
@@ -17,8 +17,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireAVS",
-            url: "https://github.com/wireapp/wire-avs/releases/download/10.1.47/avs.xcframework.zip",
-            checksum: "89119ca5e8a510d99eb93bd15a35202c7e2f069f9349dd92cf2acf908eb0e2cd"
+            url: "https://github.com/wireapp/wire-avs/releases/download/10.1.57/avs.xcframework.zip",
+            checksum: "2231a0582a2f7217c2a7a3d9884dbe314e1dcc04ea3ee78c3e78937f9b78b039"
         )
     ]
 )

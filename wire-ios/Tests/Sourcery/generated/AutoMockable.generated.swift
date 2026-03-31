@@ -72,31 +72,16 @@ class MockAccountSelector: AccountSelector {
     // MARK: - switchTo
 
     var switchToAccount_Invocations: [Account] = []
-    var switchToAccount_MockMethod: ((Account) -> Void)?
+    var switchToAccount_MockMethod: ((Account) async -> Void)?
 
-    func switchTo(account: Account) {
+    func switchTo(account: Account) async {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
             fatalError("no mock for `switchToAccount`")
         }
 
-        mock(account)
-    }
-
-    // MARK: - switchTo
-
-    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
-    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
-
-    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
-        switchToAccountCompletion_Invocations.append((account: account, completion: completion))
-
-        guard let mock = switchToAccountCompletion_MockMethod else {
-            fatalError("no mock for `switchToAccountCompletion`")
-        }
-
-        mock(account, completion)
+        await mock(account)
     }
 
 }
@@ -276,11 +261,11 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() async -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var build_MockMethod: (() async -> UIViewController?)?
+    var build_MockValue: UIViewController??
 
     @MainActor
-    func build() async -> UIViewController {
+    func build() async -> UIViewController? {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
@@ -1342,17 +1327,17 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - transitionToListAndEnqueue
 
-    var transitionToListAndEnqueueLeftViewControllerRevealed_Invocations: [(leftViewControllerRevealed: Bool, block: () -> Void)] = []
-    var transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod: ((Bool, @escaping () -> Void) -> Void)?
+    var transitionToListAndEnqueue_Invocations: [() -> Void] = []
+    var transitionToListAndEnqueue_MockMethod: ((@escaping () -> Void) -> Void)?
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void) {
-        transitionToListAndEnqueueLeftViewControllerRevealed_Invocations.append((leftViewControllerRevealed: leftViewControllerRevealed, block: block))
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
+        transitionToListAndEnqueue_Invocations.append(block)
 
-        guard let mock = transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod else {
-            fatalError("no mock for `transitionToListAndEnqueueLeftViewControllerRevealed`")
+        guard let mock = transitionToListAndEnqueue_MockMethod else {
+            fatalError("no mock for `transitionToListAndEnqueue`")
         }
 
-        mock(leftViewControllerRevealed, block)
+        mock(block)
     }
 
     // MARK: - setConversationTransitionClosure

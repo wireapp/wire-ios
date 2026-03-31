@@ -40,9 +40,9 @@ public struct SearchResult {
 
     public var conversations: [ZMConversation]
 
-    /// Bots.
+    public var apps: [any UserType]
 
-    public var services: [ServiceUser] // TODO: [WPB-20362] add `apps`
+    public var bots: [any UserType]
 
     /// Cache for search users.
 
@@ -58,7 +58,8 @@ extension SearchResult {
         self.teamMembers = []
         self.directory = []
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = nil
     }
 
@@ -90,7 +91,8 @@ extension SearchResult {
         self.contacts = []
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = searchUsersCache
 
         if searchOptions.contains(.teamMembers),
@@ -99,58 +101,6 @@ extension SearchResult {
         } else {
             self.teamMembers = []
         }
-    }
-
-    public init?(
-        servicesPayload servicesFullPayload: [AnyHashable: Any],
-        query: String,
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard let servicesPayload = servicesFullPayload["services"] as? [[String: Any]] else {
-            return nil
-        }
-
-        let searchUsersServices = ZMSearchUser.searchUsers(
-            from: servicesPayload,
-            contextProvider: contextProvider,
-            searchUsersCache: searchUsersCache
-        )
-
-        self.context = contextProvider.viewContext
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = []
-        self.conversations = []
-        self.services = searchUsersServices
-        self.searchUsersCache = searchUsersCache
-    }
-
-    public init?(
-        userLookupPayload: [AnyHashable: Any],
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard
-            let userLookupPayload = userLookupPayload as? [String: Any],
-            let searchUser = ZMSearchUser.searchUser(
-                from: userLookupPayload,
-                contextProvider: contextProvider,
-                searchUsersCache: searchUsersCache
-            ),
-            searchUser.user == nil
-            || searchUser.user?.isTeamMember == false
-        else {
-            return nil
-        }
-
-        self.context = contextProvider.viewContext
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = [searchUser]
-        self.conversations = []
-        self.services = []
-        self.searchUsersCache = searchUsersCache
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
@@ -192,7 +142,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: directory,
             conversations: copiedConversations,
-            services: services,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -204,19 +155,38 @@ extension SearchResult {
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            services: services,
+            apps: result.apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
 
-    func union(withServiceResult result: SearchResult) -> SearchResult {
+    func union(withAppsResult result: SearchResult) -> SearchResult {
         SearchResult(
             context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            services: result.services,
+            apps: apps + result.apps.filter { newApp in
+                !apps.contains { existingApp in
+                    newApp.remoteIdentifier == existingApp.remoteIdentifier
+                }
+            },
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withBotsResult result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -228,7 +198,8 @@ extension SearchResult {
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
             conversations: conversations,
-            services: services,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -240,7 +211,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: result.directory + directory,
             conversations: conversations,
-            services: services,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }

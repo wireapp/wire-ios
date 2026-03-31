@@ -116,4 +116,281 @@ final class BackOffice {
             )
         }
     }
+
+    private func getCellsFeature(teamId: String, basicAuth: String) async throws -> CellsFeatureResponse {
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("cells")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .get,
+            body: Data(),
+            basicAuth: basicAuth
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "getCellsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+
+        do {
+            return try JSONDecoder().decode(CellsFeatureResponse.self, from: data)
+        } catch {
+            throw RuntimeError(
+                "getCellsFeature decode failed: \(error). Raw: \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func getCellsInternal(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("cellsInternal")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .get,
+            body: Data(),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "getCellsInternalBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func unlockCellsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("cells")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "unlockCellsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enableCellsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("cells")
+
+        let current = try await getCellsFeature(teamId: teamId, basicAuth: headerValue)
+        let payload = CellsFeaturePayload(
+            config: current.config,
+            status: "enabled",
+            ttl: current.ttl
+        )
+        let json = try JSONEncoder().encode(payload)
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "enableCellsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func unlockChannelFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("channels")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "unlockCellsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enableChannelFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("channels")
+
+        let payload: [String: Any] = [
+            "config": [
+                "allowed_to_create_channels": "team-members",
+                "allowed_to_open_channels": "team-members"
+            ],
+            "status": "enabled",
+            "ttl": "unlimited"
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "enableCellsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    // MARK: - models - Cells Feature
+
+    private struct CellsFeaturePayload: Codable {
+        let config: CellsConfig
+        let status: String
+        let ttl: String
+    }
+
+    private struct CellsFeatureResponse: Codable {
+        let config: CellsConfig
+        let lockStatus: String
+        let status: String
+        let ttl: String
+    }
+
+    private struct CellsConfig: Codable {
+        let channels: ToggleDefault
+        let collabora: Toggle
+        let groups: ToggleDefault
+        let metadata: Metadata
+        let one2one: ToggleDefault
+        let publicLinks: PublicLinks
+        let storage: Storage
+        let users: Users
+    }
+
+    private struct ToggleDefault: Codable {
+        let `default`: String
+        let enabled: Bool
+    }
+
+    private struct Toggle: Codable {
+        let enabled: Bool
+    }
+
+    private struct Metadata: Codable {
+        let namespaces: Namespaces
+    }
+
+    private struct Namespaces: Codable {
+        let usermetaTags: UsermetaTags
+    }
+
+    private struct UsermetaTags: Codable {
+        let allowFreeValues: Bool
+        let defaultValues: [String]
+    }
+
+    private struct PublicLinks: Codable {
+        let enableFiles: Bool
+        let enableFolders: Bool
+        let enforceExpirationDefault: Int
+        let enforceExpirationMax: Int
+        let enforcePassword: Bool
+    }
+
+    private struct Storage: Codable {
+        let perFileQuotaBytes: String
+        let recycle: Recycle
+    }
+
+    private struct Recycle: Codable {
+        let allowSkip: Bool
+        let autoPurgeDays: Int
+        let disable: Bool
+    }
+
+    private struct Users: Codable {
+        let externals: Bool
+        let guests: Bool
+    }
 }

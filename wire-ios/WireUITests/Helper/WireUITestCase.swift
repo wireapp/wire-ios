@@ -25,8 +25,9 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let userHelper = UserHelper()
+    var userHelper: UserHelper!
     var callingServiceClient: CallingServiceClient!
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
     class var defaultArguments: [String] {
         [
@@ -40,11 +41,14 @@ class WireUITestCase: XCTestCase {
         dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
+        registerNotificationPermissionMonitor()
 
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
         ]
+
+        userHelper = UserHelper()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
@@ -62,6 +66,7 @@ class WireUITestCase: XCTestCase {
     override func tearDown() async throws {
         await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
+        userHelper = nil
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -115,5 +120,32 @@ class WireUITestCase: XCTestCase {
         if alert.buttons["Allow"].exists {
             alert.buttons["Allow"].tap()
         }
+    }
+
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> (ConversationsPage) {
+
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup()
+    }
+
+    func registerNotificationPermissionMonitor() {
+        guard notificationPermissionMonitor == nil else { return }
+
+        notificationPermissionMonitor =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
     }
 }

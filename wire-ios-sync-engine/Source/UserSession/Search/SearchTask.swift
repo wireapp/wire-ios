@@ -18,63 +18,70 @@
 
 import CoreData
 import Foundation
+import WireFoundation
+import WireLogging
+import WireNetwork
 import WireUtilities
 
 public final class SearchTask {
 
+    private let type: `Type`
+    private let apiVersion: WireTransport.APIVersion?
+    private let transportSession: TransportSessionType
+    private let contextProvider: ContextProvider
+    private let searchUsersCache: SearchUsersCache?
+    private let searchAPI: any SearchAPI
+    private let teamsAPI: any TeamsAPI
+    private let usersAPI: any UsersAPI
+
+    private var status = Status.pending
+
     public enum `Type` {
         case search(searchRequest: SearchRequest)
-        case lookup(qualifiedID: QualifiedID)
+        case lookup(qualifiedID: WireDataModel.QualifiedID)
     }
+
+    /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
+    ///
+    /// The closure is used because there are four different ways of aggregating search results:
+    /// - union(withLocalResult:)
+    /// - union(withBotsResult:)
+    /// - union(withDirectoryResult:)
+    /// - union(prependingDirectory:)
+    typealias SearchResultAggregator = (inout SearchResult) -> Void
 
     private enum Status {
         case pending
         case started(taskGroup: TaskGroup<SearchTask.SearchResultAggregator>)
     }
 
-    private var status = Status.pending
-
-    /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
-    ///
-    /// The closure is used because there are four different ways of aggregating search results:
-    /// - union(withLocalResult:)
-    /// - union(withServiceResult:)
-    /// - union(withDirectoryResult:)
-    /// - union(prependingDirectory:)
-    typealias SearchResultAggregator = (inout SearchResult) -> Void
-
-    private let apiVersion: WireTransport.APIVersion?
-    private let transportSession: TransportSessionType
-    private let contextProvider: ContextProvider
-    private let searchUsersCache: SearchUsersCache?
-
-    private let type: `Type`
-
     init(
         type: Type,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
     ) {
         self.type = type
         self.transportSession = transportSession
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
+        self.searchAPI = searchAPI
+        self.teamsAPI = teamsAPI
+        self.usersAPI = usersAPI
     }
 
     /// Cancel a previously started task
     public func cancel() {
-        guard case let .started(taskGroup) = status else {
-            assertionFailure()
-            return
-        }
-
+        guard case let .started(taskGroup) = status else { return }
         taskGroup.cancelAll()
     }
 
-    /// Start the search task. Errors will not be thrown.
+    /// Start the search task. Errors will be logged only.
     public func start() async -> SearchResult {
         guard case .pending = status else {
             assertionFailure()
@@ -88,9 +95,15 @@ public final class SearchTask {
 
             status = .started(taskGroup: taskGroup)
 
-            // search services
+            // search bots
             taskGroup.addTask {
-                await self.performRemoteSearchForServices()
+                do {
+                    return try await self.performRemoteSearchForBots()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to search for bots: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
 
             // search People or groups
@@ -108,10 +121,22 @@ public final class SearchTask {
 
             // v2+
             taskGroup.addTask {
-                await self.performRemoteSearch()
+                do {
+                    return try await self.performRemoteSearch()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to perform remote search: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
             taskGroup.addTask {
-                await self.performUserLookup()
+                do {
+                    return try await self.performUserLookup()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to perform user lookup: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
 
             var result = SearchResult()
@@ -119,21 +144,16 @@ public final class SearchTask {
                 aggregator(&result)
             }
 
-            if Task.isCancelled { // TODO: [WPB-20362] make this code throwing
-                return SearchResult()
-            }
-
             // add to search users cache
             let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
             result.directory.forEach(searchUserObserverCenter.addSearchUser)
-            result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+            result.bots.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
 
             return result
         }
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     /// Look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() async -> SearchResultAggregator {
@@ -152,7 +172,7 @@ extension SearchTask {
 
             /// search for the local user with matching user ID and active
             let activeMembers = self.teamMembers(
-                matchingQuery: "",
+                matchingQuery: "", // no query for lookup
                 team: selfUser.team,
                 searchOptions: options,
                 in: searchContext
@@ -192,7 +212,8 @@ extension SearchTask {
                 },
                 directory: [],
                 conversations: [],
-                services: [],
+                apps: [],
+                bots: [],
                 searchUsersCache: self.searchUsersCache
             )
 
@@ -208,11 +229,11 @@ extension SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
+        let (connectedUserIDs, teamMemberIDs, appIDs, conversationIDs) = await searchContext.perform { [self] in
 
-            var team: Team?
+            var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
-                team = (try? searchContext.existingObject(with: teamObjectID)) as? Team
+                team = (try? searchContext.existingObject(with: teamObjectID)) as? WireDataModel.Team
             }
 
             let selfUser = ZMUser.selfUser(in: searchContext)
@@ -228,6 +249,7 @@ extension SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
+            let apps = request.searchOptions.contains(.apps) ? apps(in: team) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -238,6 +260,7 @@ extension SearchTask {
             return (
                 connectedUsers.map(\.objectID),
                 teamMembers.map(\.objectID),
+                apps.map(\.objectID),
                 conversations.map(\.objectID)
             )
 
@@ -246,7 +269,11 @@ extension SearchTask {
         let viewContext = contextProvider.viewContext
         return await viewContext.perform { [self] in
 
+            let copiedConversations = conversationIDs
+                .compactMap { viewContext.object(with: $0) as? ZMConversation }
             let copiedConnectedUsers = connectedUserIDs
+                .compactMap { viewContext.object(with: $0) as? ZMUser }
+            let copiedApps = appIDs
                 .compactMap { viewContext.object(with: $0) as? ZMUser }
             let searchConnectedUsers = copiedConnectedUsers
                 .map {
@@ -258,10 +285,10 @@ extension SearchTask {
                 }
                 .filter { $0.name?.isEmpty == false }
 
-            let copiedteamMembers = teamMemberIDs.compactMap {
+            let copiedTeamMembers = teamMemberIDs.compactMap {
                 contextProvider.viewContext.object(with: $0) as? Member
             }
-            let searchTeamMembers = copiedteamMembers
+            let searchTeamMembers = copiedTeamMembers
                 .compactMap(\.user)
                 .map {
                     ZMSearchUser(
@@ -276,8 +303,9 @@ extension SearchTask {
                 contacts: searchConnectedUsers,
                 teamMembers: searchTeamMembers,
                 directory: [],
-                conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
-                services: [],
+                conversations: copiedConversations,
+                apps: copiedApps,
+                bots: [],
                 searchUsersCache: searchUsersCache
             )
 
@@ -302,11 +330,14 @@ extension SearchTask {
 
     private func teamMembers(
         matchingQuery query: String,
-        team: Team?,
+        team: WireDataModel.Team?,
         searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [Member] {
-        var partialResult = team?.members(matchingQuery: query) ?? []
+        var partialResult = team?.members(
+            matchingQuery: query,
+            filteredBy: .regular
+        ) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             partialResult = filterNonActiveTeamMembers(
@@ -332,6 +363,15 @@ extension SearchTask {
         }
 
         return partialResult
+    }
+
+    private func apps(
+        in team: WireDataModel.Team?
+    ) -> [ZMUser] {
+        team?.members(
+            matchingQuery: "",
+            filteredBy: .app
+        ).compactMap(\.user) ?? []
     }
 
     private func connectedUsers(
@@ -387,204 +427,189 @@ extension SearchTask {
         return matching + nonMatching
     }
 
-}
+    // MARK: -
 
-extension SearchTask {
+    func performUserLookup() async throws -> SearchResultAggregator {
+        guard case var .lookup(qualifiedID) = type else {
+            return { _ in }
+        }
 
-    func performUserLookup() async -> SearchResultAggregator {
-        guard
-            case let .lookup(qualifiedID) = type,
-            let apiVersion
-        else { return { _ in } }
+        let result = try await usersAPI.getUser(for: UserID(qualifiedID))
+        qualifiedID = .init(uuid: result.id.id, domain: result.id.domain)
 
-        return await withCheckedContinuation { continuation in
+        let viewContext = contextProvider.viewContext
+        return await viewContext.perform { [searchUsersCache] in
+            let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
 
-            let request = Self.searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+            let searchUser: ZMSearchUser
+            if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
+                cachedSearchUser.user = localUser
+                searchUser = cachedSearchUser
+            } else {
+                let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
+                searchUser = ZMSearchUser(
+                    viewContext: viewContext,
+                    name: result.name,
+                    handle: result.handle,
+                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                    remoteIdentifier: qualifiedID.uuid,
+                    domain: qualifiedID.domain,
+                    teamIdentifier: result.teamID,
+                    providerIdentifier: result.service?.provider.transportString(),
+                    user: localUser,
+                    searchUsersCache: searchUsersCache,
+                    type: localUser?.type,
+                    summary: localUser?.appInfo?.appDescription,
+                    isDeleted: result.deleted ?? false
+                )
+            }
 
-                guard
-                    let self,
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        userLookupPayload: payload,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
-                    )
-                else { return continuation.resume(returning: { _ in }) }
+            guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
+                return { _ in }
+            }
 
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
-            })
-
-            transportSession.enqueueOneTime(request)
+            let partialResult = SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: [],
+                directory: [searchUser],
+                conversations: [],
+                apps: [],
+                bots: [],
+                searchUsersCache: searchUsersCache
+            )
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
 
     }
 
-    // GET /users/:id has been removed in v1.
-    // We should use the qualified endpoint GET /users/:domain/:id instead.
-    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
-    private static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
-        (apiVersion <= .v1)
-            ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
-            : .init(
-                getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-                apiVersion: apiVersion.rawValue
-            )
-    }
+    // MARK: -
 
-}
-
-extension SearchTask {
-
-    func performRemoteSearch() async -> SearchResultAggregator {
+    func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v1,
             case let .search(searchRequest) = type,
             !searchRequest.query.string.isEmpty, // backend won't return anything for empty queries
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
+            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated, .apps])
         else {
             return { _ in }
         }
 
-        return await withCheckedContinuation { continuation in
+        let queryLowercased = searchRequest.query.string.lowercased()
+        let searchDomain = searchRequest.searchDomain ?? ""
+        let searchForApps = searchRequest.searchOptions.contains(.apps)
+        let contacts = try await searchAPI.searchContacts(
+            query: queryLowercased,
+            domain: searchDomain,
+            type: searchForApps ? .app : .regular
+        ).documents
 
-            let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
+        let filteredContacts = contacts.filter { contact in
+            !searchRequest.query.isHandleQuery ||
+                contact.name.hasPrefix("@") ||
+                (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+        }
 
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-                guard let self else { return }
+        try Task.checkCancellation()
 
-                guard
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        payload: payload,
-                        query: searchRequest.query,
-                        searchOptions: searchRequest.searchOptions,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
-                    )
-                else {
-                    return continuation.resume(returning: { _ in })
-                }
+        let viewContext = contextProvider.viewContext
+        let searchUsers = await viewContext.perform { [searchUsersCache] in
+            filteredContacts.compactMap { filteredContact in
+                guard let id = filteredContact.id else { return ZMSearchUser?.none }
 
-                if searchRequest.searchOptions.contains(.teamMembers) {
-                    Task {
-                        let aggregator = await self.performTeamMembershipLookup(
-                            on: partialResult,
-                            searchRequest: searchRequest
-                        )
-                        continuation.resume(returning: aggregator)
-                    }
+                let domain = filteredContact.qualifiedID?.domain
+                let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
+
+                if let cachedSearchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                    cachedSearchUser.user = localUser
+                    return cachedSearchUser
+
                 } else {
-                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
+                    let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
+                    let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
+                    return ZMSearchUser(
+                        viewContext: viewContext,
+                        name: filteredContact.name,
+                        handle: filteredContact.handle,
+                        accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                        remoteIdentifier: filteredContact.id,
+                        domain: domain,
+                        teamIdentifier: filteredContact.team,
+                        providerIdentifier: nil,
+                        user: localUser,
+                        searchUsersCache: searchUsersCache,
+                        type: .init(filteredContact.type)
+                    )
                 }
-            })
+            }
+        }
 
-            transportSession.enqueueOneTime(request)
+        try Task.checkCancellation()
+
+        let searchOptions = searchRequest.searchOptions
+        let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+        let partialResult = await viewContext.perform { [searchUsersCache] in
+            SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                conversations: [],
+                apps: searchUsers.filter(\.isApp),
+                bots: [],
+                searchUsersCache: searchUsersCache
+            )
+        }
+
+        try Task.checkCancellation()
+
+        if searchRequest.searchOptions.contains(.teamMembers) {
+            return try await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+        } else if searchForApps {
+            return { $0 = $0.union(withAppsResult: partialResult) }
+        } else {
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
     }
 
     private func performTeamMembershipLookup(
         on searchResult: SearchResult,
         searchRequest: SearchRequest
-    ) async -> SearchResultAggregator {
+    ) async throws -> SearchResultAggregator {
 
         let viewContext = contextProvider.viewContext
-        let (teamMembersIDs, teamID) = await contextProvider.viewContext.perform { [viewContext] in
+        let (teamMembersIDs, teamID) = await viewContext.perform { [viewContext] in
             let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
             let teamID = ZMUser.selfUser(in: viewContext).team?.remoteIdentifier
             return (teamMembersIDs, teamID)
         }
 
         guard
-            let apiVersion,
             let teamID,
             !teamMembersIDs.isEmpty
         else {
             return { $0 = $0.union(withDirectoryResult: searchResult) }
         }
 
-        let request = Self.fetchTeamMembershipRequest(
-            teamID: teamID,
-            teamMemberIDs: teamMembersIDs,
-            apiVersion: apiVersion
-        )
+        let remoteTeamMembers = try await teamsAPI.getTeamMembers(of: teamID, for: teamMembersIDs)
 
-        return await withCheckedContinuation { continuation in
-
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-
-                guard
-                    let self,
-                    let rawData = response.rawData,
-                    let payload = MembershipListPayload(rawData)
-                else { return continuation.resume(returning: { _ in }) }
-
-                var updatedResult = searchResult
-                updatedResult.extendWithMembershipPayload(payload: payload)
-                updatedResult.filterBy(
-                    searchOptions: searchRequest.searchOptions,
-                    query: searchRequest.query.string,
-                    contextProvider: contextProvider
-                )
-
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: updatedResult) })
-
-            })
-
-            transportSession.enqueueOneTime(request)
-
+        return await viewContext.perform { [contextProvider] in
+            var searchResult = searchResult
+            searchResult.extendWithMembership(remoteTeamMembers: remoteTeamMembers)
+            searchResult.filterBy(
+                searchOptions: searchRequest.searchOptions,
+                query: searchRequest.query.string,
+                contextProvider: contextProvider
+            )
+            return { $0 = $0.union(withDirectoryResult: searchResult) }
         }
 
     }
 
-    private static func searchRequestInDirectory(
-        withRequest searchRequest: SearchRequest,
-        fetchLimit: Int = 10,
-        apiVersion: APIVersion
-    ) -> ZMTransportRequest {
-        var queryItems = [URLQueryItem]()
-        queryItems.append(URLQueryItem(name: "q", value: searchRequest.query.string))
-
-        if let searchDomain = searchRequest.searchDomain {
-            queryItems.append(URLQueryItem(name: "domain", value: searchDomain))
-        }
-
-        queryItems.append(URLQueryItem(name: "size", value: String(fetchLimit)))
-
-        var url = URLComponents()
-        url.path = "/search/contacts"
-        url.queryItems = queryItems
-
-        let path = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
-        return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
-    }
-
-    private static func fetchTeamMembershipRequest(
-        teamID: UUID,
-        teamMemberIDs: [UUID],
-        apiVersion: APIVersion
-    ) -> ZMTransportRequest {
-
-        let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
-        let payload = [
-            "user_ids": teamMemberIDs.map { $0.transportString() }
-        ]
-
-        let request = ZMTransportRequest(
-            path: path,
-            method: .post,
-            payload: payload as ZMTransportData,
-            apiVersion: apiVersion.rawValue
-        )
-        request.contentHintForRequestLoop = "\(payload.hashValue)"
-        return request
-    }
-
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
@@ -640,7 +665,8 @@ extension SearchTask {
                         teamMembers: [],
                         directory: partialResult.directory,
                         conversations: [],
-                        services: [],
+                        apps: [],
+                        bots: [],
                         searchUsersCache: searchUsersCache
                     )
                     continuation.resume(returning: { aggregatedResult in
@@ -657,9 +683,10 @@ extension SearchTask {
         }
     }
 
+    // This is specific to API v1, so it's most likely already dead code.
     private static func searchRequestInDirectory(
         withHandle handle: String,
-        apiVersion: APIVersion
+        apiVersion: WireDataModel.APIVersion
     ) -> ZMTransportRequest {
         var handle = handle.lowercased()
 
@@ -673,11 +700,10 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
-    func performRemoteSearchForServices() async -> SearchResultAggregator {
+    func performRemoteSearchForBots() async throws -> SearchResultAggregator {
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
@@ -685,56 +711,123 @@ extension SearchTask {
         }
 
         guard
-            let apiVersion,
             let teamIdentifier,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            searchRequest.searchOptions.contains(.services)
-        else { return { _ in } }
+            searchRequest.searchOptions.contains(.bots)
+        else {
+            return { _ in }
+        }
 
-        return await withCheckedContinuation { continuation in
+        let viewContext = contextProvider.viewContext
+        var partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [],
+            conversations: [],
+            apps: [],
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
 
-            let request = Self.servicesSearchRequest(
-                teamIdentifier: teamIdentifier,
-                query: searchRequest.query.string,
-                apiVersion: apiVersion
-            )
+        let prefix = searchRequest.query.string.trimmingCharacters(in: .whitespacesAndNewlines)
+        for try await profiles in try teamsAPI.getWhitelistedBots(for: teamIdentifier, with: prefix) {
+            await viewContext.perform { [searchUsersCache] in
+                partialResult.bots += profiles.compactMap { profile in
 
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-
-                guard
-                    let self,
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        servicesPayload: payload,
-                        query: searchRequest.query.string,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
+                    let localUser = ZMUser.fetch(
+                        with: profile.id,
+                        domain: profile.qualifiedID?.domain,
+                        in: viewContext
                     )
-                else { return continuation.resume(returning: { _ in }) }
 
-                continuation.resume { $0 = $0.union(withServiceResult: partialResult) }
+                    if let searchUser = searchUsersCache?.object(forKey: profile.id as NSUUID) {
+                        searchUser.user = localUser
+                        return searchUser
+                    } else {
+                        let accentColorRawValue = profile.accentID.flatMap(Int16.init(exactly:))
+                        let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
+                        let searchUser = ZMSearchUser(
+                            viewContext: viewContext,
+                            name: profile.name,
+                            handle: profile.handle,
+                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                            remoteIdentifier: profile.id,
+                            domain: profile.qualifiedID?.domain,
+                            teamIdentifier: profile.teamID,
+                            providerIdentifier: profile.provider.transportString(),
+                            user: localUser,
+                            searchUsersCache: searchUsersCache,
+                            type: localUser?.type,
+                            summary: profile.summary,
+                            isDeleted: profile.isDeleted
+                        )
+                        searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
+                        return searchUser
+                    }
+                }
+            }
+        }
 
-            })
+        return { $0 = $0.union(withBotsResult: partialResult) }
+    }
 
-            transportSession.enqueueOneTime(request)
+}
 
+private extension SearchResult {
+
+    mutating func extendWithMembership(remoteTeamMembers: [TeamMember]) {
+        remoteTeamMembers.forEach { remoteTeamMember in
+            let searchUser = teamMembers.first(where: { $0.remoteIdentifier == remoteTeamMember.userID })
+            let permissions = remoteTeamMember.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
+            searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: remoteTeamMember.creatorID)
         }
     }
 
-    static func servicesSearchRequest(
-        teamIdentifier: UUID,
-        query: String,
-        apiVersion: APIVersion
-    ) -> ZMTransportRequest {
-        var url = URLComponents()
-        url.path = "/teams/\(teamIdentifier.transportString())/services/whitelisted"
+}
 
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedQuery.isEmpty {
-            url.queryItems = [URLQueryItem(name: "prefix", value: trimmedQuery)]
+private extension SearchUserAssetKeys {
+
+    init?(_ userAssets: [UserAsset]) {
+        guard !userAssets.isEmpty else { return nil }
+
+        var preview = String?.none
+        var complete = String?.none
+
+        for userAsset in userAssets {
+            guard userAsset.type == .image else { continue }
+
+            switch userAsset.size {
+            case .preview:
+                preview = userAsset.key
+            case .complete:
+                complete = userAsset.key
+            }
         }
-        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
-        return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
+
+        guard preview != nil || complete != nil else { return nil }
+
+        self.init(
+            preview: preview,
+            complete: complete
+        )
+
     }
+
+}
+
+private extension TypeOfUser {
+
+    init(_ type: WireNetwork.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
+
 }

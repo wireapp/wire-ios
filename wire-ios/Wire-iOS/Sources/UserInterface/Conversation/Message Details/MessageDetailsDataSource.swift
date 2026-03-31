@@ -74,6 +74,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     weak var observer: MessageDetailsDataSourceObserver?
 
     private let emojiRepository: EmojiRepositoryInterface
+    private let userSession: UserSession
 
     // MARK: - Initialization
 
@@ -81,9 +82,11 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     init(
         message: ZMConversationMessage,
+        userSession: UserSession,
         emojiRepository: EmojiRepositoryInterface = EmojiRepository()
     ) {
         self.message = message
+        self.userSession = userSession
         self.emojiRepository = emojiRepository
         self.conversation = message.conversation!
 
@@ -193,7 +196,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     }
 
     private func setupObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             let messageObserver = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
             let userObserver = UserChangeInfo.add(userObserver: self, in: userSession)
             observationTokens = [messageObserver, userObserver]

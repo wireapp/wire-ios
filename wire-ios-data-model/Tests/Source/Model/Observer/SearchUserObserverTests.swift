@@ -134,7 +134,8 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     private func makeSearchUser(
         name: String,
         remoteIdentifier: UUID?,
-        user: ZMUser? = nil
+        user: ZMUser? = nil,
+        type: TypeOfUser = .regular
     ) -> ZMSearchUser {
         ZMSearchUser(
             viewContext: coreDataStack.viewContext,
@@ -142,8 +143,10 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
             handle: name.lowercased(),
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
+            providerIdentifier: nil,
             user: user,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: type
         )
     }
 }

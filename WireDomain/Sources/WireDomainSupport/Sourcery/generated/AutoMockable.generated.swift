@@ -189,6 +189,30 @@ public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedP
 
 }
 
+public class MockClearConversationContentUseCaseProtocol: ClearConversationContentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Void)?
+
+    public func invoke() async {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -692,6 +716,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `fetchOrCreateConversationIdDomain`")
+        }
+    }
+
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_Invocations: [(id: UUID, domain: String?, setNeedsToBeUpdatedFromBackend: Bool)] = []
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockMethod: ((UUID, String?, Bool) async -> ZMConversation)?
+    public var fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(id: UUID, domain: String?, setNeedsToBeUpdatedFromBackend: Bool) async -> ZMConversation {
+        fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_Invocations.append((id: id, domain: domain, setNeedsToBeUpdatedFromBackend: setNeedsToBeUpdatedFromBackend))
+
+        if let mock = fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockMethod {
+            return await mock(id, domain, setNeedsToBeUpdatedFromBackend)
+        } else if let mock = fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationIdDomainSetNeedsToBeUpdatedFromBackend`")
         }
     }
 
@@ -1565,17 +1607,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - execute
 
-    public var executeIdentifierBlock_Invocations: [(identifier: MLSGroupID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
-    public var executeIdentifierBlock_MockMethod: ((MLSGroupID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
+    public var executeConversationIDBlock_Invocations: [(conversationID: QualifiedID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
+    public var executeConversationIDBlock_MockMethod: ((QualifiedID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
 
-    public func execute(identifier: MLSGroupID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
-        executeIdentifierBlock_Invocations.append((identifier: identifier, block: block))
+    public func execute(conversationID: QualifiedID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
+        executeConversationIDBlock_Invocations.append((conversationID: conversationID, block: block))
 
-        guard let mock = executeIdentifierBlock_MockMethod else {
-            fatalError("no mock for `executeIdentifierBlock`")
+        guard let mock = executeConversationIDBlock_MockMethod else {
+            fatalError("no mock for `executeConversationIDBlock`")
         }
 
-        await mock(identifier, block)
+        await mock(conversationID, block)
     }
 
 }
@@ -1993,15 +2035,15 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - isSelfAnActiveMember
 
-    public var isSelfAnActiveMemberIn_Invocations: [WireDataModel.MLSGroupID] = []
-    public var isSelfAnActiveMemberIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Bool)?
+    public var isSelfAnActiveMemberIn_Invocations: [WireDataModel.QualifiedID] = []
+    public var isSelfAnActiveMemberIn_MockMethod: ((WireDataModel.QualifiedID) async -> Bool)?
     public var isSelfAnActiveMemberIn_MockValue: Bool?
 
-    public func isSelfAnActiveMember(in groupID: WireDataModel.MLSGroupID) async -> Bool {
-        isSelfAnActiveMemberIn_Invocations.append(groupID)
+    public func isSelfAnActiveMember(in conversationID: WireDataModel.QualifiedID) async -> Bool {
+        isSelfAnActiveMemberIn_Invocations.append(conversationID)
 
         if let mock = isSelfAnActiveMemberIn_MockMethod {
-            return await mock(groupID)
+            return await mock(conversationID)
         } else if let mock = isSelfAnActiveMemberIn_MockValue {
             return mock
         } else {
@@ -2011,17 +2053,17 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - clearPendingProposals
 
-    public var clearPendingProposalsIn_Invocations: [WireDataModel.MLSGroupID] = []
-    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Void)?
+    public var clearPendingProposalsIn_Invocations: [WireDataModel.QualifiedID] = []
+    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.QualifiedID) async -> Void)?
 
-    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
-        clearPendingProposalsIn_Invocations.append(groupID)
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        clearPendingProposalsIn_Invocations.append(conversationID)
 
         guard let mock = clearPendingProposalsIn_MockMethod else {
             fatalError("no mock for `clearPendingProposalsIn`")
         }
 
-        await mock(groupID)
+        await mock(conversationID)
     }
 
 }
@@ -3035,17 +3077,17 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - updateButtonStates
 
-    public var updateButtonStatesButtonIDReferenceMessageIDInSenderID_Invocations: [(buttonID: String?, referenceMessageID: String, conversation: ZMConversation, senderID: UUID)] = []
-    public var updateButtonStatesButtonIDReferenceMessageIDInSenderID_MockMethod: ((String?, String, ZMConversation, UUID) async -> Void)?
+    public var updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations: [(buttonID: String?, referenceMessageID: String, conversation: ZMConversation, senderID: UUID, ensureSenderIsSelfUser: Bool)] = []
+    public var updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod: ((String?, String, ZMConversation, UUID, Bool) async -> Void)?
 
-    public func updateButtonStates(buttonID: String?, referenceMessageID: String, in conversation: ZMConversation, senderID: UUID) async {
-        updateButtonStatesButtonIDReferenceMessageIDInSenderID_Invocations.append((buttonID: buttonID, referenceMessageID: referenceMessageID, conversation: conversation, senderID: senderID))
+    public func updateButtonStates(buttonID: String?, referenceMessageID: String, in conversation: ZMConversation, senderID: UUID, ensureSenderIsSelfUser: Bool) async {
+        updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.append((buttonID: buttonID, referenceMessageID: referenceMessageID, conversation: conversation, senderID: senderID, ensureSenderIsSelfUser: ensureSenderIsSelfUser))
 
-        guard let mock = updateButtonStatesButtonIDReferenceMessageIDInSenderID_MockMethod else {
-            fatalError("no mock for `updateButtonStatesButtonIDReferenceMessageIDInSenderID`")
+        guard let mock = updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod else {
+            fatalError("no mock for `updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser`")
         }
 
-        await mock(buttonID, referenceMessageID, conversation, senderID)
+        await mock(buttonID, referenceMessageID, conversation, senderID, ensureSenderIsSelfUser)
     }
 
     // MARK: - editMessage

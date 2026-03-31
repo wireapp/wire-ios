@@ -129,12 +129,11 @@ package struct LoginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
     }
 
@@ -198,16 +197,9 @@ package struct LoginViaEmailView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .cornerRadius(12)
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
         }
         .accessibilityIdentifier(String(describing: Locators.LoginPage.createAccountLink.rawValue))
     }
@@ -232,12 +224,11 @@ package struct LoginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,

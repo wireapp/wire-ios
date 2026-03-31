@@ -20,9 +20,8 @@ import Foundation
 import PushKit
 import UserNotifications
 import WireDomain
+import WireLogging
 import WireRequestStrategy
-
-private let pushLog = ZMSLog(tag: "Push")
 
 protocol PushRegistry {
 
@@ -37,43 +36,54 @@ extension PKPushRegistry: PushRegistry {}
 
 // MARK: - UNUserNotificationCenterDelegate
 
+private enum UserNotificationHandlingError: Error {
+    case missingSelfID
+    case missingAccount
+}
+
+/// **note**: `UNUserNotificationCenterDelegate` methods are annotated as `@MainActor`. This seems to be an undocumented
+/// requirement. Without this annotation, the app may crash even with empty delegate method implementations.
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
 
-    // Called by the OS when the app receieves a notification while in the
+    // Called by the OS when the app receives a notification while in the
     // foreground.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
-            -> Void
-    ) {
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
         // route to user session
-        Task {
-            let userSession = await loadSession(userInfo: notification.userInfo)
-            userSession?.userNotificationCenter(
-                center,
-                willPresent: notification,
-                withCompletionHandler: completionHandler
+        do {
+            let userSession = try await loadSession(userInfo: notification.userInfo)
+            return await userSession.userNotificationCenter(center, willPresent: notification)
+        } catch let error as NSError {
+            WireLogger.notifications.error(
+                "Will present notification failed: \(error.safeForLoggingDescription)",
+                attributes: .safePublic
             )
+            return []
         }
     }
 
     // Called when the user engages a notification action.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
+        didReceive response: UNNotificationResponse
+    ) async {
         // Resume background task creation.
         BackgroundActivityFactory.shared.resume()
         // route to user session
-        Task { @MainActor in
-            let userSession = await loadSession(userInfo: response.notification.userInfo)
-            userSession?.userNotificationCenter(
-                center,
-                didReceive: response,
-                withCompletionHandler: completionHandler
+        do {
+            let userSession = try await loadSession(userInfo: response.notification.userInfo)
+            return await userSession.userNotificationCenter(center, didReceive: response)
+        } catch let error as NSError {
+            let errorString = error.safeForLoggingDescription
+            let responseString = response.safeForLoggingDescription
+            WireLogger.notifications.error(
+                "Did receive notification response failed: \(errorString), response: \(responseString)",
+                attributes: .safePublic
             )
         }
     }
@@ -86,36 +96,38 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         let newSyncNotificationCategories = WireDomain.NotificationCategory.allCategories
         notificationCenter.setNotificationCategories(newSyncNotificationCategories)
 
-        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, error in
+            if let error {
+                WireLogger.notifications.error("Failed to request authorization for user notifications: \(error)")
+            }
+        })
         notificationCenter.delegate = self
     }
 
-    func loadSession(userInfo: NotificationUserInfo) async -> ZMUserSession? {
-        guard
-            let selfID = userInfo.selfUserID,
-            let account = accountManager.account(with: selfID)
-        else {
-            return nil
+    @MainActor
+    func loadSession(userInfo: NotificationUserInfo) async throws -> ZMUserSession {
+        guard let selfID = userInfo.selfUserID else {
+            WireLogger.notifications.error("userInfo has no self ID")
+            throw UserNotificationHandlingError.missingSelfID
+        }
+        guard let account = accountManager.account(with: selfID) else {
+            throw UserNotificationHandlingError.missingAccount
         }
 
-        return await withSession(for: account)
+        return try await withSession(for: account)
     }
 
-    fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {
+    fileprivate func activateAccount(for session: ZMUserSession) async {
         if session == activeUserSession {
-            completion()
             return
         }
 
         var foundSession = false
-        backgroundUserSessions.forEach { accountId, backgroundSession in
-            if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
-
-                self.select(account, completion: { _ in
-                    completion()
-                })
+        for (accountId, backgroundSession) in backgroundUserSessions {
+            if session == backgroundSession, let account = accountManager.account(with: accountId) {
+                _ = await select(account)
                 foundSession = true
-                return
+                break
             }
         }
 
@@ -136,14 +148,16 @@ public extension SessionManager {
             return
         }
 
-        activateAccount(for: session) {
-            self.presentationDelegate?.showConversation(conversation, at: message)
+        Task {
+            await activateAccount(for: session)
+            presentationDelegate?.showConversation(conversation, at: message)
         }
     }
 
     func showConversationList(in session: ZMUserSession) {
-        activateAccount(for: session) {
-            self.presentationDelegate?.showConversationList()
+        Task {
+            await activateAccount(for: session)
+            presentationDelegate?.showConversationList()
         }
     }
 

@@ -3046,7 +3046,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3421,8 +3421,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Riprova"
           }
         },
         "ja" : {
@@ -5418,8 +5418,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Il tuo team"
           }
         },
         "ja" : {
@@ -5543,8 +5543,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "Nome del team"
           }
         },
         "ja" : {
@@ -5668,8 +5668,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nome del team"
           }
         },
         "ja" : {

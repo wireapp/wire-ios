@@ -374,7 +374,7 @@ final class UserSessionMock: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         let mock = MockSearchUsersUseCaseProtocol()
         mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
             let payload = ["documents": [
@@ -442,8 +442,10 @@ final class UserSessionMock: UserSession {
 
     // MARK: - Notifications
 
+    private var commonObject = MockNotificationContext()
+
     var notificationContext: any NotificationContext {
-        viewContext.notificationContext
+        commonObject
     }
 
     // MARK: - Context Provider
@@ -473,3 +475,5 @@ extension UserSessionMock: ContextProvider {
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 
 }
+
+class MockNotificationContext: NSObject, NotificationContext {}

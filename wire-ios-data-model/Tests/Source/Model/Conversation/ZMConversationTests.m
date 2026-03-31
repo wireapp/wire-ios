@@ -312,7 +312,7 @@
         
         // when
 
-        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
+        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC setNeedsToBeUpdatedFromBackend:YES];
         
         // then
         XCTAssertNotNil(conversation);
@@ -367,7 +367,7 @@
         NSUUID *uuid = NSUUID.createUUID;
         
         // when
-        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC setNeedsToBeUpdatedFromBackend:YES];
         
         // then
         XCTAssertEqualObjects(uuid, created.remoteIdentifier);
@@ -2097,7 +2097,7 @@
         NSDate *clearedTimestamp = [NSDate date];
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"B"];
         message2.serverTimestamp = clearedTimestamp;
-        conversation.lastServerTimeStamp = clearedTimestamp;
+        conversation.lastServerTimeStamp = clearedTimestamp; // this does not delete messages
         
         [self spinMainQueueWithTimeout:1];
         
@@ -2108,56 +2108,10 @@
         conversation.clearedTimeStamp = clearedTimestamp;
         
         // then
-        XCTAssertTrue(message1.isDeleted);
-        XCTAssertTrue(message2.isDeleted);
         XCTAssertFalse(message3.isDeleted);
 
     }];
 }
-
-- (void)testThatSettingClearedTimeStampDueToRemoteChangeOnlyDeletesOlderMessages_EventIsNotMessage
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        
-        ZMMessage *message1 = (id)[conversation appendMessageWithText:@"A"];
-        message1.serverTimestamp = [NSDate date];
-        
-        NSDate *clearedTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
-        
-        ZMMessage *message2 = (id)[conversation appendMessageWithText:@"B"];
-        message2.serverTimestamp = [clearedTimestamp dateByAddingTimeInterval:10];
-        
-        // when
-        conversation.clearedTimeStamp = clearedTimestamp;
-        
-        // then
-        XCTAssertTrue(message1.isDeleted);
-        XCTAssertFalse(message2.isDeleted);
-    }];
-}
-
-- (void)testThatClearingMessageHistorySetsClearedTimeStampToLastServerTimeStamp
-{
-    // given
-    NSDate *clearedTimeStamp = [NSDate date];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastServerTimeStamp = clearedTimeStamp;
-    ZMMessage *message1 = (id)[conversation appendMessageWithText:@"B"];
-    message1.serverTimestamp = clearedTimeStamp;
-    
-    XCTAssertNil(conversation.clearedTimeStamp);
-    
-    // when
-    [conversation clearMessageHistory];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-}
-
 
 - (void)testThatRemovingOthersInConversationDoesntClearMessages
 {
@@ -2182,21 +2136,6 @@
     // then
     XCTAssertFalse(conversation.isArchived);
     XCTAssertNil(conversation.clearedTimeStamp);
-}
-
-
-- (void)testThatClearingMessageHistorySetsIsArchived
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    XCTAssertFalse(conversation.isArchived);
-    
-    // when
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertTrue(conversation.isArchived);
 }
 
 #pragma mark - Archiving
@@ -2462,24 +2401,6 @@
         
         // then
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
-    }];
-}
-
-- (void)testThatItDoesNotCountConversationsThatAreClearedAsUnread;
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-
-        ZMConversation *conversation = [self insertConversationWithUnread:YES context:self.syncMOC];
-        conversation.isArchived = YES;
-        [conversation clearMessageHistory];
-        
-        // when
-        XCTAssert([self.syncMOC saveOrRollback]);
-        
-        // then
-        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
     }];
 }
 
@@ -2918,142 +2839,6 @@
 
     // then
     XCTAssertTrue([sut evaluateWithObject:conversation]);
-}
-
-- (void)testThatItDoesNotFilterOut_Cleared_Archived_Conversations_WithNewMessages_IncludingArchivedPredicate
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    __block NSDate *clearedTimeStamp;
-    [self performIgnoringZMLogError:^{
-        clearedTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self performIgnoringZMLogError:^{
-        [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-    XCTAssertTrue(conversation.isArchived);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-    
-    // when
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
-    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
-
-    // then
-    XCTAssertTrue([sut evaluateWithObject:conversation]);
-}
-
-
-- (void)testThatItFiltersOutArchivedAndClearedConversations_IncludingArchivedPredicate
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    __block NSDate *clearedTimeStamp;
-    [self performIgnoringZMLogError:^{
-        clearedTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    XCTAssertTrue(conversation.isArchived);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-
-    // when
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
-    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
-
-    // then
-    XCTAssertFalse([sut evaluateWithObject:conversation]);
-}
-
-- (void)testThatItDoesNotFilterClearedConversationsThatAreNotArchived_IncludingArchivedPredicate
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    __block NSDate *clearedTimeStamp;
-    [self performIgnoringZMLogError:^{
-        clearedTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-    
-    [conversation clearMessageHistory];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    conversation.isArchived = NO;
-    XCTAssertFalse(conversation.isArchived);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-    
-    // when
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
-    NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
-    
-    // then
-    XCTAssertTrue([sut evaluateWithObject:conversation]);
-}
-
-- (void)testThatItReturnsClearedConversationsInWhichSelfIsActiveMember_SearchStringPredicate
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.userDefinedName = @"lala";
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
-    __block NSDate *clearedTimeStamp;
-    [self performIgnoringZMLogError:^{
-        clearedTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-    [self.uiMOC saveOrRollback];
-    
-    [conversation clearMessageHistory];
-    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertTrue(conversation.isArchived);
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-    
-    // when
-    NSPredicate *sut = [ZMConversation predicateForSearchQuery:@"lala" team:nil moc:self.uiMOC];
-    
-    // then
-    XCTAssertTrue([sut evaluateWithObject:conversation]);
-}
-
-- (void)testThatIt_DoesNot_ReturnClearedConversationsInWhichSelfIs_Not_ActiveMember_SearchStringPredicate
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.userDefinedName = @"lala";
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    __block NSDate *clearedTimeStamp;
-    [self performIgnoringZMLogError:^{
-        clearedTimeStamp = [self timeStampForSortAppendMessageToConversation:conversation];
-    }];
-
-    [self.uiMOC saveOrRollback];
-    
-    [conversation clearMessageHistory];
-    [conversation removeParticipantAndUpdateConversationStateWithUser:[ZMUser selfUserInContext:self.uiMOC]
-                                                       initiatingUser:selfUser];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertTrue(conversation.isArchived);
-    XCTAssertFalse(conversation.isSelfAnActiveMember);
-    XCTAssertEqualObjects(conversation.clearedTimeStamp, clearedTimeStamp);
-    
-    // when
-    NSPredicate *sut = [ZMConversation predicateForSearchQuery:@"lala" team:nil moc:self.uiMOC];
-    
-    // then
-    XCTAssertFalse([sut evaluateWithObject:conversation]);
 }
 
 - (void)testThatItReturnsConversationsInWhichSelfIs_Not_ActiveMember_NotCleared_SearchStringPredicate

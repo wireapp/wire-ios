@@ -1,2 +1,0 @@
-curl \
-	"/v15/feature-configs/"

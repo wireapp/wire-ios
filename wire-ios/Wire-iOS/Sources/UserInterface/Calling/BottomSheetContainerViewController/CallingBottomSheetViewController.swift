@@ -20,9 +20,8 @@ import avs
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "calling")
 
 protocol ActiveCallViewControllerDelegate: AnyObject {
     func activeCallViewControllerDidDisappear(
@@ -109,8 +108,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let userSession = ZMUserSession.shared() else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
+        // This is a hack for testing as a real ZMUserSession is not available
+        guard userSession is ZMUserSession else {
+            WireLogger.calling.error("UserSession not available when initializing \(type(of: self))")
             return
         }
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
@@ -209,7 +209,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
     func updateVisibleVoiceChannelViewController() {
         guard
-            let conversation = ZMUserSession.shared()?.priorityCallConversation,
+            let conversation = (userSession as? ZMUserSession)?.priorityCallConversation,
             visibleVoiceChannelViewController.conversation != conversation,
             let voiceChannel = conversation.voiceChannel
         else {

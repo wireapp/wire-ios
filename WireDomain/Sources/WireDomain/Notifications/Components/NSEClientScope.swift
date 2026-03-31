@@ -420,7 +420,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
             conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
             conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
-            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder
+            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
         )
     }
 
