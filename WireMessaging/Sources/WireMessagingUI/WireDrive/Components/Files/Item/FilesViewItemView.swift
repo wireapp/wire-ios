@@ -226,7 +226,7 @@ struct FilesItemView: View {
             infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
         case .loading:
             if viewModel.isDownloadingForOfflineUse {
-                downloadingInfoRowTexLine()
+                downloadingInfoRowTextLine()
             } else {
                 infoRowTextLine(Strings.Files.tapToCancelDownload)
             }
