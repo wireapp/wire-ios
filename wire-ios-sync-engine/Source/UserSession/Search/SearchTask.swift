@@ -249,7 +249,10 @@ public final class SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
-            let apps = request.searchOptions.contains(.apps) ? apps(in: team) : []
+            let apps = request.searchOptions.contains(.apps) ? apps(
+                in: team,
+                matching: request
+            ) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -366,10 +369,11 @@ public final class SearchTask {
     }
 
     private func apps(
-        in team: WireDataModel.Team?
+        in team: WireDataModel.Team?,
+        matching request: SearchRequest
     ) -> [ZMUser] {
         team?.members(
-            matchingQuery: "",
+            matchingQuery: request.normalizedQuery,
             filteredBy: .app
         ).compactMap(\.user) ?? []
     }
