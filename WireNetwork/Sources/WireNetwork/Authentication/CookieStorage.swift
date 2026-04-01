@@ -34,8 +34,6 @@ public actor CookieStorage: CookieStorageProtocol {
     enum Failure: Error {
 
         case malformedCookieData
-        case failedToDecodeCookieData(any Error)
-        case missingCookieEncryptionKey
         case failedToEncryptCookie(any Error)
         case failedToDecryptCookie(any Error)
 
