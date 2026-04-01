@@ -40,6 +40,7 @@ final class StartUIViewController: UIViewController {
     weak var delegate: StartUIDelegate?
 
     let searchController = UISearchController(searchResultsController: nil)
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     let groupSelector: SearchGroupSelector
 
@@ -251,6 +252,11 @@ final class StartUIViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     private func configGroupSelector() {
