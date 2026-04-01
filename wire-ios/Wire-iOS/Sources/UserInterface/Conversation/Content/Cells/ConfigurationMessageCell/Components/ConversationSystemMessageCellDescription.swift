@@ -173,6 +173,9 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
+            return []
+            
+            // TODO: move all the cells above to the header
             var cells: [AnyConversationMessageCellDescription] = []
 
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
