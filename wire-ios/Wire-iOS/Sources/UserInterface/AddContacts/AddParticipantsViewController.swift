@@ -466,7 +466,7 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForBots = searchResultsViewController.searchGroup == .bots
+        let searchingForBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
         emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)

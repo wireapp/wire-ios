@@ -335,7 +335,7 @@ final class StartUIViewController: UIViewController {
             searchResultsViewController.searchForBots(withQuery: searchString)
         }
         emptyResultView.updateStatus(
-            searchingForBots: groupSelector.group == .bots,
+            searchingForBots: [.apps, .bots].contains(groupSelector.group),
             hasFilter: !searchString.isEmpty
         )
         if groupSelector.group == .apps, searchString.isEmpty {
