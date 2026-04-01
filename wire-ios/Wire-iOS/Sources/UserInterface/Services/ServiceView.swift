@@ -86,6 +86,7 @@ final class ServiceView: UIView {
     private let logoView: UserImageView
     private let nameLabel = UILabel()
     private let providerLabel = UILabel()
+    private let categoryLabel = UILabel()
 
     var service: Service {
         didSet {
@@ -104,19 +105,19 @@ final class ServiceView: UIView {
 
         super.init(frame: .zero)
 
-        [logoView, nameLabel, providerLabel].forEach(addSubview)
+        [logoView, nameLabel, providerLabel, categoryLabel].forEach(addSubview)
 
         createConstraints()
 
-        backgroundColor = .clear
-
         nameLabel.font = FontSpec(.large, .regular).font
         nameLabel.textColor = SemanticColors.Label.textDefault
-        nameLabel.backgroundColor = .clear
 
         providerLabel.font = FontSpec(.medium, .regular).font
         providerLabel.textColor = SemanticColors.Label.textDefault
-        providerLabel.backgroundColor = .clear
+
+        categoryLabel.font = FontSpec(.medium, .regular).font
+        categoryLabel.textColor = SemanticColors.Label.textDefault
+
         updateForService()
     }
 
@@ -130,23 +131,25 @@ final class ServiceView: UIView {
         logoView.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         providerLabel.translatesAutoresizingMaskIntoConstraints = false
+        categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            // logoView
             logoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             logoView.topAnchor.constraint(equalTo: topAnchor),
             logoView.bottomAnchor.constraint(equalTo: bottomAnchor),
             logoView.heightAnchor.constraint(equalToConstant: 80),
 
-            // nameLabel
             nameLabel.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: 16),
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            // providerLabel
             providerLabel.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: 16),
-            providerLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+            providerLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
+            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            categoryLabel.leadingAnchor.constraint(equalTo: providerLabel.leadingAnchor),
+            categoryLabel.topAnchor.constraint(equalTo: providerLabel.bottomAnchor, constant: 4),
+            categoryLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 
@@ -154,5 +157,7 @@ final class ServiceView: UIView {
         logoView.user = service.user
         nameLabel.text = service.user.name
         providerLabel.text = service.provider?.name
+        categoryLabel.text = "TODO"
     }
+
 }
