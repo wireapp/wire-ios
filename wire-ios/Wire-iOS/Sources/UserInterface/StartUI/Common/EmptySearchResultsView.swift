@@ -27,7 +27,6 @@ private enum EmptySearchResultsViewState {
     case noUsers
     case everyoneAdded
     case noBots
-    // case noApps
     case noAppsEnabled
 }
 

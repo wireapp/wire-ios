@@ -338,7 +338,7 @@ final class StartUIViewController: UIViewController {
             searchingForBots: groupSelector.group == .bots,
             hasFilter: !searchString.isEmpty
         )
-        if groupSelector.group == .apps {
+        if groupSelector.group == .apps, searchString.isEmpty {
             showEmptyAppsSearchResultView()
         } else {
             hideEmptyAppsSearchResultView()

@@ -485,7 +485,7 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
         }
-        if searchResultsViewController.searchGroup == .apps {
+        if searchResultsViewController.searchGroup == .apps, !hasFilter {
             showEmptyAppsSearchResultView()
         } else {
             hideEmptyAppsSearchResultView()
