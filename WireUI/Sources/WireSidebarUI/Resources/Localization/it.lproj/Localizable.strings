@@ -22,13 +22,13 @@
 "sidebar.conversation_filter.all.title" = "Tutto";
 "sidebar.conversation_filter.favorites.title" = "Preferiti";
 "sidebar.conversation_filter.groups.title" = "Gruppi";
-"sidebar.conversation_filter.channels.title" = "Channels";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
-"sidebar.conversation_filter.unread.title" = "Unread";
-"sidebar.conversation_filter.mentions.title" = "Mentions";
-"sidebar.conversation_filter.replies.title" = "Replies";
-"sidebar.conversation_filter.drafts.title" = "Drafts";
-"sidebar.conversation_filter.folders.title" = "Folders";
+"sidebar.conversation_filter.channels.title" = "Canali";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "Conversazioni 1:1";
+"sidebar.conversation_filter.unread.title" = "Non letti";
+"sidebar.conversation_filter.mentions.title" = "Menzioni";
+"sidebar.conversation_filter.replies.title" = "Risposte";
+"sidebar.conversation_filter.drafts.title" = "Bozze";
+"sidebar.conversation_filter.folders.title" = "Cartelle";
 "sidebar.conversation_filter.archived.title" = "Archivia";
 
 "sidebar.meetings.title" = "Meetings";
