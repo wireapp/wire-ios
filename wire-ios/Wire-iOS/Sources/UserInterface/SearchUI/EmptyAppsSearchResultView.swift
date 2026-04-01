@@ -34,11 +34,11 @@ final class EmptyAppsSearchResultView: UIView {
     private func setup() {
         let headlineLabel = UILabel()
         headlineLabel.numberOfLines = 0
-        headlineLabel.text = "Your team hasn’t added apps yet" // TODO: move to .strings file
+        headlineLabel.text = L10n.Localizable.Peoplepicker.NoAppsAdded.title
         headlineLabel.font = .font(for: .body1).withWeight(.bold)
         let contentLabel = UILabel()
         contentLabel.numberOfLines = 0
-        contentLabel.text = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management."
+        contentLabel.text = L10n.Localizable.Peoplepicker.NoAppsAdded.message
         contentLabel.font = .font(for: .body1)
         let stackView = UIStackView(arrangedSubviews: [headlineLabel, contentLabel])
         stackView.axis = .vertical
