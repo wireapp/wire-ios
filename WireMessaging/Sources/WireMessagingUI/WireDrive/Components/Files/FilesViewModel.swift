@@ -865,9 +865,9 @@ package final class FilesViewModel: ObservableObject {
         filtersSelection = filters
         Task { await reload() }
     }
-    
+
     // MARK: - Offline mode
-    
+
     private func makeAssetAvailableOffline(item: FilesViewItem) {
         Task {
             do {
@@ -877,13 +877,14 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func removeAssetAvailableOffline(item: FilesViewItem) {
         Task {
             do {
                 try useCases.removeAssetAvailableOfflineUseCase.invoke(nodeID: item.id)
             } catch {
-                WireLogger.wireDrive.error("Failed to remove asset from available offline: \(String(describing: error))")
+                WireLogger.wireDrive
+                    .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
     }

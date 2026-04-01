@@ -46,10 +46,10 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
     @MainActor
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never>
-    
+
     @MainActor
     func updateAsset(_ asset: WireDriveLocalAsset) throws
-    
+
     /// Deletes an asset from both the database and file cache.
     @MainActor
     func deleteAsset(nodeID: UUID) async throws

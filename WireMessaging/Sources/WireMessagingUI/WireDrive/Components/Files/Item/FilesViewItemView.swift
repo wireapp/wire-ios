@@ -32,31 +32,31 @@ struct FilesItemView: View {
     private let iconSpaceWidth: CGFloat = 56 // this is explicitly not supposed to scale.
     @ScaledMetric private var iconSpaceHeight: CGFloat = 28
     @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
-    
+
     @Environment(\.wireAccentColor) private var wireAccentColor
-    
+
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 icon().accessibilitySortPriority(3)
-                
+
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
                         .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    
+
                     infoRow()
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilitySortPriority(2)
-                
+
                 Spacer()
-                
+
                 Menu {
                     menuContent()
                 } label: {
@@ -113,16 +113,19 @@ struct FilesItemView: View {
                 )
             }
             .padding(.vertical, 8)
-            
+
             Divider()
-            
+
         }.contentShape(Rectangle()) // Tap area
     }
 
     @ViewBuilder
     private func icon() -> some View {
         switch viewModel.fileTracker.state {
-        case .notLoaded, .loaded(showReadyToOpen: false), .failed:
+        case .notLoaded,
+             .loaded(showReadyToOpen: false),
+             .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline,
+             .failed:
             fileTypeIcon()
         case .loaded(showReadyToOpen: true):
             progressIcon(progress: 1, readyToOpen: true)
@@ -165,7 +168,7 @@ struct FilesItemView: View {
             }
             .foregroundStyle(wireAccentColor)
     }
-    
+
     @ViewBuilder
     private func availableOfflineIcon() -> some View {
         Image(systemName: "arrow.down.circle.fill")
@@ -216,7 +219,9 @@ struct FilesItemView: View {
     @ViewBuilder
     private func infoRow() -> some View {
         switch viewModel.fileTracker.state {
-        case .notLoaded, .loaded(showReadyToOpen: false):
+        case .notLoaded,
+             .loaded(showReadyToOpen: false),
+             .loaded(showReadyToOpen: true) where viewModel.isAvailableOffline:
             HStack(spacing: 5) {
                 if viewModel.isAvailableOffline { availableOfflineIcon() }
                 tagsInfo()
@@ -234,8 +239,9 @@ struct FilesItemView: View {
             infoRowTextLine(Strings.Files.downloadFailed, error: true)
         }
     }
-    
-    @ViewBuilder private func downloadingInfoRowTextLine() -> some View {
+
+    @ViewBuilder
+    private func downloadingInfoRowTextLine() -> some View {
         Text(Strings.Files.downloadingFile)
             .font(for: .subline1)
             .lineLimit(1)
@@ -245,13 +251,13 @@ struct FilesItemView: View {
     @ViewBuilder
     private func menuContent() -> some View {
         #if DEBUG
-        Button {
-            viewModel.deleteAsset()
-        } label: {
-            Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
-        }
+            Button {
+                viewModel.deleteAsset()
+            } label: {
+                Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
+            }
         #endif
-        
+
         menuItem(.primaryAction) { item in
             Button {
                 viewModel.performAction(item)

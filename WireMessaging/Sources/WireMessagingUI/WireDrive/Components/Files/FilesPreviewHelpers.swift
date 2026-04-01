@@ -351,11 +351,11 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
 
         return (node, localAsset)
     }
-    
+
     func updateAsset(_ asset: WireDriveLocalAsset) throws {
         publishers[asset.nodeID]?.send(asset)
     }
-    
+
     func deleteAsset(nodeID: UUID) async throws {
         publishers[nodeID]?.send(nil)
     }

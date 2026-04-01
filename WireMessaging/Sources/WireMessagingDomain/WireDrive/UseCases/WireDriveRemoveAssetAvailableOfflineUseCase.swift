@@ -20,22 +20,22 @@ package import Foundation
 
 @MainActor
 package struct WireDriveRemoveAssetAvailableOfflineUseCase {
-    
+
     enum Failure: Error {
         case assetNotFound
     }
-    
+
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
-    
+
     package init(localAssetRepository: any WireDriveLocalAssetRepositoryProtocol) {
         self.localAssetRepository = localAssetRepository
     }
-    
+
     package func invoke(nodeID: UUID) throws {
         guard var asset = try localAssetRepository.asset(nodeID: nodeID) else {
             throw Failure.assetNotFound
         }
-        
+
         asset.isAvailableOffline = false
         try localAssetRepository.updateAsset(asset)
     }
