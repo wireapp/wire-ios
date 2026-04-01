@@ -34,12 +34,22 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     // MARK: - Private types
 
     /// CocoaLumberjack logger that accumulates messages in memory and writes
-    /// them all to a `DDFileLogger` when `flush()` is called.
+    /// them all to a `DDFileLogger` when `flushToFile()` is called.
+    ///
+    /// Thread-safety notes:
+    /// - `log(message:)` is always dispatched onto `loggerQueue` by `DDLog`,
+    ///   so `buffer` can be mutated there without a lock.
+    /// - `flushToFile()` first calls `DDLog.flushLog()` which blocks until
+    ///   DDLog's own queue is drained — guaranteeing every pending async
+    ///   `DDLog.log(...)` call has been dispatched to `loggerQueue` before we
+    ///   read the buffer.  The subsequent `loggerQueue.sync` then waits for
+    ///   those dispatches to actually execute, so no messages are lost.
+    /// - File writes are dispatched on `fileLogger.loggerQueue` to satisfy
+    ///   DDFileLogger's own thread-safety requirements.
     private final class BufferedDDLogger: DDAbstractLogger {
 
         private var buffer: [DDLogMessage] = []
-        private let lock = NSLock()
-        private let fileLogger: DDFileLogger
+        let fileLogger: DDFileLogger
 
         init(fileLogger: DDFileLogger) {
             self.fileLogger = fileLogger
@@ -47,21 +57,32 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         }
 
         override func log(message logMessage: DDLogMessage) {
-            lock.lock()
+            // Always called on self.loggerQueue by DDLog — no lock needed.
             buffer.append(logMessage)
-            lock.unlock()
         }
 
-        override func flush() {
-            lock.lock()
-            let messages = buffer
-            buffer.removeAll()
-            lock.unlock()
+        func flushToFile() {
+            // 1. Drain DDLog's dispatch queue so every pending async log call
+            //    has been handed off to self.loggerQueue.
+            DDLog.flushLog()
 
-            for message in messages {
-                fileLogger.log(message: message)
+            // 2. Read and clear the buffer on self.loggerQueue so we are sure
+            //    all messages dispatched in step 1 are included.
+            var messages: [DDLogMessage] = []
+            loggerQueue.sync {
+                messages = self.buffer
+                self.buffer.removeAll()
             }
-            fileLogger.flush()
+
+            guard !messages.isEmpty else { return }
+
+            // 3. Write on fileLogger's own queue as required by DDAbstractLogger.
+            fileLogger.loggerQueue.sync {
+                for msg in messages {
+                    self.fileLogger.log(message: msg)
+                }
+                self.fileLogger.flush()
+            }
         }
     }
 
@@ -243,7 +264,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         CocoaLumberjackLogger.bufferedLoggerForCrashHandler = bufferedDDLogger
         CocoaLumberjackLogger.previousUncaughtExceptionHandler = NSGetUncaughtExceptionHandler()
         NSSetUncaughtExceptionHandler { exception in
-            CocoaLumberjackLogger.bufferedLoggerForCrashHandler?.flush()
+            CocoaLumberjackLogger.bufferedLoggerForCrashHandler?.flushToFile()
             CocoaLumberjackLogger.previousUncaughtExceptionHandler?(exception)
         }
     }
@@ -267,7 +288,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     @objc private func didReceiveMemoryWarning() {
-        bufferedDDLogger?.flush()
+        bufferedDDLogger?.flushToFile()
     }
 
     private func flushWithExpiringWindow(reason: String) {
@@ -287,7 +308,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         guard let bufferedDDLogger else { return }
         ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { expired in
             if !expired {
-                bufferedDDLogger.flush()
+                bufferedDDLogger.flushToFile()
             }
         }
     }

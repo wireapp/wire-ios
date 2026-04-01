@@ -52,7 +52,6 @@ struct LogWritingModeView: View {
                     .textCase(.none)
             }
         }
-        .navigationTitle("Log writing mode")
     }
 }
 
