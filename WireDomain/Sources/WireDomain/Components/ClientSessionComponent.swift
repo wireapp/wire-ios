@@ -785,16 +785,11 @@ public final class ClientSessionComponent {
         )
     }
 
-    public func createInitiateResetMLSConversationUseCase() -> some InitiateResetMLSConversationUseCaseProtocol {
-        InitiateResetMLSConversationUseCase(
-            api: mlsAPI,
-            mlsService: mlsService,
-            conversationLocalStore: conversationLocalStore,
-            conversationRepository: conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: selfUserID
-            ),
-            selfDomain: backendMetadata.domain
+    public func clearConversationContentUseCase(conversationID: WireDataModel
+        .QualifiedID) -> ClearConversationContentUseCaseProtocol {
+        ClearConversationContentUseCase(
+            conversationID: conversationID,
+            syncContext: syncContext
         )
     }
 

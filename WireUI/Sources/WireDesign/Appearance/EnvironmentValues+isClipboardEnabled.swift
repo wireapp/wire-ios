@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
+public import SwiftUI
 
-// sourcery: AutoMockable
-protocol AccountSelector {
+public extension EnvironmentValues {
 
-    var currentAccount: Account? { get }
-
-    func switchTo(account: Account) async
+    /// Whether clipboard actions (copy, paste, cut) are allowed in text fields.
+    /// Set this at the root using `SecurityFlags.clipboard.isEnabled` from Wire-iOS.
+    @Entry var isClipboardEnabled: Bool = true
 
 }
