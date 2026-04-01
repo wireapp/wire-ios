@@ -290,6 +290,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .destination(DestinationItem(title: "Configure feature flags", makeView: {
                         AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                     })),
+                    .destination(DestinationItem(title: "Log writing mode", makeView: {
+                        AnyView(LogWritingModeView())
+                    })),
                     .destination(
                         DestinationItem(title: "Overrides", makeView: {
                             AnyView(DeveloperOverridesForm())

@@ -44,7 +44,7 @@ public enum WireAnalytics {
             #if DEBUG
                 SystemLogger()
             #endif
-            CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
+            CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target), mode: LogWritingMode.current)
             WireAnalytics.Datadog.shared
         }
 

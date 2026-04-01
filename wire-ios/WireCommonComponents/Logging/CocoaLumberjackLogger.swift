@@ -21,29 +21,103 @@ import Foundation
 import WireLogging
 import WireSystem
 
-/// Logger to write logs to fileSystem via CocoaLumberjack
+/// Logger to write logs to the file-system via CocoaLumberjack.
+///
+/// Three modes are supported, selected at initialisation time via `LogWritingMode`:
+/// - **normal** – continuous, asynchronous disk writes (existing behaviour).
+/// - **off** – no disk I/O; all log calls are no-ops.
+/// - **buffered** – messages are kept in memory and only written to disk on
+///   memory warning, app backgrounding, termination, or an uncaught
+///   NSException.
 final class CocoaLumberjackLogger: LoggerProtocol {
 
-    private let fileLogger: DDFileLogger
+    // MARK: - Private types
+
+    /// CocoaLumberjack logger that accumulates messages in memory and writes
+    /// them all to a `DDFileLogger` when `flush()` is called.
+    private final class BufferedDDLogger: DDAbstractLogger {
+
+        private var buffer: [DDLogMessage] = []
+        private let lock = NSLock()
+        private let fileLogger: DDFileLogger
+
+        init(fileLogger: DDFileLogger) {
+            self.fileLogger = fileLogger
+            super.init()
+        }
+
+        override func log(message logMessage: DDLogMessage) {
+            lock.lock()
+            buffer.append(logMessage)
+            lock.unlock()
+        }
+
+        override func flush() {
+            lock.lock()
+            let messages = buffer
+            buffer.removeAll()
+            lock.unlock()
+
+            for message in messages {
+                fileLogger.log(message: message)
+            }
+            fileLogger.flush()
+        }
+    }
+
+    // MARK: - Properties
+
+    private let mode: LogWritingMode
+    private let fileLogger: DDFileLogger?
+    private let bufferedDDLogger: BufferedDDLogger?
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
-    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
-    /// provided URL.
-    init(logsDirectory: URL?) {
-        let logFileManager = DDLogFileManagerDefault(logsDirectory: logsDirectory?.path())
-        self.fileLogger = DDFileLogger(logFileManager: logFileManager)
-        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
-        fileLogger.maximumFileSize = 100_000_000 // 100Mb
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.add(fileLogger)
+    // Retains the previous uncaught-exception handler so we can chain to it.
+    private static var previousUncaughtExceptionHandler: NSUncaughtExceptionHandler?
+    // Weak reference used by the uncaught-exception handler to flush the buffer.
+    private static weak var bufferedLoggerForCrashHandler: BufferedDDLogger?
+
+    // MARK: - Initialisation
+
+    /// - Parameters:
+    ///   - logsDirectory: Directory for log files.  If `nil` CocoaLumberjack's
+    ///     default is used.
+    ///   - mode: Controls whether / how logs are written to disk.
+    init(logsDirectory: URL?, mode: LogWritingMode = .normal) {
+        self.mode = mode
+
+        switch mode {
+        case .off:
+            fileLogger = nil
+            bufferedDDLogger = nil
+
+        case .normal:
+            let logger = Self.makeFileLogger(logsDirectory: logsDirectory)
+            DDLog.add(logger)
+            fileLogger = logger
+            bufferedDDLogger = nil
+
+        case .buffered:
+            let logger = Self.makeFileLogger(logsDirectory: logsDirectory)
+            let buffered = BufferedDDLogger(fileLogger: logger)
+            DDLog.add(buffered)
+            fileLogger = logger
+            bufferedDDLogger = buffered
+        }
 
         setupObservers()
+
+        if mode == .buffered {
+            setupCrashHandler()
+        }
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+
+    // MARK: - LoggerProtocol
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
@@ -69,7 +143,20 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         log(message, attributes: attributes, level: .error)
     }
 
+    func addTag(_ key: LogAttributesKey, value: String?) {
+        tagsQueue.async(flags: .barrier) { [weak self] in
+            if let value {
+                self?.tags[key] = value
+            } else {
+                self?.tags.removeValue(forKey: key)
+            }
+        }
+    }
+
+    // MARK: - Private helpers
+
     private func log(_ message: any LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
+        guard mode != .off else { return }
 
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {
@@ -78,7 +165,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
         let isSafe = mergedAttributes[.public] as? Bool == true
         guard isDebug || isSafe else {
-            // skips logs in production builds with non redacted info
+            // skips logs in production builds with non-redacted info
             return
         }
 
@@ -119,14 +206,13 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
-    func addTag(_ key: LogAttributesKey, value: String?) {
-        tagsQueue.async(flags: .barrier) { [weak self] in
-            if let value {
-                self?.tags[key] = value
-            } else {
-                self?.tags.removeValue(forKey: key)
-            }
-        }
+    private static func makeFileLogger(logsDirectory: URL?) -> DDFileLogger {
+        let logFileManager = DDLogFileManagerDefault(logsDirectory: logsDirectory?.path())
+        let fileLogger = DDFileLogger(logFileManager: logFileManager)
+        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
+        fileLogger.maximumFileSize = 100_000_000 // 100 MB
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+        return fileLogger
     }
 
     private func setupObservers() {
@@ -136,35 +222,73 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(appWillTerminate),
             name: UIApplication.willTerminateNotification,
             object: nil
         )
+
+        if mode == .buffered {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(didReceiveMemoryWarning),
+                name: UIApplication.didReceiveMemoryWarningNotification,
+                object: nil
+            )
+        }
     }
 
-    @objc
-    private func appDidEnterBackground() {
-        flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+    private func setupCrashHandler() {
+        CocoaLumberjackLogger.bufferedLoggerForCrashHandler = bufferedDDLogger
+        CocoaLumberjackLogger.previousUncaughtExceptionHandler = NSGetUncaughtExceptionHandler()
+        NSSetUncaughtExceptionHandler { exception in
+            CocoaLumberjackLogger.bufferedLoggerForCrashHandler?.flush()
+            CocoaLumberjackLogger.previousUncaughtExceptionHandler?(exception)
+        }
     }
 
-    @objc
-    private func appWillTerminate() {
-        flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+    // MARK: - App lifecycle
+
+    @objc private func appDidEnterBackground() {
+        switch mode {
+        case .off: break
+        case .normal: flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+        case .buffered: flushBufferedWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+        }
+    }
+
+    @objc private func appWillTerminate() {
+        switch mode {
+        case .off: break
+        case .normal: flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+        case .buffered: flushBufferedWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+        }
+    }
+
+    @objc private func didReceiveMemoryWarning() {
+        bufferedDDLogger?.flush()
     }
 
     private func flushWithExpiringWindow(reason: String) {
+        guard let fileLogger else { return }
         ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
             guard let self else { return }
-
             if expired {
                 warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
                 return
             }
-            self.info("Flushing logs early due to \(reason)", attributes: .safePublic)
+            info("Flushing logs early due to \(reason)", attributes: .safePublic)
             fileLogger.flush()
+        }
+    }
+
+    private func flushBufferedWithExpiringWindow(reason: String) {
+        guard let bufferedDDLogger else { return }
+        ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { expired in
+            if !expired {
+                bufferedDDLogger.flush()
+            }
         }
     }
 
