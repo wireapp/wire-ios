@@ -17,6 +17,24 @@
       location = "container:.github/actions"
       name = "actions">
       <Group
+         location = "group:kalium-testservice"
+         name = "kalium-testservice">
+         <Group
+            location = "group:setup"
+            name = "setup">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:stop"
+            name = "stop">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
          location = "group:allure-reporting"
          name = "allure-reporting">
          <FileRef
