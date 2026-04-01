@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireShareEngine
 
 private let cellReuseIdentifier = "ConversationCell"
@@ -30,6 +31,7 @@ final class ConversationSelectionViewController: UITableViewController {
     var selectionHandler: ((_ conversation: Conversation) -> Void)?
 
     private let searchController = UISearchController(searchResultsController: nil)
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     init(conversations: [Conversation]) {
         self.allConversations = conversations
@@ -59,6 +61,11 @@ final class ConversationSelectionViewController: UITableViewController {
         searchController.searchResultsUpdater = self
         let searchBar = searchController.searchBar
         tableView.tableHeaderView = searchBar
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {

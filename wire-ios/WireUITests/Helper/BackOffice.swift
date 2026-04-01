@@ -270,6 +270,53 @@ final class BackOffice {
         let (data, code) = try await sendRequest(
             endpoint: endpoint,
             method: .patch,
+            .appendingPathComponent("channels")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "unlockCellsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enableChannelFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("channels")
+
+        let payload: [String: Any] = [
+            "config": [
+                "allowed_to_create_channels": "team-members",
+                "allowed_to_open_channels": "team-members"
+            ],
+            "status": "enabled",
+            "ttl": "unlimited"
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
             body: json,
             basicAuth: headerValue
         )

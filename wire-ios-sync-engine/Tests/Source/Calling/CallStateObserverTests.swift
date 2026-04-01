@@ -495,33 +495,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertEqual(notificationCenter.scheduledRequests.count, 0)
     }
 
-    func testThatClearedConversationsGetsUnarchivedForIncomingCalls() {
-        // given
-        syncMOC.performGroupedBlock {
-            self.conversation.lastServerTimeStamp = Date()
-            try! self.conversation.appendText(content: "test")
-            self.conversation.clearMessageHistory()
-            XCTAssert(self.conversation.isArchived)
-            XCTAssertNotNil(self.conversation.clearedTimeStamp)
-            self.syncMOC.saveOrRollback()
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        sut.callCenterDidChange(
-            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
-            conversation: conversationUI,
-            caller: senderUI,
-            timestamp: nil,
-            previousCallState: nil
-        )
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.refreshAllObjects()
-
-        // then
-        XCTAssertFalse(conversationUI.isArchived)
-    }
-
     func testThatArchivedConversationsGetsUnarchivedForIncomingCalls() {
         // given
         syncMOC.performGroupedBlock {

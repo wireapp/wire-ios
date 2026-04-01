@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -165,6 +166,7 @@ struct ShareLinkPasswordView: View {
             RoundedRectangle(cornerRadius: 10)
                 .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
         }
+        .accessibilityIdentifier(Locators.WireDrive.ShareLinkPasswordPage.togglePassword.rawValue)
     }
 
     @ViewBuilder
@@ -279,6 +281,7 @@ struct ShareLinkPasswordView: View {
             }
         }
         .tint(.primaryText)
+        .accessibilityIdentifier(Locators.WireDrive.ShareLinkPasswordPage.sharePassword.rawValue)
     }
 
     @ViewBuilder
@@ -308,6 +311,7 @@ struct ShareLinkPasswordView: View {
             }
         }
         .tint(.primaryText)
+        .accessibilityIdentifier(Locators.WireDrive.ShareLinkPasswordPage.resetPassword.rawValue)
     }
 
     @ToolbarContentBuilder
@@ -340,6 +344,7 @@ struct ShareLinkPasswordView: View {
                 }
             }
             .disabled(!viewModel.canSave)
+            .accessibilityIdentifier(Locators.WireDrive.ShareLinkPasswordPage.savePassword.rawValue)
         }
     }
 }

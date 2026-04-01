@@ -50,6 +50,8 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         return controller
     }()
 
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
+
     private let noResultsLabel = DynamicFontLabel(
         text: Giphy.Error.noResult,
         style: .body1,
@@ -165,6 +167,11 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         definesPresentationContext = true
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     private func setupNoResultLabel() {

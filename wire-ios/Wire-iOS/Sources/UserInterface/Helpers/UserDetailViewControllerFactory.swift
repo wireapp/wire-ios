@@ -33,7 +33,7 @@ enum UserDetailViewControllerFactory {
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
     /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
-        user: UserType,
+        user: WireDataModel.UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         userSession: UserSession,
@@ -44,9 +44,10 @@ enum UserDetailViewControllerFactory {
 
         if user.isAppOrBot {
             return ServiceDetailViewController(
-                serviceUser: user,
-                actionType: .removeService(conversation),
-                userSession: userSession
+                user: user,
+                actionType: .removeParticipant(conversation),
+                userSession: userSession,
+                completion: { _ in }
             )
 
         } else {
