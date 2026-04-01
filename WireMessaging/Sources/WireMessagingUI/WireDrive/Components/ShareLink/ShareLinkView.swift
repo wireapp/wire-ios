@@ -53,6 +53,7 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
+                .accessibilitySortPriority(1)
 
                 VStack {
                     if viewModel.isPasswordEnabled, let password = viewModel.getPassword() {
@@ -123,6 +124,8 @@ struct ShareLinkView: View {
             }
             .tint(wireAccentColor.color)
             .disabled(!viewModel.isLinkToggleEnabled)
+            // We need this so VoiceOver reads the correct state AFTER it changes!
+            .accessibilityAddTraits(.updatesFrequently)
         }
     }
 
