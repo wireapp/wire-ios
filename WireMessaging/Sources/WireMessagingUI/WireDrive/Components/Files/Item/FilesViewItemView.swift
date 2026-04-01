@@ -244,6 +244,14 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func menuContent() -> some View {
+        #if DEBUG
+        Button {
+            viewModel.deleteAsset()
+        } label: {
+            Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
+        }
+        #endif
+        
         menuItem(.primaryAction) { item in
             Button {
                 viewModel.performAction(item)

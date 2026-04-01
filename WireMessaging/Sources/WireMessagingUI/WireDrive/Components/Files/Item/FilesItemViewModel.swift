@@ -223,6 +223,14 @@ final class FilesItemViewModel: ObservableObject {
     func confirmRestore() async {
         await onItemAction(.restore, item)
     }
+    
+    #if DEBUG
+    func deleteAsset() {
+        Task {
+            try await localAssetRepository.deleteAsset(nodeID: nodeID)
+        }
+    }
+    #endif
 
     private static func subtitle(
         selectedSortingKey: FilesSortingViewModel.SortingKey?,

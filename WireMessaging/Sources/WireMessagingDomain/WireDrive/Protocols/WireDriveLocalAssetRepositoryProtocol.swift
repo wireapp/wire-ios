@@ -49,6 +49,10 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     
     @MainActor
     func updateAsset(_ asset: WireDriveLocalAsset) throws
+    
+    /// Deletes an asset from both the database and file cache.
+    @MainActor
+    func deleteAsset(nodeID: UUID) async throws
 
     /// Cancels the asset download for a given `nodeID`.
     @MainActor
