@@ -127,9 +127,18 @@ struct WireDriveImageConversationAttachmentPreview: View {
 // MARK: - Preview
 
 #Preview {
-    WireDriveImageConversationAttachmentPreview(
-        thumbnailURL: nil,
-        state: .loading(progress: 0.5, isLargeFile: false),
-        isLargePreview: true
-    )
+    VStack {
+        WireDriveImageConversationAttachmentPreview(
+            thumbnailURL: nil,
+            state: .loading(progress: 0.5, isLargeFile: false),
+            isLargePreview: true
+        )
+
+        WireDriveImageConversationAttachmentPreview(
+            thumbnailURL: nil,
+            state: .notLoaded,
+            isLargePreview: true
+        )
+    }
+    .padding()
 }
