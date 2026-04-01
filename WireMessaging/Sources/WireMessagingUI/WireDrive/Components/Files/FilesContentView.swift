@@ -139,7 +139,8 @@ private extension FilesContentView {
         List {
             Group {
                 itemsSection
-                if viewModel.hasMore && !viewModel.isOffline {
+
+                if showLoadMoreRow {
                     loadMoreRow
                 }
             }
@@ -157,7 +158,7 @@ private extension FilesContentView {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.openItem(item: item) } }
+                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
                 .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }
@@ -176,6 +177,17 @@ private extension FilesContentView {
         default:
             EmptyView()
         }
+    }
+
+    private var showLoadMoreRow: Bool {
+        // workaround: when filtering by conversation, BE returns sometimes empty payload with hasMore flag set to true
+        // which wrongly displays the load more row on an empty state screen so we need here to explicitly check that
+        // the items are empty.
+        let hasMore = viewModel.hasMore
+        let isEmptyItems = viewModel.state.items.isEmpty
+        let isOffline = viewModel.isOffline
+
+        return hasMore && !isEmptyItems && !isOffline
     }
 }
 

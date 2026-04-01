@@ -23,7 +23,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
     func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
@@ -52,7 +52,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .sendMessage(messageFromOwner)
 
@@ -84,7 +84,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
 
         sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())

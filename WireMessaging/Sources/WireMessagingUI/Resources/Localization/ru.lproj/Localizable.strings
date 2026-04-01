@@ -80,6 +80,8 @@
 "conversation.creationForm.apps.toggle" = "Разрешить приложения";
 "conversation.creationForm.guests.toggle" = "Разрешить гостей";
 "conversation.creationForm.guests.description" = "Открыть эту беседу для пользователей, не входящих в вашу команду или сервис.";
+"conversation.creationForm.appsDisabled.title" = "Ваша команда еще не использует приложения";
+"conversation.creationForm.appsDisabled.message" = "Для улучшения рабочего процесса с приложениями, вашей команде требуется настройка. Пожалуйста, свяжитесь с администратором вашей команды.";
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
@@ -297,8 +299,8 @@
 "conversation.wireCells.sorting.key.size" = "Размер";
 "conversation.wireCells.sorting.order.date.recentFirst" = "Сначала новые";
 "conversation.wireCells.sorting.order.date.oldestFirst" = "Сначала старые";
-"conversation.wireCells.sorting.order.name.az" = "A to Z";
-"conversation.wireCells.sorting.order.name.za" = "Z to A";
+"conversation.wireCells.sorting.order.name.az" = "А-Я";
+"conversation.wireCells.sorting.order.name.za" = "Я-А";
 "conversation.wireCells.sorting.order.size.smallestFirst" = "Сначала маленькие";
 "conversation.wireCells.sorting.order.size.largestFirst" = "Сначала большие";
 "conversation.wireCells.sorting.results" = "Результаты в общем диске";

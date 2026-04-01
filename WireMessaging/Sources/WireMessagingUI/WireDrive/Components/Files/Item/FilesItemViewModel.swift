@@ -35,8 +35,9 @@ final class FilesItemViewModel: ObservableObject {
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
-    enum ItemAction: String {
-        case open
+    enum ItemAction {
+        /// Can be open, download or cancel download, depening on the state of the file
+        case primaryAction
         case showVersionHistory
         case edit
         case rename
@@ -53,7 +54,7 @@ final class FilesItemViewModel: ObservableObject {
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
     
     @Published private var asset: WireDriveLocalAsset?
-
+    @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
@@ -115,9 +116,17 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
+        self.fileTracker = .init()
+        fileTracker.onSmallFileLoaded = { [weak self] in
+            self?.performAction(.primaryAction)
+        }
+
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             guard let self else { return }
             self.asset = asset
+            if let asset {
+                self.fileTracker.handleDownloadState(fromAsset: asset)
+            }
         }.store(in: &cancellables)
     }
 
@@ -128,46 +137,26 @@ final class FilesItemViewModel: ObservableObject {
     var isDownloadOptionAvailable: Bool {
         guard item.kind == .file && !isOffline else { return false }
 
-        return switch asset?.downloadState {
-        case .downloaded:
+        return switch fileTracker.state {
+        case .loaded:
             false
         default:
             true
-        }
-    }
-
-    var isDownloading: Bool {
-        switch asset?.downloadState {
-        case .downloading:
-            true
-        default:
-            false
         }
     }
     
     var isDownloadingForOfflineUse: Bool {
-        switch asset?.downloadState {
-        case .downloading where asset?.isAvailableOffline == true:
+        switch fileTracker.state {
+        case .loading where asset?.isAvailableOffline == true:
             true
         default:
             false
         }
     }
 
-    var progress: Double? {
-        switch asset?.downloadState {
-        case let .downloading(progress):
-            progress
-        case .failed:
-            1 // We show a full red progress bar on failure
-        default:
-            nil
-        }
-    }
-
-    var showErrorState: Bool {
-        switch asset?.downloadState {
-        case .failed:
+    var isDownloading: Bool {
+        switch fileTracker.state {
+        case .loading:
             true
         default:
             false
@@ -178,7 +167,7 @@ final class FilesItemViewModel: ObservableObject {
         item.isEditable
     }
 
-    func performMenuAction(_ action: ItemAction) {
+    func performAction(_ action: ItemAction) {
         switch action {
         case .restore:
             showRestoreConfirmation()
@@ -186,18 +175,11 @@ final class FilesItemViewModel: ObservableObject {
             showDeleteConfirmation(deletePermanently: true)
         case .deleteToRecycleBin:
             showDeleteConfirmation(deletePermanently: false)
-        case .makeAvailableOffline:
+        case .makeAvailableOffline, .removeAvailableOffline:
             Task { await onItemAction(action, item) }
         default:
             Task { await onItemAction(action, item) }
         }
-    }
-
-    func download() async {
-        precondition(item.kind == .file)
-
-        // Ignore errors as these will be reported via the `asset` publisher.
-        try? await localAssetRepository.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
     }
 
     func showDeleteConfirmation(deletePermanently: Bool) {
@@ -379,7 +361,7 @@ final class FilesItemViewModel: ObservableObject {
         var actions: Set<ItemAction> = []
 
         if !isInRecycleBin {
-            actions.insert(.open)
+            actions.insert(.primaryAction)
             
             if !isOffline {
                 actions.insert(.shareLink)
@@ -420,8 +402,8 @@ final class FilesItemViewModel: ObservableObject {
 
     var isAvailableOffline: Bool {
         let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
-        let isDownloaded = switch asset?.downloadState {
-        case .downloaded:
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
             true
         default:
             false

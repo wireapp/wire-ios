@@ -25,6 +25,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
@@ -1169,7 +1170,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         videoButton.accessibilityIdentifier = "videoButton"
         photoButton.accessibilityIdentifier = "photoButton"
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
-        sketchButton.accessibilityIdentifier = "sketchButton"
+        sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
         pingButton.accessibilityIdentifier = "pingButton"
         locationButton.accessibilityIdentifier = "locationButton"
         gifButton.accessibilityIdentifier = "gifButton"

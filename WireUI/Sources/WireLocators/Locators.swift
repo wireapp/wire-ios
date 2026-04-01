@@ -63,6 +63,8 @@ public enum Locators {
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
+        case clearOptionOnContextMenu = "Clear Content…"
+        case clearButtonOnBottomSheet
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
@@ -118,6 +120,12 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case sketchButton
+        case canvas
+        case canvasSendButton
+        case attachmentImagePreview
+        case attachmentVideoPreview
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {
@@ -153,6 +161,7 @@ public enum Locators {
 
     public enum ConversationDetailsActions: String {
         case archive
+        case clearContent
     }
 
     public enum UserProfilePage: String {
@@ -171,6 +180,13 @@ public enum Locators {
 
         case groupNameField
         case newGroupNextButton
+        case sharedDriveSwitch
+    }
+
+    public enum CreateChannelPage: String {
+
+        case channelNameField
+        case newChannelNextButton
         case sharedDriveSwitch
     }
 
@@ -197,6 +213,7 @@ public enum Locators {
         case cancelUserSearch = "Cancel"
         case cancel
         case usernameCell
+        case createNewChannelButton
     }
 
     public enum OnMyiPhonePage: String {

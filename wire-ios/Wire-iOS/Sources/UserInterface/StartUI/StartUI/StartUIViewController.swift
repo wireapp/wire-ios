@@ -40,8 +40,9 @@ final class StartUIViewController: UIViewController {
     weak var delegate: StartUIDelegate?
 
     let searchController = UISearchController(searchResultsController: nil)
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
-    let groupSelector = SearchGroupSelector()
+    let groupSelector: SearchGroupSelector
 
     lazy var conversationTypePicker: UIViewController = {
         let canCreateChannels = userSession.channelsFeature.canCreateChannels(
@@ -119,7 +120,10 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is Proteus the team has been using bots
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
+        guard
+            SearchGroup.all(for: userSession.defaultProtocol).count > 1,
+            userSession.selfUser.canSeeServices
+        else { return false }
 
         switch userSession.defaultProtocol {
         case .mls:
@@ -170,6 +174,7 @@ final class StartUIViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
         )
+        self.groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -247,13 +252,18 @@ final class StartUIViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     private func configGroupSelector() {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if group == .services {
+            if group == .bots || group == .apps {
                 self?.searchController.searchBar.text = ""
             }
             self?.searchResults.searchGroup = group
@@ -327,11 +337,13 @@ final class StartUIViewController: UIViewController {
                 searchResults.mode = .search
                 searchResults.searchForUsers(withQuery: searchString)
             }
+        } else if groupSelector.group == .apps {
+            searchResults.searchForApps(withQuery: searchString)
         } else {
-            searchResults.searchForServices(withQuery: searchString)
+            searchResults.searchForBots(withQuery: searchString)
         }
         emptyResultView.updateStatus(
-            searchingForServices: groupSelector.group == .services,
+            searchingForApps: [.apps, .bots].contains(groupSelector.group),
             hasFilter: !searchString.isEmpty
         )
     }
