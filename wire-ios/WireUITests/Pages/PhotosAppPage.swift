@@ -85,8 +85,7 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func shareImageToWire() throws -> PhotosAppPage {
-        XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
-        shareButton.tap()
+        shareButton.waitAndTap()
         XCTAssertTrue(shareToWireApp.waitForExistence(timeout: timeout))
         shareToWireApp.tap()
         return self

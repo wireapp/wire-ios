@@ -69,10 +69,14 @@ class SharedDriveFilesPage: PageModel {
     }
 
     @discardableResult
-    func verifyFileTypeAndMetadata(username: String) throws -> SharedDriveFilesPage {
-        XCTAssertTrue(fileIcon.exists)
-        XCTAssertTrue(fileName.label.contains(".png"))
-        XCTAssertTrue(sentBy.label.contains(username))
+    func verifyFileTypeAndMetadata(
+        username: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> SharedDriveFilesPage {
+        XCTAssertTrue(fileIcon.exists, file: file, line: line)
+        XCTAssertTrue(fileName.label.contains(".png"), file: file, line: line)
+        XCTAssertTrue(sentBy.label.contains(username), file: file, line: line)
         return try SharedDriveFilesPage()
     }
 
