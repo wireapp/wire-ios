@@ -60,6 +60,7 @@ actor ExpiringActivityManager {
     }
 
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
+        try await withTaskCancellationHandler {
         try await withCheckedThrowingContinuation { continuation in
             // Shared between both callback branches.
             let semaphore = DispatchSemaphore(value: 0)
@@ -105,6 +106,8 @@ actor ExpiringActivityManager {
                     }
                 }
             }
+        } onCancel: {
+            Task { try? await self.stopWork() }
         }
     }
 

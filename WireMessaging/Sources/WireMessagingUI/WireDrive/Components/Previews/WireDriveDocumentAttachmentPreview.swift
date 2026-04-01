@@ -34,22 +34,19 @@ struct WireDriveDocumentAttachmentPreview: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-    let progress: Double?
-    let isError: Bool
+    let state: WireDriveFileUITracker.State
+    let isDraftPreview: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview {
             WireDriveDocumentHeaderView(
                 headerIcon: headerIcon,
                 headerText: headerText,
                 labelText: labelText,
-                progress: progress,
-                isError: isError,
+                isDraftPreview: isDraftPreview,
+                state: state
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -62,8 +59,8 @@ struct WireDriveDocumentAttachmentPreview: View {
         headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        isError: false
+        state: .loading(progress: 0.7, isLargeFile: false),
+        isDraftPreview: false
     )
     .frame(width: 222, height: 74)
 }

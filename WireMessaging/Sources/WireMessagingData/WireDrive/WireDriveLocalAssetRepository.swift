@@ -122,37 +122,42 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                 )
             )
 
-            let (progress, download) = fileDownloader.download(from: downloadURL)
-            for await progress in progress {
+            let (progress, urlDownloadTask) = fileDownloader.download(from: downloadURL)
+
+            var fileSize: WireDriveLocalAsset.FileSize = .small
+
+            let timerTask = Task {
+                try await Task.sleep(for: .seconds(1))
+                fileSize = .large
+            }
+
+            for try await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
+                asset.fileSize = fileSize
                 try store.upsertAsset(asset)
             }
 
-            let (tempURL, _) = try await download.value
+            timerTask.cancel()
 
-            let filename = node.path.split(separator: "/").last.flatMap(String.init) ?? "-"
-
-            var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
-
-            let extensionComponents = asset.cacheKey.split(separator: ".")
-            let pathWithoutExtension: String = if extensionComponents.count > 1 {
-                String(extensionComponents.dropLast().joined(separator: "."))
-            } else {
-                asset.cacheKey
+            if Task.isCancelled {
+                urlDownloadTask.cancel()
+                try Task.checkCancellation()
             }
 
-            let key = pathWithoutExtension + "/" + filename
-
+            let (tempURL, _) = try await urlDownloadTask.value
+            let key = WireDriveLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: node.path)
             try await fileCache.saveFile(at: tempURL, key: key)
 
-            asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
+            var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
+
             try store.upsertAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
-                asset.downloadState = .failed(error: error)
+                // On cancellation error, resets the asset to its initial download state.
+                asset.downloadState = (error is CancellationError) ? .pending : .failed(error: error)
                 try store.upsertAsset(asset)
             }
 
