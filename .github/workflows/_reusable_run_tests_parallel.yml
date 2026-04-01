@@ -1,0 +1,270 @@
+on:
+  workflow_call:
+    inputs:
+      folders:
+        type: string
+      all:
+        type: boolean
+        default: false
+        required: false
+      branch:
+        type: string
+        required: false
+      notify_secret:
+        type: string
+        required: true
+      test_dependencies:
+        type: boolean
+        default: false
+      notify:
+        type: string
+        required: true
+        default: 'failure' # values: always | failure | never
+
+    secrets:
+      ZENKINS_USERNAME:
+        required: true
+      DD_API_KEY:
+        required: true
+      UI_TEST_LOGIN_EMAIL:
+        required: true
+      UI_TEST_LOGIN_PASSWORD:
+        required: true
+
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_TEST_LOGIN_EMAIL: ${{ secrets.UI_TEST_LOGIN_EMAIL }}
+  UI_TEST_LOGIN_PASSWORD: ${{ secrets.UI_TEST_LOGIN_PASSWORD }}
+
+jobs:
+  # ── 1. Determine which framework schemes need to be tested ──────────────────
+  generate-framework-list:
+    name: Generate framework list
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    timeout-minutes: 10
+    outputs:
+      schemes: ${{ steps.list-schemes.outputs.schemes }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: fastlane/
+
+      - name: List schemes
+        id: list-schemes
+        run: |
+          RAW=$(bundle exec fastlane list_schemes_json \
+            folders:"${{ inputs.folders }}" \
+            all:${{ inputs.all }} \
+            test_dependencies:${{ inputs.test_dependencies }} \
+            2>/dev/null | tail -n 1)
+          echo "schemes=$RAW" >> "$GITHUB_OUTPUT"
+          echo "Schemes to test: $RAW"
+
+  # ── 2. One job per framework, all in parallel ───────────────────────────────
+  test-framework:
+    name: "Test ${{ matrix.scheme }}"
+    needs: generate-framework-list
+    if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    strategy:
+      matrix:
+        scheme: ${{ fromJson(needs.generate-framework-list.outputs.schemes) }}
+      fail-fast: false
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+
+    steps:
+      - name: Setup test environment
+        uses: ./.github/actions/setup-test-environment
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'true'
+
+      - name: "Test ${{ matrix.scheme }}"
+        run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
+
+      - name: Find .xcresult path
+        if: always()
+        id: find-xcresult
+        run: |
+          XCRESULT=$(find artifacts -type d -name "*.xcresult" | head -n 1)
+          echo "path=$XCRESULT" >> "$GITHUB_OUTPUT"
+          echo "Found xcresult: $XCRESULT"
+
+      - name: Analyze .xcresult
+        if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
+        uses: wireapp/analyze-xcoderesults-action@v1
+        with:
+          results: ${{ steps.find-xcresult.outputs.path }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload .xcresult as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "xcresult-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: artifacts/**/*.xcresult
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "test-reports-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+
+      - name: Upload failed snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            **/SnapshotResults/
+            xcodebuild*.log
+
+      - name: Publish test results summary
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        with:
+          files: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+          check_name: "Test Results – ${{ matrix.scheme }}"
+          compare_to_earlier_commit: false
+
+      - name: Archive DerivedData logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+
+  # ── 3. Notify on Wire ───────────────────────────────────────────────────────
+  notify:
+    name: Notify
+    needs: test-framework
+    if: always()
+    runs-on: ubuntu-24.04
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+    steps:
+      - name: Sanitize branch name
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+
+      - name: Read commit metadata
+        id: commit-info
+        shell: bash
+        run: |
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
+
+      - name: Notify on Wire (always)
+        if: ${{ inputs.notify == 'always' }}
+        continue-on-error: true
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ needs.test-framework.result }}
+          text: |
+            **Tests (parallel) for ${{ env.SANITIZED_BRANCH }}**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Notify on Wire (failure only)
+        if: ${{ inputs.notify == 'failure' && needs.test-framework.result == 'failure' }}
+        continue-on-error: true
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            **🚨 Tests (parallel) for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  # ── 4. Upload test results to Datadog ──────────────────────────────────────
+  upload-test-results-datadog:
+    name: Upload to Datadog
+    runs-on: ubuntu-24.04
+    needs: test-framework
+    if: always()
+    steps:
+      - name: Sanitize branch name
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          merge-multiple: true
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install datadog-ci
+        run: npm install -g @datadog/datadog-ci
+
+      - name: Upload results
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ci
+          DATADOG_SITE: datadoghq.eu
+        run: |
+          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .

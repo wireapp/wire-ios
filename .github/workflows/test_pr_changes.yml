@@ -1,8 +1,8 @@
 name: Test Pull Request Changes
 
-on: 
+on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
   merge_group:
     types: [checks_requested]
 
@@ -94,14 +94,31 @@ jobs:
             wire-ios-utilities:
               - 'wire-ios-utilities/**'
 
+  # ── Sequential (default) ────────────────────────────────────────────────────
+  # Used for merge_group events or PRs without the `parallel-testing` label.
   trigger_tests_pr:
     needs: detect-changes
     name: PR Tests
+    if: ${{ github.event_name == 'merge_group' || !contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
-      run_critical_flows: false # separare workflow
+      run_critical_flows: false # separate workflow
+      notify: failure
+    secrets: inherit
+
+  # ── Parallel (opt-in via label) ─────────────────────────────────────────────
+  # Add the `parallel-testing` label to a PR to run one job per framework in parallel.
+  trigger_tests_pr_parallel:
+    needs: detect-changes
+    name: PR Tests (parallel)
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
+    uses: ./.github/workflows/_reusable_run_tests_parallel.yml
+    with:
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      notify_secret: WIRE_IOS_CI_WEBHOOK
+      test_dependencies: ${{ startsWith(github.base_ref, 'release/cycle') }}
       notify: failure
     secrets: inherit
