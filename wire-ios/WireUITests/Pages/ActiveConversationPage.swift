@@ -128,6 +128,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func goBackToConversationPage() throws -> ConversationsPage {
         conversationBackButton.waitAndTap()
         return try ConversationsPage()

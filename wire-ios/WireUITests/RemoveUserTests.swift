@@ -22,21 +22,21 @@ class RemoveUserTests: WireUITestCase {
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
     @MainActor
-    func testRemoveTeamMemberAndConversationListUpdated() async throws {
+    func testRemoveTeamMemberAndConversationListUpdated_TC_9491() async throws {
         try await testRemoveTeamMember(testRemovalOnConversation: false)
     }
 
     @MainActor
-    func testUserDeletedForPersonalUser() async throws {
+    func testUserDeletedForPersonalUser_TC_9490() async throws {
         // GIVEN
         let member1 = try await userHelper.createPersonalUser()
         let member2 = try await userHelper.createPersonalUser()
 
-        _ = try await login(member2)
+        _ = try await loginToBackend(user: member2)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        let member1UserProfilePage = try await login(member1)
+        try await loginToBackend(user: member1)
             .tapPlusButtonToCreateGroup()
             .searchUserByUserHandle(member2.name)
             .tapSearchedUserCell(handle: member2.username)
@@ -88,11 +88,11 @@ class RemoveUserTests: WireUITestCase {
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
 
-        _ = try await login(member2)
+        _ = try await loginToBackend(user: member2)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        let member1UserProfilePage = try await login(member1)
+        let member1UserProfilePage = try await loginToBackend(user: member1)
             .tapPlusButtonToCreateGroup()
             .searchUserByUserHandle(member2.name)
             .tapSearchedUserCell(handle: member2.username)
@@ -131,13 +131,6 @@ class RemoveUserTests: WireUITestCase {
             oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
             "system message should be inserted"
         )
-    }
-
-    @MainActor
-    private func login(_ user: UserInfo) async throws -> ConversationsPage {
-        print("login: email \(user.email) and password \(user.password)")
-        return try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
     }
 
     private func deleteMember(_ user: UserInfo) async throws {

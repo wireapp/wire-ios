@@ -86,6 +86,7 @@ class NewConversationPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeNewConversationPage() throws -> ConversationsPage {
         cancelButtonOnSearchedUserPage.tap()
         cancelButtonOnNewConversation.tap()
