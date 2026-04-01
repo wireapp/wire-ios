@@ -39,7 +39,7 @@ final class MessagingTests: WireUITestCase {
         let conversationDomain = BackendContext.current.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try firstTimePage.acceptPopup()
 
         // WHEN member send text
         try await testServicesClient.sendText(
@@ -87,7 +87,7 @@ final class MessagingTests: WireUITestCase {
         let conversationDomain = BackendContext.current.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationsPage = try firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try firstTimePage.acceptPopup()
         let imageURL = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
