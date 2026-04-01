@@ -42,7 +42,7 @@ struct FilesItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                icon()
+                icon().accessibilitySortPriority(3)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
@@ -52,6 +52,8 @@ struct FilesItemView: View {
 
                     infoRow()
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilitySortPriority(2)
 
                 Spacer()
 
@@ -65,6 +67,7 @@ struct FilesItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
+                .accessibilitySortPriority(1)
                 .deletionConfirmationDialog( // delete file to recycle bin
                     isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,
                     title: Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
@@ -141,6 +144,7 @@ struct FilesItemView: View {
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight)
+            .accessibilityLabel(viewModel.icon.accessibilityIconLabel)
     }
 
     @ViewBuilder
@@ -317,6 +321,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityIdentifier("fileMenu.\(itemAction)")
         }
     }
 

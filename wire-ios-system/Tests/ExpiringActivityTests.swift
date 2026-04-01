@@ -75,6 +75,41 @@ class ExpiringActivityTests: XCTestCase {
         } catch {}
     }
 
+    func testThatWorkIsCancelled_WhenOuterTaskIsCancelled() async throws {
+
+        // given
+        let api = MockExpiringActivityAPI()
+        let sut = ExpiringActivityManager(api: api)
+
+        api.method = { _, block in
+            self.concurrentQueue.async {
+                block(false)
+            }
+        }
+
+        let workStarted = expectation(description: "work started")
+
+        // when
+        let outerTask = Task {
+            try await sut.withExpiringActivity(reason: "test activity") {
+                workStarted.fulfill()
+                while true {
+                    await Task.yield()
+                    try Task.checkCancellation()
+                }
+            }
+        }
+
+        await fulfillment(of: [workStarted], timeout: 1)
+        outerTask.cancel()
+
+        // then
+        do {
+            try await outerTask.value
+            XCTFail("Expected a cancellation error to be thrown")
+        } catch {}
+    }
+
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
 
         // given

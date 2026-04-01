@@ -21,6 +21,8 @@ public import SwiftUI
 public import UniformTypeIdentifiers
 public import WireMessagingDomain
 
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 extension WireDriveFileType {
 
     // MARK: - Factory
@@ -128,4 +130,41 @@ extension WireDriveFileType {
         UIImage(resource: imageResource)
     }
 
+    // MARK: - Accessibility File Icon Label
+
+    var accessibilityIconLabel: String {
+        // Folder is a special case that doesn't use the "File type" prefix
+        if self == .folder {
+            return Accessibility.Files.folder
+        }
+
+        let typeName: String = switch self {
+        case .archive:
+            Accessibility.Files.archive
+        case .audio:
+            Accessibility.Files.audio
+        case .code:
+            Accessibility.Files.code
+        case .document:
+            Accessibility.Files.document
+        case .image:
+            Accessibility.Files.image
+        case .other:
+            Accessibility.Files.other
+        case .pdf:
+            Accessibility.Files.pdf
+        case .presentation:
+            Accessibility.Files.presentation
+        case .spreadsheet:
+            Accessibility.Files.spreadsheet
+        case .video:
+            Accessibility.Files.video
+        case .text:
+            Accessibility.Files.text
+        case .folder:
+            "" // Unreachable due to the check above, but required for exhaustiveness
+        }
+
+        return Accessibility.Files.filetype.replacingOccurrences(of: "{0}", with: typeName)
+    }
 }

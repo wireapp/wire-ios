@@ -31,6 +31,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let collectionView = ReactionsCollectionView()
     private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
     private let searchBar = UISearchBar()
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
     private let selectedReactions: Set<Emoji.ID>
 
     private var deleting = false
@@ -49,6 +50,11 @@ final class CompleteReactionPickerViewController: UIViewController {
         sectionViewController.sectionDelegate = self
         setupViews()
         createConstraints()
+
+        self.clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
 
         NotificationCenter.default.addObserver(
             self,

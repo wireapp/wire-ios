@@ -82,6 +82,7 @@ public struct ValidationTextField: View {
                         .frame(width: 16, height: 16)
                         .padding(16)
                 })
+                .accessibilityLabel(L10n.ValidationTextField.removeEntry)
             }
             .padding(.leading, 16)
             .frame(height: fieldHeight)

@@ -55,7 +55,7 @@ struct WireDriveLargeVideoPreviewView: View {
                         durationView(duration: duration)
                     }
                 }
-            }
+            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
