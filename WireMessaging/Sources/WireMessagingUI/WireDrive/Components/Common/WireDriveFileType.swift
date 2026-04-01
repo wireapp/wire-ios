@@ -47,7 +47,7 @@ extension WireDriveFileType {
                 .audio
             case .script, .sourceCode, .xml, .html, .json:
                 .code
-            case .image:
+            case .image, .svg:
                 .image
             case .pdf:
                 .pdf

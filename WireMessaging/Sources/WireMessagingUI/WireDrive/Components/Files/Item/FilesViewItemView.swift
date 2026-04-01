@@ -50,37 +50,7 @@ struct FilesItemView: View {
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                    HStack(spacing: 5) {
-                        let tagsInfo = viewModel.tagsInfo
-
-                        if let firstTag = tagsInfo.firstTag {
-                            Text(firstTag)
-                                .font(for: .subline1)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.vertical, 2)
-                                .padding(.horizontal, 5)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
-                                }
-                        }
-
-                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
-                            Text(additionalTagsIndicator)
-                                .font(for: .subline1)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.trailing, 2)
-                        }
-
-                        Text(viewModel.subtitle ?? "")
-                            .font(for: .subline1)
-                            .lineLimit(1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    }
+                    infoRow()
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilitySortPriority(2)
@@ -142,12 +112,7 @@ struct FilesItemView: View {
                     confirm: { confirmRestore() }
                 )
             }
-            .padding(.top, 8)
-            .padding(.bottom, 5) // Less padding to accommodate progress bar
-
-            ProgressView(value: viewModel.progress, total: 1)
-                .opacity(viewModel.progress == nil ? 0 : 1)
-                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+            .padding(.vertical, 8)
 
             Divider()
         }
@@ -156,6 +121,18 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
+        switch viewModel.fileTracker.state {
+        case .notLoaded, .loaded(showReadyToOpen: false), .failed:
+            fileTypeIcon()
+        case .loaded(showReadyToOpen: true):
+            progressIcon(progress: 1, readyToOpen: true)
+        case let .loading(progress: progress, _):
+            progressIcon(progress: progress, readyToOpen: false)
+        }
+    }
+
+    @ViewBuilder
+    private func fileTypeIcon() -> some View {
         Image(viewModel.icon.imageResource)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -171,27 +148,94 @@ struct FilesItemView: View {
     }
 
     @ViewBuilder
-    private func menuContent() -> some View {
-        menuItem(.open) { item in
-            Button {
-                viewModel.performMenuAction(item)
-            } label: {
-                Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+    private func progressIcon(progress: Double, readyToOpen: Bool) -> some View {
+        ProgressView(value: progress)
+            .progressViewStyle(.wireDriveAsset())
+            .padding(.horizontal, iconHorizontalPadding)
+            .frame(minWidth: iconSpaceWidth)
+            .frame(height: iconSpaceHeight + 3)
+            .overlay {
+                if readyToOpen {
+                    Image(systemName: "checkmark")
+                        .fontWeight(.medium)
+                }
             }
-            .disabled(viewModel.isDownloading)
+            .foregroundStyle(wireAccentColor)
+    }
 
-            if viewModel.isDownloadOptionAvailable {
-                Button {
-                    Task { await viewModel.download() }
-                } label: {
-                    Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+    @ViewBuilder
+    private func tagsInfo() -> some View {
+        let tagsInfo = viewModel.tagsInfo
+
+        if let firstTag = tagsInfo.firstTag {
+            HStack(spacing: 5) {
+                Text(firstTag)
+                    .font(for: .subline1)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 5)
+                    .background {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
+                    }
+
+                if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                    Text(additionalTagsIndicator)
+                        .font(for: .subline1)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
+                        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                        .padding(.trailing, 2)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func infoRowTextLine(_ text: String, error: Bool = false) -> some View {
+        let color = error ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color
+        Text(text)
+            .font(for: .subline1)
+            .lineLimit(1)
+            .foregroundStyle(color)
+    }
+
+    @ViewBuilder
+    private func infoRow() -> some View {
+        switch viewModel.fileTracker.state {
+        case .notLoaded, .loaded(showReadyToOpen: false):
+            HStack(spacing: 5) {
+                tagsInfo()
+                infoRowTextLine(viewModel.subtitle ?? "")
+            }
+        case .loaded(showReadyToOpen: true):
+            infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
+        case .loading:
+            infoRowTextLine(Strings.Files.tapToCancelDownload)
+        case .failed:
+            infoRowTextLine(Strings.Files.downloadFailed, error: true)
+        }
+    }
+
+    @ViewBuilder
+    private func menuContent() -> some View {
+        menuItem(.primaryAction) { item in
+            Button {
+                viewModel.performAction(item)
+            } label: {
+                if viewModel.isDownloading {
+                    Label(Strings.Files.Item.Menu.cancelDownload, systemImage: "xmark")
+                } else {
+                    Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                 }
             }
         }
 
         menuItem(.shareLink) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(
                     Strings.Files.Item.Menu.shareLink,
@@ -202,7 +246,7 @@ struct FilesItemView: View {
 
         menuItem(.showVersionHistory) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(
                     Strings.Files.Item.Menu.versionHistory,
@@ -213,7 +257,7 @@ struct FilesItemView: View {
 
         menuItem(.edit) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
             }
@@ -223,7 +267,7 @@ struct FilesItemView: View {
 
         menuItem(.rename) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
             }
@@ -231,7 +275,7 @@ struct FilesItemView: View {
 
         menuItem(.moveToFolder) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
             }
@@ -239,7 +283,7 @@ struct FilesItemView: View {
 
         menuItem(.editTags) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
             }
@@ -247,7 +291,7 @@ struct FilesItemView: View {
 
         menuItem(.restore) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
             }
@@ -256,7 +300,7 @@ struct FilesItemView: View {
         menuItem(.deletePermanently) { item in
             Button(
                 role: .destructive,
-                action: { viewModel.performMenuAction(item) },
+                action: { viewModel.performAction(item) },
                 label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
@@ -264,7 +308,7 @@ struct FilesItemView: View {
         menuItem(.deleteToRecycleBin) { item in
             Button(
                 role: .destructive,
-                action: { viewModel.performMenuAction(item) },
+                action: { viewModel.performAction(item) },
                 label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
@@ -287,10 +331,6 @@ struct FilesItemView: View {
 
     private func confirmRestore() {
         Task { await viewModel.confirmRestore() }
-    }
-
-    private var progressColor: Color {
-        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
 }
 
