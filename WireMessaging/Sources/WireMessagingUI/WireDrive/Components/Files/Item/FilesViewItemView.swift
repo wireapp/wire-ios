@@ -115,6 +115,7 @@ struct FilesItemView: View {
             .padding(.vertical, 8)
             
             Divider()
+            
         }.contentShape(Rectangle()) // Tap area
     }
 
@@ -154,12 +155,23 @@ struct FilesItemView: View {
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight + 3)
             .overlay {
-                if readyToOpen {
+                if viewModel.isDownloadingForOfflineUse {
+                    Image(systemName: "arrow.down")
+                        .foregroundStyle(wireAccentColor)
+                } else if readyToOpen {
                     Image(systemName: "checkmark")
                         .fontWeight(.medium)
                 }
             }
             .foregroundStyle(wireAccentColor)
+    }
+    
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 10, height: 10)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
 
     @ViewBuilder
@@ -206,16 +218,28 @@ struct FilesItemView: View {
         switch viewModel.fileTracker.state {
         case .notLoaded, .loaded(showReadyToOpen: false):
             HStack(spacing: 5) {
+                if viewModel.isAvailableOffline { availableOfflineIcon() }
                 tagsInfo()
                 infoRowTextLine(viewModel.subtitle ?? "")
             }
         case .loaded(showReadyToOpen: true):
             infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
         case .loading:
-            infoRowTextLine(Strings.Files.tapToCancelDownload)
+            if viewModel.isDownloadingForOfflineUse {
+                downloadingInfoRowTexLine()
+            } else {
+                infoRowTextLine(Strings.Files.tapToCancelDownload)
+            }
         case .failed:
             infoRowTextLine(Strings.Files.downloadFailed, error: true)
         }
+    }
+    
+    @ViewBuilder private func downloadingInfoRowTexLine() -> some View {
+        Text("Downloading file...")
+            .font(for: .subline1)
+            .lineLimit(1)
+            .foregroundStyle(wireAccentColor)
     }
 
     @ViewBuilder

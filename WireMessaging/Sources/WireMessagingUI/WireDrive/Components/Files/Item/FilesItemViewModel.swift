@@ -149,8 +149,8 @@ final class FilesItemViewModel: ObservableObject {
     }
     
     var isDownloadingForOfflineUse: Bool {
-        switch asset?.downloadState {
-        case .downloading where asset?.isAvailableOffline == true:
+        switch fileTracker.state {
+        case .loading where asset?.isAvailableOffline == true:
             true
         default:
             false
@@ -392,8 +392,8 @@ final class FilesItemViewModel: ObservableObject {
 
     var isAvailableOffline: Bool {
         let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
-        let isDownloaded = switch asset?.downloadState {
-        case .downloaded:
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
             true
         default:
             false
