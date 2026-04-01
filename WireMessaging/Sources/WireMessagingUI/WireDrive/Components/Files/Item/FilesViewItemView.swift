@@ -235,8 +235,8 @@ struct FilesItemView: View {
         }
     }
     
-    @ViewBuilder private func downloadingInfoRowTexLine() -> some View {
-        Text("Downloading file...")
+    @ViewBuilder private func downloadingInfoRowTextLine() -> some View {
+        Text(Strings.Files.downloadingFile)
             .font(for: .subline1)
             .lineLimit(1)
             .foregroundStyle(wireAccentColor)

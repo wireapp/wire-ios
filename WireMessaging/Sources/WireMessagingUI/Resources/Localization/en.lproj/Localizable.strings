@@ -182,6 +182,7 @@
 "conversation.wireCells.files.readyToOpenAfterDownload" = "Ready to open";
 "conversation.wireCells.files.tapToCancelDownload" = "Tap to cancel loading";
 "conversation.wireCells.files.downloadFailed" = "Unable to load, retry";
+"conversation.wireCells.files.downloadingFile" = "Downloading file...";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
