@@ -378,7 +378,7 @@ public final class MLSService: MLSServiceInterface {
                 return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
             // make sure we have the selfUser but only once
-            // and add self at last so for 1-1 if other user don't have key packages we don't depleet our keypackages
+            // add self in last position so - if the other user doesn't have key packages for 1-1 - we don't deplete our keypackages
             // for nothing
             let usersWithSelfUser = users.filter { $0 != mlsSelfUser } + [mlsSelfUser]
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
