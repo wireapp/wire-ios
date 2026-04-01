@@ -26,6 +26,7 @@ class WireUITestCase: XCTestCase {
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var userHelper: UserHelper!
+    var ssoHelper: SSOHelper!
     var callingServiceClient: CallingServiceClient!
 
     override func setUpWithError() throws {
@@ -40,6 +41,7 @@ class WireUITestCase: XCTestCase {
         ]
 
         userHelper = UserHelper()
+        ssoHelper = SSOHelper()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
