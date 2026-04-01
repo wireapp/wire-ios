@@ -29,6 +29,8 @@ struct FilesSortingView: View {
     @ScaledMetric private var selectedSortMenuIconWidth: CGFloat = 9
     @ScaledMetric private var selectedSortMenuIconHeight: CGFloat = 11
 
+    @Environment(\.isSearching) private var isSearching
+
     package init(
         viewModel: @autoclosure @escaping () -> FilesSortingViewModel,
     ) {
@@ -85,7 +87,7 @@ struct FilesSortingView: View {
 
             Spacer()
 
-            if !viewModel.isBrowsing {
+            if !viewModel.isBrowsing, isSearching {
                 Text(viewModel.resultsInTitle)
                     .font(for: .subline2)
                     .fontWeight(.semibold)
