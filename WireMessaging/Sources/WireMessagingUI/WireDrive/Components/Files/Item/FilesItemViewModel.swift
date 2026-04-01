@@ -64,8 +64,6 @@ final class FilesItemViewModel: ObservableObject {
 
     @Published private var networkMonitor = NetworkMonitor.shared
 
-    @Published var showOfflineDownload = false
-
     let fileName: String
     let subtitle: String?
     let icon: WireDriveFileType
