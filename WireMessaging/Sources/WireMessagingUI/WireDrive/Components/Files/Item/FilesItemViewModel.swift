@@ -64,6 +64,8 @@ final class FilesItemViewModel: ObservableObject {
 
     @Published private var networkMonitor = NetworkMonitor.shared
 
+    @Published var showOfflineDownload = false
+
     let fileName: String
     let subtitle: String?
     let icon: WireDriveFileType
@@ -116,7 +118,8 @@ final class FilesItemViewModel: ObservableObject {
         self.isInRecycleBin = isInRecycleBin
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
-            self?.asset = asset
+            guard let self else { return }
+            self.asset = asset
         }.store(in: &cancellables)
     }
 
@@ -138,6 +141,15 @@ final class FilesItemViewModel: ObservableObject {
     var isDownloading: Bool {
         switch asset?.downloadState {
         case .downloading:
+            true
+        default:
+            false
+        }
+    }
+    
+    var isDownloadingForOfflineUse: Bool {
+        switch asset?.downloadState {
+        case .downloading where asset?.isAvailableOffline == true:
             true
         default:
             false
@@ -176,6 +188,8 @@ final class FilesItemViewModel: ObservableObject {
             showDeleteConfirmation(deletePermanently: true)
         case .deleteToRecycleBin:
             showDeleteConfirmation(deletePermanently: false)
+        case .makeAvailableOffline:
+            Task { await onItemAction(action, item) }
         default:
             Task { await onItemAction(action, item) }
         }
@@ -185,7 +199,7 @@ final class FilesItemViewModel: ObservableObject {
         precondition(item.kind == .file)
 
         // Ignore errors as these will be reported via the `asset` publisher.
-        try? await localAssetRepository.downloadAsset(nodeID: nodeID)
+        try? await localAssetRepository.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
     }
 
     func showDeleteConfirmation(deletePermanently: Bool) {
@@ -407,8 +421,15 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isAvailableOffline: Bool {
-        // TODO: [WPB-24208] When PR merged, uncomment code
-        self.item.hashValue.isMultiple(of: 2) // localAssetRepository.asset(nodeID: nodeID).isAvailableOffline
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch asset?.downloadState {
+        case .downloaded:
+            true
+        default:
+            false
+        }
+        
+        return isAvailableOffline && isDownloaded
     }
 }
 

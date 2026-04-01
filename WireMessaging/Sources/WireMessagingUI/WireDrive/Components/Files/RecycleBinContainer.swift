@@ -114,7 +114,9 @@ package struct RecycleBinContainer: View {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(localAssetRepository: localAssetRepository),
+                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(localAssetRepository: localAssetRepository)
             ),
             title: path.last?.name,
             navigationPath: path,

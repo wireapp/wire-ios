@@ -41,11 +41,14 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
-    func downloadAsset(nodeID: UUID) async throws
+    func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
     @MainActor
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never>
+    
+    @MainActor
+    func updateAsset(_ asset: WireDriveLocalAsset) throws
 
     /// Cancels the asset download for a given `nodeID`.
     @MainActor

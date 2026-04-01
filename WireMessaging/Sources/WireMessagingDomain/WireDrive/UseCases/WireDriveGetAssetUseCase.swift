@@ -43,7 +43,7 @@ package struct WireDriveGetAssetUseCase {
             return fileURL
         }
 
-        try await localAssetRepository.downloadAsset(nodeID: nodeID)
+        try await localAssetRepository.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
         guard let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey else {
             throw Failure.invalidDownloadState
         }

@@ -79,13 +79,13 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
-    package func downloadAsset(nodeID: UUID) async throws {
+    package func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         if let existingTask = downloadTasks[nodeID] {
             try await existingTask.value
         } else {
             defer { downloadTasks[nodeID] = nil }
 
-            let task = Task { try await _downloadAsset(nodeID: nodeID) }
+            let task = Task { try await _downloadAsset(nodeID: nodeID, isAvailableOffline: isAvailableOffline) }
             downloadTasks[nodeID] = task
             try await task.value
         }
@@ -102,17 +102,21 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     package func cancelDownload(nodeID: UUID) {
         downloadTasks[nodeID]?.cancel()
     }
+    
+    @MainActor
+    package func updateAsset(_ asset: WireDriveLocalAsset) throws {
+        try store.upsertAsset(asset)
+    }
 
     // MARK: - Private
 
-    // TODO: [WPB-23967] - Pass flag whether the asset is available offline or not..
     @MainActor
-    private func _downloadAsset(nodeID: UUID) async throws {
+    private func _downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         do {
             let node = try await getNode(nodeID: nodeID)
             let (downloadURL, eTag) = try node.downloadInfo
 
-            try store.upsertAsset(
+            try updateAsset(
                 WireDriveLocalAsset(
                     nodeID: nodeID,
                     eTag: eTag,
@@ -122,8 +126,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                     conversationName: node.conversation?.name,
                     ownerName: node.ownerUserName,
                     modified: node.modified,
-                    isAvailableOffline: false,
-                    // TODO: [WPB-23967] - Once asset is downloaded, this will need to be set to true if the asset is available offline for the user.
+                    isAvailableOffline: isAvailableOffline,
                     downloadState: .pending
                 )
             )
@@ -132,7 +135,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             for await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
-                try store.upsertAsset(asset)
+                try updateAsset(asset)
             }
 
             let (tempURL, _) = try await download.value
@@ -142,12 +145,13 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
 
-            try store.upsertAsset(asset)
+            try updateAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
                 asset.downloadState = .failed(error: error)
-                try store.upsertAsset(asset)
+                asset.isAvailableOffline = false
+                try updateAsset(asset)
             }
 
             throw error
@@ -198,7 +202,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         asset.size = node.size
         asset.downloadState = downloadState
 
-        try store.upsertAsset(asset)
+        try updateAsset(asset)
 
         return (node, asset)
     }

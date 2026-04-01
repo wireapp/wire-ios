@@ -51,35 +51,55 @@ struct FilesItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     HStack(spacing: 5) {
-                        let tagsInfo = viewModel.tagsInfo
-
-                        if let firstTag = tagsInfo.firstTag {
-                            Text(firstTag)
+                        if viewModel.isDownloadingForOfflineUse {
+                            Image(systemName: "arrow.down.circle")
+                                .resizable()
+                                .frame(width: 10, height: 10)
+                                .foregroundStyle(wireAccentColor)
+                            
+                            Text("Downloading file..")
                                 .font(for: .subline1)
-                                .fontWeight(.medium)
                                 .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.vertical, 2)
-                                .padding(.horizontal, 5)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
-                                }
-                        }
+                                .foregroundStyle(wireAccentColor)
+                        } else {
+                            
+                            if viewModel.isAvailableOffline {
+                                Image(systemName: "arrow.down.circle.fill")
+                                    .resizable()
+                                    .frame(width: 10, height: 10)
+                                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                            }
+                            
+                            let tagsInfo = viewModel.tagsInfo
 
-                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
-                            Text(additionalTagsIndicator)
+                            if let firstTag = tagsInfo.firstTag {
+                                Text(firstTag)
+                                    .font(for: .subline1)
+                                    .fontWeight(.medium)
+                                    .lineLimit(1)
+                                    .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 5)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
+                                    }
+                            }
+
+                            if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                                Text(additionalTagsIndicator)
+                                    .font(for: .subline1)
+                                    .fontWeight(.medium)
+                                    .lineLimit(1)
+                                    .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                                    .padding(.trailing, 2)
+                            }
+
+                            Text(viewModel.subtitle ?? "")
                                 .font(for: .subline1)
-                                .fontWeight(.medium)
                                 .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.trailing, 2)
+                                .foregroundStyle(ColorTheme.Base.secondaryText.color)
                         }
-
-                        Text(viewModel.subtitle ?? "")
-                            .font(for: .subline1)
-                            .lineLimit(1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
                 }
 
@@ -142,11 +162,13 @@ struct FilesItemView: View {
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
 
-            ProgressView(value: viewModel.progress, total: 1)
-                .opacity(viewModel.progress == nil ? 0 : 1)
-                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+            if !viewModel.isDownloadingForOfflineUse {
+                ProgressView(value: viewModel.progress, total: 1)
+                    .opacity(viewModel.progress == nil ? 0 : 1)
+                    .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
 
-            Divider()
+                Divider()
+            }
         }
         .contentShape(Rectangle()) // Tap area
     }

@@ -150,6 +150,10 @@ private extension WireMessagingDomain.WireDriveLocalAsset {
             && contentType == other.contentType
             && size == other.size
             && isDownloaded == other.isDownloaded
+            && conversationName == other.conversationName
+            && modified == other.modified
+            && ownerName == other.ownerName
+            && isAvailableOffline == other.isAvailableOffline
     }
 
 }
