@@ -51,7 +51,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             appendMessage(to: conversation) // new message after cleared
 
             // when
-            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC)).predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertTrue(sut.evaluate(with: conversation))
@@ -69,7 +69,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.clearedTimeStamp = clearedTimestamp
 
             // when
-            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC)).predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertFalse(sut.evaluate(with: conversation))
@@ -87,7 +87,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.isArchived = false
 
             // when
-            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC)).predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertTrue(sut.evaluate(with: conversation))
