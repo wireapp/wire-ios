@@ -95,7 +95,7 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -219,7 +219,7 @@ final class TeamManageTests: WireUITestCase {
 
         let activeConversationPage = try conversationPage.openConversation()
 
-        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let fetchMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
             "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"

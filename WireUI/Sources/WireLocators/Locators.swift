@@ -78,6 +78,7 @@ public enum Locators {
         case textFilteredByFavourites = "Filtered by Favorites"
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
         case connectionRequestsCell
+        case unreadMessageCount
     }
 
     public enum SettingsPage: String {
@@ -120,6 +121,8 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case sharedFileLabel = "FileTransferTopLabel"
+        case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
         case canvasSendButton
