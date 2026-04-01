@@ -82,6 +82,7 @@ struct WireDriveLargeVideoPreviewView: View {
 
                                 Text(Strings.Files.tapToCancelDownload)
                                     .font(for: .subline1)
+                                    .lineLimit(1)
                                     .foregroundStyle(.white)
                                     .padding(.top, 65) // workaround so text shows up below the play icon view
                             }
@@ -89,6 +90,7 @@ struct WireDriveLargeVideoPreviewView: View {
                             darkBackgroundPlayIconView {
                                 Text(Strings.Files.downloadFailed)
                                     .font(for: .subline1)
+                                    .lineLimit(1)
                                     .foregroundStyle(.white)
                                     .padding(.top, 65)
                             }
@@ -106,9 +108,7 @@ struct WireDriveLargeVideoPreviewView: View {
     private func darkBackgroundPlayIconView(@ViewBuilder content: () -> some View) -> some View {
         ZStack {
             PlayIcon()
-
             Color.black.opacity(0.7)
-
             content()
         }
     }
