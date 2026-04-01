@@ -188,6 +188,7 @@ final class ServiceDetailViewController: UIViewController {
             serviceIdentifier: "",
             providerIdentifier: "",
             name: service.user.name ?? "",
+            category: appInfo?.category ?? "",
             serviceDescription: appInfo?.appDescription ?? ""
         )
         detailView.service.provider = ServiceProvider(
@@ -206,9 +207,9 @@ final class ServiceDetailViewController: UIViewController {
                         serviceIdentifier: "",
                         providerIdentifier: "",
                         name: service.user.name ?? "",
+                        category: appInfo.category,
                         serviceDescription: appInfo.description
                     )
-                    // TODO: category
                 } catch {
                     WireLogger.search.error("Failed to fetch app info")
                 }

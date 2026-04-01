@@ -156,8 +156,9 @@ final class ServiceView: UIView {
     private func updateForService() {
         logoView.user = service.user
         nameLabel.text = service.user.name
-        providerLabel.text = service.provider?.name
-        categoryLabel.text = "TODO"
+        providerLabel.text = if let createdBy = service.provider?.name, !createdBy.isEmpty { L10n.Localizable.Peoplepicker.AppDetails.createdBy(createdBy)
+        } else { nil }
+        categoryLabel.text = service.serviceUserDetails?.category
     }
 
 }
