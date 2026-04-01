@@ -1088,7 +1088,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
 
         // then
         await fulfillment(of: [expectation])
@@ -1100,7 +1100,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1135,7 +1135,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = try await task.performRemoteSearchForServices()
+        let resultAggregator = try await task.performRemoteSearchForBots()
         resultAggregator(&result)
 
         // then

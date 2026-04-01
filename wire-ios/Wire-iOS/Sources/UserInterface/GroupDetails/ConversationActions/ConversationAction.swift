@@ -65,7 +65,8 @@ extension ZMConversation {
         var actions = [Action]()
         actions.append(contentsOf: availableStandardActions())
         actions.append(.clearContent)
-        if teamRemoteIdentifier == nil, let connectedUser {
+        if let connectedUser,
+           connectedUser.teamIdentifier == nil || connectedUser.teamIdentifier != ZMUser.selfUser()?.teamIdentifier {
             actions.append(.block(isBlocked: connectedUser.isBlocked))
         }
         return actions
@@ -187,6 +188,7 @@ extension ZMConversation.Action {
     var accessibilityIdentifier: String? {
         switch self {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
+        case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         default: nil
         }
     }
