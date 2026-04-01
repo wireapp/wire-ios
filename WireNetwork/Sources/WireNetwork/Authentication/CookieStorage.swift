@@ -87,9 +87,9 @@ public actor CookieStorage: CookieStorageProtocol {
     ///
     /// - Parameter cookies: The cookies to store.
 
-    public func storeCookies(_ cookies: [HTTPCookie]) async throws {
+    public func storeCookies(_ cookies: [HTTPCookie]) throws {
         let cookieData = try HTTPCookieCodec.encodeCookies(cookies)
-        try await storeCookieData(cookieData)
+        try storeCookieData(cookieData)
     }
 
     /// Fetch stored cookies.
@@ -100,8 +100,8 @@ public actor CookieStorage: CookieStorageProtocol {
     ///
     /// - Returns: The stored cookies.
 
-    public func fetchCookies() async throws -> [HTTPCookie] {
-        guard let cookieData = try await fetchCookieData() else {
+    public func fetchCookies() throws -> [HTTPCookie] {
+        guard let cookieData = try fetchCookieData() else {
             return []
         }
 
@@ -116,13 +116,13 @@ public actor CookieStorage: CookieStorageProtocol {
     ///
     /// - Throws: An error if the keychain deletion fails.
 
-    public func removeCookies() async throws {
-        try await keychain.deleteItem(query: baseQuery)
+    public func removeCookies() throws {
+        try keychain.deleteItem(query: baseQuery)
     }
 
     // MARK: - Cookie data
 
-    private func storeCookieData(_ cookieData: Data) async throws {
+    private func storeCookieData(_ cookieData: Data) throws {
         let encryptedCookieData: Data
         do {
             encryptedCookieData = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
@@ -133,15 +133,15 @@ public actor CookieStorage: CookieStorageProtocol {
             throw Failure.failedToEncryptCookie(error)
         }
 
-        if try await fetchCookieData() != nil {
-            try await updateCookieInKeychain(encryptedCookieData)
+        if try fetchCookieData() != nil {
+            try updateCookieInKeychain(encryptedCookieData)
         } else {
-            try await addCookieToKeychain(encryptedCookieData)
+            try addCookieToKeychain(encryptedCookieData)
         }
     }
 
-    private func fetchCookieData() async throws -> Data? {
-        guard let encryptedCookieData = try await fetchCookieDataFromKeychain() else {
+    private func fetchCookieData() throws -> Data? {
+        guard let encryptedCookieData = try fetchCookieDataFromKeychain() else {
             return nil
         }
 
@@ -157,18 +157,18 @@ public actor CookieStorage: CookieStorageProtocol {
 
     // MARK: - Keychain
 
-    private func addCookieToKeychain(_ cookieData: Data) async throws {
+    private func addCookieToKeychain(_ cookieData: Data) throws {
         let query = addQuery(cookieData: cookieData)
-        try await keychain.addItem(query: query)
+        try keychain.addItem(query: query)
     }
 
-    private func updateCookieInKeychain(_ cookieData: Data) async throws {
+    private func updateCookieInKeychain(_ cookieData: Data) throws {
         let updateQuery: Set<KeychainQueryItem> = [.data(cookieData.base64EncodedData())]
-        try await keychain.updateItem(query: baseQuery, attributesToUpdate: updateQuery)
+        try keychain.updateItem(query: baseQuery, attributesToUpdate: updateQuery)
     }
 
-    private func fetchCookieDataFromKeychain() async throws -> Data? {
-        guard let base64CookieData: Data = try await keychain.fetchItem(query: fetchQuery) else {
+    private func fetchCookieDataFromKeychain() throws -> Data? {
+        guard let base64CookieData: Data = try keychain.fetchItem(query: fetchQuery) else {
             return nil
         }
 

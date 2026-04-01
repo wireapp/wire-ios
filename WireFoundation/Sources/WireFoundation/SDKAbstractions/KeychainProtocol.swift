@@ -23,20 +23,20 @@ public protocol KeychainProtocol: Sendable {
 
     func addItem(
         query: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
     func updateItem(
         query: Set<KeychainQueryItem>,
         attributesToUpdate: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
     func fetchItem<T>(
         query: Set<KeychainQueryItem>
-    ) async throws -> T?
+    ) throws -> T?
 
     func deleteItem(
         query: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
 }
 

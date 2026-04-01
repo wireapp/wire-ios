@@ -32,7 +32,7 @@ public struct Keychain: KeychainProtocol {
 
     public func addItem(
         query: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemAdd(
             query.toCFDictionary(),
             nil
@@ -50,7 +50,7 @@ public struct Keychain: KeychainProtocol {
     public func updateItem(
         query: Set<KeychainQueryItem>,
         attributesToUpdate: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemUpdate(
             query.toCFDictionary(),
             attributesToUpdate.toCFDictionary()
@@ -67,7 +67,7 @@ public struct Keychain: KeychainProtocol {
 
     public func fetchItem<T>(
         query: Set<KeychainQueryItem>
-    ) async throws -> T? {
+    ) throws -> T? {
         var result: CFTypeRef?
 
         let status = SecItemCopyMatching(
@@ -96,7 +96,7 @@ public struct Keychain: KeychainProtocol {
 
     public func deleteItem(
         query: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemDelete(
             query.toCFDictionary()
         )

@@ -85,21 +85,21 @@ final class CookieStorageTests: XCTestCase {
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
 
         // Mock no existing cookie.
-        await keychain.setFetchItemQuery_MockValue(nil)
+        keychain.setFetchItemQuery_MockValue(nil)
 
         // Mock successul add.
-        await keychain.setAddItemQuery_MockMethod { _ in }
+        keychain.setAddItemQuery_MockMethod { _ in }
 
         // When
         try await sut.storeCookies([validCookie])
 
         // Then first we tried to fetch an existing cookie.
-        let fetchInvocations = await keychain.fetchItemQuery_Invocations
+        let fetchInvocations = keychain.fetchItemQuery_Invocations
         try XCTAssertCount(fetchInvocations, count: 1)
         XCTAssertEqual(fetchInvocations[0], Scaffolding.fetchQuery)
 
         // Then we added the new cookie.
-        let addInvocations = await keychain.addItemQuery_Invocations
+        let addInvocations = keychain.addItemQuery_Invocations
         try XCTAssertCount(addInvocations, count: 1)
         try assertAddQuery(addInvocations[0], addedCookie: validCookie)
     }
@@ -110,21 +110,21 @@ final class CookieStorageTests: XCTestCase {
 
         // Mock existing cookie.
         let data = Data("raw cookie".utf8).base64EncodedData()
-        await keychain.setFetchItemQuery_MockValue(data)
+        keychain.setFetchItemQuery_MockValue(data)
 
         // Mock successul update.
-        await keychain.setUpdateItemQueryAttributesToUpdate_MockMethod { _, _ in }
+        keychain.setUpdateItemQueryAttributesToUpdate_MockMethod { _, _ in }
 
         // When
         try await sut.storeCookies([validCookie])
 
         // Then first we tried to fetch an existing cookie.
-        let fetchInvocations = await keychain.fetchItemQuery_Invocations
+        let fetchInvocations = keychain.fetchItemQuery_Invocations
         try XCTAssertCount(fetchInvocations, count: 1)
         XCTAssertEqual(fetchInvocations[0], Scaffolding.fetchQuery)
 
         // Then we updated the keychain with the new cookie.
-        let updateInvocations = await keychain.updateItemQueryAttributesToUpdate_Invocations
+        let updateInvocations = keychain.updateItemQueryAttributesToUpdate_Invocations
         try XCTAssertCount(updateInvocations, count: 1)
 
         XCTAssertEqual(updateInvocations[0].query, Scaffolding.baseQuery)
@@ -133,7 +133,7 @@ final class CookieStorageTests: XCTestCase {
 
     func testFetchCookies_No_Cookies_EXist() async throws {
         // Mock no existing cookie.
-        await keychain.setFetchItemQuery_MockValue(nil)
+        keychain.setFetchItemQuery_MockValue(nil)
 
         // When
         let cookies = try await sut.fetchCookies()
@@ -151,7 +151,7 @@ final class CookieStorageTests: XCTestCase {
         )
 
         // Mock existing cookie.
-        await keychain.setFetchItemQuery_MockValue(storedCookieData)
+        keychain.setFetchItemQuery_MockValue(storedCookieData)
 
         // When
         let cookies = try await sut.fetchCookies()
