@@ -218,7 +218,6 @@ package final class FilesViewModel: ObservableObject {
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let fileCache: any FileCache
-    private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
@@ -429,8 +428,8 @@ package final class FilesViewModel: ObservableObject {
             onItemAction: { [weak self] action, item in
                 guard let self else { return }
                 switch action {
-                case .open:
-                    await openItem(item: item)
+                case .primaryAction:
+                    await performPrimaryAction(item: item)
                 case .deleteToRecycleBin:
                     await deleteItem(item, permanently: false)
                 case .deletePermanently:
@@ -489,8 +488,9 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
-    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
-    func openItem(item: FilesViewItem) async {
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
+    /// cancels the download.
+    func performPrimaryAction(item: FilesViewItem) async {
         switch item.kind {
         case .file:
             await viewAsset(item: item)
@@ -554,18 +554,23 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(navigationPath + [targetItem])
     }
 
-    /// Downloads if necessary and views the asset represented by the given item.
+    /// Downloads if necessary or views the asset represented by the given item or cancels the download.
     private func viewAsset(item: FilesViewItem) async {
         precondition(item.kind == .file)
 
-        // Bookkeeping ensure we only attempt to display the most recently selected item.
-        lastSelectedItem = item
-
         do {
-            let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
-            if item == lastSelectedItem {
+            let downloadState = try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
+            switch downloadState {
+            case .pending, .failed:
+                _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            case .downloaded:
+                let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url
+            case .downloading:
+                await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
             }
+        } catch is CancellationError {
+            // Cancelled by the user, ignore.
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
         } catch {
