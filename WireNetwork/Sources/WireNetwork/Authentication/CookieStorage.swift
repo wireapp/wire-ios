@@ -131,9 +131,10 @@ public actor CookieStorage: CookieStorageProtocol {
             throw Failure.failedToEncryptCookie(error)
         }
 
-        if try fetchCookieData() != nil {
+        // The typical case is updating so try that first.
+        do {
             try updateCookieInKeychain(encryptedCookieData)
-        } else {
+        } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
             try addCookieToKeychain(encryptedCookieData)
         }
     }
