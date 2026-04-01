@@ -178,7 +178,7 @@ final class FilesItemViewModel: ObservableObject {
             showDeleteConfirmation(deletePermanently: true)
         case .deleteToRecycleBin:
             showDeleteConfirmation(deletePermanently: false)
-        case .makeAvailableOffline:
+        case .makeAvailableOffline, .removeAvailableOffline:
             Task { await onItemAction(action, item) }
         default:
             Task { await onItemAction(action, item) }
