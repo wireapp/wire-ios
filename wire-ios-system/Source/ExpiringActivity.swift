@@ -20,9 +20,9 @@ import Foundation
 import WireLogging
 
 protocol ExpiringActivityInterface {
-
+    
     func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void)
-
+    
 }
 
 extension ProcessInfo: ExpiringActivityInterface {}
@@ -47,62 +47,63 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 }
 
 actor ExpiringActivityManager {
-
+    
     let api: any ExpiringActivityInterface
     private var task: Task<Void, any Error>?
-
+    
     init() {
         self.init(api: ProcessInfo.processInfo)
     }
-
+    
     init(api: any ExpiringActivityInterface) {
         self.api = api
     }
-
+    
     func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
         try await withTaskCancellationHandler {
-        try await withCheckedThrowingContinuation { continuation in
-            // Shared between both callback branches.
-            let semaphore = DispatchSemaphore(value: 0)
-
-            // Guards against double-resume: the expiring=true branch must resume the
-            // continuation itself (in case block() ignores cancellation and Task A is
-            // permanently stuck at .value). Without this guard, if Task A eventually
-            // exits it would resume the continuation a second time.
-            let once = OnceAction()
-            let finish: @Sendable (Result<Void, any Error>) -> Void = { result in
-                once.perform { continuation.resume(with: result) }
-            }
-
-            api.performExpiringActivity(withReason: reason) { expiring in
-                if !expiring {
-                    Task {
-                        do {
-                            WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
-                            try await self.startWork(block: block, semaphore: semaphore).value
-                            WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
-                            finish(.success(()))
-                        } catch {
-                            WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
-                            finish(.failure(error))
+            try await withCheckedThrowingContinuation { continuation in
+                // Shared between both callback branches.
+                let semaphore = DispatchSemaphore(value: 0)
+                
+                // Guards against double-resume: the expiring=true branch must resume the
+                // continuation itself (in case block() ignores cancellation and Task A is
+                // permanently stuck at .value). Without this guard, if Task A eventually
+                // exits it would resume the continuation a second time.
+                let once = OnceAction()
+                let finish: @Sendable (Result<Void, any Error>) -> Void = { result in
+                    once.perform { continuation.resume(with: result) }
+                }
+                
+                api.performExpiringActivity(withReason: reason) { expiring in
+                    if !expiring {
+                        Task {
+                            do {
+                                WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
+                                try await self.startWork(block: block, semaphore: semaphore).value
+                                WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
+                                finish(.success(()))
+                            } catch {
+                                WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
+                                finish(.failure(error))
+                            }
                         }
-                    }
-                    semaphore.wait()
-                } else {
-                    WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
-                    Task {
-                        do {
-                            try await self.stopWork()
-                            // Task was running and is now cancelled. Resume the continuation
-                            // immediately — we cannot rely on the task's defer to signal the
-                            // semaphore if block() ignores cooperative cancellation.
-                            finish(.failure(CancellationError()))
-                        } catch {
-                            finish(.failure(error))
+                        semaphore.wait()
+                    } else {
+                        WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
+                        Task {
+                            do {
+                                try await self.stopWork()
+                                // Task was running and is now cancelled. Resume the continuation
+                                // immediately — we cannot rely on the task's defer to signal the
+                                // semaphore if block() ignores cooperative cancellation.
+                                finish(.failure(CancellationError()))
+                            } catch {
+                                finish(.failure(error))
+                            }
+                            // Unblock the callback thread regardless. A double-signal (if the
+                            // task's defer also fires) is harmless.
+                            semaphore.signal()
                         }
-                        // Unblock the callback thread regardless. A double-signal (if the
-                        // task's defer also fires) is harmless.
-                        semaphore.signal()
                     }
                 }
             }
@@ -110,7 +111,7 @@ actor ExpiringActivityManager {
             Task { try? await self.stopWork() }
         }
     }
-
+    
     private func startWork(
         block: @escaping () async throws -> Void,
         semaphore: DispatchSemaphore
@@ -125,7 +126,7 @@ actor ExpiringActivityManager {
         self.task = task
         return task
     }
-
+    
     private func stopWork() throws {
         guard let task else { throw ExpiringActivityNotAllowedToRun() }
         task.cancel()
@@ -135,10 +136,10 @@ actor ExpiringActivityManager {
 
 /// Ensures a closure is executed at most once, safe for concurrent callers.
 private final class OnceAction: @unchecked Sendable {
-
+    
     private let lock = NSLock()
     private var executed = false
-
+    
     func perform(_ action: () -> Void) {
         lock.withLock {
             guard !executed else { return }
