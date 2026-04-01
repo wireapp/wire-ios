@@ -27,4 +27,5 @@ jobs:
       test_dependencies: false
       run_critical_flows: true
       testiny_run_name: ${{ inputs.testiny_run_name }}
+      notify: always
     secrets: inherit

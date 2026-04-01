@@ -45,6 +45,7 @@ final class ConversationListViewController: UIViewController {
 
     private static let contentControllerBottomInset: CGFloat = 16
     private var userDefaultsObservation: NSKeyValueObservation?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     private lazy var filterContainerView = UIView()
 
@@ -447,7 +448,7 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-            ? ColorTheme.Backgrounds.chatBackground
+            ? ColorTheme.Backgrounds.backgroundVariant
             : ColorTheme.Backgrounds.surface
     }
 
@@ -493,6 +494,11 @@ final class ConversationListViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.

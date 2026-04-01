@@ -28,7 +28,7 @@ extension MockUserType {
     ///
     /// - Returns: A standard mock service user object with default values.
 
-    class func createServiceUser(name: String) -> MockUserType {
+    class func createBot(name: String) -> MockUserType {
         let serviceUser = MockUserType()
         serviceUser.name = name
         serviceUser.displayName = name

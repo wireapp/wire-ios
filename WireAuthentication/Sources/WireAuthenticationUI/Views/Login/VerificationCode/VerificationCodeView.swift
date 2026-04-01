@@ -34,6 +34,7 @@ package struct VerificationCodeView: View {
 
     @StateObject private var viewModel: VerificationCodeViewModel
 
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState private var focusedIndex: Int?
 
     private typealias Strings = L10n.Localizable
@@ -106,23 +107,27 @@ package struct VerificationCodeView: View {
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
             ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
-                TextField("", text: $viewModel.code[index])
-                    .frame(width: 50, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(
-                                focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
-                                lineWidth: 1
-                            )
-                    )
-                    .multilineTextAlignment(.center)
-                    .font(for: .h2)
-                    .keyboardType(.numberPad)
-                    .foregroundColor(.primary)
-                    .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { _, newValue in
-                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
-                    }
+                ContextMenuControllableTextField(
+                    text: $viewModel.code[index],
+                    placeholder: "",
+                    isContextMenuAllowed: isClipboardEnabled,
+                    textAlignment: .center,
+                    keyboardType: .numberPad
+                )
+                .frame(width: 50, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
+                            lineWidth: 1
+                        )
+                )
+                .font(for: .h2)
+                .foregroundColor(.primary)
+                .focused($focusedIndex, equals: index)
+                .onChange(of: viewModel.code[index]) { newValue in
+                    focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
+                }
             }
         }
         .onAppear {

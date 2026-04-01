@@ -58,7 +58,8 @@
                                                      teamIdentifier:nil
                                                  providerIdentifier:nil
                                                                user:nil
-                                                   searchUsersCache:nil];
+                                                   searchUsersCache:nil
+                                                               type:[ZMTypeOfUserWrapper regular]];
 
     // (1)
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
@@ -70,7 +71,8 @@
                                                      teamIdentifier:nil
                                                  providerIdentifier:nil
                                                                user:nil
-                                                   searchUsersCache:nil];
+                                                   searchUsersCache:nil
+                                                               type:[ZMTypeOfUserWrapper regular]];
 
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);
@@ -85,7 +87,8 @@
                                                      teamIdentifier:nil
                                                  providerIdentifier:nil
                                                                user:nil
-                                                   searchUsersCache:nil];
+                                                   searchUsersCache:nil
+                                                               type:[ZMTypeOfUserWrapper regular]];
 
     XCTAssertNotEqualObjects(user1, user3);
 }
@@ -107,7 +110,8 @@
                                                           teamIdentifier:nil
                                                       providerIdentifier:nil
                                                                     user:nil
-                                                        searchUsersCache:nil];
+                                                        searchUsersCache:nil
+                                                                    type:[ZMTypeOfUserWrapper regular]];
 
     
     // then
@@ -147,7 +151,8 @@
                                                           teamIdentifier:nil
                                                       providerIdentifier:nil
                                                                     user:user
-                                                        searchUsersCache:nil];
+                                                        searchUsersCache:nil
+                                                                    type:[ZMTypeOfUserWrapper regular]];
 
     // then
     XCTAssertEqualObjects(searchUser.name, user.name);
@@ -176,7 +181,8 @@
                                                           teamIdentifier:nil
                                                       providerIdentifier:nil
                                                                     user:nil
-                                                        searchUsersCache:nil];
+                                                        searchUsersCache:nil
+                                                                    type:[ZMTypeOfUserWrapper regular]];
 
     
     // then
@@ -196,7 +202,8 @@
                                                           teamIdentifier:nil
                                                       providerIdentifier:nil
                                                                     user:nil
-                                                        searchUsersCache:nil];
+                                                        searchUsersCache:nil
+                                                                    type:[ZMTypeOfUserWrapper regular]];
 
     // then
     XCTAssertFalse(searchUser.canBeConnected);

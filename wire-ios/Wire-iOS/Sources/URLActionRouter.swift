@@ -215,7 +215,8 @@ extension URLActionRouter: PresentationDelegate {
             if DeveloperFlag.useWireAuthentication.isOn {
                 if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
                     // allows switching backend from current session
-                    sessionManager.addAccount {
+                    Task {
+                        await sessionManager.addAccount()
                         decisionHandler(SecurityFlags.customBackend.isEnabled)
                     }
                 } else {

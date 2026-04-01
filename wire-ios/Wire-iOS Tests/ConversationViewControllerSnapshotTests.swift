@@ -48,7 +48,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         super.setUp()
 
         snapshotHelper = SnapshotHelper()
-        serviceUser = coreDataFixture.createServiceUser()
+        serviceUser = coreDataFixture.createBot()
     }
 
     override func tearDown() {

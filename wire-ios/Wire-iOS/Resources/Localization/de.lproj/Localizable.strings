@@ -1637,7 +1637,7 @@
 
 "registration.country_select.title" = "Land";
 
-"registration.push_access_denied.hero.title" = "Verpassen Sie keinen Anrufe oder Nachrichten.";
+"registration.push_access_denied.hero.title" = "Verpassen Sie keine Anrufe oder Nachrichten.";
 "registration.push_access_denied.hero.paragraph1" = "Aktivieren Sie Benachrichtigungen in den Einstellungen.";
 "registration.push_access_denied.settings_button.title" = "Einstellungen öffnen";
 "registration.push_access_denied.maybe_later_button.title" = "Vielleicht später";

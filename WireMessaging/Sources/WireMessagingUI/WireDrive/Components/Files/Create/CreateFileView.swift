@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -94,7 +95,7 @@ private extension CreateFileView {
                 Text(L10n.Localizable.General.cancel)
             }
         )
-        .accessibilityIdentifier("cancelButton")
+        .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.cancelButton)
     }
 
     @ViewBuilder var createButton: some View {
@@ -110,7 +111,7 @@ private extension CreateFileView {
                 }
             )
             .disabled(viewModel.isCreateDisabled)
-            .accessibilityIdentifier("createButton")
+            .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.createButton)
         }
     }
 }

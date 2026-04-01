@@ -67,6 +67,10 @@ public struct User: Equatable, Sendable {
 
     public let expiresAt: Date?
 
+    /// App related info.
+
+    public let app: AppInfo?
+
     /// Service information associated with this user
 
     public let service: Service?
@@ -79,6 +83,8 @@ public struct User: Equatable, Sendable {
 
     public let legalholdStatus: LegalholdStatus
 
+    // MARK: -
+
     public init(
         id: UserID,
         name: String,
@@ -90,6 +96,7 @@ public struct User: Equatable, Sendable {
         deleted: Bool?,
         email: String?,
         expiresAt: Date?,
+        app: AppInfo?,
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
         legalholdStatus: LegalholdStatus
@@ -104,6 +111,7 @@ public struct User: Equatable, Sendable {
         self.deleted = deleted
         self.email = email
         self.expiresAt = expiresAt
+        self.app = app
         self.service = service
         self.supportedProtocols = supportedProtocols
         self.legalholdStatus = legalholdStatus

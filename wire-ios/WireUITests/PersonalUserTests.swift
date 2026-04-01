@@ -62,7 +62,7 @@ final class PersonalUsersTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        _ = try  firstTimePage.acceptPopup(with: self)
+        _ = try  firstTimePage.acceptPopup()
             .openSettings()
             .openAccountSettings()
             .logout()
@@ -76,7 +76,7 @@ final class PersonalUsersTests: WireUITestCase {
         let messageFromUserB = "Hello from \(userB.name)"
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
@@ -91,7 +91,7 @@ final class PersonalUsersTests: WireUITestCase {
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openPendingRequest()
 
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
@@ -135,16 +135,16 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_AddConversationAsFavourite_TC_8869() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testAddConversationAsFavourite_TC_8869() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .longPressForMoreOptionOnConversation()
@@ -156,16 +156,16 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_FilterConversationByFavourite_TC_8874() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testFilterConversationByFavourite_TC_8874() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
-                groupName: groupName
+                conversation: .group(groupName)
             )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .markConversationAsFavourite()
             .filterConversationByFavourite()
