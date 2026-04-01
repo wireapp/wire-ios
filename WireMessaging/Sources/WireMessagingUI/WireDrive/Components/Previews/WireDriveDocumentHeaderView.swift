@@ -29,6 +29,7 @@ struct WireDriveDocumentHeaderView: View {
         static let headerIconSize: CGFloat = 16
     }
 
+    @ScaledMetric private var readyToOpenIconPadding: CGFloat = 3.8
     @ScaledMetric private var scale: CGFloat = 1
     @Environment(\.wireAccentColor) private var wireAccentColor
 
