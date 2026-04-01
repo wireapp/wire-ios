@@ -126,7 +126,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        guard item.kind == .file else { return false }
+        guard item.kind == .file && !isOffline else { return false }
 
         return switch asset?.downloadState {
         case .downloaded:

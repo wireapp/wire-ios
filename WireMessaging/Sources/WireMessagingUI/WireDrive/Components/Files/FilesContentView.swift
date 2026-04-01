@@ -119,6 +119,11 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 }
             )
         }
+        .onChange(of: viewModel.isOffline) {
+            Task {
+                await viewModel.reload(refreshing: true)
+            }
+        }
     }
 
     private var isFilterBarPresented: Bool {

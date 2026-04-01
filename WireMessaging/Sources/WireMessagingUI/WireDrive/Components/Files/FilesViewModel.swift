@@ -608,6 +608,14 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private func loadMore(refreshing: Bool = false) async {
+        if isOffline {
+            await loadOfflineFiles()
+        } else {
+            await loadOnlineFiles(refreshing: refreshing)
+        }
+    }
+    
+    private func loadOnlineFiles(refreshing: Bool) async {
         guard loadMoreTask == nil else { return }
 
         let offset = refreshing ? 0 : state.items.count
@@ -637,6 +645,30 @@ package final class FilesViewModel: ObservableObject {
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
+    }
+
+    private func loadOfflineFiles() async {
+        //TODO: fetch the offline files
+        state = .received(
+            items: [
+                .init(
+                    id: UUID(),
+                    eTag: "eTag",
+                    kind: .file,
+                    name: "offline file dummy",
+                    filePath: "filePath",
+                    ownedBy: nil,
+                    modifiedAt: nil,
+                    icon: .code,
+                    tags: ["offline file"],
+                    isEditable: false,
+                    publicLinkID: nil,
+                    conversationName: nil,
+                    size: nil
+                )
+            ]
+        )
+        hasMore = false
     }
 
     private nonisolated func fetchItems(
