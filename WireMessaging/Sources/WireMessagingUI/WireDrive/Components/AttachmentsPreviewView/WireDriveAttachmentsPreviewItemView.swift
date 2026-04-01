@@ -67,9 +67,6 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 )
             case (.video, .large):
                 WireDriveLargeVideoPreviewView(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
                     url: viewModel.imagePreviewURL,
                     imageAspectRatio: viewModel.previewAspectRatio,
                     duration: viewModel.attachmentDuration,

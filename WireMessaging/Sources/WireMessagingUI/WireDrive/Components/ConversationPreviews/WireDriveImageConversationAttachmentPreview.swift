@@ -133,7 +133,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
             state: .loading(progress: 0.5, isLargeFile: false),
             isLargePreview: true
         )
-        
+
         WireDriveImageConversationAttachmentPreview(
             thumbnailURL: nil,
             state: .notLoaded,

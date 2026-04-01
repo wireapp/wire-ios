@@ -21,6 +21,8 @@ import WireDesign
 import WireFoundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveLargeVideoPreviewView: View {
     private static let errorMessage = L10n.Localizable.Conversation.Message
         .Attachment.previewNotAvailable
@@ -31,9 +33,6 @@ struct WireDriveLargeVideoPreviewView: View {
     private static let defaultAspectRatio = CGFloat(16.0 / 9.0)
     private static let previewCornerRadius = 10.0
 
-    let headerIcon: Image
-    let headerText: String
-    let labelText: String
     let url: URL?
     var imageAspectRatio: CGFloat = defaultAspectRatio
     let duration: String?
@@ -43,27 +42,12 @@ struct WireDriveLargeVideoPreviewView: View {
 
     var body: some View {
         WireDriveAttachmentPreview {
-            VStack {
-                WireDriveDocumentHeaderView(
-                    headerIcon: headerIcon,
-                    headerText: headerText,
-                    labelText: labelText,
-                    isDraftPreview: false,
-                    state: state
-                )
-                .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74)  // This might break the UI if text font is too big
-                .frame(maxWidth: .infinity)
-
+            Group {
                 previewContainer {
-                    if case .failed = state {
-                        errorView(text: Self.downloadErrorMessage)
+                    if let url {
+                        asyncImage(url: url)
                     } else {
-                        if let url {
-                            asyncImage(url: url)
-                        } else {
-                            errorView(text: Self.errorMessage)
-                        }
+                        errorView(text: Self.errorMessage)
                     }
                 }
                 .overlay(alignment: .bottom) {
@@ -86,14 +70,46 @@ struct WireDriveLargeVideoPreviewView: View {
                     .resizable()
                     .aspectRatio(imageAspectRatio, contentMode: .fit)
                     .overlay {
-                        PlayIcon()
-                            .disabled(false)
+                        switch state {
+                        case .notLoaded, .loaded:
+                            PlayIcon()
+                                .disabled(false)
+                        case let .loading(progress, _):
+                            darkBackgroundPlayIconView {
+                                ProgressView(value: progress)
+                                    .progressViewStyle(.wireDriveAsset(strokeColor: .white))
+                                    .frame(height: 30)
+
+                                Text(Strings.Files.tapToCancelDownload)
+                                    .font(for: .subline1)
+                                    .foregroundStyle(.white)
+                                    .padding(.top, 65) // workaround so text shows up below the play icon view
+                            }
+                        case .failed:
+                            darkBackgroundPlayIconView {
+                                Text(Strings.Files.downloadFailed)
+                                    .font(for: .subline1)
+                                    .foregroundStyle(.white)
+                                    .padding(.top, 65)
+                            }
+                        }
                     }
             case .failure:
                 loadingView(text: Self.loadingMessage)
             @unknown default:
                 EmptyView()
             }
+        }
+    }
+
+    @ViewBuilder
+    private func darkBackgroundPlayIconView(@ViewBuilder content: () -> some View) -> some View {
+        ZStack {
+            PlayIcon()
+
+            Color.black.opacity(0.7)
+
+            content()
         }
     }
 
@@ -152,9 +168,6 @@ struct WireDriveLargeVideoPreviewView: View {
 
 #Preview {
     WireDriveLargeVideoPreviewView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         url: URL(
             string:
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
