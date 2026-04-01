@@ -4772,6 +4772,8 @@ internal enum L10n {
         internal static func createdBy(_ p1: Any) -> String {
           return L10n.tr("Localizable", "peoplepicker.app_details.created_by", String(describing: p1), fallback: "Created by %@")
         }
+        /// Description
+        internal static let description = L10n.tr("Localizable", "peoplepicker.app_details.description", fallback: "Description")
       }
       internal enum Apps {
         internal enum AddApp {

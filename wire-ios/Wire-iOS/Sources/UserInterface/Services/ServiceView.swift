@@ -23,6 +23,7 @@ import WireSyncEngine
 
 final class ServiceDetailView: UIView {
     private let serviceView: ServiceView
+    private let titleLabel = UILabel()
     private let descriptionTextView = UITextView()
 
     var service: Service {
@@ -43,15 +44,20 @@ final class ServiceDetailView: UIView {
         )
         super.init(frame: .zero)
 
-        [serviceView, descriptionTextView].forEach(addSubview)
+        [serviceView, titleLabel, descriptionTextView].forEach(addSubview)
 
         createConstraints()
+
+        titleLabel.numberOfLines = 0
+        titleLabel.text = L10n.Localizable.Peoplepicker.AppDetails.description
+        titleLabel.font = FontSpec(.normal, .semibold).font
 
         descriptionTextView.backgroundColor = .clear
         descriptionTextView.textContainerInset = .zero
         descriptionTextView.textColor = SemanticColors.Label.textDefault
         descriptionTextView.font = FontSpec(.normal, .light).font
         descriptionTextView.isEditable = false
+
         updateForService()
     }
 
@@ -61,18 +67,25 @@ final class ServiceDetailView: UIView {
     }
 
     private func createConstraints() {
-        [self, serviceView, descriptionTextView].forEach {
+        [serviceView, titleLabel, descriptionTextView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
+
             serviceView.leadingAnchor.constraint(equalTo: leadingAnchor),
             serviceView.trailingAnchor.constraint(equalTo: trailingAnchor),
             serviceView.topAnchor.constraint(equalTo: topAnchor),
+
+            titleLabel.leadingAnchor.constraint(equalTo: serviceView.leadingAnchor, constant: 4),
+            titleLabel.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 24),
+            serviceView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 4),
+
             descriptionTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
             descriptionTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
             descriptionTextView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16)
+            descriptionTextView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16)
+
         ])
     }
 
