@@ -53,7 +53,7 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
 
-    func getSenderName() -> String? {
+    func getSenderName() -> String {
         senderNameLabel.label
     }
 
@@ -75,6 +75,14 @@ class ActiveConversationPage: PageModel {
 
     var userRemovedSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
+    }
+
+    var fileLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
+    }
+
+    var fileTypeIcons: XCUIElementQuery {
+        app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
     var labelSharedDriveIsOn: XCUIElement {
@@ -120,6 +128,15 @@ class ActiveConversationPage: PageModel {
             }
         }
         return messages
+    }
+
+    func fetchFileNames() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileLabels.count {
+            let element = fileLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
     }
 
     func sendMessage(_ message: String) throws -> ActiveConversationPage {

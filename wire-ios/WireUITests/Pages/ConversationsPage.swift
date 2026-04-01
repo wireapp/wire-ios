@@ -44,6 +44,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var unreadMessagesCount: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
+    }
+
     var textFilteredByFavourites: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
     }
@@ -106,6 +110,10 @@ class ConversationsPage: PageModel {
 
     var loadBar: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
+
+    func getGroupName() -> String? {
+        conversationCell.label as? String
     }
 
     func openSettings() throws -> SettingsPage {
@@ -206,6 +214,10 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    func getUnreadMessageCountValue() throws -> String {
+        unreadMessagesCount.value as! String
     }
 
     enum Error: Swift.Error {
