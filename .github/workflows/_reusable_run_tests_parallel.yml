@@ -141,7 +141,7 @@ jobs:
             artifacts/**/*.junit
 
       - name: Upload failed snapshots
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
@@ -160,7 +160,7 @@ jobs:
           compare_to_earlier_commit: false
 
       - name: Archive DerivedData logs
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"

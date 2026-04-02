@@ -228,7 +228,7 @@ jobs:
 
       - name: Upload Failed snapshots
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
@@ -295,7 +295,7 @@ jobs:
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
