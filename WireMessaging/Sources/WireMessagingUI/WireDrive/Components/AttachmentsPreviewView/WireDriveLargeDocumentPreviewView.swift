@@ -48,7 +48,6 @@ struct WireDriveLargeDocumentPreviewView: View {
                     state: state
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74) // This might break the UI if text font is too big
                 .frame(maxWidth: .infinity)
 
                 previewContainer {
@@ -134,4 +133,5 @@ struct WireDriveLargeDocumentPreviewView: View {
         state: .loading(progress: 0.7, isLargeFile: false),
         isDraftPreview: false
     )
+    .padding()
 }

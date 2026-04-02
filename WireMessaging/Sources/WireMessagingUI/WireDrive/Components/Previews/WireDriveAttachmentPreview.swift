@@ -33,6 +33,16 @@ struct WireDriveAttachmentPreview<Content: View>: View {
 
     var body: some View {
         content
+<<<<<<< HEAD
+=======
+            .overlay(alignment: .bottom) {
+                ProgressView(value: progress, total: 1)
+                    .tint(Color.blue)
+                    .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                    .padding(.bottom, Constants.borderWidth / 2)
+                    .opacity(progress == nil ? 0 : 1)
+            }
+>>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
             .clipShape(
                 RoundedRectangle(cornerRadius: Constants.cornerRadius)
             )
@@ -54,9 +64,18 @@ private enum Constants {
 }
 
 #Preview {
+<<<<<<< HEAD
     WireDriveAttachmentPreview {
         Rectangle()
             .fill(Color.gray.opacity(0.2))
+=======
+    WireDriveAttachmentPreview(
+        progress: 0.5,
+        progressColor: .blue
+    ) {
+        Text("content")
+            .padding()
+>>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
     }
-    .frame(width: 222, height: 74)
+    .frame(width: 222)
 }
