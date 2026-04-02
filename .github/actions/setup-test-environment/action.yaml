@@ -1,15 +1,5 @@
 name: "Setup Test Environment"
-description: "Checkout, configure Xcode, restore caches, install dependencies, and prepare the simulator for running tests."
-
-inputs:
-  ref:
-    description: "Git ref to checkout"
-    required: false
-    default: ""
-  lfs:
-    description: "Whether to enable Git LFS"
-    required: false
-    default: "true"
+description: "Configure Xcode, restore caches, install dependencies, and prepare the simulator for running tests. Requires checkout to have already run."
 
 outputs:
   xcode-version:
@@ -22,19 +12,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.ref }}
-        lfs: ${{ inputs.lfs }}
-
     - name: Sanitize branch name
       id: sanitize-branch
       shell: bash
       run: |
-        if [ -n "${{ inputs.ref }}" ]; then
-          BRANCH="${{ inputs.ref }}"
-        elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+        if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
           BRANCH="${{ github.head_ref }}"
         else
           BRANCH="${GITHUB_REF#refs/heads/}"

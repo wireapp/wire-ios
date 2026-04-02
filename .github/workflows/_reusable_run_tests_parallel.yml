@@ -97,11 +97,14 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
 
     steps:
-      - name: Setup test environment
-        uses: ./.github/actions/setup-test-environment
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+
+      - name: Setup test environment
+        uses: ./.github/actions/setup-test-environment
 
       - name: "Test ${{ matrix.scheme }}"
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
