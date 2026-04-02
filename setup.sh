@@ -134,15 +134,14 @@ if [[ "$TEST_ONLY" == "false" ]]; then
         echo "Skipping as CI is not is defined"
     fi
     echo ""
-
-    (
-        cd "$REPO_ROOT/wire-ios"
-
-        echo "ℹ️  [CodeGen] Update StyleKit Icons..."
-        swift run --package-path ./Scripts/updateStylekit
-        echo ""
-    )
-
 fi
+
+(
+    cd "$REPO_ROOT/wire-ios"
+
+    echo "ℹ️  [CodeGen] Update StyleKit Icons..."
+    swift run --package-path ./Scripts/updateStylekit
+    echo ""
+)
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
