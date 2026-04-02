@@ -87,6 +87,9 @@ jobs:
       contents: read
       pull-requests: write
       checks: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.scheme }}
+      cancel-in-progress: true
     strategy:
       matrix:
         scheme: ${{ fromJson(needs.generate-framework-list.outputs.schemes) }}
@@ -119,6 +122,7 @@ jobs:
 
       - name: Analyze .xcresult
         if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
+        continue-on-error: true
         uses: wireapp/analyze-xcoderesults-action@v1
         with:
           results: ${{ steps.find-xcresult.outputs.path }}
