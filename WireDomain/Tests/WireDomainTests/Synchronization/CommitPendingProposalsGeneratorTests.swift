@@ -83,7 +83,11 @@ class CommitPendingProposalsGeneratorTests {
         await sut.start()
 
         // THEN — properly await the async delivery rather than checking immediately
-        let firstItem = await iterator.next()
+        let firstItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
         #expect(firstItem?.conversationID == conversationID)
 
         // WHEN
@@ -94,7 +98,11 @@ class CommitPendingProposalsGeneratorTests {
         )
 
         // THEN — await the second delivery (handles future-dated proposals naturally)
-        let secondItem = await iterator.next()
+        let secondItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
         #expect(secondItem?.conversationID == newConversationID)
     }
 
