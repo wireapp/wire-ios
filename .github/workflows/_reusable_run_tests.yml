@@ -158,7 +158,7 @@ jobs:
           bundle exec fastlane generate_env
           
       - name: Setup Kalium Testservice
-        if: ${{ inputs.run_critical_flows }}
+        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/setup
         with:
           kalium_ref: ${{ inputs.kalium_ref }}
@@ -169,7 +169,7 @@ jobs:
           bundle exec fastlane run_uitests
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows }}
+        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
