@@ -68,11 +68,11 @@ jobs:
       - name: List schemes
         id: list-schemes
         run: |
-          RAW=$(bundle exec fastlane list_schemes_json \
+          bundle exec fastlane list_schemes_json \
             folders:"${{ inputs.folders }}" \
             all:${{ inputs.all }} \
-            test_dependencies:${{ inputs.test_dependencies }} \
-            2>/dev/null | tail -n 1)
+            test_dependencies:${{ inputs.test_dependencies }}
+          RAW=$(cat /tmp/schemes.json)
           echo "schemes=$RAW" >> "$GITHUB_OUTPUT"
           echo "Schemes to test: $RAW"
 

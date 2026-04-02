@@ -184,7 +184,7 @@ platform :ios do
             folders = options[:folders].to_s.split(',').reject { |f| ["fastlane", "scripts", "carthage"].include?(f) }
             schemes = folders.map { |folder| frameworks[folder] }.compact.map { |f| f.scheme }.uniq
         end
-        puts schemes.to_json
+        File.write("/tmp/schemes.json", schemes.to_json)
     end
 
     desc "Prepare for tests"
