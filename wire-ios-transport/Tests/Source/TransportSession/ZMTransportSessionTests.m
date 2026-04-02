@@ -42,7 +42,6 @@
 #import "ZMURLSession.h"
 #import "Fakes.h"
 #import "ZMPersistentCookieStorage.h"
-#import "ZMKeychain.h"
 #import "WireTransport_ios_tests-Swift.h"
 
 /// the JSON Content-Type header
@@ -360,7 +359,7 @@ static XCTestCase *currentTestCase;
     self.scheduler = nil;
     self.sessionsDirectory = nil;
 
-    [ZMKeychain deleteAllKeychainItems];
+    [ZMPersistentCookieStorage deleteAllKeychainItems];
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;

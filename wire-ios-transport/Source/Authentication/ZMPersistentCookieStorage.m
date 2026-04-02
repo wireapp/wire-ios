@@ -161,6 +161,19 @@ static dispatch_queue_t isolationQueue(void)
     });
 }
 
++ (void)deleteAllKeychainItems
+{
+    dispatch_sync(isolationQueue(), ^{
+        NonPersistedPassword = nil;
+
+        if (KeychainDisabled) {
+            return;
+        }
+
+        [ZMKeychain deleteAllKeychainItems];
+    });
+}
+
 + (BOOL)hasAccessibleAuthenticationCookieData
 {
     __block BOOL success = NO;
