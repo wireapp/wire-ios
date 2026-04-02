@@ -72,11 +72,6 @@ runs:
       with:
         bundler-cache: true
 
-    - name: Install ImageMagick
-      uses: gerlero/brew-install@v1
-      with:
-        packages: imagemagick ghostscript freetype
-
     - name: Setup workspace
       shell: bash
       run: ./setup.sh
