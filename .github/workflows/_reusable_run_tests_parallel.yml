@@ -43,7 +43,7 @@ jobs:
   # ── 1. Determine which framework schemes need to be tested ──────────────────
   generate-framework-list:
     name: Generate framework list
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
       schemes: ${{ steps.list-schemes.outputs.schemes }}
