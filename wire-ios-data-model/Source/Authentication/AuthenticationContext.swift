@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 import WireLogging
-// test
+
 // sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.
 public protocol AuthenticationContextProtocol {

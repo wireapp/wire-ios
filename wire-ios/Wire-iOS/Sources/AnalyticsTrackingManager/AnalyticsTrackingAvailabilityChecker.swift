@@ -18,7 +18,7 @@
 
 import WireAuthenticationAPI
 import WireNetwork
-//test
+
 struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
 
     func isAnalyticsTrackingAvailable(for domain: String) -> Bool {

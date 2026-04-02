@@ -17,7 +17,7 @@
 //
 
 import Foundation
-// test
+
 extension AVSConversationType {
 
     var isConference: Bool {
