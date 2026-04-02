@@ -122,6 +122,7 @@ jobs:
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
+        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 

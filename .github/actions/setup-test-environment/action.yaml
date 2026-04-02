@@ -66,6 +66,7 @@ runs:
         key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
 
     - name: Resolve Swift Package Dependencies
+      if: steps.cache-swift-packages.outputs.cache-hit != 'true'
       shell: bash
       run: |
         cd "$REPO_ROOT" && xcodebuild \
