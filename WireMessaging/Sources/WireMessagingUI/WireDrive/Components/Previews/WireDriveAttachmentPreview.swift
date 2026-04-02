@@ -23,13 +23,7 @@ import WireDesign
 
 struct WireDriveAttachmentPreview<Content: View>: View {
 
-    private let content: Content
-
-    init(
-        @ViewBuilder content: () -> Content,
-    ) {
-        self.content = content()
-    }
+    @ViewBuilder let content: Content
 
     var body: some View {
         content
@@ -55,8 +49,8 @@ private enum Constants {
 
 #Preview {
     WireDriveAttachmentPreview {
-        Rectangle()
-            .fill(Color.gray.opacity(0.2))
+        Text("content")
+            .padding()
     }
-    .frame(width: 222, height: 74)
+    .frame(width: 222)
 }
