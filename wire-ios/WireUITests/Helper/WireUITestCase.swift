@@ -27,6 +27,7 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var userHelper: UserHelper!
     var ssoHelper: SSOHelper!
+    let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
     private var notificationPermissionMonitor: NSObjectProtocol?
 
