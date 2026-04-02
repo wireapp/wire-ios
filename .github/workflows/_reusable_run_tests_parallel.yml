@@ -239,11 +239,19 @@ jobs:
           pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           merge-multiple: true
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      - name: Cache datadog-ci
+        id: cache-datadog-ci
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-datadog-ci-${{ runner.os }}-node18
+
       - name: Install datadog-ci
+        if: steps.cache-datadog-ci.outputs.cache-hit != 'true'
         run: npm install -g @datadog/datadog-ci
 
       - name: Upload results to Datadog
