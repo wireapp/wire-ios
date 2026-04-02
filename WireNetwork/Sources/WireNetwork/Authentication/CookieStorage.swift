@@ -24,12 +24,12 @@ import WireCrypto
 // sourcery: AutoMockable
 public protocol CookieStorageProtocol: Sendable {
 
-    func storeCookies(_ cookies: [HTTPCookie]) async throws
-    func fetchCookies() async throws -> [HTTPCookie]
-    func removeCookies() async throws
+    func storeCookies(_ cookies: [HTTPCookie]) throws
+    func fetchCookies() throws -> [HTTPCookie]
+    func removeCookies() throws
 }
 
-public actor CookieStorage: CookieStorageProtocol {
+public final class CookieStorage: CookieStorageProtocol, Sendable {
 
     enum Failure: Error {
 

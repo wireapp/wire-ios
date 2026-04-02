@@ -286,7 +286,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     private func isAuthenticated() async throws -> Bool {
         let cookies: [HTTPCookie]
         do {
-            cookies = try await cookieStorage.fetchCookies()
+            cookies = try cookieStorage.fetchCookies()
         } catch {
             throw Failure.failedToFetchCookies(error)
         }

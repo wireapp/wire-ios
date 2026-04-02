@@ -74,7 +74,7 @@ struct VerifyUserSessionUseCase {
             attributes: .newNSE
         )
 
-        let cookies = try await cookieStorage.fetchCookies()
+        let cookies = try cookieStorage.fetchCookies()
 
         for cookie in cookies where cookie.name == Constants.cookieName {
             if let cookieExpirationDate = cookie.expiresDate {

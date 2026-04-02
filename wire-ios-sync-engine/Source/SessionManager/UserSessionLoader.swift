@@ -192,7 +192,7 @@ final class UserSessionLoader {
         )
 
         if let cookies = newEnvironment?.cookies {
-            try await cookieStorage.storeCookies(cookies)
+            try cookieStorage.storeCookies(cookies)
         }
 
         // Check if this backend supports MLS.

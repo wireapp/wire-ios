@@ -123,7 +123,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 switch authenticationError {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
-                    try await cookieStorage.removeCookies()
+                    try cookieStorage.removeCookies()
                     WireLogger.authentication.info(
                         "Removed cookies (invalidCredentials)", attributes: .safePublic
                     )
@@ -143,7 +143,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
         lastKnownToken: AccessToken?
     ) -> Task<AccessToken, any Error> {
         Task {
-            let cookies = try await cookieStorage.fetchCookies()
+            let cookies = try cookieStorage.fetchCookies()
 
             var requestBuilder = try URLRequestBuilder(path: "/access")
                 .withMethod(.post)
