@@ -36,6 +36,7 @@ struct WireDriveDocumentAttachmentPreview: View {
     let labelText: String
     let progress: Double?
     let isError: Bool
+    var minHeight: CGFloat?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -50,20 +51,25 @@ struct WireDriveDocumentAttachmentPreview: View {
                 labelText: labelText,
                 progress: progress,
                 isError: isError,
+                minHeight: minHeight
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
 
 #Preview {
-    WireDriveDocumentAttachmentPreview(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        isError: false
-    )
-    .frame(width: 222, height: 74)
+    VStack {
+        WireDriveDocumentAttachmentPreview(
+            headerIcon: Image(WireDriveFileType.pdf.imageResource),
+            headerText: "PDF (336 KB)",
+            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
+            progress: 0.7,
+            isError: false,
+            minHeight: nil
+        )
+        .frame(width: 222)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }
