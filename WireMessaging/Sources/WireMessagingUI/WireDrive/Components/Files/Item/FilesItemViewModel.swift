@@ -217,6 +217,9 @@ final class FilesItemViewModel: ObservableObject {
         if permanently {
             await onItemAction(.deletePermanently, item)
         } else {
+            if let asset, asset.isAvailableOffline {
+                await onItemAction(.removeAvailableOffline, item)
+            }
             await onItemAction(.deleteToRecycleBin, item)
         }
     }
@@ -375,7 +378,7 @@ final class FilesItemViewModel: ObservableObject {
             actions.insert(.shareLink)
         }
 
-        if !isEditable {
+        if !isEditable, !isInRecycleBin, item.kind == .file {
             actions.insert(isAvailableOffline ? .removeAvailableOffline : .makeAvailableOffline)
         }
 

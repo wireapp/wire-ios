@@ -368,8 +368,8 @@ struct FilesItemView: View {
             switch viewModel.fileTracker.state {
             case .loaded:
                 Divider()
-                
-                Button {
+
+                Button(role: .destructive) {
                     viewModel.deleteAsset()
                 } label: {
                     Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
