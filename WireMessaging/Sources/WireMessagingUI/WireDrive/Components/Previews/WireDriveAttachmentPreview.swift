@@ -48,7 +48,7 @@ private enum Constants {
 }
 
 #Preview {
-    WireDriveAttachmentPreview() {
+    WireDriveAttachmentPreview {
         Text("content")
             .padding()
     }
