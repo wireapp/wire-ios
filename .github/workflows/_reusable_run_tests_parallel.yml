@@ -169,9 +169,9 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-  # ── 3. Notify on Wire ───────────────────────────────────────────────────────
-  notify:
-    name: Notify
+  # ── 3. Notify + upload to Datadog ──────────────────────────────────────────
+  post-tests:
+    name: Post-test reporting
     needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
@@ -181,9 +181,7 @@ jobs:
       - name: Sanitize branch name
         shell: bash
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+          if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
             BRANCH="${{ github.head_ref }}"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
@@ -197,7 +195,6 @@ jobs:
           lfs: 'false'
 
       - name: Read commit metadata
-        id: commit-info
         shell: bash
         run: |
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
@@ -231,25 +228,6 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-  # ── 4. Upload test results to Datadog ──────────────────────────────────────
-  upload-test-results-datadog:
-    name: Upload to Datadog
-    runs-on: ubuntu-24.04
-    needs: test-framework
-    if: always()
-    steps:
-      - name: Sanitize branch name
-        shell: bash
-        run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${GITHUB_REF#refs/heads/}"
-          fi
-          echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
-
       - name: Download test results
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -264,7 +242,7 @@ jobs:
       - name: Install datadog-ci
         run: npm install -g @datadog/datadog-ci
 
-      - name: Upload results
+      - name: Upload results to Datadog
         env:
           DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_ENV: ci
