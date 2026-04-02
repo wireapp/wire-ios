@@ -98,7 +98,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
-          lfs: 'true'
+          lfs: ${{ matrix.needs_lfs }}
 
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment

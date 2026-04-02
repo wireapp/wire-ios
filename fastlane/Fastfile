@@ -192,7 +192,7 @@ platform :ios do
         matrix_entries = schemes.flat_map do |scheme_name|
             fw = all_frameworks.find { |f| f.scheme == scheme_name }
             shard_count = fw&.shard_count || 1
-            (1..shard_count).map { |shard| { scheme: scheme_name, shard: shard, shard_total: shard_count } }
+            (1..shard_count).map { |shard| { scheme: scheme_name, shard: shard, shard_total: shard_count, needs_lfs: fw&.needs_lfs || false } }
         end
         File.write("/tmp/schemes.json", matrix_entries.to_json)
     end

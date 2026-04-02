@@ -1,5 +1,5 @@
 class Framework
-    attr_accessor :name, :dependencies, :relations, :shard_count, :test_target, :test_dir
+    attr_accessor :name, :dependencies, :relations, :shard_count, :test_target, :test_dir, :needs_lfs
 
     def self.all
         all_folders = [
@@ -60,6 +60,14 @@ class Framework
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireLogging"])
         
+        # Frameworks with LFS snapshot reference images — all others can skip LFS on checkout
+        frameworks["wire-ios"].needs_lfs = true
+        frameworks["WireAuthentication"].needs_lfs = true
+        frameworks["WireCalling"].needs_lfs = true
+        frameworks["WireFoundation"].needs_lfs = true
+        frameworks["WireMessaging"].needs_lfs = true
+        frameworks["WireUI"].needs_lfs = true
+
         frameworks["wire-ios-data-model"].shard_count = 2
         frameworks["wire-ios-data-model"].test_target = "WireDataModelTests"
         frameworks["wire-ios-data-model"].test_dir = "wire-ios-data-model/Tests"
@@ -132,6 +140,7 @@ class Framework
       @shard_count = 1
       @test_target = nil
       @test_dir = nil
+      @needs_lfs = false
     end
   
     def add_dependency(dependency)
