@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 @testable import WireDomain
 
+@Suite("InvalidMLSGroupGenerator Tests", .timeLimit(.minutes(1)))
 final class InvalidMLSGroupGeneratorTests {
 
     var sut: InvalidMLSGroupGenerator!
