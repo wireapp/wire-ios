@@ -5649,6 +5649,35 @@ public class MockRemoveCoreCryptoKeysUseCaseProtocol: RemoveCoreCryptoKeysUseCas
 
 }
 
+public class MockRemoveEARKeysUseCaseProtocol: RemoveEARKeysUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeAccountID_Invocations: [UUID] = []
+    public var invokeAccountID_MockError: Error?
+    public var invokeAccountID_MockMethod: ((UUID) throws -> Void)?
+
+    public func invoke(accountID: UUID) throws {
+        invokeAccountID_Invocations.append(accountID)
+
+        if let error = invokeAccountID_MockError {
+            throw error
+        }
+
+        guard let mock = invokeAccountID_MockMethod else {
+            fatalError("no mock for `invokeAccountID`")
+        }
+
+        try mock(accountID)
+    }
+
+}
+
 public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationDelegate {
 
     // MARK: - Life cycle

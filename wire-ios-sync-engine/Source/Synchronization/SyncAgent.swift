@@ -101,6 +101,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         setupBindings()
     }
 
+    func tearDown() {
+        delegate = nil
+        Task { [syncAgent = self] in
+            await syncAgent.suspend()
+        }
+    }
+
     // MARK: - API
 
     /// Trigger the appropriate sync depending in the local state.
