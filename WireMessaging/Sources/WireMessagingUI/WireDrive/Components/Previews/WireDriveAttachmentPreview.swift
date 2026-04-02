@@ -39,17 +39,13 @@ struct WireDriveAttachmentPreview<Content: View>: View {
 
     var body: some View {
         content
-            .overlay(
-                VStack {
-                    Spacer()
-                    ProgressView(value: progress, total: 1)
-                        .tint(Color.blue)
-                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
-                        .padding(.bottom, Constants.borderWidth / 2)
-                        .opacity(progress == nil ? 0 : 1)
-
-                }
-            )
+            .overlay(alignment: .bottom) {
+                ProgressView(value: progress, total: 1)
+                    .tint(Color.blue)
+                    .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                    .padding(.bottom, Constants.borderWidth / 2)
+                    .opacity(progress == nil ? 0 : 1)
+            }
             .clipShape(
                 RoundedRectangle(cornerRadius: Constants.cornerRadius)
             )
@@ -75,8 +71,8 @@ private enum Constants {
         progress: 0.5,
         progressColor: .blue
     ) {
-        Rectangle()
-            .fill(Color.gray.opacity(0.2))
+        Text("content")
+            .padding()
     }
-    .frame(width: 222, height: 74)
+    .frame(width: 222)
 }

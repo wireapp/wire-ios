@@ -52,7 +52,6 @@ struct WireDriveLargeDocumentPreviewView: View {
                     isError: downloadError
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74) // This might break the UI if text font is too big
                 .frame(maxWidth: .infinity)
 
                 previewContainer {
@@ -138,4 +137,5 @@ struct WireDriveLargeDocumentPreviewView: View {
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         )
     )
+    .padding()
 }

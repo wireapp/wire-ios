@@ -36,7 +36,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
     }
 
     var body: some View {
-        HStack {
+        Group {
             switch (viewModel.fileCategory, viewModel.displayStyle) {
             case (.image, .small):
                 WireDriveImageConversationAttachmentPreview(
@@ -88,7 +88,6 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     progress: viewModel.progress,
                     isError: viewModel.isAssetDownloadError,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .large):
                 WireDriveLargeDocumentPreviewView(
@@ -108,7 +107,6 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     progress: viewModel.progress,
                     isError: viewModel.isAssetDownloadError,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             }
         }
@@ -131,7 +129,12 @@ struct WireDriveAttachmentsPreviewItemView: View {
 // MARK: - Preview
 
 #Preview {
-    WireDriveAttachmentsPreviewItemView(
-        viewModel: WireDriveAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
-    )
+    VStack {
+        WireDriveAttachmentsPreviewItemView(
+            viewModel: WireDriveAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
+        )
+    }
+    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }

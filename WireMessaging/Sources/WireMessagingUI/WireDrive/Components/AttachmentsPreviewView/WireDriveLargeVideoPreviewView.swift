@@ -57,7 +57,6 @@ struct WireDriveLargeVideoPreviewView: View {
                     isError: downloadError
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(height: 74)  // This might break the UI if text font is too big
                 .frame(maxWidth: .infinity)
 
                 previewContainer {
@@ -169,4 +168,5 @@ struct WireDriveLargeVideoPreviewView: View {
         imageAspectRatio: CGFloat(16.0 / 9.0),
         duration: "02:34",
     )
+    .padding()
 }

@@ -33,6 +33,7 @@ struct WireDriveDocumentHeaderView: View {
     let labelText: String
     let progress: Double?
     let isError: Bool
+    var minHeight: CGFloat?
 
     var body: some View {
         header()
@@ -58,12 +59,10 @@ struct WireDriveDocumentHeaderView: View {
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .font(for: .subline1)
                     .lineLimit(1)
-
-                Spacer()
             }
-            .padding([.horizontal, .top], 8)
-
-            Spacer(minLength: 0)
+            .padding(.horizontal, 8)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
 
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
@@ -72,16 +71,23 @@ struct WireDriveDocumentHeaderView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.horizontal, .bottom], 8)
         }
+        .frame(minHeight: minHeight)
     }
 }
 
 #Preview {
-    WireDriveDocumentHeaderView(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        isError: false
-    )
-    .frame(width: 222, height: 74)
+    VStack {
+        WireDriveDocumentHeaderView(
+            headerIcon: Image(WireDriveFileType.pdf.imageResource),
+            headerText: "PDF (336 KB)",
+            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
+            progress: 0.7,
+            isError: false,
+            minHeight: nil
+        )
+        .frame(width: 222)
+        .background(.background)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }
