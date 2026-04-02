@@ -83,24 +83,6 @@
     XCTAssertEqualObjects(self.sut.authenticationCookieData, data2);
 }
 
-- (void)testThatItIsUniqueForServerName;
-{
-    ZMPersistentCookieStorage *sut1 = self.sut;
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"2.example.com" userIdentifier:self.userIdentifier useCache:YES];
-
-    XCTAssertNil([sut1 authenticationCookieData]);
-    XCTAssertNil([sut2 authenticationCookieData]);
-    
-    NSData *data1 = [NSData dataWithBytes:(char []){'a'} length:1];
-    [sut1 setAuthenticationCookieData:data1];
-    NSData *data2 = [NSData dataWithBytes:(char []){'b'} length:1];
-    [sut2 setAuthenticationCookieData:data2];
-    
-    XCTAssertEqualObjects([sut1 authenticationCookieData], data1);
-    XCTAssertEqualObjects([sut2 authenticationCookieData], data2);
-    [sut2 deleteKeychainItems];
-}
-
 - (void)testThatItCanDeleteCookies;
 {
     XCTAssertNil(self.sut.authenticationCookieData);

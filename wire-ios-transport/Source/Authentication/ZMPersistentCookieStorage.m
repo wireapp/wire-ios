@@ -133,11 +133,6 @@ static dispatch_queue_t isolationQueue(void)
     return nil;
 }
 
-- (NSString *)cookieKey
-{
-    return [[self.accountName stringByAppendingString:@"_"] stringByAppendingString:self.serverName];
-}
-
 - (NSString *)accountName
 {
     return self.userIdentifier.UUIDString;
@@ -146,7 +141,7 @@ static dispatch_queue_t isolationQueue(void)
 - (void)deleteKeychainItems
 {
     dispatch_sync(isolationQueue(), ^{
-        NonPersistedPassword[self.cookieKey] = nil;
+        NonPersistedPassword[self.accountName] = nil;
 
         [ZMKeychain deleteAllKeychainItemsWithAccountName:self.accountName];
     });
@@ -233,7 +228,7 @@ static dispatch_queue_t isolationQueue(void)
     __block BOOL success = NO;
     dispatch_sync(isolationQueue(), ^{
         
-        NSData *password = NonPersistedPassword[self.cookieKey];
+        NSData *password = NonPersistedPassword[self.accountName];
         BOOL const fetchFromKeychain = (password == nil);
         *passwordP = (password == (id) [NSNull null]) ? nil : password;
         
@@ -274,7 +269,7 @@ static dispatch_queue_t isolationQueue(void)
     if (NonPersistedPassword == nil) {
         NonPersistedPassword = [NSMutableDictionary dictionary];
     }
-    NonPersistedPassword[self.cookieKey] = password ?: [NSNull null];
+    NonPersistedPassword[self.accountName] = password ?: [NSNull null];
 }
 
 - (void)setItem:(NSData *)data
@@ -306,10 +301,10 @@ static dispatch_queue_t isolationQueue(void)
     __block BOOL success = NO;
     dispatch_sync(isolationQueue(), ^{
         
-        BOOL hasItem = ((NonPersistedPassword[self.cookieKey] != nil) &&
-                        (NonPersistedPassword[self.cookieKey] != [NSNull null]));
+        BOOL hasItem = ((NonPersistedPassword[self.accountName] != nil) &&
+                        (NonPersistedPassword[self.accountName] != [NSNull null]));
         if (hasItem) {
-            NonPersistedPassword[self.cookieKey] = password ?: [NSNull null];
+            NonPersistedPassword[self.accountName] = password ?: [NSNull null];
         }
         
         if (KeychainDisabled) {
@@ -338,7 +333,7 @@ static dispatch_queue_t isolationQueue(void)
 {
     dispatch_sync(isolationQueue(), ^{
         
-        [NonPersistedPassword removeObjectForKey:self.cookieKey];
+        [NonPersistedPassword removeObjectForKey:self.accountName];
         
         if (KeychainDisabled) {
             return;
