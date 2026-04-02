@@ -306,11 +306,6 @@ public enum Locators {
         case resetPassword = "Reset password"
     }
 
-    public enum FileVersioningPage: String {
-
-        case closeButton
-    }
-
     public enum ShareExtensionPage: String {
 
         case imageTile = "PXGGridLayout-Info"
@@ -348,6 +343,14 @@ public enum Locators {
             case saveButton
             case cancelButton
             case removeFilterButton
+        }
+
+        public enum FilesFilteringPage: String {
+            case removeAllFiltersButton
+
+            public static func filter(_ filter: String) -> String {
+                "filter.\(filter)"
+            }
         }
 
         public enum ShareLinkPasswordPage: String {
@@ -404,6 +407,44 @@ public enum Locators {
         public enum FileRenamePage: String {
             case cancel
             case save
+        }
+
+        public enum FileVersioningPage: String {
+
+            case closeButton
+            case restoreButton
+        }
+
+        public enum TagsEditPage: String {
+
+            case closeButton
+            case saveButton
+            case textInputField
+
+            public static func currentTag(_ tag: String) -> String {
+                "currentTag.\(tag)"
+            }
+
+            public static func suggestedTag(_ tag: String) -> String {
+                "suggestedTag.\(tag)"
+            }
+        }
+
+        public enum FilesSortingPage: String {
+            case menuButton
+
+            public static func sortOrder(_ order: String) -> String {
+                "sortOrder.\(order)"
+            }
+
+            public static func sortKey(_ key: String) -> String {
+                "sortKey.\(key)"
+            }
+        }
+
+        public enum FilesItemPage: String {
+            case confirmDeleteButton
+            case confirmRestoreButton
         }
     }
 }
