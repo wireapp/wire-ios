@@ -45,6 +45,8 @@ final class FilesViewTests: XCTestCase {
     private var updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase!
     private var updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase!
     private var driveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
+    private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
+    private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
 
     private let record: Bool? = nil
 
@@ -102,6 +104,12 @@ final class FilesViewTests: XCTestCase {
         deletePublicLink = WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi)
         updatePublicLinkExpiration = WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
         updatePublicLinkPassword = WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
+        makeAssetAvailableOfflineUseCase = WireDriveMakeAssetAvailableOfflineUseCase(
+            localAssetRepository: localAssetsRepository
+        )
+        removeAssetAvailableOfflineUseCase = WireDriveRemoveAssetAvailableOfflineUseCase(
+            localAssetRepository: localAssetsRepository
+        )
     }
 
     @MainActor
@@ -430,6 +438,8 @@ final class FilesViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: driveConversationsUseCase,
+                makeAssetAvailableOfflineUseCase: makeAssetAvailableOfflineUseCase,
+                removeAssetAvailableOfflineUseCase: removeAssetAvailableOfflineUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
@@ -461,6 +471,7 @@ private extension FilesItemViewModel {
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
         localAssetRepository.observeAssetNodeID_MockValue = CurrentValueSubject<WireDriveLocalAsset?, Never>(asset)
             .eraseToAnyPublisher()
+        localAssetRepository.assetNodeID_MockValue = WireDriveLocalAsset.fixture()
 
         return FilesItemViewModel(
             item: item,

@@ -118,6 +118,7 @@ final class FilesItemViewModel: ObservableObject {
 
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
             self?.performAction(.primaryAction)
         }
 
@@ -125,7 +126,7 @@ final class FilesItemViewModel: ObservableObject {
             guard let self else { return }
             self.asset = asset
             if let asset {
-                self.fileTracker.handleDownloadState(fromAsset: asset)
+                fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
     }
@@ -144,7 +145,7 @@ final class FilesItemViewModel: ObservableObject {
             true
         }
     }
-    
+
     var isDownloadingForOfflineUse: Bool {
         switch fileTracker.state {
         case .loading where asset?.isAvailableOffline == true:
@@ -220,6 +221,16 @@ final class FilesItemViewModel: ObservableObject {
     func confirmRestore() async {
         await onItemAction(.restore, item)
     }
+
+    #if DEBUG
+        func deleteAsset() {
+            Task {
+                do {
+                    try await localAssetRepository.deleteAsset(nodeID: nodeID)
+                } catch {}
+            }
+        }
+    #endif
 
     private static func subtitle(
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
@@ -408,7 +419,7 @@ final class FilesItemViewModel: ObservableObject {
         default:
             false
         }
-        
+
         return isAvailableOffline && isDownloaded
     }
 }

@@ -237,7 +237,7 @@ final class WireDriveLocalAssetRepositoryTests {
         }
 
         // when
-        try await sut.downloadAsset(nodeID: nodeID)
+        try await sut.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
 
         // then
         #expect(
@@ -340,7 +340,7 @@ final class WireDriveLocalAssetRepositoryTests {
         }
 
         // when
-        try await sut.downloadAsset(nodeID: nodeID)
+        try await sut.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
 
         // then
         #expect(
@@ -449,7 +449,7 @@ final class WireDriveLocalAssetRepositoryTests {
         ) { [nodeID, sut, store] taskGroup in
             for _ in 1 ... 3 {
                 taskGroup.addTask {
-                    try await sut.downloadAsset(nodeID: nodeID)
+                    try await sut.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
                     return try await store.asset(nodeID: nodeID)
                 }
             }

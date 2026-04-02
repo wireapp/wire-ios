@@ -20,13 +20,13 @@ package import Foundation
 
 @MainActor
 package struct WireDriveMakeAssetAvailableOfflineUseCase {
-    
+
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
-    
+
     package init(localAssetRepository: any WireDriveLocalAssetRepositoryProtocol) {
         self.localAssetRepository = localAssetRepository
     }
-    
+
     package func invoke(nodeID: UUID) async throws {
         if var asset = try localAssetRepository.asset(nodeID: nodeID), asset.downloadState.cacheKey != nil {
             asset.isAvailableOffline = true
