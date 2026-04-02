@@ -84,11 +84,6 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
     }
 
     package func deleteAssets(nodeIDs: [UUID]) async throws {
-        for nodeID in nodeIDs {
-            assets[nodeID] = nil
-            updates.send((nodeID, nil))
-        }
-
         let context = contextProvider.newBackgroundContext()
         try await Task.detached {
             try await context.perform {
@@ -100,6 +95,11 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
                 try context.save()
             }
         }.value
+
+        for nodeID in nodeIDs {
+            assets[nodeID] = nil
+            updates.send((nodeID, nil))
+        }
     }
 
     // MARK: Helpers

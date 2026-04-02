@@ -27,6 +27,7 @@ extension WireDriveLocalAsset {
         path: String = "path/to/file.txt",
         contentType: String? = "text/plain",
         size: UInt64? = 1234,
+        isAvailableOffline: Bool = false,
         downloadState: DownloadState = .pending
     ) -> WireDriveLocalAsset {
         WireDriveLocalAsset(
@@ -38,7 +39,7 @@ extension WireDriveLocalAsset {
             conversationName: "Conversation 1",
             ownerName: "User 1",
             modified: nil,
-            isAvailableOffline: false,
+            isAvailableOffline: isAvailableOffline,
             downloadState: downloadState
         )
     }

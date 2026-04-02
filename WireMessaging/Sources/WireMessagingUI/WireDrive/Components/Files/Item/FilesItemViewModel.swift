@@ -214,6 +214,9 @@ final class FilesItemViewModel: ObservableObject {
         if permanently {
             await onItemAction(.deletePermanently, item)
         } else {
+            if let asset, asset.isAvailableOffline {
+                await onItemAction(.removeAvailableOffline, item)
+            }
             await onItemAction(.deleteToRecycleBin, item)
         }
     }
@@ -379,7 +382,7 @@ final class FilesItemViewModel: ObservableObject {
             }
         }
 
-        if !isEditable {
+        if !isEditable, !isInRecycleBin, item.kind == .file {
             if isAvailableOffline {
                 actions.insert(.removeAvailableOffline)
             } else {
