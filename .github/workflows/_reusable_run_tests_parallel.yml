@@ -118,12 +118,10 @@ jobs:
         run: |
           XCRESULT=$(find artifacts -type d -name "*.xcresult" | head -n 1)
           echo "path=$XCRESULT" >> "$GITHUB_OUTPUT"
-          echo "Found xcresult: $XCRESULT"
 
       - name: Analyze .xcresult
         if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
-        continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@v1
+        uses: wireapp/analyze-xcoderesults-action@v1.0.0
         with:
           results: ${{ steps.find-xcresult.outputs.path }}
           warningAnnotations: true
