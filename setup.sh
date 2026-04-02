@@ -143,8 +143,6 @@ if [[ "$TEST_ONLY" == "false" ]]; then
         echo ""
     )
 
-    echo "ℹ️ Generate UITests demo user credentials"
-    scripts/generate_ui_tests_credentials.sh
 fi
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
