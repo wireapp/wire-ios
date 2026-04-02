@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+import os
 public import WireFoundation
 
 import WireCrypto
@@ -41,7 +42,7 @@ public final class CookieStorage: CookieStorageProtocol, Sendable {
 
     private let userID: UUID
     private let cookieEncryptionKey: Data
-    private let keychain: any KeychainProtocol
+    private let keychain: OSAllocatedUnfairLock<any KeychainProtocol>
 
     public init(
         userID: UUID,
@@ -50,7 +51,7 @@ public final class CookieStorage: CookieStorageProtocol, Sendable {
     ) {
         self.userID = userID
         self.cookieEncryptionKey = cookieEncryptionKey
-        self.keychain = keychain
+        self.keychain = OSAllocatedUnfairLock(initialState: keychain)
     }
 
     /// Store cookies.
@@ -64,11 +65,13 @@ public final class CookieStorage: CookieStorageProtocol, Sendable {
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
         let cookieData = try Self.encodeAndEncryptCookies(cookies, key: cookieEncryptionKey)
 
-        // The typical case is updating so try that first.
-        do {
-            try keychain.updateItem(query: baseQuery(), attributesToUpdate: [.data(cookieData)])
-        } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
-            try keychain.addItem(query: addQuery(cookieData: cookieData))
+        try keychain.withLock { keychain in
+            do {
+                // The typical case is updating so try that first.
+                try keychain.updateItem(query: baseQuery(), attributesToUpdate: [.data(cookieData)])
+            } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
+                try keychain.addItem(query: addQuery(cookieData: cookieData))
+            }
         }
     }
 
@@ -81,7 +84,7 @@ public final class CookieStorage: CookieStorageProtocol, Sendable {
     /// - Returns: The stored cookies.
 
     public func fetchCookies() throws -> [HTTPCookie] {
-        guard let data: Data = try keychain.fetchItem(query: fetchQuery()) else {
+        guard let data: Data = try keychain.withLock({ try $0.fetchItem(query: fetchQuery()) }) else {
             return []
         }
 
@@ -97,7 +100,7 @@ public final class CookieStorage: CookieStorageProtocol, Sendable {
     /// - Throws: An error if the keychain deletion fails.
 
     public func removeCookies() throws {
-        try keychain.deleteItem(query: baseQuery())
+        try keychain.withLock { try $0.deleteItem(query: baseQuery()) }
     }
 
     // MARK: - Queries
