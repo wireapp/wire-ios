@@ -1,6 +1,12 @@
 name: "Setup Test Environment"
 description: "Configure Xcode, restore caches, install dependencies, and prepare the simulator for running tests. Requires checkout to have already run."
 
+inputs:
+  scheme:
+    description: "Scheme being tested — used to scope the DerivedData cache key. Leave empty to skip DerivedData caching."
+    required: false
+    default: ""
+
 outputs:
   xcode-version:
     description: "The Xcode version read from .xcode-version"
@@ -66,6 +72,15 @@ runs:
           -resolvePackageDependencies \
           -disableAutomaticPackageResolution \
           -clonedSourcePackagesDirPath "$PACKAGES_DIR"
+
+    - name: Restore DerivedData Cache
+      if: ${{ inputs.scheme != '' }}
+      uses: actions/cache@v4
+      with:
+        path: DerivedData
+        key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-deriveddata-${{ inputs.scheme }}-${{ hashFiles('**/*.swift', '**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-deriveddata-${{ inputs.scheme }}-
 
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1

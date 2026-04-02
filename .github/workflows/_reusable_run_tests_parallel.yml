@@ -108,6 +108,8 @@ jobs:
 
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment
+        with:
+          scheme: ${{ matrix.scheme }}
 
       - name: "Test ${{ matrix.scheme }}"
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
