@@ -21,5 +21,3 @@
 "passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 "passwordtextfield.hide_password" = "Hide password";
 "passwordtextfield.show_password" = "Show password";
-
-"validationTextField.removeEntry" = "Remove entry";
