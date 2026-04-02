@@ -27,7 +27,6 @@
 #import "ZMKeychain.h"
 
 static NSString * const CookieName = @"zuid";
-static NSString * const LegacyAccountName = @"User";
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 static BOOL KeychainDisabled = NO;
 static NSMutableDictionary *NonPersistedPassword;
@@ -136,20 +135,12 @@ static dispatch_queue_t isolationQueue(void)
 
 - (NSString *)cookieKey
 {
-    if (nil != self.accountName) {
-        return [[self.accountName stringByAppendingString:@"_"] stringByAppendingString:self.serverName];
-    } else {
-        return self.serverName; // Legacy and migration support
-    }
+    return [[self.accountName stringByAppendingString:@"_"] stringByAppendingString:self.serverName];
 }
 
 - (NSString *)accountName
 {
-    if (nil != self.userIdentifier) {
-        return self.userIdentifier.UUIDString;
-    } else {
-        return LegacyAccountName; // Legacy and migration support
-    }
+    return self.userIdentifier.UUIDString;
 }
 
 - (void)deleteKeychainItems
