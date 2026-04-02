@@ -40,7 +40,6 @@
 "channel_access_level.navigation_title" = "Acesso";
 
 "channel_access_level.participants_header" = "Adicionar participantes";
-"channel_access_level.participants_header" = "Adicionar participantes";
 
 "channel_access_level.access_footer" = "Todos os membros da equipe podem se juntar a canais públicos. Mas, somente administradores ou membros do canal podem adicionar pessoas a um canal privado. Um canal privado não pode ser alterado para público.";
 "channel_access_level.participants_footer" = "Selecione quem pode adicionar participantes a um canal privado";

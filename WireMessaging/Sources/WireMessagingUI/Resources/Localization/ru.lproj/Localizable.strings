@@ -40,7 +40,6 @@
 "channel_access_level.navigation_title" = "Доступ";
 
 "channel_access_level.participants_header" = "Добавить участников";
-"channel_access_level.participants_header" = "Добавить участников";
 
 "channel_access_level.access_footer" = "Все члены команды могут присоединяться к публичным каналам. Но только администраторы или участники канала могут добавлять людей в приватный канал. Приватный канал не может быть изменен на публичный.";
 "channel_access_level.participants_footer" = "Выберите, кто может добавлять участников в приватный канал";

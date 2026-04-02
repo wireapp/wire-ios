@@ -40,7 +40,6 @@
 "channel_access_level.navigation_title" = "Access";
 
 "channel_access_level.participants_header" = "Додати учасників";
-"channel_access_level.participants_header" = "Додати учасників";
 
 "channel_access_level.access_footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public.";
 "channel_access_level.participants_footer" = "Select who can add participants to a private channel";

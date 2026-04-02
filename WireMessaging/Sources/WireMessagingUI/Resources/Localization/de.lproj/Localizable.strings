@@ -40,7 +40,6 @@
 "channel_access_level.navigation_title" = "Zugang";
 
 "channel_access_level.participants_header" = "Teilnehmer hinzufügen";
-"channel_access_level.participants_header" = "Teilnehmer hinzufügen";
 
 "channel_access_level.access_footer" = "Alle Team-Mitglieder können öffentlichen Channels beitreten. Aber nur Channel-Admins oder -Mitglieder können Personen zu einem privaten Channel hinzufügen. Ein privater Channel kann nicht in einen öffentlichen umgewandelt werden.";
 "channel_access_level.participants_footer" = "Wählen Sie, wer Teilnehmer zu einem privaten Channel hinzufügen kann";
