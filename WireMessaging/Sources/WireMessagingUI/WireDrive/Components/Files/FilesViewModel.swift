@@ -642,7 +642,7 @@ package final class FilesViewModel: ObservableObject {
                 state = .error(isConnectionError: isNoInternetError)
             } else {
                 if isNoInternetError {
-                    // no-op, offline bar is dynamically shown/hidden on top of the list (see `bindNetworkConnection()`)
+                    // no-op, offline bar is dynamically shown/hidden on top of the list
                 } else {
                     alert = .unknownError
                 }
