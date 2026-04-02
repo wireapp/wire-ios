@@ -102,7 +102,7 @@ final class WireDriveLocalAssetRepositoryTests {
         nodesAPI.getNodeNodeID_MockValue = node
 
         // when
-        try await sut.refreshAssetMetadata(nodeID: nodeID)
+        _ = try await sut.refreshAssetMetadata(nodeID: nodeID)
 
         // then the store is updated with the new metadata
         #expect(
@@ -167,7 +167,7 @@ final class WireDriveLocalAssetRepositoryTests {
         )
 
         // when
-        try await sut.refreshAssetMetadata(nodeID: nodeID)
+        _ = try await sut.refreshAssetMetadata(nodeID: nodeID)
 
         // then the store is updated with the new metadata
         #expect(
@@ -542,7 +542,7 @@ final class WireDriveLocalAssetRepositoryTests {
 
 // MARK: - Helper Extensions
 
-private extension Task where Success == (URL, URLResponse), Failure == any Error {
+extension Task where Success == (URL, URLResponse), Failure == any Error {
 
     static func fixture() -> Task {
         Task {
