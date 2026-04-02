@@ -55,6 +55,9 @@
          location = "group:auto_approve_cherry_pick.yml">
       </FileRef>
       <FileRef
+         location = "group:_reusable_run_tests_parallel.yml">
+      </FileRef>
+      <FileRef
          location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
