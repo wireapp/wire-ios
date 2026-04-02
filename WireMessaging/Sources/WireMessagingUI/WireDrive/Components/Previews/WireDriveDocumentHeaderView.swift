@@ -40,14 +40,9 @@ struct WireDriveDocumentHeaderView: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-<<<<<<< HEAD
     let isDraftPreview: Bool
     let state: WireDriveFileUITracker.State
-=======
-    let progress: Double?
-    let isError: Bool
     var minHeight: CGFloat?
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
 
     var body: some View {
         header()
@@ -63,27 +58,11 @@ struct WireDriveDocumentHeaderView: View {
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .font(for: .subline1)
                     .lineLimit(1)
-<<<<<<< HEAD
                     .layoutPriority(1)
-
-                Spacer()
-
-                if !isDraftPreview {
-                    stateTextView()
-                        .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
-                        .font(for: .subline1)
-                        .lineLimit(1)
-                }
-            }
-            .padding([.horizontal, .top], 8)
-
-            Spacer(minLength: 4)
-=======
             }
             .padding(.horizontal, 8)
             .padding(.top, 8)
             .padding(.bottom, 4)
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
 
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
@@ -178,7 +157,6 @@ struct WireDriveDocumentHeaderView: View {
 }
 
 #Preview {
-<<<<<<< HEAD
     let headerIcon = Image(WireDriveFileType.pdf.imageResource)
     let headerText = "PDF (336 KB)"
     let labelText = "CDR_20220120 Accessibility Review Reviewed Final Plus"
@@ -232,20 +210,5 @@ struct WireDriveDocumentHeaderView: View {
         .frame(maxWidth: .infinity)
         .padding()
     }
-=======
-    VStack {
-        WireDriveDocumentHeaderView(
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            progress: 0.7,
-            isError: false,
-            minHeight: nil
-        )
-        .frame(width: 222)
-        .background(.background)
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
     .background(.gray)
 }

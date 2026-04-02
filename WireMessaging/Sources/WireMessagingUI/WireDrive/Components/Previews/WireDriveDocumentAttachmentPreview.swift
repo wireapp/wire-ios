@@ -34,14 +34,9 @@ struct WireDriveDocumentAttachmentPreview: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-<<<<<<< HEAD
     let state: WireDriveFileUITracker.State
     let isDraftPreview: Bool
-=======
-    let progress: Double?
-    let isError: Bool
     var minHeight: CGFloat?
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -51,14 +46,9 @@ struct WireDriveDocumentAttachmentPreview: View {
                 headerIcon: headerIcon,
                 headerText: headerText,
                 labelText: labelText,
-<<<<<<< HEAD
                 isDraftPreview: isDraftPreview,
-                state: state
-=======
-                progress: progress,
-                isError: isError,
+                state: state,
                 minHeight: minHeight
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
@@ -66,28 +56,17 @@ struct WireDriveDocumentAttachmentPreview: View {
 }
 
 #Preview {
-<<<<<<< HEAD
-    WireDriveDocumentAttachmentPreview(
-        headerIcon: Image(WireDriveFileType.pdf.imageResource),
-        headerText: "PDF (336 KB)",
-        labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        state: .loading(progress: 0.7, isLargeFile: false),
-        isDraftPreview: false
-    )
-    .frame(width: 222, height: 74)
-=======
     VStack {
         WireDriveDocumentAttachmentPreview(
             headerIcon: Image(WireDriveFileType.pdf.imageResource),
             headerText: "PDF (336 KB)",
             labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            progress: 0.7,
-            isError: false,
+            state: .loading(progress: 0.7, isLargeFile: false),
+            isDraftPreview: false,
             minHeight: nil
         )
         .frame(width: 222)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(.gray)
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
 }

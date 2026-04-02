@@ -117,14 +117,9 @@ private struct AttachmentsCarouselItemView: View {
                 headerIcon: Image(item.fileIcon.imageResource),
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,
-<<<<<<< HEAD
                 state: fileTrackerState(for: item),
-                isDraftPreview: true
-=======
-                progress: item.state.progress,
-                isError: item.state.isFailed,
+                isDraftPreview: true,
                 minHeight: 72
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
             )
         }
     }

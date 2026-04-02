@@ -41,40 +41,20 @@ struct WireDriveLargeVideoPreviewView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-<<<<<<< HEAD
         WireDriveAttachmentPreview {
-            Group {
-=======
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
-            VStack(spacing: 0) {
-                WireDriveDocumentHeaderView(
-                    headerIcon: headerIcon,
-                    headerText: headerText,
-                    labelText: labelText,
-                    progress: progress,
-                    isError: downloadError
-                )
-                .background(ColorTheme.Backgrounds.surfaceVariant.color)
-                .frame(maxWidth: .infinity)
-
->>>>>>> 64c727e237 (fix: attachment preview header layout issues - WPB-23931 (#4491))
-                previewContainer {
-                    if let url {
-                        asyncImage(url: url)
-                    } else {
-                        errorView(text: Self.errorMessage)
-                    }
+            previewContainer {
+                if let url {
+                    asyncImage(url: url)
+                } else {
+                    errorView(text: Self.errorMessage)
                 }
-                .overlay(alignment: .bottom) {
-                    if let duration {
-                        durationView(duration: duration)
-                    }
+            }
+            .overlay(alignment: .bottom) {
+                if let duration {
+                    durationView(duration: duration)
                 }
-            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
+            }
+            .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
