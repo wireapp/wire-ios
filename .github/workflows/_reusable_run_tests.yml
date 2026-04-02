@@ -344,7 +344,7 @@ jobs:
   analyze-xcresults:
     needs: run-tests
     name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' }}
+    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
@@ -383,7 +383,7 @@ jobs:
     name: Upload to Datadog
     runs-on: ubuntu-24.04
     needs: run-tests
-    if: always()
+    if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
       - name: Sanitize branch name
         run: |
