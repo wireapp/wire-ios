@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.Sorting
 
@@ -28,6 +29,8 @@ struct FilesSortingView: View {
     @ScaledMetric private var defaultSortMenuIconHeight: CGFloat = 10
     @ScaledMetric private var selectedSortMenuIconWidth: CGFloat = 9
     @ScaledMetric private var selectedSortMenuIconHeight: CGFloat = 11
+
+    @Environment(\.isSearching) private var isSearching
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesSortingViewModel,
@@ -55,6 +58,7 @@ struct FilesSortingView: View {
                             systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.sortKey(sortingKey.rawValue))
                 }
 
                 Divider()
@@ -70,6 +74,7 @@ struct FilesSortingView: View {
                             systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.sortOrder(sortingOrder.rawValue))
                 }
 
             } label: {
@@ -82,10 +87,11 @@ struct FilesSortingView: View {
                 }
             }
             .foregroundStyle(.primary)
+            .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.menuButton)
 
             Spacer()
 
-            if !viewModel.isBrowsing {
+            if !viewModel.isBrowsing, isSearching {
                 Text(viewModel.resultsInTitle)
                     .font(for: .subline2)
                     .fontWeight(.semibold)

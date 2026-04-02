@@ -195,7 +195,7 @@ final class WireDriveLocalAssetRepositoryTests {
         )
         nodesAPI.getNodeNodeID_MockValue = node
 
-        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        let (progressStream, progressContinuation) = AsyncThrowingStream.makeStream(of: Double.self)
         fileDownloader.downloadFrom_MockValue = (progress: progressStream, download: Task.fixture())
 
         Task {
@@ -272,7 +272,7 @@ final class WireDriveLocalAssetRepositoryTests {
         )
         nodesAPI.getNodeNodeID_MockValue = node
 
-        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        let (progressStream, progressContinuation) = AsyncThrowingStream.makeStream(of: Double.self)
         fileDownloader.downloadFrom_MockValue = (progress: progressStream, download: Task.fixture())
 
         Task {
@@ -349,7 +349,7 @@ final class WireDriveLocalAssetRepositoryTests {
         )
         nodesAPI.getNodeNodeID_MockValue = node
 
-        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        let (progressStream, progressContinuation) = AsyncThrowingStream.makeStream(of: Double.self)
         fileDownloader.downloadFrom_MockValue = (progress: progressStream, download: Task.fixture())
 
         Task {
