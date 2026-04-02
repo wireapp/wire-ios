@@ -21,6 +21,7 @@
 @import WireTransport.Testing;
 
 #import "ZMPersistentCookieStorage.h"
+#import "ZMKeychain.h"
 
 
 @interface ZMPersistentCookieStorageTests : XCTestCase
@@ -43,7 +44,7 @@
 - (void)setUp
 {
     [super setUp];
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
+    [ZMKeychain deleteAllKeychainItems];
     _userIdentifier = NSUUID.createUUID;
     self.sut = [ZMPersistentCookieStorage storageForServerName:@"1.example.com" userIdentifier:self.userIdentifier useCache:YES];
 }

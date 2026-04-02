@@ -33,9 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Returns: True if it's possible access any authentication cookie data
 + (BOOL)hasAccessibleAuthenticationCookieData;
 
-/// Delete all keychain items for for all servers and users
-+ (void)deleteAllKeychainItems;
-
 /// Delete all keychain items for current the user and server
 - (void)deleteKeychainItems;
     
