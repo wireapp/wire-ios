@@ -85,7 +85,13 @@ final class FilesViewModelTests {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
-                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi)
+                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
@@ -98,7 +104,7 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockValue = .fixture()
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireDriveNode.fixture(), WireDriveLocalAsset.fixture())
-        localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { _, _ in }
 
         sut.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
@@ -543,7 +549,7 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockMethod = { nodeID in
             assets[nodeID]
         }
-        localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
+        localAssetRepository.downloadAssetNodeIDIsAvailableOffline_MockMethod = { nodeID, _ in
             assets[nodeID] = WireDriveLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
