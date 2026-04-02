@@ -239,7 +239,6 @@ private extension FilesContentView {
 
     var offlineBar: some View {
         FilesOfflineBarView()
-            .padding(.bottom, 4)
             .background(backgroundColor)
             .transition(
                 .move(edge: .top)

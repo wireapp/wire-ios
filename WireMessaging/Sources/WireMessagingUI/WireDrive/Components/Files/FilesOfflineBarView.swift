@@ -19,15 +19,24 @@
 import SwiftUI
 
 struct FilesOfflineBarView: View {
+    @ScaledMetric private var scale: CGFloat = 1
+    
     var body: some View {
-        VStack {
-            Text(
-                L10n.Localizable.General.NoInternet.title.uppercased()
-            )
+        VStack(spacing: 8) {
+            bar()
+            hint()
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 4)
+    }
+    
+    @ViewBuilder private func bar() -> some View {
+        Text(L10n.Localizable.General.NoInternet.title.uppercased())
             .font(for: .subline2)
+            .multilineTextAlignment(.center)
             .foregroundColor(.white) // TODO: [WPB-24475] use proper color
             .frame(maxWidth: .infinity)
-            .frame(height: 25)
+            .padding(4)
             .background {
                 // TODO: [WPB-24475] use proper color
                 Color(
@@ -37,20 +46,30 @@ struct FilesOfflineBarView: View {
                     opacity: 1
                 )
             }
-            .cornerRadius(6)
-            
-            //TODO: Olga said this design will probably change. don't localise yet.
-            Label {
-                Text("You can only see downloaded files in the offline mode.") //TODO: localize
-                    //.multilineTextAlignment(.center)
-            } icon: {
-                Image(systemName: "wifi.slash")
-            }
-        }
-        .padding(.horizontal, 16)
+            .cornerRadius(6 * scale)
+    }
+    
+    @ViewBuilder private func hint() -> some View {
+        Text(L10n.Localizable.Conversation.WireCells.Files.offlineModeHint)
+            .font(for: .subline1)
+            .multilineTextAlignment(.center)
     }
 }
 
 #Preview {
-    FilesOfflineBarView()
+    VStack(spacing: 0) {
+        Text("content above the bar")
+            .opacity(0.5)
+            .padding()
+
+        Divider()
+        
+        FilesOfflineBarView()
+        
+        Divider()
+        
+        Text("content below the bar")
+            .opacity(0.5)
+            .padding()
+    }
 }
