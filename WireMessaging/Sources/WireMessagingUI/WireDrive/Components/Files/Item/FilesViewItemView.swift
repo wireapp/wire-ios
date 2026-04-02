@@ -250,14 +250,6 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func menuContent() -> some View {
-        #if DEBUG
-            Button {
-                viewModel.deleteAsset()
-            } label: {
-                Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
-            }
-        #endif
-
         menuItem(.primaryAction) { item in
             Button {
                 viewModel.performAction(item)
@@ -371,6 +363,21 @@ struct FilesItemView: View {
                 label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
+
+        #if DEBUG
+            switch viewModel.fileTracker.state {
+            case .loaded:
+                Divider()
+                
+                Button {
+                    viewModel.deleteAsset()
+                } label: {
+                    Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
+                }
+            default:
+                EmptyView()
+            }
+        #endif
     }
 
     @ViewBuilder
