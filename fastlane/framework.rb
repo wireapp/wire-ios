@@ -1,5 +1,5 @@
 class Framework
-    attr_accessor :name, :dependencies, :relations, :shard_count, :test_target, :test_dir, :needs_lfs
+    attr_accessor :name, :dependencies, :relations, :needs_lfs
 
     def self.all
         all_folders = [
@@ -68,14 +68,6 @@ class Framework
         frameworks["WireMessaging"].needs_lfs = true
         frameworks["WireUI"].needs_lfs = true
 
-        frameworks["wire-ios-data-model"].shard_count = 2
-        frameworks["wire-ios-data-model"].test_target = "WireDataModelTests"
-        frameworks["wire-ios-data-model"].test_dir = "wire-ios-data-model/Tests"
-
-        frameworks["wire-ios-sync-engine"].shard_count = 2
-        frameworks["wire-ios-sync-engine"].test_target = "UnitTests"
-        frameworks["wire-ios-sync-engine"].test_dir = "wire-ios-sync-engine/Tests/Source"
-
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
@@ -137,9 +129,6 @@ class Framework
       @name = name
       @dependencies = []
       @relations = []
-      @shard_count = 1
-      @test_target = nil
-      @test_dir = nil
       @needs_lfs = false
     end
   

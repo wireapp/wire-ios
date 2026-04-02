@@ -82,7 +82,7 @@ jobs:
       pull-requests: write
       checks: write
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.scheme }}-shard${{ matrix.shard }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.scheme }}
       cancel-in-progress: true
     strategy:
       matrix:
@@ -105,8 +105,8 @@ jobs:
         with:
           scheme: ${{ matrix.scheme }}
 
-      - name: "Test ${{ matrix.scheme }} (${{ matrix.shard }}/${{ matrix.shard_total }})"
-        run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }} shard:${{ matrix.shard }} shard_total:${{ matrix.shard_total }}
+      - name: "Test ${{ matrix.scheme }}"
+        run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
       - name: Find .xcresult path
         if: always()
@@ -128,14 +128,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: "xcresult-${{ matrix.scheme }}-shard${{ matrix.shard }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "xcresult-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: artifacts/**/*.xcresult
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: "test-reports-${{ matrix.scheme }}-shard${{ matrix.shard }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "test-reports-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
@@ -144,7 +144,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: "snapshots-${{ matrix.scheme }}-shard${{ matrix.shard }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             **/SnapshotResults/
             xcodebuild*.log
@@ -156,14 +156,14 @@ jobs:
           files: |
             build/reports/*.junit
             artifacts/**/*.junit
-          check_name: "Test Results – ${{ matrix.scheme }} (${{ matrix.shard }}/${{ matrix.shard_total }})"
+          check_name: "Test Results – ${{ matrix.scheme }}"
           compare_to_earlier_commit: false
 
       - name: Archive DerivedData logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: "deriveddata-${{ matrix.scheme }}-shard${{ matrix.shard }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -205,7 +205,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: "test-reports-*-shard*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           merge-multiple: true
 
       - uses: actions/setup-node@v4

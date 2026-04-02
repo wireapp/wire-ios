@@ -140,10 +140,6 @@ platform :ios do
 
         framework = frameworks.find { |framework| framework.scheme == selected_choice }
 
-        # shard / shard_total are optional — passed by the parallel CI workflow for heavy frameworks
-        options[:shard] = options[:shard].to_i if options[:shard]
-        options[:shard_total] = options[:shard_total].to_i if options[:shard_total]
-
         run_tests_frameworks([framework.scheme], options)
     end
     
@@ -189,10 +185,9 @@ platform :ios do
         end
 
         all_frameworks = Framework.all.values
-        matrix_entries = schemes.flat_map do |scheme_name|
+        matrix_entries = schemes.map do |scheme_name|
             fw = all_frameworks.find { |f| f.scheme == scheme_name }
-            shard_count = fw&.shard_count || 1
-            (1..shard_count).map { |shard| { scheme: scheme_name, shard: shard, shard_total: shard_count, needs_lfs: fw&.needs_lfs || false } }
+            { scheme: scheme_name, needs_lfs: fw&.needs_lfs || false }
         end
         File.write("/tmp/schemes.json", matrix_entries.to_json)
     end
@@ -324,26 +319,14 @@ platform :ios do
 
         testplan = options[:testplan] || "AllTests" # TODO: [WPB-17497] GermanLocaleTests are not run
 
-        shard       = (options[:shard] || 1).to_i
-        shard_total = (options[:shard_total] || 1).to_i
-
         is_nightly_build = options[:all] == true
 
         schema_errors = {}
 
         schemas.each do |scheme|
-            only_testing = nil
-            if shard_total > 1
-                fw = Framework.all.values.find { |f| f.scheme == scheme }
-                if fw&.test_dir && fw&.test_target
-                    only_testing = test_classes_for_shard(fw.test_dir, fw.test_target, shard, shard_total)
-                    write_tests_info_to_summary("🤖 Shard #{shard}/#{shard_total}: #{only_testing.length} test classes")
-                end
-            end
-
             write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
             begin
-                test_plan(build, scheme, testplan, shard: shard, only_testing: only_testing)
+                test_plan(build, scheme, testplan)
                 schema_errors[scheme] = false
             rescue => e
                 write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
@@ -582,7 +565,7 @@ platform :ios do
         end
     end
 
-    def test_plan(build, scheme, testplan, shard: 1, only_testing: nil)
+    def test_plan(build, scheme, testplan)
         if ENV['IOS_SIM_ID'].nil?
             create_simulator_if_needed
         end
@@ -592,10 +575,6 @@ platform :ios do
         end
 
         ci_args = is_running_on_ci ? "CI=1" : nil
-
-        # Disambiguate output dir when the same scheme runs as multiple shards in parallel
-        shard_suffix = (only_testing && !only_testing.empty?) ? "/shard_#{shard}" : ""
-        output_dir = "#{build.artifact_path(with_filename: false)}/tests/#{scheme}#{shard_suffix}"
 
         run_tests(
             step_name: "🧪 Running tests for scheme: #{scheme}",
@@ -610,34 +589,14 @@ platform :ios do
             buildlog_path: build.build_path,
             result_bundle: true,
             # suppress_xcode_output: true,
-            output_directory: output_dir,
+            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
             output_types: "junit",
-            only_testing: only_testing,
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
             xcargs: ci_args
         )
-    end
-
-    # Scans Swift test files under `test_dir` for class names and returns the
-    # `-only-testing:Target/ClassName` identifiers for `shard` out of `shard_total`.
-    # Splits alphabetically by class name so the distribution is stable across runs.
-    def test_classes_for_shard(test_dir, test_target, shard, shard_total)
-        repo_root = ENV['REPO_ROOT'] || `git rev-parse --show-toplevel`.strip
-        dir = File.join(repo_root, test_dir)
-
-        classes = Dir.glob("#{dir}/**/*.swift").flat_map do |file|
-            File.read(file).scan(/class\s+(\w+)/).flatten
-        end.uniq.sort
-
-        return nil if classes.empty?
-
-        slice_size = (classes.length.to_f / shard_total).ceil
-        shard_classes = classes.each_slice(slice_size).to_a[shard - 1] || []
-
-        shard_classes.map { |c| "#{test_target}/#{c}" }
     end
 
     def create_simulator_if_needed
