@@ -79,8 +79,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
             self.cookieStorage = ZMPersistentCookieStorage(
-                forServerName: "myServer",
-                userIdentifier: self.userIdentifier,
+                forUserIdentifier: self.userIdentifier,
                 useCache: true
             )
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()

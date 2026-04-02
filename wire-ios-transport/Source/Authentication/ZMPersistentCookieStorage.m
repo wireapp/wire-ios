@@ -46,7 +46,6 @@ static dispatch_queue_t isolationQueue(void)
 
 @interface ZMPersistentCookieStorage ()
 
-@property (nonatomic, readonly) NSString *serverName;
 @property (nonatomic, readonly) NSArray<NSHTTPCookie *> *authenticationCookies;
 @property (nonatomic, readonly) BOOL useCache;
 
@@ -69,9 +68,9 @@ static dispatch_queue_t isolationQueue(void)
 
 #pragma mark - Creation
 
-+ (instancetype)storageForServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
++ (instancetype)storageForUserIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
 {
-    return [[self alloc] initWithServerName:serverName userIdentifier:userIdentifier useCache:useCache];
+    return [[self alloc] initWithUserIdentifier:userIdentifier useCache:useCache];
 }
 
 - (instancetype)init
@@ -79,11 +78,10 @@ static dispatch_queue_t isolationQueue(void)
     return nil;
 }
 
-- (instancetype)initWithServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
+- (instancetype)initWithUserIdentifier:(NSUUID *)userIdentifier useCache:(BOOL)useCache
 {
     self = [super init];
     if (self) {
-        _serverName = [serverName copy];
         _userIdentifier = [userIdentifier copy];
         _useCache = useCache;
     }

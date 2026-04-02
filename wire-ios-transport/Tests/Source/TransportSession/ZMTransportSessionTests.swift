@@ -77,8 +77,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         baseURL = URL(string: serverName)!
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
         cookieStorage = ZMPersistentCookieStorage(
-            forServerName: serverName,
-            userIdentifier: userIdentifier,
+            forUserIdentifier: userIdentifier,
             useCache: true
         )
         reachability = FakeReachability()

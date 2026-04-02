@@ -22,8 +22,7 @@ extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
         let backendURL = backendURL.host!
         return ZMPersistentCookieStorage(
-            forServerName: backendURL,
-            userIdentifier: account.userIdentifier,
+            forUserIdentifier: account.userIdentifier,
             useCache: true
         )
     }

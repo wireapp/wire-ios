@@ -263,8 +263,7 @@ public struct SharingSessionLoader {
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let legacyCookieStorage = ZMPersistentCookieStorage(
-            forServerName: legacyEnvironment.backendURL.host!,
-            userIdentifier: accountID,
+            forUserIdentifier: accountID,
             useCache: false
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {

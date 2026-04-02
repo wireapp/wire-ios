@@ -89,8 +89,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         )
 
         cookieStorage = ZMPersistentCookieStorage(
-            forServerName: "usersessiontest.example.com",
-            userIdentifier: .create(),
+            forUserIdentifier: .create(),
             useCache: true
         )
 
