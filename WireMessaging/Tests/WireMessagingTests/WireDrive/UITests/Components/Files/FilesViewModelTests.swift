@@ -528,7 +528,7 @@ final class FilesViewModelTests {
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
-        await sut.openItem(item: .fixture(id: nodeID))
+        await sut.performPrimaryAction(item: .fixture(id: nodeID))
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
@@ -549,11 +549,12 @@ final class FilesViewModelTests {
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
-        await sut.openItem(item: .fixture(id: nodeID))
+        await sut.performPrimaryAction(item: .fixture(id: nodeID))
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
-        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
+        #expect(sut
+            .viewingURL == nil) // expecting the file to not open automatically after download anymore, if it's large.
     }
 
     @Test(arguments: [
@@ -566,7 +567,7 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockError = error
 
         // when
-        await sut.openItem(item: .fixture())
+        await sut.performPrimaryAction(item: .fixture())
 
         // then
         #expect(sut.alert == expectedAlert)
