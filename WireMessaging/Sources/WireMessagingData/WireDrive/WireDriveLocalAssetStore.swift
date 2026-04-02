@@ -45,6 +45,10 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
             return nil
         }
     }
+    
+    package func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        assets.values.map { $0 }
+    }
 
     package func upsertAsset(_ asset: WireMessagingDomain.WireDriveLocalAsset) throws {
         guard assets[asset.nodeID] != asset else { return }

@@ -198,7 +198,7 @@ public extension WireMessagingFactory {
                         ),
                         updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                        createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                         restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                             repository: nodesAPI,
@@ -206,7 +206,7 @@ public extension WireMessagingFactory {
                             nodeCache: nodeCache
                         ),
                         getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                        getAssetUseCase: WireDriveGetAssetUseCase(
+                        getAsset: WireDriveGetAssetUseCase(
                             localAssetRepository: localAssetRepository,
                             fileCache: fileCache
                         ),
@@ -216,10 +216,13 @@ public extension WireMessagingFactory {
                         updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
                         getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
-                        makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                        makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                             localAssetRepository: localAssetRepository
                         ),
-                        removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                        removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                            localAssetRepository: localAssetRepository
+                        ),
+                        getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                             localAssetRepository: localAssetRepository
                         )
                     ),

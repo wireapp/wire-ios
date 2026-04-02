@@ -163,19 +163,20 @@ package final class FilesViewModel: ObservableObject {
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
             updateTags: any WireDriveUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
+            createFile: any WireDriveCreateFileUseCaseProtocol,
             fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
             restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireDriveGetEditingURLUseCase,
-            getAssetUseCase: WireDriveGetAssetUseCase,
+            getAsset: WireDriveGetAssetUseCase,
             getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol,
             createPublicLink: WireDriveCreatePublicLinkUseCase,
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
             updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
             getDriveConversations: any WireDriveGetConversationsUseCaseProtocol,
-            makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase,
-            removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase
+            makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase,
+            removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
+            getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -184,19 +185,20 @@ package final class FilesViewModel: ObservableObject {
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
-            self.createFileUseCase = createFileUseCase
+            self.createFile = createFile
             self.fetchNodeVersions = fetchNodeVersions
             self.restoreNodeVersion = restoreNodeVersion
             self.getEditingURL = getEditingURL
-            self.getAssetUseCase = getAssetUseCase
+            self.getAsset = getAsset
             self.getPublicLinkData = getPublicLinkData
             self.createPublicLink = createPublicLink
             self.deletePublicLink = deletePublicLink
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
             self.getDriveConversations = getDriveConversations
-            self.makeAssetAvailableOfflineUseCase = makeAssetAvailableOfflineUseCase
-            self.removeAssetAvailableOfflineUseCase = removeAssetAvailableOfflineUseCase
+            self.makeAssetAvailableOffline = makeAssetAvailableOffline
+            self.removeAssetAvailableOffline = removeAssetAvailableOffline
+            self.getOfflineAvailableAssets = getOfflineAvailableAssets
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -205,19 +207,20 @@ package final class FilesViewModel: ObservableObject {
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
         let updateTags: any WireDriveUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
-        let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
+        let createFile: any WireDriveCreateFileUseCaseProtocol
         let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireDriveGetEditingURLUseCase
-        let getAssetUseCase: WireDriveGetAssetUseCase
+        let getAsset: WireDriveGetAssetUseCase
         let getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol
         let createPublicLink: WireDriveCreatePublicLinkUseCase
         let deletePublicLink: WireDriveDeletePublicLinkUseCase
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
         let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
-        let makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase
-        let removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase
+        let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
+        let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
+        let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -467,7 +470,7 @@ package final class FilesViewModel: ObservableObject {
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
                 moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
-                createFileUseCase: useCases.createFileUseCase
+                createFileUseCase: useCases.createFile
             )
         )
     }
@@ -554,15 +557,15 @@ package final class FilesViewModel: ObservableObject {
         precondition(item.kind == .file)
 
         do {
-            let downloadState = try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
+            let downloadState = try await useCases.getAsset.downloadState(nodeID: item.id) ?? .pending
             switch downloadState {
             case .pending, .failed:
-                _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+                _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
-                let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+                let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url
             case .downloading:
-                await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
+                await useCases.getAsset.cancelDownload(nodeID: item.id)
             }
         } catch is CancellationError {
             // Cancelled by the user, ignore.
@@ -582,7 +585,7 @@ package final class FilesViewModel: ObservableObject {
         let viewModel = CreateFileViewModel(
             creationTarget: target,
             path: path,
-            createFileUseCase: useCases.createFileUseCase
+            createFileUseCase: useCases.createFile
         )
 
         // to know whether we need to reload nodes.
@@ -653,26 +656,37 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private func loadOfflineFiles() async {
-        //TODO: fetch the offline files
-        state = .received(
-            items: [
-                .init(
-                    id: UUID(),
-                    eTag: "eTag",
+        do {
+            let offlineAssets = try useCases.getOfflineAvailableAssets.invoke()
+            
+            let items: [FilesViewItem] = offlineAssets.map { asset in
+                let fileUrl = URL(fileURLWithPath: asset.path)
+                let fileName = fileUrl.lastPathComponent
+                let fileExtension = fileUrl.pathExtension
+                let fileType = UTType(filenameExtension: fileExtension)
+                
+                return .init(
+                    id: asset.nodeID,
+                    eTag: asset.eTag,
                     kind: .file,
-                    name: "offline file dummy",
-                    filePath: "filePath",
-                    ownedBy: nil,
-                    modifiedAt: nil,
-                    icon: .code,
-                    tags: ["offline file"],
-                    isEditable: false,
-                    publicLinkID: nil,
-                    conversationName: nil,
-                    size: nil
+                    name: fileName,
+                    filePath: asset.path,
+                    ownedBy: asset.ownerName,
+                    modifiedAt: asset.modified,
+                    icon: .make(type: fileType, fileExtension: fileExtension),
+                    tags: [], // change later if we want to show tags in offline mode.
+                    isEditable: false, // change later if we want to edit files in offline mode.
+                    publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
+                    conversationName: asset.conversationName,
+                    size: asset.size
                 )
-            ]
-        )
+            }
+            
+            state = .received(items: items)
+        } catch {
+            alert = .unknownError
+            WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
+        }
         hasMore = false
     }
 
@@ -853,7 +867,7 @@ package final class FilesViewModel: ObservableObject {
             eTag: item.eTag,
             fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
             restoreNodeVersionUseCase: useCases.restoreNodeVersion,
-            getAssetUseCase: useCases.getAssetUseCase,
+            getAssetUseCase: useCases.getAsset,
             accentColorProvider: accentColorProvider
         )
 
@@ -888,7 +902,7 @@ package final class FilesViewModel: ObservableObject {
     private func makeAssetAvailableOffline(item: FilesViewItem) {
         Task {
             do {
-                try await useCases.makeAssetAvailableOfflineUseCase.invoke(nodeID: item.id)
+                try await useCases.makeAssetAvailableOffline.invoke(nodeID: item.id)
             } catch {
                 WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
             }
@@ -898,7 +912,11 @@ package final class FilesViewModel: ObservableObject {
     private func removeAssetAvailableOffline(item: FilesViewItem) {
         Task {
             do {
-                try useCases.removeAssetAvailableOfflineUseCase.invoke(nodeID: item.id)
+                try useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+                
+                if isOffline {
+                    await reload()
+                }
             } catch {
                 WireLogger.wireDrive
                     .error("Failed to remove asset from available offline: \(String(describing: error))")

@@ -27,6 +27,14 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     /// fetched.
     @MainActor
     func asset(nodeID: UUID) throws -> WireDriveLocalAsset?
+    
+    /// Returns all local assets.
+    @MainActor
+    func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset]
+    
+    /// Returns all offline available local assets.
+    @MainActor
+    func offlineAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset]
 
     /// Refreshes the local asset metadata for a given `nodeID` and deletes any cached file if necessary.
     ///

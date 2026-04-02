@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFileUseCase: WireDriveCreateFileUseCase(
+                createFile: WireDriveCreateFileUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
@@ -77,7 +77,7 @@ extension FilesViewModel {
                 getEditingURL: WireDriveGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
                 ),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
                 ),
                 getPublicLinkData: WireDriveGetPublicLinkDataUseCase(
@@ -98,10 +98,13 @@ extension FilesViewModel {
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
                 ),
-                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
-                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
                 )
             ),
@@ -319,12 +322,19 @@ private func mockFileCache() -> any FileCache {
 }
 
 private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryProtocol, @unchecked Sendable {
-
     var failIndex = 0
     var publishers: [UUID: CurrentValueSubject<WireDriveLocalAsset?, Never>] = [:]
 
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         publishers[nodeID]?.value
+    }
+    
+    func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap { $0.value }
+    }
+    
+    func offlineAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        publishers.values.compactMap { $0.value }.filter { $0.isAvailableOffline }
     }
 
     func refreshAssetMetadata(
