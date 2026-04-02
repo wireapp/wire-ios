@@ -304,8 +304,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Cartelle"
           }
         },
         "ja" : {
