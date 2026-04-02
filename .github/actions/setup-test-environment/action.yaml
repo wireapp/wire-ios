@@ -90,7 +90,7 @@ runs:
 
     - name: Setup workspace
       shell: bash
-      run: ./setup.sh
+      run: ./setup.sh --test-only
 
     - name: Setup simulator
       shell: bash
