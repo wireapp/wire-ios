@@ -95,11 +95,11 @@ jobs:
               - 'wire-ios-utilities/**'
 
   # ── Sequential (default) ────────────────────────────────────────────────────
-  # Used for merge_group events or PRs without the `parallel-testing` label.
+  # Runs when parallel testing is not enabled (neither via label nor PARALLEL_TESTING_ENABLED var).
   trigger_tests_pr:
     needs: detect-changes
     name: PR Tests
-    if: ${{ github.event_name == 'merge_group' || !contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'parallel-testing') || vars.PARALLEL_TESTING_ENABLED == '1') }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
@@ -109,16 +109,18 @@ jobs:
       notify: failure
     secrets: inherit
 
-  # ── Parallel (opt-in via label) ─────────────────────────────────────────────
-  # Add the `parallel-testing` label to a PR to run one job per framework in parallel.
+  # ── Parallel (opt-in via label or PARALLEL_TESTING_ENABLED repo variable) ───
+  # Add the `parallel-testing` label to a PR, or set PARALLEL_TESTING_ENABLED=1
+  # in repository variables (Settings → Variables → Actions) to enable for all
+  # PRs and merge_group runs.
   trigger_tests_pr_parallel:
     needs: detect-changes
     name: PR Tests (parallel)
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'parallel-testing') || vars.PARALLEL_TESTING_ENABLED == '1' }}
     uses: ./.github/workflows/_reusable_run_tests_parallel.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
-      test_dependencies: ${{ startsWith(github.base_ref, 'release/cycle') }}
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       notify: failure
     secrets: inherit
