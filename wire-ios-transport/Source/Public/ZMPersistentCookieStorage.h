@@ -69,18 +69,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
-/// The @c ZMPersistentCookieStorageMigrator class should be used to migrate cookies from an
-/// old legacy store to the multi account stores. Callers should use this class to create a cookie store
-/// for the currently logged in user for the first time after upgrading. After the initial migration
-/// callers should use the initializers of @c ZMPersistentCookieStorage directly.
-/// The migrator will migrate the legacy data to the store with the identifier specified in @c init,
-/// meaning callers need to ensure these to match (which will always be the case when called in a single account setup).
-@interface ZMPersistentCookieStorageMigrator : NSObject
-
-+ (instancetype)migratorWithUserIdentifier:(NSUUID *)userIdentifier serverName:(NSString *)serverName;
-- (ZMPersistentCookieStorage *)createStoreMigratingLegacyStoreIfNeeded;
-
-@end
-
 NS_ASSUME_NONNULL_END
