@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      kalium_ref:
+        type: string
+        required: false
+        default: ''
       testiny_run_name:
         type: string
         required: false
@@ -143,7 +147,7 @@ jobs:
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-
+          
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
@@ -152,12 +156,23 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
+          
+      - name: Setup Kalium Testservice
+        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/setup
+        with:
+          kalium_ref: ${{ inputs.kalium_ref }}
 
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane run_uitests
 
+      - name: Stop Kalium Testservice
+        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/stop
+        with:
+          print_logs_on_failure: ${{ job.status != 'success' }}
 
       - name: Upload XCResult results to Testiny
         if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
@@ -285,6 +300,7 @@ jobs:
             echo "";
             echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
           } >> "$GITHUB_STEP_SUMMARY"
+
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4
