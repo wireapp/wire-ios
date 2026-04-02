@@ -1805,7 +1805,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 1)
-        XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime)) 
+        XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     // MARK: - Update key material
