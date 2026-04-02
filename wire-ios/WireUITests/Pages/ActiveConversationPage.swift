@@ -85,6 +85,10 @@ class ActiveConversationPage: PageModel {
         app.staticTexts[Locators.ActiveConversationPage.labelSelfDeletingMessagesOFF.rawValue]
     }
 
+    var classifiedBanner: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {

@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class RequestPasswordController {
 
@@ -36,6 +38,7 @@ final class RequestPasswordController {
     private let callback: Callback
     private let inputValidation: InputValidation?
     private weak var okAction: UIAlertAction?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
     weak var passwordTextField: UITextField?
 
     init(
@@ -104,6 +107,12 @@ final class RequestPasswordController {
             )
 
             self.passwordTextField = textField
+
+            let delegate = ClipboardRestrictedTextFieldDelegate(
+                isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            )
+            textField.delegate = delegate
+            self.clipboardDelegate = delegate
         }
 
         let okAction = UIAlertAction(title: okTitle, style: okActionStyle) { [weak self] _ in

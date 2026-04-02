@@ -60,7 +60,7 @@ final class ShareExtensionTests: WireUITestCase {
         try await userHelper.sendConnectionRequestToUser(domain: domain, userId: user1.id)
         try await userHelper.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
-        let conversationsPage = try  firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try  firstTimePage.acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"
@@ -107,7 +107,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"

@@ -112,7 +112,9 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
         didSet {
             if let message {
                 configuration.message = message
-                configuration.textMessageData = message.textMessageData!
+                if let data = message.textMessageData {
+                    configuration.textMessageData = data
+                }
             }
         }
     }

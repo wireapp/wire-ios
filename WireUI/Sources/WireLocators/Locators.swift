@@ -63,6 +63,8 @@ public enum Locators {
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
+        case clearOptionOnContextMenu = "Clear Content…"
+        case clearButtonOnBottomSheet
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
@@ -118,6 +120,7 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {
@@ -153,6 +156,7 @@ public enum Locators {
 
     public enum ConversationDetailsActions: String {
         case archive
+        case clearContent
     }
 
     public enum UserProfilePage: String {

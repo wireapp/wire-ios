@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"passwordtextfield.preview.title" = "Password (facoltativa)";
-"passwordtextfield.preview.placeholder" = "Inserisci password";
-"passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
-"passwordtextfield.hide_password" = "Nascondi password";
-"passwordtextfield.show_password" = "Mostra password";
+public import SwiftUI
+
+public extension EnvironmentValues {
+
+    /// Whether clipboard actions (copy, paste, cut) are allowed in text fields.
+    /// Set this at the root using `SecurityFlags.clipboard.isEnabled` from Wire-iOS.
+    @Entry var isClipboardEnabled: Bool = true
+
+}
