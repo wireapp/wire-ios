@@ -166,12 +166,22 @@ private extension FilesContentView {
     @ViewBuilder private var listBackgroundView: some View {
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(
-                info: .noFilesFound(
-                    scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
+            VStack(spacing: 0) {
+                if viewModel.isOffline {
+                    FilesOfflineBarView()
+                }
+                
+                Spacer()
+                
+                FilesInfoView(
+                    info: .noFilesFound(
+                        scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
+                        isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
+                    )
                 )
-            )
+                
+                Spacer()
+            }
         case .pending:
             FilesInfoView(info: .preparingFiles)
         default:
