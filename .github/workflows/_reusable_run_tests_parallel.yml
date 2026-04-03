@@ -10,9 +10,6 @@ on:
       branch:
         type: string
         required: false
-      notify_secret:
-        type: string
-        required: true
       test_dependencies:
         type: boolean
         default: false
