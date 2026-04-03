@@ -243,7 +243,7 @@ package final class FilesViewModel: ObservableObject {
         guard !isOffline else {
             return false
         }
-        
+
         return switch state {
         case .loading, .received:
             true
@@ -268,7 +268,7 @@ package final class FilesViewModel: ObservableObject {
     var isLoading: Bool {
         loadMoreTask != nil
     }
-    
+
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
@@ -290,7 +290,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
-    
+
     @Published private var networkMonitor = NetworkMonitor.shared
 
     private var selfUserID: String? {
@@ -327,6 +327,16 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
+
+        // Waits for the first non-nil network status to avoid incorrect UI transitions,
+        // then triggers a single reload with a resolved connection state.
+        networkMonitor.$currentStatus
+            .filter { $0 != nil }
+            .first()
+            .sink { [weak self] status in
+                guard status != nil else { return }
+                Task { await self?.reload() }
+            }.store(in: &subscriptions)
 
         bindSearch()
         fetchTemplates()
@@ -391,6 +401,8 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
+        guard networkMonitor.currentStatus != nil else { return  }
+
         cancelLoad()
         state = refreshing ? state : .loading
         hasMore = !refreshing
@@ -622,7 +634,7 @@ package final class FilesViewModel: ObservableObject {
             await loadOnlineFiles(refreshing: refreshing)
         }
     }
-    
+
     private func loadOnlineFiles(refreshing: Bool) async {
         guard loadMoreTask == nil else { return }
 
@@ -657,14 +669,14 @@ package final class FilesViewModel: ObservableObject {
 
     private func loadOfflineFiles() async {
         do {
-            let offlineAssets = try useCases.getOfflineAvailableAssets.invoke()
-            
+            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke()
+
             let items: [FilesViewItem] = offlineAssets.map { asset in
                 let fileUrl = URL(fileURLWithPath: asset.path)
                 let fileName = fileUrl.lastPathComponent
                 let fileExtension = fileUrl.pathExtension
                 let fileType = UTType(filenameExtension: fileExtension)
-                
+
                 return .init(
                     id: asset.nodeID,
                     eTag: asset.eTag,
@@ -681,7 +693,7 @@ package final class FilesViewModel: ObservableObject {
                     size: asset.size
                 )
             }
-            
+
             state = .received(items: items)
         } catch {
             alert = .unknownError
@@ -913,7 +925,7 @@ package final class FilesViewModel: ObservableObject {
         Task {
             do {
                 try useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
-                
+
                 if isOffline {
                     await reload()
                 }

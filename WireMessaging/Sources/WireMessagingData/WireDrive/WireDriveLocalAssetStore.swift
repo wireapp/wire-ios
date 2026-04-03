@@ -45,9 +45,37 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
             return nil
         }
     }
-    
-    package func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
-        assets.values.map { $0 }
+
+    package func offlineAssets() async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        if !assets.isEmpty {
+            return assets.values.filter(\.isAvailableOffline)
+        } else {
+            let context = contextProvider.newBackgroundContext()
+            return try await context.perform {
+                let managedAssets = try context.fetchLocalOfflineAssets()
+
+                return managedAssets.compactMap { managed in
+                    let cacheKey = WireDriveLocalAsset.cacheKey(
+                        nodeID: managed.nodeID,
+                        eTag: managed.eTag,
+                        path: managed.path
+                    )
+
+                    return WireDriveLocalAsset(
+                        nodeID: managed.nodeID,
+                        eTag: managed.eTag,
+                        path: managed.path,
+                        contentType: managed.contentType,
+                        size: managed.size >= 0 ? UInt64(managed.size) : nil,
+                        conversationName: managed.conversationName,
+                        ownerName: managed.ownerName,
+                        modified: managed.modified,
+                        isAvailableOffline: managed.isAvailableOffline,
+                        downloadState: .downloaded(cacheKey: cacheKey)
+                    )
+                }
+            }
+        }
     }
 
     package func upsertAsset(_ asset: WireMessagingDomain.WireDriveLocalAsset) throws {
@@ -169,6 +197,20 @@ private extension NSManagedObjectContext {
         request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
         request.fetchLimit = 1
         return try fetch(request).first
+    }
+
+    func fetchLocalOfflineAssets() throws -> [ManagedLocalAsset] {
+        let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+        let isAvailableOfflinePredicate = NSPredicate(format: "isAvailableOffline == YES")
+        let isDownloadedPredicate =
+            NSPredicate(format: "isDownloaded == YES") // assets available offline should always be downloaded, this is
+        // just a safety measure.
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            isAvailableOfflinePredicate,
+            isDownloadedPredicate
+        ])
+        request.predicate = predicate
+        return try fetch(request)
     }
 
 }

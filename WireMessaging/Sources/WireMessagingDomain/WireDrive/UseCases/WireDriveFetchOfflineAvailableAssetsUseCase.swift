@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
 @MainActor
 package struct WireDriveFetchOfflineAvailableAssetsUseCase {
@@ -27,7 +27,7 @@ package struct WireDriveFetchOfflineAvailableAssetsUseCase {
         self.localAssetRepository = localAssetRepository
     }
 
-    package func invoke() throws -> [WireDriveLocalAsset] {
-        try localAssetRepository.offlineAssets()
+    package func invoke() async throws -> [WireDriveLocalAsset] {
+        try await localAssetRepository.offlineAssets()
     }
 }
