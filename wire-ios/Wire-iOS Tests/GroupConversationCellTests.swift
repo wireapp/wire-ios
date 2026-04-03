@@ -125,8 +125,10 @@ final class GroupConversationCellTests: XCTestCase {
         // GIVEN
         let groupConversation = createGroupConversation()
         let bot = createServiceUser()
-        groupConversation.stableRandomParticipants.append(bot)
-
+        // note previously if service was first we had legacy icon
+        groupConversation.stableRandomParticipants.insert(bot, at: 0)
+        groupConversation.areAppsPresent = true
+        
         // WHEN
         groupConversation.displayName = "Group with service"
 

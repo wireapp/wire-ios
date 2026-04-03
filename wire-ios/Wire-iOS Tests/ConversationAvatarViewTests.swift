@@ -54,13 +54,6 @@ final class ConversationAvatarViewTests: XCTestCase {
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
     
-    func testThatItRendersGroupWithService() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation.createGroupConversation(otherUsers: [MockUserType.createDefaultOtherUser(), MockUserType.createDefaultSelfUser(), MockUserType.createBot(name: "Bot")])
-
-        sut.configure(context: .conversation(conversation: conversation))
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
     
     
     func testThatItRendersGroup() {
