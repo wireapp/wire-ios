@@ -156,7 +156,9 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests_parallel.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
-      notify_secret: WIRE_IOS_CI_WEBHOOK
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       notify: failure
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

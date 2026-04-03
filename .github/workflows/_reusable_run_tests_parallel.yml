@@ -26,6 +26,8 @@ on:
         required: true
       DD_API_KEY:
         required: true
+      WIRE_IOS_CI_WEBHOOK:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -95,7 +97,7 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
       - name: Checkout
@@ -179,7 +181,7 @@ jobs:
     if: always()
     runs-on: ubuntu-24.04
     env:
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
     steps:
       - name: Sanitize branch name
         shell: bash
