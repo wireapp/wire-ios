@@ -622,9 +622,9 @@ public final class MLSService: MLSServiceInterface {
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
+                userDefaults.set(.now, forKey: .keyPackageQueriedTime)
                 return
             }
 
@@ -636,6 +636,8 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
             logger.info("success: uploaded key packages for client \(clientID)")
+
+            userDefaults.set(.now, forKey: .keyPackageQueriedTime)
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
@@ -643,6 +645,11 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
+            guard await featureRepository.fetchMLS().isEnabled else {
+                logger.info("shouldn't query unclaimed key packages count: MLS is not enabled")
+                return false
+            }
+
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.transaction {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
