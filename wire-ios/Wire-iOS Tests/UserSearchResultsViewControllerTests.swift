@@ -27,7 +27,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: UserSearchResultsViewController!
-    private var serviceUser: MockServiceUserType!
+    private var serviceUser: MockUserType!
     private var selfUser: MockUserType!
     private var otherUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
@@ -35,7 +35,6 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     // MARK: setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         // self user should be a team member and other participants should be guests, in order to show guest icon in the
         // user cells
@@ -43,7 +42,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         otherUser = MockUserType.createDefaultOtherUser()
 
-        serviceUser = MockServiceUserType.createServiceUser(name: "ServiceUser")
+        serviceUser = MockUserType.createBot(name: "ServiceUser")
 
         XCTAssert(selfUser.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
     }
@@ -56,7 +55,6 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         selfUser = nil
         otherUser = nil
         serviceUser = nil
-        super.tearDown()
     }
 
     // MARK: - Helper methods

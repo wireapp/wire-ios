@@ -1005,6 +1005,62 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_PerformPendingJoins_It_JoinsByExternalCommit_DifferentDomain() async throws {
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = localDomain
+        let conversationDomain = "other.domain.local"
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+            conversation.domain = conversationDomain
+
+            // Only epoch 0 leads to establishing group
+            conversation.epoch = 0
+
+            return conversation
+        }
+
+        // mock fetching group info
+        let publicGroupState = Data()
+        mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = publicGroupState
+
+        // mock joining group
+        var joinGroupArguments = [(groupID: MLSGroupID, groupState: Data)]()
+        mockMLSActionExecutor.mockJoinGroup = {
+            joinGroupArguments.append(($0, $1))
+        }
+
+        // mock CC conversation exists
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+
+        // it fetches public group state
+        let groupStateInvocations = mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupStateInvocations.count, 1)
+        XCTAssertEqual(groupStateInvocations.first?.conversationId, conversationID)
+        XCTAssertEqual(groupStateInvocations.first?.domain, conversationDomain)
+
+        // it asks executor to join group
+        XCTAssertEqual(joinGroupArguments.count, 1)
+        XCTAssertEqual(joinGroupArguments.first?.groupID, groupID)
+        XCTAssertEqual(joinGroupArguments.first?.groupState, publicGroupState)
+
+        // it sets conversation state to ready
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, .ready)
+    }
+
     func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -1511,6 +1567,31 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Key Packages
 
+    func test_UploadKeyPackages_SkipsUpload_WhenMLSIsDisabled() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .disabled,
+            config: .init(defaultCipherSuite: defaultCipherSuite)
+        )
+
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertTrue(
+            mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.isEmpty,
+            "shouldn't count key packages when MLS is disabled"
+        )
+
+        XCTAssertTrue(
+            mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations.isEmpty,
+            "shouldn't upload key packages when MLS is disabled"
+        )
+        XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
+    }
+
     func test_UploadKeyPackages_IsSuccessful() async {
         // Given
         guard let clientID = await uiMOC.perform({ self.createSelfClient(onMOC: self.uiMOC).remoteIdentifier }) else {
@@ -1634,7 +1715,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
-    func test_CountUnclaimedKeyPackages_SetsKeyPackageQueriedTime_IfItSucceed() async {
+    func test_UploadKeyPackages_SetsKeyPackageQueriedTime_AfterSuccessfulUpload() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 
@@ -1656,6 +1737,32 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
+    }
+
+    func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_WhenGenerationFails() async {
+        // Given
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
+
+        // mock that we don't have enough unclaimed kp locally
+        mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
+            0
+        }
+
+        // mock backend count is 0
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
+            0
+        }
+
+        // mock key package generation fails (e.g. MLS not initialized)
+        mockCoreCryptoContext.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
+            throw TestError.failedToCountUnclaimedKeyPackages
+        }
+
+        // When
+        await sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() async {
@@ -1698,6 +1805,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 1)
+        XCTAssertNotNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
     // MARK: - Update key material
@@ -2695,100 +2803,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
-    }
-
-    func test_GenerateNewEpoch() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-
-        var commitPendingProposalsInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockCommitPendingProposals = {
-            commitPendingProposalsInvocations.append($0)
-        }
-
-        var updateKeyMaterialInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockUpdateKeyMaterial = {
-            updateKeyMaterialInvocations.append($0)
-        }
-
-        // When
-        try await sut.generateNewEpoch(groupID: groupID)
-
-        // Then
-        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
-        XCTAssertEqual(updateKeyMaterialInvocations, [groupID])
-    }
-
-    func test_GenerateNewEpochFailsWithResetMLSConversationError_FeatureON() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-
-        var commitPendingProposalsInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockCommitPendingProposals = {
-            commitPendingProposalsInvocations.append($0)
-        }
-
-        let updateKeyMaterialInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CoreCryptoError
-                .Mls(mlsError: .MessageRejected(reason: try MLSAPIError.mlsInvalidLeafNodeSignature.encodeAsString()))
-        }
-
-        // When
-
-        XCTAssertTrue(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
-
-        try await sut.generateNewEpoch(groupID: groupID)
-
-        // Then
-        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
-        XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockLegacyFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
-        XCTAssertEqual(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.count, 1)
-        let invocation = try XCTUnwrap(
-            resetMLSConversationDelegate
-                .didCatchBrokenMLSConversationGroupIDEpoch_Invocations.first
-        )
-        XCTAssertEqual(invocation.groupID, groupID)
-        XCTAssertEqual(invocation.epoch, 0)
-    }
-
-    func test_GenerateNewEpochFailsWithResetMLSConversationError_FeatureOff() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-
-        mockLegacyFeatureRepository.fetchAllowedGlobalOperations_MockValue = Feature
-            .AllowedGlobalOperations(
-                status: .disabled,
-                config: .init(mlsConversationReset: true)
-            )
-
-        var commitPendingProposalsInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockCommitPendingProposals = {
-            commitPendingProposalsInvocations.append($0)
-        }
-
-        let reason = try MLSAPIError.mlsInvalidLeafNodeIndex.encodeAsString()
-        let updateKeyMaterialInvocations = [MLSGroupID]()
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CoreCryptoError
-                .Mls(mlsError: .MessageRejected(reason: reason))
-        }
-
-        // When
-
-        let delegate = MockResetBrokenMLSConversationDelegate()
-        sut.setResetBrokenMLSConversationDelegate(delegate)
-        XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
-        await XCTAssertThrowsErrorAsync(MLSService.MLSRetryError.nonRecoverableError(reason)) {
-            try await self.sut.generateNewEpoch(groupID: groupID)
-        }
-
-        // Then
-        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
-        XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockLegacyFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
-        XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
     }
 
     // MARK: - Guest links

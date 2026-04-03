@@ -23,33 +23,10 @@ import WireDesign
 
 struct WireDriveAttachmentPreview<Content: View>: View {
 
-    private let progress: Double?
-    private let progressColor: Color
-    private let content: Content
-
-    init(
-        progress: Double?,
-        progressColor: Color,
-        @ViewBuilder content: () -> Content,
-    ) {
-        self.progress = progress
-        self.progressColor = progressColor
-        self.content = content()
-    }
+    @ViewBuilder let content: Content
 
     var body: some View {
         content
-            .overlay(
-                VStack {
-                    Spacer()
-                    ProgressView(value: progress, total: 1)
-                        .tint(Color.blue)
-                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
-                        .padding(.bottom, Constants.borderWidth / 2)
-                        .opacity(progress == nil ? 0 : 1)
-
-                }
-            )
             .clipShape(
                 RoundedRectangle(cornerRadius: Constants.cornerRadius)
             )
@@ -71,12 +48,9 @@ private enum Constants {
 }
 
 #Preview {
-    WireDriveAttachmentPreview(
-        progress: 0.5,
-        progressColor: .blue
-    ) {
-        Rectangle()
-            .fill(Color.gray.opacity(0.2))
+    WireDriveAttachmentPreview {
+        Text("content")
+            .padding()
     }
-    .frame(width: 222, height: 74)
+    .frame(width: 222)
 }

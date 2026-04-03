@@ -147,7 +147,7 @@ final class ConversationContentViewController: UIViewController {
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
-        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
@@ -271,12 +271,24 @@ final class ConversationContentViewController: UIViewController {
             object: .none
         )
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(clearedContent),
+            name: .clearContentNotification,
+            object: userSession.notificationContext
+        )
+
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(userSession: userSession) { [unowned self] color in
                 updateBackgroundColor(color: color)
             }
+    }
+
+    @objc
+    private func clearedContent() {
+        dataSource.resetSectionControllers()
     }
 
     private func updateBackgroundColor(color: ZMAccentColor?) {

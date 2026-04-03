@@ -654,12 +654,14 @@ final class TeamsAPITests: XCTestCase {
                 ]
             )
         }
+
     }
 
     // MARK: -
 
     private enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+        static let appID = UUID(uuidString: "E992B160-B0D7-4A46-94FD-C31467BDFF21")!
     }
 
 }

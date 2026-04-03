@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireMessagingUI
 
-class ConversationChannelCreationFormTests: XCTestCase {
+final class ConversationChannelCreationFormTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -181,6 +181,61 @@ class ConversationChannelCreationFormTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testInfoBannerVisible() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: true,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 800)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+}
+
+private extension ConversationChannelCreationFormViewModel {
+
+    convenience init(
+        channelName: String,
+        isUserPremium: Bool,
+        isWireDriveEnabled: Bool,
+        teamsURL: URL,
+        onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
+    ) {
+        self.init(
+            channelName: channelName,
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: isUserPremium,
+            isWireDriveEnabled: isWireDriveEnabled,
+            teamsURL: teamsURL,
+            onFormValidityUpdate: onFormValidityUpdate
+        )
     }
 
 }

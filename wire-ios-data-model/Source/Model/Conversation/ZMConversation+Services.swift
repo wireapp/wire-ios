@@ -19,9 +19,10 @@
 import Foundation
 
 public extension ZMConversation {
+
     class func existingConversation(
         in moc: NSManagedObjectContext,
-        service: ServiceUser,
+        service: UserType,
         team: Team?
     ) -> ZMConversation? {
         guard let team else { return nil }
@@ -61,4 +62,5 @@ public extension ZMConversation {
 
         return result.first as? ZMConversation
     }
+
 }

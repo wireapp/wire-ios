@@ -622,9 +622,9 @@ public final class MLSService: MLSServiceInterface {
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
+                userDefaults.set(.now, forKey: .keyPackageQueriedTime)
                 return
             }
 
@@ -636,6 +636,8 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
             logger.info("success: uploaded key packages for client \(clientID)")
+
+            userDefaults.set(.now, forKey: .keyPackageQueriedTime)
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
@@ -643,6 +645,11 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
+            guard await featureRepository.fetchMLS().isEnabled else {
+                logger.info("shouldn't query unclaimed key packages count: MLS is not enabled")
+                return false
+            }
+
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.transaction {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
@@ -856,43 +863,54 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        let pendingGroups = try await context.perform {
+        let pendingGroupConversations = try await context.perform {
             try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .pendingJoin,
                 in: context
             )
         }
 
-        logger.info("joining \(pendingGroups.count) group(s)")
+        logger.info("joining \(pendingGroupConversations.count) group(s)")
 
         let needToSave = await withTaskGroup(of: Bool.self) { group in
-            for pendingGroup in pendingGroups {
+            for pendingGroupConversation in pendingGroupConversations {
                 group.addTask {
-                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }),
-                          let conversationQualifiedID = await context.perform({ pendingGroup.qualifiedID }) else {
+                    let (mlsGroupID, conversationQualifiedID, epoch, isOneOnOne) = await context.perform {
+                        (
+                            pendingGroupConversation.mlsGroupID,
+                            pendingGroupConversation.qualifiedID,
+                            pendingGroupConversation.epoch,
+                            pendingGroupConversation.conversationType == .oneOnOne
+                        )
+                    }
+
+                    guard let mlsGroupID,
+                          let conversationQualifiedID else {
                         return false
                     }
 
                     do {
-                        let epoch = await context.perform {
-                            pendingGroup.epoch
-                        }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && !conversationExists && conversationQualifiedID
-                            .domain == self.localDomain
 
-                        if shouldEstablishGroup {
+                        let shouldEstablish = (epoch == 0 && !conversationExists)
+                        let isLocalGroup = (!isOneOnOne && conversationQualifiedID
+                            .domain == self.localDomain)
+
+                        // don't establishGroup for federatedGroup
+                        let shouldEstablishMLSGroup = shouldEstablish && (isLocalGroup || isOneOnOne)
+
+                        if shouldEstablishMLSGroup {
                             try await self.internalEstablishPendingGroup(
                                 groupID: mlsGroupID,
-                                pendingGroup: pendingGroup,
+                                pendingGroup: pendingGroupConversation,
                                 context: context
                             )
                             return true
                         } else {
                             try await self.joinByExternalCommit(groupID: mlsGroupID)
-                            return false
+                            return true // save change of ZMConversation
                         }
                     } catch {
                         WireLogger.mls.error(
@@ -1828,13 +1846,6 @@ public final class MLSService: MLSServiceInterface {
 
     public func epochChanged(conversationId: WireCoreCryptoUniffi.ConversationId, epoch: UInt64) async throws {
         onEpochChangedSubject.send(MLSGroupID(conversationId))
-    }
-
-    // MARK: - Generate new epoch
-
-    public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
-        try await updateKeyMaterial(for: groupID)
     }
 
     // MARK: - CRLs distribution points

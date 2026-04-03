@@ -52,8 +52,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
     @Published var isAppVersionInputPresented = false
 
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
-
+    private let userSession: ZMUserSession?
     private let selfClient: UserClient?
     private let onDismiss: (() -> Void)?
 
@@ -62,9 +61,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: - Initialize
 
     init(
+        userSession: UserSession?,
         selfClient: UserClient?,
         onDismiss: (() -> Void)? = nil
     ) {
+        self.userSession = userSession as? ZMUserSession
         self.selfClient = selfClient
         self.onDismiss = onDismiss
 
@@ -226,7 +227,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     func logout() {
-        LogOutHelper(showLoading: {}, hideLoading: {}).logout()
+        guard let userSession else { return }
+        LogOutHelper(userSession: userSession, showLoading: {}, hideLoading: {}).logout()
     }
 
     private func simulateAccessTokenFailure() {

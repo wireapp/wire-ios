@@ -40,9 +40,9 @@ public struct SearchResult {
 
     public var conversations: [ZMConversation]
 
-    public var apps: [ServiceUser]
+    public var apps: [any UserType]
 
-    public var bots: [ServiceUser]
+    public var bots: [any UserType]
 
     /// Cache for search users.
 
@@ -155,21 +155,38 @@ extension SearchResult {
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            apps: apps,
+            apps: result.apps,
             bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
 
-    func union(withBotResult result: SearchResult) -> SearchResult {
+    func union(withAppsResult result: SearchResult) -> SearchResult {
         SearchResult(
             context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            apps: result.apps,
-            bots: result.bots,
+            apps: apps + result.apps.filter { newApp in
+                !apps.contains { existingApp in
+                    newApp.remoteIdentifier == existingApp.remoteIdentifier
+                }
+            },
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withBotsResult result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
     }

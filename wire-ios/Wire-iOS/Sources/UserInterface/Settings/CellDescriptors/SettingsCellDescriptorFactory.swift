@@ -32,6 +32,7 @@ struct SettingsCellDescriptorFactory {
     var settingsCoordinator: AnySettingsCoordinator
     let localDomain: String?
     let isFederationEnabled: Bool
+    let userSession: UserSession
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {
@@ -52,7 +53,8 @@ struct SettingsCellDescriptorFactory {
             style: .plain,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -82,7 +84,9 @@ struct SettingsCellDescriptorFactory {
                 let count = sessionManager?.accountManager.numberOfAccounts,
                 let maxNumberAccounts = sessionManager?.maxNumberAccounts,
                 count < maxNumberAccounts {
-                sessionManager?.addAccount()
+                Task {
+                    await sessionManager?.addAccount()
+                }
             } else {
                 if let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) {
                     let alert = UIAlertController(
@@ -154,7 +158,8 @@ struct SettingsCellDescriptorFactory {
             icon: .gear,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -164,10 +169,13 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
-            presentationAction: { () -> (UIViewController?) in
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
+                guard let userSession else { return nil }
                 return ClientListViewController(
                     clientsList: .none,
-                    credentials: .none,
+                    selfClient: userSession.selfUserClient,
+                    userSession: userSession,
+                    contextProvider: userSession.contextProvider,
                     detailedView: true
                 )
             },
@@ -238,7 +246,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: previewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -285,7 +294,8 @@ struct SettingsCellDescriptorFactory {
             icon: .settingsSupport,
             accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
             settingsTopLevelMenuItem: .support,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -338,7 +348,8 @@ struct SettingsCellDescriptorFactory {
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
             settingsTopLevelMenuItem: .about,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

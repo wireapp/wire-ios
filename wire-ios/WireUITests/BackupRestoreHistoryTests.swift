@@ -21,10 +21,9 @@ import XCTest
 
 final class BackupRestoreHistoryTests: WireUITestCase {
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8582
     @MainActor
-    func test_CreateBackupAndRestoreHistory() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
@@ -53,11 +52,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .sendMessage(messageFromOwner)
 
-        var sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        var sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -85,10 +84,10 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
 
-        sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        sentMessages = activeConversationPage.fetchMessages()
         XCTAssertFalse(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' found in sent messages: \(sentMessages)"
@@ -113,7 +112,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .switchToConversationsTab()
             .openConversation()
 
-        sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
