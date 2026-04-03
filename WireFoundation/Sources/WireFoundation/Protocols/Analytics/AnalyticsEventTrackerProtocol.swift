@@ -25,5 +25,5 @@ public protocol AnalyticsEventTrackerProtocol: AnyObject {
     /// - Parameter event: The event to track.
 
     func trackEvent(_ event: AnalyticsEvent)
-    // trigger
+
 }
