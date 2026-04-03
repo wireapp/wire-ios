@@ -112,8 +112,8 @@ final class GroupConversationCellTests: XCTestCase {
         verify(conversation: groupConversation)
     }
 
-    private func createServiceUser() -> MockServiceUserType {
-        let otherUser = MockServiceUserType()
+    private func createServiceUser() -> MockUserType {
+        let otherUser = MockUserType()
         otherUser.initials = "B"
         otherUser.serviceIdentifier = "serviceIdentifier"
         otherUser.providerIdentifier = "providerIdentifier"
