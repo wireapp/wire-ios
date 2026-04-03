@@ -21,9 +21,12 @@ runs:
     - name: Sanitize branch name
       id: sanitize-branch
       shell: bash
+      env:
+        GH_EVENT_NAME: ${{ github.event_name }}
+        GH_HEAD_REF: ${{ github.head_ref }}
       run: |
-        if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-          BRANCH="${{ github.head_ref }}"
+        if [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+          BRANCH="$GH_HEAD_REF"
         else
           BRANCH="${GITHUB_REF#refs/heads/}"
         fi

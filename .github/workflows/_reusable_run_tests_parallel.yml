@@ -61,11 +61,15 @@ jobs:
 
       - name: List schemes
         id: list-schemes
+        env:
+          FOLDERS: ${{ inputs.folders }}
+          ALL: ${{ inputs.all }}
+          TEST_DEPENDENCIES: ${{ inputs.test_dependencies }}
         run: |
           bundle exec fastlane list_schemes_json \
-            folders:"${{ inputs.folders }}" \
-            all:${{ inputs.all }} \
-            test_dependencies:${{ inputs.test_dependencies }}
+            folders:"$FOLDERS" \
+            all:$ALL \
+            test_dependencies:$TEST_DEPENDENCIES
           RAW=$(cat /tmp/schemes.json)
           echo "schemes=$RAW" >> "$GITHUB_OUTPUT"
           echo "Schemes to test: $RAW"
@@ -179,9 +183,12 @@ jobs:
     steps:
       - name: Sanitize branch name
         shell: bash
+        env:
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
