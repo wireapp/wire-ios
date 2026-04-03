@@ -18,6 +18,7 @@
 
 @import XCTest;
 @import WireTesting;
+@import WireTransport;
 @import WireTransport.Testing;
 
 #import "ZMPersistentCookieStorage.h"
@@ -325,6 +326,86 @@
     
     // then
     XCTAssertNotNil(self.sut.authenticationCookieData);
+}
+
+@end
+
+@interface ZMPersistentCookieStorageTests (RefactorSafety)
+@end
+
+@implementation ZMPersistentCookieStorageTests (RefactorSafety)
+
+- (void)testThatExpirationDateIsNilWhenNoCookieIsStored
+{
+    XCTAssertNil(self.sut.authenticationCookieExpirationDate);
+}
+
+- (void)testThatHasAuthenticationCookieIsTrueWhenCookieIsStored
+{
+    // given
+    NSDictionary *headerFields = @{@"Set-Cookie": @"zuid=abc123; Expires=Sun, 21-Jul-2030 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"};
+    NSURL *URL = [NSURL URLWithString:@"https://example.com/login"];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
+    [self.sut setCookieDataFromResponse:response forURL:URL];
+
+    // then
+    XCTAssertTrue(self.sut.hasAuthenticationCookie);
+}
+
+- (void)testThatHasAuthenticationCookieIsFalseWhenNoCookieIsStored
+{
+    XCTAssertFalse(self.sut.hasAuthenticationCookie);
+}
+
+- (void)testThatSetRequestHeaderFieldsDoesNothingWhenNoCookieIsStored
+{
+    // given
+    NSURL *URL = [NSURL URLWithString:@"https://example.com/api"];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+
+    // when
+    [self.sut setRequestHeaderFieldsOnRequest:request];
+
+    // then
+    XCTAssertNil([request valueForHTTPHeaderField:@"Cookie"]);
+}
+
+- (void)testThatSetCookieDataFromResponseDoesNothingWhenNoCookieHeader
+{
+    // given
+    NSDictionary *headerFields = @{@"Content-Type": @"application/json"};
+    NSURL *URL = [NSURL URLWithString:@"https://example.com/login"];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
+
+    // when
+    [self.sut setCookieDataFromResponse:response forURL:URL];
+
+    // then
+    XCTAssertNil(self.sut.authenticationCookieData);
+}
+
+- (void)testThatSetCookieDataFromResponseDoesNothingWhenPolicyIsNever
+{
+    // given
+    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyNever];
+    NSDictionary *headerFields = @{@"Set-Cookie": @"zuid=abc123; Expires=Sun, 21-Jul-2030 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"};
+    NSURL *URL = [NSURL URLWithString:@"https://example.com/login"];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
+
+    // when
+    [self.sut setCookieDataFromResponse:response forURL:URL];
+
+    // then
+    XCTAssertNil(self.sut.authenticationCookieData);
+
+    // cleanup
+    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
+}
+
+- (void)testThatDeleteKeychainItemsDoesNotFailWhenNothingIsStored
+{
+    [self.sut deleteKeychainItems];
+    XCTAssertNil(self.sut.authenticationCookieData);
 }
 
 @end
