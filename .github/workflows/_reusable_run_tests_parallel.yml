@@ -173,7 +173,7 @@ jobs:
 
   # ── 3. Notify + upload to Datadog ──────────────────────────────────────────
   post-tests:
-    name: Post-test reporting
+    name: Run tests
     needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
@@ -218,3 +218,9 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
+
+      - name: Propagate test result
+        if: needs.test-framework.result != 'success'
+        run: |
+          echo "Tests ${{ needs.test-framework.result }}"
+          exit 1
