@@ -156,6 +156,7 @@ final class ConversationListAccessoryView: UIView {
 
         switch icon {
         case .pendingConnection:
+            // TODO: [WPB-17197] fix missing icon for connection
             iconView.setTemplateIcon(.clock, size: iconSize)
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationListVoiceOver.pendingConnection
