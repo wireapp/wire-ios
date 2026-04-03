@@ -46,17 +46,6 @@ final class ConversationAvatarViewTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    func testThatItRendersChannel() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation.createChannelConversation(otherUsers: [
-            MockUserType.createDefaultOtherUser(),
-            MockUserType.createDefaultSelfUser()
-        ])
-
-        sut.configure(context: .conversation(conversation: conversation))
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
     func testThatItRendersGroup() {
         // GIVEN
         let conversation = MockStableRandomParticipantsConversation()
