@@ -112,6 +112,42 @@ final class GroupConversationCellTests: XCTestCase {
         verify(conversation: groupConversation)
     }
 
+    private func createServiceUser() -> MockServiceUserType {
+        let otherUser = MockServiceUserType()
+        otherUser.initials = "B"
+        otherUser.serviceIdentifier = "serviceIdentifier"
+        otherUser.providerIdentifier = "providerIdentifier"
+        otherUser.isConnected = true
+        return otherUser
+    }
+
+    func testGroupConversationWithService() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+        let bot = createServiceUser()
+        groupConversation.stableRandomParticipants.append(bot)
+
+        // WHEN
+        groupConversation.displayName = "Group with service"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
+    
+    func testChannelConversation() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+        groupConversation.groupType = .channel
+        groupConversation.isChannel = true
+
+        // WHEN
+        groupConversation.displayName = "iOS Playtest Channel"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
     func testGroupConversationWithVeryLongName() {
         // GIVEN
         let groupConversation = createGroupConversation()
