@@ -80,6 +80,8 @@
 "conversation.creationForm.apps.toggle" = "Apps zulassen";
 "conversation.creationForm.guests.toggle" = "Gäste zulassen";
 "conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
+"conversation.creationForm.appsDisabled.title" = "Ihr Team verwendet noch keine Apps";
+"conversation.creationForm.appsDisabled.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden. Bitte wenden Sie sich an Ihren Team-Admin.";
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
@@ -153,7 +155,7 @@
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
 "conversation.wireCells.files.list.createFile" = "Datei erstellen";
 "conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
-"conversation.wireCells.files.list.createFile.spreadsheet" = "Tabelle";
+"conversation.wireCells.files.list.createFile.spreadsheet" = "Kalkulationstabelle";
 "conversation.wireCells.files.list.createFile.document" = "Dokument";
 "conversation.wireCells.files.newFolder.title" = "Ordnername";
 "conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
@@ -202,7 +204,7 @@
 "conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
 "conversation.wireCells.filter.fileType.typeName.doc" = "Dokumente";
 "conversation.wireCells.filter.fileType.typeName.image" = "Bilder";
-"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Tabellen";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Kalkulationstabellen";
 "conversation.wireCells.filter.fileType.typeName.presentation" = "Präsentationen";
 "conversation.wireCells.filter.fileType.typeName.video" = "Videos";
 "conversation.wireCells.filter.fileType.typeName.audio" = "Audiodateien";

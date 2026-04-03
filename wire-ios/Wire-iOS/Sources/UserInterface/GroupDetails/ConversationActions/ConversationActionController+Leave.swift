@@ -58,12 +58,22 @@ extension ConversationActionController {
             return
         }
 
-        transitionToListAndEnqueue {
-            if delete {
-                conversation.clearMessageHistory()
-            }
+        guard let conversationID = conversation.qualifiedID,
+              let useCase = userSession.clientSessionComponent?
+              .clearConversationContentUseCase(conversationID: conversationID) else {
+            return
+        }
 
-            conversation.removeOrShowError(participant: user)
+        Task {
+            await useCase.invoke()
+            if delete {
+                await ZClientViewController.shared?.transitionToList()
+                await MainActor.run {
+                    userSession.enqueue {
+                        conversation.removeOrShowError(participant: user)
+                    }
+                }
+            }
         }
     }
 

@@ -24,23 +24,31 @@ import WireMessagingDomain
 import WireSyncEngine
 
 extension ZMConversationMessage {
-    func replyPreview(messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil) -> UIView? {
+    func replyPreview(
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) -> UIView? {
         guard canBeQuoted else {
             return nil
         }
-        return preparePreviewView(messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel)
+        return preparePreviewView(
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
     }
 
     func preparePreviewView(
+        userSession: UserSession,
         shouldDisplaySender: Bool = true,
         messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
     ) -> UIView {
         if isImage || isVideo {
-            MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
+            MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender, userSession: userSession)
         } else {
             MessagePreviewView(
                 message: self,
                 displaySender: shouldDisplaySender,
+                userSession: userSession,
                 messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
             )
         }
@@ -75,15 +83,17 @@ final class MessageThumbnailPreviewView: UIView {
     private let imagePreview = ImageResourceView()
     private var observerToken: Any?
     private let displaySender: Bool
+    private let userSession: UserSession
     private let iconColor = SemanticColors.Icon.foregroundDefault
 
     let message: ZMConversationMessage
 
-    init(message: ZMConversationMessage, displaySender: Bool = true) {
+    init(message: ZMConversationMessage, displaySender: Bool = true, userSession: UserSession) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
+        self.userSession = userSession
         super.init(frame: .zero)
         setupSubviews()
         setupConstraints()
@@ -92,7 +102,7 @@ final class MessageThumbnailPreviewView: UIView {
     }
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(
                 observer: self,
                 for: message,
@@ -240,6 +250,7 @@ final class MessagePreviewView: UIView {
     private let contentTextView = UITextView.previewTextView()
     private var observerToken: Any?
     private let displaySender: Bool
+    private let userSession: UserSession
     private let iconColor = SemanticColors.Icon.foregroundDefault
 
     let message: ZMConversationMessage
@@ -250,12 +261,14 @@ final class MessagePreviewView: UIView {
     init(
         message: ZMConversationMessage,
         displaySender: Bool = true,
+        userSession: UserSession,
         messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
     ) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
+        self.userSession = userSession
         self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
 
         super.init(frame: .zero)
@@ -266,7 +279,7 @@ final class MessagePreviewView: UIView {
     }
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(
                 observer: self,
                 for: message,
@@ -365,8 +378,8 @@ final class MessagePreviewView: UIView {
                 message: textMessageData,
                 inputMode: true,
                 accentColor: (
-                    ZMUserSession
-                        .shared()?.selfUser.zmAccentColor ?? .default
+                    (userSession as? ZMUserSession)?
+                        .selfUser.zmAccentColor ?? .default
                 ).accentColor
             )
         } else if let location = message.locationMessageData {

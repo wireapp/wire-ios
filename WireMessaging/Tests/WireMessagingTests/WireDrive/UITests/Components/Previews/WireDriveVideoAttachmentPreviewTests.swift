@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireMessagingDomain
 import WireTestingPackage
 import XCTest
 
@@ -37,19 +38,27 @@ final class WireDriveVideoAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(thumbnail: Image?, progress: Double?, isError: Bool, canPlay: Bool)] = [
-            (thumbnail: nil, progress: nil, isError: false, canPlay: true),
-            (thumbnail: nil, progress: 0.5, isError: true, canPlay: true),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: false, canPlay: false),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: false, canPlay: true),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: true, canPlay: true)
+        let testCases: [(thumbnail: Image?, state: WireDriveFileUITracker.State, canPlay: Bool)] = [
+            (thumbnail: nil, state: .loaded(showReadyToOpen: false), canPlay: true),
+            (thumbnail: nil, state: .loaded(showReadyToOpen: false), canPlay: false),
+            (thumbnail: nil, state: .loaded(showReadyToOpen: true), canPlay: true),
+            (
+                thumbnail: Image(.rectangularPlaceholder),
+                state: .loading(progress: 0.5, isLargeFile: true),
+                canPlay: true
+            ),
+            (
+                thumbnail: Image(.rectangularPlaceholder),
+                state: .loading(progress: 0.5, isLargeFile: true),
+                canPlay: false
+            ),
+            (thumbnail: Image(.rectangularPlaceholder), state: .failed, canPlay: true)
         ]
 
         for (index, testCase) in testCases.enumerated() {
             let view = WireDriveVideoAttachmentPreview(
                 thumbnail: testCase.thumbnail,
-                progress: testCase.progress,
-                isError: testCase.isError,
+                state: testCase.state,
                 canPlay: testCase.canPlay
             )
             .frame(width: 74, height: 74)

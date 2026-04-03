@@ -49,9 +49,8 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
-    // TestCase: https://app.testiny.io/IOS/testplans/tp/109/tc/8199
     @MainActor
-    func test_ShareImageOnetoOne() async throws {
+    func testShareImageOnetoOne_TC_8915() async throws {
 
         let user1 = try await userHelper.createPersonalUser()
         let user2 = try await userHelper.createPersonalUser()
@@ -60,7 +59,7 @@ final class ShareExtensionTests: WireUITestCase {
         try await userHelper.sendConnectionRequestToUser(domain: domain, userId: user1.id)
         try await userHelper.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
-        let conversationsPage = try  firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try  firstTimePage.acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"
@@ -76,11 +75,10 @@ final class ShareExtensionTests: WireUITestCase {
         )
     }
 
-    // TestCase: https://app.testiny.io/IOS/testplans/tp/109/tc/8200
     @MainActor
-    func test_ShareImageToGroupConversation() async throws {
+    func testShareImageToGroupConversation_TC_8919() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
@@ -107,7 +105,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
 
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
         XCTAssertTrue(
             conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
             "Conversation Cell did not show up after login"

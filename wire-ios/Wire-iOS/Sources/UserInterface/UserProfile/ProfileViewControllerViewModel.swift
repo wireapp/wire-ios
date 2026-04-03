@@ -60,7 +60,7 @@ protocol ProfileViewControllerViewModeling {
     func handleNotificationResult(_ result: NotificationResult)
     func handleBlockAndUnblock()
     func handleDeleteResult(_ result: ClearContentResult)
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void)
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void)
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void)
     func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate)
 
@@ -90,7 +90,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         conversation: ZMConversation?,
         viewer: UserType,
         context: ProfileViewControllerContext,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
+        classificationProvider: SecurityClassificationProviding?,
         userSession: UserSession,
         profileActionsFactory: ProfileActionsFactoryProtocol
     ) {
@@ -242,20 +242,35 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             return
         }
 
-        transitionToListAndEnqueue {
-            self.conversation?.clearMessageHistory()
+        guard let conversation else {
+            assertionFailure("expected conversation!")
+            return
+        }
+
+        guard let conversationID = conversation.qualifiedID,
+              let useCase = userSession.clientSessionComponent?
+              .clearConversationContentUseCase(conversationID: conversationID) else {
+            return
+        }
+
+        Task {
+            await useCase.invoke()
             if leave {
-                self.conversation?.removeOrShowError(participant: user)
+                await ZClientViewController.shared?.transitionToList()
+                await MainActor.run {
+                    userSession.enqueue {
+                        conversation.removeOrShowError(participant: user)
+                    }
+                }
             }
         }
     }
 
     // MARK: - Transition
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool = true, _ block: @escaping () -> Void) {
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
         ZClientViewController.shared?.transitionToList(
-            animated: true,
-            leftViewControllerRevealed: leftViewControllerRevealed
+            animated: true
         ) {
             self.enqueueChanges(block)
         }

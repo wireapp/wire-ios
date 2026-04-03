@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -268,6 +269,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -292,6 +294,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -317,6 +320,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
@@ -342,6 +346,7 @@ extension SelfUserAPITests {
             deleted: true,
             email: "string",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
                 provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!

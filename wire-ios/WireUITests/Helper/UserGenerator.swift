@@ -61,10 +61,10 @@ enum UserGenerator {
         return String(character)
     }
 
-    static func generateRandomGroupName() -> String {
+    static func generateRandomConversationName() -> String {
         let timestamp = Int(Date().timeIntervalSince1970) % 100_000
         let hex = String(format: "%03x", Int.random(in: 0 ... 0xFFF))
-        return "Group_\(timestamp)\(hex)"
+        return "Conversation_\(timestamp)\(hex)"
     }
 
     static func generateRandomMessage() -> String {

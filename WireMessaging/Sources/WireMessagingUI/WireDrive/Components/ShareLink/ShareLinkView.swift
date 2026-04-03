@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -52,6 +53,7 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
+                .accessibilitySortPriority(1)
 
                 VStack {
                     if viewModel.isPasswordEnabled, let password = viewModel.getPassword() {
@@ -122,6 +124,8 @@ struct ShareLinkView: View {
             }
             .tint(wireAccentColor.color)
             .disabled(!viewModel.isLinkToggleEnabled)
+            // We need this so VoiceOver reads the correct state AFTER it changes!
+            .accessibilityAddTraits(.updatesFrequently)
         }
     }
 
@@ -220,6 +224,7 @@ struct ShareLinkView: View {
                         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                 }
             }
+            .accessibilityIdentifier(Locators.WireDrive.ShareLinkPage.sharePassword.rawValue)
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
@@ -233,6 +238,7 @@ struct ShareLinkView: View {
                 ShareLink(item: Strings.ShareLink.sharedMessage(link.absoluteString)) {
                     shareLinkContent()
                 }
+                .accessibilityIdentifier(Locators.WireDrive.ShareLinkPage.shareLink.rawValue)
             } else {
                 shareLinkContent()
             }

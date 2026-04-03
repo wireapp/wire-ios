@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
 final class ConversationAvatarViewTests: XCTestCase {
@@ -30,7 +31,6 @@ final class ConversationAvatarViewTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         sut = ConversationAvatarView()
     }
@@ -40,8 +40,6 @@ final class ConversationAvatarViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -91,10 +89,9 @@ final class ConversationAvatarViewTests: XCTestCase {
 
     func testThatItRendersASingleServiceUser() {
         // GIVEN
-        let otherUser = MockServiceUserType()
+        let otherUser = MockUserType()
         otherUser.initials = "B"
-        otherUser.serviceIdentifier = "serviceIdentifier"
-        otherUser.providerIdentifier = "providerIdentifier"
+        otherUser.mockedIsBot = true
         otherUser.isConnected = true
         XCTAssert(otherUser.isAppOrBot)
 

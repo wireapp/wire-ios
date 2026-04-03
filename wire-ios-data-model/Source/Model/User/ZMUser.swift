@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 import WireFoundation
 import WireSystem
 import WireTransport
@@ -196,6 +197,17 @@ extension ZMUser: UserType {
         return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
+    // MARK: - Bot specific properties
+
+    @NSManaged public var providerIdentifier: String?
+    @NSManaged public var serviceIdentifier: String?
+
+    // MARK: - App
+
+    /// The app info associated with this user, if the user is an app.
+
+    @NSManaged public var appInfo: AppInfo?
+
 }
 
 public struct AssetKey {
@@ -260,11 +272,6 @@ extension ProfileImageSize: CustomDebugStringConvertible {
             "ProfileImageSize.complete"
         }
     }
-}
-
-extension ZMUser: ServiceUser {
-    @NSManaged public var providerIdentifier: String?
-    @NSManaged public var serviceIdentifier: String?
 }
 
 public extension Notification.Name {

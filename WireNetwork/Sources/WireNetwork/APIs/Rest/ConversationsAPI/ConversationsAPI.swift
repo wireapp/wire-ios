@@ -53,11 +53,9 @@ public protocol ConversationsAPI {
     /// Creates a group conversation given provided parameters.
     /// - parameter parameters: API body parameters required to create the group.
     /// - returns: The created group conversation.
-
     func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation
-
     /// Add channel permission.
     /// - parameter conversationID: The conversation ID.
     /// - parameter conversationDomain: The conversation domain.

@@ -411,22 +411,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     // MARK: - Epoch
 
-    /// Generates a new epoch by sending a commit for the given group.
-    ///
-    /// - Parameter groupID: The group ID for which to generate a new epoch.
-    ///
-    /// Commits any pending proposals before updating key material
-    /// with ``MLSActionExecutor/updateKeyMaterial(for:)``,
-    /// which sends a commit to the backend.
-    ///
-    /// Then the ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``
-    /// method is called to note when the key material was updated for the group
-    ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
-    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
-
-    func generateNewEpoch(groupID: MLSGroupID) async throws
-
     /// - Returns: A stream of epoch changes events
 
     func epochChanges() -> AsyncStream<MLSGroupID>
