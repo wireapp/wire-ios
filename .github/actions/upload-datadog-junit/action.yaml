@@ -33,5 +33,6 @@ runs:
         DATADOG_API_KEY: ${{ inputs.api_key }}
         DD_ENV: ci
         DATADOG_SITE: datadoghq.eu
+        DD_SERVICE: ${{ inputs.service }}
       run: |
-        find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service ${{ inputs.service }} .
+        find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service "$DD_SERVICE" .
