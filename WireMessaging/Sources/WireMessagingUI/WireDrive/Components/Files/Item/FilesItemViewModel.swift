@@ -52,7 +52,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
-    
+
     @Published private var asset: WireDriveLocalAsset?
     @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
@@ -136,7 +136,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        guard item.kind == .file && !isOffline else { return false }
+        guard item.kind == .file, !isOffline else { return false }
 
         return switch fileTracker.state {
         case .loaded:
@@ -366,7 +366,7 @@ final class FilesItemViewModel: ObservableObject {
             additionalTagsIndicator: formattedNumber
         )
     }
-    
+
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
@@ -376,7 +376,7 @@ final class FilesItemViewModel: ObservableObject {
 
         if !isInRecycleBin {
             actions.insert(.primaryAction)
-            
+
             if !isOffline {
                 actions.insert(.shareLink)
             }
@@ -392,7 +392,7 @@ final class FilesItemViewModel: ObservableObject {
             }
         }
 
-        if !isBrowsing && !isOffline {
+        if !isBrowsing, !isOffline {
             if isInRecycleBin {
                 actions.insert(.restore)
                 actions.insert(.deletePermanently)

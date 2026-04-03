@@ -62,11 +62,11 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                         .opacity(isFilterBarPresented ? 1 : 0)
                         .frame(height: isFilterBarPresented ? nil : 0)
                         .padding(.bottom, isFilterBarPresented ? 15 : 0)
-                        
+
                         FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                     }
                     .padding(.top, 4)
-                    
+
                     Spacer()
                 }
 
@@ -170,16 +170,16 @@ private extension FilesContentView {
                 if viewModel.isOffline {
                     FilesOfflineBarView()
                 }
-                
+
                 Spacer()
-                
+
                 FilesInfoView(
                     info: .noFilesFound(
                         scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
                         isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
                     )
                 )
-                
+
                 Spacer()
             }
         case .pending:

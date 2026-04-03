@@ -20,7 +20,7 @@ import SwiftUI
 
 struct FilesOfflineBarView: View {
     @ScaledMetric private var scale: CGFloat = 1
-    
+
     var body: some View {
         VStack(spacing: 8) {
             bar()
@@ -29,8 +29,9 @@ struct FilesOfflineBarView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 4)
     }
-    
-    @ViewBuilder private func bar() -> some View {
+
+    @ViewBuilder
+    private func bar() -> some View {
         Text(L10n.Localizable.General.NoInternet.title.uppercased())
             .font(for: .subline2)
             .multilineTextAlignment(.center)
@@ -48,8 +49,9 @@ struct FilesOfflineBarView: View {
             }
             .cornerRadius(6 * scale)
     }
-    
-    @ViewBuilder private func hint() -> some View {
+
+    @ViewBuilder
+    private func hint() -> some View {
         Text(L10n.Localizable.Conversation.WireCells.Files.offlineModeHint)
             .font(for: .subline1)
             .multilineTextAlignment(.center)
@@ -63,11 +65,11 @@ struct FilesOfflineBarView: View {
             .padding()
 
         Divider()
-        
+
         FilesOfflineBarView()
-        
+
         Divider()
-        
+
         Text("content below the bar")
             .opacity(0.5)
             .padding()

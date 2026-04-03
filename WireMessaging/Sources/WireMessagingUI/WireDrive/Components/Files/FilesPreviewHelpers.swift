@@ -328,13 +328,13 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         publishers[nodeID]?.value
     }
-    
+
     func allAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
-        publishers.values.compactMap { $0.value }
+        publishers.values.compactMap(\.value)
     }
-    
+
     func offlineAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
-        publishers.values.compactMap { $0.value }.filter { $0.isAvailableOffline }
+        publishers.values.compactMap(\.value).filter(\.isAvailableOffline)
     }
 
     func refreshAssetMetadata(

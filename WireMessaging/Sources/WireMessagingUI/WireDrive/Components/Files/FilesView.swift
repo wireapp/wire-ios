@@ -85,7 +85,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin && !viewModel.isOffline {
+        if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }

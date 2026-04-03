@@ -23,7 +23,7 @@ import Observation
 /// Provides observable changes in internet connection.
 /// Conforms to both, `Observable` and `ObservableObject` to support ViewModels with the old and the new system.
 @MainActor
-final class NetworkMonitor: Sendable, Observable, ObservableObject {
+final class NetworkMonitor: Observable, ObservableObject {
 
     enum NetworkStatus {
         case connected
@@ -45,10 +45,10 @@ final class NetworkMonitor: Sendable, Observable, ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
                 guard let self else { return }
-                currentStatus = status
+                self.currentStatus = status
             }
             .store(in: &cancellables)
-        
+
         monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
             Task { @MainActor in
