@@ -377,24 +377,7 @@ jobs:
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-      - uses: actions/setup-node@v4
+      - name: Upload JUnit results to Datadog
+        uses: ./.github/actions/upload-datadog-junit
         with:
-          node-version: 18
-
-      - name: Cache datadog-ci
-        id: cache-datadog-ci
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-datadog-ci-${{ runner.os }}-node18
-
-      - name: Install datadog-ci
-        if: steps.cache-datadog-ci.outputs.cache-hit != 'true'
-        run: npm install -g @datadog/datadog-ci
-      - name: "Upload results"
-        env:
-          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ci
-          DATADOG_SITE: datadoghq.eu
-        run: |
-          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+          api_key: ${{ secrets.DD_API_KEY }}
