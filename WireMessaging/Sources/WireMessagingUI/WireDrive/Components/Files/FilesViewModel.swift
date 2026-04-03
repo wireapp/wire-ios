@@ -327,70 +327,14 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
+    }
 
-        // Waits for the first non-nil network status to avoid incorrect UI transitions,
-        // then triggers a single reload with a resolved connection state.
-        networkMonitor.$currentStatus
-            .filter { $0 != nil }
-            .first()
-            .sink { [weak self] status in
-                guard status != nil else { return }
-                Task { await self?.reload() }
-            }.store(in: &subscriptions)
-
+    func setup() async {
+        await fetchConversations()
         bindSearch()
+        bindConnectionStatusResolved()
         fetchTemplates()
-        fetchConversations()
-    }
-
-    private func fetchTemplates() {
-        Task {
-            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
-            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
-            templates = [
-                .init(
-                    kind: .document,
-                    editable: true,
-                    label: "Microsoft Word",
-                    id: "01-Microsoft Word.docx"
-                ),
-                .init(
-                    kind: .spreadsheet,
-                    editable: true,
-                    label: "Microsoft Excel",
-                    id: "02-Microsoft Excel.xlsx"
-                ),
-                .init(
-                    kind: .presentation,
-                    editable: true,
-                    label: "Microsoft PowerPoint",
-                    id: "03-Microsoft PowerPoint.pptx"
-                )
-            ]
-        }
-    }
-
-    private func fetchConversations() {
-        Task {
-            let allDriveConversations = await useCases.getDriveConversations.invoke()
-
-            if let cellName {
-                self.conversations = allDriveConversations.filter { $0.id == cellName }
-            } else {
-                self.conversations = allDriveConversations
-            }
-        }
-    }
-
-    private func bindSearch() {
-        $searchText
-            .removeDuplicates()
-            .dropFirst()
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task { await self?.reload() }
-            }
-            .store(in: &subscriptions)
+        Task { await reload() }
     }
 
     /// Reloads the items, clearing any previously loaded items.
@@ -540,6 +484,67 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: - Private
 
+    /// Waits for the first non-nil network status to avoid incorrect UI transitions at launch.
+    private func bindConnectionStatusResolved() {
+        guard networkMonitor.currentStatus == nil else { return }
+
+        networkMonitor.$currentStatus
+            .filter { $0 != nil }
+            .first()
+            .sink { [weak self] status in
+                guard status != nil else { return }
+                Task { await self?.reload() }
+            }.store(in: &subscriptions)
+    }
+
+    private func fetchTemplates() {
+        Task {
+            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
+            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
+            templates = [
+                .init(
+                    kind: .document,
+                    editable: true,
+                    label: "Microsoft Word",
+                    id: "01-Microsoft Word.docx"
+                ),
+                .init(
+                    kind: .spreadsheet,
+                    editable: true,
+                    label: "Microsoft Excel",
+                    id: "02-Microsoft Excel.xlsx"
+                ),
+                .init(
+                    kind: .presentation,
+                    editable: true,
+                    label: "Microsoft PowerPoint",
+                    id: "03-Microsoft PowerPoint.pptx"
+                )
+            ]
+        }
+    }
+
+    private func fetchConversations() async {
+        let allDriveConversations = await useCases.getDriveConversations.invoke()
+
+        if let cellName {
+            conversations = allDriveConversations.filter { $0.id == cellName }
+        } else {
+            conversations = allDriveConversations
+        }
+    }
+
+    private func bindSearch() {
+        $searchText
+            .removeDuplicates()
+            .dropFirst()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+    }
+
     /// Navigates to the folder represented by the given item.
     private func openFolder(item: FilesViewItem) {
         precondition(item.kind == .folder)
@@ -669,7 +674,9 @@ package final class FilesViewModel: ObservableObject {
 
     private func loadOfflineFiles() async {
         do {
-            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke()
+            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
+                conversationName: cellName != nil ? conversations.first?.name : nil
+            )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
                 let fileUrl = URL(fileURLWithPath: asset.path)

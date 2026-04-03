@@ -27,7 +27,7 @@ package struct WireDriveFetchOfflineAvailableAssetsUseCase {
         self.localAssetRepository = localAssetRepository
     }
 
-    package func invoke() async throws -> [WireDriveLocalAsset] {
-        try await localAssetRepository.offlineAssets()
+    package func invoke(conversationName: String?) async throws -> [WireDriveLocalAsset] {
+        try await localAssetRepository.offlineAssets(conversationName: conversationName)
     }
 }

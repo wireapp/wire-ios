@@ -98,7 +98,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
-            .onAppear { reloadTask() }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -123,6 +122,9 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             Task {
                 await viewModel.reload(refreshing: true)
             }
+        }
+        .task {
+            await viewModel.setup()
         }
     }
 

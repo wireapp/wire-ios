@@ -65,8 +65,8 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     }
 
     @MainActor
-    package func offlineAssets() async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
-        try await store.offlineAssets()
+    package func offlineAssets(conversationName: String?) async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        try await store.offlineAssets(conversationName: conversationName)
     }
 
     /// Refreshes the local asset metadata for a given `nodeID` and deletes any cached file if necessary.

@@ -333,7 +333,7 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
         publishers.values.compactMap(\.value)
     }
 
-    func offlineAssets() throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+    func offlineAssets(conversationName: String?) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
         publishers.values.compactMap(\.value).filter(\.isAvailableOffline)
     }
 
