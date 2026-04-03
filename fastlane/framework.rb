@@ -1,7 +1,7 @@
 class Framework
-    attr_accessor :name, :dependencies, :relations
-    
-    def self.all 
+    attr_accessor :name, :dependencies, :relations, :needs_lfs
+
+    def self.all
         all_folders = [
             "WireNetwork",
             "WireAnalytics",
@@ -60,6 +60,14 @@ class Framework
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireLogging"])
         
+        # Frameworks with LFS snapshot reference images — all others can skip LFS on checkout
+        frameworks["wire-ios"].needs_lfs = true
+        frameworks["WireAuthentication"].needs_lfs = true
+        frameworks["WireCalling"].needs_lfs = true
+        frameworks["WireFoundation"].needs_lfs = true
+        frameworks["WireMessaging"].needs_lfs = true
+        frameworks["WireUI"].needs_lfs = true
+
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
@@ -121,6 +129,7 @@ class Framework
       @name = name
       @dependencies = []
       @relations = []
+      @needs_lfs = false
     end
   
     def add_dependency(dependency)

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Generated file - DO NOT EDIT
 enum LoginCredentials {
     static let email: String = "test@example.com"
     static let password: String = "password123"

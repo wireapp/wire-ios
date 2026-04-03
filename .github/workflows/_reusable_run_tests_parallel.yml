@@ -1,0 +1,220 @@
+on:
+  workflow_call:
+    inputs:
+      folders:
+        type: string
+      all:
+        type: boolean
+        default: false
+        required: false
+      branch:
+        type: string
+        required: false
+      test_dependencies:
+        type: boolean
+        default: false
+      notify:
+        type: string
+        required: true
+        default: 'failure' # values: always | failure | never
+
+    secrets:
+      ZENKINS_USERNAME:
+        required: true
+      DD_API_KEY:
+        required: true
+      WIRE_IOS_CI_WEBHOOK:
+        required: true
+
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+
+jobs:
+  # ── 1. Determine which framework schemes need to be tested ──────────────────
+  generate-framework-list:
+    name: Generate framework list
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      schemes: ${{ steps.list-schemes.outputs.schemes }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: fastlane/
+
+      - name: List schemes
+        id: list-schemes
+        env:
+          FOLDERS: ${{ inputs.folders }}
+          ALL: ${{ inputs.all }}
+          TEST_DEPENDENCIES: ${{ inputs.test_dependencies }}
+        run: |
+          bundle exec fastlane list_schemes_json \
+            folders:"$FOLDERS" \
+            all:$ALL \
+            test_dependencies:$TEST_DEPENDENCIES
+          RAW=$(cat /tmp/schemes.json)
+          echo "schemes=$RAW" >> "$GITHUB_OUTPUT"
+          echo "Schemes to test: $RAW"
+
+  # ── 2. One job per framework, all in parallel ───────────────────────────────
+  test-framework:
+    name: "Test ${{ matrix.scheme }}"
+    needs: generate-framework-list
+    if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.scheme }}
+      cancel-in-progress: true
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.generate-framework-list.outputs.schemes) }}
+      fail-fast: false
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: ${{ matrix.needs_lfs }}
+
+      - name: Setup test environment
+        uses: ./.github/actions/setup-test-environment
+        with:
+          scheme: ${{ matrix.scheme }}
+
+      - name: "Test ${{ matrix.scheme }}"
+        run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
+
+      - name: Find .xcresult path
+        if: always()
+        id: find-xcresult
+        run: |
+          XCRESULT=$(find artifacts -type d -name "*.xcresult" | head -n 1)
+          echo "path=$XCRESULT" >> "$GITHUB_OUTPUT"
+
+      - name: Analyze .xcresult
+        if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
+        continue-on-error: true
+        uses: wireapp/analyze-xcoderesults-action@v1.0.0
+        with:
+          results: ${{ steps.find-xcresult.outputs.path }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload .xcresult as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "xcresult-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: artifacts/**/*.xcresult
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "test-reports-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+
+      - name: Upload failed snapshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            **/SnapshotResults/
+            xcodebuild*.log
+
+      - name: Publish test results summary
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        with:
+          files: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+          check_name: "Test Results – ${{ matrix.scheme }}"
+          compare_to_earlier_commit: false
+
+      - name: Archive DerivedData logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+
+  # ── 3. Notify + upload to Datadog ──────────────────────────────────────────
+  post-tests:
+    name: Post-test reporting
+    needs: test-framework
+    if: always()
+    runs-on: ubuntu-24.04
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+    steps:
+      - name: Sanitize branch name
+        shell: bash
+        env:
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+
+      - name: Notify on Wire
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: ${{ inputs.notify }}
+          status: ${{ needs.test-framework.result }}
+          branch: ${{ env.SANITIZED_BRANCH }}
+          label: Tests (parallel)
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          merge-multiple: true
+
+      - name: Upload JUnit results to Datadog
+        uses: ./.github/actions/upload-datadog-junit
+        with:
+          api_key: ${{ secrets.DD_API_KEY }}
