@@ -128,7 +128,7 @@ final class GroupConversationCellTests: XCTestCase {
         // note previously if service was first we had legacy icon
         groupConversation.stableRandomParticipants.insert(bot, at: 0)
         groupConversation.areAppsPresent = true
-        
+
         // WHEN
         groupConversation.displayName = "Group with service"
 
@@ -136,7 +136,6 @@ final class GroupConversationCellTests: XCTestCase {
         verify(conversation: groupConversation)
     }
 
-    
     func testChannelConversation() {
         // GIVEN
         let groupConversation = createGroupConversation()
