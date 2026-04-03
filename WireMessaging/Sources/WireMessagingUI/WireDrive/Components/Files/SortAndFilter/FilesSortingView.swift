@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.Sorting
 
@@ -57,6 +58,7 @@ struct FilesSortingView: View {
                             systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.sortKey(sortingKey.rawValue))
                 }
 
                 Divider()
@@ -72,6 +74,7 @@ struct FilesSortingView: View {
                             systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.sortOrder(sortingOrder.rawValue))
                 }
 
             } label: {
@@ -84,6 +87,7 @@ struct FilesSortingView: View {
                 }
             }
             .foregroundStyle(.primary)
+            .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.menuButton)
 
             Spacer()
 

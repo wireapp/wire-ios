@@ -118,7 +118,8 @@ private struct AttachmentsCarouselItemView: View {
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,
                 state: fileTrackerState(for: item),
-                isDraftPreview: true
+                isDraftPreview: true,
+                minHeight: 72
             )
         }
     }

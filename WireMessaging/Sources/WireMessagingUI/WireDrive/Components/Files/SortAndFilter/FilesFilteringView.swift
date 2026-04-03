@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
@@ -69,6 +70,7 @@ struct FilesFilteringView: View {
                             .opacity(isEnabled ? 1 : 0.5)
                     }
                     .disabled(!isEnabled)
+                    .accessibilityIdentifier(Locators.WireDrive.FilesFilteringPage.filter(filter.rawValue))
                 }
 
                 if shouldShowRemoveFilters {
@@ -80,6 +82,7 @@ struct FilesFilteringView: View {
                             .foregroundStyle(ColorTheme.Base.primary(accentColor).color)
                             .fontWeight(.semibold)
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesFilteringPage.removeAllFiltersButton)
                 }
             }
             .padding(.horizontal)
