@@ -372,11 +372,18 @@ jobs:
           SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+          sparse-checkout: .github/actions
+
       - name: Download tests results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+
       - name: Upload JUnit results to Datadog
         uses: ./.github/actions/upload-datadog-junit
         with:
