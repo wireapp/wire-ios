@@ -24,17 +24,17 @@
 #import "ZMPersistentCookieStorage.h"
 
 
-@interface ZMPersistentCookieStorageTests : XCTestCase
+@interface PersistentCookieStorageTests : XCTestCase
 
 @property (nonatomic, readonly) NSUUID *userIdentifier;
-@property (nonatomic) ZMPersistentCookieStorage *sut;
+@property (nonatomic) PersistentCookieStorage *sut;
 
 @end
 
-@interface ZMPersistentCookieStorageTests (HTTPCookie)
+@interface PersistentCookieStorageTests (HTTPCookie)
 @end
 
-@implementation ZMPersistentCookieStorageTests
+@implementation PersistentCookieStorageTests
 
 - (BOOL)shouldUseRealKeychain;
 {
@@ -44,9 +44,9 @@
 - (void)setUp
 {
     [super setUp];
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
+    [PersistentCookieStorage deleteAllKeychainItems];
     _userIdentifier = NSUUID.createUUID;
-    self.sut = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    self.sut = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
 }
 
 - (void)tearDown
@@ -99,11 +99,11 @@
 {
     NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
     @autoreleasepool {
-        ZMPersistentCookieStorage *sut1 = self.sut;
+    PersistentCookieStorage *sut1 = self.sut;
         [sut1 setAuthenticationCookieData:data];
     }
     {
-        ZMPersistentCookieStorage *sut2 = self.sut;
+        PersistentCookieStorage *sut2 = self.sut;
         XCTAssertEqualObjects([sut2 authenticationCookieData], data);
     }
 }
@@ -112,7 +112,7 @@
 {
     // given
     NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     XCTAssertTrue([sut1 isCacheEmpty]);
 
     // when
@@ -126,7 +126,7 @@
 {
     // given
     NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:NO];
+    PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:NO];
     XCTAssertTrue([sut1 isCacheEmpty]);
 
     // when
@@ -140,8 +140,8 @@
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForUserIdentifier:otherUserIdentifier  useCache:YES];
+    PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    PersistentCookieStorage *sut2 = [PersistentCookieStorage storageForUserIdentifier:otherUserIdentifier  useCache:YES];
 
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
@@ -167,8 +167,8 @@
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForUserIdentifier:otherUserIdentifier useCache:YES];
+    PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    PersistentCookieStorage *sut2 = [PersistentCookieStorage storageForUserIdentifier:otherUserIdentifier useCache:YES];
 
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
@@ -189,23 +189,23 @@
 - (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
 {
     // given
-    ZMPersistentCookieStorage *sut = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    PersistentCookieStorage *sut = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     [sut setAuthenticationCookieData:[@"This is a cookie" dataUsingEncoding:NSUTF8StringEncoding]];
     
     // then
-    XCTAssertTrue([ZMPersistentCookieStorage hasAccessibleAuthenticationCookieData]);
+    XCTAssertTrue([PersistentCookieStorage hasAccessibleAuthenticationCookieData]);
 }
 
 - (void)testThatItDoesNotHaveAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsNotAvailable
 {
-    XCTAssertFalse([ZMPersistentCookieStorage hasAccessibleAuthenticationCookieData]);
+    XCTAssertFalse([PersistentCookieStorage hasAccessibleAuthenticationCookieData]);
 }
 
 @end
 
 
 
-@implementation ZMPersistentCookieStorageTests (HTTPCookie)
+@implementation PersistentCookieStorageTests (HTTPCookie)
 
 - (void)testThatWeCanRetrieveTheCookie;
 {
@@ -330,10 +330,10 @@
 
 @end
 
-@interface ZMPersistentCookieStorageTests (RefactorSafety)
+@interface PersistentCookieStorageTests (RefactorSafety)
 @end
 
-@implementation ZMPersistentCookieStorageTests (RefactorSafety)
+@implementation PersistentCookieStorageTests (RefactorSafety)
 
 - (void)testThatExpirationDateIsNilWhenNoCookieIsStored
 {
@@ -387,7 +387,7 @@
 - (void)testThatSetCookieDataFromResponseDoesNothingWhenPolicyIsNever
 {
     // given
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyNever];
+    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyNever];
     NSDictionary *headerFields = @{@"Set-Cookie": @"zuid=abc123; Expires=Sun, 21-Jul-2030 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"};
     NSURL *URL = [NSURL URLWithString:@"https://example.com/login"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
@@ -399,7 +399,7 @@
     XCTAssertNil(self.sut.authenticationCookieData);
 
     // cleanup
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
+    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
 }
 
 - (void)testThatDeleteKeychainItemsDoesNotFailWhenNothingIsStored
