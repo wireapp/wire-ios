@@ -240,7 +240,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             userID: selfUserID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: WireFoundation.Keychain(),
-            useCache: false
+            cache: .shared
         )
 
         // Forces the access token request to fail with 403 (invalid credentials)

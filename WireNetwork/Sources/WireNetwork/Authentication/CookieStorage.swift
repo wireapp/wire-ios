@@ -30,6 +30,40 @@ public protocol CookieStorageProtocol: Sendable {
     func removeCookies() throws
 }
 
+/// A cache for cookies, keyed by user ID.
+///
+/// This class is thread-safe and can be shared across multiple `CookieStorage` instances.
+/// It is intended to be used as a singleton within a process to avoid redundant keychain reads.
+///
+/// - Warning: Do not use in app extensions. If the authentication cookie is updated in the
+/// main app, the cache in the extension will be stale.
+
+public final class CookieStorageCache: Sendable {
+
+    private let cache = OSAllocatedUnfairLock<[UUID: [HTTPCookie]]>(initialState: [:])
+
+    public static let shared = CookieStorageCache()
+
+    public init() {}
+
+    func get(for userID: UUID) -> [HTTPCookie]? {
+        cache.withLock { $0[userID] }
+    }
+
+    func set(_ cookies: [HTTPCookie], for userID: UUID) {
+        cache.withLock { $0[userID] = cookies }
+    }
+
+    func remove(for userID: UUID) {
+        cache.withLock { $0[userID] = nil }
+    }
+
+    func removeAll() {
+        cache.withLock { $0.removeAll() }
+    }
+
+}
+
 public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     enum Failure: Error {
@@ -40,8 +74,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     }
 
-    private let useCache: Bool
-    private let storage: OSAllocatedUnfairLock<(storage: _CookieStorage, cache: [HTTPCookie]?)>
+    private let storage: OSAllocatedUnfairLock<_CookieStorage>
 
     /// Creates a new `CookieStorage`.
     ///
@@ -50,26 +83,21 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     ///  - cookieEncryptionKey: A key used to encrypt and decrypt cookie data. This key should be stored in defaults
     ///  so that it is destroyed when the app is deleted.
     ///  - keychain: An instance of a type conforming to `KeychainProtocol` for performing keychain operations.
-    ///  - useCache: A boolean flag indicating whether to cache fetched cookies in memory.
-    ///
-    ///  - Warning: `useCache` should be set to false in app extensions to avoid caching issues if the authentication
-    ///  cookie is updated in the main app.
+    ///  - cache: An optional `CookieStorageCache` for caching fetched cookies in memory.
+    ///  Pass `nil` to disable caching (e.g. in app extensions).
 
     public init(
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
-        useCache: Bool
+        cache: CookieStorageCache?
     ) {
-        self.useCache = useCache
         storage = OSAllocatedUnfairLock(
-            initialState: (
-                storage: _CookieStorage(
-                    userID: userID,
-                    cookieEncryptionKey: cookieEncryptionKey,
-                    keychain: keychain
-                ),
-                cache: nil
+            initialState: _CookieStorage(
+                userID: userID,
+                cookieEncryptionKey: cookieEncryptionKey,
+                keychain: keychain,
+                cache: cache
             )
         )
     }
@@ -83,10 +111,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Parameter cookies: The cookies to store.
 
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try storage.withLock { state in
-            try state.storage.storeCookies(cookies)
-            state.cache = nil
-        }
+        try storage.withLock { try $0.storeCookies(cookies) }
     }
 
     /// Fetch stored cookies.
@@ -98,16 +123,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Returns: The stored cookies.
 
     public func fetchCookies() throws -> [HTTPCookie] {
-        try storage.withLock { state in
-            if let cached = state.cache { return cached }
-
-            let cookies = try state.storage.fetchCookies()
-            if useCache {
-                state.cache = cookies
-            }
-
-            return cookies
-        }
+        try storage.withLock { try $0.fetchCookies() }
     }
 
     /// Remove stored cookies from the keychain.
@@ -119,10 +135,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Throws: An error if the keychain deletion fails.
 
     public func removeCookies() throws {
-        try storage.withLock { state in
-            try state.storage.removeCookies()
-            state.cache = nil
-        }
+        try storage.withLock { try $0.removeCookies() }
     }
 
 }
@@ -137,15 +150,18 @@ private final class _CookieStorage: Sendable {
     private let userID: UUID
     private let cookieEncryptionKey: Data
     private let keychain: any KeychainProtocol
+    private let cache: CookieStorageCache?
 
     init(
         userID: UUID,
         cookieEncryptionKey: Data,
-        keychain: any KeychainProtocol
+        keychain: any KeychainProtocol,
+        cache: CookieStorageCache?
     ) {
         self.userID = userID
         self.cookieEncryptionKey = cookieEncryptionKey
         self.keychain = keychain
+        self.cache = cache
     }
 
     func storeCookies(_ cookies: [HTTPCookie]) throws {
@@ -157,9 +173,13 @@ private final class _CookieStorage: Sendable {
         } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
             try keychain.addItem(query: addQuery(cookieData: cookieData))
         }
+
+        cache?.set(cookies, for: userID)
     }
 
     func fetchCookies() throws -> [HTTPCookie] {
+        if let cached = cache?.get(for: userID) { return cached }
+
         guard let data: Data = try keychain.fetchItem(query: fetchQuery()) else {
             return []
         }
@@ -169,6 +189,7 @@ private final class _CookieStorage: Sendable {
 
     func removeCookies() throws {
         try keychain.deleteItem(query: baseQuery())
+        cache?.remove(for: userID)
     }
 
     // MARK: - Queries

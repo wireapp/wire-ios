@@ -295,7 +295,7 @@ public final class SharingSession {
             userID: accountIdentifier,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            useCache: false // App extensions should not use a cache.
+            cache: nil // App extensions should not use a cache.
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]

@@ -189,7 +189,7 @@ final class UserSessionLoader {
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            useCache: true
+            cache: .shared
         )
 
         if let cookies = newEnvironment?.cookies {

@@ -37,7 +37,7 @@ final class CookieStorageTests: XCTestCase {
             userID: Scaffolding.userID,
             cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain,
-            useCache: false
+            cache: nil
         )
     }
 

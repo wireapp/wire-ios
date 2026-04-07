@@ -360,7 +360,7 @@ public struct SharingSessionLoader {
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            useCache: false // App extensions should not use a cache.
+            cache: nil // App extensions should not use a cache.
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,

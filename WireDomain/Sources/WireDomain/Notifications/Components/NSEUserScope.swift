@@ -80,7 +80,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
                 userID: accountID,
                 cookieEncryptionKey: dependency.cookieEncryptionKey,
                 keychain: Keychain(),
-                useCache: false // App extensions should not use a cache.
+                cache: nil // App extensions should not use a cache.
             )
         }
     }
