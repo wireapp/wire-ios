@@ -120,4 +120,4 @@ jobs:
                 with:
                     status: custom
                     custom_payload: |
-                        { "text": ${{ toJSON(steps.build-summary.outputs.result) }} }
+                        { "text": ${{ steps.build-summary.outputs.result }} }
