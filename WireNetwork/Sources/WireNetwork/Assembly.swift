@@ -26,19 +26,22 @@ public final class Assembly {
     let backendEnvironment: BackendEnvironment
     let minTLSVersion: TLSVersion
     let cookieEncryptionKey: Data
+    let useCookieCache: Bool
 
     public init(
         userID: UUID,
         clientID: String,
         backendEnvironment: BackendEnvironment,
         minTLSVersion: TLSVersion,
-        cookieEncryptionKey: Data
+        cookieEncryptionKey: Data,
+        useCookieCache: Bool
     ) {
         self.userID = userID
         self.clientID = clientID
         self.backendEnvironment = backendEnvironment
         self.minTLSVersion = minTLSVersion
         self.cookieEncryptionKey = cookieEncryptionKey
+        self.useCookieCache = useCookieCache
     }
 
     private lazy var keychain: some KeychainProtocol = Keychain()
@@ -68,7 +71,8 @@ public final class Assembly {
     private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(
         userID: userID,
         cookieEncryptionKey: cookieEncryptionKey,
-        keychain: keychain
+        keychain: keychain,
+        useCache: useCookieCache
     )
 
     private lazy var serverTrustValidator = ServerTrustValidator(

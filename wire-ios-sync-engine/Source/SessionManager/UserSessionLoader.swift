@@ -188,7 +188,8 @@ final class UserSessionLoader {
         let cookieStorage = CookieStorage(
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            keychain: Keychain(),
+            useCache: true
         )
 
         if let cookies = newEnvironment?.cookies {

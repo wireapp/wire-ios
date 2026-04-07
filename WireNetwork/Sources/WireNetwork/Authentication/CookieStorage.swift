@@ -40,18 +40,36 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     }
 
-    private let storage: OSAllocatedUnfairLock<_CookieStorage>
+    private let useCache: Bool
+    private let storage: OSAllocatedUnfairLock<(storage: _CookieStorage, cache: [HTTPCookie]?)>
+
+    /// Creates a new `CookieStorage`.
+    ///
+    /// - Parameters:
+    ///  - userID: The unique identifier for the user whose cookies are being stored.
+    ///  - cookieEncryptionKey: A key used to encrypt and decrypt cookie data. This key should be stored in defaults
+    ///  so that it is destroyed when the app is deleted.
+    ///  - keychain: An instance of a type conforming to `KeychainProtocol` for performing keychain operations.
+    ///  - useCache: A boolean flag indicating whether to cache fetched cookies in memory.
+    ///
+    ///  - Warning: `useCache` should be set to false in app extensions to avoid caching issues if the authentication
+    ///  cookie is updated in the main app.
 
     public init(
         userID: UUID,
         cookieEncryptionKey: Data,
-        keychain: any KeychainProtocol
+        keychain: any KeychainProtocol,
+        useCache: Bool
     ) {
+        self.useCache = useCache
         storage = OSAllocatedUnfairLock(
-            initialState: _CookieStorage(
-                userID: userID,
-                cookieEncryptionKey: cookieEncryptionKey,
-                keychain: keychain
+            initialState: (
+                storage: _CookieStorage(
+                    userID: userID,
+                    cookieEncryptionKey: cookieEncryptionKey,
+                    keychain: keychain
+                ),
+                cache: nil
             )
         )
     }
@@ -65,7 +83,10 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Parameter cookies: The cookies to store.
 
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try storage.withLock { try $0.storeCookies(cookies) }
+        try storage.withLock { state in
+            try state.storage.storeCookies(cookies)
+            state.cache = nil
+        }
     }
 
     /// Fetch stored cookies.
@@ -77,7 +98,16 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Returns: The stored cookies.
 
     public func fetchCookies() throws -> [HTTPCookie] {
-        try storage.withLock { try $0.fetchCookies() }
+        try storage.withLock { state in
+            if let cached = state.cache { return cached }
+
+            let cookies = try state.storage.fetchCookies()
+            if useCache {
+                state.cache = cookies
+            }
+
+            return cookies
+        }
     }
 
     /// Remove stored cookies from the keychain.
@@ -89,7 +119,10 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Throws: An error if the keychain deletion fails.
 
     public func removeCookies() throws {
-        try storage.withLock { try $0.removeCookies() }
+        try storage.withLock { state in
+            try state.storage.removeCookies()
+            state.cache = nil
+        }
     }
 
 }

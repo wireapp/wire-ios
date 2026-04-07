@@ -79,7 +79,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             CookieStorage(
                 userID: accountID,
                 cookieEncryptionKey: dependency.cookieEncryptionKey,
-                keychain: Keychain()
+                keychain: Keychain(),
+                useCache: false // App extensions should not use a cache.
             )
         }
     }
