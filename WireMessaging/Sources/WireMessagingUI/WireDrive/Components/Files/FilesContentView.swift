@@ -118,9 +118,11 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 }
             )
         }
-        .onChange(of: viewModel.isOffline) {
-            Task {
-                await viewModel.reload(refreshing: true)
+        .onChange(of: viewModel.networkStatus) { oldValue, newValue in
+            if newValue != nil {
+                Task {
+                    await viewModel.reload(refreshing: true)
+                }
             }
         }
         .task {

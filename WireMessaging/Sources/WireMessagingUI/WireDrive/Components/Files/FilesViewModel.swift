@@ -269,6 +269,10 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
+    var networkStatus: NetworkMonitor.NetworkStatus? {
+        networkMonitor.currentStatus
+    }
+    
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
@@ -334,7 +338,6 @@ package final class FilesViewModel: ObservableObject {
     func setup() async {
         await fetchConversations()
         bindSearch()
-        bindConnectionStatusResolved()
         fetchTemplates()
         Task { await reload() }
     }
@@ -485,19 +488,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: - Private
-
-    /// Waits for the first non-nil network status to avoid incorrect UI transitions at launch.
-    private func bindConnectionStatusResolved() {
-        guard networkMonitor.currentStatus == nil else { return }
-
-        networkMonitor.$currentStatus
-            .filter { $0 != nil }
-            .first()
-            .sink { [weak self] status in
-                guard status != nil else { return }
-                Task { await self?.reload() }
-            }.store(in: &subscriptions)
-    }
 
     private func fetchTemplates() {
         Task {
