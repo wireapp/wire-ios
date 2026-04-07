@@ -702,8 +702,19 @@ package final class FilesViewModel: ObservableObject {
                     size: asset.size
                 )
             }
+            
+            let itemsWithCreationDates: [(item: FilesViewItem, creationDate: Date)] = await items.asyncMap { item in
+                let url = try? await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+                let creationDate = (try? url?.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
+                return (item: item, creationDate: creationDate)
+            }
+            
+            let sortedItems = itemsWithCreationDates.sorted { lhs, rhs in
+                lhs.creationDate.compare(rhs.creationDate) == .orderedDescending
+            }
+            .map(\.item)
 
-            state = .received(items: items)
+            state = .received(items: sortedItems)
         } catch {
             alert = .unknownError
             WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
@@ -980,5 +991,16 @@ extension WireDriveFileTemplate.Kind {
         case .presentation:
             "sparkles.tv"
         }
+    }
+}
+
+private extension Sequence {
+    @MainActor
+    func asyncMap<T>(_ transform: @MainActor (Element) async throws -> T) async rethrows -> [T] {
+        var values = [T]()
+        for element in self {
+            try await values.append(transform(element))
+        }
+        return values
     }
 }
