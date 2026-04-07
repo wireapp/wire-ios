@@ -74,7 +74,9 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     }
 
-    private let storage: OSAllocatedUnfairLock<_CookieStorage>
+    private static let lock = OSAllocatedUnfairLock()
+
+    private let storage: _CookieStorage
 
     /// Creates a new `CookieStorage`.
     ///
@@ -92,13 +94,11 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
         keychain: any KeychainProtocol,
         cache: CookieStorageCache?
     ) {
-        storage = OSAllocatedUnfairLock(
-            initialState: _CookieStorage(
-                userID: userID,
-                cookieEncryptionKey: cookieEncryptionKey,
-                keychain: keychain,
-                cache: cache
-            )
+        storage = _CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookieEncryptionKey,
+            keychain: keychain,
+            cache: cache
         )
     }
 
@@ -111,7 +111,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Parameter cookies: The cookies to store.
 
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try storage.withLock { try $0.storeCookies(cookies) }
+        try Self.lock.withLock { try storage.storeCookies(cookies) }
     }
 
     /// Fetch stored cookies.
@@ -123,7 +123,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Returns: The stored cookies.
 
     public func fetchCookies() throws -> [HTTPCookie] {
-        try storage.withLock { try $0.fetchCookies() }
+        try Self.lock.withLock { try storage.fetchCookies() }
     }
 
     /// Remove stored cookies from the keychain.
@@ -135,7 +135,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Throws: An error if the keychain deletion fails.
 
     public func removeCookies() throws {
-        try storage.withLock { try $0.removeCookies() }
+        try Self.lock.withLock { try storage.removeCookies() }
     }
 
 }
@@ -173,8 +173,6 @@ private final class _CookieStorage: Sendable {
         } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
             try keychain.addItem(query: addQuery(cookieData: cookieData))
         }
-
-        cache?.set(cookies, for: userID)
     }
 
     func fetchCookies() throws -> [HTTPCookie] {
@@ -184,7 +182,9 @@ private final class _CookieStorage: Sendable {
             return []
         }
 
-        return try Self.decryptAndDecodeCookies(data, key: cookieEncryptionKey)
+        let cookies = try Self.decryptAndDecodeCookies(data, key: cookieEncryptionKey)
+        cache?.set(cookies, for: userID)
+        return cookies
     }
 
     func removeCookies() throws {
