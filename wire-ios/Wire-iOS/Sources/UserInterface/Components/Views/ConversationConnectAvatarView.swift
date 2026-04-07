@@ -175,6 +175,7 @@ final class ConversationConnectAvatarView: UIView {
         }
     }
 
+    // TODO: [WPB-17197] cleanup unused code and fix missing icon for connection
     fileprivate(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
             clippingView.subviews.forEach { $0.isHidden = true }
