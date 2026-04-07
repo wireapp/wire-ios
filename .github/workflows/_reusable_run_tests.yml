@@ -409,12 +409,14 @@ jobs:
           sparse-checkout: .github/actions
 
       - name: Download tests results
+        id: download-test-results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
 
       - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
