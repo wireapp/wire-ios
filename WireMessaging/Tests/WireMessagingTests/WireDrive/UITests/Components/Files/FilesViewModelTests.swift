@@ -68,7 +68,7 @@ final class FilesViewModelTests {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesRepository),
+                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,
@@ -76,7 +76,7 @@ final class FilesViewModelTests {
                     nodeCache: MockWireDriveNodeCacheProtocol()
                 ),
                 getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: editingURLRepository),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
@@ -86,10 +86,13 @@ final class FilesViewModelTests {
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
                 getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
-                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
-                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: localAssetRepository
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
                 )
             ),
@@ -581,7 +584,7 @@ final class FilesViewModelTests {
 
     @Test
     func testOfflineBarIsHiddenWhenItemsAreEmpty() {
-        sut.connectionState = .offline
+        NetworkMonitor.shared.currentStatus = .disconnected
         sut.state = .received(items: [])
 
         #expect(sut.shouldShowOfflineBar == false)
@@ -592,7 +595,7 @@ final class FilesViewModelTests {
         let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
         let now = Date()
 
-        sut.connectionState = .offline
+        NetworkMonitor.shared.currentStatus = .disconnected
         sut.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,

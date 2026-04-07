@@ -47,6 +47,7 @@ final class FilesViewTests: XCTestCase {
     private var driveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
     private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
     private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
+    private var fetchOfflineAvailableAssetsUseCase: WireDriveFetchOfflineAvailableAssetsUseCase!
 
     private let record: Bool? = nil
 
@@ -108,6 +109,10 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository
         )
         removeAssetAvailableOfflineUseCase = WireDriveRemoveAssetAvailableOfflineUseCase(
+            localAssetRepository: localAssetsRepository
+        )
+
+        fetchOfflineAvailableAssetsUseCase = WireDriveFetchOfflineAvailableAssetsUseCase(
             localAssetRepository: localAssetsRepository
         )
     }
@@ -418,7 +423,7 @@ final class FilesViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFileUseCase: WireDriveCreateFileUseCase(
+                createFile: WireDriveCreateFileUseCase(
                     nodesRepository: nodesRepository
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
@@ -428,7 +433,7 @@ final class FilesViewTests: XCTestCase {
                     nodeCache: MockWireDriveNodeCacheProtocol()
                 ),
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                getAsset: WireDriveGetAssetUseCase(
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
                     fileCache: MockFileCache()
                 ),
@@ -438,8 +443,9 @@ final class FilesViewTests: XCTestCase {
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: driveConversationsUseCase,
-                makeAssetAvailableOfflineUseCase: makeAssetAvailableOfflineUseCase,
-                removeAssetAvailableOfflineUseCase: removeAssetAvailableOfflineUseCase
+                makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
+                removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
+                getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),

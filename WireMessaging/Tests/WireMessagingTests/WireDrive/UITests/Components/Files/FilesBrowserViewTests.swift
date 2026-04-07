@@ -227,21 +227,24 @@ final class FilesBrowserViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFileUseCase: createFileUseCase,
+                createFile: createFileUseCase,
                 fetchNodeVersions: fetchNodeVersionsUseCase,
                 restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: getAssetUseCase,
+                getAsset: getAssetUseCase,
                 getPublicLinkData: getPublicLinkData,
                 createPublicLink: createPublicLink,
                 deletePublicLink: deletePublicLink,
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
                 getDriveConversations: getDriveConversationsUseCase,
-                makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase(
+                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
                 ),
-                removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase(
+                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
+                    localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
+                ),
+                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
                 )
             ),
