@@ -113,7 +113,6 @@
 				Public/WireTransport.h,
 				Public/ZMBackgroundable.h,
 				Public/ZMKeychain.h,
-				Public/ZMPersistentCookieStorage.h,
 				Public/ZMReachability.h,
 				Public/ZMRequestCancellation.h,
 				Public/ZMTaskIdentifierMap.h,

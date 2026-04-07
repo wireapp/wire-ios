@@ -21,8 +21,6 @@
 @import WireTransport;
 @import WireTransport.Testing;
 
-#import "ZMPersistentCookieStorage.h"
-
 
 @interface PersistentCookieStorageTests : XCTestCase
 
