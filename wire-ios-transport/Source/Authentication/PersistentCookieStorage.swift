@@ -50,16 +50,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         userIdentifier.uuidString
     }
 
-    // MARK: - Creation
-
     @objc
-    public static func storage(
-        forUserIdentifier userIdentifier: UUID,
-        useCache: Bool
-    ) -> PersistentCookieStorage {
-        PersistentCookieStorage(userIdentifier: userIdentifier, useCache: useCache)
-    }
-
     public init(userIdentifier: UUID, useCache: Bool) {
         self.userIdentifier = userIdentifier
         self.useCache = useCache

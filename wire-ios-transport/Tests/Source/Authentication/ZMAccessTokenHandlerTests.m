@@ -76,7 +76,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[PersistentCookieStorage alloc] initWithUserIdentifier:self.userIdentifier useCache:YES];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
