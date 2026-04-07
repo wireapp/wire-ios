@@ -45,6 +45,8 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
   PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_TEST_LOGIN_EMAIL: "foo@example.com" # can be removed after 4.17 is released
+  UI_TEST_LOGIN_PASSWORD: "123456" # can be removed after 4.17 is released
 
 
 jobs:
