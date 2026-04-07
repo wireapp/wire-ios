@@ -3,6 +3,7 @@ class Framework
 
     def self.all
         all_folders = [
+            "wire-ios", # tested first so its build output warms DerivedData for all other schemes
             "WireNetwork",
             "WireAnalytics",
             "WireAuthentication",
@@ -14,7 +15,6 @@ class Framework
             "WireCalling",
             "WireLogging",
             "WireUI",
-            "wire-ios",
             "wire-ios-canvas",
             "wire-ios-data-model",
             "wire-ios-images",
