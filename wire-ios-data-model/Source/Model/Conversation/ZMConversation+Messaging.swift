@@ -229,9 +229,11 @@ public extension ZMConversation {
             )
         }
 
+        let notDeleted = NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely))
+
         request.predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [
-                matchingGroupStatus, .isMLSConversation, matchingDomain
+                matchingGroupStatus, .isMLSConversation, matchingDomain, notDeleted
             ].compactMap(\.self)
         )
 

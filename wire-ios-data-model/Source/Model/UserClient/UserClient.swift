@@ -706,7 +706,7 @@ public extension UserClient {
             }
 
             if user.isSelfUser {
-                let predicateFactory = ConversationPredicateFactory(selfTeam: user.team)
+                let predicateFactory = ConversationPredicateFactory(selfUser: user, selfTeam: user.team)
                 let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = predicateFactory.predicateForConversationsIncludingArchived()
                 let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []

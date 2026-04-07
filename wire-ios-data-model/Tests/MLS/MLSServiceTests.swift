@@ -530,6 +530,64 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(mockAddMembersCalled)
     }
 
+    func test_EstablishGroupWithSelfUser_IsAlwaysAddingSelfLast() async throws {
+        // Given
+        let mlsSelfUser = await uiMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.uiMOC)
+            return MLSUser(from: selfUser, localDomain: self.localDomain)
+        }
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKey = Data([1, 2, 3])
+        let users = [
+            mlsSelfUser,
+            MLSUser(id: UUID(), domain: "example.com")
+        ]
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
+            removal: .init(ed25519: removalKey)
+        )
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in }
+
+        mockActionsProvider
+            .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { _, _, _, _, _ in
+                users.map {
+                    KeyPackage(
+                        client: .randomAlphanumerical(length: 4),
+                        domain: $0.domain,
+                        keyPackage: .randomAlphanumerical(length: 3),
+                        keyPackageRef: .randomAlphanumerical(length: 6),
+                        userID: $0.id
+                    )
+                }
+            }
+
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        mockCoreCryptoContext
+            .createConversationConversationIdCreatorCredentialTypeConfig_MockMethod =
+            { _, _, _ in }
+
+        // When
+        try await _ = sut.establishGroup(for: groupID, with: users)
+
+        // Then
+        let invocation = mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations
+            .filter { tuple in
+                tuple.userID == mlsSelfUser.id
+            }
+
+        XCTAssertEqual(
+            mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.count,
+            2
+        )
+        XCTAssertEqual(
+            mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.last?.userID,
+            mlsSelfUser.id
+        )
+    }
+
     private func internalTestReEstablishGroup(epoch: UInt64) async throws {
         // GIVEN
         let groupID = MLSGroupID(Data([1, 2, 3]))
