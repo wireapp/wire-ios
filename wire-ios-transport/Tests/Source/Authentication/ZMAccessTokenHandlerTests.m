@@ -128,7 +128,7 @@
                                                              HTTPVersion:@""
                                                             headerFields:headers];
     [self.cookieStorage setCookieDataFromResponse:response forURL:URL];
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)invokeAccessTokenRenewalFailureHandler:(ZMTransportResponse *)response
@@ -386,7 +386,7 @@
     [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 
@@ -632,7 +632,7 @@
 - (void)testThatIt_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_Not420Or429Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -641,13 +641,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertFalse(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_429Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -657,13 +657,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_420Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -673,13 +673,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusTemporaryError
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusTemporaryError];
@@ -688,13 +688,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatItDeletesTheCookieDataIfItDoesNotReceiveANewToken
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *response = [FakeTransportResponse testResponse];
     [response setResult:ZMTransportResponseStatusSuccess];
@@ -703,7 +703,7 @@
     [self.sut processAccessTokenResponse:(id)response];
     
     // then
-    XCTAssertNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertFalse(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatItForwardsTheResponseToTheFailureHandlerIfItDoesNotReceiveANewToken

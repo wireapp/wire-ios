@@ -26,7 +26,7 @@ private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
-    func authenticationCookieData() -> Data?
+    func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
     func clearAuthenticationCookies()
     var authenticationCookieExpirationDate: Date? { get }
@@ -68,8 +68,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
 
     // MARK: - Public API
 
-    @objc
-    public func authenticationCookieData() -> Data? {
+    private func authenticationCookieData() -> Data? {
         var result: Data?
         if findItem(password: &result) {
             return result
@@ -110,7 +109,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
 
     @objc
     public var authenticationCookieExpirationDate: Date? {
-        for cookie in authenticationCookies ?? [] {
+        for cookie in authenticationCookies() ?? [] {
             if cookie.name == cookieName {
                 return cookie.expiresDate
             }
@@ -187,7 +186,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
 
     @objc(setRequestHeaderFieldsOnRequest:)
     public func setRequestHeaderFields(on request: NSMutableURLRequest) {
-        guard let cookies = authenticationCookies else {
+        guard let cookies = authenticationCookies() else {
             return
         }
 
@@ -196,9 +195,8 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         }
     }
 
-    // MARK: - Private API
-
-    private var authenticationCookies: [HTTPCookie]? {
+    @objc
+    public func authenticationCookies() -> [HTTPCookie]? {
         guard var data = authenticationCookieData() else {
             return nil
         }

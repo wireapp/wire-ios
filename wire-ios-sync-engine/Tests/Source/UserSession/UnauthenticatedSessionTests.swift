@@ -210,7 +210,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
     }
 
     func testThatItParsesCookieDataAndDoesCallTheDelegateIfTheCookieIsValidAndThereIsAUserIdKeyId() throws {
@@ -224,7 +224,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
     }
 
     func testThatItDoesNotParseAnAccountWithWrongUserIdKey() {
