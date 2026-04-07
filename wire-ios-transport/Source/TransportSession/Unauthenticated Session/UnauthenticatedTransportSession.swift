@@ -38,18 +38,16 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 @objcMembers
 public final class UserInfo: NSObject {
     public let identifier: UUID
-    public let cookieData: Data
     public let cookies: [HTTPCookie]
 
-    public init(identifier: UUID, cookieData: Data, cookies: [HTTPCookie]) {
+    public init(identifier: UUID, cookies: [HTTPCookie]) {
         self.identifier = identifier
-        self.cookieData = cookieData
         self.cookies = cookies
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserInfo else { return false }
-        return other.cookieData == cookieData && other.identifier == identifier
+        return other.identifier == identifier
     }
 }
 
@@ -280,13 +278,13 @@ extension ZMTransportResponse {
     @objc
     public func extractUserInfo() -> UserInfo? {
         guard
-            let data = extractCookies().data,
+            extractCookies().data != nil, // TODO: Validate this in another way.
             let cookies = extractCookies().array,
             let id = extractUserIdentifier()
         else {
             return nil
         }
-        return .init(identifier: id, cookieData: data, cookies: cookies)
+        return .init(identifier: id, cookies: cookies)
     }
 
 }
@@ -317,3 +315,4 @@ public extension HTTPCookie {
     }
 
 }
+

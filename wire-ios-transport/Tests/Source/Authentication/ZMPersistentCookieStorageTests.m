@@ -19,6 +19,7 @@
 @import XCTest;
 @import WireTesting;
 @import WireTransport;
+@import WireTransportSupport;
 @import WireTransport.Testing;
 
 
@@ -63,58 +64,53 @@
 - (void)testThatItStoresTheCookie;
 {
     XCTAssertNil(self.sut.authenticationCookieData);
-    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
-    [self.sut setAuthenticationCookieData:data];
+    [self.sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(self.sut.authenticationCookieData);
-    XCTAssertEqualObjects(self.sut.authenticationCookieData, data);
+    XCTAssertTrue(self.sut.hasAuthenticationCookie);
 }
 
 - (void)testThatItUpdatesTheCookie;
 {
     XCTAssertNil(self.sut.authenticationCookieData);
 
-    NSData *data1 = [NSData dataWithBytes:(char []){'a'} length:1];
-    [self.sut setAuthenticationCookieData:data1];
-    XCTAssertEqualObjects(self.sut.authenticationCookieData, data1);
-    
-    NSData *data2 = [NSData dataWithBytes:(char []){'B'} length:1];
-    [self.sut setAuthenticationCookieData:data2];
-    XCTAssertEqualObjects(self.sut.authenticationCookieData, data2);
+    [self.sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
+    XCTAssertNotNil(self.sut.authenticationCookieData);
+
+    NSArray<NSHTTPCookie *> *otherCookies = [NSHTTPCookie validCookiesWithString:@"zuid=other; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure"];
+    [self.sut setAuthenticationCookies:otherCookies];
+    XCTAssertNotNil(self.sut.authenticationCookieData);
 }
 
 - (void)testThatItCanDeleteCookies;
 {
     XCTAssertNil(self.sut.authenticationCookieData);
-    
-    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
-    [self.sut setAuthenticationCookieData:data];
+
+    [self.sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(self.sut.authenticationCookieData);
-    [self.sut setAuthenticationCookieData:nil];
+    [self.sut clearAuthenticationCookies];
     XCTAssertNil(self.sut.authenticationCookieData);
 }
 
 - (void)testThatItPersistsCookies;
 {
-    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
     @autoreleasepool {
-    PersistentCookieStorage *sut1 = self.sut;
-        [sut1 setAuthenticationCookieData:data];
+        PersistentCookieStorage *sut1 = self.sut;
+        [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     }
     {
         PersistentCookieStorage *sut2 = self.sut;
-        XCTAssertEqualObjects([sut2 authenticationCookieData], data);
+        XCTAssertNotNil([sut2 authenticationCookieData]);
     }
 }
 
 - (void)testThatItCachesCookies;
 {
     // given
-    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
     PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     XCTAssertTrue([sut1 isCacheEmpty]);
 
     // when
-    [sut1 setAuthenticationCookieData:data];
+    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
 
     // then
     XCTAssertFalse([sut1 isCacheEmpty]);
@@ -123,12 +119,11 @@
 - (void)testThatItDoesNotCacheCookies;
 {
     // given
-    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
     PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:NO];
     XCTAssertTrue([sut1 isCacheEmpty]);
 
     // when
-    [sut1 setAuthenticationCookieData:data];
+    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
 
     // then
     XCTAssertTrue([sut1 isCacheEmpty]);
@@ -141,11 +136,9 @@
     PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     PersistentCookieStorage *sut2 = [PersistentCookieStorage storageForUserIdentifier:otherUserIdentifier  useCache:YES];
 
-    NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    [sut1 setAuthenticationCookieData:data1];
+    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(sut1.authenticationCookieData);
-    [sut2 setAuthenticationCookieData:data2];
+    [sut2 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(sut2.authenticationCookieData);
 
     // when
@@ -153,7 +146,7 @@
 
     // then
     XCTAssertNil(sut1.authenticationCookieData);
-    XCTAssertEqualObjects(sut2.authenticationCookieData, data2);
+    XCTAssertNotNil(sut2.authenticationCookieData);
 
     // when
     [sut2 deleteKeychainItems];
@@ -168,17 +161,15 @@
     PersistentCookieStorage *sut1 = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     PersistentCookieStorage *sut2 = [PersistentCookieStorage storageForUserIdentifier:otherUserIdentifier useCache:YES];
 
-    NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
-    [sut1 setAuthenticationCookieData:data1];
+    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(sut1.authenticationCookieData);
-    [sut2 setAuthenticationCookieData:data2];
+    [sut2 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertNotNil(sut2.authenticationCookieData);
-    
+
     // when
     [sut1 deleteKeychainItems];
     [sut2 deleteKeychainItems];
-    
+
     // then
     XCTAssertNil(sut1.authenticationCookieData);
     XCTAssertNil(sut2.authenticationCookieData);
@@ -188,8 +179,8 @@
 {
     // given
     PersistentCookieStorage *sut = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
-    [sut setAuthenticationCookieData:[@"This is a cookie" dataUsingEncoding:NSUTF8StringEncoding]];
-    
+    [sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
+
     // then
     XCTAssertTrue([PersistentCookieStorage hasAccessibleAuthenticationCookieData]);
 }
@@ -260,8 +251,8 @@
 {
     // given
     XCTAssertNil(self.sut.authenticationCookieData);
-    [self.sut setAuthenticationCookieData:[@"previous-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
-    
+    [self.sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
+
     NSDictionary *headerFields = @{@"Date": @"Thu, 24 Jul 2014 09:06:45 GMT",
                                    @"Content-Encoding": @"gzip",
                                    @"Server": @"nginx",

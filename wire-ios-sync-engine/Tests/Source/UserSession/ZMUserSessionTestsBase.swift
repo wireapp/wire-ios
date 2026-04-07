@@ -37,7 +37,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: PersistentCookieStorage!
-    var validCookie: Data!
+    var validCookies: [HTTPCookie]!
     var baseURL: URL!
     var mediaManager: MediaManagerType!
     var flowManagerMock: FlowManagerMock!
@@ -119,7 +119,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = HTTPCookie.validCookieData()
+        validCookies = HTTPCookie.validCookies()
     }
 
     override func tearDown() {
@@ -132,7 +132,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         wireAPIBackendEnvironment = nil
         baseURL = nil
         cookieStorage = nil
-        validCookie = nil
+        validCookies = nil
         mockSessionManager = nil
         mockMLSService = nil
         transportSession = nil
@@ -216,7 +216,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         syncMOC.performAndWait {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
-            cookieStorage.setAuthenticationCookieData(validCookie)
+            cookieStorage.setAuthenticationCookies(validCookies)
         }
     }
 
@@ -225,7 +225,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
         }
-        cookieStorage.setAuthenticationCookieData(validCookie)
+        cookieStorage.setAuthenticationCookies(validCookies)
     }
 
     private func clearCache() {

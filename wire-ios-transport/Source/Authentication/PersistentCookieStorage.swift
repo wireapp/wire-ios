@@ -27,7 +27,8 @@ private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
     func authenticationCookieData() -> Data?
-    func setAuthenticationCookieData(_ data: Data?)
+    func setAuthenticationCookies(_ cookies: [HTTPCookie])
+    func clearAuthenticationCookies()
     var authenticationCookieExpirationDate: Date? { get }
     var hasAuthenticationCookie: Bool { get }
     func deleteKeychainItems()
@@ -77,7 +78,29 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     }
 
     @objc
-    public func setAuthenticationCookieData(_ data: Data?) {
+    public func setAuthenticationCookies(_ cookies: [HTTPCookie]) {
+        let properties = cookies.compactMap(\.properties)
+
+        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
+        archiver.encode(properties, forKey: "properties")
+        archiver.finishEncoding()
+
+        var data = archiver.encodedData
+
+        #if os(iOS)
+        let secretKey = UserDefaults.cookiesKey()!
+        data = data.zmEncryptPrefixingIV(key: secretKey)
+        #endif
+
+        setAuthenticationCookieData(data.base64EncodedData())
+    }
+
+    @objc
+    public func clearAuthenticationCookies() {
+        setAuthenticationCookieData(nil)
+    }
+
+    private func setAuthenticationCookieData(_ data: Data?) {
         if let data {
             setItem(data)
         } else {
@@ -159,18 +182,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
             return
         }
 
-        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
-        archiver.encode(properties, forKey: "properties")
-        archiver.finishEncoding()
-
-        var data = archiver.encodedData
-
-        #if os(iOS)
-        let secretKey = UserDefaults.cookiesKey()!
-        data = data.zmEncryptPrefixingIV(key: secretKey)
-        #endif
-
-        setAuthenticationCookieData(data.base64EncodedData())
+        setAuthenticationCookies(cookies)
     }
 
     @objc(setRequestHeaderFieldsOnRequest:)

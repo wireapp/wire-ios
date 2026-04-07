@@ -41,7 +41,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     NSString *path = @"/login";
@@ -71,7 +71,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMTransportRequestMethodPost apiVersion:0];
@@ -105,7 +105,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action}
@@ -146,7 +146,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{
@@ -185,7 +185,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMTransportRequestMethodPost apiVersion:0];
@@ -219,7 +219,7 @@
     }];
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action}
@@ -259,7 +259,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMTransportRequestMethodPost apiVersion:0];
@@ -334,7 +334,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:@{
@@ -393,7 +393,7 @@
         selfUser.password = password;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [[(id) self.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
     NSString *path = @"/login";
@@ -425,7 +425,7 @@
         selfUser.password = password;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [[(id) self.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
+    [[(id) self.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
 
     // WHEN

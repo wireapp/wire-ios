@@ -143,7 +143,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (BOOL)isLoggedIn
 {
-    return nil != self.authenticationCookieData;
+    return self.didReceiveAuthenticationCookies;
 }
 
 - (void)startLoginTimer
@@ -170,7 +170,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForLoginWithCredentials:(UserCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    self.authenticationCookieData = nil;
+    self.didReceiveAuthenticationCookies = NO;
     [self resetLoginAndRegistrationStatus];
     self.loginCredentials = credentials;
     self.isWaitingForLogin = YES;
@@ -305,13 +305,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
     [self resetLoginAndRegistrationStatus];
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-- (void)setAuthenticationCookieData:(NSData *)data;
-{
-    ZMLogDebug(@"Setting cookie data: %@", @(data.length));
-    _authenticationCookieData = data;
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
