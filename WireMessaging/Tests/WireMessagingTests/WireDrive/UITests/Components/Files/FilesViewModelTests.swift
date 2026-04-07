@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import Testing
+import Network
 import WireMessagingDomain
 
 @testable import WireMessagingDomainSupport
@@ -34,6 +35,7 @@ final class FilesViewModelTests {
     private let sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
     private var cancellables = Set<AnyCancellable>()
+    private var networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring())
 
     init() {
         let nodesApi = MockNodesAPIProtocol()
@@ -43,6 +45,8 @@ final class FilesViewModelTests {
 
         let editingURLRepository = MockWireDriveEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
+        
+        networkMonitor.currentStatus = .connected
 
         self.sut = FilesViewModel(
             useCases: .init(
@@ -101,7 +105,8 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isBrowsing: false,
-            accentColorProvider: { .default }
+            accentColorProvider: { .default },
+            networkMonitor: networkMonitor
         )
 
         localAssetRepository.assetNodeID_MockValue = .fixture()
@@ -595,7 +600,8 @@ final class FilesViewModelTests {
         let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
         let now = Date()
 
-        NetworkMonitor.shared.currentStatus = .disconnected
+        networkMonitor.currentStatus = .disconnected
+        
         sut.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,
@@ -617,4 +623,10 @@ final class FilesViewModelTests {
         #expect(sut.shouldShowOfflineBar == true)
     }
 
+}
+
+private final class MockNWPathMonitoring: NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
+    
+    func start(queue: DispatchQueue) {}
 }

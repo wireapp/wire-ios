@@ -23,7 +23,7 @@ import Observation
 /// Provides observable changes in internet connection.
 /// Conforms to both, `Observable` and `ObservableObject` to support ViewModels with the old and the new system.
 @MainActor
-final class NetworkMonitor: Observable, ObservableObject {
+package final class NetworkMonitor: Observable, ObservableObject {
 
     enum NetworkStatus {
         case connected
@@ -32,14 +32,18 @@ final class NetworkMonitor: Observable, ObservableObject {
 
     static let shared = NetworkMonitor()
 
-    private let monitor = NWPathMonitor()
+    private var monitor: any NWPathMonitoring
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")
     private let subject = CurrentValueSubject<NetworkStatus, Never>(.disconnected)
     private var cancellables = Set<AnyCancellable>()
 
     @Published var currentStatus: NetworkStatus?
 
-    private init() {
+    init(
+        monitor: any NWPathMonitoring = NWPathMonitor(),
+    ) {
+        self.monitor = monitor
+        
         subject
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
@@ -49,7 +53,7 @@ final class NetworkMonitor: Observable, ObservableObject {
             }
             .store(in: &cancellables)
 
-        monitor.pathUpdateHandler = { [weak self] path in
+        self.monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
             Task { @MainActor in
                 let status: NetworkStatus = path.status == .satisfied ? .connected : .disconnected
@@ -60,3 +64,10 @@ final class NetworkMonitor: Observable, ObservableObject {
         monitor.start(queue: queue)
     }
 }
+
+protocol NWPathMonitoring {
+    var pathUpdateHandler: (@Sendable (NWPath) -> Void)? { get set }
+    func start(queue: DispatchQueue)
+}
+
+extension NWPathMonitor: NWPathMonitoring {}

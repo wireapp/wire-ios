@@ -291,7 +291,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var conversations: [WireDriveConversation] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
 
-    @Published private var networkMonitor = NetworkMonitor.shared
+    @Published private var networkMonitor: NetworkMonitor
 
     private var selfUserID: String? {
         conversations
@@ -312,7 +312,8 @@ package final class FilesViewModel: ObservableObject {
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
-        accentColorProvider: @escaping () -> WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor,
+        networkMonitor: NetworkMonitor = .shared
     ) {
         self.useCases = useCases
         self.title = title
@@ -327,6 +328,7 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
+        self.networkMonitor = networkMonitor
     }
 
     func setup() async {
