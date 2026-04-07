@@ -94,7 +94,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 {
     if(credentials != self.internalLoginCredentials) {
         self.internalLoginCredentials = credentials;
-        [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
+        [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
         [[[NotificationInContext alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]
                                                       name:AuthenticationCenterDataChangeNotificationName
                                                            context:self

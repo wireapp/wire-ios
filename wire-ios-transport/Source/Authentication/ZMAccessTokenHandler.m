@@ -24,7 +24,6 @@
 #import "ZMTransportData.h"
 #import "ZMTransportCodec.h"
 #import <mach-o/dyld.h>
-#import "ZMPersistentCookieStorage.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMTransportRequest.h"
@@ -54,7 +53,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 
 @property (nonatomic) NSURL *baseURL;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (nonatomic, weak) id<ZMAccessTokenHandlerDelegate> delegate;
 
 @property (nonatomic) ZMExponentialBackoff *backoff;
@@ -68,7 +67,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 @implementation ZMAccessTokenHandler
 
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
-                  cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                  cookieStorage:(PersistentCookieStorage *)cookieStorage
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group

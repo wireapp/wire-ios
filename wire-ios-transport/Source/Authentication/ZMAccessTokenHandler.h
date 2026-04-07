@@ -19,7 +19,7 @@
 #import <WireTransport/ZMTransportRequest.h>
 
 @class ZMAccessToken;
-@class ZMPersistentCookieStorage;
+@class PersistentCookieStorage;
 @class ZMAccessTokenHandler;
 @class ZMURLSession;
 @class ZMExponentialBackoff;
@@ -38,7 +38,7 @@
 @interface ZMAccessTokenHandler : NSObject
 
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
-                  cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                  cookieStorage:(PersistentCookieStorage *)cookieStorage
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group

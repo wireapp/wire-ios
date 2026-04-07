@@ -24,8 +24,20 @@ private var keychainDisabled = false
 private var nonPersistedPassword: [String: Any] = [:]
 private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 
+// sourcery: AutoMockable
+@objc public protocol PersistentCookieStorageProtocol {
+    var authenticationCookieData: Data? { get set }
+    var authenticationCookieExpirationDate: Date? { get }
+    var hasAuthenticationCookie: Bool { get }
+    func deleteKeychainItems()
+    @objc(setCookieDataFromResponse:forURL:)
+    func setCookieData(from response: HTTPURLResponse, for url: URL)
+    @objc(setRequestHeaderFieldsOnRequest:)
+    func setRequestHeaderFields(on request: NSMutableURLRequest)
+}
+
 @objc
-public class PersistentCookieStorage: NSObject {
+public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol {
 
     @objc
     public let userIdentifier: UUID

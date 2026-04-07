@@ -22,7 +22,7 @@ import XCTest
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
-    public var cookieStorage = ZMPersistentCookieStorage()
+    public var cookieStorage = FakeCookieStorage()
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
     var lastEnqueuedRequest: ZMTransportRequest?

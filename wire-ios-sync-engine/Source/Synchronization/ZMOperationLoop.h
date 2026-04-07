@@ -25,7 +25,7 @@
 @protocol RequestStrategy;
 @protocol UpdateEventProcessor;
 
-@class ZMPersistentCookieStorage;
+@class PersistentCookieStorage;
 @class OperationStatus;
 @class ZMSyncStrategy;
 

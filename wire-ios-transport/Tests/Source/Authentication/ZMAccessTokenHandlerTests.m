@@ -22,7 +22,6 @@
 @import OCMock;
 
 #import "ZMAccessTokenHandler.h"
-#import "ZMPersistentCookieStorage.h"
 @import WireTransport.Testing;
 #import "ZMURLSession.h"
 #import "NSError+ZMTransportSession.h"
@@ -35,7 +34,7 @@
 @property (nonatomic) ZMAccessToken *expiredAccessToken;
 @property (nonatomic) id urlSession;
 
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) FakeExponentialBackoff *backoff;
 @property (nonatomic) FakeDelegate *delegate;
@@ -65,7 +64,7 @@
 - (void)setUp {
     [super setUp];
 #if TARGET_IPHONE_SIMULATOR
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
+    [PersistentCookieStorage setDoNotPersistToKeychain:YES];
 #endif
     NSURL *baseURL = [NSURL URLWithString:@"https://www.example.com"];
 
@@ -77,7 +76,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
@@ -113,7 +112,7 @@
     self.userIdentifier = nil;
     
 #if TARGET_IPHONE_SIMULATOR
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
+    [PersistentCookieStorage setDoNotPersistToKeychain:NO];
 #endif
     
     [super tearDown];

@@ -63,7 +63,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     let fakeCredentialsProvider = FakeCredentialProvider()
 
-    var cookieStorage: ZMPersistentCookieStorage!
+    var cookieStorage: PersistentCookieStorage!
 
     var proteusService: MockProteusServiceInterface!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -78,8 +78,8 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
             self.setupProteusService()
 
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
-            self.cookieStorage = ZMPersistentCookieStorage(
-                forUserIdentifier: self.userIdentifier,
+            self.cookieStorage = PersistentCookieStorage(
+                userIdentifier: self.userIdentifier,
                 useCache: true
             )
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()

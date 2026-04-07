@@ -129,7 +129,7 @@
 - (void)testThatRegistrationWithEmailStoresCookiesIfPolicyIsAlways
 {
     // GIVEN
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
+    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
@@ -149,7 +149,7 @@
 - (void)testThatRegistrationWithEmailDoesNotStoreCookiesIfPolicyIsNever
 {
     // GIVEN
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
+    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",

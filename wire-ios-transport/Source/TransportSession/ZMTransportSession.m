@@ -26,7 +26,6 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
-#import "ZMPersistentCookieStorage.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMReachability.h"
 #import "Collections+ZMTSafeTypes.h"
@@ -56,7 +55,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSURL *websocketURL;
 @property (nonatomic) id<BackendEnvironmentProvider> environment;
 @property (nonatomic) NSOperationQueue *workQueue;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
 @property (nonatomic) NSString *applicationGroupIdentifier;
 
@@ -103,7 +102,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
                       proxyUsername:(NSString *) proxyUsername
                       proxyPassword:(NSString *) proxyPassword
-                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                      cookieStorage:(PersistentCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
@@ -181,7 +180,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                               cookieStorage:(PersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString * _Nullable)minTLSVersion

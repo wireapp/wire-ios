@@ -26,7 +26,7 @@ final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
+    func setRequestHeaderFields(on request: NSMutableURLRequest) {}
 
     var didCallDeleteKeychainItems: Bool = false
     func deleteKeychainItems() {

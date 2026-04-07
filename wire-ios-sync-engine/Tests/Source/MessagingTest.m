@@ -154,21 +154,18 @@ static ZMReachability *sharedReachabilityMock = nil;
     [self setupCaches];
 
     if (self.shouldUseRealKeychain) {
-        [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
+        [PersistentCookieStorage setDoNotPersistToKeychain:NO];
         
 #if ! TARGET_IPHONE_SIMULATOR
         // On the Xcode Continuous Intergration server the tests run as a user whose username starts with an underscore.
         BOOL const runningOnIntegrationServer = [[[NSProcessInfo processInfo] environment][@"USER"] hasPrefix:@"_"];
         if (runningOnIntegrationServer) {
-            [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
+            [PersistentCookieStorage setDoNotPersistToKeychain:YES];
         }
 #endif
     } else {
-        [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
+        [PersistentCookieStorage setDoNotPersistToKeychain:YES];
     }
-
-    ZMPersistentCookieStorage *cookieStorage = [[ZMPersistentCookieStorage alloc] init];
-    [cookieStorage deleteKeychainItems];
 
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);

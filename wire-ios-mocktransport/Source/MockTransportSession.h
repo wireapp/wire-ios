@@ -51,7 +51,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic) NSURL *baseURL;
 
 @property (nonatomic) NSString *clientID;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (readonly, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, readonly, copy) ZMCompletionHandlerBlock accessTokenFailureHandler;
 @property (nonatomic, readonly, copy) ZMAccessTokenHandlerBlock accessTokenSuccessHandler;

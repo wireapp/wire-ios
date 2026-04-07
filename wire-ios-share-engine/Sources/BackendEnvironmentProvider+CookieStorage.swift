@@ -20,10 +20,10 @@ import WireDataModel
 import WireTransport
 
 extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
+    func cookieStorage(for account: Account) -> PersistentCookieStorage {
         let backendURL = backendURL.host!
-        return ZMPersistentCookieStorage(
-            forUserIdentifier: account.userIdentifier,
+        return PersistentCookieStorage(
+            userIdentifier: account.userIdentifier,
             useCache: false
         )
     }

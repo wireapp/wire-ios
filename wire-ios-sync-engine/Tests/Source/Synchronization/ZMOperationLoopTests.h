@@ -26,13 +26,12 @@
 @class MockUpdateEventProcessor;
 @class MockRequestCancellation;
 @class MockPushChannel;
-@class ZMPersistentCookieStorage;
 @class RecordingMockTransportSession;
 
 @interface ZMOperationLoopTests : MessagingTest
 
 @property (nonatomic) ZMOperationLoop *sut;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) id<PersistentCookieStorageProtocol> cookieStorage;
 @property (nonatomic) RecordingMockTransportSession *mockTransportSesssion;
 @property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
 @property (nonatomic) OperationStatus *operationStatus;

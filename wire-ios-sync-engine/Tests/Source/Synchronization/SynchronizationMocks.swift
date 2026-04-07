@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireDataModel
+import WireTransport
 @testable import WireSyncEngine
 
 @objcMembers
@@ -198,7 +199,23 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
-class FakeCookieStorage: ZMPersistentCookieStorage {}
+@objc
+class FakeCookieStorage: NSObject, PersistentCookieStorageProtocol, CookieProvider {
+
+    // MARK: - PersistentCookieStorageProtocol
+
+    var authenticationCookieData: Data?
+    var authenticationCookieExpirationDate: Date?
+    var hasAuthenticationCookie: Bool = false
+    func deleteKeychainItems() {}
+    func setCookieData(from response: HTTPURLResponse, for url: URL) {}
+    func setRequestHeaderFields(on request: NSMutableURLRequest) {}
+
+    // MARK: - CookieProvider
+
+    var isAuthenticated: Bool = false
+
+}
 
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {

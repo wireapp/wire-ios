@@ -105,9 +105,6 @@
 			additionalCompilerFlagsByRelativePath = {
 				Requests/ZMTaskIdentifierMap.m = "-fno-objc-arc";
 			};
-			privateHeaders = (
-				"Authentication/ZMPersistentCookieStorage+Testing.h",
-			);
 			publicHeaders = (
 				Authentication/ZMAccessTokenHandler.h,
 				"Public/Collections+ZMTSafeTypes.h",

@@ -25,7 +25,7 @@
 @class UserCredentials;
 @class UserEmailCredentials;
 @class UserPhoneCredentials;
-@class ZMPersistentCookieStorage;
+@class PersistentCookieStorage;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;

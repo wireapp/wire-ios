@@ -20,11 +20,11 @@ import Foundation
 
 public protocol CookieProvider {
     var isAuthenticated: Bool { get }
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
+    func setRequestHeaderFields(on request: NSMutableURLRequest)
     func deleteKeychainItems()
 }
 
-extension ZMPersistentCookieStorage: CookieProvider {
+extension PersistentCookieStorage: CookieProvider {
 
     public var isAuthenticated: Bool {
         hasAuthenticationCookie

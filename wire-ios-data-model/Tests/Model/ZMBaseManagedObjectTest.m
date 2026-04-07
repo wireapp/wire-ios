@@ -81,7 +81,7 @@
 {
     [super setUp];
 
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
+    [PersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
 
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;

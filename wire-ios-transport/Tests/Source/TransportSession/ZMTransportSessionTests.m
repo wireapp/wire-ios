@@ -35,13 +35,11 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
-#import "ZMPersistentCookieStorage.h"
 #import "ZMReachability.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
 #import "Fakes.h"
-#import "ZMPersistentCookieStorage.h"
 #import "WireTransport_ios_tests-Swift.h"
 
 /// the JSON Content-Type header
@@ -231,7 +229,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) FakeTransportRequestScheduler *scheduler;
 @property (nonatomic) MockSessionsDirectory *sessionsDirectory;
 @property (nonatomic) NSUUID *userIdentifier;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) MockBackgroundActivityManager *activityManager;
 @property (nonatomic) MockEnvironment *environment;
@@ -298,7 +296,7 @@ static XCTestCase *currentTestCase;
     self.environment = [[MockEnvironment alloc] init];
     self.environment.backendURL = [NSURL URLWithString:@"https://base.example.com"];
     self.environment.backendWSURL = [NSURL URLWithString:@"https://websocket.example.com"];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [PersistentCookieStorage storageForUserIdentifier:self.userIdentifier useCache:YES];
     self.reachability = [[FakeReachability alloc] init];
 
     self.activityManager = [[MockBackgroundActivityManager alloc] init];
@@ -359,7 +357,7 @@ static XCTestCase *currentTestCase;
     self.scheduler = nil;
     self.sessionsDirectory = nil;
 
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
+    [PersistentCookieStorage deleteAllKeychainItems];
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;
@@ -1530,7 +1528,7 @@ static XCTestCase *currentTestCase;
     // when
     XCTestExpectation *didRun = [self customExpectationWithDescription:@"completion handler"];
     ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
-    ZMPersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
+    PersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED r) {
         XCTAssertNotNil(cookieStorage.authenticationCookieData);
         [didRun fulfill];

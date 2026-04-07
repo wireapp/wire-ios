@@ -25,12 +25,12 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     fileprivate static let path: String = "/self"
     public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
     fileprivate(set) var deleteSync: ZMSingleRequestSync!
-    let cookieStorage: ZMPersistentCookieStorage
+    let cookieStorage: any PersistentCookieStorageProtocol
 
     public init(
         withManagedObjectContext moc: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        cookieStorage: ZMPersistentCookieStorage
+        cookieStorage: any PersistentCookieStorageProtocol
     ) {
         self.cookieStorage = cookieStorage
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)

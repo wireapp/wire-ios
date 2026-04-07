@@ -36,7 +36,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var backendEnvironment: WireTransport.BackendEnvironment!
     var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
-    var cookieStorage: ZMPersistentCookieStorage!
+    var cookieStorage: PersistentCookieStorage!
     var validCookie: Data!
     var baseURL: URL!
     var mediaManager: MediaManagerType!
@@ -88,8 +88,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             proxySettings: nil
         )
 
-        cookieStorage = ZMPersistentCookieStorage(
-            forUserIdentifier: .create(),
+        cookieStorage = PersistentCookieStorage(
+            userIdentifier: .create(),
             useCache: true
         )
 
