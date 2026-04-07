@@ -204,7 +204,8 @@ class FakeCookieStorage: NSObject, PersistentCookieStorageProtocol, CookieProvid
 
     // MARK: - PersistentCookieStorageProtocol
 
-    var authenticationCookieData: Data?
+    func authenticationCookieData() -> Data? { nil }
+    func setAuthenticationCookieData(_ data: Data?) {}
     var authenticationCookieExpirationDate: Date?
     var hasAuthenticationCookie: Bool = false
     func deleteKeychainItems() {}

@@ -88,7 +88,7 @@
 - (void)testThatItIsLoggedInWhenThereIsAuthenticationDataSelfUserSyncedAndClientIsAlreadyRegistered
 {
     // when
-    self.sut.authenticationCookieData = [NSHTTPCookie validCookieData];
+    [self.sut setAuthenticationCookieData:[NSHTTPCookie validCookieData]];
     [self.uiMOC setPersistentStoreMetadata:@"someID" forKey:ZMPersistedClientIdKey];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID new];

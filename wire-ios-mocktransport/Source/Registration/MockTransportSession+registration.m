@@ -125,7 +125,7 @@
         NSString *cookiesValue = @"zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure";
 
         if ([PersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            self.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieDataWithString:cookiesValue];
+            [self.cookieStorage setAuthenticationCookieData:[NSHTTPCookie validCookieDataWithString:cookiesValue]];
         }
 
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": cookiesValue} apiVersion:request.apiVersion];

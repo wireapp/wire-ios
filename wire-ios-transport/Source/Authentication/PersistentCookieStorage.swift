@@ -26,7 +26,8 @@ private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
-    var authenticationCookieData: Data? { get set }
+    func authenticationCookieData() -> Data?
+    func setAuthenticationCookieData(_ data: Data?)
     var authenticationCookieExpirationDate: Date? { get }
     var hasAuthenticationCookie: Bool { get }
     func deleteKeychainItems()
@@ -67,20 +68,20 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     // MARK: - Public API
 
     @objc
-    public var authenticationCookieData: Data? {
-        get {
-            var result: Data?
-            if findItem(password: &result) {
-                return result
-            }
-            return nil
+    public func authenticationCookieData() -> Data? {
+        var result: Data?
+        if findItem(password: &result) {
+            return result
         }
-        set {
-            if let data = newValue {
-                setItem(data)
-            } else {
-                deleteItem()
-            }
+        return nil
+    }
+
+    @objc
+    public func setAuthenticationCookieData(_ data: Data?) {
+        if let data {
+            setItem(data)
+        } else {
+            deleteItem()
         }
     }
 
@@ -169,7 +170,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         data = data.zmEncryptPrefixingIV(key: secretKey)
         #endif
 
-        authenticationCookieData = data.base64EncodedData()
+        setAuthenticationCookieData(data.base64EncodedData())
     }
 
     @objc(setRequestHeaderFieldsOnRequest:)
@@ -186,7 +187,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     // MARK: - Private API
 
     private var authenticationCookies: [HTTPCookie]? {
-        guard var data = authenticationCookieData else {
+        guard var data = authenticationCookieData() else {
             return nil
         }
 
@@ -205,7 +206,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
             unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
             unarchiver.requiresSecureCoding = true
         } catch {
-            authenticationCookieData = nil
+            setAuthenticationCookieData(nil)
             return nil
         }
 

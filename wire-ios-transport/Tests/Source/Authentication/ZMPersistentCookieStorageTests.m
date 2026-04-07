@@ -260,7 +260,7 @@
 {
     // given
     XCTAssertNil(self.sut.authenticationCookieData);
-    self.sut.authenticationCookieData = [@"previous-cookie" dataUsingEncoding:NSUTF8StringEncoding];
+    [self.sut setAuthenticationCookieData:[@"previous-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSDictionary *headerFields = @{@"Date": @"Thu, 24 Jul 2014 09:06:45 GMT",
                                    @"Content-Encoding": @"gzip",
