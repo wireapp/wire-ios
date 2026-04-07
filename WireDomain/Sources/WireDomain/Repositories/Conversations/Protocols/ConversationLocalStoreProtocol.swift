@@ -128,9 +128,9 @@ public protocol ConversationLocalStoreProtocol {
     ) async -> ZMConversation?
 
     /// Clears the MLS group ID for a conversation, preventing it from being wiped again.
-    /// - parameter objectID: The managed object ID of the conversation.
+    /// - parameter mlsGroupID: The mls group ID of the conversation.
 
-    func clearMLSGroupID(objectID: NSManagedObjectID) async
+    func clearMLSGroupID(mlsGroupID: MLSGroupID) async
 
     /// Removes a given user from all group conversations.
     ///

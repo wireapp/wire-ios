@@ -38,28 +38,11 @@
       }
     },
     {
-      "skippedTests" : {
-        "suites" : [
-          {
-            "name" : "WipeMLSGroupItemTests"
-          }
-        ],
-        "xctestClasses" : [
-          {
-            "name" : "PullAllConversationsSyncTests",
-            "xctestMethods" : [
-              "testPull_LegacyIdentifiers()"
-            ]
-          },
-          {
-            "name" : "PullMLSStatusSyncTests",
-            "xctestMethods" : [
-              "testPull_EndpointUnavailable()",
-              "testPull_MLSNotEnabled()"
-            ]
-          }
-        ]
-      },
+      "skippedTests" : [
+        "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
+        "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",
+        "PullMLSStatusSyncTests\/testPull_MLSNotEnabled()"
+      ],
       "target" : {
         "containerPath" : "container:WireDomain Project.xcodeproj",
         "identifier" : "01D0DCAF2C1C8C880076CB1C",

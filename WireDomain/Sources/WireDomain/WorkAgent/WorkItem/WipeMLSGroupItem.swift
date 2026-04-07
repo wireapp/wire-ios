@@ -26,7 +26,6 @@ import WireLogging
 struct WipeMLSGroupItem: WorkItem {
 
     let groupID: MLSGroupID
-    let conversationObjectID: NSManagedObjectID
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
 
@@ -42,12 +41,10 @@ struct WipeMLSGroupItem: WorkItem {
 
     init(
         groupID: MLSGroupID,
-        conversationObjectID: NSManagedObjectID,
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.groupID = groupID
-        self.conversationObjectID = conversationObjectID
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
     }
@@ -65,6 +62,6 @@ struct WipeMLSGroupItem: WorkItem {
             )
         }
 
-        await conversationLocalStore.clearMLSGroupID(objectID: conversationObjectID)
+        await conversationLocalStore.clearMLSGroupID(mlsGroupID: groupID)
     }
 }

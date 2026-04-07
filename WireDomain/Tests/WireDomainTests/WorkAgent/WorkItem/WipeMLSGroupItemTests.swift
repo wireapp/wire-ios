@@ -31,37 +31,37 @@ final class WipeMLSGroupItemTests {
     let coreDataStackHelper = CoreDataStackHelper()
     let coreDataStack: CoreDataStack
     let modelHelper = ModelHelper()
+    let sut: WipeMLSGroupItem
 
     init() async throws {
         self.conversationLocalStore = MockConversationLocalStoreProtocol()
         self.mlsService = MockMLSServiceInterface()
         self.groupID = .random()
         self.coreDataStack = try await coreDataStackHelper.createStack()
-        mlsService.wipeGroup_MockMethod = { _ in }
-        conversationLocalStore.clearMLSGroupIDObjectID_MockMethod = { _ in }
-    }
-
-    private func makeItem(objectID: NSManagedObjectID) -> WipeMLSGroupItem {
-        WipeMLSGroupItem(
+        self.sut = WipeMLSGroupItem(
             groupID: groupID,
-            conversationObjectID: objectID,
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+        conversationLocalStore.clearMLSGroupIDMlsGroupID_MockMethod = { _ in }
+        // Given
+        _ = await coreDataStack.syncContext.perform { [modelHelper, groupID, context] in
+            modelHelper.createMLSConversation(
+                mlsGroupID: groupID,
+                mlsStatus: .invalid,
+                in: context
+            )
+        }
+    }
+
+    var context: NSManagedObjectContext {
+        coreDataStack.syncContext
     }
 
     @Test("It wipes the MLS group")
     func startWipesMLSGroup() async throws {
-        // Given
-        let objectID = await coreDataStack.syncContext.perform { [self] in
-            modelHelper.createMLSConversation(
-                mlsGroupID: groupID,
-                mlsStatus: .invalid,
-                in: coreDataStack.syncContext
-            ).objectID
-        }
-        let sut = makeItem(objectID: objectID)
-
         // When
         try await sut.start()
 
@@ -71,21 +71,11 @@ final class WipeMLSGroupItemTests {
 
     @Test("It clears the MLS group ID after wiping")
     func startClearsMLSGroupID() async throws {
-        // Given
-        let objectID = await coreDataStack.syncContext.perform { [self] in
-            modelHelper.createMLSConversation(
-                mlsGroupID: groupID,
-                mlsStatus: .invalid,
-                in: coreDataStack.syncContext
-            ).objectID
-        }
-        let sut = makeItem(objectID: objectID)
-
         // When
         try await sut.start()
 
         // Then
-        #expect(conversationLocalStore.clearMLSGroupIDObjectID_Invocations == [objectID])
+        #expect(conversationLocalStore.clearMLSGroupIDMlsGroupID_Invocations == [groupID])
     }
 
     @Test("It clears the MLS group ID even when wiping fails")
@@ -94,19 +84,10 @@ final class WipeMLSGroupItemTests {
         struct WipeError: Error {}
         mlsService.wipeGroup_MockError = WipeError()
 
-        let objectID = await coreDataStack.syncContext.perform { [self] in
-            modelHelper.createMLSConversation(
-                mlsGroupID: groupID,
-                mlsStatus: .invalid,
-                in: coreDataStack.syncContext
-            ).objectID
-        }
-        let sut = makeItem(objectID: objectID)
-
         // When
         try await sut.start()
 
         // Then
-        #expect(conversationLocalStore.clearMLSGroupIDObjectID_Invocations == [objectID])
+        #expect(conversationLocalStore.clearMLSGroupIDMlsGroupID_Invocations == [groupID])
     }
 }

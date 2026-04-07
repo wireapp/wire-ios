@@ -88,7 +88,6 @@ public final class InvalidMLSGroupGenerator: NSObject, IncrementalGeneratorProto
         guard let groupID = conversation.mlsGroupID else { return }
         onInvalidMLSGroup(WipeMLSGroupItem(
             groupID: groupID,
-            conversationObjectID: conversation.objectID,
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         ))

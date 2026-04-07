@@ -858,17 +858,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - clearMLSGroupID
 
-    public var clearMLSGroupIDObjectID_Invocations: [NSManagedObjectID] = []
-    public var clearMLSGroupIDObjectID_MockMethod: ((NSManagedObjectID) async -> Void)?
+    public var clearMLSGroupIDMlsGroupID_Invocations: [MLSGroupID] = []
+    public var clearMLSGroupIDMlsGroupID_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func clearMLSGroupID(objectID: NSManagedObjectID) async {
-        clearMLSGroupIDObjectID_Invocations.append(objectID)
+    public func clearMLSGroupID(mlsGroupID: MLSGroupID) async {
+        clearMLSGroupIDMlsGroupID_Invocations.append(mlsGroupID)
 
-        guard let mock = clearMLSGroupIDObjectID_MockMethod else {
-            fatalError("no mock for `clearMLSGroupIDObjectID`")
+        guard let mock = clearMLSGroupIDMlsGroupID_MockMethod else {
+            fatalError("no mock for `clearMLSGroupIDMlsGroupID`")
         }
 
-        await mock(objectID)
+        await mock(mlsGroupID)
     }
 
     // MARK: - removeParticipantFromAllGroupConversations
