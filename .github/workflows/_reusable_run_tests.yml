@@ -310,7 +310,7 @@ jobs:
 
       - name: Notify on Wire
         if: always()
-        uses: ./.github/actions/notify-wire
+        uses: wireapp/wire-ios-mono/.github/actions/notify-wire@develop
         with:
           notify: ${{ inputs.notify }}
           status: ${{ job.status }}
