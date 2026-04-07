@@ -348,7 +348,7 @@ jobs:
   analyze-xcresults:
     needs: run-tests
     name: Analyze xcresults
-    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' }}
+    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
