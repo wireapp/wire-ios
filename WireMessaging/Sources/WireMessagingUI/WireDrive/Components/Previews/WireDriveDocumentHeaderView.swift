@@ -42,6 +42,7 @@ struct WireDriveDocumentHeaderView: View {
     let labelText: String
     let isDraftPreview: Bool
     let state: WireDriveFileUITracker.State
+    var minHeight: CGFloat?
 
     var body: some View {
         header()
@@ -58,19 +59,10 @@ struct WireDriveDocumentHeaderView: View {
                     .font(for: .subline1)
                     .lineLimit(1)
                     .layoutPriority(1)
-
-                Spacer()
-
-                if !isDraftPreview {
-                    stateTextView()
-                        .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
-                        .font(for: .subline1)
-                        .lineLimit(1)
-                }
             }
-            .padding([.horizontal, .top], 8)
-
-            Spacer(minLength: 4)
+            .padding(.horizontal, 8)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
 
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
@@ -79,6 +71,7 @@ struct WireDriveDocumentHeaderView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.horizontal, .bottom], 8)
         }
+        .frame(minHeight: minHeight)
     }
 
     private var isError: Bool {

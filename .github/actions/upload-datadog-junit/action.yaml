@@ -1,0 +1,38 @@
+name: "Upload JUnit results to Datadog"
+description: "Installs datadog-ci and uploads all *.junit files in the working directory to Datadog CI Visibility."
+
+inputs:
+  api_key:
+    description: "Datadog API key"
+    required: true
+  service:
+    description: "Service name reported to Datadog"
+    required: false
+    default: "wire-ios-mono"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Cache datadog-ci
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-datadog-ci-${{ runner.os }}-node18
+
+    - name: Install datadog-ci
+      shell: bash
+      run: npm install -g @datadog/datadog-ci
+
+    - name: Upload JUnit results
+      shell: bash
+      env:
+        DATADOG_API_KEY: ${{ inputs.api_key }}
+        DD_ENV: ci
+        DATADOG_SITE: datadoghq.eu
+        DD_SERVICE: ${{ inputs.service }}
+      run: |
+        find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service "$DD_SERVICE" .
