@@ -151,7 +151,7 @@ jobs:
   # ── Parallel ────────────────────────────────────────────────────────────────
   trigger_tests_pr_parallel:
     needs: [detect-changes, decide-strategy]
-    name: PR Tests (parallel)
+    name: PR Tests
     if: ${{ needs.decide-strategy.outputs.use_parallel == 'true' }}
     uses: ./.github/workflows/_reusable_run_tests_parallel.yml
     with:

@@ -149,6 +149,7 @@ class ConversationsPage: PageModel {
         return try ConnectionRequestsPage()
     }
 
+    @discardableResult
     func openConversation() throws -> ActiveConversationPage {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
@@ -159,6 +160,7 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
