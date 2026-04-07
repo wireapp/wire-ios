@@ -48,15 +48,19 @@ final class InvalidMLSGroupGeneratorTests {
         )
     }
 
+    var context: NSManagedObjectContext {
+        coreDataStack.syncContext
+    }
+
     @Test("It generates an item for an existing invalid MLS conversation on start")
     func startGeneratesItemForExistingConversation() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        await coreDataStack.syncContext.perform { [self] in
+        await coreDataStack.syncContext.perform { [context, modelHelper] in
             _ = modelHelper.createMLSConversation(
                 mlsGroupID: groupID,
                 mlsStatus: .invalid,
-                in: coreDataStack.syncContext
+                in: context
             )
         }
 
@@ -71,11 +75,11 @@ final class InvalidMLSGroupGeneratorTests {
     @Test("It does not generate an item for a ready MLS conversation")
     func startDoesNotGenerateItemForReadyConversation() async throws {
         // Given
-        await coreDataStack.syncContext.perform { [self] in
+        await coreDataStack.syncContext.perform { [context, modelHelper] in
             _ = modelHelper.createMLSConversation(
                 mlsGroupID: .random(),
                 mlsStatus: .ready,
-                in: coreDataStack.syncContext
+                in: context
             )
         }
 
@@ -89,11 +93,11 @@ final class InvalidMLSGroupGeneratorTests {
     @Test("It does not generate an item for an invalid conversation without a group ID")
     func startDoesNotGenerateItemWithoutGroupID() async throws {
         // Given
-        await coreDataStack.syncContext.perform { [self] in
+        await coreDataStack.syncContext.perform { [context, modelHelper] in
             _ = modelHelper.createMLSConversation(
                 mlsGroupID: nil,
                 mlsStatus: .invalid,
-                in: coreDataStack.syncContext
+                in: context
             )
         }
 
@@ -122,11 +126,11 @@ final class InvalidMLSGroupGeneratorTests {
             )
             await sut.start()
 
-            await coreDataStack.syncContext.perform { [self] in
+            await coreDataStack.syncContext.perform { [context, modelHelper] in
                 _ = modelHelper.createMLSConversation(
                     mlsGroupID: groupID,
                     mlsStatus: .invalid,
-                    in: coreDataStack.syncContext
+                    in: context
                 )
             }
             try await Task.sleep(for: .seconds(0.1))
@@ -144,11 +148,11 @@ final class InvalidMLSGroupGeneratorTests {
         await sut.stop()
 
         // When
-        await coreDataStack.syncContext.perform { [self] in
+        await coreDataStack.syncContext.perform {  [context, modelHelper] in
             _ = modelHelper.createMLSConversation(
                 mlsGroupID: .random(),
                 mlsStatus: .invalid,
-                in: coreDataStack.syncContext
+                in: context
             )
         }
         try await Task.sleep(for: .seconds(0.1))
