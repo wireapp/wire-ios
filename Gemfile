@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby file: ".ruby-version"
 
 gem 'abbrev'
-gem 'fastlane'
+gem 'fastlane', '2.232.2'
 gem 'git'
 gem 'httparty'
 gem 'xcode-install'
