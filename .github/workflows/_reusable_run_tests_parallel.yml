@@ -208,6 +208,7 @@ jobs:
           label: Tests (parallel)
 
       - name: Download test results
+        id: download-test-results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
@@ -215,6 +216,7 @@ jobs:
           merge-multiple: true
 
       - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
