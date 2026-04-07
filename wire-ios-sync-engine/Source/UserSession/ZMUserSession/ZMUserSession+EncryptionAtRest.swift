@@ -132,7 +132,11 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
 extension ZMUserSession: EARServiceDelegate {
 
     public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
-        delegate?.prepareForMigration(
+        guard let delegate else {
+            assertionFailure("delegate is nil")
+            return
+        }
+        delegate.prepareForMigration(
             for: coreDataStack.account,
             onReady: onReady
         )
