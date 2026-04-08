@@ -53,7 +53,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 
 @property (nonatomic) NSURL *baseURL;
-@property (nonatomic) PersistentCookieStorage *cookieStorage;
+@property (nonatomic) id<PersistentCookieStorageProtocol>cookieStorage;
 @property (nonatomic, weak) id<ZMAccessTokenHandlerDelegate> delegate;
 
 @property (nonatomic) ZMExponentialBackoff *backoff;
@@ -67,7 +67,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 @implementation ZMAccessTokenHandler
 
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
-                  cookieStorage:(PersistentCookieStorage *)cookieStorage
+                  cookieStorage:(id<PersistentCookieStorageProtocol>)cookieStorage
                        delegate:(id<ZMAccessTokenHandlerDelegate>)delegate
                           queue:(NSOperationQueue *)queue
                           group:(ZMSDispatchGroup *)group

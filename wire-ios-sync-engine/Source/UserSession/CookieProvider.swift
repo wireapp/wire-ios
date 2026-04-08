@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireNetwork
+import WireTransport
 
 public protocol CookieProvider {
     var isAuthenticated: Bool { get }
@@ -31,3 +33,5 @@ extension PersistentCookieStorage: CookieProvider {
     }
 
 }
+
+extension PersistentCookieStorage: @retroactive PersistentCookieStorageProtocol {}

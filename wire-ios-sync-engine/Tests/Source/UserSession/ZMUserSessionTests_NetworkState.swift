@@ -19,6 +19,7 @@
 import WireDataModelSupport
 import WireDomain
 import WireLoggingSupport
+import WireNetworkSupport
 import XCTest
 
 @testable import WireLogging

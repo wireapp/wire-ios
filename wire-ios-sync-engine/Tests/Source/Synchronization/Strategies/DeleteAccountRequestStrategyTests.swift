@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetworkSupport
 import WireSyncEngine
 import WireTransport
 

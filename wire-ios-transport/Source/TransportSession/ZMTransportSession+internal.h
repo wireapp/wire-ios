@@ -38,7 +38,7 @@
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                               cookieStorage:(PersistentCookieStorage *)cookieStorage
+                               cookieStorage:(id<PersistentCookieStorageProtocol>)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString *)minTLSVersion

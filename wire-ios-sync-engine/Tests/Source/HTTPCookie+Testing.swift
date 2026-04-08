@@ -18,16 +18,17 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-@objc public protocol PersistentCookieStorageProtocol {
-    var userIdentifier: UUID { get }
-    func authenticationCookies() -> [HTTPCookie]?
-    func setAuthenticationCookies(_ cookies: [HTTPCookie])
-    func removeCookies()
-    var authenticationCookieExpirationDate: Date? { get }
-    var hasAuthenticationCookie: Bool { get }
-    @objc(setCookieDataFromResponse:forURL:)
-    func setCookieData(from response: HTTPURLResponse, for url: URL)
-    @objc(setRequestHeaderFieldsOnRequest:)
-    func setRequestHeaderFields(on request: NSMutableURLRequest)
+extension HTTPCookie {
+
+    @objc
+    class func validCookies() -> [HTTPCookie] {
+        validCookies(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
+    }
+
+    @objc
+    class func validCookies(string: String) -> [HTTPCookie] {
+        let headers = ["Set-Cookie": string]
+        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: URL(string: "https://example.com")!)
+    }
+
 }

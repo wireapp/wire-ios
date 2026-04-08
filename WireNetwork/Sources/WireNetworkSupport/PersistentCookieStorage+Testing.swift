@@ -17,17 +17,36 @@
 //
 
 import Foundation
+import WireFoundation
+import WireNetwork
 
-// sourcery: AutoMockable
-@objc public protocol PersistentCookieStorageProtocol {
-    var userIdentifier: UUID { get }
-    func authenticationCookies() -> [HTTPCookie]?
-    func setAuthenticationCookies(_ cookies: [HTTPCookie])
-    func removeCookies()
-    var authenticationCookieExpirationDate: Date? { get }
-    var hasAuthenticationCookie: Bool { get }
-    @objc(setCookieDataFromResponse:forURL:)
-    func setCookieData(from response: HTTPURLResponse, for url: URL)
-    @objc(setRequestHeaderFieldsOnRequest:)
-    func setRequestHeaderFields(on request: NSMutableURLRequest)
+/// An in-memory cookie storage for testing purposes.
+private final class StubCookieStorage: CookieStorageProtocol {
+
+    nonisolated(unsafe) private var cookies: [HTTPCookie] = []
+
+    func storeCookies(_ cookies: [HTTPCookie]) throws {
+        self.cookies = cookies
+    }
+
+    func fetchCookies() throws -> [HTTPCookie] {
+        cookies
+    }
+
+    func removeCookies() throws {
+        cookies = []
+    }
+
+}
+
+public extension PersistentCookieStorage {
+
+    @objc
+    convenience init(testingWithUserIdentifier userIdentifier: UUID) {
+        self.init(
+            userIdentifier: userIdentifier,
+            cookieStorage: StubCookieStorage()
+        )
+    }
+
 }

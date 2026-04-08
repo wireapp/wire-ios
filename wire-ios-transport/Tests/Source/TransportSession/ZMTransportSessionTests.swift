@@ -65,7 +65,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     var serverName: String!
     var baseURL: URL!
     var websocketURL: URL!
-    var cookieStorage: PersistentCookieStorage!
+    var cookieStorage: MockPersistentCookieStorage!
     var reachability: FakeReachability!
     var sut: ZMTransportSession!
     var environment: MockEnvironment!
@@ -77,9 +77,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         serverName = "https://example.com"
         baseURL = URL(string: serverName)!
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
-        cookieStorage = PersistentCookieStorage(
-            testingWithUserIdentifier: userIdentifier
-        )
+        cookieStorage = MockPersistentCookieStorage(userIdentifier: userIdentifier)
         reachability = FakeReachability()
         environment = MockEnvironment()
         sut = ZMTransportSession(

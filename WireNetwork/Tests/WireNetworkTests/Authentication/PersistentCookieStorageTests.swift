@@ -17,8 +17,8 @@
 //
 
 import XCTest
-import WireTransport
-import WireTransportSupport
+import WireNetwork
+import WireNetworkSupport
 
 final class PersistentCookieStorageTests: XCTestCase {
 
