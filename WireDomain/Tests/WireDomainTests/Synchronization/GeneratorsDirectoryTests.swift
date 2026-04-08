@@ -18,12 +18,12 @@
 
 import Combine
 import Testing
-
 import WireDomainSupport
+
 @testable import WireDomain
 
 @Suite("GeneratorsDirectory", .timeLimit(.minutes(1)))
-struct GeneratorsDirectoryTests {
+struct GeneratorsDirectoryTests { // failing
 
     // MARK: - Helpers
 
