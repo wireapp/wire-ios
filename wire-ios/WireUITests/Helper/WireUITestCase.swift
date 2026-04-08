@@ -26,6 +26,7 @@ class WireUITestCase: XCTestCase {
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var userHelper: UserHelper!
+    let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
     private var notificationPermissionMonitor: NSObjectProtocol?
 
@@ -113,6 +114,15 @@ class WireUITestCase: XCTestCase {
         if alert.buttons["Allow"].exists {
             alert.buttons["Allow"].tap()
         }
+    }
+
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> ConversationsPage {
+        print("login: email \(user.email) and password \(user.password)")
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup()
     }
 
     func registerNotificationPermissionMonitor() {
