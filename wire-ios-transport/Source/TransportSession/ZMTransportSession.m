@@ -106,12 +106,12 @@ static NSInteger const DefaultMaximumRequests = 6;
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
-                 applicationVersion:(NSString *)appliationVersion
+                 applicationVersion:(NSString *)applicationVersion
                       minTLSVersion:(NSString * _Nullable)minTLSVersion
                        selfClientID:(nullable NSString *)selfClientID
                     isSyncV2Enabled:(bool)isSyncV2Enabled
 {
-    NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
+    NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:applicationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
     ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
