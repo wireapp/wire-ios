@@ -86,7 +86,7 @@ extension NSAttributedString {
     fileprivate static func defaultMarkdownStyle() -> DownStyle {
         let style = DownStyle.normal
 
-        style.baseFont = UIFont.normalLightFont
+        style.baseFont = FontSpec.body.font!
         style.baseFontColor = SemanticColors.Label.textDefault
         style.baseParagraphStyle = paragraphStyle
         style.listItemPrefixColor = style.baseFontColor.withAlphaComponent(0.64)
