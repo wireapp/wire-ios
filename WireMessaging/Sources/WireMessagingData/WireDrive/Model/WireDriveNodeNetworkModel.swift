@@ -88,9 +88,13 @@ package struct WireDriveNodeNetworkModel: Equatable, Hashable, Sendable {
 
 package extension WireDriveNodeNetworkModel {
     func toDomainModel(conversations: [WireDriveConversation]) -> WireDriveNode {
-        WireDriveNode(
+        let conversation = matchingConversation(in: conversations)
+        let ownerUserID = ownerUserId.flatMap { QualifiedID(string: $0) }
+        let owner = conversation?.participants.first(where: { QualifiedID(string: $0.id) == ownerUserID })
+
+        return WireDriveNode(
             uuid: uuid,
-            conversation: matchingConversation(in: conversations),
+            conversation: conversation,
             path: path,
             modified: modified.map { Date(timeIntervalSince1970: Double($0)) },
             size: size,
@@ -103,8 +107,8 @@ package extension WireDriveNodeNetworkModel {
             contentHash: contentHash,
             mimeType: mimeType,
             previews: previews.map { $0.toModel() },
-            ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
-            ownerUserName: ownerUserName,
+            ownerUserID: ownerUserID,
+            ownerUserName: owner?.displayName ?? ownerUserName,
             conversationID: conversationId.flatMap(QualifiedID.init(string:)),
             publicLinkID: publicLinkID.map(WireDrivePublicLinkID.init(string:)),
             downloadURL: downloadURL,
