@@ -79,7 +79,7 @@ jobs:
     needs: generate-framework-list
     if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 90
+    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
@@ -163,7 +163,7 @@ jobs:
           compare_to_earlier_commit: false
 
       - name: Archive DerivedData logs
-        if: failure()
+        if: failure() || cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
@@ -173,7 +173,7 @@ jobs:
 
   # ── 3. Notify + upload to Datadog ──────────────────────────────────────────
   post-tests:
-    name: Post-test reporting
+    name: Run tests
     needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
@@ -208,6 +208,7 @@ jobs:
           label: Tests (parallel)
 
       - name: Download test results
+        id: download-test-results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
@@ -215,6 +216,13 @@ jobs:
           merge-multiple: true
 
       - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
+
+      - name: Propagate test result
+        if: needs.test-framework.result != 'success'
+        run: |
+          echo "Tests ${{ needs.test-framework.result }}"
+          exit 1

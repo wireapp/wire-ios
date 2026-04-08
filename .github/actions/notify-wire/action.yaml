@@ -40,7 +40,7 @@ runs:
           **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
     - name: Notify (failure only)
-      if: ${{ inputs.notify == 'failure' && inputs.status == 'failure' }}
+      if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
       continue-on-error: true
       uses: 8398a7/action-slack@v3
       with:

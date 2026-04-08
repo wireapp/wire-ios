@@ -55,7 +55,7 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
 
         try uiMOC.save()
 
-        let predicateFactory = ConversationPredicateFactory(selfTeam: team)
+        let predicateFactory = ConversationPredicateFactory(selfUser: selfUser, selfTeam: team)
 
         // When
         let sut = ConversationList(
@@ -88,7 +88,7 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
 
         try uiMOC.save()
 
-        let predicateFactory = ConversationPredicateFactory(selfTeam: nil)
+        let predicateFactory = ConversationPredicateFactory(selfUser: selfUser, selfTeam: nil)
 
         // When
         let sut = ConversationList(
