@@ -266,6 +266,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
+    /// Consolidates user session state to ensure access is via the `OSAllocatedUnfairLock` protected `state` property.
     struct State {
         var activeUserSession: ZMUserSession?
         var backgroundUserSessions: [UUID: ZMUserSession] = [:]
