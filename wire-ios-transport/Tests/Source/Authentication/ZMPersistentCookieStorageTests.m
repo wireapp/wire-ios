@@ -35,24 +35,18 @@
 
 @implementation PersistentCookieStorageTests
 
-- (BOOL)shouldUseRealKeychain;
-{
-    return (TARGET_IPHONE_SIMULATOR) || !(TARGET_OS_IPHONE);
-}
-
 - (void)setUp
 {
     [super setUp];
-    [PersistentCookieStorage deleteAllKeychainItems];
     _userIdentifier = NSUUID.createUUID;
-    self.sut = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
+    self.sut = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
 }
 
 - (void)tearDown
 {
     _userIdentifier = nil;
     [super tearDown];
-    [self.sut deleteKeychainItems];
+    [self.sut removeCookies];
     self.sut = nil;
 }
 
@@ -87,7 +81,7 @@
 
     [self.sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertTrue(self.sut.hasAuthenticationCookie);
-    [self.sut clearAuthenticationCookies];
+    [self.sut removeCookies];
     XCTAssertFalse(self.sut.hasAuthenticationCookie);
 }
 
@@ -103,38 +97,12 @@
     }
 }
 
-- (void)testThatItCachesCookies;
-{
-    // given
-    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
-    XCTAssertTrue([sut1 isCacheEmpty]);
-
-    // when
-    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
-
-    // then
-    XCTAssertFalse([sut1 isCacheEmpty]);
-}
-
-- (void)testThatItDoesNotCacheCookies;
-{
-    // given
-    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:NO];
-    XCTAssertTrue([sut1 isCacheEmpty]);
-
-    // when
-    [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
-
-    // then
-    XCTAssertTrue([sut1 isCacheEmpty]);
-}
-
 - (void)testThatItCanDeleteCookiesForASpecificCookieStorage
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
-    PersistentCookieStorage *sut2 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:otherUserIdentifier  useCache:YES];
+    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
+    PersistentCookieStorage *sut2 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:otherUserIdentifier];
 
     [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertTrue(sut1.hasAuthenticationCookie);
@@ -142,14 +110,14 @@
     XCTAssertTrue(sut2.hasAuthenticationCookie);
 
     // when
-    [sut1 deleteKeychainItems];
+    [sut1 removeCookies];
 
     // then
     XCTAssertFalse(sut1.hasAuthenticationCookie);
     XCTAssertTrue(sut2.hasAuthenticationCookie);
 
     // when
-    [sut2 deleteKeychainItems];
+    [sut2 removeCookies];
     XCTAssertFalse(sut1.hasAuthenticationCookie);
     XCTAssertFalse(sut2.hasAuthenticationCookie);
 }
@@ -158,8 +126,8 @@
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
-    PersistentCookieStorage *sut2 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:otherUserIdentifier useCache:YES];
+    PersistentCookieStorage *sut1 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
+    PersistentCookieStorage *sut2 = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:otherUserIdentifier];
 
     [sut1 setAuthenticationCookies:[NSHTTPCookie validCookies]];
     XCTAssertTrue(sut1.hasAuthenticationCookie);
@@ -167,8 +135,8 @@
     XCTAssertTrue(sut2.hasAuthenticationCookie);
 
     // when
-    [sut1 deleteKeychainItems];
-    [sut2 deleteKeychainItems];
+    [sut1 removeCookies];
+    [sut2 removeCookies];
 
     // then
     XCTAssertFalse(sut1.hasAuthenticationCookie);
@@ -178,7 +146,7 @@
 - (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
 {
     // given
-    PersistentCookieStorage *sut = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
+    PersistentCookieStorage *sut = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     [sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
 
     // then
@@ -393,7 +361,7 @@
 
 - (void)testThatDeleteKeychainItemsDoesNotFailWhenNothingIsStored
 {
-    [self.sut deleteKeychainItems];
+    [self.sut removeCookies];
     XCTAssertFalse(self.sut.hasAuthenticationCookie);
 }
 

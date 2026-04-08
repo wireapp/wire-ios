@@ -64,10 +64,6 @@
 
 - (void)setUp {
     [super setUp];
-#if TARGET_IPHONE_SIMULATOR
-    [PersistentCookieStorage setDoNotPersistToKeychain:YES];
-#endif
-    NSURL *baseURL = [NSURL URLWithString:@"https://www.example.com"];
 
     self.taskCount = 0;
     self.failureCount = 0;
@@ -77,7 +73,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
@@ -111,10 +107,6 @@
     self.failureCount = 0;
     self.recordedResponse = nil;
     self.userIdentifier = nil;
-    
-#if TARGET_IPHONE_SIMULATOR
-    [PersistentCookieStorage setDoNotPersistToKeychain:NO];
-#endif
     
     [super tearDown];
 }

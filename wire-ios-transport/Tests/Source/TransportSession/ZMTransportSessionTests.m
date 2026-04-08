@@ -296,7 +296,7 @@ static XCTestCase *currentTestCase;
     self.environment = [[MockEnvironment alloc] init];
     self.environment.backendURL = [NSURL URLWithString:@"https://base.example.com"];
     self.environment.backendWSURL = [NSURL URLWithString:@"https://websocket.example.com"];
-    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
 
     self.activityManager = [[MockBackgroundActivityManager alloc] init];
@@ -357,7 +357,6 @@ static XCTestCase *currentTestCase;
     self.scheduler = nil;
     self.sessionsDirectory = nil;
 
-    [PersistentCookieStorage deleteAllKeychainItems];
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;

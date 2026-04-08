@@ -387,7 +387,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public func invalidateCookieAndNotify() {
         emailCredentials = nil
-        cookieProvider.deleteKeychainItems()
+        cookieProvider.removeCookies()
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let outError = NSError.userSessionError(

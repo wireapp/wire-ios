@@ -19,20 +19,32 @@
 import WireFoundation
 import WireTransport
 
-/// A no-op cookie storage for testing purposes.
+/// An in-memory cookie storage for testing purposes.
 private final class StubCookieStorage: CookieStorageProtocol {
-    func storeCookies(_ cookies: [HTTPCookie]) throws {}
-    func fetchCookies() throws -> [HTTPCookie] { [] }
-    func removeCookies() throws {}
+
+    nonisolated(unsafe) private var cookies: [HTTPCookie] = []
+
+    func storeCookies(_ cookies: [HTTPCookie]) throws {
+        self.cookies = cookies
+    }
+
+    func fetchCookies() throws -> [HTTPCookie] {
+        cookies
+    }
+
+    func removeCookies() throws {
+        cookies = []
+    }
+
 }
 
 public extension PersistentCookieStorage {
 
     @objc
-    convenience init(testingWithUserIdentifier userIdentifier: UUID, useCache: Bool) {
+    convenience init(testingWithUserIdentifier userIdentifier: UUID) {
         self.init(
             userIdentifier: userIdentifier,
-            useCache: useCache,
+            useCache: true,
             cookieStorage: StubCookieStorage()
         )
     }

@@ -21,7 +21,7 @@ import Foundation
 public protocol CookieProvider {
     var isAuthenticated: Bool { get }
     func setRequestHeaderFields(on request: NSMutableURLRequest)
-    func deleteKeychainItems()
+    func removeCookies()
 }
 
 extension PersistentCookieStorage: CookieProvider {

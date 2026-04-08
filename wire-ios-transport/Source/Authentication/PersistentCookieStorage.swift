@@ -18,21 +18,18 @@
 
 import Foundation
 import WireFoundation
+import WireLogging
 
 private let cookieName = "zuid"
-private let isolationQueue = DispatchQueue(label: "PersistentCookieStorage.isolation")
-private var keychainDisabled = false
-private var nonPersistedPassword: [String: Any] = [:]
 private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
     func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
-    func clearAuthenticationCookies()
+    func removeCookies()
     var authenticationCookieExpirationDate: Date? { get }
     var hasAuthenticationCookie: Bool { get }
-    func deleteKeychainItems()
     @objc(setCookieDataFromResponse:forURL:)
     func setCookieData(from response: HTTPURLResponse, for url: URL)
     @objc(setRequestHeaderFieldsOnRequest:)
@@ -45,12 +42,7 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     @objc
     public let userIdentifier: UUID
 
-    private let useCache: Bool
     private let cookieStorage: any CookieStorageProtocol
-
-    private var accountName: String {
-        userIdentifier.uuidString
-    }
 
     public init(
         userIdentifier: UUID,
@@ -58,49 +50,38 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         cookieStorage: any CookieStorageProtocol
     ) {
         self.userIdentifier = userIdentifier
-        self.useCache = useCache
         self.cookieStorage = cookieStorage
         super.init()
     }
 
     // MARK: - Public API
 
-    private func authenticationCookieData() -> Data? {
-        var result: Data?
-        if findItem(password: &result) {
-            return result
-        }
-        return nil
-    }
-
     @objc
     public func setAuthenticationCookies(_ cookies: [HTTPCookie]) {
-        let properties = cookies.compactMap(\.properties)
-
-        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
-        archiver.encode(properties, forKey: "properties")
-        archiver.finishEncoding()
-
-        var data = archiver.encodedData
-
-        #if os(iOS)
-        let secretKey = UserDefaults.cookiesKey()!
-        data = data.zmEncryptPrefixingIV(key: secretKey)
-        #endif
-
-        setAuthenticationCookieData(data.base64EncodedData())
+        do {
+            try cookieStorage.storeCookies(cookies)
+        } catch {
+            WireLogger.authentication.error("Failed to store cookies: \(error)")
+        }
     }
 
     @objc
-    public func clearAuthenticationCookies() {
-        setAuthenticationCookieData(nil)
+    public func authenticationCookies() -> [HTTPCookie]? {
+        do {
+            let cookies = try cookieStorage.fetchCookies()
+            return cookies.isEmpty ? nil : cookies
+        } catch {
+            WireLogger.authentication.error("Failed to fetch cookies: \(error)")
+            return nil
+        }
     }
 
-    private func setAuthenticationCookieData(_ data: Data?) {
-        if let data {
-            setItem(data)
-        } else {
-            deleteItem()
+    @objc
+    public func removeCookies() {
+        do {
+            try cookieStorage.removeCookies()
+        } catch {
+            WireLogger.authentication.error("Failed to remove cookies: \(error)")
         }
     }
 
@@ -120,33 +101,9 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     }
 
     @objc
-    public func deleteKeychainItems() {
-        isolationQueue.sync {
-            nonPersistedPassword[accountName] = nil
-            ZMKeychain.deleteAllKeychainItems(withAccountName: accountName)
-        }
-    }
-
-    @objc
-    public static func deleteAllKeychainItems() {
-        isolationQueue.sync {
-            nonPersistedPassword = [:]
-
-            if keychainDisabled {
-                return
-            }
-
-            ZMKeychain.deleteAllKeychainItems()
-        }
-    }
-
-    @objc
     public static func hasAccessibleAuthenticationCookieData() -> Bool {
-        var success = false
-        isolationQueue.sync {
-            success = ZMKeychain.hasAccessibleAccountData()
-        }
-        return success
+        // TODO: FIXME
+        ZMKeychain.hasAccessibleAccountData()
     }
 
     // MARK: - HTTPCookie
@@ -192,150 +149,4 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         }
     }
 
-    @objc
-    public func authenticationCookies() -> [HTTPCookie]? {
-        guard var data = authenticationCookieData() else {
-            return nil
-        }
-
-        guard let base64Decoded = Data(base64Encoded: data) else {
-            return nil
-        }
-        data = base64Decoded
-
-        #if os(iOS)
-        let secretKey = UserDefaults.cookiesKey()!
-        data = data.zmDecryptPrefixedIV(key: secretKey)
-        #endif
-
-        let unarchiver: NSKeyedUnarchiver
-        do {
-            unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-            unarchiver.requiresSecureCoding = true
-        } catch {
-            setAuthenticationCookieData(nil)
-            return nil
-        }
-
-        guard let propertyList = unarchiver.decodePropertyList(forKey: "properties"),
-              let properties = propertyList as? [[HTTPCookiePropertyKey: Any]] else {
-            return nil
-        }
-
-        return properties.compactMap(HTTPCookie.init)
-    }
-
-    // MARK: - Keychain
-
-    private func findItem(password: inout Data?) -> Bool {
-        var success = false
-        isolationQueue.sync {
-            let cached = nonPersistedPassword[accountName]
-            let fetchFromKeychain = (cached == nil)
-            password = (cached is NSNull) ? nil : cached as? Data
-
-            if keychainDisabled {
-                success = true
-                return
-            }
-
-            if fetchFromKeychain {
-                let result = ZMKeychain.data(forAccount: accountName, fallbackToDefaultGroup: true)
-
-                if let result {
-                    password = result
-                    addNonPersistedPassword(result)
-                    success = true
-                }
-            } else {
-                success = (password != nil)
-            }
-        }
-        return success
-    }
-
-    private func addNonPersistedPassword(_ password: Data?) {
-        if !useCache {
-            return
-        }
-
-        nonPersistedPassword[accountName] = password ?? NSNull()
-    }
-
-    private func setItem(_ data: Data) {
-        if !updateItem(withPassword: data) {
-            addItem(withPassword: data)
-        }
-    }
-
-    @discardableResult
-    private func addItem(withPassword password: Data) -> Bool {
-        var success = false
-        isolationQueue.sync {
-            addNonPersistedPassword(password)
-
-            if keychainDisabled {
-                success = true
-                return
-            }
-            success = ZMKeychain.setData(password, forAccount: accountName)
-        }
-        return success
-    }
-
-    @discardableResult
-    private func updateItem(withPassword password: Data) -> Bool {
-        var success = false
-        isolationQueue.sync {
-            let hasItem = nonPersistedPassword[accountName] != nil
-                && !(nonPersistedPassword[accountName] is NSNull)
-            if hasItem {
-                nonPersistedPassword[accountName] = password
-            }
-
-            if keychainDisabled {
-                success = hasItem
-                return
-            }
-
-            success = ZMKeychain.setData(password, forAccount: accountName)
-        }
-
-        // now try to read. If we fail to read, it means that the keychain is
-        // blocked and it always returns success on an update
-        var readPassword: Data?
-        let read = findItem(password: &readPassword)
-
-        if !read || readPassword != password {
-            isolationQueue.async {
-                self.addNonPersistedPassword(password)
-            }
-        }
-
-        return success
-    }
-
-    private func deleteItem() {
-        isolationQueue.sync {
-            nonPersistedPassword.removeValue(forKey: accountName)
-
-            if keychainDisabled {
-                return
-            }
-
-            ZMKeychain.deleteAllKeychainItems(withAccountName: accountName)
-        }
-    }
-
-    // MARK: - Testing
-
-    @objc
-    public static func setDoNotPersistToKeychain(_ disabled: Bool) {
-        keychainDisabled = disabled
-    }
-
-    @objc
-    public var isCacheEmpty: Bool {
-        nonPersistedPassword.isEmpty
-    }
 }

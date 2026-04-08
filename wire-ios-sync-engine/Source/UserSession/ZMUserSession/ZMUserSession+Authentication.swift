@@ -60,7 +60,7 @@ extension ZMUserSession {
     /// This will delete user data stored by WireSyncEngine in the keychain.
 
     func deleteUserKeychainItems() {
-        transportSession.cookieStorage.deleteKeychainItems()
+        transportSession.cookieStorage.removeCookies()
     }
 
     /// Logout the current user

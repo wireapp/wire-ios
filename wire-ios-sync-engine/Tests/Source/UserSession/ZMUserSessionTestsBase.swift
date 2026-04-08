@@ -89,8 +89,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         )
 
         cookieStorage = PersistentCookieStorage(
-            testingWithUserIdentifier: .create(),
-            useCache: true
+            testingWithUserIdentifier: .create()
         )
 
         transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)

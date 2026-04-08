@@ -33,8 +33,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let userId = NSUUID.create()!
 
         cookieStorage = PersistentCookieStorage(
-            testingWithUserIdentifier: userId,
-            useCache: true
+            testingWithUserIdentifier: userId
         )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()

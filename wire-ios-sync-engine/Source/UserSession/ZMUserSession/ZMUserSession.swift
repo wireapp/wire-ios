@@ -1533,7 +1533,7 @@ extension ZMUserSession {
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
 
             clientRegistrationStatus.emailCredentials = nil
-            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+            clientRegistrationStatus.cookieProvider.removeCookies()
 
             let selfUser = ZMUser.selfUser(in: syncContext)
             let clientDeletedRemotelyError = NSError.userSessionError(
