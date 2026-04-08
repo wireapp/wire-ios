@@ -124,12 +124,10 @@
 
         NSString *cookiesValue = @"zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure";
 
-        if ([PersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            NSDictionary *headers = @{@"Set-Cookie": cookiesValue};
-            NSURL *url = [NSURL URLWithString:@"https://example.com"];
-            NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url];
-            [self.cookieStorage setAuthenticationCookies:cookies];
-        }
+        NSDictionary *headers = @{@"Set-Cookie": cookiesValue};
+        NSURL *url = [NSURL URLWithString:@"https://example.com"];
+        NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url];
+        [self.cookieStorage setAuthenticationCookies:cookies];
 
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": cookiesValue} apiVersion:request.apiVersion];
     }

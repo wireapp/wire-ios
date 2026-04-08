@@ -126,44 +126,23 @@
     XCTAssertEqualObjects([(NSHTTPCookie *)cookies.firstObject name], @"zuid");
 }
 
-- (void)testThatRegistrationWithEmailStoresCookiesIfPolicyIsAlways
+- (void)testThatRegistrationWithEmailStoresCookies
 {
     // GIVEN
-    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
-    
+
     // WHEN
     __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
+
     // expect
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
 }
-
-- (void)testThatRegistrationWithEmailDoesNotStoreCookiesIfPolicyIsNever
-{
-    // GIVEN
-    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
-    NSDictionary *payload = @{
-                              @"name" : @"Someone someone",
-                              @"email" : @"someone@example.com",
-                              @"password" : @"supersecure",
-                              };
-    
-    // WHEN
-    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // expect
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-}
-
 
 - (void)testThatRegistrationCreatesAUserWithNoValidatedEmail
 {

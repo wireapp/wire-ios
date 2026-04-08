@@ -341,25 +341,7 @@
     XCTAssertFalse(self.sut.hasAuthenticationCookie);
 }
 
-- (void)testThatSetCookieDataFromResponseDoesNothingWhenPolicyIsNever
-{
-    // given
-    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyNever];
-    NSDictionary *headerFields = @{@"Set-Cookie": @"zuid=abc123; Expires=Sun, 21-Jul-2030 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"};
-    NSURL *URL = [NSURL URLWithString:@"https://example.com/login"];
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
-
-    // when
-    [self.sut setCookieDataFromResponse:response forURL:URL];
-
-    // then
-    XCTAssertFalse(self.sut.hasAuthenticationCookie);
-
-    // cleanup
-    [PersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
-}
-
-- (void)testThatDeleteKeychainItemsDoesNotFailWhenNothingIsStored
+- (void)testThatRemoveCookiesDoesNotFailWhenNothingIsStored
 {
     [self.sut removeCookies];
     XCTAssertFalse(self.sut.hasAuthenticationCookie);

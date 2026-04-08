@@ -21,7 +21,6 @@ import WireFoundation
 import WireLogging
 
 private let cookieName = "zuid"
-private var currentCookiesPolicy: HTTPCookie.AcceptPolicy = .always
 
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
@@ -108,22 +107,8 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
 
     // MARK: - HTTPCookie
 
-    @objc
-    public static func setCookiesPolicy(_ policy: HTTPCookie.AcceptPolicy) {
-        currentCookiesPolicy = policy == .never ? .never : .always
-    }
-
-    @objc
-    public static func cookiesPolicy() -> HTTPCookie.AcceptPolicy {
-        currentCookiesPolicy
-    }
-
     @objc(setCookieDataFromResponse:forURL:)
     public func setCookieData(from response: HTTPURLResponse, for url: URL) {
-        if currentCookiesPolicy == .never {
-            return
-        }
-
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as? [String: String] ?? [:], for: url)
         if cookies.isEmpty {
             return
