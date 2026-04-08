@@ -143,21 +143,6 @@
     XCTAssertFalse(sut2.hasAuthenticationCookie);
 }
 
-- (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
-{
-    // given
-    PersistentCookieStorage *sut = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
-    [sut setAuthenticationCookies:[NSHTTPCookie validCookies]];
-
-    // then
-    XCTAssertTrue([PersistentCookieStorage hasAccessibleAuthenticationCookieData]);
-}
-
-- (void)testThatItDoesNotHaveAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsNotAvailable
-{
-    XCTAssertFalse([PersistentCookieStorage hasAccessibleAuthenticationCookieData]);
-}
-
 @end
 
 

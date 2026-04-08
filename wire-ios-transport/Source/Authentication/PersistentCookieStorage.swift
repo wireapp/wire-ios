@@ -98,12 +98,6 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
         authenticationCookieExpirationDate != nil
     }
 
-    @objc
-    public static func hasAccessibleAuthenticationCookieData() -> Bool {
-        // TODO: FIXME
-        ZMKeychain.hasAccessibleAccountData()
-    }
-
     // MARK: - HTTPCookie
 
     @objc(setCookieDataFromResponse:forURL:)

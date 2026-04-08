@@ -237,8 +237,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperOverrides.storage = .shared()
         setupWindowAndRootViewController()
 
-        if UIApplication.shared.isProtectedDataAvailable || PersistentCookieStorage
-            .hasAccessibleAuthenticationCookieData() {
+        // TODO: [WPB-24600] Use method on CookieStorage instead of ZMKeychain.
+        if UIApplication.shared.isProtectedDataAvailable || ZMKeychain.hasAccessibleAccountData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
