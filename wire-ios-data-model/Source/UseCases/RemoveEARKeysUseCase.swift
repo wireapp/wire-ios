@@ -23,7 +23,7 @@ import WireLogging
 public protocol RemoveEARKeysUseCaseProtocol {
 
     /// Removes all encryption at rest keys from the keychain for the given account.
-    func invoke(accountID: UUID) throws
+    func invoke(accountID: UUID)
 
 }
 
@@ -39,19 +39,46 @@ public struct RemoveEARKeysUseCase: RemoveEARKeysUseCaseProtocol {
         self.keyRepository = keyRepository
     }
 
-    public func invoke(accountID: UUID) throws {
+    // MARK: - Public interface
+
+    public func invoke(accountID: UUID) {
+        EARKeyDescription.allCases.forEach { key in
+            deleteKey(key, accountID: accountID)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func deleteKey(_ key: EARKeyDescription, accountID: UUID) {
         do {
-            try keyRepository.deletePublicKey(description: .primaryKeyDescription(accountID: accountID))
-            try keyRepository.deletePrivateKey(description: .primaryKeyDescription(accountID: accountID, context: nil))
-            try keyRepository.deletePublicKey(description: .secondaryKeyDescription(accountID: accountID))
-            try keyRepository.deletePrivateKey(description: .secondaryKeyDescription(accountID: accountID))
-            try keyRepository.deleteDatabaseKey(description: .keyDescription(accountID: accountID))
+            switch key {
+            case .primaryPublic:
+                try keyRepository.deletePublicKey(description: .primaryKeyDescription(accountID: accountID))
+            case .primaryPrivate:
+                try keyRepository.deletePrivateKey(description: .primaryKeyDescription(
+                    accountID: accountID,
+                    context: nil
+                ))
+            case .secondaryPublic:
+                try keyRepository.deletePublicKey(description: .secondaryKeyDescription(accountID: accountID))
+            case .secondaryPrivate:
+                try keyRepository.deletePrivateKey(description: .secondaryKeyDescription(accountID: accountID))
+            case .database:
+                try keyRepository.deleteDatabaseKey(description: .keyDescription(accountID: accountID))
+            }
         } catch {
             WireLogger.ear.error(
-                "failed to remove EAR keys for accountID: \(accountID) - error: \(String(describing: error))"
+                "failed to remove \(key.rawValue) key for accountID: \(accountID) - error: \(String(describing: error))"
             )
-            throw error
         }
+    }
+
+    private enum EARKeyDescription: String, CaseIterable {
+        case primaryPublic
+        case primaryPrivate
+        case secondaryPublic
+        case secondaryPrivate
+        case database
     }
 
 }

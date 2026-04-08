@@ -38,9 +38,9 @@ struct RemoveEARKeysUseCaseTests {
     }
 
     @Test("Deletes all five EAR keys with correct descriptions")
-    func invoke_deletesAllExpectedKeys() throws {
+    func invoke_deletesAllExpectedKeys() {
         // When
-        try sut.invoke(accountID: accountID)
+        sut.invoke(accountID: accountID)
 
         // Then
         let deletedPublicIDs = mockKeyRepository.deletePublicKeyDescription_Invocations.map(\.id)
@@ -58,30 +58,18 @@ struct RemoveEARKeysUseCaseTests {
     }
 
     @Test("Does not delete keys belonging to a different account")
-    func invoke_doesNotDeleteOtherAccountKeys() throws {
+    func invoke_doesNotDeleteOtherAccountKeys() {
         // Given
         let otherAccountID = UUID()
 
         // When
-        try sut.invoke(accountID: accountID)
+        sut.invoke(accountID: accountID)
 
         // Then
         let deletedPublicIDs = mockKeyRepository.deletePublicKeyDescription_Invocations.map(\.id)
         #expect(!deletedPublicIDs.contains(PublicEARKeyDescription.primaryKeyDescription(accountID: otherAccountID).id))
         #expect(!deletedPublicIDs
             .contains(PublicEARKeyDescription.secondaryKeyDescription(accountID: otherAccountID).id))
-    }
-
-    @Test("Propagates repository error")
-    func invoke_propagatesRepositoryError() {
-        // Given
-        struct DeletionError: Error {}
-        mockKeyRepository.deletePublicKeyDescription_MockError = DeletionError()
-
-        // When / Then
-        #expect(throws: DeletionError.self) {
-            try sut.invoke(accountID: accountID)
-        }
     }
 
 }

@@ -5659,21 +5659,16 @@ public class MockRemoveEARKeysUseCaseProtocol: RemoveEARKeysUseCaseProtocol {
     // MARK: - invoke
 
     public var invokeAccountID_Invocations: [UUID] = []
-    public var invokeAccountID_MockError: Error?
-    public var invokeAccountID_MockMethod: ((UUID) throws -> Void)?
+    public var invokeAccountID_MockMethod: ((UUID) -> Void)?
 
-    public func invoke(accountID: UUID) throws {
+    public func invoke(accountID: UUID) {
         invokeAccountID_Invocations.append(accountID)
-
-        if let error = invokeAccountID_MockError {
-            throw error
-        }
 
         guard let mock = invokeAccountID_MockMethod else {
             fatalError("no mock for `invokeAccountID`")
         }
 
-        try mock(accountID)
+        mock(accountID)
     }
 
 }

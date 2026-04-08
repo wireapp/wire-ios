@@ -103,8 +103,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func tearDown() {
         delegate = nil
-        Task { [syncAgent = self] in
-            await syncAgent.suspend()
+        Task {
+            await self.suspend()
         }
     }
 
