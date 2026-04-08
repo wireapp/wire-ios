@@ -27,10 +27,7 @@ let package = Package(
         ),
         .target(
             name: "WireNetworkSupport",
-            dependencies: [
-                "WireNetwork",
-                .product(name: "WireFoundation", package: "WireFoundation")
-            ],
+            dependencies: ["WireNetwork"],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]

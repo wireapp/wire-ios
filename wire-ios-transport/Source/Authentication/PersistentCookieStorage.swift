@@ -17,10 +17,13 @@
 //
 
 import Foundation
+import WireFoundation
+import WireLogging
+
+private let cookieName = "zuid"
 
 // sourcery: AutoMockable
 @objc public protocol PersistentCookieStorageProtocol {
-    var userIdentifier: UUID { get }
     func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
     func removeCookies()
@@ -30,4 +33,98 @@ import Foundation
     func setCookieData(from response: HTTPURLResponse, for url: URL)
     @objc(setRequestHeaderFieldsOnRequest:)
     func setRequestHeaderFields(on request: NSMutableURLRequest)
+}
+
+@objc
+public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol {
+
+    @objc
+    public let userIdentifier: UUID
+
+    private let cookieStorage: any CookieStorageProtocol
+
+    public init(
+        userIdentifier: UUID,
+        cookieStorage: any CookieStorageProtocol
+    ) {
+        self.userIdentifier = userIdentifier
+        self.cookieStorage = cookieStorage
+        super.init()
+    }
+
+    // MARK: - Public API
+
+    @objc
+    public func setAuthenticationCookies(_ cookies: [HTTPCookie]) {
+        do {
+            try cookieStorage.storeCookies(cookies)
+        } catch {
+            WireLogger.authentication.error("Failed to store cookies: \(error)")
+        }
+    }
+
+    @objc
+    public func authenticationCookies() -> [HTTPCookie]? {
+        do {
+            let cookies = try cookieStorage.fetchCookies()
+            return cookies.isEmpty ? nil : cookies
+        } catch {
+            WireLogger.authentication.error("Failed to fetch cookies: \(error)")
+            return nil
+        }
+    }
+
+    @objc
+    public func removeCookies() {
+        do {
+            try cookieStorage.removeCookies()
+        } catch {
+            WireLogger.authentication.error("Failed to remove cookies: \(error)")
+        }
+    }
+
+    @objc
+    public var authenticationCookieExpirationDate: Date? {
+        for cookie in authenticationCookies() ?? [] {
+            if cookie.name == cookieName {
+                return cookie.expiresDate
+            }
+        }
+        return nil
+    }
+
+    @objc
+    public var hasAuthenticationCookie: Bool {
+        authenticationCookieExpirationDate != nil
+    }
+
+    // MARK: - HTTPCookie
+
+    @objc(setCookieDataFromResponse:forURL:)
+    public func setCookieData(from response: HTTPURLResponse, for url: URL) {
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as? [String: String] ?? [:], for: url)
+        if cookies.isEmpty {
+            return
+        }
+
+        let properties = cookies.compactMap(\.properties)
+
+        guard (properties.first?[.name] as? String) == cookieName else {
+            return
+        }
+
+        setAuthenticationCookies(cookies)
+    }
+
+    @objc(setRequestHeaderFieldsOnRequest:)
+    public func setRequestHeaderFields(on request: NSMutableURLRequest) {
+        guard let cookies = authenticationCookies() else {
+            return
+        }
+
+        for (field, value) in HTTPCookie.requestHeaderFields(with: cookies) {
+            request.addValue(value, forHTTPHeaderField: field)
+        }
+    }
+
 }

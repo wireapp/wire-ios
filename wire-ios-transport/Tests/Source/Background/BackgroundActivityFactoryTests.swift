@@ -117,7 +117,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         activityManager.triggerExpiration()
 
         // THEN
-        waitForExpectations(timeout: 2)
+        waitForExpectations(timeout: 1)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)

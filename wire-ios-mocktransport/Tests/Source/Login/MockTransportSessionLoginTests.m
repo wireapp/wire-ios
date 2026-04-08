@@ -40,7 +40,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -70,7 +70,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -104,7 +104,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -145,7 +145,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -184,7 +184,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -218,7 +218,7 @@
         selfUser.password = password;
     }];
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -258,7 +258,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN
@@ -333,7 +333,7 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
-    self.sut.cookieStorage = [OCMockObject mockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.sut.cookieStorage = [OCMockObject mockForClass:[PersistentCookieStorage class]];
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookies:OCMOCK_ANY];
 
     // WHEN

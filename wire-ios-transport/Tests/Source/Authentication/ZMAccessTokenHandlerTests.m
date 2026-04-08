@@ -27,7 +27,6 @@
 #import "ZMURLSession.h"
 #import "NSError+ZMTransportSession.h"
 #import "Fakes.h"
-#import "WireTransport_ios_tests-Swift.h"
 
 
 @interface ZMAccessTokenHandlerTests : ZMTBaseTest
@@ -36,7 +35,7 @@
 @property (nonatomic) ZMAccessToken *expiredAccessToken;
 @property (nonatomic) id urlSession;
 
-@property (nonatomic) id<PersistentCookieStorageProtocol>cookieStorage;
+@property (nonatomic) PersistentCookieStorage *cookieStorage;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) FakeExponentialBackoff *backoff;
 @property (nonatomic) FakeDelegate *delegate;
@@ -73,7 +72,8 @@
     self.expiredAccessToken = [[ZMAccessToken alloc] initWithToken:@"expired-token" type:@"expired-type" expiresInSeconds:0];
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
-    self.cookieStorage = [[MockPersistentCookieStorage alloc] initWithUserIdentifier:self.userIdentifier];
+
+    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];

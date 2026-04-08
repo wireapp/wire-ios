@@ -16,19 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
+import WireTransport
 
-public extension HTTPCookie {
+/// An in-memory cookie storage for testing purposes.
+private final class StubCookieStorage: CookieStorageProtocol {
 
-    @objc
-    class func validCookies() -> [HTTPCookie] {
-        validCookies(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
+    nonisolated(unsafe) private var cookies: [HTTPCookie] = []
+
+    func storeCookies(_ cookies: [HTTPCookie]) throws {
+        self.cookies = cookies
     }
 
+    func fetchCookies() throws -> [HTTPCookie] {
+        cookies
+    }
+
+    func removeCookies() throws {
+        cookies = []
+    }
+
+}
+
+public extension PersistentCookieStorage {
+
     @objc
-    class func validCookies(string: String) -> [HTTPCookie] {
-        let headers = ["Set-Cookie": string]
-        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: URL(string: "https://example.com")!)
+    convenience init(testingWithUserIdentifier userIdentifier: UUID) {
+        self.init(
+            userIdentifier: userIdentifier,
+            cookieStorage: StubCookieStorage()
+        )
     }
 
 }

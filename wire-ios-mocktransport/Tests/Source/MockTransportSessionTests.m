@@ -110,7 +110,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 {
     [super setUp];
     self.pushChannelReceivedEvents = [NSMutableArray array];
-    self.cookieStorage = [OCMockObject niceMockForProtocol:@protocol(PersistentCookieStorageProtocol)];
+    self.cookieStorage = [OCMockObject niceMockForClass:[PersistentCookieStorage class]];
     self.sut = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
     self.sut.cookieStorage = self.cookieStorage;
 }

@@ -21,7 +21,6 @@ import WireDataModelSupport
 import WireDomain
 import WireLoggingSupport
 import WireNetwork
-import WireNetworkSupport
 import WireRequestStrategySupport
 import WireTransportSupport
 
