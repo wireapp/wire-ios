@@ -26,7 +26,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(activeConversationPage.labelSelfDeletingMessageIsOFF.exists)
         XCTAssertFalse(activeConversationPage.selfDeletingMessageButton.isHittable)
 
-        activeConversationPage.conversationTitleButton.tap()
+        activeConversationPage.conversationTitleButton.waitAndTap()
 
         XCTAssertTrue(activeConversationPage.sharedDriveButton.exists)
     }
@@ -37,11 +37,12 @@ final class WireDriveTests: WireUITestCase {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enableShareDriveSwitch()
@@ -58,15 +59,14 @@ final class WireDriveTests: WireUITestCase {
 
         // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(
-            withMemberCount: 2,
-            conversation: .channel(channelName)
-        )
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
+        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        try await userHelper.unlockAndEnableChannelFeature(teamID: teamID)
+        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
 
         // WHEN
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewChannelButton()
             .enableShareDriveSwitch()
@@ -78,4 +78,28 @@ final class WireDriveTests: WireUITestCase {
         verifyDriveEnabledConversation(on: activeConversationPage)
     }
 
+    @MainActor
+    func testShareSketchImageWithTextMessageInDriveEnabledGroup_TC_8956() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let message = "Attachment with Text"
+        let (teamOwner, _, _, _) = try await userHelper.registerTeam(
+            withMemberCount: 2,
+            conversation: .group(groupName),
+            driveEnabled: true
+        )
+
+        // WHEN
+        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openConversation()
+            .typeMessageAndAttachSketch(message)
+
+        // THEN
+        XCTAssertTrue(activeConversationPage.attachmentImagePreview.waitForExistence(timeout: 2))
+        XCTAssertEqual(activeConversationPage.inputMessageField.value as? String, message)
+        XCTAssertTrue(activeConversationPage.sendButton.waitForExistence(timeout: 2) && activeConversationPage
+            .sendButton.isHittable)
+    }
 }

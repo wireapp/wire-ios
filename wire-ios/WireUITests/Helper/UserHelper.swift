@@ -401,7 +401,7 @@ class UserHelper {
 
         let filtered = conversations.found.filter { conversation in
             switch criteria {
-            case let .groupName(name):
+            case let .conversationName(name):
                 conversation.name == name
             case let .conversationType(type):
                 conversation.type == type
@@ -419,10 +419,12 @@ class UserHelper {
     ///   - qualifiedIds: qualifiedIds for members of the group
     ///   - owner: group owner
     ///   - groupName: groupName
+    ///   - driveEnabled: bool
     func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
-        groupName: String
+        groupName: String,
+        driveEnabled: Bool = false
     ) async throws {
 
         let params = CreateGroupConversationParameters(
@@ -436,7 +438,8 @@ class UserHelper {
             accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
             teamID: owner.teamID,
-            isReadReceiptsEnabled: true
+            isReadReceiptsEnabled: true,
+            cells: driveEnabled
         )
 
         let (_, accessToken) = try await authenticationAPI.login(
@@ -516,10 +519,12 @@ class UserHelper {
     /// - Parameters:
     ///   - memberCount: count of members
     ///   - conversation: optional group or channel conversation to create
+    ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
         withMemberCount memberCount: Int,
-        conversation: CreateConversationOption? = nil
+        conversation: CreateConversationOption? = nil,
+        driveEnabled: Bool = false
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
@@ -553,13 +558,17 @@ class UserHelper {
         if let conversation {
             switch conversation {
             case let .group(name):
+                if driveEnabled {
+                    try await unlockAndEnableDriveFeature(teamID: teamID)
+                }
                 try await createGroupConversations(
                     qualifiedIds: qualifiedIDs,
                     owner: teamOwner,
-                    groupName: name
+                    groupName: name,
+                    driveEnabled: driveEnabled
                 )
 
-                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                let (resolvedConversationId, _) = try await getConversationId(matching: .conversationName(name))
                 conversationId = resolvedConversationId
 
             case let .channel(name):
@@ -568,6 +577,9 @@ class UserHelper {
                 let basicAuth = basicAuth()
                 try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
                 try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+                if driveEnabled {
+                    try await unlockAndEnableDriveFeature(teamID: teamID)
+                }
 
                 try await createChannelConversations(
                     qualifiedIds: qualifiedIDs,
@@ -575,7 +587,7 @@ class UserHelper {
                     channelName: name
                 )
 
-                let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(name))
+                let (resolvedConversationId, _) = try await getConversationId(matching: .conversationName(name))
                 conversationId = resolvedConversationId
             }
         }
@@ -686,7 +698,7 @@ enum CreateConversationOption {
 }
 
 enum FilterConversationsByCriteria {
-    case groupName(String)
+    case conversationName(String)
     case conversationType(ConversationType?)
 }
 

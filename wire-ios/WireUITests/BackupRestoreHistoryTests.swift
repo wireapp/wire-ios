@@ -52,11 +52,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .sendMessage(messageFromOwner)
 
-        var sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        var sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -84,10 +84,10 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterPassword(teamOwner.password)
 
         activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
 
-        sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        sentMessages = activeConversationPage.fetchMessages()
         XCTAssertFalse(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' found in sent messages: \(sentMessages)"
@@ -112,7 +112,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .switchToConversationsTab()
             .openConversation()
 
-        sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"

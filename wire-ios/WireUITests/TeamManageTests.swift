@@ -26,7 +26,7 @@ final class TeamManageTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .tapCreateTeamButton()
             .tapContinue()
@@ -59,7 +59,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
+        let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
             .openUserProfilePage()
 
@@ -84,7 +84,7 @@ final class TeamManageTests: WireUITestCase {
         let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
@@ -95,7 +95,7 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let sentMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -133,7 +133,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openConversation()
             .openConversationDetails()
             .openUserDetailsPage(byName: teamMembers[0].name)
@@ -170,7 +170,7 @@ final class TeamManageTests: WireUITestCase {
         let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
@@ -197,12 +197,12 @@ final class TeamManageTests: WireUITestCase {
             )
 
         _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
         let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openUserProfilePage()
             .switchUserAccountForUser(withName: teamOwner.name)
             .openConversation()
@@ -219,7 +219,7 @@ final class TeamManageTests: WireUITestCase {
 
         let activeConversationPage = try conversationPage.openConversation()
 
-        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        let fetchMessages = activeConversationPage.fetchMessages()
         XCTAssertTrue(
             fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
             "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"

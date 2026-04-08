@@ -17,6 +17,45 @@
       location = "container:.github/actions"
       name = "actions">
       <Group
+         location = "group:notify-wire"
+         name = "notify-wire">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:setup-test-environment"
+         name = "setup-test-environment">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:upload-datadog-junit"
+         name = "upload-datadog-junit">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:kalium-testservice"
+         name = "kalium-testservice">
+         <Group
+            location = "group:setup"
+            name = "setup">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:stop"
+            name = "stop">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
          location = "group:allure-reporting"
          name = "allure-reporting">
          <FileRef
@@ -32,6 +71,9 @@
       </FileRef>
       <FileRef
          location = "group:_reusable_run_tests.yml">
+      </FileRef>
+      <FileRef
+         location = "group:_reusable_run_tests_parallel.yml">
       </FileRef>
       <FileRef
          location = "group:auto_approve_cherry_pick.yml">
@@ -50,6 +92,9 @@
       </FileRef>
       <FileRef
          location = "group:cherry-pick-from-release-to-develop.yml">
+      </FileRef>
+      <FileRef
+         location = "group:critical_flows.yaml">
       </FileRef>
       <FileRef
          location = "group:crowdin.yml">
@@ -92,9 +137,6 @@
       </FileRef>
       <FileRef
          location = "group:test_pr_changes.yml">
-      </FileRef>
-      <FileRef
-         location = "group:critical_flows.yaml">
       </FileRef>
    </Group>
    <FileRef

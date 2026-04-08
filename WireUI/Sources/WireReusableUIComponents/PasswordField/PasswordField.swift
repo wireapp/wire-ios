@@ -37,6 +37,7 @@ public struct PasswordField: View {
     private let isValidPassword: (String) -> Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
 
     public init(
         password: Binding<String>,
@@ -60,18 +61,26 @@ public struct PasswordField: View {
 
             HStack {
                 if isPasswordVisible {
-                    TextField(placeholder, text: $password)
-                        .autocorrectionDisabled()
-                        .textContentType(.password)
-                        .font(for: .body1)
-                        .frame(height: fieldHeight)
-                        .focused($isFocused)
+                    ContextMenuControllableTextField(
+                        text: $password,
+                        placeholder: placeholder,
+                        isSecureTextEntry: false,
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
+                    )
+                    .font(for: .body1)
+                    .frame(height: fieldHeight)
+                    .focused($isFocused)
                 } else {
-                    SecureField(placeholder, text: $password)
-                        .autocorrectionDisabled()
-                        .textContentType(.password)
-                        .frame(height: fieldHeight)
-                        .focused($isFocused)
+                    ContextMenuControllableTextField(
+                        text: $password,
+                        placeholder: placeholder,
+                        isSecureTextEntry: true,
+                        isContextMenuAllowed: isClipboardEnabled,
+                        textContentType: .password
+                    )
+                    .frame(height: fieldHeight)
+                    .focused($isFocused)
                 }
                 Spacer()
                 Button(action: {

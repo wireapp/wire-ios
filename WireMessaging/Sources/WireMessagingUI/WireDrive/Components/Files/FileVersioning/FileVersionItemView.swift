@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -105,6 +106,7 @@ struct FileVersionItemView: View {
 
             }
         )
+        .accessibilityIdentifier(Locators.WireDrive.FileVersioningPage.restoreButton)
     }
 
 }
