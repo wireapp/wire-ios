@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
+import WireSyncEngine
+#if DEBUG
 
-
-/// Pass "-XCTestObserverClass MemoryLeaksObserver" as launch arguments to use
-///
-/// N.B.: XCTestObserver is deprecated.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface MemoryLeaksObserver : XCTestObserver
-@end
-#pragma clang diagnostic pop
+final class DebugMemoryStatus {
+    static let shared = DebugMemoryStatus()
+    
+    private weak var trackedUserSession: AnyObject?
+    
+    /// Track a UserSession for memory leak detection
+    func trackUserSession(_ session: AnyObject?) {
+        trackedUserSession = session
+    }
+    
+    var userSessionStatus: String {
+        let status = trackedUserSession == nil ? "deallocated" : "retained"
+        return "UserSession:\(status)"
+    }
+}
+#endif

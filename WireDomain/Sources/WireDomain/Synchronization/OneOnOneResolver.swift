@@ -56,11 +56,18 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     public func resolveAllOneOnOneConversations() async throws {
         let usersIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
-        await withTaskGroup(of: Void.self) { group in
+        try await withThrowingTaskGroup(of: Void.self) { group in
             for userID in usersIDs {
+                // Check if task is cancelled before adding more work
+                try Task.checkCancellation()
+
                 group.addTask {
                     do {
+                        try Task.checkCancellation()
                         try await resolveOneOnOneConversation(with: userID)
+                    } catch is CancellationError {
+                        // Task was cancelled, exit gracefully
+                        WireLogger.conversation.info("1-1 conversation resolution cancelled for userID \(userID)")
                     } catch {
                         /// skip conversation migration for this user
                         WireLogger.conversation.error(
@@ -70,6 +77,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                     }
                 }
             }
+
+            // Wait for all tasks, but this will throw CancellationError if parent is cancelled
+            try await group.waitForAll()
         }
     }
 

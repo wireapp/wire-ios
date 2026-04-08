@@ -58,7 +58,13 @@ public extension ZMUserSession {
             return completionHandler(.invalidSelfUser)
         }
 
-        Task {
+        Task { [weak self] in
+            guard let self else {
+                return await MainActor.run {
+                    completionHandler(.invalidState)
+                }
+            }
+
             let selfUser = await syncManagedObjectContext.perform {
                 ZMUser.selfUser(in: self.syncManagedObjectContext)
             }

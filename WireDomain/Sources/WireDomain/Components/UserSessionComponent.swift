@@ -126,4 +126,14 @@ public final class UserSessionComponent {
         )
     }
 
+    // MARK: - Teardown
+
+    /// Invalidate and cancel all network URLSessions to stop in-flight requests.
+    /// Call this before closing Core Data to prevent responses from being processed.
+    public func invalidateNetworkServices() {
+        restNetworkService.invalidateAndCancel()
+        websocketNetworkService.invalidateAndCancel()
+        blacklistNetworkService.invalidateAndCancel()
+    }
+
 }

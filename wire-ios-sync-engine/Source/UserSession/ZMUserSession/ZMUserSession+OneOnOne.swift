@@ -37,7 +37,12 @@ public extension ZMUserSession {
             return
         }
 
-        Task {
+        Task { [weak self] in
+            guard let self else {
+                completion(.failure(.userDoesNotExist))
+                return
+            }
+
             do {
                 let syncContext = self.syncContext
 

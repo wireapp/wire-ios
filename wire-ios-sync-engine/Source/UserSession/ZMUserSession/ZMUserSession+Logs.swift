@@ -67,8 +67,8 @@ public extension ZMUserSession {
             handler(metadata, type, error, userInfo)
         }
 
-        syncManagedObjectContext.performGroupedBlock {
-            self.syncManagedObjectContext.errorOnSaveCallback = { context, error in
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            self?.syncManagedObjectContext.errorOnSaveCallback = { context, error in
                 let type = context.type
 
                 guard

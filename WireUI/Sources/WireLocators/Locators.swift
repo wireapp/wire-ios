@@ -338,6 +338,12 @@ public enum Locators {
 
     }
 
+    public enum DeveloperToolsPage: String {
+
+        case userSessionMemoryLeakLabel
+    
+    }
+
     public enum WireDrive {
 
         public enum FilesFilterPage: String {

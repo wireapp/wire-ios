@@ -859,7 +859,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
 
-            self?.activeUserSession = nil
+            // Notify delegate that teardown is complete - session should deallocate after this
+            self?.delegate?.sessionManagerWillLogout(
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 
