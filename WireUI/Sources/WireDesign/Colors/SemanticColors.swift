@@ -128,7 +128,7 @@ public enum SemanticColors {
         public static let backgroundDefault = UIColor(light: .gray20, dark: .gray100)
         public static let backgroundDefaultBlack = UIColor(light: .black, dark: .white)
         public static let backgroundDefaultWhite = UIColor(light: .white, dark: .black)
-        public static let backgroundConversationView = UIColor(light: .gray10, dark: .gray95)
+        public static let backgroundConversationView = UIColor(light: .gray10, dark: .gray100)
         public static let backgroundUserCell = UIColor(light: .white, dark: .gray95)
         public static let backgroundUserCellHightLighted = UIColor(light: .gray40, dark: .gray100)
         public static let backgroundSeparatorCell = UIColor(light: .gray40, dark: .gray90)
@@ -239,8 +239,8 @@ public enum SemanticColors {
         public static let textUnderlineEnabledDefault = UIColor(light: .black, dark: .white)
 
         // Reaction Button
-        public static let backroundReactionNormal = UIColor(light: .white, dark: .black)
-        public static let borderReactionNormal = UIColor(light: .gray50, dark: .gray80)
+        public static let backgroundReactionNormal = UIColor(light: .white, dark: .gray90)
+        public static let borderReactionNormal = UIColor(light: .gray50, dark: .gray100)
         public static let backgroundReactionSelected = UIColor(light: .blue50Light, dark: .blue900Dark)
         public static let borderReactionSelected = UIColor(light: .blue300Light, dark: .blue700Dark)
 
@@ -284,7 +284,7 @@ public enum SemanticColors {
 
     public enum ChatBubble {
         public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray90)
-        public static let foregroundOwnMessage = UIColor(light: .black, dark: .white)
+        public static let foregroundOwnMessage = UIColor(light: .white, dark: .white)
         public static let foregroundOtherMessage = UIColor(light: .black, dark: .white)
     }
 }

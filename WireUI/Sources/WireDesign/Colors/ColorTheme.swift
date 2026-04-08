@@ -42,6 +42,24 @@ public enum ColorTheme {
 
         public static let onPrimary = UIColor(light: .white, dark: .black)
 
+        /// Own chat bubble background: primary 500 in light mode, primary 800 in dark mode.
+        public static func ownBubbleBackground(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue500Light, dark: .blue800Dark)
+            case .green:
+                UIColor(light: .green500Light, dark: .green800Dark)
+            case .red:
+                UIColor(light: .red500Light, dark: .red800Dark)
+            case .amber:
+                UIColor(light: .amber500Light, dark: .amber800Dark)
+            case .turquoise:
+                UIColor(light: .turquoise500Light, dark: .turquoise800Dark)
+            case .purple:
+                UIColor(light: .purple500Light, dark: .purple800Dark)
+            }
+        }
+
         public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:

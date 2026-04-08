@@ -81,7 +81,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.wireAccentColor ?? .default
-            let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+            let ownMessageColor = ColorTheme.Base.ownBubbleBackground(userColor)
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
             configureTextColor(forOwnMessage: isOwnMessage)
         }
