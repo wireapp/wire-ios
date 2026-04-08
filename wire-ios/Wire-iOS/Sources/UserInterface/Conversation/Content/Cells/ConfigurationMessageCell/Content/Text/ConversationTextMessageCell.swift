@@ -348,6 +348,8 @@ extension ConversationTextMessageCellDescription {
             let quoteCell = ConversationReplyCellDescription(
                 quotedMessage: quotedMessage,
                 accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+                isSentBySelfUser: message.isSentBySelfUser,
+                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue,
                 messageReplyAttachmentsViewModel: viewModel
             )
             cells.append(AnyConversationMessageCellDescription(quoteCell))

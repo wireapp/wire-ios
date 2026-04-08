@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
@@ -52,6 +53,8 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var aspectConstraint: NSLayoutConstraint?
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
+    private var ownMessageBackground: UIColor = SemanticColors.View.backgroundCollectionCell
+    private var isOwnMessage: Bool = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -109,6 +112,16 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
+        isOwnMessage = object.message.isSentBySelfUser
+        if isOwnMessage {
+            ownMessageBackground = ColorTheme.Base.ownBubbleBackground(accentColor)
+            containerView.layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
+        } else {
+            ownMessageBackground = SemanticColors.View.backgroundCollectionCell
+            containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
+        }
+
         let scaleFactor: CGFloat = object.image.isAnimatedGIF ? 1 : 0.5
         let imageSize = object.image.originalSize.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let imageAspectRatio = imageSize.width > 0 ? imageSize.height / imageSize.width : 1.0
@@ -123,7 +136,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         widthConstraint?.constant = imageSize.width
         heightConstraint?.constant = imageSize.height
 
-        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.backgroundColor = ownMessageBackground
 
         if object.isObfuscated {
             setup(obfuscationView)
@@ -163,7 +176,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             containerView.backgroundColor = UIColor.clear
             imageResourceView.layer.borderWidth = 0
         } else {
-            containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+            containerView.backgroundColor = ownMessageBackground
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }

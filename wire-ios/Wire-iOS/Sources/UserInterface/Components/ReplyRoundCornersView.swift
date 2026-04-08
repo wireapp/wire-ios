@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 import WireUtilities
 
@@ -81,6 +82,18 @@ final class ReplyRoundCornersView: UIControl {
             highlightLayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             highlightLayer.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+
+    func updateStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
+        if isSentBySelfUser {
+            backgroundColor = ColorTheme.Base.ownBubbleBackground(accentColor)
+            layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
+            grayBoxView.backgroundColor = ColorTheme.Base.primary(accentColor)
+        } else {
+            backgroundColor = nil
+            layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
+            grayBoxView.backgroundColor = ViewColors.backgroundSeparatorCell
+        }
     }
 
     // MARK: - UIControl
