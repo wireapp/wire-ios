@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 private let cookieName = "zuid"
 private let isolationQueue = DispatchQueue(label: "PersistentCookieStorage.isolation")
@@ -45,15 +46,20 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
     public let userIdentifier: UUID
 
     private let useCache: Bool
+    private let cookieStorage: any CookieStorageProtocol
 
     private var accountName: String {
         userIdentifier.uuidString
     }
 
-    @objc
-    public init(userIdentifier: UUID, useCache: Bool) {
+    public init(
+        userIdentifier: UUID,
+        useCache: Bool,
+        cookieStorage: any CookieStorageProtocol
+    ) {
         self.userIdentifier = userIdentifier
         self.useCache = useCache
+        self.cookieStorage = cookieStorage
         super.init()
     }
 

@@ -264,7 +264,13 @@ public struct SharingSessionLoader {
         // process, then the cached cookie will be invalid.
         let legacyCookieStorage = PersistentCookieStorage(
             userIdentifier: accountID,
-            useCache: false
+            useCache: false,
+            cookieStorage: CookieStorage(
+                userID: accountID,
+                cookieEncryptionKey: UserDefaults.cookiesKey(),
+                keychain: Keychain(),
+                cache: nil
+            )
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")

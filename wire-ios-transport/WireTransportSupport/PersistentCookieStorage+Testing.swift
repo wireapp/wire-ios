@@ -16,27 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireFoundation
-import WireNetwork
 import WireTransport
 
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> PersistentCookieStorage {
-        let cookieStorage = CookieStorage(
-            userID: account.userIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain(),
-            cache: nil
-        )
-        return PersistentCookieStorage(
-            userIdentifier: account.userIdentifier,
-            useCache: false,
-            cookieStorage: cookieStorage
+/// A no-op cookie storage for testing purposes.
+private final class StubCookieStorage: CookieStorageProtocol {
+    func storeCookies(_ cookies: [HTTPCookie]) throws {}
+    func fetchCookies() throws -> [HTTPCookie] { [] }
+    func removeCookies() throws {}
+}
+
+public extension PersistentCookieStorage {
+
+    @objc
+    convenience init(testingWithUserIdentifier userIdentifier: UUID, useCache: Bool) {
+        self.init(
+            userIdentifier: userIdentifier,
+            useCache: useCache,
+            cookieStorage: StubCookieStorage()
         )
     }
 
-    public func isAuthenticated(_ account: Account) -> Bool {
-        cookieStorage(for: account).hasAuthenticationCookie
-    }
 }

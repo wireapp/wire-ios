@@ -16,13 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+import WireNetwork
 import WireTransport
 
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> PersistentCookieStorage {
+        let cookieStorage = CookieStorage(
+            userID: account.userIdentifier,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain(),
+            cache: .shared
+        )
         return PersistentCookieStorage(
             userIdentifier: account.userIdentifier,
-            useCache: true
+            useCache: true,
+            cookieStorage: cookieStorage
         )
     }
 

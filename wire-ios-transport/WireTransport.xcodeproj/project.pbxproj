@@ -17,6 +17,7 @@
 		BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */; platformFilter = ios; };
 		CB79AC782C6D0582003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */; };
+		CBD2D0972F8560DA00A20777 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CBD2D0962F8560DA00A20777 /* WireFoundation */; };
 		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
 /* End PBXBuildFile section */
 
@@ -177,6 +178,7 @@
 			files = (
 				CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */,
 				591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */,
+				CBD2D0972F8560DA00A20777 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +819,10 @@
 		59FE6ACD2DA90CC100DB461C /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
+		};
+		CBD2D0962F8560DA00A20777 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

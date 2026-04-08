@@ -22,14 +22,6 @@ public import WireFoundation
 
 import WireCrypto
 
-// sourcery: AutoMockable
-public protocol CookieStorageProtocol: Sendable {
-
-    func storeCookies(_ cookies: [HTTPCookie]) throws
-    func fetchCookies() throws -> [HTTPCookie]
-    func removeCookies() throws
-}
-
 /// A cache for cookies, keyed by user ID.
 ///
 /// This class is thread-safe and can be shared across multiple `CookieStorage` instances.

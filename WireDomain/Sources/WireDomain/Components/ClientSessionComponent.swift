@@ -22,6 +22,7 @@ import WireCoreCrypto
 import WireDataModel
 import WireLogging
 import WireNetwork
+import WireFoundation
 
 public final class ClientSessionComponent {
 

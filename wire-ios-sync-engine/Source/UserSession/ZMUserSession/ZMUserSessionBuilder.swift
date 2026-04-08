@@ -103,7 +103,7 @@ struct ZMUserSessionBuilder {
             userID: userId,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: keychain,
-            useCache: true
+            cache: .shared
         )
 
         let serverTrustValidator = ServerTrustValidator(

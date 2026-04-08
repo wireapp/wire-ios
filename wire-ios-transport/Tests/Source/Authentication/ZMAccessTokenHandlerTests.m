@@ -23,6 +23,7 @@
 
 #import "ZMAccessTokenHandler.h"
 @import WireTransport.Testing;
+@import WireTransportSupport;
 #import "ZMURLSession.h"
 #import "NSError+ZMTransportSession.h"
 #import "Fakes.h"
@@ -76,7 +77,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [[PersistentCookieStorage alloc] initWithUserIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier useCache:YES];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
