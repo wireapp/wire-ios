@@ -44,7 +44,6 @@ public extension PersistentCookieStorage {
     convenience init(testingWithUserIdentifier userIdentifier: UUID) {
         self.init(
             userIdentifier: userIdentifier,
-            useCache: true,
             cookieStorage: StubCookieStorage()
         )
     }

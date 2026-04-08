@@ -30,7 +30,6 @@ extension BackendEnvironmentProvider {
         )
         return PersistentCookieStorage(
             userIdentifier: account.userIdentifier,
-            useCache: true,
             cookieStorage: cookieStorage
         )
     }

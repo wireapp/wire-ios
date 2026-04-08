@@ -45,7 +45,6 @@ public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol 
 
     public init(
         userIdentifier: UUID,
-        useCache: Bool,
         cookieStorage: any CookieStorageProtocol
     ) {
         self.userIdentifier = userIdentifier
