@@ -130,7 +130,7 @@ final class ReactionToggle: UIControl {
         } else {
             backgroundColor = ButtonColors.backgroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
-            counterLabel.textColor = SemanticColors.Label.textDefault
+            counterLabel.textColor = ColorTheme.Base.secondaryText
         }
     }
 

@@ -29,16 +29,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let isObfuscated: Bool
         let userSession: UserSession?
 
-        init(
-            attributedText: NSAttributedString,
-            isObfuscated: Bool,
-            userSession: UserSession? = nil
-        ) {
-            self.attributedText = attributedText
-            self.isObfuscated = isObfuscated
-            self.userSession = userSession
-        }
-
         static func == (
             lhs: ConversationTextMessageCell.Configuration,
             rhs: ConversationTextMessageCell.Configuration
@@ -72,7 +62,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }()
 
     private var container: ConversationMessageContainerView?
-    private var currentConfiguration: Configuration?
 
     var isSelected = false
 
@@ -188,9 +177,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
         let userColor = message.senderUser?.wireAccentColor ?? .default
-        let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+        let ownMessageColor = ColorTheme.Base.ownBubbleBackground(userColor)
         container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
-
+        container?.layer.maskedCorners = [
+            .layerMinXMinYCorner, .layerMaxXMinYCorner,
+            .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+        ]
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
@@ -243,7 +235,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -338,31 +330,52 @@ extension ConversationTextMessageCellDescription {
             )
         }
 
-        // Quote
-        if let quotedMessage = textMessageData.quoteMessage {
+        let hasQuote = textMessageData.quoteMessage != nil
+        let hasText = !messageText.string.isEmpty
+
+        if hasQuote, let quotedMessage = textMessageData.quoteMessage, hasText {
+            // Render quote + text as a single unified bubble cell
             let viewModel = MessageReplyAttachmentsViewModel(
                 fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
-
-            let quoteCell = ConversationReplyCellDescription(
+            let combinedCell = ConversationReplyWithTextCellDescription(
                 quotedMessage: quotedMessage,
                 accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
-                isSentBySelfUser: message.isSentBySelfUser,
-                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue,
-                messageReplyAttachmentsViewModel: viewModel
-            )
-            cells.append(AnyConversationMessageCellDescription(quoteCell))
-        }
-
-        // Text
-        if !messageText.string.isEmpty {
-            let textCell = ConversationTextMessageCellDescription(
-                attributedString: messageText,
+                messageReplyAttachmentsViewModel: viewModel,
+                attributedText: messageText,
                 isObfuscated: message.isObfuscated,
-                userSession: userSession
+                userSession: userSession,
+                isSentBySelfUser: message.isSentBySelfUser,
+                senderAccentColor: message.senderUser?.wireAccentColor ?? .blue
             )
-            cells.append(AnyConversationMessageCellDescription(textCell))
+            cells.append(AnyConversationMessageCellDescription(combinedCell))
+        } else {
+            // Quote only (no text body — rare edge case)
+            if let quotedMessage = textMessageData.quoteMessage {
+                let viewModel = MessageReplyAttachmentsViewModel(
+                    fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
+                    fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+                )
+                let quoteCell = ConversationReplyCellDescription(
+                    quotedMessage: quotedMessage,
+                    accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+                    isSentBySelfUser: message.isSentBySelfUser,
+                    senderAccentColor: message.senderUser?.wireAccentColor ?? .blue,
+                    messageReplyAttachmentsViewModel: viewModel
+                )
+                cells.append(AnyConversationMessageCellDescription(quoteCell))
+            }
+
+            // Text only (no quote)
+            if hasText {
+                let textCell = ConversationTextMessageCellDescription(
+                    attributedString: messageText,
+                    isObfuscated: message.isObfuscated,
+                    userSession: userSession
+                )
+                cells.append(AnyConversationMessageCellDescription(textCell))
+            }
         }
 
         guard !message.isObfuscated else { return cells }

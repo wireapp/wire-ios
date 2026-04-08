@@ -43,6 +43,7 @@ final class ConversationReplyContentView: UIView {
         weak var delegate: ConversationMessageCellDelegate?
         var isSentBySelfUser: Bool = false
         var senderAccentColor: WireAccentColor = .blue
+        var showReplyArrow: Bool = false
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -115,9 +116,11 @@ final class ConversationReplyContentView: UIView {
 
         private func setupContent() -> Content {
             typealias LabelColors = SemanticColors.Label
+            let iconColor: UIColor = showReplyArrow ? .white : LabelColors.textDefault
+            let textColor: UIColor = showReplyArrow ? .white : LabelColors.textDefault
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.smallSemiboldFont,
-                .foregroundColor: LabelColors.textDefault
+                .foregroundColor: textColor
             ]
             switch quotedMessage {
             case let message? where message.isMultipart:
@@ -147,19 +150,19 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: iconColor)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (location.name ?? MessagePreview.location).localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isAudio:
-                let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: iconColor)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.audio
                     .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isImage && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: iconColor)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -168,7 +171,7 @@ final class ConversationReplyContentView: UIView {
                 return .imagePreview(thumbnail: message.imageMessageData!.image, isVideo: false)
 
             case let message? where message.isVideo && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: iconColor)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -178,7 +181,7 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isFile:
                 let fileData = message.fileMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .document, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.textAttachment(for: .document, with: iconColor)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (fileData.filename ?? MessagePreview.file).localizedUppercase
                 return .text(initialString && attributes)
@@ -289,17 +292,46 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
         contentAttachmentsView.isHidden = true
 
-        if object.isSentBySelfUser {
+        if object.showReplyArrow {
+            // Dark accent background: content/timestamp use white; sender uses quoted sender's accent color
+            contentTextView.textColor = .white
+            timestampLabel.textColor = UIColor.white.withAlphaComponent(0.7)
+
+            let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
+            let senderColor = ColorTheme.Base.primary(quotedAccentColor)
+
+            if let name = object.senderName,
+               let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(.white, renderingMode: .alwaysTemplate) {
+                let attachment = NSTextAttachment()
+                attachment.image = replyIcon
+                let iconSize = CGFloat(10)
+                attachment.bounds = CGRect(x: 0, y: -1, width: iconSize, height: iconSize)
+                let iconAttr = NSAttributedString(attachment: attachment)
+                let nameAttr = NSAttributedString(
+                    string: " \(name)",
+                    attributes: [.foregroundColor: senderColor, .font: UIFont.mediumSemiboldFont]
+                )
+                let combined = NSMutableAttributedString()
+                combined.append(iconAttr)
+                combined.append(nameAttr)
+                senderComponent.label.attributedText = combined
+            } else {
+                senderComponent.senderName = object.senderName
+                senderComponent.label.textColor = senderColor
+            }
+        } else if object.isSentBySelfUser {
+            senderComponent.label.attributedText = nil
             senderComponent.label.textColor = ColorTheme.Base.ownBubbleSenderNameColor(object.senderAccentColor)
             contentTextView.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
             timestampLabel.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
+            senderComponent.senderName = object.senderName
         } else {
+            senderComponent.label.attributedText = nil
             senderComponent.label.textColor = SemanticColors.Label.textDefault
             contentTextView.textColor = SemanticColors.Label.textDefault
             timestampLabel.textColor = SemanticColors.Label.textCollectionSecondary
+            senderComponent.senderName = object.senderName
         }
-
-        senderComponent.senderName = object.senderName
         senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
             size: 8,
             color: SemanticColors.Icon.foregroundDefault
@@ -360,6 +392,19 @@ final class ConversationReplyContentView: UIView {
 
             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
             messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
+        }
+
+        // In the combined reply+text cell the box background is dark: force white on the content text
+        if object.showReplyArrow,
+           let existing = contentTextView.attributedText,
+           !existing.string.isEmpty {
+            let mutable = NSMutableAttributedString(attributedString: existing)
+            mutable.addAttribute(
+                .foregroundColor,
+                value: UIColor.white,
+                range: NSRange(location: 0, length: mutable.length)
+            )
+            contentTextView.attributedText = mutable
         }
     }
 
