@@ -37,10 +37,7 @@ final class NotificationService: UNNotificationServiceExtension {
         super.init()
         DeveloperOverrides.storage = .shared()
         WireAnalytics.setup(for: .notificationServiceExtension)
-
-        let logger = CCLogger()
-        CoreCrypto.setLogger(logger)
-        CoreCrypto.setMaxLogLevel(.debug)
+        CoreCrypto.registerLogger()
     }
 
     // MARK: - Methods
@@ -124,36 +121,4 @@ final class NotificationService: UNNotificationServiceExtension {
             }
         )
     }
-}
-
-final class CCLogger: CoreCryptoLogger {
-
-    func log(
-        level: WireCoreCryptoUniffi.CoreCryptoLogLevel,
-        message: String,
-        context: String?
-    ) throws {
-        var log = message
-        if let context {
-            log += ", context: \(context)"
-        }
-
-        let attributes = LogAttributes.safePublic
-
-        switch level {
-        case .off:
-            break
-        case .trace, .debug:
-            WireLogger.coreCrypto.debug(message, attributes: attributes)
-        case .info:
-            WireLogger.coreCrypto.info(message, attributes: attributes)
-        case .warn:
-            WireLogger.coreCrypto.warn(message, attributes: attributes)
-        case .error:
-            WireLogger.coreCrypto.error(message, attributes: attributes)
-        @unknown default:
-            break
-        }
-    }
-
 }
