@@ -41,6 +41,7 @@ public enum ColorTheme {
         }
 
         public static let onPrimary = UIColor(light: .white, dark: .black)
+        public static let onPrimaryFocused = UIColor(light: .white, dark: .black)
 
         public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
@@ -76,6 +77,7 @@ public enum ColorTheme {
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
 
+        // TODO: [WPB-24757] Below these are not specified and should be removed updated
         public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
 
         public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
@@ -100,11 +102,14 @@ public enum ColorTheme {
         public static let onInverted = UIColor(light: .white, dark: .black)
 
         public static let onTransparentDark = UIColor(light: .white, dark: .white)
-    }
+        public static let onTransparentLight = UIColor(light: .black, dark: .black)
 
-    public enum Banners {
-        public static let background = Base.primaryVariant
-        public static let border = Base.primary
+        public static let bubblesBackground = UIColor(light: .white, dark: .gray100)
+
+        public static let transparentDark = UIColor(light: .black55, dark: .black60)
+        public static let transparentLight = UIColor(light: .white75, dark: .white25)
+
+        // TODO: [WPB-24757] add primaryContainer token
     }
 
     public enum Buttons {
@@ -162,7 +167,7 @@ public enum ColorTheme {
             static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
 
-        enum Link {
+        enum Link { // TODO: [WPB-24757] not defined on figma, update
             public static let onEnabled = Backgrounds.onSurface
 
             static let onDisabled = Base.secondaryText
@@ -173,7 +178,7 @@ public enum ColorTheme {
         }
     }
 
-    public enum Checkbox {
+    public enum Checkbox { // TODO: [WPB-24757] not defined on figma, update
         public static let enabled = UIColor(light: .gray50, dark: .gray80)
         public static let selected = UIColor(light: .blue500Light, dark: .blue500Dark)
     }
@@ -181,7 +186,10 @@ public enum ColorTheme {
     public enum Strokes {
 
         public static let outline = UIColor(light: .gray40, dark: .gray90)
-        public static let disabledOutline = UIColor(light: .gray50, dark: .gray80)
+        public static let disabledOutline = UIColor(
+            light: .gray50,
+            dark: .gray80
+        ) // TODO: [WPB-24757] not defined on figma, update
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 
@@ -198,8 +206,92 @@ public enum ColorTheme {
         public static let background = UIColor.black.withAlphaComponent(0.55)
     }
 
-    public enum NotificationBadge {
-        public static let fill = ColorTheme.Base.error
+    // TODO: [WPB-24757] missing: Group Avatars
+    // TODO: [WPB-24757] missing: Channel Avatars
+
+    public enum OwnChatBubbles {
+
+        public static func primary(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue500Light, dark: .blue800Dark)
+            case .green:
+                UIColor(light: .green500Light, dark: .green800Dark)
+            case .red:
+                UIColor(light: .red500Light, dark: .red800Dark)
+            case .amber:
+                UIColor(light: .amber500Light, dark: .amber800Dark)
+            case .turquoise:
+                UIColor(light: .turquoise500Light, dark: .turquoise800Dark)
+            case .purple:
+                UIColor(light: .purple500Light, dark: .purple800Dark)
+            }
+        }
+
+        public static let onPrimary: UIColor = .white
+
+        public static func secondary(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue600Light, dark: .blue900Dark)
+            case .green:
+                UIColor(light: .green600Light, dark: .green900Dark)
+            case .red:
+                UIColor(light: .red600Light, dark: .red900Dark)
+            case .amber:
+                UIColor(light: .amber600Light, dark: .amber900Dark)
+            case .turquoise:
+                UIColor(light: .turquoise600Light, dark: .turquoise900Dark)
+            case .purple:
+                UIColor(light: .purple600Light, dark: .purple900Dark)
+            }
+        }
+
+        public static let onSecondary: UIColor = .white
+
+        public static func primaryOnSecondary(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue200Light, dark: .blue400Dark)
+            case .green:
+                UIColor(light: .green200Light, dark: .green400Dark)
+            case .red:
+                UIColor(light: .red200Light, dark: .red400Dark)
+            case .amber:
+                UIColor(light: .amber200Light, dark: .amber400Dark)
+            case .turquoise:
+                UIColor(light: .turquoise200Light, dark: .turquoise400Dark)
+            case .purple:
+                UIColor(light: .purple200Light, dark: .purple400Dark)
+            }
+        }
+    }
+
+    public enum OthersChatBubbles {
+        /// light gray 20 / dark gray 90
+        public static let primary = UIColor(light: .gray20, dark: .gray90)
+        public static let onPrimary = UIColor(light: .black, dark: .white)
+
+        /// white / dark gray 95
+        public static let secondary = UIColor(light: .white, dark: .gray95)
+        public static let onSecondary = UIColor(light: .black, dark: .white)
+
+        public static func primaryOnSecondary(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue500Light, dark: .blue500Dark)
+            case .green:
+                UIColor(light: .green500Light, dark: .green500Dark)
+            case .red:
+                UIColor(light: .red500Light, dark: .red500Dark)
+            case .amber:
+                UIColor(light: .amber500Light, dark: .amber500Dark)
+            case .turquoise:
+                UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+            case .purple:
+                UIColor(light: .purple500Light, dark: .purple500Dark)
+            }
+        }
     }
 }
 

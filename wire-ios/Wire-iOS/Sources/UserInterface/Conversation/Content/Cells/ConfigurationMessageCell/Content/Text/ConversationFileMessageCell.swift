@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 final class ConversationFileMessageCell: UIView, ConversationMessageCell {
@@ -83,6 +84,17 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .default
+        let isOwnMessage = object.message.isSentBySelfUser
+
+        if isOwnMessage {
+            containerView.backgroundColor = ColorTheme.OwnChatBubbles.primary(accentColor)
+            containerView.layer.borderColor = ColorTheme.OwnChatBubbles.primary(accentColor).cgColor
+        } else {
+            containerView.backgroundColor = ColorTheme.OthersChatBubbles.primary
+            containerView.layer.borderColor = ColorTheme.OthersChatBubbles.primary.cgColor
+        }
+
         if object.isObfuscated {
             setup(obfuscationView)
         } else if !object.message.canBeShared {

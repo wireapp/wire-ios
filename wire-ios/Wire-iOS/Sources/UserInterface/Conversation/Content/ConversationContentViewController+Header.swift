@@ -31,14 +31,14 @@ extension ConversationContentViewController {
 
         var headerView: UIView?
 
-        let otherParticipant: ZMUser? = if conversation.conversationType == .connection {
+        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
+            .conversationType == .oneOnOne
+
+        let otherParticipant: ZMUser? = if connectionOrOneOnOne {
             conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
         } else {
             conversation.firstActiveParticipantOtherThanSelf
         }
-
-        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
-            .conversationType == .oneOnOne
 
         if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)

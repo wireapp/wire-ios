@@ -86,10 +86,12 @@ extension NSAttributedString {
     fileprivate static func defaultMarkdownStyle() -> DownStyle {
         let style = DownStyle.normal
 
-        style.baseFont = UIFont.normalLightFont
+        style.baseFont = FontSpec.body.font!
         style.baseFontColor = SemanticColors.Label.textDefault
         style.baseParagraphStyle = paragraphStyle
         style.listItemPrefixColor = style.baseFontColor.withAlphaComponent(0.64)
+        style.quoteColor = style.baseFontColor.withAlphaComponent(0.6)
+        style.quoteParagraphStyle = paragraphStyle.indentedBy(points: 10)
 
         return style
     }
@@ -97,6 +99,7 @@ extension NSAttributedString {
     static func formatForPreview(
         message: TextMessageData,
         inputMode: Bool,
+        textColor: UIColor = SemanticColors.Label.textDefault,
         accentColor: AccentColor
     ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
@@ -131,7 +134,7 @@ extension NSAttributedString {
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
         markdownText.addAttribute(
             .foregroundColor,
-            value: SemanticColors.Label.textDefault,
+            value: textColor,
             range: NSRange(location: 0, length: markdownText.length)
         )
         return markdownText
@@ -270,6 +273,21 @@ private extension IndexSet {
         includedIndexSet.insert(integersIn: range)
 
         self = includedIndexSet.subtracting(excludedIndexSet)
+    }
+
+}
+
+// extension from Down
+private extension NSParagraphStyle {
+
+    func indentedBy(points: CGFloat) -> NSParagraphStyle {
+        let copy = mutableCopy() as! NSMutableParagraphStyle
+        copy.firstLineHeadIndent += points
+        copy.headIndent += points
+        copy.tabStops = copy.tabStops.map {
+            NSTextTab(textAlignment: $0.alignment, location: $0.location + points)
+        }
+        return copy as NSParagraphStyle
     }
 
 }

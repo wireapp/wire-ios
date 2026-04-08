@@ -67,6 +67,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
     let inviteButton = SecondaryTextButton()
+    private let iconImageView = UIImageView()
     var isSelected: Bool = false
 
     // MARK: initialization
@@ -97,6 +98,14 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
         inviteButton.addTarget(self, action: #selector(inviteButtonTapped), for: .touchUpInside)
 
+        iconImageView.image = StyleKitIcon.about.makeImage(
+            size: 20,
+            color: SemanticColors.Icon.backgroundDefault
+        )
+        iconImageView.contentMode = .center
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(iconImageView)
+
         configureTitles(isChannel: false)
     }
 
@@ -112,7 +121,12 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
         let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            iconImageView.widthAnchor.constraint(equalToConstant: 32),
+            iconImageView.heightAnchor.constraint(equalToConstant: 32),
+            iconImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)

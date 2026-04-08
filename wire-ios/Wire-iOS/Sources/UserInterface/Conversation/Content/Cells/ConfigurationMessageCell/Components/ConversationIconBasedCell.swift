@@ -144,10 +144,16 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
                 equalTo: trailingAnchor
             )
         } else {
-            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: conversationHorizontalMargins.left
+            )
             containerWidthConstraint = imageContainer.widthAnchor
-                .constraint(equalToConstant: conversationHorizontalMargins.left)
-            textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
+                .constraint(equalToConstant: 32)
+            textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(
+                equalTo: imageContainer.trailingAnchor,
+                constant: 8
+            )
             textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
                 constant: trailingTextMargin
@@ -200,7 +206,8 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {
-            containerWidthConstraint.constant = conversationHorizontalMargins.left
+            imageContainerLeadingConstraint.constant = conversationHorizontalMargins.left
+            containerWidthConstraint.constant = 32
             textLabelTrailingConstraint.constant = trailingTextMargin
         }
     }

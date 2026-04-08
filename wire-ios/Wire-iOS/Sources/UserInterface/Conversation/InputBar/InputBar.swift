@@ -102,6 +102,7 @@ enum InputBarState: Equatable {
 
 private struct InputBarConstants {
     let buttonsBarHeight: CGFloat = 56
+    let leftAccessoryWidth: CGFloat = 56
 }
 
 final class InputBar: UIView {
@@ -120,7 +121,7 @@ final class InputBar: UIView {
     private let rightAccessoryStackView: UIStackView = {
         let stackView = UIStackView()
 
-        let rightInset = (stackView.conversationHorizontalMargins.left - rightIconSize) / 2
+        let rightInset = (InputBarConstants().leftAccessoryWidth - rightIconSize) / 2
 
         stackView.spacing = 16
         stackView.axis = .horizontal
@@ -182,7 +183,7 @@ final class InputBar: UIView {
     fileprivate let constants = InputBarConstants()
 
     private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor
-        .constraint(equalToConstant: conversationHorizontalMargins.left)
+        .constraint(equalToConstant: constants.leftAccessoryWidth)
 
     var isEditing: Bool {
         inputBarState.isEditing
@@ -445,11 +446,11 @@ final class InputBar: UIView {
     }
 
     fileprivate func updateLeftAccessoryViewWidth() {
-        leftAccessoryViewWidthConstraint.constant = conversationHorizontalMargins.left
+        leftAccessoryViewWidthConstraint.constant = constants.leftAccessoryWidth
     }
 
     fileprivate func updateRightAccessoryStackViewLayoutMargins() {
-        let rightInset = (conversationHorizontalMargins.left - InputBar.rightIconSize) / 2
+        let rightInset = (constants.leftAccessoryWidth - InputBar.rightIconSize) / 2
         rightAccessoryStackView.layoutMargins = UIEdgeInsets(top: 0, left: rightInset, bottom: 0, right: rightInset)
     }
 

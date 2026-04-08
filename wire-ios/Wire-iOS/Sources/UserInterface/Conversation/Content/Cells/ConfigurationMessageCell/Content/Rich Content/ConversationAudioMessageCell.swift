@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
@@ -84,6 +85,15 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .default
+        if object.message.isSentBySelfUser {
+            containerView.backgroundColor = ColorTheme.OwnChatBubbles.primary(accentColor)
+            containerView.layer.borderColor = ColorTheme.OwnChatBubbles.primary(accentColor).cgColor
+        } else {
+            containerView.backgroundColor = ColorTheme.OthersChatBubbles.primary
+            containerView.layer.borderColor = ColorTheme.OthersChatBubbles.primary.cgColor
+        }
+
         transferView.setUserSession(userSession: object.userSession)
 
         if object.isObfuscated {
