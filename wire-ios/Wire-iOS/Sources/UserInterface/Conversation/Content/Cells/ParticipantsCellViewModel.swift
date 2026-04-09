@@ -264,7 +264,7 @@ final class ParticipantsCellViewModel {
             nil
         }
     }
-    
+
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
         return L10n.Localizable.Content.System.Apps.warning

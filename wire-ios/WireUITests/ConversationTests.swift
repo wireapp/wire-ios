@@ -50,7 +50,6 @@ final class ConversationTests: WireUITestCase {
         XCTAssertTrue(sentMessages.isEmpty)
     }
 
-    
     @MainActor
     func testLeaveGroup_TC_8861() async throws {
         let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
@@ -72,16 +71,16 @@ final class ConversationTests: WireUITestCase {
             .leaveOptionsConversationDetails()
             .leaveConversation()
             .closeConversationDetails()
-        
+
         // THEN
         let userMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertEqual(userMessages.count, 1)
-        
+
         XCTAssertTrue(activeConversationPage.userLeftSystemMessage.exists, "the system message is missing")
     }
 
     @MainActor
-    func testLeaveAndClearGroup() async throws {
+    func testLeaveAndClearGroup_TC_10525() async throws {
         let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamOwner)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
@@ -101,11 +100,11 @@ final class ConversationTests: WireUITestCase {
             .leaveOptionsConversationDetails()
             .leaveAndClearConversation()
             .closeConversationDetails()
-        
+
         // THEN
         let userMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertEqual(userMessages.count, 0)
-        
+
         XCTAssertFalse(activeConversationPage.userLeftSystemMessage.exists, "the system message has not been removed")
     }
 

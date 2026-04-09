@@ -39,22 +39,22 @@ enum LeaveResult: AlertResultConfiguration {
 
     func action(_ handler: @escaping (LeaveResult) -> Void) -> UIAlertAction {
         let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
-        let identifier: String?
-        switch self {
+        let identifier: String? = switch self {
         case .leave(delete: true):
-            identifier = Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue
-            
+            Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue
+
         case .leave(delete: false):
-            identifier = Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue
+            Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue
+
         case .cancel:
-            identifier = nil
+            nil
         }
-        
+
         if let identifier {
             action.setValue(identifier, forKey: "accessibilityIdentifier")
         }
         return action
-        
+
     }
 
     static var title: String {

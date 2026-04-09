@@ -68,8 +68,7 @@ class ActiveConversationPage: PageModel {
     var imageCell: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
-    
-    
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
