@@ -50,4 +50,34 @@ final class ConversationTests: WireUITestCase {
         XCTAssertTrue(sentMessages.isEmpty)
     }
 
+    
+    @MainActor
+    func testLeaveGroup_TC_8861() async throws {
+        let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
+        let userA = try XCTUnwrap(stagingTeam.teamOwner)
+        let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
+
+        let conversationsPage = try await loginToBackend(user: userA)
+
+        // WHEN
+        let activeConversationPage = try conversationsPage
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName("test")
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .sendMessage("test")
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .leaveConversation()
+            .closeConversationDetails()
+        
+        // THEN
+        let userMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertEqual(userMessages.count, 1)
+        
+        XCTAssertTrue(activeConversationPage.userLeftSystemMessage.exists, "the system message is missing")
+    }
+
 }

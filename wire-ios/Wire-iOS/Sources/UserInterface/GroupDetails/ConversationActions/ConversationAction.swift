@@ -189,6 +189,7 @@ extension ZMConversation.Action {
         switch self {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
         case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
+        case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
         default: nil
         }
     }

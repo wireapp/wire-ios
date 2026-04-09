@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 enum ConversationActionType {
 
@@ -255,6 +256,15 @@ final class ParticipantsCellViewModel {
         }
     }
 
+    var accessibilityIdentifier: String? {
+        switch action {
+        case .left:
+            Locators.ConversationsPage.useLeftSystemMessage.rawValue
+        default:
+            nil
+        }
+    }
+    
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
         return L10n.Localizable.Content.System.Apps.warning

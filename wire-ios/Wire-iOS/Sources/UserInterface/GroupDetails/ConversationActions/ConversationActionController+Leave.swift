@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum LeaveResult: AlertResultConfiguration {
     case leave(delete: Bool)
@@ -37,7 +38,23 @@ enum LeaveResult: AlertResultConfiguration {
     }
 
     func action(_ handler: @escaping (LeaveResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        let identifier: String?
+        switch self {
+        case .leave(delete: true):
+            identifier = Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue
+            
+        case .leave(delete: false):
+            identifier = Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue
+        case .cancel:
+            identifier = nil
+        }
+        
+        if let identifier {
+            action.setValue(identifier, forKey: "accessibilityIdentifier")
+        }
+        return action
+        
     }
 
     static var title: String {
@@ -52,7 +69,7 @@ enum LeaveResult: AlertResultConfiguration {
 extension ConversationActionController {
 
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard  case let .leave(delete: delete) = result else { return }
+        guard  case let .leave(delete: clearContent) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -65,13 +82,12 @@ extension ConversationActionController {
         }
 
         Task {
-            await useCase.invoke()
-            if delete {
-                await ZClientViewController.shared?.transitionToList()
-                await MainActor.run {
-                    userSession.enqueue {
-                        conversation.removeOrShowError(participant: user)
-                    }
+            if clearContent {
+                await useCase.invoke()
+            }
+            await MainActor.run {
+                userSession.enqueue {
+                    conversation.removeOrShowError(participant: user)
                 }
             }
         }
