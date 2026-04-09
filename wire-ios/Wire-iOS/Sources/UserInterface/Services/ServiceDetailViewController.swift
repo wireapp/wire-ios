@@ -198,7 +198,8 @@ final class ServiceDetailViewController: UIViewController {
             url: "",
             providerDescription: ""
         )
-        if let usersAPI = userSession.clientSessionComponent?.usersAPI, let userID = service.user.qualifiedID(localDomain: userSession.resolvedBackendMetadata.domain) {
+        if let usersAPI = userSession.clientSessionComponent?.usersAPI,
+           let userID = service.user.qualifiedID(localDomain: userSession.resolvedBackendMetadata.domain) {
             Task {
                 do {
                     guard let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
