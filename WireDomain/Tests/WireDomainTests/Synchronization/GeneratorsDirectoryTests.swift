@@ -23,17 +23,9 @@ import WireDomainSupport
 @testable import WireDomain
 
 @Suite("GeneratorsDirectory", .timeLimit(.minutes(1)))
-struct GeneratorsDirectoryTests { // failing
+struct GeneratorsDirectoryTests {
 
     // MARK: - Helpers
-
-    /// Awaits the first time `block` is executed (used to reliably observe async `.start()` calls triggered from a
-    /// `Task { }`).
-    private func waitForCall(_ installHandler: (@escaping () -> Void) -> Void) async {
-        await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
-            installHandler { c.resume() }
-        }
-    }
 
     let subject = PassthroughSubject<SyncState, Never>()
     let base = MockGeneratorProtocol()
@@ -52,7 +44,8 @@ struct GeneratorsDirectoryTests { // failing
     // MARK: - Tests
 
     @Test("idle / initialSyncing stops all generators", arguments: [
-        SyncState.idle, .initialSyncing(.pullLastEventID),
+        SyncState.idle,
+        .initialSyncing(.pullLastEventID),
         .initialSyncing(.pullResources),
         .initialSyncing(.pushSupportedProtocols),
         .initialSyncing(.resolveOneOnOneConversations)
@@ -65,7 +58,7 @@ struct GeneratorsDirectoryTests { // failing
         )
         sut.observeSyncState()
 
-        async let incrementalStoped: Void = waitForCall { resume in
+        async let incrementalStoped: Void = waitForCall { [incremental] resume in
             incremental.stop_MockMethod = { resume() }
         }
 
@@ -161,5 +154,14 @@ struct GeneratorsDirectoryTests { // failing
         // THEN
         #expect(base.stop_Invocations.count == 1)
         #expect(live.stop_Invocations.count == 1)
+    }
+
+}
+
+/// Awaits the first time `block` is executed (used to reliably observe async `.start()` calls triggered from a
+/// `Task { }`).
+private func waitForCall(_ installHandler: (@escaping () -> Void) -> Void) async {
+    await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
+        installHandler { c.resume() }
     }
 }
