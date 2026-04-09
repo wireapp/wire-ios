@@ -18,17 +18,12 @@
 
 import Foundation
 
-extension URLSession {
+extension URLSessionConfiguration {
 
-    /// A url session powered by `URLProtocolMock`.
-    ///
-    /// Set `URLProtocolMock.mockHandler` with a mocking function to
-    /// control how request received by this URL session are handled.
-
-    static func mockURLSession() -> URLSession {
+    static var mock: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
         config.protocolClasses = [URLProtocolMock.self]
-        return URLSession(configuration: config)
+        return config
     }
 
 }
