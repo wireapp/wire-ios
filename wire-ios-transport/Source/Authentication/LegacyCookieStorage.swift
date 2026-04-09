@@ -30,7 +30,6 @@ private let cookieName = "zuid"
 
 // sourcery: AutoMockable
 @objc public protocol LegacyCookieStorageProtocol {
-    func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
     func removeCookies() throws
     var authenticationCookieExpirationDate: Date? { get }
@@ -70,24 +69,14 @@ public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
     }
 
     @objc
-    public func authenticationCookies() -> [HTTPCookie]? {
-        do {
-            let cookies = try cookieStorage.fetchCookies()
-            return cookies.isEmpty ? nil : cookies
-        } catch {
-            WireLogger.authentication.error("Failed to fetch cookies: \(error)")
-            return nil
-        }
-    }
-
-    @objc
     public func removeCookies() throws {
         try cookieStorage.removeCookies()
     }
 
     @objc
     public var authenticationCookieExpirationDate: Date? {
-        for cookie in authenticationCookies() ?? [] {
+        let cookies = (try? cookieStorage.fetchCookies()) ?? []
+        for cookie in cookies {
             if cookie.name == cookieName {
                 return cookie.expiresDate
             }
@@ -120,9 +109,7 @@ public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
 
     @objc(setRequestHeaderFieldsOnRequest:)
     public func setRequestHeaderFields(on request: NSMutableURLRequest) {
-        guard let cookies = authenticationCookies() else {
-            return
-        }
+        let cookies = (try? cookieStorage.fetchCookies()) ?? []
 
         for (field, value) in HTTPCookie.requestHeaderFields(with: cookies) {
             request.addValue(value, forHTTPHeaderField: field)
