@@ -23,8 +23,10 @@ import WireLogging
 public extension CoreCrypto {
 
     static func registerLogger() {
-        setLogger(CoreCryptoLoggerProxy())
-        setMaxLogLevel(.debug)
+        if DeveloperFlag.enabledCCDebugLogs.isOn {
+            setLogger(CoreCryptoLoggerProxy())
+            setMaxLogLevel(.debug)
+        }
     }
 
 }
