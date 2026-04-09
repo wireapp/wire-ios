@@ -29,7 +29,7 @@ final class MockCookieStorage: CookieProvider {
     func setRequestHeaderFields(on request: NSMutableURLRequest) {}
 
     var didCallRemoveCookies: Bool = false
-    func removeCookies() {
+    func removeCookies() throws {
         didCallRemoveCookies = true
     }
 

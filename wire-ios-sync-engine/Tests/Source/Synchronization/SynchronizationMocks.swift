@@ -206,7 +206,7 @@ class FakeCookieStorage: NSObject, LegacyCookieStorageProtocol, CookieProvider {
 
     func authenticationCookies() -> [HTTPCookie]? { nil }
     func setAuthenticationCookies(_ cookies: [HTTPCookie]) {}
-    func removeCookies() {}
+    func removeCookies() throws {}
     var authenticationCookieExpirationDate: Date?
     var hasAuthenticationCookie: Bool = false
     func setCookieData(from response: HTTPURLResponse, for url: URL) {}

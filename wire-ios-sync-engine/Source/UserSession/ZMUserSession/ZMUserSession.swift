@@ -1533,7 +1533,11 @@ extension ZMUserSession {
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
 
             clientRegistrationStatus.emailCredentials = nil
-            clientRegistrationStatus.cookieProvider.removeCookies()
+            do {
+                try clientRegistrationStatus.cookieProvider.removeCookies()
+            } catch {
+                WireLogger.authentication.error("Failed to remove cookies: \(error)")
+            }
 
             let selfUser = ZMUser.selfUser(in: syncContext)
             let clientDeletedRemotelyError = NSError.userSessionError(

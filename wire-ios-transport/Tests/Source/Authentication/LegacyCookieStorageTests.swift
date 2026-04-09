@@ -32,7 +32,7 @@ final class LegacyCookieStorageTests: XCTestCase {
     }
 
     override func tearDown() {
-        sut.removeCookies()
+        try? sut.removeCookies()
         sut = nil
         userIdentifier = nil
         super.tearDown()
@@ -63,12 +63,12 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertTrue(sut.hasAuthenticationCookie)
     }
 
-    func testThatItCanDeleteCookies() {
+    func testThatItCanDeleteCookies() throws {
         XCTAssertFalse(sut.hasAuthenticationCookie)
 
         sut.setAuthenticationCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut.hasAuthenticationCookie)
-        sut.removeCookies()
+        try sut.removeCookies()
         XCTAssertFalse(sut.hasAuthenticationCookie)
     }
 
@@ -83,7 +83,7 @@ final class LegacyCookieStorageTests: XCTestCase {
 
     // MARK: - Per-user isolation
 
-    func testThatItCanDeleteCookiesForASpecificCookieStorage() {
+    func testThatItCanDeleteCookiesForASpecificCookieStorage() throws {
         // given
         let otherUserIdentifier = UUID()
         let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
@@ -95,19 +95,19 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertTrue(sut2.hasAuthenticationCookie)
 
         // when
-        sut1.removeCookies()
+        try sut1.removeCookies()
 
         // then
         XCTAssertFalse(sut1.hasAuthenticationCookie)
         XCTAssertTrue(sut2.hasAuthenticationCookie)
 
         // when
-        sut2.removeCookies()
+        try sut2.removeCookies()
         XCTAssertFalse(sut1.hasAuthenticationCookie)
         XCTAssertFalse(sut2.hasAuthenticationCookie)
     }
 
-    func testThatItCanDeleteAllCookies() {
+    func testThatItCanDeleteAllCookies() throws {
         // given
         let otherUserIdentifier = UUID()
         let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
@@ -119,8 +119,8 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertTrue(sut2.hasAuthenticationCookie)
 
         // when
-        sut1.removeCookies()
-        sut2.removeCookies()
+        try sut1.removeCookies()
+        try sut2.removeCookies()
 
         // then
         XCTAssertFalse(sut1.hasAuthenticationCookie)
@@ -305,8 +305,8 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertFalse(sut.hasAuthenticationCookie)
     }
 
-    func testThatRemoveCookiesDoesNotFailWhenNothingIsStored() {
-        sut.removeCookies()
+    func testThatRemoveCookiesDoesNotFailWhenNothingIsStored() throws {
+        try sut.removeCookies()
         XCTAssertFalse(sut.hasAuthenticationCookie)
     }
 

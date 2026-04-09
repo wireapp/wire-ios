@@ -1161,7 +1161,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
-        environment.cookieStorage(for: account).removeCookies()
+        do {
+            try environment.cookieStorage(for: account).removeCookies()
+        } catch {
+            WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
+        }
         account.deleteKeychainItems()
 
         clearCRLExpirationDates(for: account)

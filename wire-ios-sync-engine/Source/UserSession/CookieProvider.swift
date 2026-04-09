@@ -21,7 +21,7 @@ import Foundation
 public protocol CookieProvider {
     var isAuthenticated: Bool { get }
     func setRequestHeaderFields(on request: NSMutableURLRequest)
-    func removeCookies()
+    func removeCookies() throws
 }
 
 extension LegacyCookieStorage: CookieProvider {

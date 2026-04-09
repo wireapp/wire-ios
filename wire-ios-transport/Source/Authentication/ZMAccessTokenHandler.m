@@ -322,7 +322,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     if (didFail) {
         [self logError:[NSString stringWithFormat:@"Failed to process access token response... clearing access token and cookie. Response result: %d, response status: %ld", response.result, (long)response.HTTPStatus]];
         self.accessToken = nil;
-        [self.cookieStorage removeCookies];
+        [self.cookieStorage removeCookiesAndReturnError:nil];
         [self notifyTokenFailure:response];
     }
     

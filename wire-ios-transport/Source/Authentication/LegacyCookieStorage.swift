@@ -32,7 +32,7 @@ private let cookieName = "zuid"
 @objc public protocol LegacyCookieStorageProtocol {
     func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
-    func removeCookies()
+    func removeCookies() throws
     var authenticationCookieExpirationDate: Date? { get }
     var hasAuthenticationCookie: Bool { get }
     @objc(setCookieDataFromResponse:forURL:)
@@ -81,12 +81,8 @@ public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
     }
 
     @objc
-    public func removeCookies() {
-        do {
-            try cookieStorage.removeCookies()
-        } catch {
-            WireLogger.authentication.error("Failed to remove cookies: \(error)")
-        }
+    public func removeCookies() throws {
+        try cookieStorage.removeCookies()
     }
 
     @objc
