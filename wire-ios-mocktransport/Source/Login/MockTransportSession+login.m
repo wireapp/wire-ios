@@ -90,7 +90,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSDictionary *cookieHeaders = @{@"Set-Cookie": cookiesValue};
         NSURL *url = [NSURL URLWithString:@"https://example.com"];
         NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:cookieHeaders forURL:url];
-        [self.cookieStorage setAuthenticationCookies:cookies];
+        [self.cookieStorage storeCookies:cookies error:nil];
 
         self.selfUser = user;
         self.clientCompletedLogin = YES;

@@ -215,7 +215,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         syncMOC.performAndWait {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
-            cookieStorage.setAuthenticationCookies(validCookies)
+            try? cookieStorage.storeCookies(validCookies)
         }
     }
 
@@ -224,7 +224,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
         }
-        cookieStorage.setAuthenticationCookies(validCookies)
+        try? cookieStorage.storeCookies(validCookies)
     }
 
     private func clearCache() {

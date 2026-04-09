@@ -1424,7 +1424,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    [self.sut.cookieStorage setAuthenticationCookies:[NSHTTPCookie validCookies]];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
     // The request will fail with a 401:
     NSDictionary *dummyPayload = @{@"b": @"B"};
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request, NSData *data ZM_UNUSED) {
@@ -1462,7 +1462,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    [self.sut.cookieStorage setAuthenticationCookies:[NSHTTPCookie validCookies]];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1487,7 +1487,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    [self.sut.cookieStorage setAuthenticationCookies:[NSHTTPCookie validCookies]];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];

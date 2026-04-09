@@ -30,7 +30,7 @@ private let cookieName = "zuid"
 
 // sourcery: AutoMockable
 @objc public protocol LegacyCookieStorageProtocol {
-    func setAuthenticationCookies(_ cookies: [HTTPCookie])
+    func storeCookies(_ cookies: [HTTPCookie]) throws
     func removeCookies() throws
     var authenticationCookieExpirationDate: Date? { get }
     var hasAuthenticationCookie: Bool { get }
@@ -60,12 +60,8 @@ public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
     // MARK: - Public API
 
     @objc
-    public func setAuthenticationCookies(_ cookies: [HTTPCookie]) {
-        do {
-            try cookieStorage.storeCookies(cookies)
-        } catch {
-            WireLogger.authentication.error("Failed to store cookies: \(error)")
-        }
+    public func storeCookies(_ cookies: [HTTPCookie]) throws {
+        try cookieStorage.storeCookies(cookies)
     }
 
     @objc
@@ -104,7 +100,11 @@ public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
             return
         }
 
-        setAuthenticationCookies(cookies)
+        do {
+            try storeCookies(cookies)
+        } catch {
+            WireLogger.authentication.error("Failed to store cookies: \(error)")
+        }
     }
 
     @objc(setRequestHeaderFieldsOnRequest:)

@@ -44,38 +44,38 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertFalse(sut.hasAuthenticationCookie)
     }
 
-    func testThatItStoresTheCookie() {
+    func testThatItStoresTheCookie() throws {
         XCTAssertFalse(sut.hasAuthenticationCookie)
-        sut.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut.hasAuthenticationCookie)
     }
 
-    func testThatItUpdatesTheCookie() {
+    func testThatItUpdatesTheCookie() throws {
         XCTAssertFalse(sut.hasAuthenticationCookie)
 
-        sut.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut.hasAuthenticationCookie)
 
         let otherCookies = HTTPCookie.validCookies(
             string: "zuid=other; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure"
         )
-        sut.setAuthenticationCookies(otherCookies)
+        try sut.storeCookies(otherCookies)
         XCTAssertTrue(sut.hasAuthenticationCookie)
     }
 
     func testThatItCanDeleteCookies() throws {
         XCTAssertFalse(sut.hasAuthenticationCookie)
 
-        sut.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut.hasAuthenticationCookie)
         try sut.removeCookies()
         XCTAssertFalse(sut.hasAuthenticationCookie)
     }
 
-    func testThatItPersistsCookies() {
-        autoreleasepool {
+    func testThatItPersistsCookies() throws {
+        try autoreleasepool {
             let sut1 = sut!
-            sut1.setAuthenticationCookies(HTTPCookie.validCookies())
+            try sut1.storeCookies(HTTPCookie.validCookies())
         }
         let sut2 = sut!
         XCTAssertTrue(sut2.hasAuthenticationCookie)
@@ -89,9 +89,9 @@ final class LegacyCookieStorageTests: XCTestCase {
         let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
         let sut2 = LegacyCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
 
-        sut1.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut1.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut1.hasAuthenticationCookie)
-        sut2.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut2.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut2.hasAuthenticationCookie)
 
         // when
@@ -113,9 +113,9 @@ final class LegacyCookieStorageTests: XCTestCase {
         let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
         let sut2 = LegacyCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
 
-        sut1.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut1.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut1.hasAuthenticationCookie)
-        sut2.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut2.storeCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut2.hasAuthenticationCookie)
 
         // when
@@ -186,10 +186,10 @@ final class LegacyCookieStorageTests: XCTestCase {
         XCTAssertEqual(dateFormatter.string(from: expirationDate), "2024-07-21T09:06:45Z")
     }
 
-    func testThatItDoesNotSetACookieDataIfNewCookieIsInvalid() {
+    func testThatItDoesNotSetACookieDataIfNewCookieIsInvalid() throws {
         // given
         XCTAssertFalse(sut.hasAuthenticationCookie)
-        sut.setAuthenticationCookies(HTTPCookie.validCookies())
+        try sut.storeCookies(HTTPCookie.validCookies())
 
         let headerFields = [
             "Date": "Thu, 24 Jul 2014 09:06:45 GMT",

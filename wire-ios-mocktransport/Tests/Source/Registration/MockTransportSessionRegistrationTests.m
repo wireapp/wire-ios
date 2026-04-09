@@ -139,7 +139,7 @@
     __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
 
     // expect
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] storeCookies:OCMOCK_ANY error:[OCMArg anyObjectRef]];
 
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -353,7 +353,7 @@
     [self requestVerificationCodeForPhone:phone];
     
     // expect
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookies:OCMOCK_ANY];
+    [[(id) self.sut.cookieStorage expect] storeCookies:OCMOCK_ANY error:[OCMArg anyObjectRef]];
     
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];

@@ -127,7 +127,7 @@
         NSDictionary *headers = @{@"Set-Cookie": cookiesValue};
         NSURL *url = [NSURL URLWithString:@"https://example.com"];
         NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url];
-        [self.cookieStorage setAuthenticationCookies:cookies];
+        [self.cookieStorage storeCookies:cookies error:nil];
 
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": cookiesValue} apiVersion:request.apiVersion];
     }
