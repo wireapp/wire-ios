@@ -77,6 +77,7 @@ public enum Locators {
         case filterByOneOnOneConversation = "Show all one on one conversations"
         case textFilteredByFavourites = "Filtered by Favorites"
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case userRemovedSystemMessage
         case connectionRequestsCell
         case unreadMessageCount
     }

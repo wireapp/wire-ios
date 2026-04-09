@@ -64,6 +64,18 @@ class NewConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.NewConversationPage.usernameCell.rawValue].firstMatch
     }
 
+    func searchedUserCell(handle: String) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(identifier: Locators.NewConversationPage.usernameCell.rawValue)
+            .matching(NSPredicate(format: "label CONTAINS %@", handle))
+            .firstMatch
+    }
+
+    func tapSearchedUserCell(handle: String) throws -> UserDetailsPage {
+        searchedUserCell(handle: handle).waitAndTap()
+        return try UserDetailsPage()
+    }
+
     func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {
         try searchByNameOrUsernameSearchBox.tapIfKeyboardNotFocused().typeText(handle)
         return self
@@ -74,6 +86,7 @@ class NewConversationPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeNewConversationPage() throws -> ConversationsPage {
         cancelButtonOnSearchedUserPage.tap()
         cancelButtonOnNewConversation.tap()

@@ -62,7 +62,7 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
         // THEN
-        let factory = ConversationPredicateFactory(selfTeam: team)
+        let factory = ConversationPredicateFactory(selfUser: selfUser, selfTeam: team)
         XCTAssertTrue(factory.predicateForOneToOneConversations().evaluate(with: conversation))
     }
 }

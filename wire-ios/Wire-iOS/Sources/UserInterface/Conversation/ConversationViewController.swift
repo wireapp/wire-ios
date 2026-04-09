@@ -784,6 +784,10 @@ extension ConversationViewController: UserObserving {
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
+        if changeInfo.user.isAccountDeleted {
+            // updates UI since conversation should be readonly
+            update(conversation: conversation)
+        }
     }
 }
 

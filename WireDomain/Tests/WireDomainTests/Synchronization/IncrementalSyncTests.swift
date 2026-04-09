@@ -310,7 +310,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         let token = try await sut.perform()
         await token.task.value
-        wait(for: [expectation])
+        wait(for: [expectation], timeout: 5)
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(

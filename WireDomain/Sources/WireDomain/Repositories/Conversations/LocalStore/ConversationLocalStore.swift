@@ -884,8 +884,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
     }
 
-    public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService?.wipeGroup(groupID)
+    public func clearMLSGroupID(mlsGroupID: MLSGroupID) async {
+        await context.perform { [context] in
+            guard let conversation = ZMConversation.fetch(
+                with: mlsGroupID,
+                in: context
+            ) else {
+                return
+            }
+            conversation.mlsGroupID = nil
+            context.saveOrRollback()
+        }
     }
 
     public func storeConversation(

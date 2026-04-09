@@ -37,12 +37,12 @@ final class RequestSnapshotter {
     ) {
         self.networkService = NetworkService(
             baseURL: baseURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: currentDateProvider
             )
         )
-        networkService.configure(with: .mockURLSession())
 
         let authenticationManager = MockAuthenticationManagerProtocol()
         authenticationManager.getValidAccessToken_MockValue = AccessToken(

@@ -49,5 +49,10 @@ package struct WireDriveAttachmentsPreviewView: View {
 // MARK: - Preview
 
 #Preview {
-    WireDriveAttachmentsPreviewView(viewModel: .makePreview())
+    VStack {
+        WireDriveAttachmentsPreviewView(viewModel: .makePreview())
+    }
+    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.gray)
 }
