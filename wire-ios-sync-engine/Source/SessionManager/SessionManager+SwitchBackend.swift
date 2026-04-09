@@ -37,7 +37,7 @@ public extension SessionManager {
 
     func switchBackendWithoutResolving(to environment: BackendEnvironment) {
         self.environment = environment
-        unauthenticatedSession = nil
+        setUnauthenticatedSession(nil)
     }
 
     func switchBackend(
@@ -45,7 +45,7 @@ public extension SessionManager {
         completion: @escaping ((any Error)?) -> Void = { _ in }
     ) {
         self.environment = environment
-        unauthenticatedSession = nil
+        setUnauthenticatedSession(nil)
         completion(nil)
     }
 
