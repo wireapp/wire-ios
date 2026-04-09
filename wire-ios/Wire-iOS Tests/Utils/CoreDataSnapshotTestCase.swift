@@ -124,6 +124,12 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         return user
     }
 
+    func createApp(name: String) -> ZMUser {
+        let user = createUser(name: name)
+        user.type = .app
+        return user
+    }
+
     func nonTeamTest(_ block: () -> Void) {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = false
