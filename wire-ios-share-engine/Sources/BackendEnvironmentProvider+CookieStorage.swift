@@ -39,3 +39,5 @@ extension BackendEnvironmentProvider {
         cookieStorage(for: account).hasAuthenticationCookie
     }
 }
+
+extension CookieStorage: WireTransport.CookieStorageProtocol {}
