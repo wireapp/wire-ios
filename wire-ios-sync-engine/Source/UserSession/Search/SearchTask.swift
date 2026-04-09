@@ -251,7 +251,7 @@ public final class SearchTask {
             ) : []
             let apps = request.searchOptions.contains(.apps) ? apps(
                 in: team,
-                matching: request
+                matching: request.normalizedQuery
             ) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
@@ -370,10 +370,10 @@ public final class SearchTask {
 
     private func apps(
         in team: WireDataModel.Team?,
-        matching request: SearchRequest
+        matching query: String
     ) -> [ZMUser] {
         team?.members(
-            matchingQuery: request.normalizedQuery,
+            matchingQuery: query,
             filteredBy: .app
         ).compactMap(\.user) ?? []
     }
