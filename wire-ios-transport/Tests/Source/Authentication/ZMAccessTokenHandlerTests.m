@@ -35,7 +35,7 @@
 @property (nonatomic) ZMAccessToken *expiredAccessToken;
 @property (nonatomic) id urlSession;
 
-@property (nonatomic) PersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) FakeExponentialBackoff *backoff;
 @property (nonatomic) FakeDelegate *delegate;
@@ -73,7 +73,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
+    self.cookieStorage = [[LegacyCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];

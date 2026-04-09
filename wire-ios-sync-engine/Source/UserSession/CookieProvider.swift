@@ -24,7 +24,7 @@ public protocol CookieProvider {
     func removeCookies()
 }
 
-extension PersistentCookieStorage: CookieProvider {
+extension LegacyCookieStorage: CookieProvider {
 
     public var isAuthenticated: Bool {
         hasAuthenticationCookie

@@ -32,7 +32,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // given
         let userId = NSUUID.create()!
 
-        cookieStorage = PersistentCookieStorage(
+        cookieStorage = LegacyCookieStorage(
             testingWithUserIdentifier: userId
         )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)

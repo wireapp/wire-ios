@@ -24,7 +24,7 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
 
     fileprivate var sut: DeleteAccountRequestStrategy!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
-    fileprivate let cookieStorage = PersistentCookieStorage(testingWithUserIdentifier: .init())
+    fileprivate let cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: .init())
     private var accountDeleted: Bool = false
     var observers: [Any] = []
 

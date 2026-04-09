@@ -37,7 +37,7 @@ private final class StubCookieStorage: CookieStorageProtocol {
 
 }
 
-public extension PersistentCookieStorage {
+public extension LegacyCookieStorage {
 
     @objc
     convenience init(testingWithUserIdentifier userIdentifier: UUID) {

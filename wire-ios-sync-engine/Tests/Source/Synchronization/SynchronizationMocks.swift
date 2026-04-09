@@ -200,9 +200,9 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 }
 
 @objc
-class FakeCookieStorage: NSObject, PersistentCookieStorageProtocol, CookieProvider {
+class FakeCookieStorage: NSObject, LegacyCookieStorageProtocol, CookieProvider {
 
-    // MARK: - PersistentCookieStorageProtocol
+    // MARK: - LegacyCookieStorageProtocol
 
     func authenticationCookies() -> [HTTPCookie]? { nil }
     func setAuthenticationCookies(_ cookies: [HTTPCookie]) {}

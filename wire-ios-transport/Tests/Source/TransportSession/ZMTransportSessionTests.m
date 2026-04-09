@@ -229,7 +229,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) FakeTransportRequestScheduler *scheduler;
 @property (nonatomic) MockSessionsDirectory *sessionsDirectory;
 @property (nonatomic) NSUUID *userIdentifier;
-@property (nonatomic) PersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) MockBackgroundActivityManager *activityManager;
 @property (nonatomic) MockEnvironment *environment;
@@ -296,7 +296,7 @@ static XCTestCase *currentTestCase;
     self.environment = [[MockEnvironment alloc] init];
     self.environment.backendURL = [NSURL URLWithString:@"https://base.example.com"];
     self.environment.backendWSURL = [NSURL URLWithString:@"https://websocket.example.com"];
-    self.cookieStorage = [[PersistentCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
+    self.cookieStorage = [[LegacyCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
 
     self.activityManager = [[MockBackgroundActivityManager alloc] init];
@@ -1525,7 +1525,7 @@ static XCTestCase *currentTestCase;
     // when
     XCTestExpectation *didRun = [self customExpectationWithDescription:@"completion handler"];
     ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
-    PersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
+    LegacyCookieStorage *cookieStorage = self.sut.cookieStorage;
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED r) {
         XCTAssertTrue(cookieStorage.hasAuthenticationCookie);
         [didRun fulfill];

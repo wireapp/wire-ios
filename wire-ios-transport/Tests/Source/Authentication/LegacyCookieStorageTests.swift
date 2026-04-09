@@ -20,15 +20,15 @@ import XCTest
 import WireTransport
 import WireTransportSupport
 
-final class PersistentCookieStorageTests: XCTestCase {
+final class LegacyCookieStorageTests: XCTestCase {
 
     private var userIdentifier: UUID!
-    private var sut: PersistentCookieStorage!
+    private var sut: LegacyCookieStorage!
 
     override func setUp() {
         super.setUp()
         userIdentifier = UUID()
-        sut = PersistentCookieStorage(testingWithUserIdentifier: userIdentifier)
+        sut = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
     }
 
     override func tearDown() {
@@ -86,8 +86,8 @@ final class PersistentCookieStorageTests: XCTestCase {
     func testThatItCanDeleteCookiesForASpecificCookieStorage() {
         // given
         let otherUserIdentifier = UUID()
-        let sut1 = PersistentCookieStorage(testingWithUserIdentifier: userIdentifier)
-        let sut2 = PersistentCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
+        let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
+        let sut2 = LegacyCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
 
         sut1.setAuthenticationCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut1.hasAuthenticationCookie)
@@ -110,8 +110,8 @@ final class PersistentCookieStorageTests: XCTestCase {
     func testThatItCanDeleteAllCookies() {
         // given
         let otherUserIdentifier = UUID()
-        let sut1 = PersistentCookieStorage(testingWithUserIdentifier: userIdentifier)
-        let sut2 = PersistentCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
+        let sut1 = LegacyCookieStorage(testingWithUserIdentifier: userIdentifier)
+        let sut2 = LegacyCookieStorage(testingWithUserIdentifier: otherUserIdentifier)
 
         sut1.setAuthenticationCookies(HTTPCookie.validCookies())
         XCTAssertTrue(sut1.hasAuthenticationCookie)

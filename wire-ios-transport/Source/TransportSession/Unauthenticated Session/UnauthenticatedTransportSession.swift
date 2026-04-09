@@ -54,7 +54,7 @@ public final class UserInfo: NSObject {
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
 /// until a user has been authenticated. Consumers should set themselves as delegate to
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
-/// When cookie data became available it should be used to create a `PersistentCookieStorage` and
+/// When cookie data became available it should be used to create a `LegacyCookieStorage` and
 /// to create a regular transport session with it.
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 

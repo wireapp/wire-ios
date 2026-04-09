@@ -31,7 +31,7 @@
 @interface ZMOperationLoopTests : MessagingTest
 
 @property (nonatomic) ZMOperationLoop *sut;
-@property (nonatomic) id<PersistentCookieStorageProtocol> cookieStorage;
+@property (nonatomic) id<LegacyCookieStorageProtocol> cookieStorage;
 @property (nonatomic) RecordingMockTransportSession *mockTransportSesssion;
 @property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
 @property (nonatomic) OperationStatus *operationStatus;

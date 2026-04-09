@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UIApplication;
 @class ZMTransportRequest;
-@class PersistentCookieStorage;
+@class LegacyCookieStorage;
 @class ZMAccessTokenHandler;
 @class ZMTransportRequestScheduler;
 @protocol ZMSGroupQueue;
@@ -70,7 +70,7 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 @property (nonatomic, readonly) NSURL *baseURL;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
-@property (nonatomic, readonly) PersistentCookieStorage *cookieStorage;
+@property (nonatomic, readonly) LegacyCookieStorage *cookieStorage;
 @property (nonatomic, readonly) ZMAccessTokenHandler *accessTokenHandler;
 @property (nonatomic, readonly) id<URLSessionsDirectory, TearDownCapable> sessionsDirectory;
 @property (nonatomic, copy, nullable) void (^requestLoopDetectionCallback)(NSString*);
@@ -79,7 +79,7 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
                       proxyUsername:(nullable NSString *)proxyUsername
                       proxyPassword:(nullable NSString *)proxyPassword
-                      cookieStorage:(PersistentCookieStorage *)cookieStorage
+                      cookieStorage:(LegacyCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier

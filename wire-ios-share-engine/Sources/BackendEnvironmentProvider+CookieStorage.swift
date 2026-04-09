@@ -22,14 +22,14 @@ import WireNetwork
 import WireTransport
 
 extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> PersistentCookieStorage {
+    func cookieStorage(for account: Account) -> LegacyCookieStorage {
         let cookieStorage = CookieStorage(
             userID: account.userIdentifier,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
             cache: nil
         )
-        return PersistentCookieStorage(
+        return LegacyCookieStorage(
             userIdentifier: account.userIdentifier,
             cookieStorage: cookieStorage
         )

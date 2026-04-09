@@ -29,7 +29,7 @@ public protocol CookieStorageProtocol: Sendable {
 private let cookieName = "zuid"
 
 // sourcery: AutoMockable
-@objc public protocol PersistentCookieStorageProtocol {
+@objc public protocol LegacyCookieStorageProtocol {
     func authenticationCookies() -> [HTTPCookie]?
     func setAuthenticationCookies(_ cookies: [HTTPCookie])
     func removeCookies()
@@ -42,7 +42,7 @@ private let cookieName = "zuid"
 }
 
 @objc
-public class PersistentCookieStorage: NSObject, PersistentCookieStorageProtocol {
+public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
 
     @objc
     public let userIdentifier: UUID

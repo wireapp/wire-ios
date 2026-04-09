@@ -38,7 +38,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        cookieStorage: any PersistentCookieStorageProtocol & CookieProvider,
+        cookieStorage: any LegacyCookieStorageProtocol & CookieProvider,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         coreCryptoProvider: CoreCryptoProviderProtocol,

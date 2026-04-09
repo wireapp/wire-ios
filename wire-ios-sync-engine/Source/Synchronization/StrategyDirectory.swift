@@ -42,7 +42,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     init(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: any PersistentCookieStorageProtocol,
+        cookieStorage: any LegacyCookieStorageProtocol,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
@@ -90,7 +90,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     static func buildStrategies(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: any PersistentCookieStorageProtocol,
+        cookieStorage: any LegacyCookieStorageProtocol,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
