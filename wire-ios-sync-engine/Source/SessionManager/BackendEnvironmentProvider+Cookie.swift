@@ -42,3 +42,5 @@ extension BackendEnvironmentProvider {
         return expirationDate.timeIntervalSinceNow > 0
     }
 }
+
+extension CookieStorage: WireTransport.CookieStorageProtocol {}

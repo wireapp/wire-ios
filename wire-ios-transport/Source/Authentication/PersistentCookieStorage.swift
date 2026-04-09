@@ -17,8 +17,14 @@
 //
 
 import Foundation
-import WireFoundation
 import WireLogging
+
+public protocol CookieStorageProtocol: Sendable {
+
+    func storeCookies(_ cookies: [HTTPCookie]) throws
+    func fetchCookies() throws -> [HTTPCookie]
+    func removeCookies() throws
+}
 
 private let cookieName = "zuid"
 

@@ -55,7 +55,7 @@ public final class ClientSessionComponent {
 
     private let isMLSEnabled: Bool
 
-    private let cookieStorage: any CookieStorageProtocol
+    private let cookieStorage: any WireNetwork.CookieStorageProtocol
     private let sharedContainerURL: URL?
     private let sharedUserDefaults: UserDefaults
     private let syncContext: NSManagedObjectContext
@@ -77,7 +77,7 @@ public final class ClientSessionComponent {
         websocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         sharedContainerURL: URL?,
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,

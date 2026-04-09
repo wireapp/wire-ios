@@ -41,13 +41,13 @@ struct VerifyUserSessionUseCase {
     // MARK: - Properties
 
     private let journal: any JournalProtocol
-    private let cookieStorage: any CookieStorageProtocol
+    private let cookieStorage: any WireNetwork.CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
     private let logger = WireLogger.notifications
 
     init(
         journal: any JournalProtocol,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
         self.journal = journal

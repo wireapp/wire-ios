@@ -458,7 +458,7 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.application = application
