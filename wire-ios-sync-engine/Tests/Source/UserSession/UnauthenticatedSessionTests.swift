@@ -17,12 +17,13 @@
 //
 
 import WireTesting
+import WireTransportSupport
 import XCTest
 @testable import WireSyncEngine
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
-    public var cookieStorage = FakeCookieStorage()
+    public var cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: UUID())
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
     var lastEnqueuedRequest: ZMTransportRequest?

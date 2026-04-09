@@ -24,7 +24,6 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
 
     fileprivate var sut: DeleteAccountRequestStrategy!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
-    fileprivate let cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: .init())
     private var accountDeleted: Bool = false
     var observers: [Any] = []
 
@@ -33,8 +32,7 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
         mockApplicationStatus = MockApplicationStatus()
         sut = DeleteAccountRequestStrategy(
             withManagedObjectContext: uiMOC,
-            applicationStatus: mockApplicationStatus,
-            cookieStorage: cookieStorage
+            applicationStatus: mockApplicationStatus
         )
     }
 

@@ -807,7 +807,6 @@ public final class ZMUserSession: NSObject {
         StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
-            cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
             localNotificationDispatcher: localNotificationDispatcher!,

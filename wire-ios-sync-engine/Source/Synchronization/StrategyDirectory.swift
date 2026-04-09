@@ -42,7 +42,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     init(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: any LegacyCookieStorageProtocol,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
@@ -56,7 +55,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
-            cookieStorage: cookieStorage,
             pushMessageHandler: pushMessageHandler,
             flowManager: flowManager,
             localNotificationDispatcher: localNotificationDispatcher,
@@ -90,7 +88,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     static func buildStrategies(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: any LegacyCookieStorageProtocol,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
@@ -133,8 +130,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             DeleteAccountRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                cookieStorage: cookieStorage
+                applicationStatus: applicationStatusDirectory
             ),
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,

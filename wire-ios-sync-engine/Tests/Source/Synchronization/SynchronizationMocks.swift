@@ -199,23 +199,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
-@objc
-class FakeCookieStorage: NSObject, LegacyCookieStorageProtocol, CookieProvider {
-
-    // MARK: - LegacyCookieStorageProtocol
-
-    func storeCookies(_ cookies: [HTTPCookie]) throws {}
-    func removeCookies() throws {}
-    var authenticationCookieExpirationDate: Date?
-    var hasAuthenticationCookie: Bool = false
-    func setCookieData(from response: HTTPURLResponse, for url: URL) {}
-    func setRequestHeaderFields(on request: NSMutableURLRequest) {}
-
-    // MARK: - CookieProvider
-
-    var isAuthenticated: Bool = false
-
-}
 
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {

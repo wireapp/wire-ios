@@ -29,7 +29,7 @@ class ApplicationStatusDirectoryTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        let cookieStorage = FakeCookieStorage()
+        let cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: UUID())
         let mockApplication = ApplicationMock()
 
         syncMOC.performAndWait {

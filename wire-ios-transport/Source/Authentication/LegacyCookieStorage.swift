@@ -28,20 +28,8 @@ public protocol CookieStorageProtocol: Sendable {
 
 private let cookieName = "zuid"
 
-// sourcery: AutoMockable
-@objc public protocol LegacyCookieStorageProtocol {
-    func storeCookies(_ cookies: [HTTPCookie]) throws
-    func removeCookies() throws
-    var authenticationCookieExpirationDate: Date? { get }
-    var hasAuthenticationCookie: Bool { get }
-    @objc(setCookieDataFromResponse:forURL:)
-    func setCookieData(from response: HTTPURLResponse, for url: URL)
-    @objc(setRequestHeaderFieldsOnRequest:)
-    func setRequestHeaderFields(on request: NSMutableURLRequest)
-}
-
 @objc
-public class LegacyCookieStorage: NSObject, LegacyCookieStorageProtocol {
+public class LegacyCookieStorage: NSObject {
 
     @objc
     public let userIdentifier: UUID
