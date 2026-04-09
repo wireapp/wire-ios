@@ -207,7 +207,8 @@ final class ServiceDetailViewController: UIViewController {
                         serviceDescription: appInfo.description
                     )
                 } catch {
-                    WireLogger.search.error("Failed to fetch app info")
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
                 }
             }
         }
