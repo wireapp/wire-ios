@@ -62,7 +62,10 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-            return [AnyConversationMessageCellDescription(missedCallCell)]
+            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
+
+            return [AnyConversationMessageCellDescription(missedCallCell),
+                    AnyConversationMessageCellDescription(startedConversationCell)]
 
         case .performedCall:
             // [WPB-6988] removed system message for call ends.
@@ -177,6 +180,14 @@ enum ConversationSystemMessageCellDescription {
             
             // TODO: move all the cells above to the header
             var cells: [AnyConversationMessageCellDescription] = []
+
+//            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
+//                variant: (
+//                    wireCells: conversation.isWireDriveEnabled,
+//                    isChannel: conversation.isChannel
+//                )
+//            )
+//            cells.append(AnyConversationMessageCellDescription(welcomeCell))
 
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))

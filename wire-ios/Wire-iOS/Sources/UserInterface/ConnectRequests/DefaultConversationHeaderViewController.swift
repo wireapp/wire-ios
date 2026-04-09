@@ -24,9 +24,11 @@ final class DefaultConversationHeaderViewController: UIViewController {
     fileprivate var defaultConversationHeaderView: DefaultConversationHeaderView!
 
     let userSession: ZMUserSession
+    var message: ZMConversationMessage? = nil
 
-    init(userSession: ZMUserSession) {
+    init(userSession: ZMUserSession, message: ZMConversationMessage? = nil) {
         self.userSession = userSession
+        self.message = message
         super.init(nibName: .none, bundle: .none)
     }
 

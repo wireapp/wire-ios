@@ -72,10 +72,12 @@ final class UserConnectionViewController: UIViewController {
 
     let userSession: ZMUserSession
     let user: ZMUser
+    var message: ZMConversationMessage? = nil
 
-    init(userSession: ZMUserSession, user: ZMUser) {
+    init(userSession: ZMUserSession, user: ZMUser, message: ZMConversationMessage? = nil) {
         self.userSession = userSession
         self.user = user
+        self.message = message
         super.init(nibName: .none, bundle: .none)
 
         guard !self.user.isConnected else { return }
@@ -88,7 +90,7 @@ final class UserConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        userConnectionView = UserConnectionView(user: user, userSession: userSession)
+        userConnectionView = UserConnectionView(user: user, userSession: userSession, message: message)
         view = userConnectionView
     }
 }
