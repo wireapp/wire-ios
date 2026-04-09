@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireNetwork
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireNetwork

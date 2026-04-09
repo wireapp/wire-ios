@@ -19,7 +19,6 @@
 import WireData
 import WireNetworkSupport
 import WireTestingPackage
-import WireNetworkSupport
 import XCTest
 
 @testable import Wire
