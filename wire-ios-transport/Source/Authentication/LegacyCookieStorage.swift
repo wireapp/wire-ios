@@ -57,7 +57,6 @@ public class LegacyCookieStorage: NSObject {
         try cookieStorage.removeCookies()
     }
 
-    @objc
     public var authenticationCookieExpirationDate: Date? {
         let cookies = (try? cookieStorage.fetchCookies()) ?? []
         for cookie in cookies {
