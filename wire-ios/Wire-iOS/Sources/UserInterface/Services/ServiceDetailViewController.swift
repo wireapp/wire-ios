@@ -67,24 +67,19 @@ final class ServiceDetailViewController: UIViewController {
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
+    private let usersAPI: (any UsersAPI)?
 
-    /// init method with ServiceUser, destination conversation and customized UI.
-    ///
-    /// - Parameters:
-    ///   - user: an app or a bot user to show
-    ///   - destinationConversation: the destination conversation of the serviceUser
-    ///   - actionType: Enum ActionType to choose the action add or remove the service user
-    ///   - selfUser: self user, for inject mock user for testing
-    ///   - completion: completion handler
     init(
         user: any WireDataModel.UserType,
         actionType: ActionType,
         userSession: UserSession,
+        usersAPI: (any UsersAPI)?,
         completion: @escaping (AddBotResult) -> Void
     ) {
         self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
+        self.usersAPI = usersAPI
 
         self.detailView = ServiceDetailView(
             service: service,
@@ -198,8 +193,8 @@ final class ServiceDetailViewController: UIViewController {
             url: "",
             providerDescription: ""
         )
-        if let usersAPI = userSession.clientSessionComponent?.usersAPI,
-           let userID = service.user.qualifiedID(localDomain: userSession.resolvedBackendMetadata.domain) {
+        let localDomain = userSession.resolvedBackendMetadata.domain
+        if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
             Task {
                 do {
                     guard let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
