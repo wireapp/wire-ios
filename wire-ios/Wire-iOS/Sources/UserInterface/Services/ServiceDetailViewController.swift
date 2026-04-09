@@ -195,9 +195,9 @@ final class ServiceDetailViewController: UIViewController {
         )
         let localDomain = userSession.resolvedBackendMetadata.domain
         if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
-            Task {
+            Task { @MainActor [weak self] in
                 do {
-                    guard let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
+                    guard let self, let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
 
                     detailView.service.serviceUserDetails = ServiceDetails(
                         serviceIdentifier: "",
@@ -207,7 +207,8 @@ final class ServiceDetailViewController: UIViewController {
                         serviceDescription: appInfo.description
                     )
                 } catch {
-                    WireLogger.search.error("Failed to fetch app info")
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
                 }
             }
         }
@@ -278,8 +279,10 @@ final class ServiceDetailViewController: UIViewController {
             return completion(.failure(error: .general))
         }
 
-        Task {
+        Task { @MainActor [weak self] in
             do {
+                guard let self else { return }
+
                 let syncContext = contextProvider.syncContext
                 let conversationParticipantsService = ConversationParticipantsService(
                     context: syncContext,
@@ -296,13 +299,9 @@ final class ServiceDetailViewController: UIViewController {
                 try await syncContext.perform {
                     try syncContext.save()
                 }
-                await MainActor.run {
-                    completion(.success(conversation: conversation))
-                }
+                completion(.success(conversation: conversation))
             } catch {
-                await MainActor.run {
-                    completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                }
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
             }
         }
     }
@@ -348,13 +347,13 @@ final class ServiceDetailViewController: UIViewController {
         completion: @escaping (AddBotResult) -> Void
     ) {
         let user = service.user
-        Task {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
             guard let userID = user.qualifiedID(
                 localDomain: userSession.resolvedBackendMetadata.domain
             ) else {
-                return await MainActor.run {
-                    completion(.failure(error: AddBotError.general))
-                }
+                return completion(.failure(error: AddBotError.general))
             }
 
             let conversation = user.oneToOneConversation
@@ -362,9 +361,7 @@ final class ServiceDetailViewController: UIViewController {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
                 if isReady {
                     guard let conversation else {
-                        return await MainActor.run {
-                            completion(.failure(error: AddBotError.general))
-                        }
+                        return completion(.failure(error: AddBotError.general))
                     }
                     completion(.success(conversation: conversation))
                 } else {
@@ -382,9 +379,7 @@ final class ServiceDetailViewController: UIViewController {
             } catch {
                 WireLogger.conversation
                     .warn("failed to check if one on one conversation is ready: \(error)")
-                await MainActor.run {
-                    completion(.failure(error: AddBotError.general))
-                }
+                completion(.failure(error: AddBotError.general))
             }
         }
     }
