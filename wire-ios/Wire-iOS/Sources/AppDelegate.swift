@@ -530,35 +530,3 @@ private enum SessionManagerSetupError: Error {
     case initializationFailed(any Error)
 
 }
-
-final class CCLogger: CoreCryptoLogger {
-
-    func log(
-        level: WireCoreCryptoUniffi.CoreCryptoLogLevel,
-        message: String,
-        context: String?
-    ) throws {
-        var log = message
-        if let context {
-            log += ", context: \(context)"
-        }
-
-        let attributes = LogAttributes.safePublic
-
-        switch level {
-        case .off:
-            break
-        case .trace, .debug:
-            WireLogger.coreCrypto.debug(message, attributes: attributes)
-        case .info:
-            WireLogger.coreCrypto.info(message, attributes: attributes)
-        case .warn:
-            WireLogger.coreCrypto.warn(message, attributes: attributes)
-        case .error:
-            WireLogger.coreCrypto.error(message, attributes: attributes)
-        @unknown default:
-            break
-        }
-    }
-
-}
