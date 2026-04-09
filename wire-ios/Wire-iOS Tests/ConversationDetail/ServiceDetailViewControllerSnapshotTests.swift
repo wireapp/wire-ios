@@ -49,7 +49,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    func createSut() {
+    func createSut() { todo: add texts
         sut = ServiceDetailViewController(
             user: bot,
             actionType: .removeParticipant(groupConversation),

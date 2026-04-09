@@ -51,6 +51,7 @@ final class ServiceDetailView: UIView {
         titleLabel.numberOfLines = 0
         titleLabel.text = L10n.Localizable.Peoplepicker.AppDetails.description
         titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
 
         descriptionTextView.backgroundColor = .clear
         descriptionTextView.textContainerInset = .zero
