@@ -159,7 +159,8 @@ private extension FilesContentView {
             FilesInfoView(
                 info: .noFilesFound(
                     scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
+                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty,
+                    isFolder: !viewModel.isInRootFolder
                 )
             )
         case .pending:

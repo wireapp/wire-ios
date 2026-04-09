@@ -528,6 +528,10 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    var isInRootFolder: Bool {
+        navigationPath.isEmpty
+    }
+
     // MARK: - Private
 
     /// Navigates to the folder represented by the given item.

@@ -28,109 +28,131 @@ struct FilesInfoView: View {
 
     enum Info: Equatable {
         case preparingFiles
-        case noFilesFound(scope: Scope, isSearch: Bool)
+        case noFilesFound(scope: Scope, isSearch: Bool, isFolder: Bool = false)
         case error(isConnectionError: Bool)
 
         enum Scope: Equatable {
             case allConversations
             case oneConversation
             case recycleBin
+        }
 
-            var learnMoreURL: URL {
-                switch self {
-                case .oneConversation:
-                    URL.sharedDriveInConversations
-                case .allConversations:
-                    URL.accessAllFilesAccrossConversations
-                case .recycleBin:
-                    URL.accessRecycleBin
+        var learnMoreLinkData: (title: String, destination: URL)? {
+            switch self {
+            case let .noFilesFound(scope, isSearch, isFolder):
+                if !isSearch, !isFolder {
+                    switch scope {
+                    case .oneConversation:
+                        (Strings.Files.NoData.learnMore, URL.sharedDriveInConversations)
+                    case .allConversations:
+                        (Strings.AllFiles.NoData.learnMore, URL.accessAllFilesAccrossConversations)
+                    case .recycleBin:
+                        (Strings.RecycleBin.NoData.learnMore, URL.accessRecycleBin)
+                    }
+                } else {
+                    nil
                 }
+            default:
+                nil
             }
         }
 
-        func textFor(scope: Scope, isSearch: Bool) -> String {
-            if isSearch {
-                Strings.Files.NoSearchResults.message
-            } else {
-                switch scope {
-                case .allConversations: Strings.AllFiles.NoData.message
-                case .oneConversation: Strings.Files.NoData.message
-                case .recycleBin: Strings.RecycleBin.NoData.message
-                }
-            }
-        }
-
-        func accessibilityTextFor(scope: Scope, isSearch: Bool) -> String {
-            if isSearch {
-                Accessibility.Files.NoSearchResults.message
-            } else {
-                switch scope {
-                case .allConversations: Accessibility.AllFiles.NoData.message
-                case .oneConversation: Accessibility.Files.NoData.message
-                case .recycleBin: Accessibility.RecycleBin.NoData.message
-                }
-            }
-        }
-
-        var localizedStrings: (title: String, message: String) {
+        var title: String? {
             switch self {
             case .preparingFiles:
-                (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
-            case let .noFilesFound(scope, isSearch):
-                (
-                    isSearch ? Strings.Files.NoSearchResults.title :
-                        scope == .oneConversation || scope == .recycleBin ?
-                        Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
-                    textFor(scope: scope, isSearch: isSearch)
-                )
+                Strings.Files.PendingCells.title
             case let .error(isConnectionError):
                 if isConnectionError {
-                    (Strings.Files.Error.NoConnection.title, Strings.Files.Error.NoConnection.message)
+                    Strings.Files.Error.NoConnection.title
                 } else {
-                    (Strings.Files.Error.title, Strings.Files.Error.message)
+                    Strings.Files.Error.title
+                }
+            case let .noFilesFound(scope, isSearch, isFolder):
+                if isSearch {
+                    Strings.Files.NoSearchResults.title
+                } else {
+                    if !isFolder {
+                        switch scope {
+                        case .allConversations:
+                            Strings.AllFiles.NoData.title
+                        case .oneConversation:
+                            Strings.Files.NoData.title
+                        case .recycleBin:
+                            Strings.Files.NoData.title
+                        }
+                    } else {
+                        nil
+                    }
                 }
             }
         }
 
-        var accessibilityStrings: (title: String, message: String) {
+        var message: String {
             switch self {
             case .preparingFiles:
-                (Accessibility.Files.PendingCells.title, Accessibility.Files.PendingCells.message)
-            case let .noFilesFound(scope, isSearch):
-                (
-                    Accessibility.Files.NoData.title,
-                    accessibilityTextFor(scope: scope, isSearch: isSearch)
-                )
+                Strings.Files.PendingCells.message
             case let .error(isConnectionError):
                 if isConnectionError {
-                    (Accessibility.Files.Error.NoConnection.title, Strings.Files.Error.NoConnection.message)
+                    Strings.Files.Error.NoConnection.message
                 } else {
-                    (Accessibility.Files.Error.title, Strings.Files.Error.message)
+                    Strings.Files.Error.message
+                }
+            case let .noFilesFound(scope, isSearch, isFolder):
+                if isSearch {
+                    Strings.Files.NoSearchResults.message
+                } else {
+                    if !isFolder {
+                        switch scope {
+                        case .allConversations:
+                            Strings.AllFiles.NoData.message
+                        case .oneConversation:
+                            Strings.Files.NoData.message
+                        case .recycleBin:
+                            Strings.Files.NoData.message
+                        }
+                    } else {
+                        switch scope {
+                        case .allConversations, .oneConversation:
+                            Strings.Files.EmptyFolder.message
+                        case .recycleBin:
+                            Strings.RecycleBin.EmptyFolder.message
+                        }
+                    }
                 }
             }
         }
 
-        var accessibilityIdentifiers: (title: String, message: String) {
+        var titleAccessibilityId: String {
             typealias Identifiers = Locators.WireDrive.FilesInfoPage
 
-            switch self {
+            return switch self {
             case .preparingFiles:
-                return (Identifiers.preparingFilesTitle.rawValue, Identifiers.preparingFilesMessage.rawValue)
-            case let .noFilesFound(scope, isSearch):
-                if isSearch {
-                    return (
-                        Identifiers.noFilesSearchTitle.rawValue,
-                        Identifiers.noFilesSearchMessage.rawValue
-                    )
-                } else {
-                    return (
-                        Identifiers.noFilesTitle.rawValue,
-                        scope == .allConversations ? Identifiers.noFilesAllConversationsMessage.rawValue : Identifiers
-                            .noFilesMessage.rawValue
-                    )
-                }
+                Identifiers.preparingFilesTitle.rawValue
             case .error:
-                return (Identifiers.errorTitle.rawValue, Identifiers.errorMessage.rawValue)
+                Identifiers.errorTitle.rawValue
+            case let .noFilesFound(_, isSearch, _):
+                if isSearch {
+                    Identifiers.noFilesSearchTitle.rawValue
+                } else {
+                    Identifiers.noFilesTitle.rawValue
+                }
+            }
+        }
+
+        var messageAccessibilityId: String {
+            typealias Identifiers = Locators.WireDrive.FilesInfoPage
+
+            return switch self {
+            case .preparingFiles:
+                Identifiers.preparingFilesMessage.rawValue
+            case .error:
+                Identifiers.errorMessage.rawValue
+            case let .noFilesFound(_, isSearch, _):
+                if isSearch {
+                    Identifiers.noFilesSearchMessage.rawValue
+                } else {
+                    Identifiers.noFilesMessage.rawValue
+                }
             }
         }
     }
@@ -140,28 +162,26 @@ struct FilesInfoView: View {
 
     var body: some View {
         VStack(spacing: 25) {
-            Text(info.localizedStrings.title)
-                .padding([.leading, .trailing], info == .preparingFiles ? 30 : 0)
-                .font(.title3.weight(.semibold))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(SemanticColors.Label.textDefault.color)
-                .accessibilityLabel(info.accessibilityStrings.title)
-                .accessibilityIdentifier(info.accessibilityIdentifiers.title)
+            if let title = info.title {
+                Text(title)
+                    .padding([.leading, .trailing], info == .preparingFiles ? 30 : 0)
+                    .font(.title3.weight(.semibold))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(SemanticColors.Label.textDefault.color)
+                    .accessibilityIdentifier(info.titleAccessibilityId)
+            }
 
-            Text(info.localizedStrings.message)
+            Text(info.message)
                 .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel(info.accessibilityStrings.message)
-                .accessibilityIdentifier(info.accessibilityIdentifiers.message)
+                .accessibilityIdentifier(info.messageAccessibilityId)
 
             switch info {
-            case let .noFilesFound(scope, isSearch):
-                if !isSearch {
-                    learnMoreLink(scope: scope)
-                }
+            case .noFilesFound:
+                learnMoreLink()
             case .error:
                 retryButton
             default:
@@ -173,20 +193,14 @@ struct FilesInfoView: View {
         .padding()
     }
 
-    private func learnMoreLink(scope: Info.Scope) -> some View {
-        let linkTitle = switch scope {
-        case .oneConversation:
-            Strings.Files.NoData.learnMore
-        case .allConversations:
-            Strings.AllFiles.NoData.learnMore
-        case .recycleBin:
-            Strings.RecycleBin.NoData.learnMore
-        }
-
-        return Link(destination: scope.learnMoreURL) {
-            Text(linkTitle)
-                .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
-                .underline()
+    @ViewBuilder
+    private func learnMoreLink() -> some View {
+        if let link = info.learnMoreLinkData {
+            Link(destination: link.destination) {
+                Text(link.title)
+                    .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+                    .underline()
+            }
         }
     }
 
@@ -222,8 +236,16 @@ struct FilesInfoView: View {
     FilesInfoView(info: .noFilesFound(scope: .allConversations, isSearch: false))
 }
 
+#Preview("no files found - all conversations - folder") {
+    FilesInfoView(info: .noFilesFound(scope: .allConversations, isSearch: false, isFolder: true))
+}
+
 #Preview("no files found - recycle bin") {
     FilesInfoView(info: .noFilesFound(scope: .recycleBin, isSearch: false))
+}
+
+#Preview("no files found - recycle bin - folder") {
+    FilesInfoView(info: .noFilesFound(scope: .recycleBin, isSearch: false, isFolder: true))
 }
 
 #Preview("no files found via search - all conversations") {
