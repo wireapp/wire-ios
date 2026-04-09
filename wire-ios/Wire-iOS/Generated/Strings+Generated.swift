@@ -4841,6 +4841,12 @@ internal enum L10n {
         /// New conversation
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
       }
+      internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
+        internal static let message = L10n.tr("Localizable", "peoplepicker.no_apps_added.message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        /// Your team hasn’t added apps yet
+        internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
+      }
       internal enum NoMatchingResults {
         internal enum Action {
           /// Learn more

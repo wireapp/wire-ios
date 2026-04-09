@@ -986,21 +986,6 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(error, retryHandler)
     }
 
-    // MARK: - sessionManagerDidChangeActiveUserSession
-
-    public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
-    public var sessionManagerDidChangeActiveUserSessionUserSession_MockMethod: ((ZMUserSession) -> Void)?
-
-    public func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
-        sessionManagerDidChangeActiveUserSessionUserSession_Invocations.append(userSession)
-
-        guard let mock = sessionManagerDidChangeActiveUserSessionUserSession_MockMethod else {
-            fatalError("no mock for `sessionManagerDidChangeActiveUserSessionUserSession`")
-        }
-
-        mock(userSession)
-    }
-
     // MARK: - sessionManagerDidReportLockChange
 
     public var sessionManagerDidReportLockChangeForSession_Invocations: [UserSession] = []

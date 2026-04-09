@@ -312,7 +312,7 @@ final class AddParticipantsViewController: UIViewController {
         updateSelectionValues()
 
         if searchResultsViewController.isResultEmpty {
-            emptyResultView.updateStatus(searchingForApps: false, hasFilter: false)
+            emptyResultView.updateStatus(searchingForBots: false, hasFilter: false)
         }
     }
 
@@ -466,10 +466,10 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForAppsOrBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
+        let searchingForBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
-        emptyResultView.updateStatus(searchingForApps: searchingForAppsOrBots, hasFilter: hasFilter)
+        emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
         case (.apps, _):
@@ -485,6 +485,11 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
         }
+        if searchResultsViewController.searchGroup == .apps, !hasFilter {
+            showEmptyAppsSearchResultView()
+        } else {
+            hideEmptyAppsSearchResultView()
+        }
     }
 
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
@@ -492,6 +497,16 @@ final class AddParticipantsViewController: UIViewController {
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
     }
+
+    private func showEmptyAppsSearchResultView() {
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView()
+        searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
+    }
+
+    private func hideEmptyAppsSearchResultView() {
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+    }
+
 }
 
 extension AddParticipantsViewController: UserSelectionObserver {
