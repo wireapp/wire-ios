@@ -192,7 +192,7 @@
     ConversationListChangeObserver *obs = [[ConversationListChangeObserver alloc] initWithConversationList:list managedObjectContext:self.uiMOC];
     ZMConversation *c2;
     
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfUser:[ZMUser selfUserInContext:self.uiMOC] selfTeam:nil];
 
     // when
     // conversation is inserted while the app is in the background

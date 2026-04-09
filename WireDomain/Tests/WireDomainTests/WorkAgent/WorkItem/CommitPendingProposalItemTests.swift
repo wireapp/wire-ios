@@ -24,6 +24,7 @@ import WireDomainSupport
 import WireNetwork
 @testable import WireDomain
 
+@Suite("CommitPendingProposalItem Tests", .timeLimit(.minutes(1)))
 class CommitPendingProposalItemTests {
 
     var sut: CommitPendingProposalItem!

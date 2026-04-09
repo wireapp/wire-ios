@@ -22,7 +22,7 @@ import XCTest
 class ActiveConversationPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        videoCallButton
+        conversationTitleButton
     }
 
     var videoCallButton: XCUIElement {
@@ -71,6 +71,10 @@ class ActiveConversationPage: PageModel {
 
     var imageCell: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    }
+
+    var userRemovedSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
     }
 
     var fileLabels: XCUIElementQuery {
@@ -141,6 +145,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func goBackToConversationPage() throws -> ConversationsPage {
         conversationBackButton.waitAndTap()
         return try ConversationsPage()

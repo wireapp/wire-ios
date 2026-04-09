@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 @testable import WireDomain
 
+@Suite("ConversationUpdatesGenerator Tests", .timeLimit(.minutes(1)))
 class ConversationUpdatesGeneratorTests {
 
     var sut: ConversationUpdatesGenerator!

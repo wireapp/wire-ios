@@ -208,7 +208,7 @@ extension ZMUser: SelfLegalHoldSubject {
             return
         }
 
-        let predicateFactory = ConversationPredicateFactory(selfTeam: team)
+        let predicateFactory = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: context), selfTeam: team)
         let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         fetchRequest.predicate = predicateFactory.predicateForConversationsIncludingArchived()
 

@@ -77,7 +77,7 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
     }
 
     func configure(for conversation: GroupDetailsConversationType, editable: Bool) {
-        titleTextField.text = conversation.displayName
+        titleTextField.text = conversation.displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
         verifiedIconView.isHidden = conversation.securityLevel != .secure
 
         titleTextField.isUserInteractionEnabled = editable

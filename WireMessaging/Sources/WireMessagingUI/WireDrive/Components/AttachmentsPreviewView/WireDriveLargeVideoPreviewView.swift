@@ -42,20 +42,19 @@ struct WireDriveLargeVideoPreviewView: View {
 
     var body: some View {
         WireDriveAttachmentPreview {
-            Group {
-                previewContainer {
-                    if let url {
-                        asyncImage(url: url)
-                    } else {
-                        errorView(text: Self.errorMessage)
-                    }
+            previewContainer {
+                if let url {
+                    asyncImage(url: url)
+                } else {
+                    errorView(text: Self.errorMessage)
                 }
-                .overlay(alignment: .bottom) {
-                    if let duration {
-                        durationView(duration: duration)
-                    }
+            }
+            .overlay(alignment: .bottom) {
+                if let duration {
+                    durationView(duration: duration)
                 }
-            }.background(ColorTheme.Backgrounds.surfaceVariant.color)
+            }
+            .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
 
@@ -176,4 +175,5 @@ struct WireDriveLargeVideoPreviewView: View {
         duration: "02:34",
         state: .loading(progress: 0.7, isLargeFile: false)
     )
+    .padding()
 }
