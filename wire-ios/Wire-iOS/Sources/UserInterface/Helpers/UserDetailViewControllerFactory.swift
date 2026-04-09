@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireNetwork
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
@@ -43,14 +44,17 @@ enum UserDetailViewControllerFactory {
     ) -> UIViewController {
 
         if user.isAppOrBot {
+
             return ServiceDetailViewController(
                 user: user,
                 actionType: .removeParticipant(conversation),
                 userSession: userSession,
+                usersAPI: userSession.clientSessionComponent?.usersAPI,
                 completion: { _ in }
             )
 
         } else {
+
             let profileViewController = ProfileViewController(
                 user: user,
                 viewer: userSession.selfUser,
@@ -62,6 +66,7 @@ enum UserDetailViewControllerFactory {
             )
             profileViewController.delegate = profileViewControllerDelegate
             return profileViewController
+
         }
     }
 }

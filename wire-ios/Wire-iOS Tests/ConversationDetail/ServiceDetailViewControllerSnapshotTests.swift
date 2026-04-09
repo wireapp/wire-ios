@@ -17,6 +17,7 @@
 //
 
 import WireTestingPackage
+import WireNetworkSupport
 import XCTest
 
 @testable import Wire
@@ -27,6 +28,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var bot: MockUserType!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
+    private var mockUsersAPI: MockUsersAPI!
     private var snapshotHelper: SnapshotHelper!
 
     @MainActor
@@ -37,9 +39,11 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         bot = .createBot(name: "AppUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
+        mockUsersAPI = .init()
     }
 
     override func tearDown() {
+        mockUsersAPI = nil
         snapshotHelper = nil
         sut = nil
         bot = nil
@@ -49,11 +53,12 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    func createSut() { todo: add texts
+    func createSut() {
         sut = ServiceDetailViewController(
             user: bot,
             actionType: .removeParticipant(groupConversation),
             userSession: UserSessionMock(mockUser: mockSelfUser),
+            usersAPI: mockUsersAPI,
             completion: { _ in }
         )
     }
@@ -75,6 +80,17 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             createSut()
             snapshotHelper.verify(matching: sut)
         }
+    }
+
+    func testDisplayingApp() {
+        teamTest {
+            groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
+            mockSelfUser.canRemoveService = true
+            createSut()
+            let navigationController = sut.wrapInNavigationController()
+            snapshotHelper.verify(matching: navigationController)
+        }
+        fatalError()
     }
 
 }
