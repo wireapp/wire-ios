@@ -107,6 +107,12 @@ class ConversationDetailsPage: PageModel {
         leaveConversationButtonOnBottomSheet.waitAndTap()
         return try ConversationDetailsPage()
     }
+    
+    @discardableResult
+    func leaveAndClearConversation() throws -> ConversationDetailsPage {
+        leaveAndClearConversationButtonOnBottomSheet.waitAndTap()
+        return try ConversationDetailsPage()
+    }
 
     var clearButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
@@ -116,4 +122,8 @@ class ConversationDetailsPage: PageModel {
         app.buttons[Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue].firstMatch
     }
 
+    var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
+    }
+    
 }
