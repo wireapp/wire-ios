@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+
 @testable import WireDataModel
 
-class MLSClientIdTests: ZMConversationTestsBase {
+final class MLSClientIdTests: ZMConversationTestsBase {
 
     func test_itCreatesALowercasedClientId() {
         // GIVEN
