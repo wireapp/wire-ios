@@ -19,19 +19,21 @@
 import WireTransport
 
 /// An in-memory cookie storage for testing purposes.
-private final class StubCookieStorage: CookieStorageProtocol {
+public final class StubCookieStorage: CookieStorageProtocol {
 
-    nonisolated(unsafe) private var cookies: [HTTPCookie] = []
+    public nonisolated(unsafe) var cookies: [HTTPCookie] = []
 
-    func storeCookies(_ cookies: [HTTPCookie]) throws {
+    public init() {}
+
+    public func storeCookies(_ cookies: [HTTPCookie]) throws {
         self.cookies = cookies
     }
 
-    func fetchCookies() throws -> [HTTPCookie] {
+    public func fetchCookies() throws -> [HTTPCookie] {
         cookies
     }
 
-    func removeCookies() throws {
+    public func removeCookies() throws {
         cookies = []
     }
 
