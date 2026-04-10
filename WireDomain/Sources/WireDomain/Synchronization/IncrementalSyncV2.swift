@@ -160,7 +160,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
                     await processLiveStream(
                         liveEventStream,
                         pushChannel: pushChannel,
@@ -171,7 +171,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     await pushChannel.close()
                     await pushChannelState.markAsClosed()
                 }
-            } catch {
+            } catch { // TODO: not needed, refactor!
                 // if we expire, close everything
                 WireLogger.sync.debug(
                     "Error while processing live stream, close push channel",

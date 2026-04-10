@@ -18,18 +18,7 @@
 
 import Foundation
 
-/*public*/ func registerExpiringActivity(
-    reason: String,
-    task: Task<some Sendable, some Error>
-) {
-    registerExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
-        reason: reason,
-        task: task
-    )
-}
-
-func registerExpiringActivity(
+func taskCancellationAsExpiringActivity(
     performer: some ExpiringActivityPerformer,
     reason: String,
     task: Task<some Sendable, some Error>

@@ -16,6 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - Non-throwing
+
+public func withExpiringActivity(
+    reason: String,
+    block: @escaping @Sendable () async -> Void
+) async {
+    await withExpiringActivity(
+        performer: ExpiringActivityProcessInfoWrapper(),
+        reason: reason,
+        block: block
+    )
+}
+
+func withExpiringActivity(
+    performer: some ExpiringActivityPerformer,
+    reason: String,
+    block: @escaping @Sendable () async -> Void
+) async {
+    let task = Task(operation: block)
+    registerExpiringActivity(
+        performer: ExpiringActivityProcessInfoWrapper(),
+        reason: reason,
+        task: task
+    )
+    await task.value
+}
+
+// MARK: - Throwing
+
 public func withExpiringActivity(
     reason: String,
     block: @escaping @Sendable () async throws -> Void

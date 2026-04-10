@@ -169,14 +169,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 do {
                     // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
                     // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                    try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
+                    await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
                             publicKeys: publicKeys
                         )
                     }
-                } catch {
+                } catch { // TODO: not needed, refactor!
                     // if we expire, close everything
                     WireLogger.sync.debug(
                         "Error while processing live stream, close push channel",
