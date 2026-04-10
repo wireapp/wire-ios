@@ -49,7 +49,7 @@ func registerExpiringActivity(
             let semaphore = DispatchSemaphore(value: 0)
             defer { semaphore.wait() }
 
-            Task<Void, Never> {
+            Task.detached {
                 // We only need to wait for the task to complete; the result is irrelevant.
                 _ = try? await task.value
                 semaphore.signal()
