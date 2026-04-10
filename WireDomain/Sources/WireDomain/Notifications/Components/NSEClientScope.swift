@@ -62,6 +62,35 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
     private var monitoringTask: Task<Void, any Error>?
+//    private lazy var processCallingEventsUseCase: ProcessCallingEventsUseCase = ProcessCallingEventsUseCase(
+//        callingService: callingService,
+//        clientID: clientID,
+//        conversationLocalStore: conversationLocalStore,
+//        isFederationEnabled: isFederationEnabled,
+//        accountID: dependency.accountID
+//    )
+    private var processCallingEventsUseCase: ProcessCallingEventsUseCase {
+        shared {
+            ProcessCallingEventsUseCase(
+                callingService: callingService,
+                clientID: clientID,
+                conversationLocalStore: conversationLocalStore,
+                isFederationEnabled: isFederationEnabled,
+                accountID: dependency.accountID
+            )
+        }
+    }
+    private lazy var callKitReportingCoordinator: CallKitReportingCoordinator = {
+        WireLogger.calling.debug(
+            "NSEClientScope: creating CallKitReportingCoordinator",
+            attributes: .newNSE, .safePublic
+        )
+        return CallKitReportingCoordinator(
+            accountID: dependency.accountID,
+            avsService: callingService
+        )
+    }()
+
     //private var callKitReportTask: Task<Void, Never>?
 
 //    private lazy var callingService: any AVSCallingEventServiceProtocol = {
@@ -250,7 +279,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         WireLogger.calling.info("WOW NSE state: isAvsReady=\(isAvsReady), isCallKitAvailable=\(isCallKitAvailable)", attributes: .newNSE, .safePublic)
 
         // 3. Process calling events via AVS — CallKit is reported internally via callingService callbacks.
-        await processCallingEventsUseCase().invoke(eventBatches: eventBatches)
+        _ = callKitReportingCoordinator
+        await processCallingEventsUseCase.invoke(eventBatches: eventBatches)
+        await callKitReportingCoordinator.waitForCompletion()
 
         // 4. Generate notifications from events.
         let eventStream = AsyncStream<[UpdateEvent]> { continuation in
@@ -330,15 +361,15 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         }
     }
 
-    private func processCallingEventsUseCase() -> ProcessCallingEventsUseCase {
-        ProcessCallingEventsUseCase(
-            callingService: callingService,
-            clientID: clientID,
-            conversationLocalStore: conversationLocalStore,
-            isFederationEnabled: isFederationEnabled,
-            accountID: dependency.accountID
-        )
-    }
+//    private func processCallingEventsUseCase() -> ProcessCallingEventsUseCase {
+//        ProcessCallingEventsUseCase(
+//            callingService: callingService,
+//            clientID: clientID,
+//            conversationLocalStore: conversationLocalStore,
+//            isFederationEnabled: isFederationEnabled,
+//            accountID: dependency.accountID
+//        )
+//    }
 
     // MARK: - Pull events consumable notifications
 

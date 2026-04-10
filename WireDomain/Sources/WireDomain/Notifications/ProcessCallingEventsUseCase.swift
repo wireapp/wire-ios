@@ -29,7 +29,7 @@ final class ProcessCallingEventsUseCase {
     private let clientID: String
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let isFederationEnabled: Bool
-    private var callKitReportTask: Task<Void, Never>?
+//    private var callKitReportTask: Task<Void, Never>?
 
     public init(
         callingService: any AVSCallingEventServiceProtocol,
@@ -42,70 +42,71 @@ final class ProcessCallingEventsUseCase {
         self.conversationLocalStore = conversationLocalStore
         self.isFederationEnabled = isFederationEnabled
 
-        var didReportIncomingCall = false
+//        var didReportIncomingCall = false
 
-        callingService.onIncomingCall = { [weak self] conversationId, shouldRing, isVideoCall in
-            WireLogger.calling.info("WOW NSE calling: onIncomingCall fired, conversationId=\(conversationId), shouldRing=\(shouldRing)", attributes: .newNSE, .safePublic)
+//        callingService.onIncomingCall = { conversationId, shouldRing, isVideoCall in
+//            WireLogger.calling.info("WOW NSE calling: onIncomingCall fired, conversationId=\(conversationId), shouldRing=\(shouldRing)", attributes: .newNSE, .safePublic)
+//
+//            guard let qualifiedID = QualifiedID(rawValue: conversationId) else { return }
+//
+//            let callKitContent: [String: Any] = [
+//                "accountID": accountID.uuidString,
+//                "conversationID": qualifiedID.uuid.uuidString,
+//                "shouldRing": shouldRing,
+//                "hasVideo": isVideoCall,
+//                "callerName": ""
+//            ]
+//
+//            didReportIncomingCall = shouldRing
+//            WireLogger.calling.error("12345 \(self == nil)", attributes: .newNSE, .safePublic)
+//
+//            self.callKitReportTask = Task {
+//                await withCheckedContinuation { continuation in
+//                    CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
+//                        if let error {
+//                            WireLogger.calling.error(
+//                                "reportNewIncomingVoIPPushPayload error: \(error)",
+//                                attributes: .newNSE, .safePublic
+//                            )
+//                        } else {
+//                            WireLogger.calling.info(
+//                                "reportNewIncomingVoIPPushPayload done",
+//                                attributes: .newNSE, .safePublic
+//                            )
+//                        }
+//                        continuation.resume()
+//                    }
+//                }
+//            }
+//        }
+//
+//        callingService.onMissedCall = { conversationId, messageTime, isVideoCall in
+//            WireLogger.calling.info("WOW NSE calling: onMissedCall fired", attributes: .newNSE, .safePublic)
+//            // Nothing to do here — the missed call text notification
+//            // is already built by ConversationCallingEventNotificationBuilder
+//            // from the same event in the event stream.
+//            WireLogger.calling.info(
+//                "AVS: missed call in conversation \(conversationId)",
+//                attributes: .newNSE, .safePublic
+//            )
+//        }
 
-            guard let qualifiedID = QualifiedID(rawValue: conversationId) else { return }
-
-            let callKitContent: [String: Any] = [
-                "accountID": accountID.uuidString,
-                "conversationID": qualifiedID.uuid.uuidString,
-                "shouldRing": shouldRing,
-                "hasVideo": isVideoCall,
-                "callerName": ""
-            ]
-
-            didReportIncomingCall = shouldRing
-
-            self?.callKitReportTask = Task {
-                await withCheckedContinuation { continuation in
-                    CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-                        if let error {
-                            WireLogger.calling.error(
-                                "reportNewIncomingVoIPPushPayload error: \(error)",
-                                attributes: .newNSE, .safePublic
-                            )
-                        } else {
-                            WireLogger.calling.info(
-                                "reportNewIncomingVoIPPushPayload done",
-                                attributes: .newNSE, .safePublic
-                            )
-                        }
-                        continuation.resume()
-                    }
-                }
-            }
-        }
-
-        callingService.onMissedCall = { conversationId, messageTime, isVideoCall in
-            WireLogger.calling.info("WOW NSE calling: onMissedCall fired", attributes: .newNSE, .safePublic)
-            // Nothing to do here — the missed call text notification
-            // is already built by ConversationCallingEventNotificationBuilder
-            // from the same event in the event stream.
-            WireLogger.calling.info(
-                "AVS: missed call in conversation \(conversationId)",
-                attributes: .newNSE, .safePublic
-            )
-        }
-
-        callingService.onCallClosed = { [weak self] reason, conversationId in
-            WireLogger.calling.info("WOW NSE calling: onCallClosed fired, reason=\(reason)", attributes: .newNSE, .safePublic)
-            guard didReportIncomingCall else { return }
-
-            let callKitContent: [String: Any] = [
-                "accountID": accountID.uuidString,
-                "conversationID": conversationId,
-                "shouldRing": false
-            ]
-
-            didReportIncomingCall = false
-
-            self?.callKitReportTask = Task {
-                try? await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-            }
-        }
+//        callingService.onCallClosed = { reason, conversationId in
+//            WireLogger.calling.info("WOW NSE calling: onCallClosed fired, reason=\(reason)", attributes: .newNSE, .safePublic)
+//            guard didReportIncomingCall else { return }
+//
+//            let callKitContent: [String: Any] = [
+//                "accountID": accountID.uuidString,
+//                "conversationID": conversationId,
+//                "shouldRing": false
+//            ]
+//
+//            didReportIncomingCall = false
+//
+//            self.callKitReportTask = Task {
+//                try? await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+//            }
+//        }
 
     }
 
@@ -137,7 +138,7 @@ final class ProcessCallingEventsUseCase {
         WireLogger.calling.info("WOW NSE calling: did call end()", attributes: .newNSE, .safePublic)
         // Wait for CXProvider report to complete before returning —
         // without this the NSE may terminate before the report fires.
-        _ = await callKitReportTask?.value
+//        _ = await callKitReportTask?.value
         WireLogger.calling.info("WOW NSE calling: callKitReportTask awaited", attributes: .newNSE, .safePublic)
     }
 

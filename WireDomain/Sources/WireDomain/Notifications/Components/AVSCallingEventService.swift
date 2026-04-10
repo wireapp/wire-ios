@@ -76,6 +76,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     // MARK: - Private
 
     private var handle: UInt32
+    private var contextPointer: UnsafeMutableRawPointer?
 
     // MARK: - Init
     private static let avsInitialize: Void = {
@@ -93,15 +94,24 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             guard let msg = msgPtr.flatMap({ String(cString: $0) }) else { return }
             WireLogger.calling.debug(msg, attributes: .newNSE, .safePublic)
         }, nil)
+        let retained = Unmanaged.passRetained(self)
+        self.contextPointer = retained.toOpaque()
         self.handle = wcall_event_create(
             userID,
             clientID,
             Self.incomingCallHandler,
             Self.missedCallHandler,
             Self.closedCallHandler,
-            Unmanaged.passUnretained(self).toOpaque()
+            contextPointer
         )
         WireLogger.calling.info("WOW NSE AVS: wcall_event_create handle=\(self.handle)", attributes: .newNSE, .safePublic)
+    }
+    deinit {
+        if let ptr = contextPointer {
+            Unmanaged<AVSCallingEventService>.fromOpaque(ptr).release()
+        }
+        WireLogger.calling.info("12345 caled DEINIT", attributes: .newNSE, .safePublic)
+
     }
 
     // MARK: - AVSCallingEventServiceProtocol
@@ -160,6 +170,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
         else { return }
 
         let service = Unmanaged<AVSCallingEventService>.fromOpaque(contextRef).takeUnretainedValue()
+        WireLogger.mls.info("12345 \(service.onIncomingCall == nil), conversationId = \(conversationId)")
         service.onIncomingCall?(
             conversationId,
             shouldRingFlag == 1,
