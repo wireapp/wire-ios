@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol ExpiringActivityPerformer {
+protocol ExpiringActivityPerformerProtocol {
 
     func performExpiringActivity(
         reason: String,
@@ -28,7 +28,7 @@ protocol ExpiringActivityPerformer {
 
 }
 
-extension ExpiringActivityPerformer {
+extension ExpiringActivityPerformerProtocol {
 
     func performTaskCancellationAsExpiringActivity(
         reason: String,
@@ -42,6 +42,7 @@ extension ExpiringActivityPerformer {
 
                 // System is revoking background time — cancel the task.
                 task.cancel()
+
                 // Calling signal() here in order to unblock the first invocation of this closure and prevent the system
                 // from killing the app. The execution of the task however, might be suspended.
                 semaphore.signal()

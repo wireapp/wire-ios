@@ -24,7 +24,7 @@ import Testing
 
 struct ExpiringActivityPerformerTests {
 
-    let performerMock = ExpiringActivityPerformerMock()
+    let performerMock = ExpiringActivityPerformerProtocolMock()
 
     @Test
     func testReasonIsForwardedToPerformer() {

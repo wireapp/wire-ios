@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct ExpiringActivityProcessInfoWrapper: ExpiringActivityPerformer {
+struct ExpiringActivityProcessInfoWrapper: ExpiringActivityPerformerProtocol {
 
     var processInfo: ProcessInfo
 
