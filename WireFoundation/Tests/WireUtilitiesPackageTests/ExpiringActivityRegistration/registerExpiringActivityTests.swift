@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
 
 @testable import WireUtilitiesPackage
@@ -23,8 +24,115 @@ import Testing
 struct RegisterExpiringActivityTests {
 
     @Test
-    func something() async throws {
-        fatalError()
+    func reasonIsForwardedToPerformer() async throws {
+        // Given
+        var receivedReason: String?
+        let performer: ExpiringActivityPerformer = { reason, block in
+            receivedReason = reason
+            block(false)
+        }
+        let task = Task<Void, Never> {}
+
+        // When
+        registerExpiringActivity(
+            performer: performer,
+            reason: "sync messages",
+            task: task
+        )
+
+        // Then
+        #expect(receivedReason == "sync messages")
+    }
+
+    @Test
+    func taskIsCancelledWhenExpiring() async throws {
+        // Given
+        let performer: ExpiringActivityPerformer = { _, block in
+            block(true)
+        }
+        let task = Task<Void, Never> {
+            try? await Task.sleep(for: .seconds(60))
+        }
+
+        // When
+        registerExpiringActivity(
+            performer: performer,
+            reason: "sync",
+            task: task
+        )
+
+        // Then
+        #expect(task.isCancelled)
+    }
+
+    @Test
+    func blockWaitsForTaskToFinishWhenNotExpiring() async throws {
+        // Given
+        let taskStarted = DispatchSemaphore(value: 0)
+        let taskCanFinish = DispatchSemaphore(value: 0)
+        var blockDidReturn = false
+
+        let task = Task<Void, Never> {
+            taskStarted.signal()
+            taskCanFinish.wait()
+        }
+
+        let performer: ExpiringActivityPerformer = { _, block in
+            DispatchQueue.global().async {
+                block(false)
+                blockDidReturn = true
+            }
+        }
+
+        // When
+        registerExpiringActivity(
+            performer: performer,
+            reason: "sync",
+            task: task
+        )
+
+        // Wait for the task to actually start running.
+        taskStarted.wait()
+
+        // The block should still be waiting because the task hasn't finished.
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!blockDidReturn)
+
+        // Allow the task to finish.
+        taskCanFinish.signal()
+
+        // The block should return shortly after.
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(blockDidReturn)
+    }
+
+    @Test
+    func blockReturnsEvenWhenTaskThrows() async throws {
+        // Given
+        struct TestError: Error {}
+        var blockDidReturn = false
+
+        let task = Task<Void, Error> {
+            throw TestError()
+        }
+
+        let performer: ExpiringActivityPerformer = { _, block in
+            DispatchQueue.global().async {
+                block(false)
+                blockDidReturn = true
+            }
+        }
+
+        // When
+        registerExpiringActivity(
+            performer: performer,
+            reason: "sync",
+            task: task
+        )
+
+        // Then — block should return despite the task throwing.
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(blockDidReturn)
     }
 
 }
