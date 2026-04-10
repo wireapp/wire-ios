@@ -31,7 +31,7 @@ class LoginPage: PageModel {
     }
 
     var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.LoginPage.nextButton.rawValue].firstMatch
     }
 
     var emailField: XCUIElement {
