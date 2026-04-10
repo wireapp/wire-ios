@@ -1074,6 +1074,29 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.first?.teamRole, .admin)
     }
 
+    // MARK: Apps search
+
+    // TODO: [WPB-24382] add test(s)
+    /*
+    func testThatItSendsASearchAppsRequest() async throws {
+        // given
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.apps])
+        let task = makeSearchTask(request: request)
+        let expectation = XCTestExpectation()
+        teamsAPIMock.getWhitelistedBotsForWith_MockMethod = { _, prefix in
+            XCTAssertEqual(prefix, "steve o'hara & söhne")
+            expectation.fulfill()
+            return .init { _ in .init(element: .init(), hasMore: false, nextStart: "") }
+        }
+
+        // when
+        _ = try await task.performRemoteSearchForBots()
+
+        // then
+        await fulfillment(of: [expectation])
+    }
+     */
+
     // MARK: Bots search
 
     func testThatItSendsASearchServicesRequest() async throws {
