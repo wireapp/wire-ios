@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: check if cancellation is still forwarded to the nested task
+
 // MARK: - Non-throwing
 
 public func withExpiringActivity(
