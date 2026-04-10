@@ -35,19 +35,21 @@ extension ExpiringActivityPerformer {
         task: Task<some Sendable, some Error>
     ) {
 
+        let semaphore = DispatchSemaphore(value: 0)
         performExpiringActivity(reason: reason) { isExpiring in
 
             if isExpiring {
 
                 // System is revoking background time — cancel the task.
                 task.cancel()
-                // TODO: semaphore.signal() here? https://github.com/wireapp/wire-ios/pull/4550/changes/BASE..338d2cce8f6b7583cf1075cd96c29d74049b2f59#r3065220532
+                // Calling signal() here in order to unblock the first invocation of this closure and prevent the system
+                // from killing the app. The execution of the task however, might be suspended.
+                semaphore.signal()
 
             } else {
 
                 // System granted time. Block this callback until the task finishes,
                 // so the system knows we're still doing work.
-                let semaphore = DispatchSemaphore(value: 0)
                 Task.detached {
                     // We only need to wait for the task to complete; the result is irrelevant.
                     _ = try? await task.value
