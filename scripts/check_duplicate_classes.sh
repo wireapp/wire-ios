@@ -1,6 +1,7 @@
 #!/bin/bash
 # Scans xcodebuild log files for Objective-C runtime warnings about
-# duplicate class implementations across modules.
+# duplicate symbol implementations across modules (classes, protocols,
+# categories, etc.).
 #
 # Usage: check_duplicate_classes.sh <log_dir>
 #   log_dir  – directory to search for xcodebuild*.log files (default: .)
@@ -10,12 +11,12 @@
 set -euo pipefail
 
 LOG_DIR="${1:-.}"
-PATTERN="Class .+ is implemented in both .+ and .+"
+PATTERN="is implemented in both .+ and .+"
 
 DUPLICATES=$(grep -rEo "$PATTERN" "$LOG_DIR" --include='*.log' 2>/dev/null | sort -u || true)
 
 if [ -n "$DUPLICATES" ]; then
-    echo "::error::Duplicate class implementations detected in test output!"
+    echo "::error::Duplicate symbol implementations detected in test output!"
     echo ""
     echo "$DUPLICATES"
     echo ""
@@ -23,4 +24,4 @@ if [ -n "$DUPLICATES" ]; then
     exit 1
 fi
 
-echo "No duplicate class implementations found."
+echo "No duplicate symbol implementations found."
