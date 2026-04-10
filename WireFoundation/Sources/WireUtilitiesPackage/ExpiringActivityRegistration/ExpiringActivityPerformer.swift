@@ -41,6 +41,7 @@ extension ExpiringActivityPerformer {
 
                 // System is revoking background time — cancel the task.
                 task.cancel()
+                // TODO: semaphore.signal() here? https://github.com/wireapp/wire-ios/pull/4550/changes/BASE..338d2cce8f6b7583cf1075cd96c29d74049b2f59#r3065220532
 
             } else {
 
