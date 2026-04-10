@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import Testing
+import XCTest
 
 @testable import WireUtilitiesPackage
 
-struct RegisterExpiringActivityTests {
+final class RegisterExpiringActivityTests: XCTestCase {
 
-    @Test
-    func reasonIsForwardedToPerformer() async throws {
+    func testReasonIsForwardedToPerformer() {
         // Given
         var receivedReason: String?
         let performer: ExpiringActivityPerformer = { reason, block in
@@ -41,11 +39,10 @@ struct RegisterExpiringActivityTests {
         )
 
         // Then
-        #expect(receivedReason == "sync messages")
+        XCTAssertEqual(receivedReason, "sync messages")
     }
 
-    @Test
-    func taskIsCancelledWhenExpiring() async throws {
+    func testTaskIsCancelledWhenExpiring() {
         // Given
         let performer: ExpiringActivityPerformer = { _, block in
             block(true)
@@ -62,25 +59,22 @@ struct RegisterExpiringActivityTests {
         )
 
         // Then
-        #expect(task.isCancelled)
+        XCTAssertTrue(task.isCancelled)
     }
 
-    @Test
-    func blockWaitsForTaskToFinishWhenNotExpiring() async throws {
+    func testBlockWaitsForTaskToFinishWhenNotExpiring() async throws {
         // Given
-        let taskStarted = DispatchSemaphore(value: 0)
-        let taskCanFinish = DispatchSemaphore(value: 0)
-        var blockDidReturn = false
+        let (stream, continuation) = AsyncStream<Void>.makeStream()
+        let flag = Flag()
 
         let task = Task<Void, Never> {
-            taskStarted.signal()
-            taskCanFinish.wait()
+            for await _ in stream {}
         }
 
         let performer: ExpiringActivityPerformer = { _, block in
             DispatchQueue.global().async {
                 block(false)
-                blockDidReturn = true
+                Task { await flag.set() }
             }
         }
 
@@ -91,26 +85,24 @@ struct RegisterExpiringActivityTests {
             task: task
         )
 
-        // Wait for the task to actually start running.
-        taskStarted.wait()
+        // Then — the block should still be waiting because the task hasn't finished.
+        try await Task.sleep(for: .milliseconds(200))
+        var didReturn = await flag.value
+        XCTAssertFalse(didReturn)
 
-        // The block should still be waiting because the task hasn't finished.
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(!blockDidReturn)
-
-        // Allow the task to finish.
-        taskCanFinish.signal()
+        // Allow the task to complete.
+        continuation.finish()
 
         // The block should return shortly after.
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(blockDidReturn)
+        try await Task.sleep(for: .milliseconds(200))
+        didReturn = await flag.value
+        XCTAssertTrue(didReturn)
     }
 
-    @Test
-    func blockReturnsEvenWhenTaskThrows() async throws {
+    func testBlockReturnsEvenWhenTaskThrows() async throws {
         // Given
         struct TestError: Error {}
-        var blockDidReturn = false
+        let flag = Flag()
 
         let task = Task<Void, Error> {
             throw TestError()
@@ -119,7 +111,7 @@ struct RegisterExpiringActivityTests {
         let performer: ExpiringActivityPerformer = { _, block in
             DispatchQueue.global().async {
                 block(false)
-                blockDidReturn = true
+                Task { await flag.set() }
             }
         }
 
@@ -131,8 +123,16 @@ struct RegisterExpiringActivityTests {
         )
 
         // Then — block should return despite the task throwing.
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(blockDidReturn)
+        try await Task.sleep(for: .milliseconds(200))
+        let didReturn = await flag.value
+        XCTAssertTrue(didReturn)
     }
 
+}
+
+// MARK: -
+
+private actor Flag {
+    var value = false
+    func set() { value = true }
 }
