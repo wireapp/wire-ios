@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 // sourcery: AutoMockable
 protocol ExpiringActivityPerformer {
 
@@ -23,5 +25,38 @@ protocol ExpiringActivityPerformer {
         reason: String,
         using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
     )
+
+}
+
+extension ExpiringActivityPerformer {
+
+    func performTaskCancellationAsExpiringActivity(
+        reason: String,
+        task: Task<some Sendable, some Error>
+    ) {
+
+        performExpiringActivity(reason: reason) { isExpiring in
+
+            if isExpiring {
+
+                // System is revoking background time — cancel the task.
+                task.cancel()
+
+            } else {
+
+                // System granted time. Block this callback until the task finishes,
+                // so the system knows we're still doing work.
+                let semaphore = DispatchSemaphore(value: 0)
+                Task.detached {
+                    // We only need to wait for the task to complete; the result is irrelevant.
+                    _ = try? await task.value
+                    semaphore.signal()
+                }
+                semaphore.wait()
+
+            }
+        }
+
+    }
 
 }

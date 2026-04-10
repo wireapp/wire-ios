@@ -22,7 +22,7 @@ import Testing
 @testable import WireUtilitiesPackage
 @testable import WireUtilitiesPackageSupport
 
-struct RegisterExpiringActivityTests {
+struct ExpiringActivityPerformerTests {
 
     let performerMock = ExpiringActivityPerformerMock()
 
@@ -39,11 +39,7 @@ struct RegisterExpiringActivityTests {
         let task = Task<Void, Never> {}
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync messages",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync messages", task: task)
 
         // Then
         #expect(receivedReason == "sync messages")
@@ -61,11 +57,7 @@ struct RegisterExpiringActivityTests {
         }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then
         #expect(task.isCancelled)
@@ -90,11 +82,7 @@ struct RegisterExpiringActivityTests {
             }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then — the block should still be waiting because the task hasn't finished.
         try await Task.sleep(for: .milliseconds(200))
@@ -129,11 +117,7 @@ struct RegisterExpiringActivityTests {
             }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then — block should return despite the task throwing.
         try await Task.sleep(for: .milliseconds(200))

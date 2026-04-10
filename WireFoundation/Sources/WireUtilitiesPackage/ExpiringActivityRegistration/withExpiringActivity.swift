@@ -35,11 +35,7 @@ func withExpiringActivity(
     block: @escaping @Sendable () async -> Void
 ) async {
     let task = Task(operation: block)
-    registerExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
-        reason: reason,
-        task: task
-    )
+    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
     await task.value
 }
 
@@ -62,10 +58,6 @@ func withExpiringActivity(
     block: @escaping @Sendable () async throws -> Void
 ) async throws {
     let task = Task(operation: block)
-    registerExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
-        reason: reason,
-        task: task
-    )
+    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
     try await task.value
 }
