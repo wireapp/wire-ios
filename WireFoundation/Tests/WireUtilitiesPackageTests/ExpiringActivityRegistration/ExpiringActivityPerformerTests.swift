@@ -99,6 +99,44 @@ struct ExpiringActivityPerformerTests {
     }
 
     @Test
+    func testBlockUnblocksWhenSystemRevokesTime() async throws {
+        // Given
+        let (stream, _) = AsyncStream<Void>.makeStream()
+        let flag = Flag()
+        var capturedBlock: (@Sendable (Bool) -> Void)?
+
+        let task = Task<Void, Never> {
+            for await _ in stream {}
+        }
+
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                capturedBlock = block
+                DispatchQueue.global().async {
+                    block(false)
+                    Task { await flag.set() }
+                }
+            }
+
+        // When — register the activity, which grants time and blocks.
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+
+        // The block should still be waiting because the task hasn't finished.
+        try await Task.sleep(for: .milliseconds(200))
+        var didReturn = await flag.value
+        #expect(!didReturn)
+
+        // Simulate the system revoking background time.
+        capturedBlock?(true)
+
+        // Then — the block should unblock and the task should be cancelled.
+        try await Task.sleep(for: .milliseconds(200))
+        didReturn = await flag.value
+        #expect(didReturn)
+        #expect(task.isCancelled)
+    }
+
+    @Test
     func testBlockReturnsEvenWhenTaskThrows() async throws {
         // Given
         struct TestError: Error {}
