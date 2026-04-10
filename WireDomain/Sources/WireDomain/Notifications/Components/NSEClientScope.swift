@@ -100,8 +100,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
             // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
             // cancel the task (not keeping any file lock in suspend mode)
-            let task = Task { [weak self] in
-                guard let self else { return }
+            try await withExpiringActivity(reason: "processPayload in NSE") { [weak self] in
+                guard let self else { return } // TODO: check if new warnings are introduced
                 // make sure no pushChannel is open
                 let pushChannelState = PushChannelState(
                     sharedContainerURL: dependency.appContainerURL,
@@ -147,8 +147,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 // no need to monitor anymore let's cancel
                 monitoringTask?.cancel()
             }
-            registerExpiringActivity(reason: "processPayload in NSE", task: task)
-            try await task.value
 
         } else {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)

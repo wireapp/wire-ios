@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol ExpiringActivityPerformer {
+import Foundation
 
-    func performExpiringActivity(
-        reason: String,
-        using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-    )
+struct ExpiringActivityProcessInfoWrapper: ExpiringActivityPerformerProtocol {
+
+    var processInfo: ProcessInfo
+
+    init(processInfo: ProcessInfo = .processInfo) {
+        self.processInfo = processInfo
+    }
+
+    func performExpiringActivity(reason: String, using block: @escaping @Sendable (Bool) -> Void) {
+        processInfo.performExpiringActivity(withReason: reason, using: block)
+    }
 
 }

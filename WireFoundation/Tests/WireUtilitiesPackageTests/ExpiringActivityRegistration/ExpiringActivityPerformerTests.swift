@@ -22,9 +22,9 @@ import Testing
 @testable import WireUtilitiesPackage
 @testable import WireUtilitiesPackageSupport
 
-struct RegisterExpiringActivityTests {
+struct ExpiringActivityPerformerTests {
 
-    let performerMock = ExpiringActivityPerformerMock()
+    let performerMock = ExpiringActivityPerformerProtocolMock()
 
     @Test
     func testReasonIsForwardedToPerformer() {
@@ -39,11 +39,7 @@ struct RegisterExpiringActivityTests {
         let task = Task<Void, Never> {}
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync messages",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync messages", task: task)
 
         // Then
         #expect(receivedReason == "sync messages")
@@ -61,11 +57,7 @@ struct RegisterExpiringActivityTests {
         }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then
         #expect(task.isCancelled)
@@ -90,11 +82,7 @@ struct RegisterExpiringActivityTests {
             }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then — the block should still be waiting because the task hasn't finished.
         try await Task.sleep(for: .milliseconds(200))
@@ -108,6 +96,44 @@ struct RegisterExpiringActivityTests {
         try await Task.sleep(for: .milliseconds(200))
         didReturn = await flag.value
         #expect(didReturn)
+    }
+
+    @Test
+    func testBlockUnblocksWhenSystemRevokesTime() async throws {
+        // Given
+        let (stream, _) = AsyncStream<Void>.makeStream()
+        let flag = Flag()
+        var capturedBlock: (@Sendable (Bool) -> Void)?
+
+        let task = Task<Void, Never> {
+            for await _ in stream {}
+        }
+
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                capturedBlock = block
+                DispatchQueue.global().async {
+                    block(false)
+                    Task { await flag.set() }
+                }
+            }
+
+        // When — register the activity, which grants time and blocks.
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+
+        // The block should still be waiting because the task hasn't finished.
+        try await Task.sleep(for: .milliseconds(200))
+        var didReturn = await flag.value
+        #expect(!didReturn)
+
+        // Simulate the system revoking background time.
+        capturedBlock?(true)
+
+        // Then — the block should unblock and the task should be cancelled.
+        try await Task.sleep(for: .milliseconds(200))
+        didReturn = await flag.value
+        #expect(didReturn)
+        #expect(task.isCancelled)
     }
 
     @Test
@@ -129,11 +155,7 @@ struct RegisterExpiringActivityTests {
             }
 
         // When
-        registerExpiringActivity(
-            performer: performerMock,
-            reason: "sync",
-            task: task
-        )
+        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
 
         // Then — block should return despite the task throwing.
         try await Task.sleep(for: .milliseconds(200))
