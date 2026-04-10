@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireDesign
 import WireDomain
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -145,12 +146,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         titleView.addInteraction(UILargeContentViewerInteraction())
         navigationItem.titleView = titleView
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+        let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
+        closeButton.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
 
+        navigationItem.rightBarButtonItem = closeButton
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
         navigationItem.backButtonDisplayMode = .minimal
+
+        navigationItem.titleView?.accessibilityIdentifier = Locators.ConversationDetailsPage.title.rawValue
     }
 
     override func viewDidLoad() {
