@@ -528,8 +528,8 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    var isInRootFolder: Bool {
-        navigationPath.isEmpty
+    var isInFolder: Bool {
+        !navigationPath.isEmpty
     }
 
     // MARK: - Private
