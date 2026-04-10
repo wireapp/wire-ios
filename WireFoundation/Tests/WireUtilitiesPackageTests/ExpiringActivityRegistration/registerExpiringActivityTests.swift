@@ -20,22 +20,27 @@ import Foundation
 import Testing
 
 @testable import WireUtilitiesPackage
+@testable import WireUtilitiesPackageSupport
 
 struct RegisterExpiringActivityTests {
+
+    let performerMock = ExpiringActivityPerformerMock()
 
     @Test
     func testReasonIsForwardedToPerformer() {
         // Given
         var receivedReason: String?
-        let performer: ExpiringActivityPerformer = { reason, block in
-            receivedReason = reason
-            block(false)
-        }
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure =
+            { reason, block in
+                receivedReason = reason
+                block(false)
+            }
         let task = Task<Void, Never> {}
 
         // When
         registerExpiringActivity(
-            performer: performer,
+            performer: performerMock,
             reason: "sync messages",
             task: task
         )
@@ -47,16 +52,17 @@ struct RegisterExpiringActivityTests {
     @Test
     func testTaskIsCancelledWhenExpiring() {
         // Given
-        let performer: ExpiringActivityPerformer = { _, block in
-            block(true)
-        }
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                block(true)
+            }
         let task = Task<Void, Never> {
             try? await Task.sleep(for: .seconds(60))
         }
 
         // When
         registerExpiringActivity(
-            performer: performer,
+            performer: performerMock,
             reason: "sync",
             task: task
         )
@@ -75,16 +81,17 @@ struct RegisterExpiringActivityTests {
             for await _ in stream {}
         }
 
-        let performer: ExpiringActivityPerformer = { _, block in
-            DispatchQueue.global().async {
-                block(false)
-                Task { await flag.set() }
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                DispatchQueue.global().async {
+                    block(false)
+                    Task { await flag.set() }
+                }
             }
-        }
 
         // When
         registerExpiringActivity(
-            performer: performer,
+            performer: performerMock,
             reason: "sync",
             task: task
         )
@@ -113,16 +120,17 @@ struct RegisterExpiringActivityTests {
             throw TestError()
         }
 
-        let performer: ExpiringActivityPerformer = { _, block in
-            DispatchQueue.global().async {
-                block(false)
-                Task { await flag.set() }
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                DispatchQueue.global().async {
+                    block(false)
+                    Task { await flag.set() }
+                }
             }
-        }
 
         // When
         registerExpiringActivity(
-            performer: performer,
+            performer: performerMock,
             reason: "sync",
             task: task
         )

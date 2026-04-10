@@ -23,26 +23,19 @@ public func registerExpiringActivity(
     task: Task<some Sendable, some Error>
 ) {
     registerExpiringActivity(
-        performer: ProcessInfo.processInfo.performExpiringActivity(withReason:using:),
+        performer: ProcessInfoWrapper(),
         reason: reason,
         task: task
     )
 }
 
-// MARK: - Helpers for making the code testable
-
-typealias ExpiringActivityPerformer = (
-    _ reason: String,
-    _ block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-) -> Void
-
 func registerExpiringActivity(
-    performer performExpiringActivity: ExpiringActivityPerformer,
+    performer: some ExpiringActivityPerformer,
     reason: String,
     task: Task<some Sendable, some Error>
 ) {
 
-    performExpiringActivity(reason) { isExpiring in
+    performer.performExpiringActivity(reason: reason) { isExpiring in
 
         if isExpiring {
 
@@ -63,6 +56,20 @@ func registerExpiringActivity(
             }
 
         }
+    }
+
+}
+
+private struct ProcessInfoWrapper: ExpiringActivityPerformer {
+
+    var processInfo: ProcessInfo
+
+    init(processInfo: ProcessInfo = .processInfo) {
+        self.processInfo = processInfo
+    }
+
+    func performExpiringActivity(reason: String, using block: @escaping @Sendable (Bool) -> Void) {
+        processInfo.performExpiringActivity(withReason: reason, using: block)
     }
 
 }
