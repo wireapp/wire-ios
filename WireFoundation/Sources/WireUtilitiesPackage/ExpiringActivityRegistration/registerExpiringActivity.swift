@@ -18,12 +18,12 @@
 
 import Foundation
 
-public func registerExpiringActivity(
+/*public*/ func registerExpiringActivity(
     reason: String,
     task: Task<some Sendable, some Error>
 ) {
     registerExpiringActivity(
-        performer: ProcessInfoWrapper(),
+        performer: ExpiringActivityProcessInfoWrapper(),
         reason: reason,
         task: task
     )
@@ -55,20 +55,6 @@ func registerExpiringActivity(
             semaphore.wait()
 
         }
-    }
-
-}
-
-private struct ProcessInfoWrapper: ExpiringActivityPerformer {
-
-    var processInfo: ProcessInfo
-
-    init(processInfo: ProcessInfo = .processInfo) {
-        self.processInfo = processInfo
-    }
-
-    func performExpiringActivity(reason: String, using block: @escaping @Sendable (Bool) -> Void) {
-        processInfo.performExpiringActivity(withReason: reason, using: block)
     }
 
 }
