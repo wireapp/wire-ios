@@ -26,10 +26,10 @@ public protocol CookieStorageProtocol: Sendable {
     func removeCookies() throws
 }
 
-private let cookieName = "zuid"
-
 @objc
 public class LegacyCookieStorage: NSObject {
+
+    private static let cookieName = "zuid"
 
     @objc
     public let userIdentifier: UUID
@@ -47,26 +47,31 @@ public class LegacyCookieStorage: NSObject {
 
     // MARK: - Public API
 
+    /// Stores the given cookies.
     @objc
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
         try cookieStorage.storeCookies(cookies)
     }
 
+    /// Removes all stored cookies for the user.
     @objc
     public func removeCookies() throws {
         try cookieStorage.removeCookies()
     }
 
+    /// The expiration date of the authentication cookie, if it exists.
     public var authenticationCookieExpirationDate: Date? {
-        let cookies = (try? cookieStorage.fetchCookies()) ?? []
-        for cookie in cookies {
-            if cookie.name == cookieName {
+        for cookie in fetchCookies() {
+            if cookie.name == Self.cookieName {
                 return cookie.expiresDate
             }
         }
         return nil
     }
 
+    /// Whether there is an authentication cookie stored.
+    ///
+    /// - warning: This only checks for the presence of the cookie, not whether it is valid or not.
     @objc
     public var hasAuthenticationCookie: Bool {
         authenticationCookieExpirationDate != nil
@@ -74,18 +79,13 @@ public class LegacyCookieStorage: NSObject {
 
     // MARK: - HTTPCookie
 
+    /// Extracts cookies from the given HTTP response and stores them if they match the expected cookie name.
     @objc(setCookieDataFromResponse:forURL:)
     public func setCookieData(from response: HTTPURLResponse, for url: URL) {
-        let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as? [String: String] ?? [:], for: url)
-        if cookies.isEmpty {
-            return
-        }
+        let headerFields = response.allHeaderFields as? [String: String] ?? [:]
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
 
-        let properties = cookies.compactMap(\.properties)
-
-        guard (properties.first?[.name] as? String) == cookieName else {
-            return
-        }
+        guard cookies.first?.name == Self.cookieName else { return }
 
         do {
             try storeCookies(cookies)
@@ -94,13 +94,24 @@ public class LegacyCookieStorage: NSObject {
         }
     }
 
+    /// Adds store cookies on the given request.
     @objc(setRequestHeaderFieldsOnRequest:)
     public func setRequestHeaderFields(on request: NSMutableURLRequest) {
-        let cookies = (try? cookieStorage.fetchCookies()) ?? []
-
-        for (field, value) in HTTPCookie.requestHeaderFields(with: cookies) {
+        for (field, value) in HTTPCookie.requestHeaderFields(with: fetchCookies()) {
             request.addValue(value, forHTTPHeaderField: field)
         }
+    }
+
+    // MARK: - Helpers
+
+    private func fetchCookies() -> [HTTPCookie] {
+        do {
+            return try cookieStorage.fetchCookies()
+        } catch {
+            WireLogger.authentication.error("Failed to fetch cookies: \(error)")
+            return []
+        }
+
     }
 
 }
