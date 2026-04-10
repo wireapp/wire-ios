@@ -47,14 +47,13 @@ func registerExpiringActivity(
             // System granted time. Block this callback until the task finishes,
             // so the system knows we're still doing work.
             let semaphore = DispatchSemaphore(value: 0)
-            defer { semaphore.wait() }
 
             Task.detached {
                 // We only need to wait for the task to complete; the result is irrelevant.
                 _ = try? await task.value
                 semaphore.signal()
             }
-
+            semaphore.wait()
         }
     }
 
