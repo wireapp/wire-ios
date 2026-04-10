@@ -23,6 +23,7 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireUtilities
+import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 protocol SyncAgentProtocol {
@@ -127,13 +128,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "resuming sync") { [weak self] in
+                let task = Task<Void, any Error> { [weak self] in
                     if callEventsOnly {
                         try await self?.performIncrementalSyncForCallingEvents()
                     } else {
                         try await self?.performSync()
                     }
                 }
+                registerExpiringActivity(reason: "resuming sync", task: task)
+                try await task.value
             } catch is CancellationError {
                 // ignore error
             } catch {

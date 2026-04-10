@@ -23,6 +23,7 @@ import WireLogging
 import WireNetwork
 import WireSystem
 import WireUtilities
+import WireUtilitiesPackage
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -165,24 +166,17 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.info("handling live event stream", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
-                do {
-                    // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
-                    // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                    try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
-                        await processLiveEvents(
-                            liveEventStream: liveEventStream,
-                            processedEnvelopeIDs: processedEnvelopeIDs,
-                            publicKeys: publicKeys
-                        )
-                    }
-                } catch {
-                    // if we expire, close everything
-                    WireLogger.sync.debug(
-                        "Error while processing live stream, close push channel",
-                        attributes: .incrementalSyncV2
+                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
+                // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
+                let task = Task {
+                    await processLiveEvents(
+                        liveEventStream: liveEventStream,
+                        processedEnvelopeIDs: processedEnvelopeIDs,
+                        publicKeys: publicKeys
                     )
-                    await pushChannel.close()
                 }
+                registerExpiringActivity(reason: "processLiveStream IncrementalSync", task: task)
+                await task.value
 
                 logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.finished))
