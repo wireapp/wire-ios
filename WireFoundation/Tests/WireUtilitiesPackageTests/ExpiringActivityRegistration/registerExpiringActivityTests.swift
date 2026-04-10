@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import WireUtilitiesPackage
 
-final class RegisterExpiringActivityTests: XCTestCase {
+struct RegisterExpiringActivityTests {
 
+    @Test
     func testReasonIsForwardedToPerformer() {
         // Given
         var receivedReason: String?
@@ -39,9 +41,10 @@ final class RegisterExpiringActivityTests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(receivedReason, "sync messages")
+        #expect(receivedReason == "sync messages")
     }
 
+    @Test
     func testTaskIsCancelledWhenExpiring() {
         // Given
         let performer: ExpiringActivityPerformer = { _, block in
@@ -59,9 +62,10 @@ final class RegisterExpiringActivityTests: XCTestCase {
         )
 
         // Then
-        XCTAssertTrue(task.isCancelled)
+        #expect(task.isCancelled)
     }
 
+    @Test
     func testBlockWaitsForTaskToFinishWhenNotExpiring() async throws {
         // Given
         let (stream, continuation) = AsyncStream<Void>.makeStream()
@@ -88,7 +92,7 @@ final class RegisterExpiringActivityTests: XCTestCase {
         // Then — the block should still be waiting because the task hasn't finished.
         try await Task.sleep(for: .milliseconds(200))
         var didReturn = await flag.value
-        XCTAssertFalse(didReturn)
+        #expect(!didReturn)
 
         // Allow the task to complete.
         continuation.finish()
@@ -96,15 +100,16 @@ final class RegisterExpiringActivityTests: XCTestCase {
         // The block should return shortly after.
         try await Task.sleep(for: .milliseconds(200))
         didReturn = await flag.value
-        XCTAssertTrue(didReturn)
+        #expect(didReturn)
     }
 
+    @Test
     func testBlockReturnsEvenWhenTaskThrows() async throws {
         // Given
         struct TestError: Error {}
         let flag = Flag()
 
-        let task = Task<Void, Error> {
+        let task = Task<Void, any Error> {
             throw TestError()
         }
 
@@ -125,7 +130,7 @@ final class RegisterExpiringActivityTests: XCTestCase {
         // Then — block should return despite the task throwing.
         try await Task.sleep(for: .milliseconds(200))
         let didReturn = await flag.value
-        XCTAssertTrue(didReturn)
+        #expect(didReturn)
     }
 
 }
