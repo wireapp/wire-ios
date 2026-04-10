@@ -23,6 +23,11 @@ jobs:
                     script: |
                         const REQUIRED_APPROVALS = 2;
 
+                        const releaseLabel = (pr) => {
+                            const m = pr.base.ref.match(/^release\/cycle-(.+)$/);
+                            return m ? `🚨 Release ${m[1]}` : null;
+                        };
+
                         // ── 1. Fetch all open, non-draft PRs ────────────────────────────────────
                         const { data: prs } = await github.rest.pulls.list({
                             owner:    context.repo.owner,
@@ -35,7 +40,7 @@ jobs:
 
                         // ── 2. For each PR collect review state ──────────────────────────────────
                         const readyToMerge = [];  // ≥ REQUIRED_APPROVALS approvals
-                        const reviewerMap  = {};  // reviewer login → [{ pr, tag }]
+                        const reviewerMap  = {};  // reviewer login → [{ pr, release, tag }]
 
                         for (const pr of openPRs) {
                             const { data: reviews } = await github.rest.pulls.listReviews({
@@ -55,8 +60,10 @@ jobs:
                             const approvalCount = Object.values(latestByUser)
                                 .filter(s => s === 'APPROVED').length;
 
+                            const release = releaseLabel(pr);
+
                             if (approvalCount >= REQUIRED_APPROVALS) {
-                                readyToMerge.push({ pr, approvalCount });
+                                readyToMerge.push({ pr, approvalCount, release });
                                 continue;
                             }
 
@@ -74,9 +81,14 @@ jobs:
                                 const tag = latestByUser[reviewer] === 'CHANGES_REQUESTED'
                                     ? ' *(changes requested — waiting for author update)*'
                                     : '';
-                                reviewerMap[reviewer].push({ pr, tag });
+                                reviewerMap[reviewer].push({ pr, release, tag });
                             }
                         }
+
+                        const formatPR = ({ pr, release, tag = '' }) => {
+                            const prefix = release ? `**[${release}]** ` : '';
+                            return `  • ${prefix}[#${pr.number}](${pr.html_url}) ${pr.title}${tag}`;
+                        };
 
                         // ── 3. Format the message ────────────────────────────────────────────────
                         const lines = [];
@@ -91,9 +103,12 @@ jobs:
                             lines.push('**PRs needing your attention**');
                             lines.push('');
                             for (const reviewer of reviewers) {
+                                const items = reviewerMap[reviewer];
+                                // Release PRs first, then the rest
+                                items.sort((a, b) => (b.release ? 1 : 0) - (a.release ? 1 : 0));
                                 lines.push(`**@${reviewer}**`);
-                                for (const { pr, tag } of reviewerMap[reviewer]) {
-                                    lines.push(`  • [#${pr.number}](${pr.html_url}) ${pr.title}${tag}`);
+                                for (const item of items) {
+                                    lines.push(formatPR(item));
                                 }
                                 lines.push('');
                             }
@@ -107,8 +122,11 @@ jobs:
                         } else {
                             lines.push('**✅ Approved & waiting to merge**');
                             lines.push('');
-                            for (const { pr, approvalCount } of readyToMerge) {
-                                lines.push(`  • [#${pr.number}](${pr.html_url}) ${pr.title} — author: **@${pr.user.login}** (${approvalCount} approvals)`);
+                            // Release PRs first
+                            readyToMerge.sort((a, b) => (b.release ? 1 : 0) - (a.release ? 1 : 0));
+                            for (const { pr, approvalCount, release } of readyToMerge) {
+                                const prefix = release ? `**[${release}]** ` : '';
+                                lines.push(`  • ${prefix}[#${pr.number}](${pr.html_url}) ${pr.title} — author: **@${pr.user.login}** (${approvalCount} approvals)`);
                             }
                         }
 
