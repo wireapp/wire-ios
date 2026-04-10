@@ -16,11 +16,27 @@ PATTERN="is implemented in both .+ and .+"
 DUPLICATES=$(grep -rEo "$PATTERN" "$LOG_DIR" --include='*.log' 2>/dev/null | sort -u || true)
 
 if [ -n "$DUPLICATES" ]; then
-    echo "::error::Duplicate symbol implementations detected in test output!"
+    echo "::warning::Duplicate symbol implementations detected in test output!"
     echo ""
     echo "$DUPLICATES"
     echo ""
     echo "Each duplicate must be resolved — it can cause spurious casting failures and mysterious crashes at runtime."
+
+    # Write to GitHub Actions job summary if available
+    if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+        {
+            echo "## Duplicate Symbol Implementations"
+            echo ""
+            echo "The following symbols are implemented in multiple modules:"
+            echo ""
+            echo '```'
+            echo "$DUPLICATES"
+            echo '```'
+            echo ""
+            echo "Each duplicate must be resolved — it can cause spurious casting failures and mysterious crashes at runtime."
+        } >> "$GITHUB_STEP_SUMMARY"
+    fi
+
     exit 1
 fi
 
