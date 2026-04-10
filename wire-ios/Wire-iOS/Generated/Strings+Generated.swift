@@ -4767,6 +4767,14 @@ internal enum L10n {
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
       internal static let searchPlaceholder = L10n.tr("Localizable", "peoplepicker.search_placeholder", fallback: "Search by name or username")
+      internal enum AppDetails {
+        /// Created by %@
+        internal static func createdBy(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "peoplepicker.app_details.created_by", String(describing: p1), fallback: "Created by %@")
+        }
+        /// Description
+        internal static let description = L10n.tr("Localizable", "peoplepicker.app_details.description", fallback: "Description")
+      }
       internal enum Apps {
         internal enum AddApp {
           /// Add app
@@ -4840,6 +4848,12 @@ internal enum L10n {
       internal enum NavigationHeader {
         /// New conversation
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
+      internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
+        internal static let message = L10n.tr("Localizable", "peoplepicker.no_apps_added.message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        /// Your team hasn’t added apps yet
+        internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
       }
       internal enum NoMatchingResults {
         internal enum Action {

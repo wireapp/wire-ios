@@ -120,14 +120,21 @@ final class FileRenameViewModel: ObservableObject {
             let nodeID = model.nodeID
             let nodeFilePath = model.filepath
 
-            try await renameNodeUseCase.invoke(
-                nodeID: nodeID,
-                nodeFilepath: nodeFilePath,
-                newFilename: trimmedInput(filenameInput),
-                isFolder: kind == .folder
-            )
+            let originalFilename = URL(fileURLWithPath: model.filename).deletingPathExtension().lastPathComponent
 
-            didRename = true
+            // The backend doesn't allow to only change the case so we consider case changes as no changes.
+            let fileNameChanged = originalFilename.caseInsensitiveCompare(filenameInput) != .orderedSame
+
+            if fileNameChanged {
+                try await renameNodeUseCase.invoke(
+                    nodeID: nodeID,
+                    nodeFilepath: nodeFilePath,
+                    newFilename: trimmedInput(filenameInput),
+                    isFolder: kind == .folder
+                )
+
+                didRename = true
+            }
 
             return true
 
