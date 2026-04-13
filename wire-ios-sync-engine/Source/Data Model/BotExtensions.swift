@@ -86,17 +86,20 @@ public final class ServiceDetails {
     public let providerIdentifier: String
 
     public let name: String
+    public let category: String
     public let serviceDescription: String
 
     public init(
         serviceIdentifier: String,
         providerIdentifier: String,
         name: String,
+        category: String,
         serviceDescription: String
     ) {
         self.serviceIdentifier = serviceIdentifier
         self.providerIdentifier = providerIdentifier
         self.name = name
+        self.category = category
         self.serviceDescription = serviceDescription
     }
 
@@ -110,6 +113,7 @@ public final class ServiceDetails {
         self.serviceIdentifier = serviceIdentifier
         self.providerIdentifier = providerIdentifier
         self.name = name
+        self.category = ""
         self.serviceDescription = description
     }
 

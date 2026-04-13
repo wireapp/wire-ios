@@ -124,6 +124,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set up Datadog and other loggers
         WireAnalytics.setup(for: .app)
+        CoreCrypto.registerLogger()
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
