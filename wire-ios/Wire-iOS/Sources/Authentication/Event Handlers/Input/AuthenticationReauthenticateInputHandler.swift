@@ -18,8 +18,7 @@
 
 import Foundation
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "AuthenticationReauthenticateInputHandler")
+import WireLogging
 
 /// Handles input in the reauthentication phase.
 
@@ -47,7 +46,7 @@ final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler
             )
             return [.startLoginFlow(request, proxyCredentials)]
         } else {
-            zmLog.error("Unable to handle context type: \(type(of: context))")
+            WireLogger.authentication.error("Unable to handle context type: \(type(of: context))")
         }
 
         // Do not handle other cases.

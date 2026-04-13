@@ -16,4 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// TODO: delete file
+func ZMSLog() {}
+func ZMSLog(tag: String) {}

@@ -21,6 +21,7 @@ import WireAuthenticationAPI
 import WireDataModel
 import WireNetwork
 import WireSystem
+import WireLogging
 
 /// Provides information to the event responder chain and executes actions.
 
@@ -99,9 +100,6 @@ final class AuthenticationEventResponderChain {
     }
 
     // MARK: - Properties
-
-    /// The handle to the OS log for authentication events.
-    private let log = ZMSLog(tag: "Authentication")
 
     /// The object assisting the responder chain.
     weak var delegate: AuthenticationEventResponderChainDelegate?
@@ -227,9 +225,9 @@ final class AuthenticationEventResponderChain {
 
     func handleEvent(ofType eventType: EventType) {
         if case .userInput = eventType {
-            log.info("Event handling manager received event: userInput")
+            WireLogger.authentication.info("Event handling manager received event: userInput")
         } else {
-            log.info("Event handling manager received event: \(eventType)")
+            WireLogger.authentication.info("Event handling manager received event: \(eventType)")
         }
 
         switch eventType {
@@ -265,7 +263,7 @@ final class AuthenticationEventResponderChain {
     /// Start handling the event with the specified context, using the given handlers and delegate.
     private func handleEvent<Context>(with handlers: [AnyAuthenticationEventHandler<Context>], context: Context) {
         guard let delegate else {
-            log.error("The event will not be handled because the responder chain does not have a delegate.")
+            WireLogger.authentication.error("The event will not be handled because the responder chain does not have a delegate.")
             return
         }
 
@@ -288,13 +286,13 @@ final class AuthenticationEventResponderChain {
         }
 
         guard let (name, actions) = lookupResult else {
-            log.error(
+            WireLogger.authentication.error(
                 "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
             )
             return
         }
 
-        log.info("Handing event using \(name), and \(actions.count) actions.")
+        WireLogger.authentication.info("Handing event using \(name), and \(actions.count) actions.")
         delegate.executeActions(actions)
     }
 

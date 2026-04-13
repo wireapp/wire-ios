@@ -19,8 +19,7 @@
 import AVFoundation
 import Foundation
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "UI")
+import WireLogging
 
 // MARK: - audio convert
 
@@ -34,7 +33,7 @@ public extension AVAsset {
         let alteredAsset = AVAsset(url: fileURL)
         let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)
         guard let exportSession = session else {
-            zmLog.error("Failed to create export session with asset \(alteredAsset)")
+            WireLogger.ui.error("Failed to create export session with asset \(alteredAsset)")
             completion?(false)
             return
         }
@@ -44,7 +43,7 @@ public extension AVAsset {
         exportSession.exportAsynchronously { [unowned exportSession] in
             switch exportSession.status {
             case .failed:
-                zmLog.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
+                WireLogger.ui.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
                 DispatchQueue.main.async {
                     completion?(false)
                 }
@@ -112,8 +111,7 @@ public extension AVURLAsset {
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch let deleteError {
-                    zmLog.error("Cannot delete file: \(url) (\(deleteError))")
-
+                    WireLogger.ui.error("Cannot delete file: \(url) (\(deleteError))")
                 }
             }
 
@@ -132,7 +130,7 @@ public extension AVURLAsset {
             do {
                 try FileManager.default.removeItem(at: outputURL)
             } catch let deleteError {
-                zmLog.error("Cannot delete old leftover at \(outputURL): \(deleteError)")
+                WireLogger.ui.error("Cannot delete old leftover at \(outputURL): \(deleteError)")
             }
         }
 
@@ -162,7 +160,7 @@ extension AVAssetExportSession {
             do {
                 try FileManager.default.removeItem(at: exportURL)
             } catch {
-                zmLog.error("Cannot delete old leftover at \(exportURL): \(error)")
+                WireLogger.ui.error("Cannot delete old leftover at \(exportURL): \(error)")
             }
         }
         outputURL = exportURL
@@ -174,7 +172,7 @@ extension AVAssetExportSession {
         exportAsynchronously {
             if let session,
                let error = session.error {
-                zmLog
+                WireLogger.ui
                     .error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
             }
             completion(exportURL, session?.error)

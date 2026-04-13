@@ -18,8 +18,7 @@
 
 import Foundation
 import WireTransport
-
-private let zmsLog = ZMSLog(tag: "backend-environment")
+import WireLogging
 
 public extension BackendEnvironment {
     static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
@@ -40,7 +39,7 @@ public extension BackendEnvironment {
             AutomationHelper.sharedHelper.disableBackendTypeOverride()
             shared.save(in: .applicationGroup)
             NotificationCenter.default.post(name: backendSwitchNotification, object: shared)
-            zmsLog.debug("Shared backend environment did change to: \(shared.title)")
+            WireLogger.backend.debug("Shared backend environment did change to: \(shared.title)")
         }
     }
 
