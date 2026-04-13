@@ -2145,9 +2145,9 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.call.missed-call", p1, fallback: "Plural format key: \"%#@missed_call@\"")
           }
           internal enum MissedCall {
-            /// Plural format key: "%#@missed_call_from@ %2$@"
-            internal static func groups(_ p1: Int, _ p2: Any) -> String {
-              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, String(describing: p2), fallback: "Plural format key: \"%#@missed_call_from@ %2$@\"")
+            /// Plural format key: "%#@missed_call_from@"
+            internal static func groups(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, fallback: "Plural format key: \"%#@missed_call_from@\"")
             }
           }
         }
