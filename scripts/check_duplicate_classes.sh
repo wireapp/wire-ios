@@ -32,7 +32,7 @@ set -euo pipefail
 LOG_DIR="${1:-.}"
 PATTERN="is implemented in both .+ and .+"
 
-DUPLICATES=$(grep -rE "$PATTERN" "$LOG_DIR" --include='*.log' 2>/dev/null | sort -u || true)
+DUPLICATES=$(find "$LOG_DIR" -name '*.log' -type f -exec grep -E "$PATTERN" {} + 2>/dev/null | sort -u || true)
 
 if [ -n "$DUPLICATES" ]; then
     echo "::warning::Duplicate symbol implementations detected in test output!"
