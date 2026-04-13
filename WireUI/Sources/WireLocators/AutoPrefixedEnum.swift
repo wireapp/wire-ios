@@ -16,5 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.16.2
-MAJOR_VERSION = 4
+protocol AutoPrefixedEnum: RawRepresentable, CaseIterable where RawValue == String {}
+
+extension AutoPrefixedEnum {
+    public var rawValue: String { "\(Self.self).\(self)" }
+
+    public init?(rawValue: String) {
+        guard let match = Self.allCases.first(where: { $0.rawValue == rawValue }) else { return nil }
+        self = match
+    }
+}
