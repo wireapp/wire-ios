@@ -19,7 +19,8 @@
 protocol AutoPrefixedEnum: RawRepresentable, CaseIterable where RawValue == String {}
 
 extension AutoPrefixedEnum {
-    public var rawValue: String { "\(Self.self).\(self)" }
+    // TODO: https://wearezeta.atlassian.net/browse/WPB-24694
+    public var rawValue: String { "\(self)" }
 
     public init?(rawValue: String) {
         guard let match = Self.allCases.first(where: { $0.rawValue == rawValue }) else { return nil }
