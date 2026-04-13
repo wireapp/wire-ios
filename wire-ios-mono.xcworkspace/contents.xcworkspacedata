@@ -88,6 +88,9 @@
          location = "group:c1_c2_c3_app_release_restricted.yml">
       </FileRef>
       <FileRef
+         location = "group:pr-review-summary.yml">
+      </FileRef>
+      <FileRef
          location = "group:changelog.yml">
       </FileRef>
       <FileRef

@@ -153,6 +153,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setUpDatadog() {
         WireAnalytics.setup(for: .shareExtension)
+        CoreCrypto.registerLogger()
     }
 
     override func viewDidLoad() {

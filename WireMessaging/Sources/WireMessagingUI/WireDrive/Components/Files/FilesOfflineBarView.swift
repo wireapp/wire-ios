@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct FilesOfflineBarView: View {
     var body: some View {
@@ -25,16 +26,11 @@ struct FilesOfflineBarView: View {
                 L10n.Localizable.General.NoInternet.title.uppercased()
             )
             .font(for: .subline2)
-            .foregroundColor(.white)
+            .foregroundColor(ColorTheme.Base.onWarning.color)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 25)
-        .background(Color(
-            red: 254.0 / 255.0,
-            green: 191.0 / 255.0,
-            blue: 2.0 / 255.0,
-            opacity: 1
-        ))
+        .background(ColorTheme.Base.warning.color)
         .cornerRadius(6)
         .padding(.horizontal, 16)
     }

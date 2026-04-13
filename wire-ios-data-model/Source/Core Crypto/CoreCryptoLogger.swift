@@ -20,6 +20,17 @@ import Foundation
 import WireCoreCrypto
 import WireLogging
 
+public extension CoreCrypto {
+
+    static func registerLogger() {
+        if DeveloperFlag.enabledCCDebugLogs.isOn {
+            setLogger(CoreCryptoLoggerProxy())
+            setMaxLogLevel(.debug)
+        }
+    }
+
+}
+
 final class CoreCryptoLoggerProxy: CoreCryptoLogger {
 
     func log(

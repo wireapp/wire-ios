@@ -35,15 +35,15 @@ final class ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
-    private lazy var wireDriveBackendURL: URL? = {
+    private var wireDriveBackendURL: URL? {
         let contextProvider = userSession.contextProvider
-        let syncContext = contextProvider.syncContext
-        let featureRepository = LegacyFeatureRepository(context: syncContext)
+        let viewContext = contextProvider.viewContext
+        let featureRepository = LegacyFeatureRepository(context: viewContext)
 
-        return syncContext.performAndWait {
+        return viewContext.performAndWait {
             featureRepository.fetchCellsInternal()?.config.backend.url
         }
-    }()
+    }
 
     init(
         account: Account,

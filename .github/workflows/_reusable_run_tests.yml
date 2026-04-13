@@ -206,6 +206,11 @@ jobs:
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
+
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
         id: find-xcresults
