@@ -348,13 +348,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Nieodebrane połączenie</string>
-        <key>few</key>
-        <string>Nieodebrane połączenia</string>
-        <key>many</key>
-        <string>Nieodebrane połączenia</string>
+        <string>Missed call</string>
         <key>other</key>
-        <string>Nieodebrane połączenia</string>
+        <string>Missed calls (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -380,7 +376,7 @@
     <key>content.system.call.missed-call.groups</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@missed_call_from@ %2$@</string>
+      <string>%#@missed_call_from@</string>
       <key>missed_call_from</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
@@ -388,13 +384,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Nieodebrana rozmowa od</string>
-        <key>few</key>
-        <string>Nieodebrane rozmowy od</string>
-        <key>many</key>
-        <string>Nieodebrane rozmowy od</string>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>Nieodebrane rozmowy od</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

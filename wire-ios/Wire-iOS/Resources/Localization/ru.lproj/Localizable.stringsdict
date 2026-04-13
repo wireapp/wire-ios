@@ -348,13 +348,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Пропущенный вызов</string>
-        <key>few</key>
-        <string>Пропущенных вызова</string>
-        <key>many</key>
-        <string>Пропущенных вызовов</string>
+        <string>Missed call</string>
         <key>other</key>
-        <string>Пропущенных вызовов</string>
+        <string>Missed calls (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -380,7 +376,7 @@
     <key>content.system.call.missed-call.groups</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@missed_call_from@ %2$@</string>
+      <string>%#@missed_call_from@</string>
       <key>missed_call_from</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
@@ -388,13 +384,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Пропущенный вызов от</string>
-        <key>few</key>
-        <string>Пропущенные вызовы от</string>
-        <key>many</key>
-        <string>Пропущенные вызовы от</string>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>Пропущенные вызовы от</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
