@@ -245,8 +245,10 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
+        <key>one</key>
+        <string>Missed call</string>
         <key>other</key>
-        <string>未接来电</string>
+        <string>Missed calls (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -273,8 +275,10 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
+        <key>one</key>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>来自 %2$@ 的未接来电</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
