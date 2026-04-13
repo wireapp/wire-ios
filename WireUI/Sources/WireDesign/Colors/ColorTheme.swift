@@ -82,17 +82,17 @@ public enum ColorTheme {
         public static func ownBubbleSenderNameColor(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
-                UIColor(light: .blue400Light, dark: .blue400Dark)
+                UIColor(light: .blue400Light, dark: .blue200Dark)
             case .green:
-                UIColor(light: .green400Light, dark: .green400Dark)
+                UIColor(light: .green400Light, dark: .green200Dark)
             case .red:
-                UIColor(light: .red400Light, dark: .red400Dark)
+                UIColor(light: .red400Light, dark: .red200Dark)
             case .amber:
-                UIColor(light: .amber400Light, dark: .amber400Dark)
+                UIColor(light: .amber400Light, dark: .amber200Dark)
             case .turquoise:
-                UIColor(light: .turquoise400Light, dark: .turquoise400Dark)
+                UIColor(light: .turquoise400Light, dark: .turquoise200Dark)
             case .purple:
-                UIColor(light: .purple400Light, dark: .purple400Dark)
+                UIColor(light: .purple400Light, dark: .purple200Dark)
             }
         }
 
