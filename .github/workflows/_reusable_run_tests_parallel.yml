@@ -111,6 +111,11 @@ jobs:
       - name: "Test ${{ matrix.scheme }}"
         run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
 
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
+
       - name: Find .xcresult path
         if: always()
         id: find-xcresult
