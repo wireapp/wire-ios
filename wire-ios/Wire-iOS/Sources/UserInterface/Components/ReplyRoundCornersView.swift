@@ -91,11 +91,12 @@ final class ReplyRoundCornersView: UIControl {
 
     func updateStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
         if isSentBySelfUser {
-            backgroundColor = ColorTheme.Base.ownBubbleBackground(accentColor)
+            
+            backgroundColor = ColorTheme.Base.replyBoxBackground(accentColor)
             layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
             grayBoxView.backgroundColor = ColorTheme.Base.primary(accentColor)
         } else {
-            backgroundColor = nil
+            backgroundColor = SemanticColors.ChatBubble.backgroundReplyOtherMessage
             layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
             grayBoxView.backgroundColor = ViewColors.backgroundSeparatorCell
         }

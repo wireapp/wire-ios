@@ -283,6 +283,7 @@ public enum SemanticColors {
     }
 
     public enum ChatBubble {
+        public static let backgroundReplyOtherMessage = UIColor(light: .white, dark: .gray95)
         public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray90)
         public static let foregroundOwnMessage = UIColor(light: .white, dark: .white)
         public static let foregroundOtherMessage = UIColor(light: .black, dark: .white)

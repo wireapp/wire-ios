@@ -196,7 +196,6 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
             .layerMinXMaxYCorner, .layerMaxXMaxYCorner
         ]
         replyContainer.setAccentBarHidden(true)
-        replyContainer.backgroundColor = ColorTheme.Base.replyBoxBackground(accentColor)
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
@@ -204,7 +203,7 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
 
         let textColor: UIColor = ownMessage ? ownColor : otherColor
-        let linkColor: UIColor = ownMessage ? ownColor : .accent()
+        let linkColor: UIColor = ownMessage ? ownColor : otherColor
 
         let linkAttributes: [NSAttributedString.Key: Any] = ownMessage
             ? [

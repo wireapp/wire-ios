@@ -116,8 +116,8 @@ final class ConversationReplyContentView: UIView {
 
         private func setupContent() -> Content {
             typealias LabelColors = SemanticColors.Label
-            let iconColor: UIColor = showReplyArrow ? .white : LabelColors.textDefault
-            let textColor: UIColor = showReplyArrow ? .white : LabelColors.textDefault
+            let iconColor: UIColor = isSentBySelfUser ? .white : LabelColors.textDefault
+            let textColor: UIColor = isSentBySelfUser ? .white : LabelColors.textDefault
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.smallSemiboldFont,
                 .foregroundColor: textColor
@@ -131,6 +131,7 @@ final class ConversationReplyContentView: UIView {
                         .formatForPreview(
                             message: data,
                             inputMode: false,
+                            textColor: textColor,
                             accentColor: accentColor
                         )
                 }
@@ -144,6 +145,7 @@ final class ConversationReplyContentView: UIView {
                         .formatForPreview(
                             message: data,
                             inputMode: false,
+                            textColor: textColor,
                             accentColor: accentColor
                         )
                 )
@@ -294,14 +296,16 @@ final class ConversationReplyContentView: UIView {
 
         if object.showReplyArrow {
             // Dark accent background: content/timestamp use white; sender uses quoted sender's accent color
-            contentTextView.textColor = .white
-            timestampLabel.textColor = UIColor.white.withAlphaComponent(0.7)
+            let replyColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
+            contentTextView.textColor = replyColor
+            timestampLabel.textColor = replyColor.withAlphaComponent(0.7)
 
             let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
             let senderColor = ColorTheme.Base.primary(quotedAccentColor)
 
+            
             if let name = object.senderName,
-               let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(.white, renderingMode: .alwaysTemplate) {
+               let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(replyColor, renderingMode: .alwaysTemplate) {
                 let attachment = NSTextAttachment()
                 attachment.image = replyIcon
                 let iconSize = CGFloat(10)
@@ -398,10 +402,12 @@ final class ConversationReplyContentView: UIView {
         if object.showReplyArrow,
            let existing = contentTextView.attributedText,
            !existing.string.isEmpty {
+            let color = object.isSentBySelfUser ? UIColor.white : UIColor.black
+            
             let mutable = NSMutableAttributedString(attributedString: existing)
             mutable.addAttribute(
                 .foregroundColor,
-                value: UIColor.white,
+                value: color,
                 range: NSRange(location: 0, length: mutable.length)
             )
             contentTextView.attributedText = mutable

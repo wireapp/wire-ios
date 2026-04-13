@@ -97,6 +97,7 @@ extension NSAttributedString {
     static func formatForPreview(
         message: TextMessageData,
         inputMode: Bool,
+        textColor: UIColor = SemanticColors.Label.textDefault,
         accentColor: AccentColor
     ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
@@ -131,7 +132,7 @@ extension NSAttributedString {
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
         markdownText.addAttribute(
             .foregroundColor,
-            value: SemanticColors.Label.textDefault,
+            value: textColor,
             range: NSRange(location: 0, length: markdownText.length)
         )
         return markdownText

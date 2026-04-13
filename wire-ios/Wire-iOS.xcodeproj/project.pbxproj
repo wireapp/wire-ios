@@ -636,6 +636,7 @@
 				ConversationMessageCell/ConversationMessageSnapshotTestCase.swift,
 				ConversationMessageCell/ConversationPingMessageTests.swift,
 				ConversationMessageCell/ConversationReactionMessageTests.swift,
+				ConversationMessageCell/ConversationReplyWithTextCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSystemMessageTests.swift,
 				ConversationMessageCell/ConversationTextMessageTests.swift,
