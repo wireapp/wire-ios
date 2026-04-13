@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: check if cancellation is still forwarded to the nested task
-
 // MARK: - Non-throwing
 
 public func withExpiringActivity(
@@ -38,7 +36,11 @@ func withExpiringActivity(
 ) async {
     let task = Task(operation: block)
     performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    await task.value
+    await withTaskCancellationHandler {
+        await task.value
+    } onCancel: {
+        task.cancel()
+    }
 }
 
 // MARK: - Throwing
@@ -61,5 +63,9 @@ func withExpiringActivity(
 ) async throws {
     let task = Task(operation: block)
     performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    try await task.value
+    try await withTaskCancellationHandler {
+        try await task.value
+    } onCancel: {
+        task.cancel()
+    }
 }

@@ -163,6 +163,43 @@ struct ExpiringActivityPerformerTests {
         #expect(didReturn)
     }
 
+    @Test
+    func testCancellingOuterTaskCancelsBlock() async throws {
+        // Given
+        let blockStarted = Flag()
+        let blockCancelled = Flag()
+
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                DispatchQueue.global().async {
+                    block(false)
+                }
+            }
+
+        let outerTask = Task {
+            await withExpiringActivity(performer: performerMock, reason: "sync") {
+                await blockStarted.set()
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .milliseconds(10))
+                }
+                await blockCancelled.set()
+            }
+        }
+
+        // Wait for the block to start running.
+        while !(await blockStarted.value) {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        // When
+        outerTask.cancel()
+
+        // Then — the block should see cancellation.
+        try await Task.sleep(for: .milliseconds(200))
+        let wasCancelled = await blockCancelled.value
+        #expect(wasCancelled)
+    }
+
 }
 
 // MARK: -
