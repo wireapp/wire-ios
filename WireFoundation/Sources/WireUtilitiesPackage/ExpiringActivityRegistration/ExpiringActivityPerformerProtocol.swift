@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol ExpiringActivityPerformerProtocol {
+protocol ExpiringActivityPerformerProtocol: Sendable {
 
     func performExpiringActivity(
         reason: String,
