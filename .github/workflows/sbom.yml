@@ -1,15 +1,15 @@
 name: SBOM Generation
 
 on:
+  push:
+    branches:
+      - develop
   workflow_dispatch:
     inputs:
       ref:
         description: 'Branch or tag to check out'
         required: true
         default: 'develop'
-      project_version:
-        description: 'Project version to use in Dependency Track'
-        required: true
 
 jobs:
   sbom:
@@ -17,7 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Read project version
+        id: read_version
+        run: |
+          VERSION=$(grep 'WIRE_SHORT_VERSION' wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig | cut -d'=' -f2 | tr -d ' ')
+          echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Install Trivy
         run: |
@@ -35,6 +41,6 @@ jobs:
           serverhostname: ${{ secrets.DEPENDENCY_TRACK_HOST }}
           apikey: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
           projectname: wire-ios
-          projectversion: ${{ inputs.project_version }}
+          projectversion: ${{ steps.read_version.outputs.project_version }}
           bomfilename: bom.json
           autocreate: true
