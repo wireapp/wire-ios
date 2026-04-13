@@ -19,6 +19,7 @@
 public import Foundation
 
 import WireFoundation
+import WireLogging
 import WireUtilitiesPackage
 
 public extension SessionManager {
@@ -49,19 +50,20 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
 
     @MainActor
     func reportMigrationNeeded() async {
-        await withCheckedContinuation { continuation in
-            sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
-        }
+        await sessionManager.prepareForRestoreWithMigration()
     }
 
     @MainActor
     func selectAccountAndTriggerSlowSync(_ account: Account) async {
-        let userSession = await withCheckedContinuation { continuation in
-            sessionManager.select(account, completion: { continuation.resume(returning: $0) })
-        }
-        guard let userSession else { return }
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            userSession.syncStatus.forceSlowSync()
+        guard let userSession = await sessionManager.select(account) else { return }
+        do {
+            try await userSession.syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error(
+                "error performing slow sync: \(String(describing: error))",
+                attributes: .initialSync,
+                .safePublic
+            )
         }
     }
 }

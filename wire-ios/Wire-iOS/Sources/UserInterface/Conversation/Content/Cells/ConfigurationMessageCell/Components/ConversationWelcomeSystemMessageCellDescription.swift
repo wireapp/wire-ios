@@ -37,11 +37,21 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(isWireCellsEnabled: Bool) {
-        let title = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
+    typealias Variant = (wireCells: Bool, isChannel: Bool)
+
+    init(variant: Variant) {
+        let title = variant.wireCells ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
             .Localizable.Conversation.ConnectionView.Welcome.Title.wire
-        let message = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells : L10n
-            .Localizable.Conversation.ConnectionView.Welcome.Message.wire
+
+        let message: String = switch variant {
+        case (wireCells: false, isChannel: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireGroup
+        case (wireCells: false, isChannel: true):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireChannel
+        case (wireCells: true, isChannel: _):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells
+        }
+
         let linkLabel = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
         let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
 
@@ -51,12 +61,12 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
         ]
 
         let messageAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: FontSpec(.header, .regular).font!,
+            .font: UIFont.mediumFont,
             .foregroundColor: LabelColors.textDefault
         ]
 
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: FontSpec(.header, .semibold).font!,
+            .font: UIFont.mediumSemiboldFont,
             .foregroundColor: LabelColors.textDefault,
             .link: linkUrl as AnyObject,
             .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,

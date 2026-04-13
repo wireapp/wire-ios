@@ -37,7 +37,7 @@ extension NSManagedObjectContext {
     }
 }
 
-public class SearchUserSnapshot {
+public final class SearchUserSnapshot {
 
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [

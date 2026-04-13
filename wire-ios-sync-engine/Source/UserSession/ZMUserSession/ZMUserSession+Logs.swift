@@ -22,25 +22,21 @@ import WireDataModel
 // MARK: - Error on context save debugging
 
 public enum ContextType: String {
-    case UI
-    case Sync
-    case Search
-    case Other
+    case ui
+    case sync
+    case other
 }
 
 extension NSManagedObjectContext {
 
     var type: ContextType {
         if zm_isSyncContext {
-            return .Sync
+            return .sync
         }
         if zm_isUserInterfaceContext {
-            return .UI
+            return .ui
         }
-        if zm_isSearchContext {
-            return .Search
-        }
-        return .Other
+        return .other
     }
 }
 

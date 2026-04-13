@@ -31,7 +31,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
         let accountPage = try firstTimePage
-            .acceptPopup(with: self)
+            .acceptPopup()
             .openSettings()
             .openAccountSettings()
 
@@ -45,7 +45,7 @@ final class MultiBackendSupportTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Add_MultiBackend_Accounts() async throws {
+    func testAddMultiBackendAccounts_TC_8940() async throws {
 
         defer { BackendContext.current = .staging }
 

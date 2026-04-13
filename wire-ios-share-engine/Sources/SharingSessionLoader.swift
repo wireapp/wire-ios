@@ -112,7 +112,7 @@ public struct SharingSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        guard !shouldEnableSyncV2(metadata: metadata) else {
+        guard journal[.isSyncV2Enabled] else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
@@ -249,13 +249,6 @@ public struct SharingSessionLoader {
         return await useCase.invoke()
     }
 
-    // TODO: [WPB-17732] de-duplicate when implementing NSE
-    private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
-    }
-
     private func makeSharingSession(
         selfClientID: String,
         environment: BackendEnvironment2,
@@ -325,12 +318,13 @@ public struct SharingSessionLoader {
             transportSession: transportSession
         )
         let contextStorage = LAContextStorage()
-        let earService = EARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
@@ -381,6 +375,7 @@ public struct SharingSessionLoader {
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,

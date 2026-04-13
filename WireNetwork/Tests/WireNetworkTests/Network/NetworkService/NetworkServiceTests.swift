@@ -25,10 +25,8 @@ import XCTest
 
 final class NetworkServiceTests: XCTestCase {
 
-    var session: URLSession!
-    var sut: NetworkService!
-    var backendURL: URL!
-
+    private var sut: NetworkService!
+    private var backendURL: URL!
     private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUp() async throws {
@@ -36,10 +34,10 @@ final class NetworkServiceTests: XCTestCase {
         mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
 
-        session = .mockURLSession()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         sut = NetworkService(
             baseURL: backendURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [
                     try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
@@ -47,11 +45,9 @@ final class NetworkServiceTests: XCTestCase {
                 currentDateProvider: mockDateProvider
             )
         )
-        sut.configure(with: session)
     }
 
     override func tearDown() async throws {
-        session = nil
         backendURL = nil
         sut = nil
         mockDateProvider = nil
@@ -66,6 +62,7 @@ final class NetworkServiceTests: XCTestCase {
         // When
         let sut = NetworkService(
             baseURL: baseURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
@@ -83,6 +80,7 @@ final class NetworkServiceTests: XCTestCase {
         // When
         let sut = NetworkService(
             baseURL: baseURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
@@ -144,66 +142,6 @@ final class NetworkServiceTests: XCTestCase {
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
-    // MARK: - URLAuthenticationChallenge
-
-    func testUserSessionDidReceiveChallenge_whenNotServerTrustAuthenticationMethod() async throws {
-        let methods = [
-            NSURLAuthenticationMethodClientCertificate,
-            NSURLAuthenticationMethodNegotiate,
-            NSURLAuthenticationMethodNTLM,
-            NSURLAuthenticationMethodHTMLForm,
-            NSURLAuthenticationMethodHTTPDigest,
-            NSURLAuthenticationMethodHTTPBasic,
-            NSURLAuthenticationMethodDefault
-        ]
-
-        for method in methods {
-            // Given
-            let challenge = try Scaffolding.makeAuthenticationChallenge(
-                authenticationMethod: method,
-                serverTrust: .invalid
-            )
-            let task = session.dataTask(with: Scaffolding.getRequest)
-
-            // When
-            let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-            // Then
-            XCTAssertEqual(result.0, .performDefaultHandling)
-            XCTAssertEqual(result.1, Scaffolding.makeCredential())
-        }
-    }
-
-    func testUserSessionDidReceiveChallenge_whenServerTrustValid() async throws {
-        let challenge = try Scaffolding.makeAuthenticationChallenge(
-            authenticationMethod: NSURLAuthenticationMethodServerTrust,
-            serverTrust: .wire
-        )
-        let task = session.dataTask(with: Scaffolding.getRequest)
-
-        // When
-        let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-        // Then
-        XCTAssertEqual(result.0, .performDefaultHandling)
-        XCTAssertEqual(result.1, Scaffolding.makeCredential())
-    }
-
-    func testUserSessionDidReceiveChallenge_whenServerTrustInvalid() async throws {
-        let challenge = try Scaffolding.makeAuthenticationChallenge(
-            authenticationMethod: NSURLAuthenticationMethodServerTrust,
-            serverTrust: .invalid
-        )
-        let task = session.dataTask(with: Scaffolding.getRequest)
-
-        // When
-        let result = await sut.urlSession(session, task: task, didReceive: challenge)
-
-        // Then
-        XCTAssertEqual(result.0, .cancelAuthenticationChallenge)
-        XCTAssertNil(result.1)
-    }
-
 }
 
 private enum Scaffolding {
@@ -223,27 +161,4 @@ private enum Scaffolding {
         URLCredential(user: "user", password: "password", persistence: .none)
     }
 
-    static func makeAuthenticationChallenge(
-        authenticationMethod: String,
-        serverTrust: SecTrust
-    ) throws -> URLAuthenticationChallenge {
-        let protectionSpace = MockURLProtectionSpace(
-            host: "prod-nginz-https.wire.com",
-            port: 8080,
-            protocol: nil,
-            realm: nil,
-            authenticationMethod: authenticationMethod
-        )
-
-        protectionSpace.mockServerTrust = serverTrust
-
-        return URLAuthenticationChallenge(
-            protectionSpace: protectionSpace,
-            proposedCredential: Scaffolding.makeCredential(),
-            previousFailureCount: 0,
-            failureResponse: nil,
-            error: nil,
-            sender: MockURLAuthenticationChallengeSender()
-        )
-    }
 }

@@ -22,10 +22,27 @@ set -Eeuo pipefail
 #
 # USAGE:
 # This scripts checks that the necessary tools are installed on the local machine
-# and sets up the project so that it can be built with Xcode
+# and sets up the project so that it can be built with Xcode.
+#
+# Pass --test-only to skip steps not required for running unit tests (codegen,
+# licenses, AWS CLI, submodules, build-tool Swift packages).
 #
 
 function die { ( >&2 echo "$*"); exit 1; }
+
+# Parse flags, filtering out --test-only before forwarding remaining args to sub-scripts
+TEST_ONLY=false
+REMAINING_ARGS=()
+for arg in "$@"; do
+  case $arg in
+    --test-only)
+      TEST_ONLY=true
+      ;;
+    *)
+      REMAINING_ARGS+=("$arg")
+      ;;
+  esac
+done
 
 # CHECK PREREQUISITES
 
@@ -46,6 +63,13 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+if [[ "$TEST_ONLY" == "false" ]]; then
+    echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
+    # Install dependencies from Brewfile (respects CI environment variable)
+    brew bundle install
+    echo ""
+fi
+
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
 elif command -v git-lfs > /dev/null 2>&1; then
@@ -56,7 +80,7 @@ else
 fi
 echo ""
 
-# Workaround for carthage "The file couldn’t be saved." error
+# Workaround for carthage "The file couldn't be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️ Carthage bootstrap. This might take a while..."
@@ -67,35 +91,25 @@ else
 fi
 echo ""
 
-echo "ℹ️ Resolve Swift Packages for Scripts..."
-xcrun --sdk macosx swift package --package-path scripts resolve
-xcrun --sdk macosx swift package --package-path WirePlugins resolve
-echo ""
+if [[ "$TEST_ONLY" == "false" ]]; then
+    echo "ℹ️ Resolve Swift Packages for Scripts..."
+    xcrun --sdk macosx swift package --package-path scripts resolve
+    xcrun --sdk macosx swift package --package-path WirePlugins resolve
+    echo ""
 
-echo "ℹ️ Installing ImageMagick..."
-if [[ -n "${CI-}" ]]; then
-    # CI
-    which identify || brew install ImageMagick
-else
-    # Local Machine
-    echo "Skipping ImageMagick install because not running on CI"
-fi
-echo ""
+    echo "ℹ️ Installing AWS CLI..."
+    if [[ -n "${CI-}" ]]; then
+        which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
+    else
+        echo "Skipping AWS CLI install because not running on CI"
+    fi
+    echo ""
 
-echo "ℹ️ Installing AWS CLI..."
-if [[ -n "${CI-}" ]]; then
-    # CI
-    which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
-else
-    # Local Machine
-    echo "Skipping AWS CLI install because not running on CI"
-fi
-echo ""
-
-echo "ℹ️ Fetching submodules..."
+    echo "ℹ️ Fetching submodules..."
     git submodule update --init --recursive || true
     git submodule sync --recursive || true
-echo ""
+    echo ""
+fi
 
 echo "ℹ️ Installing bundler and Ruby dependencies..."
 if [[ -n "${CI-}" ]]; then
@@ -109,21 +123,18 @@ fi
 echo ""
 
 echo "ℹ️ Overriding configuration if specified..."
-scripts/override-configuration_if_needed.sh "$@"
+scripts/override-configuration_if_needed.sh "${REMAINING_ARGS[@]+"${REMAINING_ARGS[@]}"}"
 echo ""
 
-echo "ℹ️ Generate Licenses"
-if [[ -n "${CI-}" ]]; then
-    # CI
-    scripts/generate-licenses.sh
-else
-    # Local Machine
-    # Skipped on local machines, because updating sdks, libraries etc. causes
-    # Git changes when running this script, that can be easily forgotten.
-    # We decided that the CI should always generate the latest licenses include it in delivered builds.
-    echo "Skipping as CI is not is defined"
+if [[ "$TEST_ONLY" == "false" ]]; then
+    echo "ℹ️ Generate Licenses"
+    if [[ -n "${CI-}" ]]; then
+        scripts/generate-licenses.sh
+    else
+        echo "Skipping as CI is not is defined"
+    fi
+    echo ""
 fi
-echo ""
 
 (
     cd "$REPO_ROOT/wire-ios"
@@ -132,8 +143,5 @@ echo ""
     swift run --package-path ./Scripts/updateStylekit
     echo ""
 )
-
-echo "ℹ️ Generate UITests demo user credentials"
-scripts/generate_ui_tests_credentials.sh
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"

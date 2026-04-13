@@ -185,7 +185,7 @@ extension ConversationListViewController.ViewModel {
 
     func setupObservers() {
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
@@ -329,7 +329,6 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
             .imageSmallProfileDataChanged || changeInfo.teamsChanged {
             updateAccountImage()

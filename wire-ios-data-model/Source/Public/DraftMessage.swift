@@ -166,38 +166,31 @@ extension ZMConversation {
     @nonobjc
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
-        return try moc.encryptData(data: data)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.encrypt(data: data, contextData: contextData)
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
         guard let nonce = draftMessageNonce else { return data }
-        return try moc.decryptData(data: data, nonce: nonce)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.decrypt(data: data, nonce: nonce, contextData: contextData)
     }
 
 }
 
 // MARK: - Storable Helper
 
-private extension UserType {
-
-    // Private helper to get the user identifier for a `UserType`.
-    var userIdentifier: UUID? {
-        if let user = self as? ZMUser {
-            return user.remoteIdentifier
-        } else if let user = self as? ServiceUser {
-            return user.userIdentifier
-        }
-
-        return nil
-    }
-
-}
-
 private extension Mention {
 
     /// The storable version of the object.
     var storable: StorableMention? {
-        user.userIdentifier.map {
+        user.remoteIdentifier.map {
             StorableMention(range: range, userIdentifier: $0)
         }
     }

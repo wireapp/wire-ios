@@ -51,6 +51,12 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
                 throw OneOnOneProtocolSelectorError.userNotFound
             }
 
+            // we treat deleted user as no protocols, in reality, the conversations on backend side remove the otherUser
+            // when deleted so we don't end up here
+            if otherUser.isAccountDeleted {
+                return Set<MessageProtocol>()
+            }
+
             var otherProtocols = otherUser.supportedProtocols
 
             if otherProtocols.isEmpty {

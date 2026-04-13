@@ -44,24 +44,76 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var unreadMessagesCount: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
+    }
+
+    var textFilteredByFavourites: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
+    }
+
+    var textFilteredByOneOnOne: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
+    }
+
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var clearButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearOptionOnContextMenu.rawValue]
+    }
+
+    var addFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
+    }
+
+    var removeFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
+    }
+
+    var filterByFavourite: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
+    }
+
+    var filterByOneOnOneConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterConversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterConversations.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
+    var clearButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
+    }
+
     var videoCallButton: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
-    var acceptRequestButton: XCUIElement {
-        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
+    var connectionsRequestCell: XCUIElement {
+        app.cells[Locators.ConversationsPage.connectionRequestsCell.rawValue]
     }
 
     var accountProfileImageView: XCUIElement {
         app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
+    }
+
+    var mentionStatus: XCUIElement {
+        app.otherElements[Locators.ConversationsPage.status.rawValue]
+    }
+
+    var loadBar: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
+
+    func getGroupName() -> String? {
+        conversationCell.label as? String
     }
 
     func openSettings() throws -> SettingsPage {
@@ -75,10 +127,8 @@ class ConversationsPage: PageModel {
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
-
-        if accountProfileImageView.waitForExistence(timeout: 2), accountProfileImageView.isHittable {
-            accountProfileImageView.tap()
-        }
+        try letTheSyncFinish()
+        accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
 
@@ -88,21 +138,20 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
+        try letTheSyncFinish()
 
         let maxDuration: TimeInterval = 10
-        let start = Date()
-
-        while !acceptRequestButton.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        guard connectionsRequestCell.waitForExistence(timeout: maxDuration) else {
+            throw Error.connectionRequestsCellNotFound
         }
+
+        connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
 
+    @discardableResult
     func openConversation() throws -> ActiveConversationPage {
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -111,12 +160,14 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
     }
 
+    @discardableResult
     func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
         conversationCell.press(forDuration: 1.0)
         return try ConversationsPage()
@@ -128,7 +179,48 @@ class ConversationsPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func clearContent() throws -> ConversationsPage {
+        clearButtonOnMoreOptions.tap()
+        clearButtonOnBottomSheet.tap()
+        return self
+    }
+
+    func tapConnectionRequestsCell() throws -> ConnectionRequestsPage {
+        connectionsRequestCell.tap()
+        return try ConnectionRequestsPage()
+    }
+
     func getNameLabel() -> String? {
         conversationCell.label
+    }
+
+    func letTheSyncFinish() throws {
+        loadBar.waitToDisappear()
+    }
+
+    func markConversationAsFavourite() throws -> ConversationsPage {
+        addFavouriteButtonOnMoreOptions.tap()
+        return self
+    }
+
+    func filterConversationByFavourite() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFavourite.tap()
+        return self
+    }
+
+    func filterConversationByOneOnOne() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByOneOnOneConversation.tap()
+        return self
+    }
+
+    func getUnreadMessageCountValue() throws -> String {
+        unreadMessagesCount.value as! String
+    }
+
+    enum Error: Swift.Error {
+        case connectionRequestsCellNotFound
     }
 }

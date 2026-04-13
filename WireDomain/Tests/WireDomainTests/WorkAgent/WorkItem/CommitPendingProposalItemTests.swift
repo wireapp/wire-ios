@@ -24,6 +24,7 @@ import WireDomainSupport
 import WireNetwork
 @testable import WireDomain
 
+@Suite("CommitPendingProposalItem Tests", .timeLimit(.minutes(1)))
 class CommitPendingProposalItemTests {
 
     var sut: CommitPendingProposalItem!
@@ -39,6 +40,7 @@ class CommitPendingProposalItemTests {
         self.mlsGroupID = .random()
         self.mlsService = .init()
         mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = true
         repository.isSelfAnActiveMemberIn_MockValue = true
     }
 
@@ -47,6 +49,7 @@ class CommitPendingProposalItemTests {
             repository: repository,
             conversationID: conversationID,
             groupID: mlsGroupID,
+            isSubconversation: false,
             mlsService: mlsService
         )
     }
@@ -74,6 +77,22 @@ class CommitPendingProposalItemTests {
 
         // Then
         #expect(mlsService.commitPendingProposalsIn_Invocations.isEmpty)
+    }
+
+    @Test("It does not call commitPendingProposal when mlsGroup does not exist")
+    func startDoesNotCommitWhenMLSGroupDoesNotExist() async throws {
+        // Given
+        repository.clearPendingProposalsIn_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = false
+
+        sut = makeProposalItem()
+
+        // When
+        try await sut.start()
+
+        // Then
+        #expect(mlsService.commitPendingProposalsIn_Invocations.isEmpty)
+        #expect(repository.clearPendingProposalsIn_Invocations.count == 1)
     }
 
     @Test("It logs properly")

@@ -404,9 +404,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [self willChangeValueForKey:ZMConversationClearedTimeStampKey];
     [self setPrimitiveValue:clearedTimeStamp forKey:ZMConversationClearedTimeStampKey];
     [self didChangeValueForKey:ZMConversationClearedTimeStampKey];
-    if (self.managedObjectContext.zm_isSyncContext) {
-        [self deleteOlderMessages];
-    }
 }
 
 - (void)setLastReadServerTimeStamp:(NSDate *)lastReadServerTimeStamp
@@ -800,24 +797,6 @@ TODO: get rid of everything around ZM(S)Log, in production code log to WireLogge
     static const int HOUR_IN_SEC = 60 * 60;
     static const NSTimeInterval STALENESS = -36 * HOUR_IN_SEC;
     return (self.isFault) || (self.lastModifiedDate == nil) || (self.lastModifiedDate.timeIntervalSinceNow > STALENESS);
-}
-
-@end
-
-
-@implementation ZMConversation (History)
-
-
-- (void)clearMessageHistory
-{
-    self.isArchived = YES;
-    self.clearedTimeStamp = self.lastServerTimeStamp; // the setter of this deletes all messages
-    self.lastReadServerTimeStamp = self.lastServerTimeStamp;
-}
-
-- (void)revealClearedConversation
-{
-    self.isArchived = NO;
 }
 
 @end

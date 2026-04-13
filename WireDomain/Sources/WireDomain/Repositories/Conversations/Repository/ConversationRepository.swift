@@ -238,7 +238,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         if let mlsGroupID {
 
-            try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
+            try await mlsProvider.service.wipeGroup(mlsGroupID)
 
             await conversationsLocalStore.deleteConversation(
                 conversation
@@ -381,13 +381,20 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func isSelfAnActiveMember(
-        in groupID: MLSGroupID
+        in conversationID: WireDataModel.QualifiedID
     ) async -> Bool {
         nonisolated(unsafe) var isSelfAnActiveMember = false
-        await conversationsLocalStore.execute(identifier: groupID) { conversation, _ in
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, _ in
             isSelfAnActiveMember = conversation?.isSelfAnActiveMember ?? false
         }
         return isSelfAnActiveMember
+    }
+
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, context in
+            conversation?.commitPendingProposalDate = nil
+            context.saveOrRollback()
+        }
     }
 
     // MARK: - Private

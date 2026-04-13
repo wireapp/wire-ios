@@ -39,7 +39,7 @@ public struct MultipartAttachment {
 
     }
 
-    /// The wire cells UUID of the attachment.
+    /// The wire drive UUID of the attachment.
 
     public let uuid: UUID
 

@@ -69,6 +69,8 @@ public struct UserPropertiesAPIBuilder {
             UserPropertiesAPIV13(apiService: apiService)
         case .v14:
             UserPropertiesAPIV14(apiService: apiService)
+        case .v15:
+            UserPropertiesAPIV15(apiService: apiService)
         }
     }
 

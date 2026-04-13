@@ -54,7 +54,7 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
         )
 
         let attachments = multipartMessage.attachments.map {
-            WireCellsMessageAttachment(
+            WireDriveMessageAttachment(
                 nodeID: $0.nodeID,
                 contentType: $0.contentType,
                 initialName: $0.initialName,

@@ -54,7 +54,8 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         }
 
         textCell.textInput.isEnabled = settingsProperty.enabled
-        textCell.textInput.isAccessibilityElement = true
+
+        textCell.setupAccessibility()
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

@@ -139,6 +139,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
             )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            .simplifiedUserConnectionRequestQRCode(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
         case let .cells(config):
             .cells(
                 StorableBasicFeatureConfig(
@@ -268,6 +276,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            .simplifiedUserConnectionRequestQRCode(
+                SimplifiedUserConnectionRequestQRCodeConfig(
+                    status: config.status.toAPIModel()
+                )
+            )
         case let .cells(config):
             .cells(
                 .init(status: config.status.toAPIModel())
@@ -310,6 +324,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
+    case simplifiedUserConnectionRequestQRCode(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
     case cellsInternal(StorableCellsInternalFeatureConfig)
     case unknown(featureName: String)
@@ -423,7 +438,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
         case everyone
         case admins
 
-        init(_ value: WireNetwork.ChannelsPermision) {
+        init(_ value: WireNetwork.ChannelsPermission) {
             switch value {
             case .teamMembers:
                 self = .teamMembers
@@ -434,7 +449,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
             }
         }
 
-        func toAPIModel() -> WireNetwork.ChannelsPermision {
+        func toAPIModel() -> WireNetwork.ChannelsPermission {
             switch self {
             case .teamMembers:
                 .teamMembers

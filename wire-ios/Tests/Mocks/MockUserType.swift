@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 import WireDataModel
 import WireFoundation
 
@@ -205,6 +206,17 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canCreateService: Bool = false
 
     var canManageTeam: Bool = false
+
+    // MARK: - App specific
+
+    var appInfo: AppInfo?
+
+    // MARK: - Bot specific
+
+    var providerIdentifier: String?
+    var serviceIdentifier: String?
+
+    // MARK: - Methods
 
     func canLeave(_ conversation: ZMConversation) -> Bool {
         canLeaveConversation

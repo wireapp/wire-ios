@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 public final class ClientSessionComponent {
@@ -59,6 +60,7 @@ public final class ClientSessionComponent {
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
+    private let earService: any EARServiceInterface
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
@@ -79,6 +81,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
+        earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
@@ -96,6 +99,7 @@ public final class ClientSessionComponent {
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
+        self.earService = earService
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
@@ -131,7 +135,7 @@ public final class ClientSessionComponent {
         networkService: restNetworkService
     ).makeAPI()
 
-    public lazy var conversationsAPI = ConversationsAPIBuilder(
+    public private(set) lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -151,11 +155,15 @@ public final class ClientSessionComponent {
         pushChannelService: pushChannelService
     ).makeAPI(for: apiVersion)
 
+    public private(set) lazy var searchAPI = SearchAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+
     private lazy var selfUserAPI = SelfUserAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var teamsAPI = TeamsAPIBuilder(
+    public private(set) lazy var teamsAPI = TeamsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -171,7 +179,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var usersAPI = UsersAPIBuilder(
+    public private(set) lazy var usersAPI = UsersAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -350,6 +358,7 @@ public final class ClientSessionComponent {
     // MARK: High level syncs
 
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
@@ -397,8 +406,10 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
-        mlsGroupRepairAgent: mlsGroupRepairAgent
+        mlsGroupRepairAgent: mlsGroupRepairAgent,
+        earService: earService
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -412,9 +423,11 @@ public final class ClientSessionComponent {
             processor: updateEventProcessor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
+            earService: earService,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }
@@ -772,6 +785,14 @@ public final class ClientSessionComponent {
         )
     }
 
+    public func clearConversationContentUseCase(conversationID: WireDataModel
+        .QualifiedID) -> ClearConversationContentUseCaseProtocol {
+        ClearConversationContentUseCase(
+            conversationID: conversationID,
+            syncContext: syncContext
+        )
+    }
+
     // MARK: - Other
 
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
@@ -844,10 +865,21 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var invalidMLSGroupGenerator: IncrementalGeneratorProtocol = InvalidMLSGroupGenerator(
+        context: syncContext,
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore,
+        onInvalidMLSGroup: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
     public lazy var generatorsDirectory = GeneratorsDirectory(
         generators: [
             conversationUpdatesGenerator,
-            commitPendingProposalsGenerator
+            commitPendingProposalsGenerator,
+            invalidMLSGroupGenerator
         ],
         syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
     )
@@ -863,4 +895,14 @@ public final class ClientSessionComponent {
         workAgent: workAgent
     )
 
+    public func setupLiveMLSBrokenGroups() -> AnyCancellable {
+        liveBrokenGroupSubject.sink { [weak self]  liveMLSBrokenGroups in
+            guard let self else { return }
+            WireLogger.mls.debug("detected during live sync \(liveMLSBrokenGroups.count) broken MLS groups")
+            let item = RepairBrokenMLSGroupsItem(repairAgent: mlsGroupRepairAgent)
+            Task {
+                await self.workAgent.submitItem(item)
+            }
+        }
+    }
 }

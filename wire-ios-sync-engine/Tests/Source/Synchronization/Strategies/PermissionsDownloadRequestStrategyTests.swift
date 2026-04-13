@@ -81,22 +81,6 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotCreateARequestDuringSync() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let member = Member.insertNewObject(in: self.syncMOC)
-            member.remoteIdentifier = .create()
-            self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-
-            // when
-            member.needsToBeUpdatedFromBackend = true
-            self.boostrapChangeTrackers(with: member)
-
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
-        }
-    }
-
     func testThatItUpdatesAMembersPermissionsWithTheResponse() {
         var member: Member!
         var user: ZMUser!

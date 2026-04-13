@@ -72,9 +72,8 @@ class CameraKeyboardViewController: UIViewController {
         case photos = 1
     }
 
-    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
-        sessionRestriction: ZMUserSession.shared()
-    )
+    private let mediaSharingRestrictionsMananger: MediaShareRestrictionManager
+    private let userSession: UserSession
 
     let assetLibrary: AssetLibrary?
     let imageManagerType: ImageManagerProtocol.Type
@@ -93,8 +92,13 @@ class CameraKeyboardViewController: UIViewController {
     init(
         splitLayoutObservable: SplitLayoutObservable,
         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
-        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
+        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy(),
+        userSession: UserSession
     ) {
+        self.userSession = userSession
+        self.mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        )
         self.splitLayoutObservable = splitLayoutObservable
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
@@ -114,7 +118,8 @@ class CameraKeyboardViewController: UIViewController {
             object: nil
         )
 
-        if let userSession = ZMUserSession.shared() {
+        // The cast is not needed for compilation but is a necessary hack for tests
+        if let userSession = userSession as? ZMUserSession {
             self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
                 observer: self,
                 contextProvider: userSession.contextProvider
@@ -304,19 +309,21 @@ class CameraKeyboardViewController: UIViewController {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data else { return }
 
-            let returnData: Data = if (uti == "public.heif") ||
-                (uti == "public.heic"),
-                let convertedJPEGData = data.convertHEIFToJPG() {
-                convertedJPEGData
+            let utType: UTType?
+            let returnData: Data
+            if (uti == "public.heif") || (uti == "public.heic"), let convertedJPEGData = data.convertHEIFToJPG() {
+                returnData = convertedJPEGData
+                utType = .jpeg
             } else {
-                data
+                returnData = data
+                utType = uti.flatMap { UTType($0) }
             }
 
             let name = PHAssetResource.assetResources(for: asset).first?.originalFilename
 
             let image = SendableImage(
                 name: name,
-                utType: .jpeg,
+                utType: utType,
                 data: returnData
             )
 
@@ -412,7 +419,7 @@ class CameraKeyboardViewController: UIViewController {
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
         activityIndicator.start()
-        guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else { return }
+        let fileLengthLimit: UInt64 = userSession.maxUploadFileSize
 
         asset.getVideoURL { url in
             DispatchQueue.main.async {
@@ -531,7 +538,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: a protocol for this for testing
     @objc var shouldBlockCallingRelatedActions: Bool {
-        ZMUserSession.shared()?.isCallOngoing ?? false
+        (userSession as? ZMUserSession)?.isCallOngoing ?? false
     }
 
     private func deniedAuthorizationCell(

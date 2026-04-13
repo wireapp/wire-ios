@@ -33,6 +33,6 @@ final class DeveloperDebugActionsViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+        DeveloperDebugActionsViewModel(userSession: nil, selfClient: nil)
     }
 }

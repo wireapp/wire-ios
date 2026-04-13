@@ -38,7 +38,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         "\(pathPrefix)/list-connections"
     }
 
-    func getConnections() async throws -> PayloadPager<[Connection]> {
+    func getConnections() throws -> PayloadPager<[Connection]> {
         PayloadPager<[Connection]> { start in
 
             // body Params

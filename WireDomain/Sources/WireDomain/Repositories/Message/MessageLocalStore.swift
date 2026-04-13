@@ -203,6 +203,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     try clientMessage.setUnderlyingMessage(genericMessage)
                     clientMessage.updateNormalizedText()
                 } catch {
+                    WireLogger.messaging.error("Failed to set generic message: \(error.localizedDescription)")
                     assertionFailure("Failed to set generic message: \(error.localizedDescription)")
                 }
             } else {
@@ -359,12 +360,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
-        senderID: UUID
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async {
         await context.perform { [context] in
 
-            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
-            guard senderID == selfUserID else { return }
+            if ensureSenderIsSelfUser {
+                let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+                guard senderID == selfUserID else { return }
+            }
 
             ZMClientMessage.updateButtonStates(
                 buttonID: buttonID,
@@ -952,6 +956,21 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             let systemMessage = await createSystemMessage(
                 messageType: .channelHistoryDepthModified,
+                sender: sender,
+            )
+
+            return [systemMessage]
+
+        case let .userDeleted(sender: (id, domain)):
+            guard let sender = await fetchUser(
+                id: id,
+                domain: domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .userRemovedFromTeam,
                 sender: sender,
             )
 

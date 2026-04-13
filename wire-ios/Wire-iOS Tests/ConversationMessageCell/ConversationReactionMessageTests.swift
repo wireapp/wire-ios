@@ -21,14 +21,12 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationReactionMessageTests: XCTestCase {
+final class ConversationReactionMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
     private var sut: MessageReactionsCell!
-    var mockOtherUser: MockUserType!
-    var message: MockMessage!
 
     // MARK: - setUp
 
@@ -40,7 +38,6 @@ final class ConversationReactionMessageTests: XCTestCase {
         sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
         // We need to pass an estimated cell size to help the cell layout properly
         sut.systemLayoutSizeFitting(CGSize(width: 375, height: 100))
-        message = createMessage()
     }
 
     // MARK: - tearDown
@@ -48,7 +45,6 @@ final class ConversationReactionMessageTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        message = nil
         super.tearDown()
     }
 
@@ -57,13 +53,11 @@ final class ConversationReactionMessageTests: XCTestCase {
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
         let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
-        let messageReactionMetadata = [reaction]
-        let messageReactionConfiguration = MessageReactionsCellConfiguration(
-            reactions: messageReactionMetadata,
-            message: message
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: [reaction],
+            userSession: userSession
         )
-
-        sut.configure(with: messageReactionConfiguration, animated: false)
+        sut.configure(with: configuration, animated: false)
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -101,36 +95,22 @@ final class ConversationReactionMessageTests: XCTestCase {
             isSelfUserReacting: false
         )
 
-        let messageReactionMetadata = [
+        let reaction = [
             likeReaction,
             thumbsUpReaction,
             thumbsDownReaction,
             slightlySmilingReaction,
             frowningFaceReaction
         ]
-        let messageReactionConfiguration = MessageReactionsCellConfiguration(
-            reactions: messageReactionMetadata,
-            message: message
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: reaction,
+            userSession: userSession
         )
 
         // WHEN
-        sut.configure(with: messageReactionConfiguration, animated: false)
+        sut.configure(with: configuration, animated: false)
 
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
-    // MARK: - Helper Methods
-
-    func createMessage(
-        withText: String =
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
-        userName: String = "Bruno"
-    ) -> MockMessage {
-        let message = MockMessageFactory.textMessage(withText: withText)
-        mockOtherUser = MockUserType.createConnectedUser(name: userName)
-        message.senderUser = mockOtherUser
-        return message
-    }
-
 }

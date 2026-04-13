@@ -29,11 +29,36 @@ import UIKit
 open class ContextMenuControllableUITextField: UITextField {
 
     private let isContextMenuAllowed: Bool
+    var customPlaceholderColor: UIColor?
 
     public init(frame: CGRect, isContextMenuAllowed: Bool) {
         self.isContextMenuAllowed = isContextMenuAllowed
 
         super.init(frame: frame)
+    }
+
+    open override func drawPlaceholder(in rect: CGRect) {
+        if attributedPlaceholder != nil {
+            super.drawPlaceholder(in: rect)
+            return
+        }
+
+        guard let placeholder else { return }
+        let font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: traitCollection)
+        let color = customPlaceholderColor ?? .placeholderText
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: color,
+            .paragraphStyle: paragraphStyle
+        ]
+        let textHeight = min(font.lineHeight, rect.height)
+        let yOffset = max(0, (rect.height - textHeight) / 2)
+        placeholder.draw(
+            in: CGRect(x: rect.minX, y: rect.minY + yOffset, width: rect.width, height: textHeight),
+            withAttributes: attributes
+        )
     }
 
     @available(*, unavailable)
@@ -58,9 +83,7 @@ open class ContextMenuControllableUITextField: UITextField {
 
     public override func buildMenu(with builder: any UIMenuBuilder) {
         if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
+            builder.remove(menu: .autoFill)
         }
     }
 
@@ -72,23 +95,38 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
     private let isSecureTextEntry: Bool
     private let placeholderColor: Color?
     private let isContextMenuAllowed: Bool
+    private let textAlignment: NSTextAlignment
+    private let keyboardType: UIKeyboardType
+    private let textContentType: UITextContentType?
+    private let autocapitalizationType: UITextAutocapitalizationType
+    private let textColor: UIColor?
 
     public init(
         text: Binding<String>,
         placeholder: String,
         isSecureTextEntry: Bool = false,
         placeholderColor: Color? = nil,
-        isContextMenuAllowed: Bool
+        isContextMenuAllowed: Bool,
+        textAlignment: NSTextAlignment = .natural,
+        keyboardType: UIKeyboardType = .default,
+        textContentType: UITextContentType? = nil,
+        autocapitalizationType: UITextAutocapitalizationType = .none,
+        textColor: UIColor? = nil
     ) {
         self._text = text
         self.placeholder = placeholder
         self.isSecureTextEntry = isSecureTextEntry
         self.placeholderColor = placeholderColor
         self.isContextMenuAllowed = isContextMenuAllowed
+        self.textAlignment = textAlignment
+        self.keyboardType = keyboardType
+        self.textContentType = textContentType
+        self.autocapitalizationType = autocapitalizationType
+        self.textColor = textColor
     }
 
     public func makeUIView(context: Context) -> UITextField {
-        let textField: UITextField = ContextMenuControllableUITextField(
+        let textField = ContextMenuControllableUITextField(
             frame: .zero,
             isContextMenuAllowed: isContextMenuAllowed
         )
@@ -96,22 +134,13 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.text = text
         textField.autocorrectionType = .no
+        textField.font = UIFont.preferredFont(forTextStyle: .body)
         textField.adjustsFontForContentSizeCategory = true
+        textField.textAlignment = textAlignment
         textField.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
+        textField.customPlaceholderColor = placeholderColor.map(UIColor.init)
         if isSecureTextEntry {
             textField.isSecureTextEntry = true
-            textField.textContentType = .oneTimeCode
-        }
-        if let placeholderColor {
-            let font = UIFont.preferredFont(forTextStyle: .body)
-            let placeholderAttributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor(placeholderColor),
-                .font: font
-            ]
-            textField.attributedPlaceholder = NSAttributedString(
-                string: placeholder,
-                attributes: placeholderAttributes
-            )
         }
 
         return textField
@@ -119,6 +148,10 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
 
     public func updateUIView(_ uiView: UITextField, context: Context) {
         uiView.text = text
+        uiView.keyboardType = keyboardType
+        uiView.textContentType = textContentType
+        uiView.autocapitalizationType = autocapitalizationType
+        uiView.textColor = textColor ?? .label
     }
 
     public func makeCoordinator() -> Coordinator {

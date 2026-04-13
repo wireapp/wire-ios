@@ -19,13 +19,13 @@
 import GenericMessageProtocol
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireNetwork
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
 
     enum Failure: Error {
-        case failedToDecryptMLSMessage
-        case failedToDecryptProteusMessage
+        case proteusMessageMissing
     }
 
     let context: Context
@@ -41,55 +41,84 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     let conversationPingMessageNotificationBuilder: any ConversationPingMessageNotificationBuilderProtocol
     let conversationVideoMessageNotificationBuilder: any ConversationVideoMessageNotificationBuilderProtocol
     let conversationTextMessageNotificationBuilder: any ConversationTextMessageNotificationBuilderProtocol
+    let protobufMessageDecoder: ProtobufMessageDecoder
 
-    func buildContent(
-        event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
-    ) async throws -> UserNotification? {
-
+    struct MessageContent {
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
+    }
 
+    func buildContent(
+        event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
+    ) async throws -> [UserNotification]? {
         switch event {
         case let .left(mlsMessageEvent):
-            let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
+            var userNotifications = [UserNotification]()
 
-            message = try decryptMessage(
-                decryptedMessage: decryptedMessage,
-                isProteus: false
-            )
+            for decryptedMessage in mlsMessageEvent.decryptedMessages {
+                do {
+                    let message = try protobufMessageDecoder.extractMLSMessageContent(
+                        from: decryptedMessage.message
+                    )
 
-            senderID = mlsMessageEvent.senderID
-            conversationID = mlsMessageEvent.conversationID
-            timestamp = mlsMessageEvent.timestamp
+                    let messageContent =
+                        MessageContent(
+                            message: message,
+                            senderID: mlsMessageEvent.senderID,
+                            conversationID: mlsMessageEvent.conversationID,
+                            timestamp: mlsMessageEvent.timestamp
+                        )
+
+                    if let userNotification = try await buildUserNotification(for: messageContent) {
+                        userNotifications.append(userNotification)
+                    }
+                } catch {
+                    WireLogger.sync.error(
+                        "Failed to build notification for message",
+                        attributes: [.conversationId: mlsMessageEvent.conversationID.id.safeForLoggingDescription]
+                    )
+                }
+            }
+
+            return userNotifications.isEmpty ? nil : userNotifications
 
         case let .right(proteusMessageEvent):
-            let decryptedMessage = proteusMessageEvent.message.decryptedMessage
-            let external = proteusMessageEvent.externalData?.encryptedMessage
+            guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
+                throw Failure.proteusMessageMissing
+            }
 
-            message = try decryptMessage(
-                decryptedMessage: decryptedMessage,
-                external: external
+            var message = try protobufMessageDecoder.extractProteusMessageContent(
+                from: decryptedMessage,
+                externalData: proteusMessageEvent.externalData
             )
 
-            senderID = proteusMessageEvent.senderID
-            conversationID = proteusMessageEvent.conversationID
-            timestamp = proteusMessageEvent.timestamp
+            let messageContent = MessageContent(
+                message: message,
+                senderID: proteusMessageEvent.senderID,
+                conversationID: proteusMessageEvent.conversationID,
+                timestamp: proteusMessageEvent.timestamp
+            )
+            let userNotification = try await buildUserNotification(for: messageContent)
+            return userNotification.flatMap { [$0] }
         }
+    }
+
+    private func buildUserNotification(for content: MessageContent) async throws -> UserNotification? {
 
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
-            calling: message.calling,
-            at: timestamp,
-            conversationID: conversationID,
-            senderID: senderID
+            calling: content.message.calling,
+            at: content.timestamp,
+            conversationID: content.conversationID,
+            senderID: content.senderID
         ) {
-            return callingNotification
+            callingNotification
         } else {
-            return await buildMessageContentNotification(
-                message: message,
-                senderID: senderID,
-                conversationID: conversationID
+            await buildMessageContentNotification(
+                message: content.message,
+                senderID: content.senderID,
+                conversationID: content.conversationID
             )
         }
     }
@@ -186,22 +215,6 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         default:
             return nil
         }
-    }
-
-    private func decryptMessage(
-        decryptedMessage: String?,
-        external: String? = nil,
-        isProteus: Bool = true
-    ) throws -> GenericMessage {
-        guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
-                  from: decryptedMessage,
-                  externalData: external
-              ) else {
-            throw isProteus ? Failure.failedToDecryptProteusMessage : Failure.failedToDecryptMLSMessage
-        }
-
-        return genericMessage
     }
 }
 

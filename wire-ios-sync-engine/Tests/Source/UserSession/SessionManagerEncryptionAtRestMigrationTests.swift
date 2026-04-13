@@ -19,21 +19,16 @@
 import Foundation
 import LocalAuthentication
 import WireDataModelSupport
-@testable import WireSyncEngine
+@testable @preconcurrency import WireSyncEngine
 
 final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase {
 
     var userSessionDelegate: MockUserSessionDelegate!
-    private var activityManager: MockBackgroundActivityManager!
-    private var factory: BackgroundActivityFactory!
     private var setEncryptionAtRestExpectation: XCTestExpectation?
+    private var earService: EARService!
 
     private var account: Account {
         coreDataStack.account
-    }
-
-    private var userSession: ZMUserSession {
-        sut
     }
 
     override func setUp() {
@@ -41,9 +36,6 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
 
         super.setUp()
 
-        activityManager = MockBackgroundActivityManager()
-        factory = BackgroundActivityFactory.shared
-        factory.activityManager = activityManager
         setEncryptionAtRestExpectation = nil
     }
 
@@ -52,13 +44,9 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
     override func createSut() -> ZMUserSession {
-        let earService = EARService(
+        let earService = EARServiceFactory.createEARService(
             accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
-            ],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
@@ -72,87 +60,94 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             self.setEncryptionAtRestExpectation?.fulfill()
         }
 
+        self.earService = earService
+
         return session
     }
 
     override func tearDown() {
-        factory = nil
-        activityManager = nil
-
         try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
         userSessionDelegate = nil
+        earService = nil
     }
 
-    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #filePath, line: UInt = #line) {
-        try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+    private func setupDatabaseContexts() async {
+        await EARServiceFactory.setupDatabaseContexts(
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            onEARService: earService
+        )
     }
 
-    private func login() {
-        syncMOC.performAndWait {
-            simulateLoggedInUser()
+    private func login() async {
+        await simulateLoggedInUser()
+
+        await syncMOC.perform { [syncMOC] in
             ModelHelper().createSelfClient(in: syncMOC)
             syncMOC.saveOrRollback()
         }
-        userSession.viewContext.saveOrRollback()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled() throws {
+    @MainActor
+    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled() async throws {
         // given
-        login()
+        await setupDatabaseContexts()
+        await login()
 
-        XCTAssertFalse(userSession.encryptMessagesAtRest)
+        XCTAssertFalse(sut.encryptMessagesAtRest)
 
         let expectedText = "Hello World"
-        var groupConversation: ZMConversation!
-        userSession.perform {
-            groupConversation = ModelHelper().createGroupConversation(in: self.userSession.managedObjectContext)
-            try! groupConversation.appendText(content: expectedText)
+        let groupConversation = try await uiMOC.perform { [uiMOC] in
+            let groupConversation = ModelHelper().createGroupConversation(in: uiMOC)
+            try groupConversation.appendText(content: expectedText)
+            return groupConversation
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
-        try userSession.setEncryptionAtRest(enabled: true)
-        self.wait(for: [setEncryptionAtRestExpectation!], timeout: 0.5)
+        try sut.setEncryptionAtRest(enabled: true)
+        await fulfillment(of: [setEncryptionAtRestExpectation!], timeout: 0.5)
 
         // then
-        XCTAssertTrue(userSession.encryptMessagesAtRest)
+        XCTAssertTrue(sut.encryptMessagesAtRest)
 
-        try userSession.unlockDatabase()
-        let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
+        try sut.unlockDatabase()
+        let clientMessage = groupConversation.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled() throws {
+    @MainActor
+    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled() async throws {
         // given
-        login()
+        await setupDatabaseContexts()
+        await login()
 
         let expectedText = "Hello World"
 
-        try userSession.setEncryptionAtRest(enabled: true, skipMigration: true)
-        XCTAssertTrue(userSession.encryptMessagesAtRest)
+        try sut.setEncryptionAtRest(enabled: true, skipMigration: true)
+        XCTAssertTrue(sut.encryptMessagesAtRest)
 
-        var groupConversation: ZMConversation!
-        userSession.perform {
-            groupConversation = ModelHelper().createGroupConversation(in: self.userSession.managedObjectContext)
-            try! groupConversation.appendText(content: expectedText)
+        let groupConversation = try await uiMOC.perform { [uiMOC] in
+            let groupConversation = ModelHelper().createGroupConversation(in: uiMOC)
+            try groupConversation.appendText(content: expectedText)
+            return groupConversation
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
-        try userSession.setEncryptionAtRest(enabled: false)
-        self.wait(for: [setEncryptionAtRestExpectation!], timeout: 0.5)
+        try sut.setEncryptionAtRest(enabled: false)
+        await fulfillment(of: [setEncryptionAtRestExpectation!], timeout: 0.5)
 
         // then
-        XCTAssertFalse(userSession.encryptMessagesAtRest)
+        XCTAssertFalse(sut.encryptMessagesAtRest)
 
-        let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
+        let clientMessage = groupConversation.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)
     }
 

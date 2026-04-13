@@ -35,4 +35,5 @@ public protocol UsersAPI {
     /// - Returns: List user details response.
 
     func getUsers(userIDs: [UserID]) async throws -> UserList
+
 }

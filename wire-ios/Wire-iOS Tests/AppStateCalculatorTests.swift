@@ -98,9 +98,8 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnWillMigrateAccount() {
 
         // GIVEN
-        let account = Account(userName: "dummy", userIdentifier: UUID())
-        let selectedAccount = Account(userName: "selectedDummy", userIdentifier: UUID())
-        sut.testHelper_setAppState(.loading(account: account, from: selectedAccount))
+        let userSession = UserSessionMock()
+        sut.testHelper_setAppState(.authenticated(userSession))
         sut.applicationDidBecomeActive()
 
         // WHEN
@@ -114,41 +113,59 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnSessionManagerWillLogout() {
 
         // GIVEN
+        let accountID = UUID()
         let error = NSError(userSessionErrorCode: UserSessionErrorCode.unknownError, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLogin() {
 
         // GIVEN
+        let accountID = UUID()
         let error = NSError(userSessionErrorCode: UserSessionErrorCode.invalidCredentials, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLogin_CanNotRegisterMoreClients() {
         // GIVEN
+        let accountID = UUID()
         let error = NSError(userSessionErrorCode: UserSessionErrorCode.canNotRegisterMoreClients, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {
@@ -207,7 +224,7 @@ final class AppStateCalculatorTests: XCTestCase {
         if let userSession {
             XCTAssertEqual(sut.appState, .authenticated(userSession))
         } else {
-            guard case let .unauthenticated(_, error: error) = sut.appState else {
+            guard case let .unauthenticated(_, _, error: error) = sut.appState else {
                 return XCTFail("Error - unauthenticated")
             }
 

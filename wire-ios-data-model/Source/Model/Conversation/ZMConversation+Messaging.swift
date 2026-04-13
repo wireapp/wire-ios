@@ -229,9 +229,11 @@ public extension ZMConversation {
             )
         }
 
+        let notDeleted = NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely))
+
         request.predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [
-                matchingGroupStatus, .isMLSConversation, matchingDomain
+                matchingGroupStatus, .isMLSConversation, matchingDomain, notDeleted
             ].compactMap(\.self)
         )
 
@@ -255,6 +257,12 @@ public extension ZMConversation {
     static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
         let request = NSFetchRequest<Self>(entityName: Self.entityName())
         request.predicate = .isMLSConversation
+        return context.fetchOrAssert(request: request)
+    }
+
+    static func fetchDriveConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isDriveConversation
         return context.fetchOrAssert(request: request)
     }
 
@@ -344,6 +352,14 @@ public extension ZMConversation {
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
+
+    static var isDriveConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %d",
+            "cellsState",
+            CellsState.ready.rawValue
+        )
+    }
 
     static var isMLSConversation: NSPredicate {
         NSPredicate(

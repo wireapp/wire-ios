@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 class UsersAPIV5: UsersAPIV4 {
 
     override var apiVersion: APIVersion {

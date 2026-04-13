@@ -24,6 +24,7 @@ import WireAuthenticationAPI
 import WireCommonComponents
 import WireCountly
 import WireDataModel
+import WireDesign
 import WireFoundation
 import WireNetwork
 import WireSyncEngine
@@ -306,14 +307,16 @@ final class AuthenticationInterfaceBuilder {
         let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
             .map { account in
                 account.toUIModel { [weak self] in
-                    self?.accountSelector?.switchTo(account: account)
+                    Task {
+                        await self?.accountSelector?.switchTo(account: account)
+                    }
                 }
             }
         let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
             WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
         }
 
-        return assembly.assemble(
+        let (view, bridge) = assembly.assemble(
             authenticationType: authenticationType,
             environment: environment,
             minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
@@ -327,6 +330,11 @@ final class AuthenticationInterfaceBuilder {
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
             registrationAnalyticsTracker: registrationAnalyticsTracker
+        )
+
+        return (
+            view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
+            bridge: bridge
         )
     }
 }

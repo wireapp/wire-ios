@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Cells* (internal) feature.
 
-public struct CellsInternalFeatureConfig: Equatable, Sendable {
+public struct CellsInternalFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The cells backend URL.
 

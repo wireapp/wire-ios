@@ -38,7 +38,7 @@ final class ConversationViewController: UIViewController {
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
     let wireMessagingFactory: WireMessagingFactoryProtocol
-    private(set) var wireCellsState: CellsState = .disabled
+    private(set) var wireDriveState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -116,7 +116,7 @@ final class ConversationViewController: UIViewController {
     var participantsController: UIViewController? {
         get async {
 
-            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
             let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
                 .isFeatureEnabled(.apps) ?? false
 
@@ -222,7 +222,7 @@ final class ConversationViewController: UIViewController {
         )
 
         self.wireMessagingFactory = wireMessagingFactory
-        self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
+        self.wireDriveState = userSession.contextProvider.syncContext.performAndWait {
             conversation.cellsState
         }
 
@@ -264,7 +264,11 @@ final class ConversationViewController: UIViewController {
 
         selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
-        startCallController = ConversationCallController(conversation: conversation, target: self)
+        startCallController = ConversationCallController(
+            conversation: conversation,
+            target: self,
+            userSession: userSession
+        )
 
     }
 
@@ -306,6 +310,7 @@ final class ConversationViewController: UIViewController {
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
             let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
@@ -362,7 +367,7 @@ final class ConversationViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         updateLeftNavigationBarItems()
-        ZMUserSession.shared()?.didClose(conversation: conversation)
+        (userSession as? ZMUserSession)?.didClose(conversation: conversation)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -476,16 +481,16 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
-            actions.append(
-                UIAction(
-                    title: L10n.Localizable.Conversation.Action.files,
-                    image: UIImage(resource: .files),
-                    handler: { [weak self] _ in
-                        self?.onFilesButtonPressed(nil)
-                    }
-                )
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
+            let filesAction = UIAction(
+                title: L10n.Localizable.Conversation.Action.files,
+                image: UIImage(resource: .files),
+                handler: { [weak self] _ in
+                    self?.onFilesButtonPressed(nil)
+                }
             )
+            filesAction.accessibilityIdentifier = Locators.ActiveConversationPage.sharedDriveButton.rawValue
+            actions.append(filesAction)
         }
 
         if shouldShowCollectionsButton {
@@ -779,6 +784,10 @@ extension ConversationViewController: UserObserving {
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
+        if changeInfo.user.isAccountDeleted {
+            // updates UI since conversation should be readonly
+            update(conversation: conversation)
+        }
     }
 }
 
@@ -861,10 +870,9 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
-    @MainActor
     @objc
     private func onConversationDetailsPressed() {
-        Task {
+        Task { @MainActor in
             if let superview = titleView.superview, let participantsController = await participantsController {
                 presentParticipantsViewController(participantsController, from: superview)
             }
@@ -907,8 +915,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let filesView = wireMessagingFactory
             .makeFilesView(
-                cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending
+                cellName: conversation.wireDriveCellName,
+                isCellsStatePending: wireDriveState == .pending
             ) {
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             }
@@ -920,7 +928,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
     /// as it might have been updated to either a `pending` or `ready` state.
     func syncCellsState() {
-        guard wireCellsState != .ready else {
+        guard wireDriveState != .ready else {
             return
         }
 
@@ -936,7 +944,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         Task {
             do {
-                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                self.wireDriveState = try await syncCellsStateUseCase.invoke(
                     conversationObjectID: conversation.objectID
                 )
             } catch {

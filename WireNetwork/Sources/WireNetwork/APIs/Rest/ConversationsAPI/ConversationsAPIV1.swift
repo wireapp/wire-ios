@@ -21,12 +21,12 @@ import Foundation
 class ConversationsAPIV1: ConversationsAPIV0 {
     override var apiVersion: APIVersion { .v1 }
 
-    override func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]> {
+    override func getLegacyConversationIdentifiers() throws -> PayloadPager<[UUID]> {
         assertionFailure("not implemented! use getConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
 
-    override func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
+    override func getConversationIdentifiers() throws -> PayloadPager<[QualifiedID]> {
         let path = "\(pathPrefix)\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 

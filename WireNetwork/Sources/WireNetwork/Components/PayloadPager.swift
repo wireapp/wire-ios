@@ -24,9 +24,9 @@ import Foundation
 public struct PayloadPager<Payload>: AsyncSequence {
 
     public typealias Element = Payload
-    public typealias PageFetcher = (String?) async throws -> Page
+    public typealias PageFetcher = (_ start: String?) async throws -> Page
 
-    var start: String?
+    let start: String?
     let fetchPage: PageFetcher
 
     public init(

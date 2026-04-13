@@ -30,26 +30,9 @@ typedef NS_OPTIONS(NSUInteger, ZMStrategyConfigurationOption) {
     /** Strategy is allowed to make requests while the application is operating in the background.
      */
     ZMStrategyConfigurationOptionAllowsRequestsWhileInBackground = 1 << 1,
-    
-    /** Strategy is allowed to make requests while the application is waiting for the websocket to be established.
-     */
-    ZMStrategyConfigurationOptionAllowsRequestsWhileWaitingForWebsocket = 1 << 2,
-    
+        
     /** Strategy is allowed to make requests when the application is online and is receiving events via the web socket.
      */
     ZMStrategyConfigurationOptionAllowsRequestsWhileOnline = 1 << 3,
-    
-    /** Strategy is allowed to make requests during slow sync phase.
-        
-        During the slow sync phase the application is downloading metadata about users, conversations, etc..
-    */
-    ZMStrategyConfigurationOptionAllowsRequestsDuringSlowSync = 1 << 4,
-    
-    /** Strategy is allowed to make requests during quick sync phase.
-     
-        During the quick sync phase the application is catching up on changes since it was last active, during this phase we are downloading and decrypting messages.
-     
-        WARNING: it's important that we don't send any encrypted message during this phase since it can lead to encryption errors.
-     */
-    ZMStrategyConfigurationOptionAllowsRequestsDuringQuickSync = 1 << 5
 };
+

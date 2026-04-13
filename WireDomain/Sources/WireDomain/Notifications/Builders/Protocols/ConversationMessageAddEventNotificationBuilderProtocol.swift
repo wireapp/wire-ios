@@ -23,5 +23,5 @@ import WireNetwork
 protocol ConversationMessageAddEventNotificationBuilderProtocol {
     func buildContent(
         event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
-    ) async throws -> UserNotification?
+    ) async throws -> [UserNotification]?
 }

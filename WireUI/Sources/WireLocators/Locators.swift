@@ -23,7 +23,7 @@ import Foundation
 // because the current UI tests depend on these exact values.
 // We are keeping them as-is for now to avoid breaking existing tests.
 //
-// TODO: [WPB-21952] Replace these explicit string values with properly camel-cased,
+// TODO: [WPB-21952] Replace these explicit string values with properly camelCased,
 // non-UI-text-based identifiers (e.g., accessibility identifiers) to have this
 // unform format and reduce test fragility.
 
@@ -63,9 +63,23 @@ public enum Locators {
         case createGroupOrSearchButton
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
+        case clearOptionOnContextMenu = "Clear Content…"
+        case clearButtonOnBottomSheet
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
+        case status
+        case loadBar
+        case addToFavourite = "Add to Favorites"
+        case removeFromFavourite = "Remove from Favorites"
+        case filterConversations = "Filter conversations"
+        case filterByFavourites = "Show all favorite conversations"
+        case filterByOneOnOneConversation = "Show all one on one conversations"
+        case textFilteredByFavourites = "Filtered by Favorites"
+        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case userRemovedSystemMessage
+        case connectionRequestsCell
+        case unreadMessageCount
     }
 
     public enum SettingsPage: String {
@@ -100,8 +114,22 @@ public enum Locators {
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
+        case sharedDriveButton
+        case ephemeralTimeSelectionButton
         case message
         case imageCell = "ImageCell"
+        case mentionButton
+        case userCellName
+        case labelSharedDriveON = "Shared Drive is on"
+        case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case sharedFileLabel = "FileTransferTopLabel"
+        case fileTypeIcon = "FileTransferFileTypeIcon"
+        case sketchButton
+        case canvas
+        case canvasSendButton
+        case attachmentImagePreview
+        case attachmentVideoPreview
+        case classifiedBanner = "ClassificationBannerClassified"
     }
 
     public enum BackupOrRestorePage: String {
@@ -137,6 +165,7 @@ public enum Locators {
 
     public enum ConversationDetailsActions: String {
         case archive
+        case clearContent
     }
 
     public enum UserProfilePage: String {
@@ -148,12 +177,21 @@ public enum Locators {
         case createWireTeamButton
         case manageTeamButton
         case addAccountOrTeamButton
+        case userProfilePicture
     }
 
     public enum CreateGroupPage: String {
 
         case groupNameField
         case newGroupNextButton
+        case sharedDriveSwitch
+    }
+
+    public enum CreateChannelPage: String {
+
+        case channelNameField
+        case newChannelNextButton
+        case sharedDriveSwitch
     }
 
     public enum CreatePersonalAccountFormPage: String {
@@ -179,6 +217,7 @@ public enum Locators {
         case cancelUserSearch = "Cancel"
         case cancel
         case usernameCell
+        case createNewChannelButton
     }
 
     public enum OnMyiPhonePage: String {
@@ -268,18 +307,145 @@ public enum Locators {
         case resetPassword = "Reset password"
     }
 
-    public enum FileVersioningPage: String {
-
-        case closeButton
-    }
-
     public enum ShareExtensionPage: String {
 
         case imageTile = "PXGGridLayout-Info"
         case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "chevron"
+        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
         case continueButton = "Continue"
     }
 
+    public enum IncomingCallPage: String {
+
+        case acceptCall = "Accept"
+        case turnOffMicrophone = "Microphone"
+    }
+
+    public enum OngoingCallPage: String {
+
+        case endOngoingCallButton = "End call"
+        case timeLabel
+
+        public static func participantIdentifier(_ name: String) -> String {
+            "audioView.\(name).minimized.inactive"
+        }
+    }
+
+    public enum SecurityLevelView: String {
+
+        case classificationBanner = "ClassificationBanner"
+
+    }
+
+    public enum WireDrive {
+
+        public enum FilesFilterPage: String {
+            case saveButton
+            case cancelButton
+            case removeFilterButton
+        }
+
+        public enum FilesFilteringPage: String {
+            case removeAllFiltersButton
+
+            public static func filter(_ filter: String) -> String {
+                "filter.\(filter)"
+            }
+        }
+
+        public enum ShareLinkPasswordPage: String {
+            case togglePassword
+            case sharePassword
+            case resetPassword
+            case savePassword
+        }
+
+        public enum ShareLinkPage: String {
+            case sharePassword
+            case shareLink
+        }
+
+        public enum FilesContentPage: String {
+            case confirm
+            case search
+
+            public static func fileItem(_ index: Int) -> String {
+                "fileItem\(index)"
+            }
+        }
+
+        public enum FilesPage: String {
+            case close
+            case createFolder
+            case createFile
+            case recycleBin
+        }
+
+        public enum FilesInfoPage: String {
+            case preparingFilesTitle
+            case preparingFilesMessage
+            case noFilesSearchTitle
+            case noFilesSearchMessage
+            case noFilesTitle
+            case noFilesAllConversationsMessage
+            case noFilesMessage
+            case errorTitle
+            case errorMessage
+            case retryButton
+            case loadMore
+        }
+
+        public enum EditFilePage: String {
+            case close
+        }
+
+        public enum CreateFilePage: String {
+            case cancelButton
+            case createButton
+        }
+
+        public enum FileRenamePage: String {
+            case cancel
+            case save
+        }
+
+        public enum FileVersioningPage: String {
+
+            case closeButton
+            case restoreButton
+        }
+
+        public enum TagsEditPage: String {
+
+            case closeButton
+            case saveButton
+            case textInputField
+
+            public static func currentTag(_ tag: String) -> String {
+                "currentTag.\(tag)"
+            }
+
+            public static func suggestedTag(_ tag: String) -> String {
+                "suggestedTag.\(tag)"
+            }
+        }
+
+        public enum FilesSortingPage: String {
+            case menuButton
+
+            public static func sortOrder(_ order: String) -> String {
+                "sortOrder.\(order)"
+            }
+
+            public static func sortKey(_ key: String) -> String {
+                "sortKey.\(key)"
+            }
+        }
+
+        public enum FilesItemPage: String {
+            case confirmDeleteButton
+            case confirmRestoreButton
+        }
+    }
 }

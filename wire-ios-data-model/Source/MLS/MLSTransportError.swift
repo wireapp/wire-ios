@@ -44,6 +44,7 @@ public enum MLSTransportError: Error, Codable {
     case invalidOperation(message: String)
     case noConversation(message: String)
     case groupOutOfSync(missingUsers: Set<QualifiedID>)
+    case mlsIdentityMismatch
 
     public init(_ error: MLSAPIError) {
         switch error {
@@ -84,6 +85,8 @@ public enum MLSTransportError: Error, Codable {
                 QualifiedID(uuid: $0.id, domain: $0.domain)
             }
             self = .groupOutOfSync(missingUsers: Set(missingUsers))
+        case .mlsIdentityMismatch:
+            self = .mlsIdentityMismatch
         }
     }
 }

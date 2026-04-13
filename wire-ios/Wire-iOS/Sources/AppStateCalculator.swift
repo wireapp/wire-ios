@@ -26,13 +26,12 @@ enum AppState: Equatable {
     case headless
     case locked(UserSession)
     case authenticated(UserSession)
-    case unauthenticated(environment: BackendEnvironment2?, error: NSError?)
+    case unauthenticated(accountID: UUID?, environment: BackendEnvironment2?, error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
     case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
-    case loading(account: Account, from: Account?)
     case syncFailure(error: any Error, onRetry: () -> Void)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
@@ -41,10 +40,11 @@ enum AppState: Equatable {
             true
         case (.locked, .locked):
             true
-        case (.authenticated, .authenticated):
-            true
-        case let (.unauthenticated(env1, error1), .unauthenticated(env2, error2)):
-            env1 == env2 &&
+        case let (.authenticated(userSession1), .authenticated(userSession2)):
+            userSession1 === userSession2
+        case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
+            id1 == id2 &&
+                env1 == env2 &&
                 error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             reason1 == reason2
@@ -56,8 +56,6 @@ enum AppState: Equatable {
             true
         case (migrating, migrating):
             true
-        case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
             true
         default:
@@ -78,7 +76,7 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated: \(error.debugDescription)"
         case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
@@ -90,8 +88,6 @@ extension AppState: CustomDebugStringConvertible {
             "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
-        case .loading:
-            "loading"
         case let .syncFailure(error, _):
             "syncFailure: \(error.localizedDescription)"
         }
@@ -109,7 +105,7 @@ extension AppState: SafeForLoggingStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated \(error?.localizedDescription ?? "<nil>")"
         case let .blacklisted(reason):
             "blacklisted \(reason)"
@@ -121,8 +117,6 @@ extension AppState: SafeForLoggingStringConvertible {
             "databaseFailure \(reason)"
         case .migrating:
             "migrating"
-        case let .loading(account, from):
-            "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
         case let .syncFailure(error, _):
             "syncFailure \(error.localizedDescription)"
         }
@@ -178,6 +172,12 @@ final class AppStateCalculator {
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        guard let delegate else {
+            fatalInternal("AppStateCalculator has no delegate")
+            completion?()
+            return
+        }
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -196,7 +196,7 @@ final class AppStateCalculator {
             "transitioning to app state \(appState.safeForLoggingDescription)",
             attributes: .safePublic
         )
-        delegate?.appStateCalculator(self, didCalculate: appState) {
+        delegate.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
     }
@@ -241,12 +241,17 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
         transition(
-            to: .unauthenticated(environment: environment, error: error as NSError?),
+            to: .unauthenticated(
+                accountID: accountID,
+                environment: environment,
+                error: error as NSError?
+            ),
             completion: userSessionCanBeTornDown
         )
     }
@@ -297,21 +302,6 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
     }
 
-    func sessionManagerWillOpenAccount(
-        _ account: Account,
-        from selectedAccount: Account?,
-        userSessionCanBeTornDown: @escaping () -> Void
-    ) {
-        let appState: AppState = .loading(
-            account: account,
-            from: selectedAccount
-        )
-        transition(
-            to: appState,
-            completion: userSessionCanBeTornDown
-        )
-    }
-
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
         // No op
     }
@@ -331,7 +321,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -340,7 +330,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 

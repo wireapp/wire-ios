@@ -27,7 +27,7 @@ protocol WorkItem: Sendable {
 
     /// A unique identifier for this item.
 
-    var id: UUID { get }
+    var id: String { get }
 
     /// The urgency or importance of this ticket.
 

@@ -39,7 +39,7 @@ import WireSyncEngine
             } else {
                 guard let session = ZMUserSession.shared() else { return nil }
 
-                return ZMUser.selfUser(inUserSession: session)
+                return ZMUser.selfUser(in: session.viewContext)
             }
         }
     }
@@ -52,7 +52,7 @@ import WireSyncEngine
         static func selfUser() -> ZMUser? {
             guard let session = ZMUserSession.shared() else { return nil }
 
-            return ZMUser.selfUser(inUserSession: session)
+            return ZMUser.selfUser(in: session.viewContext)
         }
     }
 #endif

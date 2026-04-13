@@ -32,6 +32,7 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
     private let modelHelper = ModelHelper()
     private var mockConversation: ZMConversation!
     private var mockSelfUser: ZMUser!
+    private var mockAPI: MockConversationsAPI!
     private var sut: SetAllowGuestAndAppsUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
@@ -42,8 +43,10 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         stack = try await coreDataStackHelper.createStack()
+        let mockAPI = MockConversationsAPI()
+        self.mockAPI = mockAPI
         (sut, mockSelfUser, mockConversation) = await syncContext.perform { [modelHelper, syncContext] in
-            let sut = SetAllowGuestAndAppsUseCase()
+            let sut = SetAllowGuestAndAppsUseCase(api: mockAPI)
             let mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             let mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
@@ -55,6 +58,7 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
 
     override func tearDown() async throws {
         stack = nil
+        mockAPI = nil
         sut = nil
         mockSelfUser = nil
         mockConversation = nil
@@ -69,29 +73,21 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
         await syncContext.perform { [self] in
             setUpRoleAndAction(syncContext, mockConversation, mockSelfUser)
         }
-        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-            result: .success(()),
-            context: syncContext.notificationContext
-        )
+        mockAPI.updateConversationAccessConversationIDAllowGuestsAllowApps_MockMethod = { _, _, _ in }
 
         // WHEN
         try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
-        withExtendedLifetime(mockHandler) {}
 
     }
 
     func testGuestEnablementFails_WithInsufficientPermissions() async {
 
         // GIVEN
-        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-            result: .failure(.unknown),
-            context: syncContext.notificationContext
-        )
+        mockAPI.updateConversationAccessConversationIDAllowGuestsAllowApps_MockMethod = { _, _, _ in }
 
         // WHEN
         do {
             try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
-            withExtendedLifetime(mockHandler) {}
             XCTFail("Expected operation to fail, but it succeeded.")
         } catch {
             guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {
@@ -107,29 +103,22 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
         await syncContext.perform { [syncContext, mockConversation, mockSelfUser] in
             setUpRoleAndAction(syncContext, mockConversation, mockSelfUser)
         }
-        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-            result: .success(()),
-            context: syncContext.notificationContext
-        )
+
+        mockAPI.updateConversationAccessConversationIDAllowGuestsAllowApps_MockMethod = { _, _, _ in }
 
         // WHEN
         try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
-        withExtendedLifetime(mockHandler) {}
 
     }
 
     func testAppsEnablementFails_WithInsufficientPermissions() async {
 
         // GIVEN
-        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-            result: .failure(.unknown),
-            context: syncContext.notificationContext
-        )
+        mockAPI.updateConversationAccessConversationIDAllowGuestsAllowApps_MockMethod = { _, _, _ in }
 
         // WHEN
         do {
             try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
-            withExtendedLifetime(mockHandler) {}
             XCTFail("Expected operation to fail, but it succeeded.")
         } catch {
             guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {

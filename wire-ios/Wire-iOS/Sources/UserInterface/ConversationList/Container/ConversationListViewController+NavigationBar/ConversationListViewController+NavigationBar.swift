@@ -17,13 +17,13 @@
 //
 
 import SwiftUI
-import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFolderPickerUI
 import WireLocators
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -414,7 +414,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentConnectUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
@@ -443,7 +446,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     func presentCreateConversationUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present conversation creation ui, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)

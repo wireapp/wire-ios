@@ -53,7 +53,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         messageProtocol: MessageProtocol?
-    ) async throws -> SearchResult {
+    ) async -> SearchResult {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
@@ -72,23 +72,14 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
             team: team
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            guard !Task.isCancelled else {
-                continuation.resume(throwing: CancellationError())
-                self.activeSearchTask = nil
-                return
+        let task = searchDirectory.createSearchTask(with: request)
+        activeSearchTask = task
+        defer {
+            if activeSearchTask === task {
+                activeSearchTask = nil
             }
-
-            let task = searchDirectory.perform(request)
-            task.addResultHandler { result, isCompleted in
-                if isCompleted {
-                    continuation.resume(returning: result)
-                    self.activeSearchTask = nil
-                }
-            }
-            task.start()
-            activeSearchTask = task
         }
+        return await task.start()
     }
 
     // MARK: - Private methods

@@ -40,7 +40,7 @@ public actor WorkAgent {
 
     private var task: Task<Void, Never>?
     private let scheduler: any WorkItemScheduler
-    private let nonReentrantTaskManager = NonReentrantTaskManager()
+    private let nonReentrantTaskManager = NonReentrantTaskManager<Void, any Error>()
 
     init(scheduler: any WorkItemScheduler) {
         self.scheduler = scheduler
@@ -108,7 +108,7 @@ public actor WorkAgent {
                     )
                 } catch {
                     WireLogger.workAgent.error(
-                        "item failed, dropping: \(String(describing: error))",
+                        "item failed, dropping \(String(describing: error))",
                         attributes: .init(item)
                     )
                     continue
@@ -136,6 +136,10 @@ public actor WorkAgent {
         task = nil
     }
 
+    public func clearSchedulerQueue() async {
+        WireLogger.workAgent.info("clear scheduler queue", attributes: .safePublic)
+        await scheduler.clearAllItems()
+    }
 }
 
 extension LogAttributes {

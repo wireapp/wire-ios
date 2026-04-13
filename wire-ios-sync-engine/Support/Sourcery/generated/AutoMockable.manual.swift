@@ -510,9 +510,9 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    public var isWireCellsEnabled: Bool = false
+    public var isWireDriveEnabled: Bool = false
     
-    public var wireCellsBackendURL: URL? = nil
+    public var wireDriveBackendURL: URL? = nil
 
     public var isEnterpriseUser: Bool = false
     
@@ -1081,7 +1081,7 @@ public class MockUserSession: UserSession {
     public var makeConversationSecureGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
     public var makeConversationSecureGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
         makeConversationSecureGuestLinkUseCase_Invocations.append(())
 
         if let mock = makeConversationSecureGuestLinkUseCase_MockMethod {
@@ -1096,10 +1096,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSetConversationGuestsAndAppsUseCase
 
     public var makeSetConversationGuestsAndAppsUseCase_Invocations: [Void] = []
-    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol)?
-    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol?
+    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol?)?
+    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol??
 
-    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
         makeSetConversationGuestsAndAppsUseCase_Invocations.append(())
 
         if let mock = makeSetConversationGuestsAndAppsUseCase_MockMethod {
@@ -1294,10 +1294,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSearchUsersUseCase
 
     public var makeSearchUsersUseCase_Invocations: [Void] = []
-    public var makeSearchUsersUseCase_MockMethod: (() -> SearchUsersUseCaseProtocol)?
-    public var makeSearchUsersUseCase_MockValue: SearchUsersUseCaseProtocol?
+    public var makeSearchUsersUseCase_MockMethod: (() -> (any SearchUsersUseCaseProtocol)?)?
+    public var makeSearchUsersUseCase_MockValue: (any SearchUsersUseCaseProtocol)??
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    public func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         makeSearchUsersUseCase_Invocations.append(())
 
         if let mock = makeSearchUsersUseCase_MockMethod {

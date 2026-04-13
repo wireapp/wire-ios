@@ -9,6 +9,11 @@
         "status": "enabled",
         "ttl": "unlimited"
     },
+    "apps": {
+      "lockStatus": "locked",
+      "status": "enabled",
+      "ttl": "unlimited"
+    },
     "classifiedDomains": {
         "config": {
             "domains": [

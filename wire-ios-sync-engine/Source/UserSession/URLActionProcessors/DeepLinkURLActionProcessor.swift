@@ -209,7 +209,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     private func handleOpenUserProfile(id: UUID, domain: String?, delegate: PresentationDelegate?) {
 
         let viewContext = contextProvider.viewContext
-
         if let user = ZMUser.fetch(with: id, domain: domain, in: viewContext) {
             delegate?.showUserProfile(user: user)
         } else {

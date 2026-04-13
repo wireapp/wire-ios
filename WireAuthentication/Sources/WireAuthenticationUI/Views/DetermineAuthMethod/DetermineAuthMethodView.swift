@@ -123,12 +123,11 @@ package struct DetermineAuthMethodView: View {
                 isMandatory: false,
                 placeholder: Strings.Identity.Input.Field.placeholder,
                 title: Strings.Identity.Input.Field.title,
-                string: $viewModel.emailOrSSOCode
+                string: $viewModel.emailOrSSOCode,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier(Locators.WelcomePage.emailTextField.rawValue)

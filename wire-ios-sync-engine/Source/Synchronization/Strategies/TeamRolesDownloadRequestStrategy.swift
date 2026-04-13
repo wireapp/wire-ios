@@ -50,14 +50,11 @@ public final class TeamRolesDownloadRequestStrategy:
     ZMDownstreamTranscoder {
 
     private(set) var downstreamSync: ZMDownstreamObjectSync!
-    private unowned var syncStatus: SyncStatus
 
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
+        applicationStatus: ApplicationStatus
     ) {
-        self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
@@ -69,11 +66,7 @@ public final class TeamRolesDownloadRequestStrategy:
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = downstreamSync.nextRequest(for: apiVersion)
-        if request == nil {
-            completeSyncPhaseIfNoTeam()
-        }
-        return request
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
@@ -82,18 +75,6 @@ public final class TeamRolesDownloadRequestStrategy:
 
     public var requestGenerators: [ZMRequestGenerator] {
         [self]
-    }
-
-    fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
-
-    fileprivate var isSyncing: Bool {
-        syncStatus.currentSyncPhase == expectedSyncPhase
-    }
-
-    private func completeSyncPhaseIfNoTeam() {
-        if syncStatus.currentSyncPhase == expectedSyncPhase, !downstreamSync.hasOutstandingItems {
-            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-        }
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -115,10 +96,6 @@ public final class TeamRolesDownloadRequestStrategy:
 
         team.needsToDownloadRoles = false
         team.updateRoles(with: payload)
-
-        if isSyncing {
-            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-        }
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

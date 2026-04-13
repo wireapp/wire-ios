@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 @testable import WireDomain
 
+@Suite("CommitPendingProposalsGenerator Tests", .timeLimit(.minutes(1)))
 class CommitPendingProposalsGeneratorTests {
 
     var sut: CommitPendingProposalsGenerator!
@@ -30,7 +31,7 @@ class CommitPendingProposalsGeneratorTests {
     let coreDataStackHelper = CoreDataStackHelper()
     let coreDataStack: CoreDataStack
     var commitPendingProposalItemClosure: ((CommitPendingProposalItem) -> Void)?
-    var mockMLSService: MockMLSServiceInterface!
+    var mockMLSService: MockMLSServiceInterface
     var isMLSGroupBroken: (MLSGroupID) -> Bool = { _ in false }
 
     init() async throws {
@@ -55,9 +56,14 @@ class CommitPendingProposalsGeneratorTests {
         )
     }
 
+    deinit {
+        sut = nil
+        commitPendingProposalItemClosure = nil
+    }
+
     @Test(
         "It generates an item when a conversation with commitPendingProposalDate set is found",
-        arguments: [Date(), Date().addingTimeInterval(0.5)]
+        arguments: [Date(), Date().addingTimeInterval(0.5), Date().addingTimeInterval(1)]
     )
     func startGeneratesItem(date: Date) async throws {
         // GIVEN
@@ -67,36 +73,37 @@ class CommitPendingProposalsGeneratorTests {
             proposalDate: date
         )
 
-        var items = [CommitPendingProposalItem]()
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
         commitPendingProposalItemClosure = { item in
-            items.append(item)
+            streamContinuation.yield(item)
         }
+        var iterator = stream.makeAsyncIterator()
+
         // WHEN
         await sut.start()
 
-        // THEN
-        #expect(items.count == 1)
-        #expect(items.first?.conversationID == conversationID)
+        // THEN — properly await the async delivery rather than checking immediately
+        let firstItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
+        #expect(firstItem?.conversationID == conversationID)
 
         // WHEN
         let newConversationID = QualifiedID.random()
-        try await confirmation("generator delivers an update for a new conversation") { confirm in
-            self.commitPendingProposalItemClosure = {  item in
-                items.append(item)
-                confirm()
-            }
+        await createPendingMLSConversation(
+            id: newConversationID,
+            proposalDate: date
+        )
 
-            await self.createPendingMLSConversation(
-                id: newConversationID,
-                proposalDate: date
-            )
-
-            try await Task.sleep(for: .seconds(0.5))
+        // THEN — await the second delivery (handles future-dated proposals naturally)
+        let secondItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
         }
-
-        // THEN
-        #expect(items.count == 2)
-        #expect(items.last?.conversationID == newConversationID)
+        #expect(secondItem?.conversationID == newConversationID)
     }
 
     @Test("It does not generate an item on conversation insertion")
@@ -157,7 +164,7 @@ class CommitPendingProposalsGeneratorTests {
                 with: [selfUser],
                 in: context
             )
-            conversation.commitPendingProposalDate = Date()
+            conversation.commitPendingProposalDate = proposalDate
         }
     }
 }

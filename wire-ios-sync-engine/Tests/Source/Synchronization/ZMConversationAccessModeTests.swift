@@ -113,7 +113,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/access")
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             XCTAssertEqual(
                 request.path,
                 "/v\(apiVersion.rawValue)/conversations/\(conversation.remoteIdentifier!.transportString())/access"

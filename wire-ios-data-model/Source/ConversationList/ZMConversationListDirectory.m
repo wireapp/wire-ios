@@ -66,7 +66,7 @@ static NSString * const PendingKey = @"Pending";
 
         ZMUser *selfUser = [ZMUser selfUserInContext:managedObjectContext];
         Team *selfTeam = selfUser.team;
-        self.factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:selfTeam];
+        self.factory = [[ConversationPredicateFactory alloc] initWithSelfUser:selfUser selfTeam:selfTeam];
 
         self.folderList = [[FolderList alloc] initWithLabels:allFolders];
         self.listsByFolder = [self createListsFromFolders:allFolders allConversations:allConversations];
@@ -209,7 +209,7 @@ static NSString * const PendingKey = @"Pending";
 
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
     Team *selfTeam = selfUser.team;
-    self.factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:selfTeam];
+    self.factory = [[ConversationPredicateFactory alloc] initWithSelfUser:selfUser selfTeam:selfTeam];
 
     NSArray *allConversations = [self fetchAllConversations:moc];
 

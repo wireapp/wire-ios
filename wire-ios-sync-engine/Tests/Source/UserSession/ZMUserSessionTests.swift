@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireDataModelSupport
 import WireTesting
@@ -25,6 +26,18 @@ import WireTestingPackage
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
+
+    private var cancellables: Set<AnyCancellable>!
+
+    override func setUp() {
+        super.setUp()
+        cancellables = []
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        cancellables = nil
+    }
 
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
@@ -118,11 +131,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let syncStatus = try await syncMOC.perform {
-            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
-        }
+        let expectation = expectation(description: "wait for trigger slow")
+        sut.clientSessionComponent?.syncStateSubject.sink { state in
+            if state == .initialSyncing(.pullLastEventID) {
+                expectation.fulfill()
+            }
+        }.store(in: &cancellables)
 
-        XCTAssertTrue(syncStatus.isSlowSyncing)
+        wait(for: [expectation])
     }
 
     func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {
@@ -389,21 +405,29 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
-        syncMOC.performAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
+    func test_itUploadKeyPackagesIfNeeded_AfterQuickSync() async throws {
+        // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        await syncMOC.perform { [self, syncMOC] in
+            let domain = "anta.com"
+            ZMUser.selfUser(in: syncMOC).domain = domain
+            let selfUserClient = createSelfClient()
+            // MLS client has been registered
+            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = domain
+            sut.didRegisterSelfUserClient(selfUserClient)
+            syncMOC.saveOrRollback()
+
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!, isNewClient: false)
 
             // WHEN
             sut.didFinishIncrementalSync(isRecovering: false)
         }
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
         // THEN
-        let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
-
-        XCTAssertTrue(supportedProtocols.contains(.proteus))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
     }
 
     func test_OnSelfClientInvalidated() async throws {

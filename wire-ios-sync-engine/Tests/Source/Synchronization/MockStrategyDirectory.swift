@@ -22,10 +22,6 @@ import Foundation
 public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public var clientContextChangeTrackers: [any ZMContextChangeTracker] = []
 
-    public var eventConsumers: [ZMEventConsumer] = []
-
-    public var eventAsyncConsumers: [ZMEventAsyncConsumer] = []
-
     public var requestStrategies: [RequestStrategy] = []
 
     public var contextChangeTrackers: [ZMContextChangeTracker] = []

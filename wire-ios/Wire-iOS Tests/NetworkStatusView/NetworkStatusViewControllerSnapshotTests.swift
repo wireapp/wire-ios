@@ -56,7 +56,7 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
         mockContainerViewController.view.bounds.size = CGSize(width: 375.0, height: 667.0)
         mockContainerViewController.view.backgroundColor = .lightGray
 
-        sut = NetworkStatusViewController()
+        sut = NetworkStatusViewController(userSession: UserSessionMock())
         sut.view.backgroundColor = .gray
         mockContainerViewController.view.addSubview(sut.view)
         sut.delegate = mockContainerViewController
@@ -106,7 +106,36 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
         sut.applyPendingState()
 
         // THEN
-        snapshotHelper.verify(matching: mockContainerViewController.view, file: file, testName: testName, line: line)
+        verifyViewInAllThemes(
+            mockContainerViewController.view,
+            file: file,
+            line: line,
+            testName: testName
+        )
+    }
+
+    private func verifyViewInAllThemes(
+        _ view: UIView,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        testName: String = #function
+    ) {
+        let themes: [(style: UIUserInterfaceStyle, name: String)] = [
+            (.light, "LightTheme"),
+            (.dark, "DarkTheme")
+        ]
+
+        for theme in themes {
+            snapshotHelper
+                .withUserInterfaceStyle(theme.style)
+                .verify(
+                    matching: view,
+                    named: theme.name,
+                    file: file,
+                    testName: testName,
+                    line: line
+                )
+        }
     }
 
     // MARK: - Snapshot Tests

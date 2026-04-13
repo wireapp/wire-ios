@@ -54,6 +54,9 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageShouldUpdate()
 
+    /// Notify the delegate that the content size of the message changed.
+    func conversationMessageContentDidChangeSize()
+
 }
 
 /// A generic view that displays conversation contents.

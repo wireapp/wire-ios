@@ -61,9 +61,10 @@ class UsersAPIV12: UsersAPIV11 {
             .success(code: .ok, type: UserListResponseV12.self)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
-struct UserListResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserListResponseV12: Decodable, ToAPIModelConvertible {
 
     /// List of users which were found and successfully retrieved.
 
@@ -81,7 +82,7 @@ struct UserListResponseV12: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct UserResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
     let id: QualifiedIDV0
     let name: String
@@ -128,6 +129,7 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
             legalholdStatus: legalholdStatus.toAPIModel()

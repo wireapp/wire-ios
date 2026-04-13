@@ -32,7 +32,7 @@ public extension ZMMessage {
 
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
 
-        let possibleMatches = try! managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
+        let possibleMatches = try? managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
         let confirmationReceipts = possibleMatches?.filter { candidateConfirmationReceipt in
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
                 return false

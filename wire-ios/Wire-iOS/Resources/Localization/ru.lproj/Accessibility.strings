@@ -78,7 +78,7 @@
 "conversationSearch.audioMessage.description" = "Аудиосообщение";
 "conversationSearch.linkMessage.description" = "Ссылка";
 "conversationSearch.sentBy.description" = "Отправлено %@";
-"conversationSearch.fileName.description" = "Имя файла";
+"conversationSearch.fileName.description" = "Название файла";
 "conversationSearch.fileSize.description" = "Размер";
 "conversationSearch.fileType.description" = "Тип";
 

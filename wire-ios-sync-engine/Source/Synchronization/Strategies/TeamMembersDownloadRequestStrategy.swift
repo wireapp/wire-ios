@@ -19,28 +19,22 @@
 import Foundation
 
 /// Downloads all team members during the slow sync and updating when processing events or when manually requested.
-
-public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder,
+public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy,
     ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
 
-    let syncStatus: SyncStatus
-    private var slowSync: ZMSingleRequestSync!
     private var downstreamSync: ZMDownstreamObjectSync!
 
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
+        applicationStatus: ApplicationStatus
     ) {
-
-        self.syncStatus = syncStatus
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
 
-        configuration = [.allowsRequestsWhileOnline, .allowsRequestsDuringSlowSync]
+        configuration = [.allowsRequestsWhileOnline]
         self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
@@ -48,64 +42,16 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
             filter: nil,
             managedObjectContext: managedObjectContext
         )
-        self.slowSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if syncStatus.currentSyncPhase == .fetchingTeamMembers {
-            slowSync.readyForNextRequestIfNotBusy()
-            return slowSync.nextRequest(for: apiVersion)
-        } else {
-            return downstreamSync.nextRequest(for: apiVersion)
-        }
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [downstreamSync]
-    }
-
-    // MARK: - ZMSingleRequestTranscoder
-
-    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
-            completeSyncPhase() // Skip sync phase if user doesn't belong to a team
-            return nil
-        }
-
-        let maxResults = 2000
-        return ZMTransportRequest(
-            getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)",
-            apiVersion: apiVersion.rawValue
-        )
-    }
-
-    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard
-            response.result == .success,
-            let team = ZMUser.selfUser(in: managedObjectContext).team,
-            let rawData = response.rawData,
-            let payload = MembershipListPayload(rawData)
-        else {
-            failSyncPhase()
-            return
-        }
-
-        // as per WPB-6485 we ignore the hasMore
-        payload.members.forEach { membershipPayload in
-            membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
-        }
-
-        completeSyncPhase()
-    }
-
-    func failSyncPhase() {
-        syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
-    }
-
-    func completeSyncPhase() {
-        syncStatus.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
     }
 
     // MARK: - ZMDownstreamTranscoder

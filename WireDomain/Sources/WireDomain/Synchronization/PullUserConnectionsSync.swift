@@ -33,7 +33,7 @@ struct PullUserConnectionsSync: PullUserConnectionsSyncProtocol {
     }
 
     func pull() async throws {
-        let connectionsPager = try await api.getConnections()
+        let connectionsPager = try api.getConnections()
 
         for try await connections in connectionsPager {
             for connection in connections {

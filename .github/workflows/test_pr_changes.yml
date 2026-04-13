@@ -1,8 +1,8 @@
 name: Test Pull Request Changes
 
-on: 
+on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
   merge_group:
     types: [checks_requested]
 
@@ -94,13 +94,71 @@ jobs:
             wire-ios-utilities:
               - 'wire-ios-utilities/**'
 
-  trigger_tests_pr:
+  # ── Strategy decision ──────────────────────────────────────────────────────
+  # Decides whether to run tests sequentially or in parallel.
+  # Parallel is used when:
+  #   - the `parallel-testing` label is on the PR, OR
+  #   - SMART_TESTING_ENABLED=1 (repo variable) AND the number of frameworks
+  #     to test is >= 4 (number of available macOS runners).
+  # Set SMART_TESTING_ENABLED in Settings → Variables → Actions.
+  decide-strategy:
+    name: Decide test strategy
     needs: detect-changes
+    if: ${{ github.event.pull_request.draft != true }}
+    runs-on: ubuntu-24.04
+    outputs:
+      use_parallel: ${{ steps.decide.outputs.use_parallel }}
+    steps:
+      - name: Decide parallel vs sequential
+        id: decide
+        env:
+          FOLDERS: ${{ needs.detect-changes.outputs.folders }}
+          SMART_TESTING_ENABLED: ${{ vars.SMART_TESTING_ENABLED }}
+          HAS_PARALLEL_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
+        run: |
+          if [ "$HAS_PARALLEL_LABEL" = "true" ]; then
+            echo "use_parallel=true" >> "$GITHUB_OUTPUT"
+            echo "Parallel: parallel-testing label is set"
+          elif [ "$SMART_TESTING_ENABLED" = "1" ]; then
+            COUNT=$(echo "$FOLDERS" | jq '[.[] | select(. != "fastlane" and . != "scripts" and . != "carthage")] | length')
+            echo "Framework count: $COUNT (threshold: 4 runners)"
+            if [ "$COUNT" -ge 4 ]; then
+              echo "use_parallel=true" >> "$GITHUB_OUTPUT"
+              echo "Parallel: $COUNT frameworks >= 4 runners"
+            else
+              echo "use_parallel=false" >> "$GITHUB_OUTPUT"
+              echo "Sequential: $COUNT frameworks < 4 runners, setup overhead not worth it"
+            fi
+          else
+            echo "use_parallel=false" >> "$GITHUB_OUTPUT"
+            echo "Sequential: smart testing not enabled"
+          fi
+
+  # ── Sequential ──────────────────────────────────────────────────────────────
+  trigger_tests_pr:
+    needs: [detect-changes, decide-strategy]
     name: PR Tests
+    if: ${{ needs.decide-strategy.outputs.use_parallel != 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
-      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
-      run_critical_flows: false # separare workflow
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
+      run_critical_flows: false # separate workflow
+      notify: failure
     secrets: inherit
+
+  # ── Parallel ────────────────────────────────────────────────────────────────
+  trigger_tests_pr_parallel:
+    needs: [detect-changes, decide-strategy]
+    name: PR Tests
+    if: ${{ needs.decide-strategy.outputs.use_parallel == 'true' }}
+    uses: ./.github/workflows/_reusable_run_tests_parallel.yml
+    with:
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
+      notify: failure
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

@@ -171,9 +171,14 @@ class TextView: UITextView {
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+
         if action == #selector(paste(_:)) {
-            let pasteboard = UIPasteboard.general
-            return pasteboard.hasImages || pasteboard.hasStrings
+            if isContextMenuAllowed {
+                let pasteboard = UIPasteboard.general
+                return pasteboard.hasImages || pasteboard.hasStrings
+            } else {
+                return false
+            }
         }
 
         return super.canPerformAction(action, withSender: sender)
@@ -185,9 +190,7 @@ class TextView: UITextView {
 
     override func buildMenu(with builder: any UIMenuBuilder) {
         if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
+            builder.remove(menu: .autoFill)
         }
     }
 
