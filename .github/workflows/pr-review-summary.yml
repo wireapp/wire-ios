@@ -1,0 +1,141 @@
+name: Daily PR Review Summary
+
+# **What it does**: Posts a daily summary of open PRs grouped by reviewer (who still needs to act)
+#                   and lists PRs with 2+ approvals waiting to be merged.
+# **Why we have it**: Keep reviewers informed and unblock authors waiting for a merge.
+# **Who does it impact**: All contributors and reviewers of the repo.
+
+on:
+    schedule:
+        -   cron: '0 8 * * 1-5'   # Every weekday at 08:00 UTC
+    workflow_dispatch:              # Allow manual runs for testing
+
+jobs:
+    pr-review-summary:
+        runs-on: ubuntu-24.04
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
+        steps:
+            -   name: Build summary message
+                id: build-summary
+                uses: actions/github-script@v7
+                with:
+                    script: |
+                        const REQUIRED_APPROVALS = 2;
+
+                        const releaseLabel = (pr) => {
+                            const m = pr.base.ref.match(/^release\/cycle-(.+)$/);
+                            return m ? `🚨 Release ${m[1]}` : null;
+                        };
+
+                        // ── 1. Fetch all open, non-draft PRs ────────────────────────────────────
+                        const { data: prs } = await github.rest.pulls.list({
+                            owner:    context.repo.owner,
+                            repo:     context.repo.repo,
+                            state:    'open',
+                            per_page: 100,
+                        });
+
+                        const openPRs = prs.filter(pr => !pr.draft);
+
+                        // ── 2. For each PR collect review state ──────────────────────────────────
+                        const readyToMerge = [];  // ≥ REQUIRED_APPROVALS approvals
+                        const reviewerMap  = {};  // reviewer login → [{ pr, release, tag }]
+
+                        for (const pr of openPRs) {
+                            const { data: reviews } = await github.rest.pulls.listReviews({
+                                owner:       context.repo.owner,
+                                repo:        context.repo.repo,
+                                pull_number: pr.number,
+                                per_page:    100,
+                            });
+
+                            // Keep only the latest review per user (most-recent wins)
+                            const latestByUser = {};
+                            for (const review of reviews) {
+                                if (review.state === 'DISMISSED') continue;
+                                latestByUser[review.user.login] = review.state;
+                            }
+
+                            const approvalCount = Object.values(latestByUser)
+                                .filter(s => s === 'APPROVED').length;
+
+                            const release = releaseLabel(pr);
+
+                            if (approvalCount >= REQUIRED_APPROVALS) {
+                                readyToMerge.push({ pr, approvalCount, release });
+                                continue;
+                            }
+
+                            // Who still needs to act:
+                            // - explicitly requested reviewers (haven't reviewed yet)
+                            // - anyone who left CHANGES_REQUESTED (may need to re-review after updates)
+                            const pending = new Set(pr.requested_reviewers.map(r => r.login));
+                            for (const [login, state] of Object.entries(latestByUser)) {
+                                if (state === 'CHANGES_REQUESTED') pending.add(login);
+                            }
+                            pending.delete(pr.user.login); // exclude the author
+
+                            for (const reviewer of pending) {
+                                if (!reviewerMap[reviewer]) reviewerMap[reviewer] = [];
+                                const tag = latestByUser[reviewer] === 'CHANGES_REQUESTED'
+                                    ? ' *(changes requested — waiting for author update)*'
+                                    : '';
+                                reviewerMap[reviewer].push({ pr, release, tag });
+                            }
+                        }
+
+                        const formatPR = ({ pr, release, tag = '' }) => {
+                            const prefix = release ? `**[${release}]** ` : '';
+                            return `  • ${prefix}[#${pr.number}](${pr.html_url}) ${pr.title}${tag}`;
+                        };
+
+                        // ── 3. Format the message ────────────────────────────────────────────────
+                        const lines = [];
+
+                        lines.push(`**📋 PR Review Summary — ${new Date().toDateString()}**`);
+                        lines.push('');
+
+                        const reviewers = Object.keys(reviewerMap).sort();
+                        if (reviewers.length === 0) {
+                            lines.push('✅ No PRs are waiting for a reviewer right now.');
+                        } else {
+                            lines.push('**PRs needing your attention**');
+                            lines.push('');
+                            for (const reviewer of reviewers) {
+                                const items = reviewerMap[reviewer];
+                                // Release PRs first, then the rest
+                                items.sort((a, b) => (b.release ? 1 : 0) - (a.release ? 1 : 0));
+                                lines.push(`**@${reviewer}**`);
+                                for (const item of items) {
+                                    lines.push(formatPR(item));
+                                }
+                                lines.push('');
+                            }
+                        }
+
+                        lines.push('---');
+                        lines.push('');
+
+                        if (readyToMerge.length === 0) {
+                            lines.push('🚀 No PRs are fully approved and waiting to merge.');
+                        } else {
+                            lines.push('**✅ Approved & waiting to merge**');
+                            lines.push('');
+                            // Release PRs first
+                            readyToMerge.sort((a, b) => (b.release ? 1 : 0) - (a.release ? 1 : 0));
+                            for (const { pr, approvalCount, release } of readyToMerge) {
+                                const prefix = release ? `**[${release}]** ` : '';
+                                lines.push(`  • ${prefix}[#${pr.number}](${pr.html_url}) ${pr.title} — author: **@${pr.user.login}** (${approvalCount} approvals)`);
+                            }
+                        }
+
+                        return lines.join('\n');
+
+            -   name: Post to Wire
+                continue-on-error: true
+                uses: 8398a7/action-slack@v3
+                with:
+                    status: custom
+                    custom_payload: |
+                        { "text": ${{ steps.build-summary.outputs.result }} }
