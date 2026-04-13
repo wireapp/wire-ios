@@ -157,26 +157,16 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             logger.debug("handling live event stream", attributes: logAttributes)
             syncStateSubject.send(.liveSyncing(.ongoing))
 
-            do {
-                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
-                // cancel the task (not keeping any file lock in suspend mode)
-                await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
-                    await processLiveStream(
-                        liveEventStream,
-                        pushChannel: pushChannel,
-                        syncMarker: syncMarker
-                    )
-
-                    WireLogger.sync.debug("Live stream ended, close push channel", attributes: logAttributes)
-                    await pushChannel.close()
-                    await pushChannelState.markAsClosed()
-                }
-            } catch { // TODO: not needed, refactor!
-                // if we expire, close everything
-                WireLogger.sync.debug(
-                    "Error while processing live stream, close push channel",
-                    attributes: logAttributes
+            // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
+            // cancel the task (not keeping any file lock in suspend mode)
+            await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                await processLiveStream(
+                    liveEventStream,
+                    pushChannel: pushChannel,
+                    syncMarker: syncMarker
                 )
+
+                WireLogger.sync.debug("Live stream ended, close push channel", attributes: logAttributes)
                 await pushChannel.close()
                 await pushChannelState.markAsClosed()
             }

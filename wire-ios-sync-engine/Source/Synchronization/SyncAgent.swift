@@ -129,7 +129,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
                 try await withExpiringActivity(reason: "resuming sync") { [weak self] in
-                    if callEventsOnly { // TODO: check if new warnings are introduced
+                    if callEventsOnly {
                         try await self?.performIncrementalSyncForCallingEvents()
                     } else {
                         try await self?.performSync()
