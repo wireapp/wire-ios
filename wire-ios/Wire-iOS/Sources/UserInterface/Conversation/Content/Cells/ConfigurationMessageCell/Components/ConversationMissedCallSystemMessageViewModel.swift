@@ -50,12 +50,11 @@ struct ConversationMissedCallSystemMessageViewModel {
 
         let senderName = sender.name ?? ""
 
-        let finalText: String
-        if message.conversationLike?.conversationType == .group {
+        let finalText: String = if message.conversationLike?.conversationType == .group {
             // SwiftGen does not support this localized string.
-            finalText = "content.system.call.missed-call.groups".localized(args: numberOfCalls, senderName)
+            "content.system.call.missed-call.groups".localized(args: numberOfCalls, senderName)
         } else {
-            finalText = L10n.Localizable.Content.System.Call.missedCall(numberOfCalls)
+            L10n.Localizable.Content.System.Call.missedCall(numberOfCalls)
         }
 
         return NSAttributedString(
