@@ -135,7 +135,7 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
-        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY"],
+        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
               !oktaApiKey.isEmpty else {
             throw Failure.missingOktaApiKey
         }

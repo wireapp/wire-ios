@@ -249,7 +249,7 @@ final class BackOffice {
         }
     }
 
-    func enableSSOFeature(teamId: String, basicAuth: String) async throws {
+    func unlockChannelFeature(teamId: String, basicAuth: String) async throws {
 
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -264,12 +264,6 @@ final class BackOffice {
             .appendingPathComponent("teams")
             .appendingPathComponent(teamId)
             .appendingPathComponent("features")
-            .appendingPathComponent("sso")
-
-        let json = try JSONSerialization.data(withJSONObject: ["status": "enabled"], options: [])
-        let (data, code) = try await sendRequest(
-            endpoint: endpoint,
-            method: .patch,
             .appendingPathComponent("channels")
             .appendingPathComponent("unlocked")
 
@@ -323,10 +317,42 @@ final class BackOffice {
 
         guard code.statusCode == 200 else {
             throw RuntimeError(
-                "enableSSOBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+                "enableCellsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
     }
+    
+    func enableSSOFeature(teamId: String, basicAuth: String) async throws {
+
+         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+         let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+             trimmed
+         } else {
+             "Basic \(trimmed)"
+         }
+
+         let endpoint = backendURL
+             .appendingPathComponent("i")
+             .appendingPathComponent("teams")
+             .appendingPathComponent(teamId)
+             .appendingPathComponent("features")
+             .appendingPathComponent("sso")
+
+         let json = try JSONSerialization.data(withJSONObject: ["status": "enabled"], options: [])
+         let (data, code) = try await sendRequest(
+             endpoint: endpoint,
+             method: .patch,
+             body: json,
+             basicAuth: headerValue
+         )
+
+         guard code.statusCode == 200 else {
+             throw RuntimeError(
+                 "enableSSOBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+             )
+         }
+     }
 
     // MARK: - models - Cells Feature
 
