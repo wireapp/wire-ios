@@ -81,11 +81,8 @@ public enum Locators {
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
         case userRemovedSystemMessage
         case connectionRequestsCell
-<<<<<<< HEAD
         case unreadMessageCount
-=======
         case useLeftSystemMessage
->>>>>>> b601194251 (fix: leave conversation as an admin - WPB-24661 🍒 (#4552))
     }
 
     public enum SettingsPage: AutoPrefixedEnum {
@@ -314,14 +311,6 @@ public enum Locators {
         case resetPassword = "Reset password"
     }
 
-<<<<<<< HEAD
-=======
-    public enum FileVersioningPage: AutoPrefixedEnum {
-
-        case closeButton
-    }
-
->>>>>>> b601194251 (fix: leave conversation as an admin - WPB-24661 🍒 (#4552))
     public enum ShareExtensionPage: String {
 
         case imageTile = "PXGGridLayout-Info"
@@ -425,7 +414,7 @@ public enum Locators {
             case save
         }
 
-        public enum FileVersioningPage: String {
+        public enum FileVersioningPage: AutoPrefixedEnum {
 
             case closeButton
             case restoreButton
