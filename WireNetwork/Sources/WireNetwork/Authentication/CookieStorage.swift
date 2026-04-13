@@ -40,18 +40,39 @@ public protocol CookieStorageProtocol: Sendable {
 
 public final class CookieStorageCache: Sendable {
 
-    private let cache = OSAllocatedUnfairLock<[UUID: [HTTPCookie]]>(initialState: [:])
+    public struct Item: Sendable {
+        let cookies: [HTTPCookie]
+        let epoch: UUID
+    }
 
-    public static let shared = CookieStorageCache()
+    public static let sharedStorage = OSAllocatedUnfairLock<[UUID: Item]>(initialState: [:])
 
-    public init() {}
+    private let epoch: CookieStorageEpoch
+    private let cache: OSAllocatedUnfairLock<[UUID: Item]>
+
+    public init(
+        epoch: CookieStorageEpoch,
+        sharedStorage: OSAllocatedUnfairLock<[UUID: Item]> = CookieStorageCache.sharedStorage
+    ) {
+        self.epoch = epoch
+        self.cache = sharedStorage
+    }
 
     func get(for userID: UUID) -> [HTTPCookie]? {
-        cache.withLock { $0[userID] }
+        cache.withLock {
+            guard let item = $0[userID] else { return nil }
+
+            if item.epoch == epoch.value(userID: userID) {
+                return item.cookies
+            } else {
+                $0[userID] = nil
+                return nil
+            }
+        }
     }
 
     func set(_ cookies: [HTTPCookie], for userID: UUID) {
-        cache.withLock { $0[userID] = cookies }
+        cache.withLock { $0[userID] = Item(cookies: cookies, epoch: epoch.value(userID: userID)) }
     }
 
     func remove(for userID: UUID) {
@@ -60,6 +81,37 @@ public final class CookieStorageCache: Sendable {
 
     func removeAll() {
         cache.withLock { $0.removeAll() }
+    }
+
+}
+
+public final class CookieStorageEpoch: @unchecked Sendable {
+
+    private let sharedDefaults: UserDefaults
+
+    public init(sharedDefaults: UserDefaults) {
+        self.sharedDefaults = sharedDefaults
+    }
+
+    func increment(userID: UUID) {
+        let epoch = UUID()
+        sharedDefaults.set(epoch.uuidString, forKey: Self.key(for: userID))
+    }
+
+    func value(userID: UUID) -> UUID {
+        if
+            let epochString = sharedDefaults.string(forKey: Self.key(for: userID)),
+            let epoch = UUID(uuidString: epochString) {
+            return epoch
+        } else {
+            let epoch = UUID()
+            sharedDefaults.set(epoch.uuidString, forKey: Self.key(for: userID))
+            return epoch
+        }
+    }
+
+    private static func key(for userID: UUID) -> String {
+        "wire.com.cookieStorageEpoch.\(userID.uuidString)"
     }
 
 }
@@ -92,13 +144,15 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
-        cache: CookieStorageCache?
+        cache: CookieStorageCache?,
+        epoch: CookieStorageEpoch
     ) {
         storage = _CookieStorage(
             userID: userID,
             cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain,
-            cache: cache
+            cache: cache,
+            epoch: epoch
         )
     }
 
@@ -151,17 +205,20 @@ private final class _CookieStorage: Sendable {
     private let cookieEncryptionKey: Data
     private let keychain: any KeychainProtocol
     private let cache: CookieStorageCache?
+    private let epoch: CookieStorageEpoch
 
     init(
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
-        cache: CookieStorageCache?
+        cache: CookieStorageCache?,
+        epoch: CookieStorageEpoch
     ) {
         self.userID = userID
         self.cookieEncryptionKey = cookieEncryptionKey
         self.keychain = keychain
         self.cache = cache
+        self.epoch = epoch
     }
 
     func storeCookies(_ cookies: [HTTPCookie]) throws {
@@ -170,6 +227,8 @@ private final class _CookieStorage: Sendable {
         do {
             // The typical case is updating so try that first.
             try keychain.updateItem(query: baseQuery(), attributesToUpdate: [.data(cookieData)])
+            cache?.remove(for: userID)
+            epoch.increment(userID: userID)
         } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
             try keychain.addItem(query: addQuery(cookieData: cookieData))
         }

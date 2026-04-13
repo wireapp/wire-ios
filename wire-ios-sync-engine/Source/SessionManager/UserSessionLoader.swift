@@ -185,11 +185,13 @@ final class UserSessionLoader {
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
+        let epoch = CookieStorageEpoch(sharedDefaults: .shared())
         let cookieStorage = CookieStorage(
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain(),
-            cache: .shared
+            keychain: WireFoundation.Keychain(),
+            cache: CookieStorageCache(epoch: epoch),
+            epoch: epoch
         )
 
         if let cookies = newEnvironment?.cookies {

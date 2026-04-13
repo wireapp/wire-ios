@@ -268,7 +268,8 @@ public struct SharingSessionLoader {
                 userID: accountID,
                 cookieEncryptionKey: UserDefaults.cookiesKey(),
                 keychain: Keychain(),
-                cache: nil
+                cache: nil,
+                epoch: CookieStorageEpoch(sharedDefaults: .shared())
             )
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {
@@ -365,7 +366,8 @@ public struct SharingSessionLoader {
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            cache: nil // App extensions should not use a cache.
+            cache: nil, // App extensions should not use a cache.
+            epoch: CookieStorageEpoch(sharedDefaults: .shared())
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,

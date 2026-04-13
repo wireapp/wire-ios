@@ -80,7 +80,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
                 userID: accountID,
                 cookieEncryptionKey: dependency.cookieEncryptionKey,
                 keychain: Keychain(),
-                cache: nil // App extensions should not use a cache.
+                cache: nil, // App extensions should not use a cache.
+                epoch: CookieStorageEpoch(sharedDefaults: .shared())
             )
         }
     }

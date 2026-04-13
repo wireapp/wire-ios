@@ -55,6 +55,7 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
     case accessible(ItemAccessibility)
     case returningData(Bool)
     case data(Data)
+    case returningAttributes(Bool)
 
     public enum ItemClass: Equatable, Sendable {
 
@@ -87,6 +88,8 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
         case let .data(data):
             (kSecValueData, data)
+        case let .returningAttributes(bool):
+            (kSecReturnAttributes, bool)
         }
     }
 

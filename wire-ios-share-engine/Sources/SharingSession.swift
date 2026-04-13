@@ -295,7 +295,8 @@ public final class SharingSession {
             userID: accountIdentifier,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            cache: nil // App extensions should not use a cache.
+            cache: nil, // App extensions should not use a cache.
+            epoch: CookieStorageEpoch(sharedDefaults: .shared())
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]
