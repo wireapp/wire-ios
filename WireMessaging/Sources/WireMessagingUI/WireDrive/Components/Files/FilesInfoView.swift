@@ -25,166 +25,54 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
     @Environment(\.openURL) private var openURL
-
-    enum Info: Equatable {
-        case preparingFiles
-        case noFilesFound(scope: Scope, isSearch: Bool, isFolder: Bool = false)
-        case error(isConnectionError: Bool)
-
-        enum Scope: Equatable {
-            case allConversations
-            case oneConversation
-            case recycleBin
-        }
-
-        var learnMoreLinkData: (title: String, destination: URL)? {
-            switch self {
-            case let .noFilesFound(scope, isSearch, isFolder):
-                if !isSearch, !isFolder {
-                    switch scope {
-                    case .oneConversation:
-                        (Strings.Files.NoData.learnMore, URL.sharedDriveInConversations)
-                    case .allConversations:
-                        (Strings.AllFiles.NoData.learnMore, URL.accessAllFilesAccrossConversations)
-                    case .recycleBin:
-                        (Strings.RecycleBin.NoData.learnMore, URL.accessRecycleBin)
-                    }
-                } else {
-                    nil
-                }
-            default:
-                nil
-            }
-        }
-
-        var title: String? {
-            switch self {
-            case .preparingFiles:
-                Strings.Files.PendingCells.title
-            case let .error(isConnectionError):
-                if isConnectionError {
-                    Strings.Files.Error.NoConnection.title
-                } else {
-                    Strings.Files.Error.title
-                }
-            case let .noFilesFound(scope, isSearch, isFolder):
-                if isSearch {
-                    Strings.Files.NoSearchResults.title
-                } else {
-                    if !isFolder {
-                        switch scope {
-                        case .allConversations:
-                            Strings.AllFiles.NoData.title
-                        case .oneConversation:
-                            Strings.Files.NoData.title
-                        case .recycleBin:
-                            Strings.Files.NoData.title
-                        }
-                    } else {
-                        nil
-                    }
-                }
-            }
-        }
-
-        var message: String {
-            switch self {
-            case .preparingFiles:
-                Strings.Files.PendingCells.message
-            case let .error(isConnectionError):
-                if isConnectionError {
-                    Strings.Files.Error.NoConnection.message
-                } else {
-                    Strings.Files.Error.message
-                }
-            case let .noFilesFound(scope, isSearch, isFolder):
-                if isSearch {
-                    Strings.Files.NoSearchResults.message
-                } else {
-                    if !isFolder {
-                        switch scope {
-                        case .allConversations:
-                            Strings.AllFiles.NoData.message
-                        case .oneConversation:
-                            Strings.Files.NoData.message
-                        case .recycleBin:
-                            Strings.Files.NoData.message
-                        }
-                    } else {
-                        switch scope {
-                        case .allConversations, .oneConversation:
-                            Strings.Files.EmptyFolder.message
-                        case .recycleBin:
-                            Strings.RecycleBin.EmptyFolder.message
-                        }
-                    }
-                }
-            }
-        }
-
-        var titleAccessibilityId: String {
-            typealias Identifiers = Locators.WireDrive.FilesInfoPage
-
-            return switch self {
-            case .preparingFiles:
-                Identifiers.preparingFilesTitle.rawValue
-            case .error:
-                Identifiers.errorTitle.rawValue
-            case let .noFilesFound(_, isSearch, _):
-                if isSearch {
-                    Identifiers.noFilesSearchTitle.rawValue
-                } else {
-                    Identifiers.noFilesTitle.rawValue
-                }
-            }
-        }
-
-        var messageAccessibilityId: String {
-            typealias Identifiers = Locators.WireDrive.FilesInfoPage
-
-            return switch self {
-            case .preparingFiles:
-                Identifiers.preparingFilesMessage.rawValue
-            case .error:
-                Identifiers.errorMessage.rawValue
-            case let .noFilesFound(_, isSearch, _):
-                if isSearch {
-                    Identifiers.noFilesSearchMessage.rawValue
-                } else {
-                    Identifiers.noFilesMessage.rawValue
-                }
-            }
+    
+    enum Scope: Hashable {
+        case files(conversation: Conversation, isFolder: Bool = false)
+        case recycleBin(isFolder: Bool)
+        case search
+        case moveToFolder
+        
+        enum Conversation {
+            case all
+            case one
         }
     }
 
-    let info: Info
+    enum Kind: Hashable {
+        case preparing
+        case empty
+        case error(isConnectionError: Bool)
+    }
+
+    let scope: Scope
+    let kind: Kind
     var onRetry: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 25) {
-            if let title = info.title {
+            if let title = title {
                 Text(title)
-                    .padding([.leading, .trailing], info == .preparingFiles ? 30 : 0)
+                    .padding([.leading, .trailing], kind == .preparing ? 30 : 0)
                     .font(.title3.weight(.semibold))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(SemanticColors.Label.textDefault.color)
-                    .accessibilityIdentifier(info.titleAccessibilityId)
+                    .accessibilityIdentifier(titleAccessibilityId)
             }
 
-            Text(info.message)
-                .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
+            Text(message)
+                .padding([.leading, .trailing], kind == .preparing ? 0 : 30)
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityIdentifier(info.messageAccessibilityId)
+                .accessibilityIdentifier(messageAccessibilityId)
 
-            switch info {
-            case .noFilesFound:
+            switch kind {
+            case .empty:
                 learnMoreLink()
             case .error:
                 retryButton
-            default:
+            case .preparing:
                 EmptyView()
             }
         }
@@ -192,10 +80,143 @@ struct FilesInfoView: View {
         .frame(maxWidth: 420)
         .padding()
     }
+    
+    var title: String? {
+        switch kind {
+        case .preparing:
+            Strings.Files.PendingCells.title
+        case let .error(isConnectionError):
+            if isConnectionError {
+                Strings.Files.Error.NoConnection.title
+            } else {
+                Strings.Files.Error.title
+            }
+        case .empty:
+            switch scope {
+            case let .files(conversation, isFolder):
+                if isFolder {
+                    nil
+                } else {
+                    switch conversation {
+                    case .all: Strings.AllFiles.NoData.title
+                    case .one: Strings.Files.NoData.title
+                    }
+                }
+            case let .recycleBin(isFolder):
+                if isFolder {
+                    nil
+                } else {
+                    Strings.Files.NoData.title
+                }
+            case .search:
+                Strings.Files.NoSearchResults.title
+            case .moveToFolder:
+                "TODO"
+            }
+        }
+    }
+
+    var message: String {
+        switch kind {
+        case .preparing:
+            Strings.Files.PendingCells.message
+        case let .error(isConnectionError):
+            if isConnectionError {
+                Strings.Files.Error.NoConnection.message
+            } else {
+                Strings.Files.Error.message
+            }
+        case .empty:
+            switch scope {
+            case let .files(conversation, isFolder):
+                if isFolder {
+                    Strings.Files.EmptyFolder.message
+                } else {
+                    switch conversation {
+                    case .all: Strings.AllFiles.NoData.message
+                    case .one: Strings.Files.NoData.message
+                    }
+                }
+            case let .recycleBin(isFolder):
+                if isFolder {
+                    Strings.RecycleBin.EmptyFolder.message
+                } else {
+                    Strings.Files.NoData.message
+                }
+            case .search:
+                Strings.Files.NoSearchResults.message
+            case .moveToFolder:
+                "TODO"
+            }
+        }
+    }
+
+    var titleAccessibilityId: String {
+        typealias Identifiers = Locators.WireDrive.FilesInfoPage
+
+        return switch kind {
+        case .preparing:
+            Identifiers.preparingFilesTitle.rawValue
+        case .error:
+            Identifiers.errorTitle.rawValue
+        case .empty:
+            switch scope {
+            case .recycleBin, .files:
+                Identifiers.noFilesTitle.rawValue
+            case .search:
+                Identifiers.noFilesSearchTitle.rawValue
+            case .moveToFolder:
+                "TODO"
+            }
+        }
+    }
+
+    var messageAccessibilityId: String {
+        typealias Identifiers = Locators.WireDrive.FilesInfoPage
+
+        return switch kind {
+        case .preparing:
+            Identifiers.preparingFilesMessage.rawValue
+        case .error:
+            Identifiers.errorMessage.rawValue
+        case .empty:
+            switch scope {
+            case .recycleBin, .files:
+                Identifiers.noFilesMessage.rawValue
+            case .search:
+                Identifiers.noFilesSearchMessage.rawValue
+            case .moveToFolder:
+                "TODO"
+            }
+        }
+    }
+    
+    private var learnMoreLinkData: (title: String, destination: URL)? {
+        switch kind {
+        case .empty:
+            switch scope {
+            case let .files(conversation, isFolder):
+                if isFolder {
+                    nil
+                } else {
+                    switch conversation {
+                    case .all:
+                        (Strings.AllFiles.NoData.learnMore, URL.accessAllFilesAccrossConversations)
+                    case .one:
+                        (Strings.Files.NoData.learnMore, URL.sharedDriveInConversations)
+                    }
+                }
+            case .search, .moveToFolder, .recycleBin:
+                nil
+            }
+        case .error, .preparing:
+            nil
+        }
+    }
 
     @ViewBuilder
     private func learnMoreLink() -> some View {
-        if let link = info.learnMoreLinkData {
+        if let link = learnMoreLinkData {
             Link(destination: link.destination) {
                 Text(link.title)
                     .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
@@ -208,7 +229,7 @@ struct FilesInfoView: View {
         Button {
             onRetry?()
         } label: {
-            Text(info == .error(isConnectionError: true) ? Strings.Files.Error.NoConnection.retry : Strings.Files.Error
+            Text(kind == .error(isConnectionError: true) ? Strings.Files.Error.NoConnection.retry : Strings.Files.Error
                 .retry)
                 .padding()
                 .font(.subheadline.weight(.semibold))
@@ -228,51 +249,46 @@ struct FilesInfoView: View {
     }
 }
 
-#Preview("no files found - single conversation") {
-    FilesInfoView(info: .noFilesFound(scope: .oneConversation, isSearch: false))
+#Preview("empty files, all conversations") {
+    FilesInfoView(scope: .files(conversation: .all), kind: .empty)
 }
 
-#Preview("no files found - all conversations") {
-    FilesInfoView(info: .noFilesFound(scope: .allConversations, isSearch: false))
+#Preview("empty files, one conversation") {
+    FilesInfoView(scope: .files(conversation: .one), kind: .empty)
 }
 
-#Preview("no files found - all conversations - folder") {
-    FilesInfoView(info: .noFilesFound(scope: .allConversations, isSearch: false, isFolder: true))
+#Preview("empty files, one conversation, folder") {
+    FilesInfoView(scope: .files(conversation: .one, isFolder: true), kind: .empty)
 }
 
-#Preview("no files found - recycle bin") {
-    FilesInfoView(info: .noFilesFound(scope: .recycleBin, isSearch: false))
+#Preview("empty recycle bin") {
+    FilesInfoView(scope: .recycleBin(isFolder: false), kind: .empty)
 }
 
-#Preview("no files found - recycle bin - folder") {
-    FilesInfoView(info: .noFilesFound(scope: .recycleBin, isSearch: false, isFolder: true))
+#Preview("empty recycle bin, folder") {
+    FilesInfoView(scope: .recycleBin(isFolder: true), kind: .empty)
 }
 
-#Preview("no files found via search - all conversations") {
-    FilesInfoView(info: .noFilesFound(scope: .allConversations, isSearch: true))
+#Preview("empty move-to-folder") {
+    FilesInfoView(scope: .moveToFolder, kind: .empty)
 }
 
-struct LoadMoreView: View {
-    let isLoading: Bool
-    let onLoadMore: () -> Void
+#Preview("empty search") {
+    FilesInfoView(scope: .search, kind: .empty)
+}
 
-    var body: some View {
-        VStack {
-            if isLoading {
-                ProgressView()
-                    .progressViewStyle(.circular)
-            } else {
-                Button(Strings.Files.LoadMore.title, action: onLoadMore)
-                    .accessibilityLabel(Accessibility.Files.LoadMore.title)
-                    .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.loadMore.rawValue)
-                    .buttonStyle(.borderless)
-                    .font(for: .body3)
-                    .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+#Preview("preparing files") {
+    FilesInfoView(scope: .files(conversation: .all), kind: .preparing)
+}
 
-            }
-        }
-        .padding(.vertical, 16)
-        .frame(maxWidth: .infinity, minHeight: 56, alignment: .center)
-    }
+#Preview("error files") {
+    FilesInfoView(scope: .files(conversation: .all), kind: .error(isConnectionError: false))
+}
 
+#Preview("error files, isConnectionError") {
+    FilesInfoView(scope: .files(conversation: .all), kind: .error(isConnectionError: true))
+}
+
+#Preview("error move-to-folder") {
+    FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: false))
 }
