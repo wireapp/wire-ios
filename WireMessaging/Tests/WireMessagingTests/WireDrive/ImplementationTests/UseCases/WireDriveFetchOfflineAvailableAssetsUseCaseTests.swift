@@ -46,7 +46,7 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
         store.upsertAsset_MockMethod = { [weak self] asset in
             self?.storeBacking[asset.nodeID] = asset
         }
-        
+
         store.offlineAssetsConversationName_MockMethod = { [weak self] conversationName in
             if let conversationName {
                 return self?.storeBacking.map(\.value).filter { $0.conversationName == conversationName } ?? []
@@ -68,11 +68,17 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
         // then
         #expect(availableAssets.count == assets.count)
     }
-    
+
     @Test
     func `It retrieves available offline assets for a given conversation locally`() async throws {
         // given
-        let assets = [WireDriveLocalAsset.fixture(conversationName: "Test"), .fixture(conversationName: "Test"), .fixture(), .fixture(), .fixture()]
+        let assets = [
+            WireDriveLocalAsset.fixture(conversationName: "Test"),
+            .fixture(conversationName: "Test"),
+            .fixture(),
+            .fixture(),
+            .fixture()
+        ]
         try assets.forEach(store.upsertAsset)
 
         // when

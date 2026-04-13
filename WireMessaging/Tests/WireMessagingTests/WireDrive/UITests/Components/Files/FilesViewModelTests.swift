@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import Testing
 import Network
+import Testing
 import WireMessagingDomain
 
 @testable import WireMessagingDomainSupport
@@ -45,7 +45,7 @@ final class FilesViewModelTests {
 
         let editingURLRepository = MockWireDriveEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
-        
+
         networkMonitor.currentStatus = .connected
 
         self.sut = FilesViewModel(
@@ -601,7 +601,7 @@ final class FilesViewModelTests {
         let now = Date()
 
         networkMonitor.currentStatus = .disconnected
-        
+
         sut.state = .received(items: [
             FilesViewItem(
                 id: nodeA.id,
@@ -627,6 +627,6 @@ final class FilesViewModelTests {
 
 private final class MockNWPathMonitoring: NWPathMonitoring {
     var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
-    
+
     func start(queue: DispatchQueue) {}
 }
