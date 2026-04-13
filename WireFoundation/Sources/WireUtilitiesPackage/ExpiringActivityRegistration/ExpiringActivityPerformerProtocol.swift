@@ -30,6 +30,16 @@ protocol ExpiringActivityPerformerProtocol: Sendable {
 
 extension ExpiringActivityPerformerProtocol {
 
+    /// Registers an expiring activity that keeps the system from suspending the app
+    /// while the given task is running. If the system revokes background time, the task
+    /// is cancelled.
+    ///
+    /// This method returns immediately. The expiring activity's callback is kept blocked
+    /// (via a semaphore) until either the task completes or the system signals expiration.
+    ///
+    /// - Parameters:
+    ///   - reason: A human-readable reason for the activity, used for debugging.
+    ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
     func performTaskCancellationAsExpiringActivity(
         reason: String,
         task: Task<some Sendable, some Error>
