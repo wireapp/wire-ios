@@ -22,7 +22,7 @@ import XCTest
 class ActiveConversationPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        videoCallButton
+        conversationTitleButton
     }
 
     var videoCallButton: XCUIElement {
@@ -87,6 +87,10 @@ class ActiveConversationPage: PageModel {
 
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
+    }
+
+    var userLeftSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
 
     func fetchMessages() -> [String] {
