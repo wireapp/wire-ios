@@ -85,12 +85,6 @@ struct FilesInfoView: View {
         switch kind {
         case .preparing:
             Strings.Files.PendingCells.title
-        case let .error(isConnectionError):
-            if isConnectionError {
-                Strings.Files.Error.NoConnection.title
-            } else {
-                Strings.Files.Error.title
-            }
         case .empty:
             switch scope {
             case let .files(conversation, isFolder):
@@ -111,7 +105,22 @@ struct FilesInfoView: View {
             case .search:
                 Strings.Files.NoSearchResults.title
             case .moveToFolder:
-                "TODO"
+                nil
+            }
+        case let .error(isConnectionError):
+            switch scope {
+            case .moveToFolder:
+                if isConnectionError {
+                    L10n.Localizable.General.Error.NoInternet.title
+                } else {
+                    L10n.Localizable.General.Error.Unknown.title
+                }
+            default:
+                if isConnectionError {
+                    Strings.Files.Error.NoConnection.title
+                } else {
+                    Strings.Files.Error.title
+                }
             }
         }
     }
@@ -120,12 +129,6 @@ struct FilesInfoView: View {
         switch kind {
         case .preparing:
             Strings.Files.PendingCells.message
-        case let .error(isConnectionError):
-            if isConnectionError {
-                Strings.Files.Error.NoConnection.message
-            } else {
-                Strings.Files.Error.message
-            }
         case .empty:
             switch scope {
             case let .files(conversation, isFolder):
@@ -146,7 +149,22 @@ struct FilesInfoView: View {
             case .search:
                 Strings.Files.NoSearchResults.message
             case .moveToFolder:
-                "TODO"
+                Strings.Files.MoveToFolder.noSubfolders
+            }
+        case let .error(isConnectionError):
+            switch scope {
+            case .moveToFolder:
+                if isConnectionError {
+                    L10n.Localizable.General.Error.NoInternet.message
+                } else {
+                    L10n.Localizable.General.Error.Unknown.message
+                }
+            default:
+                if isConnectionError {
+                    Strings.Files.Error.NoConnection.message
+                } else {
+                    Strings.Files.Error.message
+                }
             }
         }
     }
@@ -157,17 +175,15 @@ struct FilesInfoView: View {
         return switch kind {
         case .preparing:
             Identifiers.preparingFilesTitle.rawValue
-        case .error:
-            Identifiers.errorTitle.rawValue
         case .empty:
             switch scope {
-            case .recycleBin, .files:
+            case .recycleBin, .files, .moveToFolder:
                 Identifiers.noFilesTitle.rawValue
             case .search:
                 Identifiers.noFilesSearchTitle.rawValue
-            case .moveToFolder:
-                "TODO"
             }
+        case .error:
+            Identifiers.errorTitle.rawValue
         }
     }
 
@@ -177,17 +193,15 @@ struct FilesInfoView: View {
         return switch kind {
         case .preparing:
             Identifiers.preparingFilesMessage.rawValue
-        case .error:
-            Identifiers.errorMessage.rawValue
         case .empty:
             switch scope {
-            case .recycleBin, .files:
+            case .recycleBin, .files, .moveToFolder:
                 Identifiers.noFilesMessage.rawValue
             case .search:
                 Identifiers.noFilesSearchMessage.rawValue
-            case .moveToFolder:
-                "TODO"
             }
+        case .error:
+            Identifiers.errorMessage.rawValue
         }
     }
     
@@ -285,10 +299,14 @@ struct FilesInfoView: View {
     FilesInfoView(scope: .files(conversation: .all), kind: .error(isConnectionError: false))
 }
 
-#Preview("error files, isConnectionError") {
+#Preview("error files, no internet") {
     FilesInfoView(scope: .files(conversation: .all), kind: .error(isConnectionError: true))
 }
 
 #Preview("error move-to-folder") {
     FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: false))
+}
+
+#Preview("error move-to-folder, no internet") {
+    FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: true))
 }
