@@ -34,7 +34,7 @@ PATTERN="is implemented in both .+ and .+"
 
 DUPLICATES=$(find "$LOG_DIR" -name '*.log' -type f -exec grep -E "$PATTERN" {} + 2>/dev/null | sort -u || true)
 
-if [ -n "$DUPLICATES" ]; then
+if [[ -n "$DUPLICATES" ]]; then
     echo "::warning::Duplicate symbol implementations detected in test output!"
     echo ""
     echo "$DUPLICATES"
@@ -42,7 +42,7 @@ if [ -n "$DUPLICATES" ]; then
     echo "Each duplicate must be resolved — it can cause spurious casting failures and mysterious crashes at runtime."
 
     # Write to GitHub Actions job summary if available
-    if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
         {
             echo "## Duplicate Symbol Implementations"
             echo ""
