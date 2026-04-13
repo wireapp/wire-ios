@@ -116,7 +116,6 @@ final class ConversationReplyContentView: UIView {
 
         private func setupContent() -> Content {
             typealias LabelColors = SemanticColors.Label
-            let iconColor: UIColor = isSentBySelfUser ? .white : LabelColors.textDefault
             let textColor: UIColor = isSentBySelfUser ? .white : LabelColors.textDefault
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.smallSemiboldFont,
@@ -152,19 +151,19 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: iconColor)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .locationPin)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (location.name ?? MessagePreview.location).localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isAudio:
-                let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: iconColor)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .microphone)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.audio
                     .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isImage && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: iconColor)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .photo)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -173,7 +172,7 @@ final class ConversationReplyContentView: UIView {
                 return .imagePreview(thumbnail: message.imageMessageData!.image, isVideo: false)
 
             case let message? where message.isVideo && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: iconColor)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .camera)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -183,7 +182,7 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isFile:
                 let fileData = message.fileMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .document, with: iconColor)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .document)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (fileData.filename ?? MessagePreview.file).localizedUppercase
                 return .text(initialString && attributes)
@@ -402,7 +401,7 @@ final class ConversationReplyContentView: UIView {
         if object.showReplyArrow,
            let existing = contentTextView.attributedText,
            !existing.string.isEmpty {
-            let color = object.isSentBySelfUser ? UIColor.white : UIColor.black
+            let color: UIColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
             
             let mutable = NSMutableAttributedString(attributedString: existing)
             mutable.addAttribute(
