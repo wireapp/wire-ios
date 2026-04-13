@@ -67,24 +67,19 @@ final class ServiceDetailViewController: UIViewController {
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
+    private let usersAPI: (any UsersAPI)?
 
-    /// init method with ServiceUser, destination conversation and customized UI.
-    ///
-    /// - Parameters:
-    ///   - user: an app or a bot user to show
-    ///   - destinationConversation: the destination conversation of the serviceUser
-    ///   - actionType: Enum ActionType to choose the action add or remove the service user
-    ///   - selfUser: self user, for inject mock user for testing
-    ///   - completion: completion handler
     init(
         user: any WireDataModel.UserType,
         actionType: ActionType,
         userSession: UserSession,
+        usersAPI: (any UsersAPI)?,
         completion: @escaping (AddBotResult) -> Void
     ) {
         self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
+        self.usersAPI = usersAPI
 
         self.detailView = ServiceDetailView(
             service: service,
@@ -188,6 +183,7 @@ final class ServiceDetailViewController: UIViewController {
             serviceIdentifier: "",
             providerIdentifier: "",
             name: service.user.name ?? "",
+            category: appInfo?.category ?? "",
             serviceDescription: appInfo?.appDescription ?? ""
         )
         detailView.service.provider = ServiceProvider(
@@ -197,6 +193,25 @@ final class ServiceDetailViewController: UIViewController {
             url: "",
             providerDescription: ""
         )
+        let localDomain = userSession.resolvedBackendMetadata.domain
+        if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
+            Task { @MainActor [weak self] in
+                do {
+                    guard let self, let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
+
+                    detailView.service.serviceUserDetails = ServiceDetails(
+                        serviceIdentifier: "",
+                        providerIdentifier: "",
+                        name: service.user.name ?? "",
+                        category: appInfo.category,
+                        serviceDescription: appInfo.description
+                    )
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
+                }
+            }
+        }
     }
 
     private func fetchBotDetails() {
@@ -264,8 +279,10 @@ final class ServiceDetailViewController: UIViewController {
             return completion(.failure(error: .general))
         }
 
-        Task {
+        Task { @MainActor [weak self] in
             do {
+                guard let self else { return }
+
                 let syncContext = contextProvider.syncContext
                 let conversationParticipantsService = ConversationParticipantsService(
                     context: syncContext,
@@ -282,13 +299,9 @@ final class ServiceDetailViewController: UIViewController {
                 try await syncContext.perform {
                     try syncContext.save()
                 }
-                await MainActor.run {
-                    completion(.success(conversation: conversation))
-                }
+                completion(.success(conversation: conversation))
             } catch {
-                await MainActor.run {
-                    completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                }
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
             }
         }
     }
@@ -334,13 +347,13 @@ final class ServiceDetailViewController: UIViewController {
         completion: @escaping (AddBotResult) -> Void
     ) {
         let user = service.user
-        Task {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
             guard let userID = user.qualifiedID(
                 localDomain: userSession.resolvedBackendMetadata.domain
             ) else {
-                return await MainActor.run {
-                    completion(.failure(error: AddBotError.general))
-                }
+                return completion(.failure(error: AddBotError.general))
             }
 
             let conversation = user.oneToOneConversation
@@ -348,9 +361,7 @@ final class ServiceDetailViewController: UIViewController {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
                 if isReady {
                     guard let conversation else {
-                        return await MainActor.run {
-                            completion(.failure(error: AddBotError.general))
-                        }
+                        return completion(.failure(error: AddBotError.general))
                     }
                     completion(.success(conversation: conversation))
                 } else {
@@ -368,9 +379,7 @@ final class ServiceDetailViewController: UIViewController {
             } catch {
                 WireLogger.conversation
                     .warn("failed to check if one on one conversation is ready: \(error)")
-                await MainActor.run {
-                    completion(.failure(error: AddBotError.general))
-                }
+                completion(.failure(error: AddBotError.general))
             }
         }
     }

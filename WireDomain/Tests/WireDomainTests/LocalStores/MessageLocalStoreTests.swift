@@ -231,6 +231,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.sessionReset])
         case .channelHistoryDepthModified:
             (messagesCount: 1, [.channelHistoryDepthModified])
+        case let .userDeleted(sender: sender):
+            (messagesCount: 1, [.userRemovedFromTeam])
         }
     }
 

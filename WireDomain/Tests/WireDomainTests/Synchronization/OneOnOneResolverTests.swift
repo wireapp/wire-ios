@@ -277,6 +277,44 @@ final class OneOnOneResolverTests: XCTestCase {
         }
     }
 
+    func testResolveOneOnOneConversations_Resolves_Conversation_With_No_Common_Protocol_ForDeletedUser() async throws {
+        // Given
+
+        let forcedReadOnly = false
+
+        let (selfUser, user, mlsOneOnOneConversation) = try await context.perform { [self] in
+            try setupManagedObjects(
+                selfUserProtocol: .mls,
+                userProtocol: .mls,
+                forcedReadOnly: forcedReadOnly
+            )
+        }
+
+        await context.perform {
+            user.oneOnOneConversation = mlsOneOnOneConversation
+            user.isAccountDeleted = true
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        }
+
+        // Mock
+
+        setupMock(
+            selfUser: selfUser,
+            user: user,
+            mlsOneOnOneConversation: mlsOneOnOneConversation
+        )
+
+        // When
+
+        try await sut.resolveAllOneOnOneConversations()
+
+        // Then
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.mlsStatus, .invalid)
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        }
+    }
+
     // MARK: - Setup
 
     typealias ManagedObjects = (selfUser: ZMUser, user: ZMUser, mlsConversation: ZMConversation)
@@ -343,6 +381,7 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
         mlsService.conversationExistsGroupID_MockValue = mlsConversationExists
         mlsService.joinGroupWith_MockMethod = { _ in }
+        mlsService.wipeGroup_MockMethod = { _ in }
     }
 
     private func setupConnection(status: ConnectionStatus) -> Connection {
