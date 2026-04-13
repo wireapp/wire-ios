@@ -73,7 +73,6 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
 
-<<<<<<< HEAD:wire-ios/WireUITests/Pages/ActiveConversationPage.swift
     var labelSharedDriveIsOn: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
     }
@@ -88,10 +87,10 @@ class ActiveConversationPage: PageModel {
 
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
-=======
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
->>>>>>> 276a6a4803 (fix: leave conversation as an admin - WPB-24661 (#4548)):wire-ios/WireUITests/Pages/ActiveConversationPage .swift
     }
 
     func fetchMessages() -> [String] {
