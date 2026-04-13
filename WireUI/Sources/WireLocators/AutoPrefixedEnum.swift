@@ -19,7 +19,7 @@
 protocol AutoPrefixedEnum: RawRepresentable, CaseIterable where RawValue == String {}
 
 extension AutoPrefixedEnum {
-    // TODO: WPB-24694
+    // TODO: [WPB-24694]
     public var rawValue: String { "\(self)" }
 
     public init?(rawValue: String) {
