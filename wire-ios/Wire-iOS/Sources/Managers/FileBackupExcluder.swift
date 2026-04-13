@@ -19,8 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
+import WireLogging
 
 final class FileBackupExcluder: BackupExcluder {
 
@@ -64,7 +63,7 @@ final class FileBackupExcluder: BackupExcluder {
         do {
             try FileBackupExcluder.exclude(filesToExclude: FileBackupExcluder.filesToExclude)
         } catch {
-            zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
+            WireLogger.ui.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }
 
@@ -73,7 +72,7 @@ final class FileBackupExcluder: BackupExcluder {
             let libraryURL = sharedContainerURL.appendingPathComponent("Library")
             try libraryURL.excludeFromBackupIfExists()
         } catch {
-            zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
+            WireLogger.ui.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }
 }

@@ -18,8 +18,7 @@
 
 import UIKit
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
+import WireLogging
 
 final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
@@ -62,7 +61,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         do {
             try settingsProperty.set(newValue: self.value, resultHandler: { _ in })
         } catch {
-            zmLog.error("Cannot set property: \(error)")
+            WireLogger.ui.error("Cannot set property: \(error)")
         }
 
         selectAction?(self)

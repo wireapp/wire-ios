@@ -18,8 +18,7 @@
 
 import UIKit
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
+import WireLogging
 
 /// @abstract Generates the cell that displays toggle control
 
@@ -98,7 +97,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
                 }
             }
         } catch {
-            zmLog.error("Cannot set property: \(error)")
+            WireLogger.ui.error("Cannot set property: \(error)")
         }
     }
 }

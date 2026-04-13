@@ -18,8 +18,7 @@
 
 import UIKit
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "UI")
+import WireLogging
 
 final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
@@ -86,7 +85,7 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
                 }
 
             } catch let generalError {
-                zmLog.error("Error setting property: \(generalError)")
+                WireLogger.ui.error("Error setting property: \(generalError)")
             }
         }
     }
