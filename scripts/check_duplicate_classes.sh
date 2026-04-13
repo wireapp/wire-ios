@@ -1,10 +1,29 @@
 #!/bin/bash
-# Scans xcodebuild log files for Objective-C runtime warnings about
-# duplicate symbol implementations across modules (classes, protocols,
-# categories, etc.).
+set -Eeuo pipefail
+
+#
+# Wire
+# Copyright (C) 2026 Wire Swiss GmbH
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see http://www.gnu.org/licenses/.
+#
+
+# Scans *.log files recursively for Objective-C runtime warnings about duplicate
+# symbol implementations across modules (classes, protocols, categories, etc.).
 #
 # Usage: check_duplicate_classes.sh <log_dir>
-#   log_dir  – directory to search for xcodebuild*.log files (default: .)
+#   log_dir  – directory to search for recursively *.log files (default: .)
 #
 # Exits with 1 if any duplicates are found, 0 otherwise.
 
@@ -13,7 +32,7 @@ set -euo pipefail
 LOG_DIR="${1:-.}"
 PATTERN="is implemented in both .+ and .+"
 
-DUPLICATES=$(grep -rEo "$PATTERN" "$LOG_DIR" --include='*.log' 2>/dev/null | sort -u || true)
+DUPLICATES=$(grep -rE "$PATTERN" "$LOG_DIR" --include='*.log' 2>/dev/null | sort -u || true)
 
 if [ -n "$DUPLICATES" ]; then
     echo "::warning::Duplicate symbol implementations detected in test output!"
