@@ -117,6 +117,10 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var userLeftSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
