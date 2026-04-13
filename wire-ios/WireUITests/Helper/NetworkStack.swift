@@ -51,11 +51,12 @@ final class NetworkStack {
     )
 
     lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
+        return NetworkService(
+            baseURL: backendEnvironment.url,
+            urlSessionConfiguration: config,
+            serverTrustValidator: serverTrustValidator
+        )
     }()
 
     private lazy var serverTrustValidator = ServerTrustValidator(
