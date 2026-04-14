@@ -73,7 +73,7 @@ jobs:
           retention-days: 90
 
       - name: Upload SBOM to Dependency Track
-        uses: DependencyTrack/gh-upload-sbom@v3
+        uses: DependencyTrack/gh-upload-sbom@48feab3080ff9e8f51f4d21861d9fc914eb744f5 #v3.1.0
         with:
           serverhostname: ${{ secrets.DEPENDENCYTRACKURL }}
           apikey: ${{ secrets.DEPENDENCYTRACKKEY }}
