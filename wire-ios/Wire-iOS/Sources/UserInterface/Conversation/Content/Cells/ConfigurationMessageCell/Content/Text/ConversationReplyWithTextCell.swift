@@ -37,7 +37,7 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         let isObfuscated: Bool
         let userSession: UserSession?
         var isSentBySelfUser: Bool = false
-        var senderAccentColor: WireAccentColor = .blue
+        var senderAccentColor: WireAccentColor = .default
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor
@@ -328,7 +328,7 @@ final class ConversationReplyWithTextCellDescription: ConversationMessageCellDes
     weak var message: ZMConversationMessage? {
         didSet {
             configuration.isSentBySelfUser = message?.isSentBySelfUser ?? false
-            configuration.senderAccentColor = message?.senderUser?.wireAccentColor ?? .blue
+            configuration.senderAccentColor = message?.senderUser?.wireAccentColor ?? .default
             if let quotedMessage = message?.textMessageData?.quoteMessage {
                 configuration.quotedMessage = quotedMessage
             }

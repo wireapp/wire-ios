@@ -53,8 +53,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var aspectConstraint: NSLayoutConstraint?
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
-    private var ownMessageBackground: UIColor = SemanticColors.View.backgroundCollectionCell
-    private var isOwnMessage: Bool = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -109,13 +107,12 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
-        isOwnMessage = object.message.isSentBySelfUser
-        if isOwnMessage {
-            ownMessageBackground = ColorTheme.OwnChatBubbles.primary(accentColor)
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .default
 
+        let ownMessageBackground = if object.message.isSentBySelfUser {
+             ColorTheme.OwnChatBubbles.primary(accentColor)
         } else {
-            ownMessageBackground = ColorTheme.OthersChatBubbles.primary
+            ColorTheme.OthersChatBubbles.primary
         }
         containerView.layer.borderColor = ownMessageBackground.cgColor
 
@@ -148,7 +145,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             let imageResource = object.isObfuscated ? nil : object.image.image
 
             imageResourceView.setImageResource(imageResource) { [weak self] in
-                self?.updateImageContainerAppearance()
+                self?.updateImageContainerAppearance(backgroundColor: ownMessageBackground)
                 _ = object.message.startSelfDestructionIfNeeded()
             }
         }
@@ -167,11 +164,11 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         ])
     }
 
-    private func updateImageContainerAppearance() {
+    private func updateImageContainerAppearance(backgroundColor: UIColor) {
         if imageResourceView.image?.isTransparent == true {
             containerView.backgroundColor = UIColor.clear
         } else {
-            containerView.backgroundColor = ownMessageBackground
+            containerView.backgroundColor = backgroundColor
         }
         imageResourceView.layer.borderWidth = 0
     }

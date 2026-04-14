@@ -42,7 +42,7 @@ final class ConversationReplyContentView: UIView {
         let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
         weak var delegate: ConversationMessageCellDelegate?
         var isSentBySelfUser: Bool = false
-        var senderAccentColor: WireAccentColor = .blue
+        var senderAccentColor: WireAccentColor = .default
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -298,7 +298,7 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
         contentAttachmentsView.isHidden = true
 
-        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
+        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .default
         if object.isSentBySelfUser {
             senderComponent.label.attributedText = nil
             senderComponent.label.textColor = ColorTheme.OwnChatBubbles.primaryOnSecondary(quotedAccentColor)
@@ -413,7 +413,6 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        container.updateStyle(isSentBySelfUser: object.isSentBySelfUser, accentColor: object.senderAccentColor)
         contentView.configure(with: object)
     }
 
@@ -446,7 +445,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
             // Always update quotedMessage — it will be nil when the original was deleted.
             configuration.quotedMessage = message?.textMessageData?.quoteMessage
             configuration.isSentBySelfUser = message?.isSentBySelfUser ?? false
-            configuration.senderAccentColor = message?.senderUser?.wireAccentColor ?? .blue
+            configuration.senderAccentColor = message?.senderUser?.wireAccentColor ?? .default
         }
     }
 
@@ -465,7 +464,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
         quotedMessage: ZMConversationMessage?,
         accentColor: AccentColor,
         isSentBySelfUser: Bool = false,
-        senderAccentColor: WireAccentColor = .blue,
+        senderAccentColor: WireAccentColor = .default,
         messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
     ) {
         self.configuration = View

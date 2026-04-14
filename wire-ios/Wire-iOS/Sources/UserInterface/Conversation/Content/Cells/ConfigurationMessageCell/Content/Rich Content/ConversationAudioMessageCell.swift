@@ -85,7 +85,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .default
         if object.message.isSentBySelfUser {
             containerView.backgroundColor = ColorTheme.OwnChatBubbles.primary(accentColor)
             containerView.layer.borderColor = ColorTheme.OwnChatBubbles.primary(accentColor).cgColor

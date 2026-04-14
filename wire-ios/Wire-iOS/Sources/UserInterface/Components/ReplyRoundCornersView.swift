@@ -89,19 +89,6 @@ final class ReplyRoundCornersView: UIControl {
         grayBoxView.isHidden = hidden
     }
 
-    func updateStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
-        if isSentBySelfUser {
-
-            backgroundColor = .green // ColorTheme.Base.replyBoxBackground(accentColor)
-            layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
-            grayBoxView.backgroundColor = ColorTheme.Base.primary(accentColor)
-        } else {
-            backgroundColor = SemanticColors.ChatBubble.backgroundReplyOtherMessage
-            layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
-            grayBoxView.backgroundColor = ViewColors.backgroundSeparatorCell
-        }
-    }
-
     // MARK: - UIControl
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

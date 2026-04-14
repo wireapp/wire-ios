@@ -84,7 +84,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
+        let accentColor = object.message.senderUser?.wireAccentColor ?? .default
         let isOwnMessage = object.message.isSentBySelfUser
 
         if isOwnMessage {
