@@ -21,7 +21,7 @@ import XCTest
 final class ConversationTests: WireUITestCase {
 
     @MainActor
-    func testClearContent() async throws {
+    func testClearContent_TC_9488() async throws {
         let stagingTeam = try await userHelper.registerTeam(withMemberCount: 2)
         let userA = try XCTUnwrap(stagingTeam.teamMembers.first)
         let userB = try XCTUnwrap(stagingTeam.teamMembers.last)
