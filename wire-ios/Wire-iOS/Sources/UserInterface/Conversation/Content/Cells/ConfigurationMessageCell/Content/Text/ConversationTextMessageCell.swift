@@ -70,7 +70,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.wireAccentColor ?? .default
-            let ownMessageColor = ColorTheme.Base.ownBubbleBackground(userColor)
+            let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
             configureTextColor(forOwnMessage: isOwnMessage)
         }
@@ -177,7 +177,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
         let userColor = message.senderUser?.wireAccentColor ?? .default
-        let ownMessageColor = ColorTheme.Base.ownBubbleBackground(userColor)
+        let ownMessageColor = ColorTheme.OwnChatBubbles.primary(userColor)
         container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
         container?.layer.maskedCorners = [
             .layerMinXMinYCorner, .layerMaxXMinYCorner,
@@ -316,8 +316,6 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-
-        let detectedLinks = findDetectedLinks(in: messageText)
 
         // Search queries
         if !searchQueries.isEmpty {

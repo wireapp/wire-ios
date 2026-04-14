@@ -79,18 +79,15 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 
     private func configureView() {
         containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
-        containerView.layer.borderWidth = 1
+        containerView.layer.borderWidth = 0
         containerView.layer.masksToBounds = true
-        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
+        containerView.backgroundColor = .green
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func createConstraints() {
-        let margins = conversationHorizontalMargins
-
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
@@ -115,13 +112,13 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
         isOwnMessage = object.message.isSentBySelfUser
         if isOwnMessage {
-            ownMessageBackground = ColorTheme.Base.ownBubbleBackground(accentColor)
-            containerView.layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
-        } else {
-            ownMessageBackground = SemanticColors.View.backgroundCollectionCell
-            containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
-        }
+            ownMessageBackground = ColorTheme.OwnChatBubbles.primary(accentColor)
 
+        } else {
+            ownMessageBackground = ColorTheme.OthersChatBubbles.primary
+        }
+        containerView.layer.borderColor = ownMessageBackground.cgColor
+        
         let scaleFactor: CGFloat = object.image.isAnimatedGIF ? 1 : 0.5
         let imageSize = object.image.originalSize.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let imageAspectRatio = imageSize.width > 0 ? imageSize.height / imageSize.width : 1.0
@@ -146,7 +143,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         } else {
             setup(imageResourceView)
             imageResourceView.contentMode = .scaleAspectFill
-            imageResourceView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
             imageResourceView.layer.borderWidth = 0
 
             let imageResource = object.isObfuscated ? nil : object.image.image
@@ -174,11 +170,10 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private func updateImageContainerAppearance() {
         if imageResourceView.image?.isTransparent == true {
             containerView.backgroundColor = UIColor.clear
-            imageResourceView.layer.borderWidth = 0
         } else {
             containerView.backgroundColor = ownMessageBackground
-            imageResourceView.layer.borderWidth = UIScreen.hairline
         }
+        imageResourceView.layer.borderWidth = 0
     }
 
 }

@@ -85,12 +85,14 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         let accentColor = object.message.senderUser?.wireAccentColor ?? .blue
-        if object.message.isSentBySelfUser {
-            containerView.backgroundColor = ColorTheme.Base.ownBubbleBackground(accentColor)
-            containerView.layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
+        let isOwnMessage = object.message.isSentBySelfUser
+        
+        if isOwnMessage {
+            containerView.backgroundColor = ColorTheme.OwnChatBubbles.primary(accentColor)
+            containerView.layer.borderColor = ColorTheme.OwnChatBubbles.primary(accentColor).cgColor
         } else {
-            containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-            containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
+            containerView.backgroundColor = ColorTheme.OthersChatBubbles.primary
+            containerView.layer.borderColor = ColorTheme.OthersChatBubbles.primary.cgColor
         }
 
         if object.isObfuscated {

@@ -186,12 +186,13 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     // MARK: - Styling
 
     private func applyStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
+        
         backgroundColor = isSentBySelfUser
-            ? ColorTheme.Base.ownBubbleBackground(accentColor)
-            : SemanticColors.ChatBubble.backgroundOtherMessage
+            ? ColorTheme.OwnChatBubbles.primary(accentColor)
+            : ColorTheme.OthersChatBubbles.primary
         replyContainer.backgroundColor = isSentBySelfUser
-            ? ColorTheme.Base.replyBoxBackground(accentColor)
-            : SemanticColors.ChatBubble.backgroundReplyOtherMessage
+            ? ColorTheme.OwnChatBubbles.secondary(accentColor)
+            : ColorTheme.OthersChatBubbles.secondary
         replyContainer.layer.borderWidth = 0
         replyContainer.layer.maskedCorners = [
             .layerMinXMinYCorner, .layerMaxXMinYCorner,
@@ -204,12 +205,14 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     /// - Adds a reply-arrow icon next to the quoted sender's name, colored with the quoted sender's accent color.
     /// - Dims the timestamp slightly.
     private func applyEmbeddedSenderStyle(object: Configuration) {
-        let iconColor: UIColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
-        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
-        let senderColor = ColorTheme.Base.primary(quotedAccentColor)
-
-        if let name = object.quotedMessage?.senderName,
-           let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(iconColor, renderingMode: .alwaysTemplate) {
+        
+        
+        let iconColor: UIColor =  object.isSentBySelfUser ? ColorTheme.OwnChatBubbles.onPrimary : ColorTheme.OthersChatBubbles.onPrimary
+        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .default
+        let senderColor = object.isSentBySelfUser ? ColorTheme.OwnChatBubbles.primaryOnSecondary(quotedAccentColor) : ColorTheme.OthersChatBubbles.primaryOnSecondary(quotedAccentColor)
+        
+        if let name = object.quotedMessage?.senderName {
+            let replyIcon = UIImage(named: "ReplyIcon")!.withTintColor(iconColor, renderingMode: .alwaysTemplate)
             let attachment = NSTextAttachment()
             attachment.image = replyIcon
             attachment.bounds = CGRect(x: 0, y: -1, width: 10, height: 10)
@@ -224,12 +227,12 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
             replyContentView.senderComponent.label.textColor = senderColor
         }
 
-        replyContentView.timestampLabel.textColor = iconColor.withAlphaComponent(0.7)
+        replyContentView.timestampLabel.textColor = iconColor
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        let ownColor = ColorTheme.OwnChatBubbles.onPrimary
+        let otherColor = ColorTheme.OthersChatBubbles.onPrimary
 
         let textColor: UIColor = ownMessage ? ownColor : otherColor
         let linkColor: UIColor = ownMessage ? ownColor : otherColor

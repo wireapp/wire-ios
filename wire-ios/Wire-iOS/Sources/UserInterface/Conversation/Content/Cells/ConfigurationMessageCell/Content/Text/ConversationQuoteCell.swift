@@ -295,13 +295,13 @@ final class ConversationReplyContentView: UIView {
         let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
         if object.isSentBySelfUser {
             senderComponent.label.attributedText = nil
-            senderComponent.label.textColor = ColorTheme.Base.primary(quotedAccentColor)
-            timestampLabel.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
+            senderComponent.label.textColor = ColorTheme.OwnChatBubbles.primaryOnSecondary(quotedAccentColor)
+            timestampLabel.textColor = ColorTheme.OwnChatBubbles.onSecondary
             senderComponent.senderName = object.senderName
         } else {
             senderComponent.label.attributedText = nil
-            senderComponent.label.textColor = SemanticColors.Label.textDefault
-            timestampLabel.textColor = SemanticColors.Label.textCollectionSecondary
+            senderComponent.label.textColor = ColorTheme.OthersChatBubbles.primaryOnSecondary(quotedAccentColor)
+            timestampLabel.textColor = ColorTheme.OthersChatBubbles.onSecondary
             senderComponent.senderName = object.senderName
         }
         senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
