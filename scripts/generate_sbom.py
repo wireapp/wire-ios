@@ -42,6 +42,16 @@ def run_trivy():
     if result.returncode != 0:
         print(f"trivy failed:\n{result.stderr}", file=sys.stderr)
         sys.exit(1)
+
+    # Trivy adds the scanned file itself as an application component — remove it.
+    with open(OUTPUT) as f:
+        bom = json.load(f)
+    bom["components"] = [
+        c for c in bom.get("components", [])
+        if c.get("name") != "Package.resolved"
+    ]
+    with open(OUTPUT, "w") as f:
+        json.dump(bom, f, indent=2)
     print("  Done.")
 
 
@@ -136,6 +146,10 @@ def build_binary_component(target):
     }
     if target["repo"]:
         component["purl"] = f"pkg:github/{target['repo']}@{target['version']}"
+        component["externalReferences"].append({
+            "type": "vcs",
+            "url": f"https://github.com/{target['repo']}",
+        })
     return component
 
 
