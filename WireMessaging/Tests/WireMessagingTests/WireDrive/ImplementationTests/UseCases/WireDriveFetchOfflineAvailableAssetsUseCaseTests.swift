@@ -47,7 +47,7 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
             self?.storeBacking[asset.nodeID] = asset
         }
 
-        store.offlineAssetsConversationNameFilePath_MockMethod = { [weak self] conversationName, filePath in
+        store.offlineAssetsConversationNameFilePath_MockMethod = { [weak self] conversationName, _ in
             if let conversationName {
                 return self?.storeBacking.map(\.value).filter { $0.conversationName == conversationName } ?? []
             } else {
