@@ -23,6 +23,7 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireUtilities
+import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 protocol SyncAgentProtocol {
