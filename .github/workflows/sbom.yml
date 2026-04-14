@@ -18,6 +18,10 @@ on:
         description: 'Branch or tag to check out'
         required: true
         default: 'develop'
+      use_commit_ref:
+        description: 'Use the branch/tag ref as the project version in Dependency Track instead of the app version from xcconfig'
+        type: boolean
+        default: false
 
 jobs:
   sbom:
@@ -32,8 +36,12 @@ jobs:
       - name: Read project version
         id: read_version
         run: |
-          VERSION=$(grep 'WIRE_SHORT_VERSION' wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig | cut -d'=' -f2 | tr -d ' ')
-          echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.use_commit_ref }}" = "true" ]; then
+            echo "project_version=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          else
+            VERSION=$(grep 'WIRE_SHORT_VERSION' wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig | cut -d'=' -f2 | tr -d ' ')
+            echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Install Trivy
         run: |
@@ -47,7 +55,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-wire-ios-${{ steps.read_version.outputs.project_version }}
+          path: bom.json
+          retention-days: 90
+
       - name: Upload SBOM to Dependency Track
+        id: upload_deptrack
         uses: DependencyTrack/gh-upload-sbom@v3
         with:
           serverhostname: ${{ secrets.DEPENDENCYTRACKURL }}
@@ -56,3 +72,26 @@ jobs:
           projectversion: ${{ steps.read_version.outputs.project_version }}
           bomfilename: bom.json
           autocreate: true
+
+      - name: Summary
+        env:
+          DT_HOST: ${{ secrets.DEPENDENCYTRACKURL }}
+          DT_API_KEY: ${{ secrets.DEPENDENCYTRACKKEY }}
+          PROJECT_VERSION: ${{ steps.read_version.outputs.project_version }}
+        run: |
+          PROJECT_UUID=$(curl -sf \
+            -H "X-Api-Key: $DT_API_KEY" \
+            "https://$DT_HOST/api/v1/project/lookup?name=wire-ios&version=$PROJECT_VERSION" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin).get('uuid',''))" 2>/dev/null || echo "")
+
+          echo "## SBOM Generation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| | |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Project** | wire-ios |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version** | $PROJECT_VERSION |" >> $GITHUB_STEP_SUMMARY
+          if [ -n "$PROJECT_UUID" ]; then
+            echo "| **Dependency Track** | [View project](https://$DT_HOST/#/projects/$PROJECT_UUID) |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| **Dependency Track** | [Browse projects](https://$DT_HOST/#/projects) |" >> $GITHUB_STEP_SUMMARY
+          fi
