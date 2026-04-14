@@ -684,7 +684,7 @@ package final class FilesViewModel: ObservableObject {
                     let fullComponents = fullPath.split(separator: "/")
 
                     let noMoreFolders = fullComponents.count == baseComponents.count + 1
-                    
+
                     if noMoreFolders {
                         return nil
                     }
