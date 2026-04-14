@@ -25,14 +25,14 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
     @Environment(\.openURL) private var openURL
-    
+
     enum Scope: Hashable {
         case files(conversation: Conversation, isFolder: Bool = false)
         case recycleBin(isFolder: Bool)
         case search
         case moveToFolder
         case editFile
-        
+
         enum Conversation {
             case all
             case one
@@ -83,7 +83,7 @@ struct FilesInfoView: View {
         .frame(maxWidth: 420)
         .padding()
     }
-    
+
     var title: String? {
         switch kind {
         case .preparing:
@@ -213,7 +213,7 @@ struct FilesInfoView: View {
             Identifiers.errorMessage.rawValue
         }
     }
-    
+
     private var learnMoreLinkData: (title: String, destination: URL)? {
         switch kind {
         case .empty:
@@ -280,7 +280,7 @@ private extension View {
     @ViewBuilder
     func accessibilityIdentifier(_ id: String?) -> some View {
         if let id {
-            self.accessibilityIdentifier(id)
+            accessibilityIdentifier(id)
         } else {
             self
         }

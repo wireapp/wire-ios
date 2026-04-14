@@ -156,7 +156,7 @@ private extension FilesContentView {
                 .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }
-    
+
     private func infoViewScope() -> FilesInfoView.Scope {
         if viewModel.isRecycleBin {
             .recycleBin(isFolder: viewModel.isInFolder)
@@ -169,7 +169,7 @@ private extension FilesContentView {
 
     @ViewBuilder private var listBackgroundView: some View {
         let scope = infoViewScope()
-        
+
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
             FilesInfoView(scope: scope, kind: .empty)

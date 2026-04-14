@@ -48,7 +48,7 @@ struct LoadMoreView: View {
 
 #Preview {
     @Previewable @State var isLoading = false
-    
+
     LoadMoreView(isLoading: isLoading) {
         if !isLoading {
             Task {
