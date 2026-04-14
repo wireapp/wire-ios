@@ -112,7 +112,7 @@ struct FilesInfoView: View {
             }
         case let .error(isConnectionError):
             switch scope {
-            case .moveToFolder:
+            case .moveToFolder, .editFile:
                 if isConnectionError {
                     L10n.Localizable.General.Error.NoInternet.title
                 } else {
@@ -158,7 +158,7 @@ struct FilesInfoView: View {
             }
         case let .error(isConnectionError):
             switch scope {
-            case .moveToFolder:
+            case .moveToFolder, .editFile:
                 if isConnectionError {
                     L10n.Localizable.General.Error.NoInternet.message
                 } else {
@@ -332,5 +332,13 @@ private extension View {
 }
 
 #Preview("error move-to-folder, no internet") {
+    FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: true))
+}
+
+#Preview("error edit-file") {
+    FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: false))
+}
+
+#Preview("error edit-file, no internet") {
     FilesInfoView(scope: .moveToFolder, kind: .error(isConnectionError: true))
 }
