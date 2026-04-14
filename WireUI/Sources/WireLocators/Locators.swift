@@ -379,11 +379,23 @@ public enum Locators {
             }
         }
 
+        public enum FileMenu: String {
+            case deleteToRecycleBin
+
+            public var identifier: String {
+                "fileMenu.\(rawValue)"
+            }
+        }
+
         public enum FilesPage: String {
             case close
             case createFolder
             case createFile
             case recycleBin
+            case sharedDrivePageHeader = "Shared Drive"
+            case deleteOnBottomSheet = "Delete"
+            case moreOptions = "More"
+            case recycleBinPageheader = "Recycle Bin"
         }
 
         public enum FilesInfoPage: String {
