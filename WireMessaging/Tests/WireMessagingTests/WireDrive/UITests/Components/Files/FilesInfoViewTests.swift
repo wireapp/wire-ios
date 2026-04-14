@@ -105,9 +105,9 @@ final class FilesInfoViewTests: XCTestCase {
     @MainActor
     func testVariants() async {
         let configs: [(name: String, scope: FilesInfoView.Scope, kind: FilesInfoView.Kind)] = [
-            (name: "files_empty", scope: .files(conversation: .all), kind: .empty),
-            (name: "search_empty", scope: .search, kind: .empty),
-            (name: "search_error", scope: .search, kind: .error(isConnectionError: true))
+            (name: "files_empty", scope: .files(conversation: .all), kind: .empty), // this has a link
+            (name: "search_empty", scope: .search, kind: .empty), // this has just text
+            (name: "search_error", scope: .search, kind: .error(isConnectionError: true)) // this has a button
         ]
 
         for config in configs {
