@@ -1,4 +1,11 @@
 name: SBOM Generation
+# Triggers and project version used in Dependency Track:
+#
+#   Merge to develop     → runs when dependency files change; version = commit SHA
+#   Tag creation         → runs on every tag; version = WIRE_SHORT_VERSION from xcconfig
+#   Manual (workflow_dispatch):
+#     use_commit_ref=true (default)  → version = commit SHA of the checked-out ref
+#     use_commit_ref=false           → version = WIRE_SHORT_VERSION from xcconfig
 
 on:
   push:
@@ -12,6 +19,7 @@ on:
       - 'WireAVS/Package.swift'
       - 'WireCoreCrypto/Package.swift'
       - 'wire-ios-build-assets/Gemfile.lock'
+  create:
   workflow_dispatch:
     inputs:
       ref:
@@ -19,28 +27,30 @@ on:
         required: true
         default: 'develop'
       use_commit_ref:
-        description: 'Use the branch/tag ref as the project version in Dependency Track instead of the app version from xcconfig'
+        description: 'Use the commit SHA as the project version in Dependency Track instead of the app version from xcconfig'
         type: boolean
-        default: false
+        default: true
 
 jobs:
   sbom:
+    # For the create event, only run on tag creation (not branch creation)
+    if: github.event_name != 'create' || github.event.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref || github.sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || '' }}
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
 
       - name: Read project version
         id: read_version
         run: |
-          if [ "${{ inputs.use_commit_ref }}" = "true" ]; then
-            echo "project_version=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          else
+          if [ "${{ github.event_name }}" = "create" ] || { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.use_commit_ref }}" != "true" ]; }; then
             VERSION=$(grep 'WIRE_SHORT_VERSION' wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig | cut -d'=' -f2 | tr -d ' ')
             echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "project_version=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install Trivy
@@ -63,7 +73,6 @@ jobs:
           retention-days: 90
 
       - name: Upload SBOM to Dependency Track
-        id: upload_deptrack
         uses: DependencyTrack/gh-upload-sbom@v3
         with:
           serverhostname: ${{ secrets.DEPENDENCYTRACKURL }}
@@ -74,24 +83,10 @@ jobs:
           autocreate: true
 
       - name: Summary
-        env:
-          DT_HOST: ${{ secrets.DEPENDENCYTRACKURL }}
-          DT_API_KEY: ${{ secrets.DEPENDENCYTRACKKEY }}
-          PROJECT_VERSION: ${{ steps.read_version.outputs.project_version }}
         run: |
-          PROJECT_UUID=$(curl -sf \
-            -H "X-Api-Key: $DT_API_KEY" \
-            "https://$DT_HOST/api/v1/project/lookup?name=wire-ios&version=$PROJECT_VERSION" \
-            | python3 -c "import json,sys; print(json.load(sys.stdin).get('uuid',''))" 2>/dev/null || echo "")
-
           echo "## SBOM Generation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| | |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|" >> $GITHUB_STEP_SUMMARY
           echo "| **Project** | wire-ios |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Version** | $PROJECT_VERSION |" >> $GITHUB_STEP_SUMMARY
-          if [ -n "$PROJECT_UUID" ]; then
-            echo "| **Dependency Track** | [View project](https://$DT_HOST/#/projects/$PROJECT_UUID) |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| **Dependency Track** | [Browse projects](https://$DT_HOST/#/projects) |" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "| **Version** | ${{ steps.read_version.outputs.project_version }} |" >> $GITHUB_STEP_SUMMARY
