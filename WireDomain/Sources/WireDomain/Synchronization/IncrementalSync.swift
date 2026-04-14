@@ -193,6 +193,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     ) async {
         do {
             for try await var envelope in liveEventStream {
+
+                guard !Task.isCancelled else { return }
+
                 logger.debug(
                     "received live event envelope",
                     attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
