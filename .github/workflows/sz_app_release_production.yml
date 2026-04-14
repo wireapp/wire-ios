@@ -34,6 +34,8 @@ jobs:
 
       - name: Generate SBOM
         run: python3 scripts/generate_sbom.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload SBOM to Dependency Track
         uses: DependencyTrack/gh-upload-sbom@v3
