@@ -56,7 +56,7 @@ struct TagsEditView: View {
                         Button {
                             dismiss()
                         } label: {
-                            Text(L10n.Localizable.General.close)
+                            Text(L10n.Localizable.General.cancel)
                         }
                         .accessibilityIdentifier(Locators.WireDrive.TagsEditPage.closeButton)
                     }
