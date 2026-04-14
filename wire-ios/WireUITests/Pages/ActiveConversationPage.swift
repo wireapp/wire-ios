@@ -22,7 +22,7 @@ import XCTest
 class ActiveConversationPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        videoCallButton
+        conversationTitleButton
     }
 
     var videoCallButton: XCUIElement {
@@ -73,6 +73,10 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
 
+    var userRemovedSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.userRemovedSystemMessage.rawValue]
+    }
+
     var fileLabels: XCUIElementQuery {
         app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
@@ -113,6 +117,10 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var userLeftSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -141,6 +149,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func goBackToConversationPage() throws -> ConversationsPage {
         conversationBackButton.waitAndTap()
         return try ConversationsPage()
@@ -176,5 +185,16 @@ class ActiveConversationPage: PageModel {
         canvas.tap()
         sendCanvasButton.tap()
         return self
+    }
+
+    func waitToUploadToFinishAndSend() {
+        XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
+        sendButton.waitAndTap()
+    }
+
+    func openSharedDrive() throws -> SharedDriveFilesPage {
+        conversationTitleButton.waitAndTap()
+        sharedDriveButton.tap()
+        return try SharedDriveFilesPage()
     }
 }

@@ -150,7 +150,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: uiMOC)
 
-        let factory = ConversationPredicateFactory(selfTeam: team)
+        let factory = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: uiMOC), selfTeam: team)
 
         // when inserting a new conversation while in the background
         dispatcher.applicationDidEnterBackground()

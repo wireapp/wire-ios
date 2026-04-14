@@ -635,16 +635,26 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+    private func linkOneOnOneUserIfNeeded(
+        for localConversation: ZMConversation
+    ) {
+        guard localConversation.conversationType == .oneOnOne else {
             return
         }
 
-        conversation.oneOnOneUser = otherUser
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            localConversation.isForcedReadOnly = true
+            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                localConversation.mlsStatus = .invalid
+            }
+            return
+        }
+
+        guard otherUser.oneOnOneConversation == nil else {
+            return
+        }
+
+        localConversation.oneOnOneUser = otherUser
     }
 
     @discardableResult

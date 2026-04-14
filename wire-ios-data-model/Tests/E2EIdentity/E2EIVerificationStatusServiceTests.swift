@@ -21,7 +21,7 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2EIVerificationStatusServiceTests: XCTestCase {
+final class E2EIVerificationStatusServiceTests: XCTestCase {
 
     var sut: E2EIVerificationStatusService!
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!

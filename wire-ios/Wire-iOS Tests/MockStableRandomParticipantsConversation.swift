@@ -46,4 +46,35 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
 
         return otherUserConversation
     }
+
+    static func createGroupConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType]) -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .group
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
+    }
+
+    static func createChannelConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType])
+        -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .channel
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
+    }
 }
