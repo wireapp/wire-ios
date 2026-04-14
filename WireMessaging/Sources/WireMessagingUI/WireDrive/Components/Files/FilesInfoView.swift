@@ -31,6 +31,7 @@ struct FilesInfoView: View {
         case recycleBin(isFolder: Bool)
         case search
         case moveToFolder
+        case editFile
         
         enum Conversation {
             case all
@@ -50,7 +51,7 @@ struct FilesInfoView: View {
 
     var body: some View {
         VStack(spacing: 25) {
-            if let title = title {
+            if let title {
                 Text(title)
                     .padding([.leading, .trailing], kind == .preparing ? 30 : 0)
                     .font(.title3.weight(.semibold))
@@ -59,13 +60,15 @@ struct FilesInfoView: View {
                     .accessibilityIdentifier(titleAccessibilityId)
             }
 
-            Text(message)
-                .padding([.leading, .trailing], kind == .preparing ? 0 : 30)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityIdentifier(messageAccessibilityId)
+            if let message {
+                Text(message)
+                    .padding([.leading, .trailing], kind == .preparing ? 0 : 30)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier(messageAccessibilityId)
+            }
 
             switch kind {
             case .empty:
@@ -104,7 +107,7 @@ struct FilesInfoView: View {
                 }
             case .search:
                 Strings.Files.NoSearchResults.title
-            case .moveToFolder:
+            case .moveToFolder, .editFile:
                 nil
             }
         case let .error(isConnectionError):
@@ -125,7 +128,7 @@ struct FilesInfoView: View {
         }
     }
 
-    var message: String {
+    var message: String? {
         switch kind {
         case .preparing:
             Strings.Files.PendingCells.message
@@ -150,6 +153,8 @@ struct FilesInfoView: View {
                 Strings.Files.NoSearchResults.message
             case .moveToFolder:
                 Strings.Files.MoveToFolder.noSubfolders
+            case .editFile:
+                nil
             }
         case let .error(isConnectionError):
             switch scope {
@@ -169,7 +174,7 @@ struct FilesInfoView: View {
         }
     }
 
-    var titleAccessibilityId: String {
+    var titleAccessibilityId: String? {
         typealias Identifiers = Locators.WireDrive.FilesInfoPage
 
         return switch kind {
@@ -181,13 +186,15 @@ struct FilesInfoView: View {
                 Identifiers.noFilesTitle.rawValue
             case .search:
                 Identifiers.noFilesSearchTitle.rawValue
+            case .editFile:
+                nil
             }
         case .error:
             Identifiers.errorTitle.rawValue
         }
     }
 
-    var messageAccessibilityId: String {
+    var messageAccessibilityId: String? {
         typealias Identifiers = Locators.WireDrive.FilesInfoPage
 
         return switch kind {
@@ -199,6 +206,8 @@ struct FilesInfoView: View {
                 Identifiers.noFilesMessage.rawValue
             case .search:
                 Identifiers.noFilesSearchMessage.rawValue
+            case .editFile:
+                nil
             }
         case .error:
             Identifiers.errorMessage.rawValue
@@ -220,7 +229,7 @@ struct FilesInfoView: View {
                         (Strings.Files.NoData.learnMore, URL.sharedDriveInConversations)
                     }
                 }
-            case .search, .moveToFolder, .recycleBin:
+            case .search, .moveToFolder, .recycleBin, .editFile:
                 nil
             }
         case .error, .preparing:
@@ -243,23 +252,38 @@ struct FilesInfoView: View {
         Button {
             onRetry?()
         } label: {
-            Text(kind == .error(isConnectionError: true) ? Strings.Files.Error.NoConnection.retry : Strings.Files.Error
-                .retry)
-                .padding()
+            let isConnectionError = kind == .error(isConnectionError: true)
+            let text = if isConnectionError {
+                Strings.Files.Error.NoConnection.retry
+            } else {
+                Strings.Files.Error.retry
+            }
+
+            Text(text)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(SemanticColors.Label.textDefault.color)
-                .frame(maxHeight: 35)
-                .background(
-                    RoundedRectangle(
-                        cornerRadius: 10,
-                        style: .continuous
-                    )
-                    .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-
-                )
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            SemanticColors.Button.borderSecondaryEnabled.color,
+                            lineWidth: 1
+                        )
+                }
         }
-        .accessibilityLabel(Strings.Files.Error.retry)
         .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.retryButton)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func accessibilityIdentifier(_ id: String?) -> some View {
+        if let id {
+            self.accessibilityIdentifier(id)
+        } else {
+            self
+        }
     }
 }
 
