@@ -202,7 +202,9 @@ enum DebugActions {
             return
         }
 
-        appRootRouter.reload()
+        Task { @MainActor in
+            appRootRouter.reload()
+        }
     }
 
     static func resetCallQualitySurveyMuteFilter(_ type: any SettingsCellDescriptorType) {
