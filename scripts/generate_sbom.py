@@ -112,7 +112,7 @@ def parse_gemfile_lock(path: Path):
     components = []
     in_specs = False
     # Gem spec lines are indented with exactly 4 spaces: "    name (version)"
-    gem_pattern = re.compile(r'^    (\S+) \(([^)]+)\)$')
+    gem_pattern = re.compile(r'^\s{4}(\S+) \(([^)]+)\)$')
 
     for line in path.read_text().splitlines():
         if line.strip() == "specs:":
