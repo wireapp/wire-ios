@@ -252,7 +252,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         do {
             for try await element in liveEventStream {
 
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else {
+                    return logger.debug(
+                        "returning from processLiveStream early, task cancelled",
+                        attributes: logAttributes
+                    )
+                }
 
                 switch element {
                 case let .syncMarker(id, deliveryTag):
