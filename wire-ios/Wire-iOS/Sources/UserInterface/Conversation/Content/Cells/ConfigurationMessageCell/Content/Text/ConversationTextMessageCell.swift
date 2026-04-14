@@ -328,11 +328,15 @@ extension ConversationTextMessageCellDescription {
             )
         }
 
-        let hasQuote = textMessageData.quoteMessage != nil
+        // Use the protobuf-backed flag so the reply box is preserved even when the
+        // quoted message is deleted (which nullifies the Core Data relationship).
+        let quotedMessage = textMessageData.quoteMessage
+        let hasQuote = textMessageData.hasQuote
         let hasText = !messageText.string.isEmpty
 
-        if hasQuote, let quotedMessage = textMessageData.quoteMessage, hasText {
-            // Render quote + text as a single unified bubble cell
+        if hasQuote, hasText {
+            // Render quote + text as a single unified bubble cell.
+            // quotedMessage may be nil when the original was deleted.
             let viewModel = MessageReplyAttachmentsViewModel(
                 fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
@@ -349,8 +353,9 @@ extension ConversationTextMessageCellDescription {
             )
             cells.append(AnyConversationMessageCellDescription(combinedCell))
         } else {
-            // Quote only (no text body — rare edge case)
-            if let quotedMessage = textMessageData.quoteMessage {
+            // Quote only (no text body — rare edge case).
+            // quotedMessage may be nil when the original was deleted.
+            if hasQuote {
                 let viewModel = MessageReplyAttachmentsViewModel(
                     fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                     fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()

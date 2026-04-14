@@ -51,16 +51,13 @@ final class ConversationReplyContentView: UIView {
         }
 
         var showDetails: Bool {
-            guard let message = quotedMessage,
-                  message.isText
-                  || message.isLocation
-                  || message.isAudio
-                  || message.isImage
-                  || message.isVideo
-                  || message.isFile else {
-                return false
-            }
-            return true
+            guard let message = quotedMessage else { return false }
+            return message.isText
+                || message.isLocation
+                || message.isAudio
+                || message.isImage
+                || message.isVideo
+                || message.isFile
         }
 
         var isEdited: Bool {
@@ -120,6 +117,16 @@ final class ConversationReplyContentView: UIView {
                 .font: UIFont.smallSemiboldFont,
                 .foregroundColor: textColor
             ]
+            guard quotedMessage != nil else {
+                let deletedAttributes: [NSAttributedString.Key: AnyObject] = [
+                    .font: UIFont.mediumFont.italic,
+                    .foregroundColor: LabelColors.textCollectionSecondary
+                ]
+                return .text(NSAttributedString(
+                    string: L10n.Localizable.Content.Message.Reply.brokenMessage,
+                    attributes: deletedAttributes
+                ))
+            }
             switch quotedMessage {
             case let message? where message.isMultipart:
                 let data = message.textMessageData
@@ -437,9 +444,8 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     weak var message: ZMConversationMessage? {
         didSet {
-            if let quoteMessage = message?.textMessageData?.quoteMessage {
-                configuration.quotedMessage = quoteMessage
-            }
+            // Always update quotedMessage — it will be nil when the original was deleted.
+            configuration.quotedMessage = message?.textMessageData?.quoteMessage
             configuration.isSentBySelfUser = message?.isSentBySelfUser ?? false
             configuration.senderAccentColor = message?.senderUser?.wireAccentColor ?? .blue
         }
