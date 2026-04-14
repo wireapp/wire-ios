@@ -77,7 +77,7 @@ public enum ColorTheme {
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
 
-        // TODO: Below these are not specified and should be removed updated
+        // TODO: [WPB-24757] Below these are not specified and should be removed updated
         public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
 
         public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
@@ -89,7 +89,6 @@ public enum ColorTheme {
         public static let background = UIColor(light: .gray20, dark: .gray100)
         public static let onBackground = UIColor(light: .black, dark: .white)
 
-        public static let chatBackground = UIColor(light: .gray10, dark: .gray90) // TODO: to remove
         public static let backgroundVariant = UIColor(light: .gray10, dark: .gray95)
         public static let onBackgroundVariant = UIColor(light: .black, dark: .white)
 
@@ -103,19 +102,14 @@ public enum ColorTheme {
         public static let onInverted = UIColor(light: .white, dark: .black)
 
         public static let onTransparentDark = UIColor(light: .white, dark: .white)
+        public static let onTransparentLight = UIColor(light: .black, dark: .black)
 
         public static let bubblesBackground = UIColor(light: .white, dark: .gray100)
-        // missing:
-        // transparentLight
-        // transparentDark
-        // onTransparentLight
-        // primaryContainer
-        //
-    }
 
-    public enum Banners { // TODO: to remove
-        public static let background = Base.primaryVariant
-        public static let border = Base.primary
+        public static let transparentDark = UIColor(light: .black55, dark: .black60)
+        public static let transparentLight = UIColor(light: .white75, dark: .white25)
+
+        // TODO: [WPB-24757] add primaryContainer token
     }
 
     public enum Buttons {
@@ -173,7 +167,7 @@ public enum ColorTheme {
             static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
 
-        enum Link { // TODO: not defined on figma
+        enum Link { // TODO: [WPB-24757] not defined on figma, update
             public static let onEnabled = Backgrounds.onSurface
 
             static let onDisabled = Base.secondaryText
@@ -184,7 +178,7 @@ public enum ColorTheme {
         }
     }
 
-    public enum Checkbox { // TODO: not defined on figma
+    public enum Checkbox { // TODO: [WPB-24757] not defined on figma, update
         public static let enabled = UIColor(light: .gray50, dark: .gray80)
         public static let selected = UIColor(light: .blue500Light, dark: .blue500Dark)
     }
@@ -192,7 +186,10 @@ public enum ColorTheme {
     public enum Strokes {
 
         public static let outline = UIColor(light: .gray40, dark: .gray90)
-        public static let disabledOutline = UIColor(light: .gray50, dark: .gray80) // TODO: not defined on figma
+        public static let disabledOutline = UIColor(
+            light: .gray50,
+            dark: .gray80
+        ) // TODO: [WPB-24757] not defined on figma, update
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 
@@ -209,12 +206,8 @@ public enum ColorTheme {
         public static let background = UIColor.black.withAlphaComponent(0.55)
     }
 
-    // missing: Group Avatars
-    // missing: Channel Avatars
-
-    public enum NotificationBadge { // TODO: not defined on figma
-        public static let fill = ColorTheme.Base.error
-    }
+    // TODO: [WPB-24757] missing: Group Avatars
+    // TODO: [WPB-24757] missing: Channel Avatars
 
     public enum OwnChatBubbles {
 

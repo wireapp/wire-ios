@@ -110,7 +110,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         let accentColor = object.message.senderUser?.wireAccentColor ?? .default
 
         let ownMessageBackground = if object.message.isSentBySelfUser {
-             ColorTheme.OwnChatBubbles.primary(accentColor)
+            ColorTheme.OwnChatBubbles.primary(accentColor)
         } else {
             ColorTheme.OthersChatBubbles.primary
         }
