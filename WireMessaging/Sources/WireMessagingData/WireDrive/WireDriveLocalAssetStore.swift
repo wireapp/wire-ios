@@ -89,24 +89,21 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
 
         if let oldAsset, asset.hasEqualMetadata(to: oldAsset) { return }
 
-        let context = contextProvider.newBackgroundContext()
         Task.detached {
-            try await context.perform {
-                let stored = try context.fetchLocalAsset(nodeID: asset.nodeID) ?? ManagedLocalAsset(context: context)
-                stored.nodeID = asset.nodeID
-                stored.eTag = asset.eTag
-                stored.path = asset.path
-                stored.contentType = asset.contentType
-                stored.size = asset.size.map { Int64($0) } ?? -1
-                stored.conversationName = asset.conversationName
-                stored.ownerName = asset.ownerName
-                stored.modified = asset.modified
-                stored.isAvailableOffline = asset.isAvailableOffline
-                stored.isDownloaded = asset.isDownloaded
-
-                try context.save()
-            }
+            try await self.storeAsset(asset)
         }
+    }
+
+    package func upsertAssetAsync(_ asset: WireMessagingDomain.WireDriveLocalAsset) async throws {
+        guard assets[asset.nodeID] != asset else { return }
+
+        let oldAsset = assets[asset.nodeID]
+        assets[asset.nodeID] = asset
+        updates.send((asset.nodeID, asset))
+
+        if let oldAsset, asset.hasEqualMetadata(to: oldAsset) { return }
+
+        try await storeAsset(asset)
     }
 
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireDriveLocalAsset?, Never> {
@@ -137,6 +134,26 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
     }
 
     // MARK: Helpers
+
+    private func storeAsset(_ asset: WireMessagingDomain.WireDriveLocalAsset) async throws {
+        let context = contextProvider.newBackgroundContext()
+
+        try await context.perform {
+            let stored = try context.fetchLocalAsset(nodeID: asset.nodeID) ?? ManagedLocalAsset(context: context)
+            stored.nodeID = asset.nodeID
+            stored.eTag = asset.eTag
+            stored.path = asset.path
+            stored.contentType = asset.contentType
+            stored.size = asset.size.map { Int64($0) } ?? -1
+            stored.conversationName = asset.conversationName
+            stored.ownerName = asset.ownerName
+            stored.modified = asset.modified
+            stored.isAvailableOffline = asset.isAvailableOffline
+            stored.isDownloaded = asset.isDownloaded
+
+            try context.save()
+        }
+    }
 
     private func storedAsset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         let context = contextProvider.viewContext

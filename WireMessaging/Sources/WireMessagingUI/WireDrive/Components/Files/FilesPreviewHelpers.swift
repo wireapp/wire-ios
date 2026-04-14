@@ -369,6 +369,10 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
         publishers[asset.nodeID]?.send(asset)
     }
 
+    func updateAssetAsync(_ asset: WireDriveLocalAsset) async throws {
+        publishers[asset.nodeID]?.send(asset)
+    }
+
     func deleteAsset(nodeID: UUID) async throws {
         publishers[nodeID]?.send(nil)
     }

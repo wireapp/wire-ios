@@ -34,6 +34,10 @@ package protocol WireDriveLocalAssetStoreProtocol: Sendable {
     /// Updates an existing `WireDriveLocalAsset` or creates a new one if none exists with its `nodeID`.
     func upsertAsset(_ asset: WireDriveLocalAsset) throws
 
+    /// Updates an existing `WireDriveLocalAsset` or creates a new one if none exists with its `nodeID`.
+    /// This method waits for the database operation to complete before returning.
+    func upsertAssetAsync(_ asset: WireDriveLocalAsset) async throws
+
     /// Returns a publisher to monitor changes to an `WireDriveLocalAsset` for a given `nodeID`.
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never>
 

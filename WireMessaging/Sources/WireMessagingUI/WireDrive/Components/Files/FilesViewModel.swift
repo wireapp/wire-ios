@@ -977,7 +977,7 @@ package final class FilesViewModel: ObservableObject {
     private func removeAssetAvailableOffline(item: FilesViewItem) {
         Task {
             do {
-                try useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+                try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
 
                 if isOffline {
                     await reload()

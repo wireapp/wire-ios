@@ -46,7 +46,7 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
         store.assetNodeID_MockMethod = { [weak self] nodeID in
             self?.storeBacking[nodeID]
         }
-        store.upsertAsset_MockMethod = { [weak self] asset in
+        store.upsertAssetAsync_MockMethod = { [weak self] asset in
             self?.storeBacking[asset.nodeID] = asset
         }
     }
@@ -62,7 +62,7 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
         #expect(asset.isAvailableOffline == true)
 
         // when
-        try sut.invoke(nodeID: asset.nodeID)
+        try await sut.invoke(nodeID: asset.nodeID)
 
         // then
         #expect(storeBacking[asset.nodeID]?.isAvailableOffline == false)
@@ -77,9 +77,9 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
         )
 
         // then
-        #expect(throws: WireDriveRemoveAssetAvailableOfflineUseCase.Failure.assetNotFound) {
+        await #expect(throws: WireDriveRemoveAssetAvailableOfflineUseCase.Failure.assetNotFound) {
             // when
-            try sut.invoke(nodeID: asset.nodeID)
+            try await sut.invoke(nodeID: asset.nodeID)
         }
     }
 

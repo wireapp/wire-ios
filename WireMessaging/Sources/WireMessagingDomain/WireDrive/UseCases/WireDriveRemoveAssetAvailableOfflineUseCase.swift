@@ -31,12 +31,12 @@ package struct WireDriveRemoveAssetAvailableOfflineUseCase {
         self.localAssetRepository = localAssetRepository
     }
 
-    package func invoke(nodeID: UUID) throws {
+    package func invoke(nodeID: UUID) async throws {
         guard var asset = try localAssetRepository.asset(nodeID: nodeID) else {
             throw Failure.assetNotFound
         }
 
         asset.isAvailableOffline = false
-        try localAssetRepository.updateAsset(asset)
+        try await localAssetRepository.updateAssetAsync(asset)
     }
 }

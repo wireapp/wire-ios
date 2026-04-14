@@ -117,6 +117,11 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     }
 
     @MainActor
+    package func updateAssetAsync(_ asset: WireDriveLocalAsset) async throws {
+        try await store.upsertAssetAsync(asset)
+    }
+
+    @MainActor
     package func deleteAsset(nodeID: UUID) async throws {
         guard let asset = try store.asset(nodeID: nodeID),
               let cacheKey = asset.downloadState.cacheKey else {
