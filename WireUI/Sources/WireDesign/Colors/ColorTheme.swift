@@ -42,7 +42,7 @@ public enum ColorTheme {
 
         public static let onPrimary = UIColor(light: .white, dark: .black)
         public static let onPrimaryFocused = UIColor(light: .white, dark: .black)
-        
+
         public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
@@ -77,7 +77,7 @@ public enum ColorTheme {
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
 
-        /// TODO: Below these are not specified and should be removed updated
+        // TODO: Below these are not specified and should be removed updated
         public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
 
         public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
@@ -103,16 +103,14 @@ public enum ColorTheme {
         public static let onInverted = UIColor(light: .white, dark: .black)
 
         public static let onTransparentDark = UIColor(light: .white, dark: .white)
-        
+
         public static let bubblesBackground = UIColor(light: .white, dark: .gray100)
         // missing:
-        /*
-         transparentLight
-         transparentDark
-         onTransparentLight
-         primaryContainer
-         
-         */
+        // transparentLight
+        // transparentDark
+        // onTransparentLight
+        // primaryContainer
+        //
     }
 
     public enum Banners { // TODO: to remove
@@ -213,13 +211,13 @@ public enum ColorTheme {
 
     // missing: Group Avatars
     // missing: Channel Avatars
-    
+
     public enum NotificationBadge { // TODO: not defined on figma
         public static let fill = ColorTheme.Base.error
     }
-    
+
     public enum OwnChatBubbles {
-        
+
         public static func primary(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
@@ -236,7 +234,7 @@ public enum ColorTheme {
                 UIColor(light: .purple500Light, dark: .purple800Dark)
             }
         }
-        
+
         public static let onPrimary: UIColor = .white
 
         public static func secondary(_ accentColor: WireAccentColor) -> UIColor {
@@ -255,9 +253,9 @@ public enum ColorTheme {
                 UIColor(light: .purple600Light, dark: .purple900Dark)
             }
         }
-        
+
         public static let onSecondary: UIColor = .white
-        
+
         public static func primaryOnSecondary(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
@@ -275,16 +273,16 @@ public enum ColorTheme {
             }
         }
     }
-    
+
     public enum OthersChatBubbles {
         /// light gray 20 / dark gray 90
         public static let primary = UIColor(light: .gray20, dark: .gray90)
         public static let onPrimary = UIColor(light: .black, dark: .white)
-        
+
         /// white / dark gray 95
         public static let secondary = UIColor(light: .white, dark: .gray95)
         public static let onSecondary = UIColor(light: .black, dark: .white)
-                
+
         public static func primaryOnSecondary(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:

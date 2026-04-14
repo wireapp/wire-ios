@@ -186,7 +186,7 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     // MARK: - Styling
 
     private func applyStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
-        
+
         backgroundColor = isSentBySelfUser
             ? ColorTheme.OwnChatBubbles.primary(accentColor)
             : ColorTheme.OthersChatBubbles.primary
@@ -205,12 +205,13 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     /// - Adds a reply-arrow icon next to the quoted sender's name, colored with the quoted sender's accent color.
     /// - Dims the timestamp slightly.
     private func applyEmbeddedSenderStyle(object: Configuration) {
-        
-        
-        let iconColor: UIColor =  object.isSentBySelfUser ? ColorTheme.OwnChatBubbles.onPrimary : ColorTheme.OthersChatBubbles.onPrimary
+
+        let iconColor: UIColor = object.isSentBySelfUser ? ColorTheme.OwnChatBubbles.onPrimary : ColorTheme
+            .OthersChatBubbles.onPrimary
         let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .default
-        let senderColor = object.isSentBySelfUser ? ColorTheme.OwnChatBubbles.primaryOnSecondary(quotedAccentColor) : ColorTheme.OthersChatBubbles.primaryOnSecondary(quotedAccentColor)
-        
+        let senderColor = object.isSentBySelfUser ? ColorTheme.OwnChatBubbles
+            .primaryOnSecondary(quotedAccentColor) : ColorTheme.OthersChatBubbles.primaryOnSecondary(quotedAccentColor)
+
         if let name = object.quotedMessage?.senderName {
             let replyIcon = UIImage(named: "ReplyIcon")!.withTintColor(iconColor, renderingMode: .alwaysTemplate)
             let attachment = NSTextAttachment()
@@ -256,8 +257,8 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
                 guard let self, let message else { return }
                 let isOwn = message.isSentBySelfUser
                 let accentColor = message.senderUser?.wireAccentColor ?? .default
-                self.applyStyle(isSentBySelfUser: isOwn, accentColor: accentColor)
-                self.configureTextColor(forOwnMessage: isOwn)
+                applyStyle(isSentBySelfUser: isOwn, accentColor: accentColor)
+                configureTextColor(forOwnMessage: isOwn)
             }
     }
 
@@ -270,7 +271,8 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
 
     // MARK: - Reply tap
 
-    @objc private func onReplyTap() {
+    @objc
+    private func onReplyTap() {
         guard let message else { return }
         delegate?.perform(action: .openQuote, for: message, view: self)
     }

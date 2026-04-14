@@ -111,8 +111,8 @@ final class ConversationReplyContentView: UIView {
         }
 
         private func setupContent() -> Content {
-            typealias LabelColors = SemanticColors.Label
-            let textColor: UIColor = isSentBySelfUser ? .white : LabelColors.textDefault
+            let textColor: UIColor = isSentBySelfUser ? ColorTheme.OwnChatBubbles.onPrimary : ColorTheme
+                .OthersChatBubbles.onPrimary
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.smallSemiboldFont,
                 .foregroundColor: textColor
@@ -120,10 +120,10 @@ final class ConversationReplyContentView: UIView {
             guard quotedMessage != nil else {
                 let deletedAttributes: [NSAttributedString.Key: AnyObject] = [
                     .font: UIFont.mediumFont.italic,
-                    .foregroundColor: LabelColors.textCollectionSecondary
+                    .foregroundColor: textColor
                 ]
                 return .text(NSAttributedString(
-                    string: L10n.Localizable.Content.Message.Reply.brokenMessage,
+                    string: L10n.Localizable.Content.Message.Reply.deletedMessage,
                     attributes: deletedAttributes
                 ))
             }
@@ -196,8 +196,7 @@ final class ConversationReplyContentView: UIView {
             default:
                 let attributes: [NSAttributedString.Key: AnyObject] = [
                     .font: UIFont.mediumFont.italic,
-                    .foregroundColor: LabelColors
-                        .textCollectionSecondary
+                    .foregroundColor: textColor
                 ]
                 return .text(NSAttributedString(
                     string: L10n.Localizable.Content.Message.Reply.brokenMessage,

@@ -1885,6 +1885,8 @@ internal enum L10n {
         internal enum Reply {
           /// You cannot see this message.
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
+          /// Deleted message
+          internal static let deletedMessage = L10n.tr("Localizable", "content.message.reply.deleted_message", fallback: "Deleted message")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
           internal enum Files {

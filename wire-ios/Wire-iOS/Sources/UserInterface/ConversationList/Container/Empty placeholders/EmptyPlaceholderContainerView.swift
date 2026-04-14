@@ -60,7 +60,7 @@ final class EmptyPlaceholderContainerView: UIView {
         )
 
         backgroundColor = isIPadRegular() ?
-        ColorTheme.Backgrounds.bubblesBackground :
+            ColorTheme.Backgrounds.bubblesBackground :
             ColorTheme.Backgrounds
             .surfaceVariant
 

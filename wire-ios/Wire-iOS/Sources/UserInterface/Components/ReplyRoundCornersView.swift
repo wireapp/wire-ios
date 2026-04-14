@@ -91,8 +91,8 @@ final class ReplyRoundCornersView: UIControl {
 
     func updateStyle(isSentBySelfUser: Bool, accentColor: WireAccentColor) {
         if isSentBySelfUser {
-            
-            backgroundColor = .green //ColorTheme.Base.replyBoxBackground(accentColor)
+
+            backgroundColor = .green // ColorTheme.Base.replyBoxBackground(accentColor)
             layer.borderColor = ColorTheme.Base.primary(accentColor).cgColor
             grayBoxView.backgroundColor = ColorTheme.Base.primary(accentColor)
         } else {
