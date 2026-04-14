@@ -25,7 +25,10 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 PACKAGE_RESOLVED = ROOT / "wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 CARTFILE_RESOLVED = ROOT / "Cartfile.resolved"
-GEMFILE_LOCK = ROOT / "Gemfile.lock"
+GEMFILE_LOCKS = [
+    ROOT / "Gemfile.lock",
+    ROOT / "wire-ios-build-assets/Gemfile.lock",
+]
 OUTPUT = ROOT / "bom.json"
 
 EXCLUDE_DIRS = {"DerivedData", "Carthage", ".build"}
@@ -101,9 +104,9 @@ def parse_cartfile_resolved():
     return components
 
 
-def parse_gemfile_lock():
-    """Parse root Gemfile.lock and return CycloneDX components for all resolved gems."""
-    if not GEMFILE_LOCK.exists():
+def parse_gemfile_lock(path: Path):
+    """Parse a Gemfile.lock and return CycloneDX components for all resolved gems."""
+    if not path.exists():
         return []
 
     components = []
@@ -111,7 +114,7 @@ def parse_gemfile_lock():
     # Gem spec lines are indented with exactly 4 spaces: "    name (version)"
     gem_pattern = re.compile(r'^    (\S+) \(([^)]+)\)$')
 
-    for line in GEMFILE_LOCK.read_text().splitlines():
+    for line in path.read_text().splitlines():
         if line.strip() == "specs:":
             in_specs = True
             continue
@@ -301,13 +304,14 @@ def main():
     else:
         print("  Nothing found.")
 
-    print("\nParsing Gemfile.lock...")
-    gems = parse_gemfile_lock()
-    if gems:
-        print(f"  Found {len(gems)} Ruby gem(s)")
-        extra.extend(gems)
-    else:
-        print("  Nothing found.")
+    for gemfile_lock in GEMFILE_LOCKS:
+        print(f"\nParsing {gemfile_lock.relative_to(ROOT)}...")
+        gems = parse_gemfile_lock(gemfile_lock)
+        if gems:
+            print(f"  Found {len(gems)} Ruby gem(s)")
+            extra.extend(gems)
+        else:
+            print("  Nothing found.")
 
     print(f"\nMerging {len(extra)} extra component(s) into bom.json...")
     added, total = merge_into_bom(extra)

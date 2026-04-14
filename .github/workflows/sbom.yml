@@ -11,6 +11,7 @@ on:
       - 'scripts/Package.swift'
       - 'WireAVS/Package.swift'
       - 'WireCoreCrypto/Package.swift'
+      - 'wire-ios-build-assets/Gemfile.lock'
   workflow_dispatch:
     inputs:
       ref:
@@ -25,6 +26,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
 
       - name: Read project version
         id: read_version
