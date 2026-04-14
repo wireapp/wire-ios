@@ -272,7 +272,7 @@ package final class FilesViewModel: ObservableObject {
     var networkStatus: NetworkMonitor.NetworkStatus? {
         networkMonitor.currentStatus
     }
-    
+
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
@@ -430,7 +430,10 @@ package final class FilesViewModel: ObservableObject {
                 },
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
-                moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
+                moveNodeUseCase: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: assetRepository
+                ),
                 createFileUseCase: useCases.createFile
             )
         )
@@ -667,24 +670,57 @@ package final class FilesViewModel: ObservableObject {
     private func loadOfflineFiles() async {
         do {
             let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
-                conversationName: cellName != nil ? conversations.first?.name : nil
+                conversationName: cellName != nil ? conversations.first?.name : nil,
+                assetsPath: navigationPath.last?.filePath
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
                 let fileUrl = URL(fileURLWithPath: asset.path)
-                let fileName = fileUrl.lastPathComponent
                 let fileExtension = fileUrl.pathExtension
                 let fileType = UTType(filenameExtension: fileExtension)
+
+                func nextFolderPath(from fullPath: String, basePath: String) -> String? {
+                    let baseComponents = basePath.split(separator: "/")
+                    let fullComponents = fullPath.split(separator: "/")
+
+                    let noMoreFolders = fullComponents.count == baseComponents.count + 1
+
+                    if noMoreFolders {
+                        return nil
+                    }
+
+                    guard fullComponents.starts(with: baseComponents) else {
+                        return nil
+                    }
+
+                    let nextCount = baseComponents.count + 1
+                    let nextComponents = fullComponents.prefix(nextCount)
+                    return nextComponents.joined(separator: "/") + "/"
+                }
+
+                let basePath = navigationPath.last?.filePath ?? asset.path.split(separator: "/").prefix(1).joined()
+                let nextFolderPath = isBrowsing ? nil : nextFolderPath(from: asset.path, basePath: basePath)
+
+                let filekind: FilesViewItem.Kind = if nextFolderPath != nil {
+                    .folder
+                } else {
+                    .file
+                }
+                let filepath: String = if let nextFolderPath {
+                    nextFolderPath
+                } else {
+                    asset.path
+                }
 
                 return .init(
                     id: asset.nodeID,
                     eTag: asset.eTag,
-                    kind: .file,
-                    name: fileName,
-                    filePath: asset.path,
+                    kind: filekind,
+                    name: URL(fileURLWithPath: filepath).lastPathComponent,
+                    filePath: filepath,
                     ownedBy: asset.ownerName,
                     modifiedAt: asset.modified,
-                    icon: .make(type: fileType, fileExtension: fileExtension),
+                    icon: filekind == .folder ? .folder : .make(type: fileType, fileExtension: fileExtension),
                     tags: [], // change later if we want to show tags in offline mode.
                     isEditable: false, // change later if we want to edit files in offline mode.
                     publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
@@ -692,17 +728,24 @@ package final class FilesViewModel: ObservableObject {
                     size: asset.size
                 )
             }
-            
+
             let itemsWithCreationDates: [(item: FilesViewItem, creationDate: Date)] = await items.asyncMap { item in
                 let url = try? await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
                 let creationDate = (try? url?.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
                 return (item: item, creationDate: creationDate)
             }
-            
+
             let sortedItems = itemsWithCreationDates.sorted { lhs, rhs in
                 lhs.creationDate.compare(rhs.creationDate) == .orderedDescending
             }
             .map(\.item)
+            .reduce(into: [FilesViewItem]()) { result, item in
+                let isDuplicate = result.map(\.filePath).contains(item.filePath) // removes duplicated folders
+
+                if !isDuplicate {
+                    result.append(item)
+                }
+            }
 
             state = .received(items: sortedItems)
         } catch {

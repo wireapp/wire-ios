@@ -43,7 +43,7 @@ package final class NetworkMonitor: Observable, ObservableObject {
         monitor: any NWPathMonitoring = NWPathMonitor(),
     ) {
         self.monitor = monitor
-        
+
         subject
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
