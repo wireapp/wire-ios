@@ -43,7 +43,6 @@ final class ConversationReplyContentView: UIView {
         weak var delegate: ConversationMessageCellDelegate?
         var isSentBySelfUser: Bool = false
         var senderAccentColor: WireAccentColor = .blue
-        var showReplyArrow: Bool = false
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -293,36 +292,7 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
         contentAttachmentsView.isHidden = true
 
-        if object.showReplyArrow {
-            // Dark accent background: content/timestamp use white; sender uses quoted sender's accent color
-            let replyColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
-            contentTextView.textColor = replyColor
-            timestampLabel.textColor = replyColor.withAlphaComponent(0.7)
-
-            let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
-            let senderColor = ColorTheme.Base.primary(quotedAccentColor)
-
-            
-            if let name = object.senderName,
-               let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(replyColor, renderingMode: .alwaysTemplate) {
-                let attachment = NSTextAttachment()
-                attachment.image = replyIcon
-                let iconSize = CGFloat(10)
-                attachment.bounds = CGRect(x: 0, y: -1, width: iconSize, height: iconSize)
-                let iconAttr = NSAttributedString(attachment: attachment)
-                let nameAttr = NSAttributedString(
-                    string: " \(name)",
-                    attributes: [.foregroundColor: senderColor, .font: UIFont.mediumSemiboldFont]
-                )
-                let combined = NSMutableAttributedString()
-                combined.append(iconAttr)
-                combined.append(nameAttr)
-                senderComponent.label.attributedText = combined
-            } else {
-                senderComponent.senderName = object.senderName
-                senderComponent.label.textColor = senderColor
-            }
-        } else if object.isSentBySelfUser {
+        if object.isSentBySelfUser {
             senderComponent.label.attributedText = nil
             senderComponent.label.textColor = ColorTheme.Base.ownBubbleSenderNameColor(object.senderAccentColor)
             contentTextView.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
@@ -397,20 +367,6 @@ final class ConversationReplyContentView: UIView {
             messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
         }
 
-        // In the combined reply+text cell the box background is dark: force white on the content text
-        if object.showReplyArrow,
-           let existing = contentTextView.attributedText,
-           !existing.string.isEmpty {
-            let color: UIColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
-            
-            let mutable = NSMutableAttributedString(attributedString: existing)
-            mutable.addAttribute(
-                .foregroundColor,
-                value: color,
-                range: NSRange(location: 0, length: mutable.length)
-            )
-            contentTextView.attributedText = mutable
-        }
     }
 
 }

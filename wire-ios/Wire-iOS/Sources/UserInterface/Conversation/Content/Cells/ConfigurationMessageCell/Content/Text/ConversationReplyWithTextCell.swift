@@ -160,8 +160,8 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
             senderAccentColor: object.senderAccentColor
         )
         replyConfig.delegate = delegate
-        replyConfig.showReplyArrow = true
         replyContentView.configure(with: replyConfig)
+        applyEmbeddedSenderStyle(object: object)
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = 0
@@ -196,6 +196,33 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
             .layerMinXMaxYCorner, .layerMaxXMaxYCorner
         ]
         replyContainer.setAccentBarHidden(true)
+    }
+
+    /// Applies the embedded-cell-specific styling to the reply content view after it has been configured:
+    /// - Adds a reply-arrow icon next to the quoted sender's name, colored with the quoted sender's accent color.
+    /// - Dims the timestamp slightly.
+    private func applyEmbeddedSenderStyle(object: Configuration) {
+        let iconColor: UIColor = object.isSentBySelfUser ? .white : SemanticColors.Label.textDefault
+        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
+        let senderColor = ColorTheme.Base.primary(quotedAccentColor)
+
+        if let name = object.quotedMessage?.senderName,
+           let replyIcon = UIImage(named: "ReplyIcon")?.withTintColor(iconColor, renderingMode: .alwaysTemplate) {
+            let attachment = NSTextAttachment()
+            attachment.image = replyIcon
+            attachment.bounds = CGRect(x: 0, y: -1, width: 10, height: 10)
+            let combined = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
+            combined.append(NSAttributedString(
+                string: " \(name)",
+                attributes: [.foregroundColor: senderColor, .font: UIFont.mediumSemiboldFont]
+            ))
+            replyContentView.senderComponent.label.attributedText = combined
+        } else {
+            replyContentView.senderComponent.senderName = object.quotedMessage?.senderName
+            replyContentView.senderComponent.label.textColor = senderColor
+        }
+
+        replyContentView.timestampLabel.textColor = iconColor.withAlphaComponent(0.7)
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
