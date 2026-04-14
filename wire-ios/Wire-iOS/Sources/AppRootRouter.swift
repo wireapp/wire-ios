@@ -257,6 +257,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showAppLock(userSession: userSession, completion: completion)
         case let .syncFailure(error, onRetry):
             presentSyncErrorAlert(error: error, onRetry: onRetry)
+            appStateTransitionGroup.leave()
         }
     }
 
@@ -275,9 +276,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.Content.System.FailedtosendMessage.retry, // reusing retry string
                 style: .default
-            ) { [weak self] _ in
+            ) { _ in
                 onRetry()
-                self?.appStateTransitionGroup.leave()
             }
         )
 
@@ -285,9 +285,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.General.cancel,
                 style: .destructive
-            ) { [weak self] _ in
-                self?.appStateTransitionGroup.leave()
-            }
+            ) { _ in }
         )
 
         rootViewController.present(alert, animated: true)
