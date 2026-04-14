@@ -211,6 +211,87 @@ public struct SnapshotHelper {
         }
     }
 
+    public enum Variants {
+        case colorSchemes
+        case sizes(_ set: SizeSet = .smallestLarge)
+
+        public enum SizeSet {
+            case all
+            case smallestLarge
+            case smallestLargest
+            case smallestLargeLargest
+            case smallestNormalLarge
+            case smallestNormalLargest
+        }
+    }
+
+    public func verify<View: SwiftUI.View>(
+        matching view: View,
+        named name: String? = nil,
+        variants: Variants,
+        record recording: Bool? = nil,
+        testName: String = #function,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        func makeName(_ name: String?, variant: String) -> String {
+            if let name {
+                "\(name).\(variant)"
+            } else {
+                variant
+            }
+        }
+
+        switch variants {
+        case .colorSchemes:
+            withUserInterfaceStyle(.light).verify(
+                matching: view.preferredColorScheme(.light),
+                named: makeName(name, variant: "light"),
+                record: recording,
+                testName: testName,
+                file: file,
+                line: line
+            )
+
+            withUserInterfaceStyle(.dark).verify(
+                matching: view.preferredColorScheme(.dark),
+                named: makeName(name, variant: "dark"),
+                record: recording,
+                testName: testName,
+                file: file,
+                line: line
+            )
+        case let .sizes(set):
+            let defaultSize: DynamicTypeSize = .large
+
+            let sizes: [DynamicTypeSize] = switch set {
+            case .all:
+                DynamicTypeSize.allCases
+            case .smallestLarge:
+                [.xSmall, .xxxLarge]
+            case .smallestLargest:
+                [.xSmall, .accessibility5]
+            case .smallestLargeLargest:
+                [.xSmall, .xxxLarge, .accessibility5]
+            case .smallestNormalLarge:
+                [.xSmall, defaultSize, .xxxLarge]
+            case .smallestNormalLargest:
+                [.xSmall, defaultSize, .accessibility5]
+            }
+
+            for size in sizes {
+                verify(
+                    matching: view.dynamicTypeSize(size),
+                    named: makeName(name, variant: "\(size)"),
+                    record: recording,
+                    testName: testName,
+                    file: file,
+                    line: line
+                )
+            }
+        }
+    }
+
     /// Verifies a `UIViewController` in both Light and Dark Mode
     ///
     /// - Parameters:
