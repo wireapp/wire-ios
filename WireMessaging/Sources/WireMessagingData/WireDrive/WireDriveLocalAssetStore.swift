@@ -48,13 +48,13 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
 
     package func offlineAssets(
         conversationName: String?,
-        filePath: String?
+        assetsPath: String?
     ) async throws -> [WireMessagingDomain.WireDriveLocalAsset] {
         let context = contextProvider.newBackgroundContext()
         return try await context.perform {
             let managedAssets = try context.fetchLocalOfflineAssets(
                 conversationName: conversationName,
-                filePath: filePath
+                assetsPath: assetsPath
             )
 
             return managedAssets.compactMap { managed in
@@ -201,7 +201,7 @@ private extension NSManagedObjectContext {
         return try fetch(request).first
     }
 
-    func fetchLocalOfflineAssets(conversationName: String?, filePath: String?) throws -> [ManagedLocalAsset] {
+    func fetchLocalOfflineAssets(conversationName: String?, assetsPath: String?) throws -> [ManagedLocalAsset] {
         let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
         let isAvailableOfflinePredicate = NSPredicate(format: "isAvailableOffline == YES")
         let isDownloadedPredicate =
@@ -217,8 +217,8 @@ private extension NSManagedObjectContext {
             predicates.append(NSPredicate(format: "conversationName == %@", conversationName))
         }
 
-        if let filePath {
-            predicates.append(NSPredicate(format: "path CONTAINS %@", filePath))
+        if let assetsPath {
+            predicates.append(NSPredicate(format: "path BEGINSWITH %@", assetsPath))
         }
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)

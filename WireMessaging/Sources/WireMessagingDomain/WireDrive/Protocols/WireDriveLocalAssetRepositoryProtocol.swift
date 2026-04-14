@@ -28,9 +28,10 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     @MainActor
     func asset(nodeID: UUID) throws -> WireDriveLocalAsset?
 
-    /// Returns offline available local assets for a given conversation or for all conversations if nil.
+    /// Returns offline `WireDriveLocalAsset` objects for a given path or conversation.
+    /// If both parameters are `nil`, all offline assets are returned.
     @MainActor
-    func offlineAssets(conversationName: String?, filePath: String?) async throws
+    func offlineAssets(conversationName: String?, assetsPath: String?) async throws
         -> [WireMessagingDomain.WireDriveLocalAsset]
 
     /// Refreshes the local asset metadata for a given `nodeID` and deletes any cached file if necessary.

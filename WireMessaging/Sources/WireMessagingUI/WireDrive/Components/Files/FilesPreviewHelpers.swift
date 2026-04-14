@@ -335,7 +335,7 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
 
     func offlineAssets(
         conversationName: String?,
-        filePath: String?
+        assetsPath: String?
     ) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
         publishers.values.compactMap(\.value).filter(\.isAvailableOffline)
     }

@@ -47,7 +47,7 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
             self?.storeBacking[asset.nodeID] = asset
         }
 
-        store.offlineAssetsConversationNameFilePath_MockMethod = { [weak self] conversationName, _ in
+        store.offlineAssetsConversationNameAssetsPath_MockMethod = { [weak self] conversationName, _ in
             if let conversationName {
                 return self?.storeBacking.map(\.value).filter { $0.conversationName == conversationName } ?? []
             } else {
@@ -63,7 +63,7 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
         try assets.forEach(store.upsertAsset)
 
         // when
-        let availableAssets = try await sut.invoke(conversationName: nil, filePath: nil)
+        let availableAssets = try await sut.invoke(conversationName: nil, assetsPath: nil)
 
         // then
         #expect(availableAssets.count == assets.count)
@@ -82,7 +82,7 @@ final class WireDriveFetchOfflineAvailableAssetsUseCaseTests {
         try assets.forEach(store.upsertAsset)
 
         // when
-        let availableAssets = try await sut.invoke(conversationName: "Test", filePath: nil)
+        let availableAssets = try await sut.invoke(conversationName: "Test", assetsPath: nil)
 
         // then
         #expect(availableAssets.count == 2)

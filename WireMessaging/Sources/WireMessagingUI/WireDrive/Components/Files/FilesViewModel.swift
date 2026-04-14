@@ -671,7 +671,7 @@ package final class FilesViewModel: ObservableObject {
         do {
             let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
                 conversationName: cellName != nil ? conversations.first?.name : nil,
-                filePath: navigationPath.last?.filePath
+                assetsPath: navigationPath.last?.filePath
             )
 
             let items: [FilesViewItem] = offlineAssets.map { asset in
@@ -683,8 +683,9 @@ package final class FilesViewModel: ObservableObject {
                     let baseComponents = basePath.split(separator: "/")
                     let fullComponents = fullPath.split(separator: "/")
 
-                    // no more folders.
-                    if fullComponents.count == baseComponents.count + 1 {
+                    let noMoreFolders = fullComponents.count == baseComponents.count + 1
+                    
+                    if noMoreFolders {
                         return nil
                     }
 
