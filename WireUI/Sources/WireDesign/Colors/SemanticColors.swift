@@ -24,6 +24,7 @@ import UIKit
 ///
 ///  "<usage>.<context/role>.<state?>"
 /// The last part is optional
+@available(*, deprecated, message: "Use ColorScheme instead")
 public enum SemanticColors {
 
     public enum Switch {
@@ -135,7 +136,7 @@ public enum SemanticColors {
         public static let backgroundSeparatorEditView = UIColor(light: .gray60, dark: .gray70)
         public static let backgroundConversationList = UIColor(light: .gray20, dark: .gray100)
         public static let borderConversationListTableViewCell = UIColor(light: .gray40, dark: .gray90)
-        public static let backgroundCollectionCell = UIColor(light: .white, dark: .gray90)
+        public static let backgroundCollectionCell = UIColor(light: .white, dark: .gray90) // TODO: remove
         public static let borderCollectionCell = UIColor(light: .gray30, dark: .gray80)
         public static let backgroundSecurityLevel = UIColor(light: .gray20, dark: .gray95)
         public static let borderSecurityEnabled = UIColor(light: .green500Light, dark: .green500Dark)
@@ -282,7 +283,7 @@ public enum SemanticColors {
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
     }
 
-    public enum ChatBubble {
+    public enum ChatBubble { // TODO: to remove
         public static let backgroundReplyOtherMessage = UIColor(light: .white, dark: .gray95)
         public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray90)
         public static let foregroundOwnMessage = UIColor(light: .white, dark: .white)
