@@ -189,8 +189,34 @@ def fetch_github_license(repo: str, token):
     return licenses
 
 
+def fetch_rubygems_license(name: str) -> list:
+    """Return a CycloneDX licenses list for a Ruby gem via the RubyGems API."""
+    cache_key = f"gem:{name}"
+    if cache_key in _license_cache:
+        return _license_cache[cache_key]
+
+    url = f"https://rubygems.org/api/v1/gems/{name}.json"
+    req = urllib.request.Request(url)
+    req.add_header("Accept", "application/json")
+
+    licenses = []
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            spdx_list = data.get("licenses") or []
+            licenses = [{"license": {"id": spdx}} for spdx in spdx_list if spdx]
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            print(f"  [warn] HTTP {e.code} fetching RubyGems license for {name}", file=sys.stderr)
+    except Exception as e:
+        print(f"  [warn] Could not fetch RubyGems license for {name}: {e}", file=sys.stderr)
+
+    _license_cache[cache_key] = licenses
+    return licenses
+
+
 def enrich_with_licenses(bom: dict) -> int:
-    """Add license info to all components resolvable to a GitHub repo."""
+    """Add license info to all components via GitHub API (Swift/Carthage) or RubyGems API (gems)."""
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
         print("  [warn] GITHUB_TOKEN not set; unauthenticated requests are rate-limited to 60/hour")
@@ -199,14 +225,20 @@ def enrich_with_licenses(bom: dict) -> int:
     for comp in bom.get("components", []):
         if comp.get("licenses"):
             continue
-        repo = extract_github_repo(comp)
-        if not repo:
-            continue
-        licenses = fetch_github_license(repo, token)
+
+        purl = comp.get("purl", "")
+        if purl.startswith("pkg:gem/"):
+            licenses = fetch_rubygems_license(comp.get("name", ""))
+        else:
+            repo = extract_github_repo(comp)
+            if not repo:
+                continue
+            licenses = fetch_github_license(repo, token)
+
         if licenses:
             comp["licenses"] = licenses
             enriched += 1
-        time.sleep(0.05)  # stay well within GitHub API rate limits
+        time.sleep(0.05)
 
     return enriched
 
