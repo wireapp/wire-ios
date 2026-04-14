@@ -27,7 +27,7 @@ on:
         required: true
         default: 'develop'
       use_commit_ref:
-        description: 'Use the commit SHA as the project version in Dependency Track instead of the app version from xcconfig'
+        description: 'Use the commit SHA as the project version'
         type: boolean
         default: true
 
@@ -37,7 +37,7 @@ jobs:
     if: github.event_name != 'create' || github.event.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || '' }}
           token: ${{ secrets.SUBMODULE_PAT }}
