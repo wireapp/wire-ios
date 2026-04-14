@@ -6,20 +6,31 @@ Combines:
   - SPM dependencies from Package.resolved (via trivy)
   - Binary xcframework targets from local Package.swift files
   - Carthage dependencies from Cartfile.resolved
+  - Ruby gems from Gemfile.lock
+
+Enriches all GitHub-hosted components with license information via the GitHub API.
+Set GITHUB_TOKEN in the environment to avoid rate limiting.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 PACKAGE_RESOLVED = ROOT / "wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 CARTFILE_RESOLVED = ROOT / "Cartfile.resolved"
+GEMFILE_LOCK = ROOT / "Gemfile.lock"
 OUTPUT = ROOT / "bom.json"
 
 EXCLUDE_DIRS = {"DerivedData", "Carthage", ".build"}
+
+_license_cache: dict = {}
 
 
 def run_trivy():
@@ -80,6 +91,38 @@ def parse_cartfile_resolved():
     return components
 
 
+def parse_gemfile_lock():
+    """Parse root Gemfile.lock and return CycloneDX components for all resolved gems."""
+    if not GEMFILE_LOCK.exists():
+        return []
+
+    components = []
+    in_specs = False
+    # Gem spec lines are indented with exactly 4 spaces: "    name (version)"
+    gem_pattern = re.compile(r'^    (\S+) \(([^)]+)\)$')
+
+    for line in GEMFILE_LOCK.read_text().splitlines():
+        if line.strip() == "specs:":
+            in_specs = True
+            continue
+        # A non-empty line without leading whitespace signals a new top-level section
+        if in_specs and line and not line.startswith(" "):
+            break
+        if in_specs:
+            m = gem_pattern.match(line)
+            if m:
+                name, version = m.group(1), m.group(2)
+                components.append({
+                    "type": "library",
+                    "name": name,
+                    "version": version,
+                    "purl": f"pkg:gem/{name}@{version}",
+                    "externalReferences": [{"type": "website", "url": f"https://rubygems.org/gems/{name}"}],
+                    "properties": [{"name": "dependency-manager", "value": "bundler"}],
+                })
+    return components
+
+
 def build_binary_component(target):
     component = {
         "type": "library",
@@ -94,6 +137,78 @@ def build_binary_component(target):
     if target["repo"]:
         component["purl"] = f"pkg:github/{target['repo']}@{target['version']}"
     return component
+
+
+def extract_github_repo(comp: dict):
+    """Extract 'owner/repo' from a component's purl or name field, or None."""
+    purl = comp.get("purl", "")
+    # pkg:swift/github.com/owner/repo@version  (SPM packages from trivy)
+    m = re.match(r'pkg:swift/github\.com/([^/@]+/[^@]+)@', purl)
+    if m:
+        return m.group(1)
+    # pkg:github/owner/repo@version  (binary targets, Carthage)
+    m = re.match(r'pkg:github/([^@]+)@', purl)
+    if m:
+        return m.group(1)
+    # name: github.com/owner/repo  (trivy fallback)
+    name = comp.get("name", "")
+    m = re.match(r'github\.com/([^/]+/[^/]+)$', name)
+    if m:
+        return m.group(1)
+    return None
+
+
+def fetch_github_license(repo: str, token):
+    """Return a CycloneDX licenses list for a GitHub repo, using a cache."""
+    if repo in _license_cache:
+        return _license_cache[repo]
+
+    url = f"https://api.github.com/repos/{repo}"
+    req = urllib.request.Request(url)
+    req.add_header("Accept", "application/vnd.github+json")
+    req.add_header("X-GitHub-Api-Version", "2022-11-28")
+    if token:
+        req.add_header("Authorization", f"Bearer {token}")
+
+    licenses = []
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            spdx = (data.get("license") or {}).get("spdx_id")
+            if spdx and spdx != "NOASSERTION":
+                licenses = [{"license": {"id": spdx}}]
+    except urllib.error.HTTPError as e:
+        if e.code == 403:
+            print(f"  [warn] GitHub API rate-limited or forbidden for {repo}", file=sys.stderr)
+        elif e.code != 404:
+            print(f"  [warn] HTTP {e.code} fetching license for {repo}", file=sys.stderr)
+    except Exception as e:
+        print(f"  [warn] Could not fetch license for {repo}: {e}", file=sys.stderr)
+
+    _license_cache[repo] = licenses
+    return licenses
+
+
+def enrich_with_licenses(bom: dict) -> int:
+    """Add license info to all components resolvable to a GitHub repo."""
+    token = os.environ.get("GITHUB_TOKEN")
+    if not token:
+        print("  [warn] GITHUB_TOKEN not set; unauthenticated requests are rate-limited to 60/hour")
+
+    enriched = 0
+    for comp in bom.get("components", []):
+        if comp.get("licenses"):
+            continue
+        repo = extract_github_repo(comp)
+        if not repo:
+            continue
+        licenses = fetch_github_license(repo, token)
+        if licenses:
+            comp["licenses"] = licenses
+            enriched += 1
+        time.sleep(0.05)  # stay well within GitHub API rate limits
+
+    return enriched
 
 
 def merge_into_bom(extra_components):
@@ -140,8 +255,25 @@ def main():
     else:
         print("  Nothing found.")
 
+    print("\nParsing Gemfile.lock...")
+    gems = parse_gemfile_lock()
+    if gems:
+        print(f"  Found {len(gems)} Ruby gem(s)")
+        extra.extend(gems)
+    else:
+        print("  Nothing found.")
+
     print(f"\nMerging {len(extra)} extra component(s) into bom.json...")
     added, total = merge_into_bom(extra)
+
+    print("\nEnriching components with license information from GitHub API...")
+    with open(OUTPUT) as f:
+        bom = json.load(f)
+    enriched = enrich_with_licenses(bom)
+    with open(OUTPUT, "w") as f:
+        json.dump(bom, f, indent=2)
+    print(f"  Enriched {enriched} component(s) with license data")
+
     print(f"\nDone. Added {added} component(s). Total components in SBOM: {total}")
     print(f"Output: {OUTPUT}")
 
