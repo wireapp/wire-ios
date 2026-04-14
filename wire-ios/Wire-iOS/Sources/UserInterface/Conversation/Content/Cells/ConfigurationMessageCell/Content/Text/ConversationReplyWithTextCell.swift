@@ -189,7 +189,9 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         backgroundColor = isSentBySelfUser
             ? ColorTheme.Base.ownBubbleBackground(accentColor)
             : SemanticColors.ChatBubble.backgroundOtherMessage
-        replyContainer.updateStyle(isSentBySelfUser: isSentBySelfUser, accentColor: accentColor)
+        replyContainer.backgroundColor = isSentBySelfUser
+            ? ColorTheme.Base.replyBoxBackground(accentColor)
+            : SemanticColors.ChatBubble.backgroundReplyOtherMessage
         replyContainer.layer.borderWidth = 0
         replyContainer.layer.maskedCorners = [
             .layerMinXMinYCorner, .layerMaxXMinYCorner,

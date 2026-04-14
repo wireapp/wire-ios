@@ -78,24 +78,6 @@ public enum ColorTheme {
             }
         }
 
-        /// Sender name color inside own reply bubble: primary 400.
-        public static func ownBubbleSenderNameColor(_ accentColor: WireAccentColor) -> UIColor {
-            switch accentColor {
-            case .blue:
-                UIColor(light: .blue400Light, dark: .blue200Dark)
-            case .green:
-                UIColor(light: .green400Light, dark: .green200Dark)
-            case .red:
-                UIColor(light: .red400Light, dark: .red200Dark)
-            case .amber:
-                UIColor(light: .amber400Light, dark: .amber200Dark)
-            case .turquoise:
-                UIColor(light: .turquoise400Light, dark: .turquoise200Dark)
-            case .purple:
-                UIColor(light: .purple400Light, dark: .purple200Dark)
-            }
-        }
-
         public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:

@@ -292,16 +292,15 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
         contentAttachmentsView.isHidden = true
 
+        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .blue
         if object.isSentBySelfUser {
             senderComponent.label.attributedText = nil
-            senderComponent.label.textColor = ColorTheme.Base.ownBubbleSenderNameColor(object.senderAccentColor)
-            contentTextView.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
+            senderComponent.label.textColor = ColorTheme.Base.primary(quotedAccentColor)
             timestampLabel.textColor = SemanticColors.ChatBubble.foregroundOwnMessage
             senderComponent.senderName = object.senderName
         } else {
             senderComponent.label.attributedText = nil
             senderComponent.label.textColor = SemanticColors.Label.textDefault
-            contentTextView.textColor = SemanticColors.Label.textDefault
             timestampLabel.textColor = SemanticColors.Label.textCollectionSecondary
             senderComponent.senderName = object.senderName
         }
