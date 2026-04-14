@@ -149,7 +149,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
-        closeButton.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
+        closeButton.accessibilityIdentifier = Locators.Common.close.rawValue
 
         navigationItem.rightBarButtonItem = closeButton
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description

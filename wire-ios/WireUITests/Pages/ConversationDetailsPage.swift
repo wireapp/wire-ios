@@ -34,7 +34,7 @@ class ConversationDetailsPage: PageModel {
     }
 
     var closeConversationDetailsButton: XCUIElement {
-        app.buttons[Locators.ConversationDetailsPage.close.rawValue]
+        app.buttons[Locators.Common.close.rawValue]
     }
 
     var moreOptionsConversationDetailsButton: XCUIElement {

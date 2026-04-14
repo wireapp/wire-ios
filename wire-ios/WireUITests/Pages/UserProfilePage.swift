@@ -47,7 +47,7 @@ class UserProfilePage: PageModel {
     }
 
     var closeButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.ConversationDetailsPage.close.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.Common.close.rawValue].firstMatch
     }
 
     var addAccountOrTeamButton: XCUIElement {

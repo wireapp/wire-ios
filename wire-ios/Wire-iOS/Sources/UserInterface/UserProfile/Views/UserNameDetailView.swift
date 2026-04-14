@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)
@@ -75,7 +76,7 @@ final class UserNameDetailViewModel: NSObject {
 
     var firstAccessibilityIdentifier: String? {
         if handleText != nil {
-            return "username"
+            return Locators.ConnectionRequestsPage.username.rawValue
         } else if correlationText != nil {
             return "correlation"
         }

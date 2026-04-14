@@ -34,7 +34,7 @@ class UserDetailsPage: PageModel {
     }
 
     var closeProfileButton: XCUIElement {
-        app.buttons[Locators.UserDetailsPage.close.rawValue].firstMatch
+        app.buttons[Locators.Common.close.rawValue].firstMatch
     }
 
     var connectButton: XCUIElement {

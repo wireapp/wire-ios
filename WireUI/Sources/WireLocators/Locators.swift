@@ -153,7 +153,6 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
-        case close
 
     }
 
@@ -271,7 +270,6 @@ public enum Locators {
 
     public enum UserDetailsPage: String {
 
-        case close
         case connectLeftButton
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
@@ -292,11 +290,6 @@ public enum Locators {
     public enum WebViewPage: String {
 
         case resetPassword = "Reset password"
-    }
-
-    public enum FileVersioningPage: AutoPrefixedEnum {
-
-        case closeButton
     }
 
     public enum ShareExtensionPage: String {
@@ -337,5 +330,9 @@ public enum Locators {
             case cancelButton
             case removeFilterButton
         }
+    }
+
+    public enum Common: AutoPrefixedEnum {
+        case close
     }
 }
