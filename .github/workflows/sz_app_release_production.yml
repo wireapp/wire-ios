@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - 'wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved'
+      - 'Gemfile.lock'
+      - 'Cartfile.resolved'
+      - 'scripts/Package.swift'
+      - 'WireAVS/Package.swift'
+      - 'WireCoreCrypto/Package.swift'
   workflow_dispatch:
     inputs:
       ref:
