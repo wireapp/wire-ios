@@ -17,6 +17,7 @@
 //
 
 import Foundation
+// import WireLogging // TODO: find solution for dependency
 
 // sourcery: AutoMockable
 protocol ExpiringActivityPerformerProtocol: Sendable {
@@ -27,6 +28,8 @@ protocol ExpiringActivityPerformerProtocol: Sendable {
     )
 
 }
+
+// private let logger = WireLogger.backgroundActivity
 
 extension ExpiringActivityPerformerProtocol {
 
@@ -45,10 +48,14 @@ extension ExpiringActivityPerformerProtocol {
         task: Task<some Sendable, some Error>
     ) {
 
+        // logger.debug("Setting up expiring activity for task cancellation [reason: \(reason)]")
+
         let semaphore = DispatchSemaphore(value: 0)
         performExpiringActivity(reason: reason) { isExpiring in
 
             if isExpiring {
+
+                // logger.debug("Activity is expiring, cancelling task and signaling semaphore … [reason: \(reason)]")
 
                 // System is revoking background time — cancel the task.
                 task.cancel()
@@ -59,14 +66,26 @@ extension ExpiringActivityPerformerProtocol {
 
             } else {
 
+                // logger.debug("Starting expiring activity, waiting on semaphore … [reason: \(reason)]")
+
                 // System granted time. Block this callback until the task finishes,
                 // so the system knows we're still doing work.
                 Task.detached {
+
+                    // logger.debug("Awaiting task … [reason: \(reason)]")
+
                     // We only need to wait for the task to complete; the result is irrelevant.
                     _ = try? await task.value
+
+                    // logger.debug("… task ended, signaling semaphore … [reason: \(reason)]")
+
                     semaphore.signal()
+
                 }
+
                 semaphore.wait()
+
+                // logger.debug("Waiting on semaphore finished [reason: \(reason)]")
 
             }
         }
