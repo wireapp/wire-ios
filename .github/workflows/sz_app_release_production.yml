@@ -42,5 +42,5 @@ jobs:
           apikey: ${{ secrets.DEPENDENCYTRACKKEY }}
           projectname: wire-ios
           projectversion: ${{ steps.read_version.outputs.project_version }}
-          bomfilename: test-wrong-bom.json
+          bomfilename: bom.json
           autocreate: true
