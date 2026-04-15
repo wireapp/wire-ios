@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireLogging
 
 protocol CallInfoViewControllerDelegate: AnyObject {
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction)
@@ -166,7 +167,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     private func updateState() {
-        Log.calling.debug("updating info controller with state: \(configuration)")
+        WireLogger.calling.debug("updating info controller with state: \(configuration)")
         actionsView.update(with: configuration)
         statusViewController.configuration = configuration
         accessoryViewController.configuration = configuration

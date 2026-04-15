@@ -20,8 +20,9 @@ import Foundation
 import WireDataModel
 import WireFoundation
 import WireReusableUIComponents
+import WireLogging
 
-private let log = ZMSLog(tag: "Mentions")
+private let logger = WireLogger.ui
 
 struct TextMarker<A> {
 
@@ -132,7 +133,7 @@ extension NSMutableAttributedString {
             let mentionRange = mutableString.range(of: textObject.token)
 
             guard mentionRange.location != NSNotFound else {
-                log.error("Cannot process mention: \(textObject)")
+                logger.error("Cannot process mention: \(textObject)")
                 return
             }
 
