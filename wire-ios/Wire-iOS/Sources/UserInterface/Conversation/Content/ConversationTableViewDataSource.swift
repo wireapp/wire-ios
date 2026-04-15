@@ -778,56 +778,6 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestButtonStateUpdateFor message: any ZMConversationMessage
-    ) -> Bool {
-        guard let compositeMessage = message as? ConversationCompositeMessage,
-              let compositeData = compositeMessage.compositeMessageData,
-              let nonce = message.nonce else {
-            l.critical("return false 0")
-            return false
-        }
-
-        guard let sectionIndex = currentSections.firstIndex(where: { $0.model == nonce }) else {
-            l.critical("return false 1")
-            return false
-        }
-
-        let section = currentSections[sectionIndex]
-
-        let displayedButtons: [ConversationButtonMessageCellDescription] = section.elements.compactMap {
-            $0.instance as? ConversationButtonMessageCellDescription
-        }
-
-        let currentButtonData: [(title: String?, state: ButtonMessageState, isExpired: Bool)] =
-            compositeData.items.compactMap { item in
-                guard case let .button(data) = item else { return nil }
-                return (data.title, data.state, data.isExpired)
-            }
-
-        guard displayedButtons.count == currentButtonData.count else {
-            l.critical("return false 2")
-            return false
-        }
-
-        for (displayed, current) in zip(displayedButtons, currentButtonData.reversed()) {
-            let config = displayed.configuration
-            if config.text != current.title
-                || config.state != current.state
-                || config.hasError != current.isExpired {
-                if config.text != current.title { l.critical("config.text != current.title: \(config.text ?? "") != \(current.title ?? "")") }
-                if config.state != current.state { l.critical("config.state != current.state: \("\(config.state)") != \("\(current.state)")") }
-                if config.hasError != current.isExpired { l.critical("config.hasError != current.isExpired: \(config.hasError) != \(current.isExpired)") }
-                l.critical("return false 3")
-                return false
-            }
-        }
-
-      l.critical("return true 4")
-        return true
-    }
-
-    func messageSectionController(
-        _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
         guard let nonce = message.nonce else { return }
