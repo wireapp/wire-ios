@@ -23,13 +23,12 @@ on:
         type: string
         required: false
         default: ''
-     notify:
+      notify:
         type: string
         required: true
         default: 'failure' # values: always | failure | never
 
-        
-     secrets:
+    secrets:
       ZENKINS_USERNAME:
         required: true
       DD_API_KEY:
