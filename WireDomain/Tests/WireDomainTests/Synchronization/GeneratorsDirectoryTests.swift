@@ -25,16 +25,6 @@ import WireDomainSupport
 @Suite("GeneratorsDirectory", .timeLimit(.minutes(1)))
 struct GeneratorsDirectoryTests {
 
-    // MARK: - Helpers
-
-    /// Awaits the first time `block` is executed (used to reliably observe async `.start()` calls triggered from a
-    /// `Task { }`).
-    private func waitForCall(_ installHandler: (@escaping () -> Void) -> Void) async {
-        await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
-            installHandler { c.resume() }
-        }
-    }
-
     let subject = PassthroughSubject<SyncState, Never>()
     let base = MockGeneratorProtocol()
     let live = MockLiveGeneratorProtocol()
@@ -48,8 +38,6 @@ struct GeneratorsDirectoryTests {
         incremental.start_MockMethod = {}
         incremental.stop_MockMethod = {}
     }
-
-    // MARK: - Tests
 
     @Test("idle / initialSyncing stops all generators", arguments: [
         SyncState.idle, .initialSyncing(.pullLastEventID),
@@ -65,13 +53,21 @@ struct GeneratorsDirectoryTests {
         )
         sut.observeSyncState()
 
-        async let incrementalStoped: Void = waitForCall { resume in
-            incremental.stop_MockMethod = { resume() }
-        }
+        let (baseStream, baseCont) = AsyncStream<Void>.makeStream()
+        let (liveStream, liveCont) = AsyncStream<Void>.makeStream()
+        let (incrementalStream, incrementalCont) = AsyncStream<Void>.makeStream()
+        base.stop_MockMethod = { baseCont.yield() }
+        live.stop_MockMethod = { liveCont.yield() }
+        incremental.stop_MockMethod = { incrementalCont.yield() }
 
         // WHEN
         subject.send(state)
-        _ = await incrementalStoped
+        async let baseStopped = baseStream.waitForCall()
+        async let liveStopped = liveStream.waitForCall()
+        async let incrementalStopped = incrementalStream.waitForCall()
+        #expect(await baseStopped)
+        #expect(await liveStopped)
+        #expect(await incrementalStopped)
 
         // THEN
         #expect(base.stop_Invocations.count == 1)
@@ -86,21 +82,17 @@ struct GeneratorsDirectoryTests {
             generators: [live, incremental],
             syncStatePublisher: subject.eraseToAnyPublisher()
         )
-
         sut.observeSyncState()
 
-        async let incrementalStarted: Void = waitForCall { resume in
-            incremental.start_MockMethod = { resume() }
-        }
-
-        // Ensure live does NOT start on this state
+        let (incrementalStream, incrementalCont) = AsyncStream<Void>.makeStream()
+        incremental.start_MockMethod = { incrementalCont.yield() }
         live.start_MockMethod = {
             Issue.record("Live generator should not start during incrementalSyncing(.createPushChannel)")
         }
 
         // WHEN
         subject.send(.incrementalSyncing(.createPushChannel))
-        _ = await incrementalStarted
+        #expect(await incrementalStream.waitForCall())
 
         // THEN
         #expect(incremental.start_Invocations.count == 1)
@@ -116,17 +108,15 @@ struct GeneratorsDirectoryTests {
         )
         sut.observeSyncState()
 
-        async let liveStarted: Void = waitForCall { resume in
-            live.start_MockMethod = { resume() }
-        }
-
+        let (liveStream, liveCont) = AsyncStream<Void>.makeStream()
+        live.start_MockMethod = { liveCont.yield() }
         incremental.start_MockMethod = {
             Issue.record("Incremental generator should not start during liveSyncing(.ongoing)")
         }
 
         // WHEN
         subject.send(.liveSyncing(.ongoing))
-        _ = await liveStarted
+        #expect(await liveStream.waitForCall())
 
         // THEN
         #expect(live.start_Invocations.count == 1)
@@ -145,21 +135,43 @@ struct GeneratorsDirectoryTests {
         )
         sut.observeSyncState()
 
-        async let baseStopped: Void = waitForCall { resume in
-            base.stop_MockMethod = { resume() }
-        }
-
-        async let liveStopped: Void = waitForCall { resume in
-            live.stop_MockMethod = { resume() }
-        }
+        let (baseStream, baseCont) = AsyncStream<Void>.makeStream()
+        let (liveStream, liveCont) = AsyncStream<Void>.makeStream()
+        base.stop_MockMethod = { baseCont.yield() }
+        live.stop_MockMethod = { liveCont.yield() }
 
         // WHEN
         subject.send(state)
-        _ = await baseStopped
-        _ = await liveStopped
+        async let baseStopped = baseStream.waitForCall()
+        async let liveStopped = liveStream.waitForCall()
+        #expect(await baseStopped)
+        #expect(await liveStopped)
 
         // THEN
         #expect(base.stop_Invocations.count == 1)
         #expect(live.stop_Invocations.count == 1)
+    }
+}
+
+// MARK: - Helpers
+
+private extension AsyncStream where Element == Void {
+
+    /// Waits for the stream to yield its first element within `timeout`.
+    /// Returns `false` if the timeout elapses first, so callers can use `#expect`
+    /// to get a failure attributed to the right source location.
+    func waitForCall(timeout: Duration = .seconds(2)) async -> Bool {
+        await withTaskGroup(of: Bool.self) { group in
+            group.addTask {
+                var iter = self.makeAsyncIterator()
+                return await iter.next() != nil
+            }
+            group.addTask {
+                try? await Task.sleep(for: timeout)
+                return false
+            }
+            defer { group.cancelAll() }
+            return await group.next() ?? false
+        }
     }
 }
