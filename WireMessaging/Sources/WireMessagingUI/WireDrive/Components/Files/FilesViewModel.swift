@@ -668,6 +668,10 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private func loadOfflineFiles() async {
+        guard !isRecycleBin else {
+            return state = .received(items: [])
+        }
+
         do {
             let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
                 conversationName: cellName != nil ? conversations.first?.name : nil,

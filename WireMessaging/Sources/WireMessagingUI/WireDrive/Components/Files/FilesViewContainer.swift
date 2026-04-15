@@ -115,7 +115,7 @@ package struct FilesViewContainer: View {
             useCases: .init(
                 fetchNodes: WireDriveFetchNodesPageUseCase(
                     configuration: .conversationFileView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
+                        root: path.last.map { .path($0.filePath) } ?? .path(cellName),
                     ),
                     repository: nodesRepository
                 ),
