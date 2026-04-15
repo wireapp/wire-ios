@@ -27,7 +27,7 @@ final class BlacklistTests: WireUITestCase {
     }
 
     @MainActor
-    func test_blacklistAfterLogin__TC_9483() async throws {
+    func testBlacklistAfterLogin__TC_9483() async throws {
         let user = try await userHelper.createPersonalUser()
         _ = try app.loginUser(email: user.email, password: user.password)
 
