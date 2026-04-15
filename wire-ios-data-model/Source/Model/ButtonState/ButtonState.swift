@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import os
-private let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "adsklfj")
 
 final class ButtonState: ZMManagedObject {
     @NSManaged private(set) var stateValue: Int16
@@ -48,9 +46,7 @@ final class ButtonState: ZMManagedObject {
             ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
-            guard newValue.rawValue != stateValue else {
-                return l.critical("guard!")
-            }
+            guard newValue.rawValue != stateValue else { return }
             stateValue = newValue.rawValue
         }
     }

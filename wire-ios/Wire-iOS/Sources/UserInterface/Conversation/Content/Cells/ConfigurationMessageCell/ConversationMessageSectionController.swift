@@ -31,12 +31,10 @@ struct ConversationMessageContext: Equatable {
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
-
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     )
-
 }
 
 extension ZMConversationMessage {

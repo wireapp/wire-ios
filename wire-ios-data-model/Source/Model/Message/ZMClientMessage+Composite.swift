@@ -18,8 +18,6 @@
 
 import Foundation
 import GenericMessageProtocol
-import os
-private let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "slkdfj")
 
 // MARK: - ConversationCompositeMessage
 
