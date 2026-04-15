@@ -45,10 +45,10 @@ func withExpiringActivity(
 
 // MARK: - Throwing
 
-public func withExpiringActivity(
+public func withExpiringActivity<T>(
     reason: String,
-    block: @escaping @Sendable () async throws -> Void
-) async throws {
+    block: @escaping @Sendable () async throws -> T
+) async throws -> T where T: Sendable {
     try await withExpiringActivity(
         performer: ExpiringActivityProcessInfoWrapper(),
         reason: reason,
@@ -56,14 +56,14 @@ public func withExpiringActivity(
     )
 }
 
-func withExpiringActivity(
+func withExpiringActivity<T>(
     performer: some ExpiringActivityPerformerProtocol,
     reason: String,
-    block: @escaping @Sendable () async throws -> Void
-) async throws {
+    block: @escaping @Sendable () async throws -> T
+) async throws -> T where T: Sendable {
     let task = Task(operation: block)
     performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    try await withTaskCancellationHandler {
+    return try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {
         task.cancel()
