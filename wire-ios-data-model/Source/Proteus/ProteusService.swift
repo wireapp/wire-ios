@@ -112,7 +112,8 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("checking if session exists")
 
         do {
-            return try await coreCrypto.extendedTransaction { try await $0.proteusSessionExists(sessionId: id.rawValue) }
+            return try await coreCrypto
+                .extendedTransaction { try await $0.proteusSessionExists(sessionId: id.rawValue) }
         } catch {
             logger.error("failed to check if session exists \(String(describing: error))")
             return false
@@ -292,7 +293,8 @@ public final class ProteusService: ProteusServiceInterface {
     public func lastPrekey() async throws -> String {
         logger.info("getting last resort prekey")
         do {
-            return try await coreCrypto.extendedTransaction { try await $0.proteusLastResortPrekey().base64EncodedString() }
+            return try await coreCrypto
+                .extendedTransaction { try await $0.proteusLastResortPrekey().base64EncodedString() }
         } catch {
             logger.error("failed to get last resort prekey: \(String(describing: error))")
             throw PrekeyError.failedToGetLastPrekey
@@ -363,7 +365,8 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("fetching remote fingerprint")
 
         do {
-            return try await coreCrypto.extendedTransaction { try await $0.proteusFingerprintRemote(sessionId: id.rawValue) }
+            return try await coreCrypto
+                .extendedTransaction { try await $0.proteusFingerprintRemote(sessionId: id.rawValue) }
         } catch {
             logger.error("failed to fetch remote fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetRemoteFingerprint
@@ -378,7 +381,8 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            return try await coreCrypto.extendedTransaction { try $0.proteusFingerprintPrekeybundle(prekey: prekeyData) }
+            return try await coreCrypto
+                .extendedTransaction { try $0.proteusFingerprintPrekeybundle(prekey: prekeyData) }
         } catch {
             logger.error("failed to get fingerprint from prekey: \(String(describing: error))")
             throw FingerprintError.failedToGetFingerprintFromPrekey
