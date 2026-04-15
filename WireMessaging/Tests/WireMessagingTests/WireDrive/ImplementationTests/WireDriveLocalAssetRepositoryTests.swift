@@ -35,6 +35,11 @@ final class WireDriveLocalAssetRepositoryTests {
     private var storeBacking: [UUID: WireDriveLocalAsset] = [:]
     private let sut: WireDriveLocalAssetRepository
     private var cancellables = Set<AnyCancellable>()
+    private let wireDriveConversation = WireDriveConversation(
+        id: UUID().uuidString,
+        name: "Conversation 1",
+        participants: []
+    )
 
     init() {
         self.sut = WireDriveLocalAssetRepository(
@@ -87,11 +92,7 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
-            conversation: WireDriveConversation(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: wireDriveConversation,
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
@@ -105,19 +106,21 @@ final class WireDriveLocalAssetRepositoryTests {
         _ = try await sut.refreshAssetMetadata(nodeID: nodeID)
 
         // then the store is updated with the new metadata
+        let expectedAsset = WireDriveLocalAsset(
+            nodeID: nodeID,
+            eTag: "abc",
+            path: "path/file.png",
+            contentType: "image/png",
+            size: 1234,
+            conversationName: "Conversation 1",
+            ownerName: "User 1",
+            modified: nil,
+            isAvailableOffline: false,
+            downloadState: .pending
+        )
+
         #expect(
-            try store.asset(nodeID: nodeID) == WireDriveLocalAsset(
-                nodeID: nodeID,
-                eTag: "abc",
-                path: "path/file.png",
-                contentType: "image/png",
-                size: 1234,
-                conversationName: "Conversation 1",
-                ownerName: "User 1",
-                modified: nil,
-                isAvailableOffline: false,
-                downloadState: .pending
-            )
+            try store.asset(nodeID: nodeID) == expectedAsset
         )
 
         // then no files are deleted
@@ -126,18 +129,7 @@ final class WireDriveLocalAssetRepositoryTests {
         // then one asset change is observed
         try #require(store.upsertAsset_Invocations.count == 1)
         #expect(
-            store.upsertAsset_Invocations.first == WireDriveLocalAsset(
-                nodeID: nodeID,
-                eTag: "abc",
-                path: "path/file.png",
-                contentType: "image/png",
-                size: 1234,
-                conversationName: "Conversation 1",
-                ownerName: "User 1",
-                modified: nil,
-                isAvailableOffline: false,
-                downloadState: .pending,
-            )
+            store.upsertAsset_Invocations.first == expectedAsset
         )
     }
 
@@ -213,11 +205,7 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
-            conversation: WireDriveConversation(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: wireDriveConversation,
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
@@ -316,11 +304,7 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
-            conversation: WireDriveConversation(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: wireDriveConversation,
             path: "path/fileWithoutExtension",
             size: 1234,
             eTag: "abc",
@@ -343,8 +327,8 @@ final class WireDriveLocalAssetRepositoryTests {
         try await sut.downloadAsset(nodeID: nodeID, isAvailableOffline: false)
 
         // then
-        #expect(
-            try store.asset(nodeID: nodeID) == WireDriveLocalAsset(
+        func expectedAsset(downloadState: WireDriveLocalAsset.DownloadState) -> WireDriveLocalAsset {
+            WireDriveLocalAsset(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/fileWithoutExtension",
@@ -354,60 +338,22 @@ final class WireDriveLocalAssetRepositoryTests {
                 ownerName: "User 1",
                 modified: nil,
                 isAvailableOffline: false,
-                downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
+                downloadState: downloadState,
             )
+        }
+
+        #expect(
+            try store
+                .asset(nodeID: nodeID) ==
+                expectedAsset(downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension"))
         )
 
         #expect(
             store.upsertAsset_Invocations == [
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/fileWithoutExtension",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .pending,
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/fileWithoutExtension",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloading(progress: 0.5)
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/fileWithoutExtension",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloading(progress: 1.0)
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/fileWithoutExtension",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
-                )
+                expectedAsset(downloadState: .pending),
+                expectedAsset(downloadState: .downloading(progress: 0.5)),
+                expectedAsset(downloadState: .downloading(progress: 1)),
+                expectedAsset(downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension"))
             ]
         )
     }
@@ -419,11 +365,7 @@ final class WireDriveLocalAssetRepositoryTests {
 
         let node = WireDriveNode.fixture(
             uuid: nodeID,
-            conversation: WireDriveConversation(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: wireDriveConversation,
             path: "path/file.png",
             size: 1234,
             eTag: "abc",
@@ -467,73 +409,33 @@ final class WireDriveLocalAssetRepositoryTests {
         // then
         #expect(assets.count == 3)
 
+        func expectedAsset(downloadState: WireDriveLocalAsset.DownloadState) -> WireDriveLocalAsset {
+            WireDriveLocalAsset(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                conversationName: "Conversation 1",
+                ownerName: "User 1",
+                modified: nil,
+                isAvailableOffline: false,
+                downloadState: downloadState,
+            )
+        }
+
         #expect(
             try assets.allSatisfy { asset in
-                asset == WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/file.png",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
-                )
+                asset == expectedAsset(downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png"))
             }
         )
 
         #expect(
             store.upsertAsset_Invocations == [
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/file.png",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .pending,
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/file.png",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloading(progress: 0.5)
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/file.png",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloading(progress: 1.0)
-                ),
-                WireDriveLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "abc",
-                    path: "path/file.png",
-                    contentType: "image/png",
-                    size: 1234,
-                    conversationName: "Conversation 1",
-                    ownerName: "User 1",
-                    modified: nil,
-                    isAvailableOffline: false,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
-                )
+                expectedAsset(downloadState: .pending),
+                expectedAsset(downloadState: .downloading(progress: 0.5)),
+                expectedAsset(downloadState: .downloading(progress: 1)),
+                expectedAsset(downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png"))
             ]
         )
     }
