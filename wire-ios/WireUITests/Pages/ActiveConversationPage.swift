@@ -117,6 +117,10 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var userLeftSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -181,5 +185,16 @@ class ActiveConversationPage: PageModel {
         canvas.tap()
         sendCanvasButton.tap()
         return self
+    }
+
+    func waitToUploadToFinishAndSend() {
+        XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
+        sendButton.waitAndTap()
+    }
+
+    func openSharedDrive() throws -> SharedDriveFilesPage {
+        conversationTitleButton.waitAndTap()
+        sharedDriveButton.tap()
+        return try SharedDriveFilesPage()
     }
 }

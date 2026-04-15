@@ -22,7 +22,11 @@ import XCTest
 class ConversationDetailsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        addParticipantsButton
+        navigationTitleView
+    }
+
+    var navigationTitleView: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.title.rawValue].firstMatch
     }
 
     var addParticipantsButton: XCUIElement {
@@ -43,6 +47,11 @@ class ConversationDetailsPage: PageModel {
 
     var clearContentOptionConversationDetailsButton: XCUIElement {
         app.buttons.matching(identifier: Locators.ConversationDetailsActions.clearContent.rawValue).element(boundBy: 0)
+    }
+
+    var leaveConversationOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.leaveConversation.rawValue)
+            .element(boundBy: 0)
     }
 
     var userCells: XCUIElementQuery {
@@ -76,6 +85,11 @@ class ConversationDetailsPage: PageModel {
         return self
     }
 
+    func leaveOptionsConversationDetails() throws -> Self {
+        leaveConversationOptionConversationDetailsButton.tap()
+        return self
+    }
+
     func appParticipantToConversation() throws -> SelectParticipantsPage {
         addParticipantsButton.tap()
         return try SelectParticipantsPage()
@@ -88,8 +102,28 @@ class ConversationDetailsPage: PageModel {
         return try ConversationDetailsPage()
     }
 
+    @discardableResult
+    func leaveConversation() throws -> ConversationDetailsPage {
+        leaveConversationButtonOnBottomSheet.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
+    @discardableResult
+    func leaveAndClearConversation() throws -> ConversationDetailsPage {
+        leaveAndClearConversationButtonOnBottomSheet.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
     var clearButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue].firstMatch
+    }
+
+    var leaveConversationButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.leaveButtonOnBottomSheet.rawValue].firstMatch
+    }
+
+    var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
+        app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
     }
 
 }
