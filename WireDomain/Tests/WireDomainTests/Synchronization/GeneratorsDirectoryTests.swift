@@ -163,8 +163,8 @@ private extension AsyncStream where Element == Void {
     func waitForCall(timeout: Duration = .seconds(2)) async -> Bool {
         await withTaskGroup(of: Bool.self) { group in
             group.addTask {
-                var iter = self.makeAsyncIterator()
-                return await iter.next() != nil
+                var iteration = self.makeAsyncIterator()
+                return await iteration.next() != nil
             }
             group.addTask {
                 try? await Task.sleep(for: timeout)
