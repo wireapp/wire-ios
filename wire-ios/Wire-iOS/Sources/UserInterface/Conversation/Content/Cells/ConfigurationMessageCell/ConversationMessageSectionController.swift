@@ -32,6 +32,19 @@ struct ConversationMessageContext: Equatable {
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
 
+    /// Attempts to update only the button states of a message without performing a full refresh.
+    ///
+    /// Called when a change notification indicates that only button states may have changed.
+    /// The delegate should check whether the currently displayed cells already reflect the
+    /// correct state and, if so, update just the button visuals in place.
+    ///
+    /// - Returns: `true` if the button states were successfully updated in place and no further
+    ///   action is needed; `false` if the message requires a full refresh.
+    func messageSectionController(
+        _ controller: ConversationMessageSectionController,
+        didRequestButtonStateUpdateFor message: ZMConversationMessage
+    ) -> Bool
+
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
@@ -668,10 +681,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
             // WPB-24283: prevent flickering of composite messages
-            // When only button states changed, skip this refresh path entirely.
-            // The NSFetchedResultsController will pick up the change via controllerDidChangeContent,
-            // so a second refresh here would cause a duplicate reload and visible flickering.
-            return
+            // Skip redundant updates if only a button state change is reported and it actually didn't change.
+            if sectionDelegate?.messageSectionController(self, didRequestButtonStateUpdateFor: message) == true {
+                return
+            }
         }
 
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
