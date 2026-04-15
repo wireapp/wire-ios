@@ -29,14 +29,14 @@ import Foundation
 
 public enum Locators {
 
-    public enum WelcomePage: String {
+    public enum WelcomePage: AutoPrefixedEnum {
 
         case emailTextField
         case nextButton
         case onPremInfoButton
     }
 
-    public enum LoginPage: String {
+    public enum LoginPage: AutoPrefixedEnum {
 
         case emailTextField
         case passwordSecureTextField
@@ -65,6 +65,8 @@ public enum Locators {
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
+        case leaveButtonOnBottomSheet
+        case leaveAndClearButtonOnBottomSheet
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
@@ -77,10 +79,13 @@ public enum Locators {
         case filterByOneOnOneConversation = "Show all one on one conversations"
         case textFilteredByFavourites = "Filtered by Favorites"
         case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case userRemovedSystemMessage
         case connectionRequestsCell
+        case unreadMessageCount
+        case useLeftSystemMessage
     }
 
-    public enum SettingsPage: String {
+    public enum SettingsPage: AutoPrefixedEnum {
 
         case accountCell
         case optionsCell
@@ -120,6 +125,8 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case sharedFileLabel = "FileTransferTopLabel"
+        case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
         case canvasSendButton
@@ -135,7 +142,7 @@ public enum Locators {
         case browse = "Browse"
     }
 
-    public enum CreatingBackupPage: String {
+    public enum CreatingBackupPage: AutoPrefixedEnum {
 
         case creatingBackupPageLabel
         case progressView
@@ -143,15 +150,15 @@ public enum Locators {
         case exportBackupButton
     }
 
-    public enum ConnectionRequestsPage: String {
+    public enum ConnectionRequestsPage: AutoPrefixedEnum {
 
         case connectRequestButton
         case ignoreRequestButton
         case username
     }
 
-    public enum ConversationDetailsPage: String {
-
+    public enum ConversationDetailsPage: AutoPrefixedEnum {
+        case title
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
@@ -159,12 +166,13 @@ public enum Locators {
 
     }
 
-    public enum ConversationDetailsActions: String {
+    public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
+        case leaveConversation
     }
 
-    public enum UserProfilePage: String {
+    public enum UserProfilePage: AutoPrefixedEnum {
 
         case name
         case qrCodeButton
@@ -176,7 +184,7 @@ public enum Locators {
         case userProfilePicture
     }
 
-    public enum CreateGroupPage: String {
+    public enum CreateGroupPage: AutoPrefixedEnum {
 
         case groupNameField
         case newGroupNextButton
@@ -199,7 +207,7 @@ public enum Locators {
         case acceptTermsOfUse = "Accept"
     }
 
-    public enum EmailUpdatePage: String {
+    public enum EmailUpdatePage: AutoPrefixedEnum {
 
         case emailField
         case newGroupNextButton
@@ -234,7 +242,7 @@ public enum Locators {
         case saveToFiles = "Save to Files"
     }
 
-    public enum SelectParticipantsPage: String {
+    public enum SelectParticipantsPage: AutoPrefixedEnum {
 
         case done
         case skip
@@ -246,7 +254,7 @@ public enum Locators {
         case proceedButton = "Proceed"
     }
 
-    public enum SetPasscodePage: String {
+    public enum SetPasscodePage: AutoPrefixedEnum {
 
         case passcodeField
         case createPasscodeButton
@@ -263,13 +271,13 @@ public enum Locators {
 
     }
 
-    public enum SetUsernamePage: String {
+    public enum SetUsernamePage: AutoPrefixedEnum {
 
         case usernameTextField
         case confirmUsernameButton
     }
 
-    public enum TeamSetupStepsPage: String {
+    public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
         case confirmUsernameButton
@@ -287,7 +295,7 @@ public enum Locators {
         case removeFromConversation = "Remove From Conversation…"
     }
 
-    public enum VerificationCodePage: String {
+    public enum VerificationCodePage: AutoPrefixedEnum {
 
         case verificationCodeTextField
         case confirmButton
@@ -301,11 +309,6 @@ public enum Locators {
     public enum WebViewPage: String {
 
         case resetPassword = "Reset password"
-    }
-
-    public enum FileVersioningPage: String {
-
-        case closeButton
     }
 
     public enum ShareExtensionPage: String {
@@ -347,6 +350,14 @@ public enum Locators {
             case removeFilterButton
         }
 
+        public enum FilesFilteringPage: String {
+            case removeAllFiltersButton
+
+            public static func filter(_ filter: String) -> String {
+                "filter.\(filter)"
+            }
+        }
+
         public enum ShareLinkPasswordPage: String {
             case togglePassword
             case sharePassword
@@ -368,11 +379,23 @@ public enum Locators {
             }
         }
 
+        public enum FileMenu: String {
+            case deleteToRecycleBin
+
+            public var identifier: String {
+                "fileMenu.\(rawValue)"
+            }
+        }
+
         public enum FilesPage: String {
             case close
             case createFolder
             case createFile
             case recycleBin
+            case sharedDrivePageHeader = "Shared Drive"
+            case deleteOnBottomSheet = "Delete"
+            case moreOptions = "More"
+            case recycleBinPageheader = "Recycle Bin"
         }
 
         public enum FilesInfoPage: String {
@@ -401,6 +424,44 @@ public enum Locators {
         public enum FileRenamePage: String {
             case cancel
             case save
+        }
+
+        public enum FileVersioningPage: AutoPrefixedEnum {
+
+            case closeButton
+            case restoreButton
+        }
+
+        public enum TagsEditPage: String {
+
+            case closeButton
+            case saveButton
+            case textInputField
+
+            public static func currentTag(_ tag: String) -> String {
+                "currentTag.\(tag)"
+            }
+
+            public static func suggestedTag(_ tag: String) -> String {
+                "suggestedTag.\(tag)"
+            }
+        }
+
+        public enum FilesSortingPage: String {
+            case menuButton
+
+            public static func sortOrder(_ order: String) -> String {
+                "sortOrder.\(order)"
+            }
+
+            public static func sortKey(_ key: String) -> String {
+                "sortKey.\(key)"
+            }
+        }
+
+        public enum FilesItemPage: String {
+            case confirmDeleteButton
+            case confirmRestoreButton
         }
     }
 }

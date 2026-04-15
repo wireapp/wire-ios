@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct FilesOfflineBarView: View {
     @ScaledMetric private var scale: CGFloat = 1

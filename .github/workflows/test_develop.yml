@@ -13,6 +13,7 @@ concurrency:
 jobs:
   trigger_tests:
     strategy:
+      fail-fast: false # prevents a branch to cancel other branches on failure
       matrix:
         branch: [develop, release/cycle-4.16, release/cycle-4.17]  # List other branches here
     uses: ./.github/workflows/_reusable_run_tests.yml

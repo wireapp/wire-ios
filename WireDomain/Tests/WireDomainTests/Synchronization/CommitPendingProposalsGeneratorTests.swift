@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 @testable import WireDomain
 
+@Suite("CommitPendingProposalsGenerator Tests", .timeLimit(.minutes(1)))
 class CommitPendingProposalsGeneratorTests {
 
     var sut: CommitPendingProposalsGenerator!
@@ -61,7 +62,7 @@ class CommitPendingProposalsGeneratorTests {
     }
 
     @Test(
-        "It generates an item when a conversation with commitPendingProposalDate set is found", .timeLimit(.minutes(1)),
+        "It generates an item when a conversation with commitPendingProposalDate set is found",
         arguments: [Date(), Date().addingTimeInterval(0.5), Date().addingTimeInterval(1)]
     )
     func startGeneratesItem(date: Date) async throws {
@@ -82,7 +83,11 @@ class CommitPendingProposalsGeneratorTests {
         await sut.start()
 
         // THEN — properly await the async delivery rather than checking immediately
-        let firstItem = await iterator.next()
+        let firstItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
         #expect(firstItem?.conversationID == conversationID)
 
         // WHEN
@@ -93,7 +98,11 @@ class CommitPendingProposalsGeneratorTests {
         )
 
         // THEN — await the second delivery (handles future-dated proposals naturally)
-        let secondItem = await iterator.next()
+        let secondItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
         #expect(secondItem?.conversationID == newConversationID)
     }
 

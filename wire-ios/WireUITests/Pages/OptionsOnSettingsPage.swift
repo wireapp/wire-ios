@@ -38,17 +38,6 @@ class OptionsOnSettingsPage: PageModel {
         return try SetPasscodePage()
     }
 
-    @discardableResult
-    func backgroundAndResume(
-        app: XCUIApplication,
-        forDelay duration: TimeInterval
-    ) async throws -> OptionsOnSettingsPage {
-        await XCUIDevice.shared.press(.home)
-        try await Task.sleep(for: .seconds(duration))
-        await app.activate()
-        return self
-    }
-
     func enterPasscode(_ passcode: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch

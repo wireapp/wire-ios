@@ -52,13 +52,11 @@ public final class Assembly {
         authenticationManager: authenticationManager
     )
 
-    public lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
-        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
-    }()
+    public lazy var apiNetworkService = NetworkService(
+        baseURL: backendEnvironment.url,
+        urlSessionConfiguration: urlSessionConfigurationFactory.makeRESTAPISessionConfiguration(),
+        serverTrustValidator: serverTrustValidator
+    )
 
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,

@@ -54,12 +54,6 @@ final class ConversationAvatarView: UIView {
         case let .connect(users: users):
             configureForOneOnOne(users)
         case let .conversation(conversation: conversation) where conversation.conversationType == .group:
-            let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
-            if let user = users.first, user.isAppOrBot {
-                configureForOneOnOne(users)
-                break
-            }
-
             configureForGroup(conversation)
         case let .conversation(conversation: conversation) where conversation.conversationType == .oneOnOne:
             let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }

@@ -23,23 +23,20 @@ import WireNetwork
 extension NetworkService {
 
     static func make(backendEnvironment: BackendEnvironment, minTLSVersion: TLSVersion) -> NetworkService {
-        let service = NetworkService(
-            baseURL: backendEnvironment.url,
-            serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: backendEnvironment.pinnedKeys,
-                currentDateProvider: .system
-            )
-        )
 
         let config = URLSessionConfigurationFactory(
             minTLSVersion: minTLSVersion,
             proxySettings: backendEnvironment.proxySettings
         ).makeRESTAPISessionConfiguration()
 
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-
-        return service
+        return NetworkService(
+            baseURL: backendEnvironment.url,
+            urlSessionConfiguration: config,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: backendEnvironment.pinnedKeys,
+                currentDateProvider: .system
+            )
+        )
     }
 
 }

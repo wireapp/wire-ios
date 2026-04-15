@@ -122,12 +122,18 @@ final class PullAllConversationsSyncTests: XCTestCase {
             )
         })
 
-        // We don't care about the response in this test.
-        api.getConversationsFor_MockValue = .init(
-            found: [],
-            notFound: [],
-            failed: []
-        )
+        // The mock's Invocations array is not thread-safe: concurrent tasks race to append
+        // to it, causing lost writes. Use an actor-based collector instead.
+        actor InvocationCollector {
+            var invocations: [[WireNetwork.QualifiedID]] = []
+            func record(_ ids: [WireNetwork.QualifiedID]) { invocations.append(ids) }
+        }
+        let collector = InvocationCollector()
+
+        api.getConversationsFor_MockMethod = { ids in
+            await collector.record(ids)
+            return .init(found: [], notFound: [], failed: [])
+        }
 
         // When
         try await sut.pull()
@@ -135,7 +141,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
 
-        let invocations = api.getConversationsFor_Invocations
+        let invocations = await collector.invocations
         try XCTAssertCount(invocations, count: 3)
 
         // The invocations are not always in the same order, so assert with contains.

@@ -93,7 +93,8 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         let detail = ServiceDetailViewController(
             user: app,
             actionType: .openConversation,
-            userSession: userSession
+            userSession: userSession,
+            usersAPI: userSession.clientSessionComponent?.usersAPI
         ) { [weak self] result in
             guard let self else { return }
 
