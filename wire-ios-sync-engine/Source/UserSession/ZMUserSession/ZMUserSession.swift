@@ -402,7 +402,7 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var checkBlacklistWorker: CheckBlacklistWorker = .init(
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker? = .init(
         isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
         onIsBuildBlacklisted: { [weak self] in
             guard let self else { return }
@@ -692,7 +692,7 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
-        checkBlacklistWorker.start()
+        checkBlacklistWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -781,6 +781,7 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+        checkBlacklistWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
