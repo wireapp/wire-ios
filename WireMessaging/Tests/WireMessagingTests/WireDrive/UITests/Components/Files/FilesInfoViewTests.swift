@@ -17,106 +17,92 @@
 //
 
 import SwiftUI
+import Testing
 import WireTestingPackage
-import XCTest
 
 @testable import WireMessagingUI
 
-final class FilesInfoViewTests: XCTestCase {
+struct FilesInfoViewTests {
 
-    private var snapshotHelper: SnapshotHelper!
+    private let snapshotHelper: SnapshotHelper = .init()
+        .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
 
+    typealias ScopeArgument = (name: String, scope: FilesInfoView.Scope)
+    typealias ScopeAndKindArgument = (name: String, scope: FilesInfoView.Scope, kind: FilesInfoView.Kind)
+
+    /// Testing the empty states in different scopes (areas/features of the app).
+    @Test(arguments: [ScopeArgument]([
+        (name: "all_conv_files", scope: .files(conversation: .all)),
+        (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
+        (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
+        (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
+        (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
+        (name: "search", scope: .search),
+        (name: "move_to_folder", scope: .moveToFolder)
+    ]))
     @MainActor
-    override func setUp() async throws {
-        snapshotHelper = .init()
-            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    func testEmpty(_ argument: ScopeArgument) async {
+        let view = FilesInfoView(scope: argument.scope, kind: .empty)
+            .frame(width: 375)
+            .fixedSize(horizontal: false, vertical: true)
+
+        snapshotHelper.verify(matching: view, named: argument.name)
     }
 
+    /// Testing the error states of unkown errors in different scopes (areas/features of the app).
+    @Test(arguments: [ScopeArgument]([
+        (name: "all_conv_files", scope: .files(conversation: .all)),
+        (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
+        (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
+        (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
+        (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
+        (name: "search", scope: .search),
+        (name: "move_to_folder", scope: .moveToFolder),
+        (name: "edit_file", scope: .editFile)
+    ]))
     @MainActor
-    override func tearDown() async throws {
-        snapshotHelper = nil
+    func testErrorUnknown(_ argument: ScopeArgument) async {
+        let view = FilesInfoView(scope: argument.scope, kind: .error(isConnectionError: false))
+            .frame(width: 375)
+            .fixedSize(horizontal: false, vertical: true)
+
+        snapshotHelper.verify(matching: view, named: argument.name)
     }
 
+    /// Testing the error states of "no internet" errors in different scopes (areas/features of the app).
+    @Test(arguments: [ScopeArgument]([
+        (name: "all_conv_files", scope: .files(conversation: .all)),
+        (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
+        (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
+        (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
+        (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
+        (name: "search", scope: .search),
+        (name: "move_to_folder", scope: .moveToFolder),
+        (name: "edit_file", scope: .editFile)
+    ]))
     @MainActor
-    func testEmpty() async {
-        let configs: [(name: String, scope: FilesInfoView.Scope)] = [
-            (name: "all_conv_files", scope: .files(conversation: .all)),
-            (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
-            (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
-            (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
-            (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
-            (name: "search", scope: .search),
-            (name: "move_to_folder", scope: .moveToFolder)
-        ]
+    func testErrorNoInternet(_ argument: ScopeArgument) async {
+        let view = FilesInfoView(scope: argument.scope, kind: .error(isConnectionError: true))
+            .frame(width: 375)
+            .fixedSize(horizontal: false, vertical: true)
 
-        for config in configs {
-            let view = FilesInfoView(scope: config.scope, kind: .empty)
-                .frame(width: 375)
-                .fixedSize(horizontal: false, vertical: true)
-
-            snapshotHelper.verify(matching: view, named: config.name)
-        }
+        snapshotHelper.verify(matching: view, named: argument.name)
     }
 
+    /// Testing differnet compositions of `FilesInfoView` (with buttons, links or just text) with different sizes and
+    /// color themes.
+    @Test(arguments: [ScopeAndKindArgument]([
+        (name: "files_empty", scope: .files(conversation: .all), kind: .empty), // this has a link
+        (name: "search_empty", scope: .search, kind: .empty), // this has just text
+        (name: "search_error", scope: .search, kind: .error(isConnectionError: true)) // this has a button
+    ]))
     @MainActor
-    func testErrorUnknown() async {
-        let configs: [(name: String, scope: FilesInfoView.Scope)] = [
-            (name: "all_conv_files", scope: .files(conversation: .all)),
-            (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
-            (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
-            (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
-            (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
-            (name: "search", scope: .search),
-            (name: "move_to_folder", scope: .moveToFolder),
-            (name: "edit_file", scope: .editFile)
-        ]
+    func testVariants(_ argument: ScopeAndKindArgument) async {
+        let view = FilesInfoView(scope: argument.scope, kind: argument.kind)
+            .frame(width: 375)
+            .fixedSize(horizontal: false, vertical: true)
 
-        for config in configs {
-            let view = FilesInfoView(scope: config.scope, kind: .error(isConnectionError: false))
-                .frame(width: 375)
-                .fixedSize(horizontal: false, vertical: true)
-
-            snapshotHelper.verify(matching: view, named: config.name)
-        }
-    }
-
-    @MainActor
-    func testErrorNoInternet() async {
-        let configs: [(name: String, scope: FilesInfoView.Scope)] = [
-            (name: "all_conv_files", scope: .files(conversation: .all)),
-            (name: "one_conv_files_root", scope: .files(conversation: .one, isFolder: false)),
-            (name: "one_conv_files_folder", scope: .files(conversation: .one, isFolder: true)),
-            (name: "recycle_bin_root", scope: .recycleBin(isFolder: false)),
-            (name: "recycle_bin_folder", scope: .recycleBin(isFolder: true)),
-            (name: "search", scope: .search),
-            (name: "move_to_folder", scope: .moveToFolder),
-            (name: "edit_file", scope: .editFile)
-        ]
-
-        for config in configs {
-            let view = FilesInfoView(scope: config.scope, kind: .error(isConnectionError: true))
-                .frame(width: 375)
-                .fixedSize(horizontal: false, vertical: true)
-
-            snapshotHelper.verify(matching: view, named: config.name)
-        }
-    }
-
-    @MainActor
-    func testVariants() async {
-        let configs: [(name: String, scope: FilesInfoView.Scope, kind: FilesInfoView.Kind)] = [
-            (name: "files_empty", scope: .files(conversation: .all), kind: .empty), // this has a link
-            (name: "search_empty", scope: .search, kind: .empty), // this has just text
-            (name: "search_error", scope: .search, kind: .error(isConnectionError: true)) // this has a button
-        ]
-
-        for config in configs {
-            let view = FilesInfoView(scope: config.scope, kind: config.kind)
-                .frame(width: 375)
-                .fixedSize(horizontal: false, vertical: true)
-
-            snapshotHelper.verify(matching: view, named: config.name, variants: .colorSchemes)
-            snapshotHelper.verify(matching: view, named: config.name, variants: .sizes(.smallestLargeLargest))
-        }
+        snapshotHelper.verify(matching: view, named: argument.name, variants: .colorSchemes)
+        snapshotHelper.verify(matching: view, named: argument.name, variants: .sizes(.smallestLargeLargest))
     }
 }
