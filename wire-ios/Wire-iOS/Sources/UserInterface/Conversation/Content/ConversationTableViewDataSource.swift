@@ -660,7 +660,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
-        tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
+        tableView.reload(using: stagedChangeset, with: .none) { currentSections = $0 }
     }
 
 }

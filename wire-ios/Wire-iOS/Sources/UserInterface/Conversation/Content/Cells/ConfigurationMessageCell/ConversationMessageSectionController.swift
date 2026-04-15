@@ -666,15 +666,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
-            // WPB-24283: prevent flickering of composite messages
-            // When only button states changed, skip this refresh path.
-            // The NSFetchedResultsController will handle the update via
-            // controllerDidChangeContent, which is already debounced.
-            // Firing both paths causes duplicate reloads and visible flickering.
-            return
-        }
-
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
