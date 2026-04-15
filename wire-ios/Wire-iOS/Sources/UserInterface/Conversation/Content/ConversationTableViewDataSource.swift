@@ -775,6 +775,13 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
+        didRequestButtonStateUpdateFor message: any ZMConversationMessage
+    ) -> Bool {
+        fatalError() // TODO: finish
+    }
+
+    func messageSectionController(
+        _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
         guard let nonce = message.nonce else { return }
