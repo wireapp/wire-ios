@@ -16,5 +16,12 @@ manual:
   - source: https://github.com/undefinedlabs/Thrift-Swift # No license file in repository.
     name: Thrift-Swift
     file: scripts/ManualLicenses/Thrift-Swift.LICENSE.txt
+  - source: https://github.com/wireapp/wire-avs # Binary SPM target, not parseable by LicensePlist.
+    name: avs
+    version: "${AVS_VERSION}"
+    file: scripts/ManualLicenses/avs.LICENSE.txt
+  - source: https://github.com/wireapp/core-crypto # Binary SPM target, not parseable by LicensePlist.
+    name: core-crypto
+    file: scripts/ManualLicenses/core-crypto.LICENSE.txt
 exclude:
   - owner: DataDog # not shipped in production
