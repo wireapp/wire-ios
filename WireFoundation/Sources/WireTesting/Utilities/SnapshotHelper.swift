@@ -222,6 +222,28 @@ public struct SnapshotHelper {
             case smallestLargeLargest
             case smallestNormalLarge
             case smallestNormalLargest
+
+            var dynamicTypeSizes: [DynamicTypeSize] {
+                let defaultSize: DynamicTypeSize = .large
+                let smallest: DynamicTypeSize = .xSmall
+                let large: DynamicTypeSize = .xxxLarge
+                let largest: DynamicTypeSize = .accessibility5
+
+                return switch self {
+                case .all:
+                    DynamicTypeSize.allCases
+                case .smallestLarge:
+                    [smallest, large]
+                case .smallestLargest:
+                    [smallest, largest]
+                case .smallestLargeLargest:
+                    [smallest, large, largest]
+                case .smallestNormalLarge:
+                    [smallest, defaultSize, large]
+                case .smallestNormalLargest:
+                    [smallest, defaultSize, largest]
+                }
+            }
         }
     }
 
@@ -262,24 +284,7 @@ public struct SnapshotHelper {
                 line: line
             )
         case let .sizes(set):
-            let defaultSize: DynamicTypeSize = .large
-
-            let sizes: [DynamicTypeSize] = switch set {
-            case .all:
-                DynamicTypeSize.allCases
-            case .smallestLarge:
-                [.xSmall, .xxxLarge]
-            case .smallestLargest:
-                [.xSmall, .accessibility5]
-            case .smallestLargeLargest:
-                [.xSmall, .xxxLarge, .accessibility5]
-            case .smallestNormalLarge:
-                [.xSmall, defaultSize, .xxxLarge]
-            case .smallestNormalLargest:
-                [.xSmall, defaultSize, .accessibility5]
-            }
-
-            for size in sizes {
+            for size in set.dynamicTypeSizes {
                 verify(
                     matching: view.dynamicTypeSize(size),
                     named: makeName(name, variant: "\(size)"),
