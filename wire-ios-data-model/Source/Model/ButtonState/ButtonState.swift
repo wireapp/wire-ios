@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import os
+let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "adsklfj")
 
 final class ButtonState: ZMManagedObject {
     @NSManaged private(set) var stateValue: Int16
@@ -46,6 +48,9 @@ final class ButtonState: ZMManagedObject {
             ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
+            guard newValue.rawValue != stateValue else {
+                return l.critical("guard!")
+            }
             stateValue = newValue.rawValue
         }
     }
@@ -60,16 +65,18 @@ public enum ButtonMessageState: Int16 {
 extension Set where Element: ButtonState {
     func confirmButtonState(buttonID: String?) {
         for button in self {
-            button.state = if let buttonID, button.remoteIdentifier == buttonID {
+            let newState: ButtonMessageState = if let buttonID, button.remoteIdentifier == buttonID {
                 .confirmed
             } else {
                 .unselected
             }
+            guard button.state != newState else { continue }
+            button.state = newState
         }
     }
 
     func resetExpired() {
-        for button in self {
+        for button in self where button.isExpired {
             button.isExpired = false
         }
     }
