@@ -19,6 +19,7 @@
 import Foundation
 import UserNotifications
 import WireCommonComponents
+import WireCoreCrypto
 import WireDomain
 import WireFoundation
 import WireLogging
@@ -36,6 +37,7 @@ final class NotificationService: UNNotificationServiceExtension {
         super.init()
         DeveloperOverrides.storage = .shared()
         WireAnalytics.setup(for: .notificationServiceExtension)
+        CoreCrypto.registerLogger()
     }
 
     // MARK: - Methods
