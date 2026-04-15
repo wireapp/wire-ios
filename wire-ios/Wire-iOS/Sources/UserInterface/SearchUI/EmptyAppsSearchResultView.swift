@@ -25,7 +25,7 @@ final class EmptyAppsSearchResultView: UIView {
 
     required init(canManageTeam: Bool) {
         self.canManageTeam = canManageTeam
-        super.init()
+        super.init(frame: .zero)
         setup()
     }
 

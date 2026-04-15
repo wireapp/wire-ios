@@ -39,9 +39,40 @@ final class EmptyAppsSearchResultViewSnapshotTests: XCTestCase {
 
     // MARK: Snapshot Tests
 
-    func testAppearance() {
+    func testAdminAppearance() {
         // GIVEN
-        let sut = EmptyAppsSearchResultView()
+        let sut = EmptyAppsSearchResultView(canManageTeam: true)
+        sut.frame = CGRect(
+            origin: .zero,
+            size: CGSize(width: 320, height: 480)
+        )
+        sut.backgroundColor = .systemBackground
+
+        // WHEN & THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+    }
+
+    func testNonAdminAppearance() {
+        // GIVEN
+        let sut = EmptyAppsSearchResultView(canManageTeam: false)
         sut.frame = CGRect(
             origin: .zero,
             size: CGSize(width: 320, height: 480)
