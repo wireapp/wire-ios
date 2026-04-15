@@ -21,6 +21,7 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 import WireSystem
+import WireLogging
 
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"
@@ -37,7 +38,7 @@ enum MediaManagerSound: String {
     case someoneLeavesVoiceChannelSound = "talk_later"
 }
 
-private let zmLog = ZMSLog(tag: "AVSMediaManager CustomSounds")
+private let logger = WireLogger.avs
 
 extension AVSMediaManager {
     private static var MediaManagerSoundConfig: [AnyHashable: Any]?
@@ -69,7 +70,7 @@ extension AVSMediaManager {
             let soundConfig = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any]
 
             if soundConfig == nil {
-                zmLog.error("Couldn't load sound config file: \(path)")
+                logger.error("CustomSounds: Couldn't load sound config file: \(path)")
                 return
             }
 

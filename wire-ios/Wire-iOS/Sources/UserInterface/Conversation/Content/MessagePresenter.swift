@@ -22,8 +22,9 @@ import PassKit
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
+import WireLogging
 
-private let zmLog = ZMSLog(tag: "MessagePresenter")
+private let logger = WireLogger.ui
 
 final class MessagePresenter: NSObject {
     enum MessagePresenterError: Error {
@@ -77,7 +78,7 @@ final class MessagePresenter: NSObject {
             let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
             assertionFailure(errorMessage)
 
-            zmLog.error(errorMessage)
+            logger.error(errorMessage)
             userSession.enqueue {
                 message.fileMessageData?.requestFileDownload()
             }
@@ -94,7 +95,7 @@ final class MessagePresenter: NSObject {
         do {
             try FileManager.default.linkItem(atPath: path, toPath: tmpPath)
         } catch {
-            zmLog.error("Cannot symlink \(path) to \(tmpPath): \(error)")
+            logger.error("Cannot symlink \(path) to \(tmpPath): \(error)")
             tmpPath = path
         }
 
@@ -113,7 +114,7 @@ final class MessagePresenter: NSObject {
         do {
             try FileManager.default.removeItem(at: url)
         } catch let linkDeleteError {
-            zmLog.error("Cannot delete temporary link \(url): \(linkDeleteError)")
+            logger.error("Cannot delete temporary link \(url): \(linkDeleteError)")
         }
     }
 

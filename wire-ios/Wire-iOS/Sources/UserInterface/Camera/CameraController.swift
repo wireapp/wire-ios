@@ -19,8 +19,9 @@
 import AVFoundation
 import UIKit
 import WireSystem
+import WireLogging
 
-private let zmLog = ZMSLog(tag: "UI")
+private let logger = WireLogger.ui
 
 final class CameraController {
 
@@ -108,7 +109,7 @@ final class CameraController {
             canSwitchInputs = true
 
         default:
-            zmLog.error("CameraController could not add any inputs.")
+            logger.error("CameraController could not add any inputs.")
             setupResult = .failed
             return
         }
@@ -118,7 +119,7 @@ final class CameraController {
         // SETUP OUTPUTS
 
         guard session.canAddOutput(photoOutput) else {
-            zmLog.error("CameraController could not add photo capture output.")
+            logger.error("CameraController could not add photo capture output.")
             setupResult = .failed
             return
         }
@@ -264,7 +265,7 @@ final class CameraController {
             defer { completion() }
 
             if let error {
-                zmLog
+                logger
                     .error(
                         "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
                     )
