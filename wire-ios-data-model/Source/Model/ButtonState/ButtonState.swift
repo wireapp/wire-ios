@@ -66,7 +66,6 @@ extension Set where Element: ButtonState {
             } else {
                 .unselected
             }
-            guard button.state != newState else { continue }
             button.state = newState
         }
     }
