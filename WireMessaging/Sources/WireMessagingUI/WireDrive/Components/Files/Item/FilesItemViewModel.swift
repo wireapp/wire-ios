@@ -353,7 +353,7 @@ final class FilesItemViewModel: ObservableObject {
                 actions.insert(.restore)
                 actions.insert(.deletePermanently)
             } else {
-                if item.kind == .file {
+                if item.kind == .file, isEditable {
                     actions.insert(.showVersionHistory)
                 }
                 actions.insert(.moveToFolder)

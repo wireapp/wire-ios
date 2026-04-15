@@ -77,6 +77,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug(
+            "Resolving 1-1 conversation for userID",
+            attributes: [.senderUserId: userID.safeForLoggingDescription]
+        )
         var action: OneOnOneConversationResolution = .noAction
 
         let user = try await userLocalStore.fetchUser(
@@ -346,13 +350,19 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         between selfUser: ZMUser,
         and user: ZMUser
     ) async {
+
         await context.perform {
-            WireLogger.conversation.debug("No common protocols found")
+            WireLogger.conversation.debug(
+                "No common protocols found",
+                attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+            )
 
             guard let conversation = user.oneOnOneConversation else {
-                return WireLogger.conversation.warn(
-                    "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
+                WireLogger.conversation.warn(
+                    "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id",
+                    attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
                 )
+                return
             }
 
             if !conversation.isForcedReadOnly {
@@ -363,6 +373,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 }
 
                 conversation.isForcedReadOnly = true
+                if user.isAccountDeleted {
+                    conversation.mlsStatus = .invalid
+                }
             }
         }
     }
@@ -376,6 +389,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             let otherUserProtocols = otherUser.supportedProtocols.isEmpty ?
                 [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
+            if otherUser.isAccountDeleted {
+                return nil
+            }
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 
             if commonProtocols.contains(.mls) {

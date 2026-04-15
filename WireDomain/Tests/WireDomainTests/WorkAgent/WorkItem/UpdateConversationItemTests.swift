@@ -22,6 +22,7 @@ import WireDomainSupport
 import WireNetwork
 @testable import WireDomain
 
+@Suite("UpdateConversationItem Tests", .timeLimit(.minutes(1)))
 struct UpdateConversationItemTests {
 
     let sut: UpdateConversationItem

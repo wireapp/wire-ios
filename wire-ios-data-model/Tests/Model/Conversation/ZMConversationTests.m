@@ -2140,7 +2140,7 @@
 
 #pragma mark - Archiving
 
-- (void)testThatLeavingAConversationMarksItAsArchived
+- (void)testThatLeavingAConversationDoesNotMarkItAsArchived
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2155,7 +2155,7 @@
     WaitForAllGroupsToBeEmpty(0.5f);
     
     // then
-    XCTAssertTrue(conversation.isArchived);
+    XCTAssertFalse(conversation.isArchived);
 }
 
 - (void)testThatAppendingATextMessageInAnArchivedConversationUnarchivesIt
@@ -2811,7 +2811,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // when
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfUser:[ZMUser selfUserInContext:self.uiMOC] selfTeam:nil];
     NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
 
     // then
@@ -2834,7 +2834,7 @@
     XCTAssertNil(conversation.clearedTimeStamp);
     
     // when
-    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfUser:[ZMUser selfUserInContext:self.uiMOC] selfTeam:nil];
     NSPredicate *sut = [factory predicateForConversationsIncludingArchived];
 
     // then
