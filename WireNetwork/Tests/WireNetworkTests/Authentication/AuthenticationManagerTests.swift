@@ -38,12 +38,12 @@ final class AuthenticationManagerTests: XCTestCase {
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         let networkService = NetworkService(
             baseURL: backendURL,
+            urlSessionConfiguration: .mock,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: mockDateProvider
             )
         )
-        networkService.configure(with: .mockURLSession())
 
         sut = AuthenticationManager(
             clientID: Scaffolding.clientID,

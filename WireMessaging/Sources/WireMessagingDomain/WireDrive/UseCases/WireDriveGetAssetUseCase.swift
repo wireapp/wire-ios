@@ -55,6 +55,15 @@ package struct WireDriveGetAssetUseCase {
         return fileURL
     }
 
+    package func downloadState(nodeID: UUID) async throws -> WireDriveLocalAsset.DownloadState? {
+        let asset = try await localAssetRepository.asset(nodeID: nodeID)
+        return asset?.downloadState
+    }
+
+    package func cancelDownload(nodeID: UUID) async {
+        await localAssetRepository.cancelDownload(nodeID: nodeID)
+    }
+
     // MARK: - Private helpers
 
     /// Returns the cached asset URL if it exists and matches the provided eTag.

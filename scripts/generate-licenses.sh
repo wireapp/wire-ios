@@ -63,7 +63,13 @@ cp -R "$PACKAGES_DIR" "$TMP_DIR"
 cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$TMP_DIR/checkouts"
 
 
+# Extract versions from Package.swift files (single source of truth)
+AVS_VERSION=$(grep -o 'wire-avs/releases/download/[^/]*' "$REPO_ROOT/WireAVS/Package.swift" | cut -d/ -f4)
+
 # Generate Licenses
 echo ""
 echo "ℹ️  Generate Licenses"
-"$LICENSEPLIST" --package-sources-path "$TMP_DIR" --config-path ".license_plist.yml"
+TMP_CONFIG="$REPO_ROOT/.license_plist_resolved.yml"
+AVS_VERSION="$AVS_VERSION" envsubst < ".license_plist.yml" > "$TMP_CONFIG"
+"$LICENSEPLIST" --package-sources-path "$TMP_DIR" --config-path "$TMP_CONFIG"
+rm -f "$TMP_CONFIG"

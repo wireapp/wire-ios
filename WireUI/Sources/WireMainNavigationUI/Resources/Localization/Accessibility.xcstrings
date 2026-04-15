@@ -54,7 +54,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Archivia"
+            "value" : "Archivio"
           }
         },
         "ja" : {
@@ -551,7 +551,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Allegati"
+            "value" : "File"
           }
         },
         "ja" : {

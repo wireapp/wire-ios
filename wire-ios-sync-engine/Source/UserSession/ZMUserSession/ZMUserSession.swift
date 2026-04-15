@@ -1237,6 +1237,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishInitialSync() {
+        // initialSync includes resolving all 1:1 so mark it as done here
+        didAlreadyResolveAllOneOnOnes = true
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
@@ -1621,6 +1623,9 @@ extension ZMUserSession {
             AppVersionMigration_4_12_2(
                 coreDataStack: coreDataStack,
                 coreCryptoProvider: coreCryptoProvider
+            ),
+            AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
             )
         ]
 

@@ -23,6 +23,7 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireUtilities
+import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 protocol SyncAgentProtocol {
@@ -256,6 +257,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     // swallow error from retrier and start resume
                     resume()
                 } catch IncrementalSync.Failure.databaseLocked {
+                    WireLogger.sync.warn("aborted incremental sync: database is locked")
                     syncStateSubject.send(.suspended)
                     // ignore error and don't retry, the sync will be resumed once the app is unlocked
                 } catch {

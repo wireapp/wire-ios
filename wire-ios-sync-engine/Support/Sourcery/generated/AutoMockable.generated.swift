@@ -806,21 +806,6 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(accountID, environment, error, userSessionCanBeTornDown)
     }
 
-    // MARK: - sessionManagerWillOpenAccount
-
-    public var sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_Invocations: [(account: Account, selectedAccount: Account?, userSessionCanBeTornDown: () -> Void)] = []
-    public var sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_MockMethod: ((Account, Account?, @escaping () -> Void) -> Void)?
-
-    public func sessionManagerWillOpenAccount(_ account: Account, from selectedAccount: Account?, userSessionCanBeTornDown: @escaping () -> Void) {
-        sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_Invocations.append((account: account, selectedAccount: selectedAccount, userSessionCanBeTornDown: userSessionCanBeTornDown))
-
-        guard let mock = sessionManagerWillOpenAccountFromUserSessionCanBeTornDown_MockMethod else {
-            fatalError("no mock for `sessionManagerWillOpenAccountFromUserSessionCanBeTornDown`")
-        }
-
-        mock(account, selectedAccount, userSessionCanBeTornDown)
-    }
-
     // MARK: - sessionManagerWillMigrateAccount
 
     public var sessionManagerWillMigrateAccountUserSessionCanBeTornDown_Invocations: [() -> Void] = []
@@ -999,21 +984,6 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         }
 
         mock(error, retryHandler)
-    }
-
-    // MARK: - sessionManagerDidChangeActiveUserSession
-
-    public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
-    public var sessionManagerDidChangeActiveUserSessionUserSession_MockMethod: ((ZMUserSession) -> Void)?
-
-    public func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
-        sessionManagerDidChangeActiveUserSessionUserSession_Invocations.append(userSession)
-
-        guard let mock = sessionManagerDidChangeActiveUserSessionUserSession_MockMethod else {
-            fatalError("no mock for `sessionManagerDidChangeActiveUserSessionUserSession`")
-        }
-
-        mock(userSession)
     }
 
     // MARK: - sessionManagerDidReportLockChange

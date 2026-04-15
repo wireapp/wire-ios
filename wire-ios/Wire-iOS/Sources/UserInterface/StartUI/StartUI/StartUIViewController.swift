@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -40,8 +39,9 @@ final class StartUIViewController: UIViewController {
     weak var delegate: StartUIDelegate?
 
     let searchController = UISearchController(searchResultsController: nil)
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
-    let groupSelector = SearchGroupSelector()
+    let groupSelector: SearchGroupSelector
 
     lazy var conversationTypePicker: UIViewController = {
         let canCreateChannels = userSession.channelsFeature.canCreateChannels(
@@ -50,8 +50,8 @@ final class StartUIViewController: UIViewController {
 
         let isTeamUser = userSession.selfUser.hasTeam
 
-        let availableConversationTypes: Set<MultiParticipantConversationType> = if areChannelsSupported,
-                                                                                   canCreateChannels {
+        let availableConversationTypes: Set<MultiParticipantConversationType>
+        availableConversationTypes = if areChannelsSupported, canCreateChannels {
             [.channel, .group]
         } else {
             [.group]
@@ -108,10 +108,6 @@ final class StartUIViewController: UIViewController {
 
     let backgroundColor = SemanticColors.View.backgroundDefault
 
-    var searchResults: SearchResultsViewController {
-        searchResultsViewController
-    }
-
     /// Whether there is a switch control for either listing/searching for users/people or apps/bots.
     ///
     /// The people/apps switch control will only be visible if
@@ -119,7 +115,10 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is Proteus the team has been using bots
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
+        guard
+            SearchGroup.all(for: userSession.defaultProtocol).count > 1,
+            userSession.selfUser.canSeeServices
+        else { return false }
 
         switch userSession.defaultProtocol {
         case .mls:
@@ -170,6 +169,7 @@ final class StartUIViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
         )
+        self.groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -215,12 +215,9 @@ final class StartUIViewController: UIViewController {
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
         )
-
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
-        searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         setupSearchController()
 
@@ -229,13 +226,13 @@ final class StartUIViewController: UIViewController {
         }
         view.addSubview(conversationTypePicker.view)
 
-        searchResults.delegate = self
-        addToSelf(searchResults)
-        searchResults.searchResultsView.emptyResultView = emptyResultView
-        searchResults.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
+        searchResultsViewController.delegate = self
+        addToSelf(searchResultsViewController)
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+        searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         createConstraints()
-        searchResults.searchContactList()
+        searchResultsViewController.searchContactList()
 
         view.accessibilityViewIsModal = true
     }
@@ -247,16 +244,21 @@ final class StartUIViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     private func configGroupSelector() {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if group == .services {
+            if group == .bots || group == .apps {
                 self?.searchController.searchBar.text = ""
             }
-            self?.searchResults.searchGroup = group
+            self?.searchResultsViewController.searchGroup = group
             self?.performSearch()
         }
     }
@@ -321,19 +323,26 @@ final class StartUIViewController: UIViewController {
 
         if groupSelector.group == .people {
             if searchString.isEmpty {
-                searchResults.mode = .list
-                searchResults.searchContactList()
+                searchResultsViewController.mode = .list
+                searchResultsViewController.searchContactList()
             } else {
-                searchResults.mode = .search
-                searchResults.searchForUsers(withQuery: searchString)
+                searchResultsViewController.mode = .search
+                searchResultsViewController.searchForUsers(withQuery: searchString)
             }
+        } else if groupSelector.group == .apps {
+            searchResultsViewController.searchForApps(withQuery: searchString)
         } else {
-            searchResults.searchForServices(withQuery: searchString)
+            searchResultsViewController.searchForBots(withQuery: searchString)
         }
         emptyResultView.updateStatus(
-            searchingForServices: groupSelector.group == .services,
+            searchingForBots: [.apps, .bots].contains(groupSelector.group),
             hasFilter: !searchString.isEmpty
         )
+        if groupSelector.group == .apps, searchString.isEmpty {
+            showEmptyAppsSearchResultView()
+        } else {
+            hideEmptyAppsSearchResultView()
+        }
     }
 
     // MARK: - Navigation methods
@@ -417,6 +426,15 @@ final class StartUIViewController: UIViewController {
                 selfProfileViewController.triggerCreateTeamFlow()
             }
         }
+    }
+
+    private func showEmptyAppsSearchResultView() {
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView()
+        searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
+    }
+
+    private func hideEmptyAppsSearchResultView() {
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
     }
 
 }

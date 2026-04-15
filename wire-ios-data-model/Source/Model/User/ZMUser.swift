@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireData
 import WireFoundation
+import WireLogging
 import WireSystem
 import WireTransport
 import WireUtilities
@@ -200,6 +202,12 @@ extension ZMUser: UserType {
 
     @NSManaged public var providerIdentifier: String?
     @NSManaged public var serviceIdentifier: String?
+
+    // MARK: - App
+
+    /// The app info associated with this user, if the user is an app.
+
+    @NSManaged public var appInfo: AppInfo?
 
 }
 
@@ -524,8 +532,15 @@ public extension ZMUser {
         }
 
         conversations.forEach { conversation in
+            WireLogger.conversation.debug("inserting message for user removal")
             conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+
+            if conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                conversation.mlsStatus = .invalid
+            }
+            conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
+
     }
 
 }

@@ -28,22 +28,20 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         let sharedContainerURL = sharedContainerURL
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
-            self?.tearDownBackgroundSession(for: account.userIdentifier) {
-                self?.activeUserSession = nil
-                Task {
-                    do {
-                        try await CoreDataStack.migrateLocalStorage(
-                            accountIdentifier: account.userIdentifier,
-                            applicationContainer: sharedContainerURL,
-                            migration: onReady
-                        )
-
-                    } catch {
-                        WireLogger.ear.error("failed to migrate account: \(error)")
-                    }
-
-                    _ = await self?.loadSession(for: account)
+            Task {
+                await self?.tearDownBackgroundSession(for: account.userIdentifier)
+                self?.setActiveUserSession(nil)
+                do {
+                    try await CoreDataStack.migrateLocalStorage(
+                        accountIdentifier: account.userIdentifier,
+                        applicationContainer: sharedContainerURL,
+                        migration: onReady
+                    )
+                } catch {
+                    WireLogger.ear.error("failed to migrate account: \(error)")
                 }
+
+                _ = await self?.loadSession(for: account)
             }
         })
     }

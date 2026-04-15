@@ -24,6 +24,7 @@ import WireDomainSupport
 import WireNetwork
 @testable import WireDomain
 
+@Suite("CommitPendingProposalItem Tests", .timeLimit(.minutes(1)))
 class CommitPendingProposalItemTests {
 
     var sut: CommitPendingProposalItem!
@@ -48,6 +49,7 @@ class CommitPendingProposalItemTests {
             repository: repository,
             conversationID: conversationID,
             groupID: mlsGroupID,
+            isSubconversation: false,
             mlsService: mlsService
         )
     }

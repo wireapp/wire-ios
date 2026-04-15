@@ -127,12 +127,10 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation?
 
-    /// Wipes MLS group conversation.
-    /// - parameter id: The MLS group ID.
+    /// Clears the MLS group ID for a conversation, preventing it from being wiped again.
+    /// - parameter mlsGroupID: The mls group ID of the conversation.
 
-    func wipeMLSGroup(
-        groupID: WireDataModel.MLSGroupID
-    ) async throws
+    func clearMLSGroupID(mlsGroupID: MLSGroupID) async
 
     /// Removes a given user from all group conversations.
     ///
@@ -492,8 +490,14 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchServerTimeDelta() async -> TimeInterval
 
+    /// Fetches the conversation matching the given qualified ID and executes a block,
+    /// providing the conversation (if found) and the context.
+    /// - Parameters:
+    ///   - conversationID: The qualified conversation ID used to look up the conversation.
+    ///   - block: Some code that should be invoked with the fetched conversation and the managed object context.
     func execute(
-        identifier: MLSGroupID,
+        conversationID: QualifiedID,
         block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async
+
 }

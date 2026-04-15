@@ -33,7 +33,7 @@ final class ProxyCredentialsTests: ZMTBaseTest {
         let sut = ProxyCredentials(username: username, password: password, proxy: proxy)
 
         // THEN
-        XCTAssertNoThrow(try sut?.persist())
+        XCTAssertNoThrow(try sut.persist())
     }
 
     func test_retrieveFrom_returnsCredentialsIfStoredOneExists() throws {
@@ -42,7 +42,7 @@ final class ProxyCredentialsTests: ZMTBaseTest {
         let username = "testUsername2"
         let proxy = MockProxy(host: "testHost2", port: 20, needsAuthentication: true)
         let storedCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
-        try storedCredentials?.persist()
+        try storedCredentials.persist()
 
         // WHEN
         let sut = ProxyCredentials.retrieve(for: proxy)
@@ -70,7 +70,7 @@ final class ProxyCredentialsTests: ZMTBaseTest {
         let username = "testUsername2"
         let proxy = MockProxy(host: "testHost2", port: 20, needsAuthentication: true)
         let storedCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
-        try storedCredentials?.persist()
+        try storedCredentials.persist()
 
         // WHEN
         let result = ProxyCredentials.destroy(for: proxy)

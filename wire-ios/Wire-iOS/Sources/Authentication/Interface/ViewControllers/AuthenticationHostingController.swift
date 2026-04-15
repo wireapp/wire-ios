@@ -84,9 +84,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             return
         }
 
-        sessionManager.select(account, completion: { _ in
+        Task {
+            _ = await sessionManager.select(account)
             completion?()
-        })
+        }
     }
 
     @available(*, unavailable)

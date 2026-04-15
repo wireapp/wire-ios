@@ -1074,6 +1074,49 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.first?.teamRole, .admin)
     }
 
+    // MARK: Apps search
+
+    func testThatItSendsASearchAppsRequest() async throws {
+        // given
+        let request = SearchRequest(
+            query: "Steve O'Hara & Söhne",
+            searchDomain: "wire.com",
+            searchOptions: [.apps]
+        )
+        let task = makeSearchTask(request: request, apiVersion: .v5)
+        let qualifiedID = QualifiedID(id: UUID(), domain: "wire.com")
+        let searchResult = ContactSearchResult.Contact(
+            id: qualifiedID.id,
+            qualifiedID: qualifiedID,
+            name: "Steve",
+            handle: "o",
+            team: teamIdentifier,
+            accentID: 2,
+            type: .app
+        )
+
+        let expectation = XCTestExpectation()
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, domain, userType in
+            XCTAssertEqual(query, "steve o'hara & söhne")
+            XCTAssertEqual(domain, "wire.com")
+            XCTAssertEqual(userType, .app)
+            expectation.fulfill()
+            return ContactSearchResult(documents: [searchResult])
+        }
+
+        // when
+        let result = await task.start()
+
+        // then
+        await fulfillment(of: [expectation])
+        XCTAssertEqual(result.apps.count, 1)
+        XCTAssertEqual(result.apps.first?.qualifiedID(localDomain: "-").map { .init($0) }, qualifiedID)
+        XCTAssertEqual(result.apps.first?.name, "Steve")
+        XCTAssertEqual(result.apps.first?.handle, "o")
+        XCTAssertEqual(result.apps.first?.teamIdentifier, teamIdentifier)
+        XCTAssertEqual(result.apps.first?.zmAccentColor?.rawValue, 2)
+    }
+
     // MARK: Bots search
 
     func testThatItSendsASearchServicesRequest() async throws {
@@ -1088,7 +1131,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
 
         // then
         await fulfillment(of: [expectation])
@@ -1100,7 +1143,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = try await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForBots()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1135,7 +1178,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = try await task.performRemoteSearchForServices()
+        let resultAggregator = try await task.performRemoteSearchForBots()
         resultAggregator(&result)
 
         // then
@@ -1163,6 +1206,7 @@ final class SearchTaskTests: DatabaseTest {
                 deleted: nil,
                 email: nil,
                 expiresAt: nil,
+                app: nil,
                 service: nil,
                 supportedProtocols: nil,
                 legalholdStatus: .disabled
@@ -1197,6 +1241,7 @@ final class SearchTaskTests: DatabaseTest {
                 deleted: nil,
                 email: nil,
                 expiresAt: nil,
+                app: nil,
                 service: nil,
                 supportedProtocols: nil,
                 legalholdStatus: .disabled
@@ -1224,6 +1269,7 @@ final class SearchTaskTests: DatabaseTest {
             deleted: nil,
             email: nil,
             expiresAt: nil,
+            app: nil,
             service: nil,
             supportedProtocols: nil,
             legalholdStatus: .disabled
