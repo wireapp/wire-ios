@@ -4850,8 +4850,10 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
       }
       internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.
+        internal static let addInTmMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.add_in_tm_message", fallback: "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.")
         /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
-        internal static let message = L10n.tr("Localizable", "peoplepicker.no_apps_added.message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        internal static let askAdminMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.ask_admin_message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
         /// Your team hasn’t added apps yet
         internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
       }
