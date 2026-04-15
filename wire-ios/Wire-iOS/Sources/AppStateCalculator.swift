@@ -177,8 +177,8 @@ final class AppStateCalculator {
             completion?()
             return
         }
-        
-		let appState = validAppState(from: appState)
+
+        let appState = validAppState(from: appState)
 
         guard hasEnteredForeground  else {
             pendingAppState = appState
