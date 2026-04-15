@@ -590,7 +590,6 @@ public final class ZMUserSession: NSObject {
         startEphemeralTimers()
         restoreDebugCommandsState()
         configureRecurringActions()
-        checkBlacklistWorker.start()
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
@@ -693,6 +692,7 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
+        checkBlacklistWorker.start()
     }
 
     private func startWorkAgentAndGenerators() async {
