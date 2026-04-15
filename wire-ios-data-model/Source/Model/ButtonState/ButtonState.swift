@@ -18,7 +18,7 @@
 
 import Foundation
 import os
-let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "adsklfj")
+private let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "adsklfj")
 
 final class ButtonState: ZMManagedObject {
     @NSManaged private(set) var stateValue: Int16

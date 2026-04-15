@@ -24,7 +24,7 @@ import WireMessagingUI
 import WireSyncEngine
 
 import os
-let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "sdklfj")
+private let l = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "sdklfj")
 
 extension Int: Differentiable {}
 extension String: Differentiable {}

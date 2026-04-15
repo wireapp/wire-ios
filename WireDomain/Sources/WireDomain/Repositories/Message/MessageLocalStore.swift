@@ -370,6 +370,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 guard senderID == selfUserID else { return }
             }
 
+            // let allButtonStates = ButtonMessageState
+
             ZMClientMessage.updateButtonStates(
                 buttonID: buttonID,
                 referenceMessageID: referenceMessageID,
