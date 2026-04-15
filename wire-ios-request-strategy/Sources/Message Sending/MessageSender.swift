@@ -18,8 +18,8 @@
 
 import WireCoreCrypto
 import WireDataModel
-import WireFoundation
 import WireLogging
+import WireUtilitiesPackage
 
 public enum MessageSendError: Error {
     case missingMessageProtocol
