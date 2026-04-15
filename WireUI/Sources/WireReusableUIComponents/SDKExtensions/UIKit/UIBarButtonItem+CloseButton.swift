@@ -42,7 +42,6 @@ public extension UIBarButtonItem {
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
         closeItem.accessibilityLabel = accessibilityLabel
-        closeItem.accessibilityIdentifier = Locators.Common.close.rawValue
 
         return closeItem
     }

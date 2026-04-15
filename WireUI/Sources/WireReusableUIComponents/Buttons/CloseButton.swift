@@ -43,7 +43,6 @@ public struct CloseButton: View {
         .buttonStyle(.plain)
         .foregroundColor(Color(uiColor: foregroundColor))
         .accessibilityLabel(Text(accessibilityLabel))
-        .accessibilityIdentifier(Locators.Common.close.rawValue)
     }
 }
 

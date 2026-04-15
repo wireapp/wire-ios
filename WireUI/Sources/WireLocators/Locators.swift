@@ -153,6 +153,7 @@ public enum Locators {
         case addParticipantsButton
         case moreOptionsButton
         case userCellName
+        case close
 
     }
 
@@ -172,6 +173,7 @@ public enum Locators {
         case manageTeamButton
         case addAccountOrTeamButton
         case userProfilePicture
+        case close
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -274,6 +276,7 @@ public enum Locators {
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
         case removeFromConversation = "Remove From Conversation…"
+        case close
     }
 
     public enum VerificationCodePage: AutoPrefixedEnum {
@@ -335,9 +338,5 @@ public enum Locators {
             case cancelButton
             case removeFilterButton
         }
-    }
-
-    public enum Common: AutoPrefixedEnum {
-        case close
     }
 }

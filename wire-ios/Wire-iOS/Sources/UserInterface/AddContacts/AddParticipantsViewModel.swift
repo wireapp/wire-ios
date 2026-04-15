@@ -100,7 +100,7 @@ struct AddParticipantsViewModel {
         case .add:
             let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
-            item.accessibilityIdentifier = Locators.Common.close.rawValue
+            item.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
             return item
         case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
