@@ -18,6 +18,7 @@
 
 import WireCoreCrypto
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 public enum MessageSendError: Error {
