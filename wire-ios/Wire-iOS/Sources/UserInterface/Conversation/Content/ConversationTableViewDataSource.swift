@@ -777,7 +777,42 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestButtonStateUpdateFor message: any ZMConversationMessage
     ) -> Bool {
-        fatalError() // TODO: finish
+        guard let compositeMessage = message as? ConversationCompositeMessage,
+              let compositeData = compositeMessage.compositeMessageData,
+              let nonce = message.nonce else {
+            return false
+        }
+
+        guard let sectionIndex = currentSections.firstIndex(where: { $0.model == nonce }) else {
+            return false
+        }
+
+        let section = currentSections[sectionIndex]
+
+        let displayedButtons: [ConversationButtonMessageCellDescription] = section.elements.compactMap {
+            $0.instance as? ConversationButtonMessageCellDescription
+        }
+
+        let currentButtonData: [(title: String?, state: ButtonMessageState, isExpired: Bool)] =
+            compositeData.items.compactMap { item in
+                guard case let .button(data) = item else { return nil }
+                return (data.title, data.state, data.isExpired)
+            }
+
+        guard displayedButtons.count == currentButtonData.count else {
+            return false
+        }
+
+        for (displayed, current) in zip(displayedButtons, currentButtonData) {
+            let config = displayed.configuration
+            if config.text != current.title
+                || config.state != current.state
+                || config.hasError != current.isExpired {
+                return false
+            }
+        }
+
+        return true
     }
 
     func messageSectionController(

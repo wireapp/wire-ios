@@ -681,10 +681,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
             // WPB-24283: prevent flickering of composite messages
-            // try to skip redundant updates if only a button state change is reported and it actually didn't change
-            let result = sectionDelegate?.messageSectionController(self, didRequestButtonStateUpdateFor: message)
-            if let result, result {
-                // skip full refresh
+            // Skip redundant updates if only a button state change is reported and it actually didn't change.
+            if sectionDelegate?.messageSectionController(self, didRequestButtonStateUpdateFor: message) == true {
                 return
             }
         }

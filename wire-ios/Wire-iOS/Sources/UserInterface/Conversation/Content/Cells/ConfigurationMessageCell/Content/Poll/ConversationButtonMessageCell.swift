@@ -19,9 +19,6 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
-import os
-
-private let l = os.Logger(OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "kldsjfr"))
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
@@ -126,8 +123,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     override init(frame: CGRect) {
         super.init(frame: .zero)
 
-        l.critical("cell init")
-
         configureViews()
         createConstraints()
 
@@ -199,9 +194,6 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
         userSession: UserSession,
         buttonAction: @escaping Completion
     ) {
-
-        l.critical("celldesc init")
-
         self.configuration = View.Configuration(
             text: text,
             state: state,
