@@ -137,7 +137,7 @@ private extension FileVersioningView {
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier(Locators.Common.close.rawValue)
+        .accessibilityIdentifier(Locators.FileVersioningPage.closeButton.rawValue)
     }
 }
 

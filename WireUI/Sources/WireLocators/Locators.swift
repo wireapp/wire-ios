@@ -307,6 +307,11 @@ public enum Locators {
         case turnOffMicrophone = "Microphone"
     }
 
+    public enum FileVersioningPage: AutoPrefixedEnum {
+
+        case closeButton
+    }
+
     public enum OngoingCallPage: String {
 
         case endOngoingCallButton = "End call"
