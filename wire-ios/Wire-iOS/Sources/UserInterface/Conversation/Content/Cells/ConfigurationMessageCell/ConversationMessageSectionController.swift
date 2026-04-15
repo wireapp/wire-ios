@@ -664,6 +664,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
+        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
+            // WPB-24283: prevent flickering of composite messages
+            // try to skip redundant updates if only a button state change is reported and it actually didn't change
+            fatalError("TODO: skip update maybe")
+        }
+
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
