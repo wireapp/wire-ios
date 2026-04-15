@@ -136,21 +136,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withShortStrings() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
 
         let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
@@ -165,20 +151,10 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withLongStrings() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
+        let item = filesViewItem(
             name: "some random file with a long name.excel",
-            filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
-            modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -194,20 +170,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withOneTag() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: ["important"],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+        let item = filesViewItem(
+            tags: ["important"]
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -223,20 +187,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_withThreeTags() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: ["tag1", "tag2", "abcdef"],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+        let item = filesViewItem(
+            tags: ["tag1", "tag2", "abcdef"]
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -252,20 +204,10 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_dynamicTypeVariants() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
+        let item = filesViewItem(
             name: "some random file with a long name.excel",
-            filePath: "",
             ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .spreadsheet,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
+            icon: .spreadsheet
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -283,21 +225,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_whenDownloading() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
+
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
             eTag: "eTag",
@@ -324,21 +253,8 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesViewItemView_whenDownloadFailed() {
-        let item = FilesViewItem(
-            id: UUID(),
-            eTag: "eTag",
-            kind: .file,
-            name: "image.jpg",
-            filePath: "",
-            ownedBy: "Natsuko Shiroi",
-            modifiedAt: modifiedAt,
-            icon: .image,
-            tags: [],
-            isEditable: false,
-            publicLinkID: nil,
-            conversationName: "Conversation 1",
-            size: nil
-        )
+        let item = filesViewItem()
+
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
             eTag: "eTag",
@@ -409,6 +325,29 @@ final class FilesViewTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark", record: record)
+    }
+
+    private func filesViewItem(
+        name: String = "image.jpg",
+        ownedBy: String = "Natsuko Shiroi",
+        icon: WireDriveFileType = .image,
+        tags: [String] = []
+    ) -> FilesViewItem {
+        FilesViewItem(
+            id: UUID(),
+            eTag: "eTag",
+            kind: .file,
+            name: name,
+            filePath: "",
+            ownedBy: ownedBy,
+            modifiedAt: modifiedAt,
+            icon: icon,
+            tags: tags,
+            isEditable: false,
+            publicLinkID: nil,
+            conversationName: "Conversation 1",
+            size: nil
+        )
     }
 
     @MainActor
