@@ -87,18 +87,7 @@ extension ZMClientMessage {
     }
 
     private func containsButtonState(withId buttonId: String) -> Bool {
-
-        let buttonStatesIsNil = buttonStates == nil
-        let buttonStatesIsEmpty = buttonStates?.isEmpty ?? true
-        let buttonStateCount = buttonStates?.count ?? 0
-        l.critical("contBuSt, nil: \(buttonStatesIsNil) empty: \(buttonStatesIsEmpty) count: \(buttonStateCount)")
-//        if let buttonStates {
-//            for buttonState in buttonStates {
-//                l.critical("\(buttonState.message)")
-//            }
-//        }
-
-        return buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
+        buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
     }
 
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {
