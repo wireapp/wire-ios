@@ -21,8 +21,11 @@ import WireDesign
 
 final class EmptyAppsSearchResultView: UIView {
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    private let canManageTeam: Bool
+
+    required init(canManageTeam: Bool) {
+        self.canManageTeam = canManageTeam
+        super.init(frame: .zero)
         setup()
     }
 
@@ -38,7 +41,9 @@ final class EmptyAppsSearchResultView: UIView {
         headlineLabel.font = .font(for: .body1).withWeight(.bold)
         let contentLabel = UILabel()
         contentLabel.numberOfLines = 0
-        contentLabel.text = L10n.Localizable.Peoplepicker.NoAppsAdded.message
+        contentLabel.text = canManageTeam
+            ? L10n.Localizable.Peoplepicker.NoAppsAdded.addInTmMessage
+            : L10n.Localizable.Peoplepicker.NoAppsAdded.askAdminMessage
         contentLabel.font = .font(for: .body1)
         let stackView = UIStackView(arrangedSubviews: [headlineLabel, contentLabel])
         stackView.axis = .vertical
@@ -56,6 +61,11 @@ final class EmptyAppsSearchResultView: UIView {
 }
 
 @available(iOS 17, *)
-#Preview {
-    EmptyAppsSearchResultView()
+#Preview("Admin") {
+    EmptyAppsSearchResultView(canManageTeam: true)
+}
+
+@available(iOS 17, *)
+#Preview("Non-admin") {
+    EmptyAppsSearchResultView(canManageTeam: false)
 }
