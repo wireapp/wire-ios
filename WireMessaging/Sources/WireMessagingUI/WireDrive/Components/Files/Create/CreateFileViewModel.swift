@@ -51,7 +51,10 @@ final class CreateFileViewModel: ObservableObject {
         case .folder:
             Strings.Files.NewFolder.navigationTitle
         case let .file(template):
-            Strings.Files.NewFile.navigationTitle("." + template.fileExtension)
+            Strings.Files.NewFile.navigationTitle(
+                localizedFileExtensionName(for: template.kind),
+                "." + template.fileExtension
+            )
         }
     }
 
@@ -79,6 +82,17 @@ final class CreateFileViewModel: ObservableObject {
             Strings.Files.RenameFolder.folderAlreadyExistsError
         case .file:
             Strings.Files.RenameFile.fileAlreadyExistsError
+        }
+    }
+
+    private func localizedFileExtensionName(for kind: WireDriveFileTemplate.Kind) -> String {
+        switch kind {
+        case .document:
+            Strings.Files.NewFile.document
+        case .spreadsheet:
+            Strings.Files.NewFile.spreadsheet
+        case .presentation:
+            Strings.Files.NewFile.presentation
         }
     }
 
