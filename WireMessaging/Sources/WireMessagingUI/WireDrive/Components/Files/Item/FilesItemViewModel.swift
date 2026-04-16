@@ -423,7 +423,9 @@ final class FilesItemViewModel: ObservableObject {
             false
         }
 
-        return isAvailableOffline && isDownloaded
+        let isFolder = item.kind == .folder
+
+        return isAvailableOffline && isDownloaded && !isFolder
     }
 }
 
