@@ -42,7 +42,7 @@ class WelcomePage: PageModel {
         nextButton.waitAndTap()
         return try LoginPage()
     }
-    
+
     func enterSSOCode(_ code: String) throws -> OktaLoginPage {
         try typeEmailOrSSO(code)
         nextButton.waitAndTap()

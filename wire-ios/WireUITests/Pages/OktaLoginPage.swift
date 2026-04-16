@@ -20,7 +20,7 @@ import WireLocators
 import XCTest
 
 class OktaLoginPage: PageModel {
-    
+
     override var pageMainElement: XCUIElement {
         webView
     }
@@ -40,19 +40,19 @@ class OktaLoginPage: PageModel {
     var signinButton: XCUIElement {
         webView.buttons["Sign In"]
     }
- 
+
     @MainActor
     func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
         usernameTextField.typeText(email)
-        
+
         webView.tap()
-        
+
         passwordSecureTextField.waitAndTap()
         passwordSecureTextField.typeText(password + "\n")
-       
-          if signinButton.exists && signinButton.isHittable {
-              signinButton.tap()
-          }
+
+        if signinButton.exists, signinButton.isHittable {
+            signinButton.tap()
+        }
 
         return try FirstTimePage()
     }

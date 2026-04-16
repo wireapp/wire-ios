@@ -214,15 +214,15 @@ class UserHelper {
 
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
-    func registerUserAsTeamOwner(setHandle: Bool = true) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+    func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
         let generated = UserGenerator.generateUniqueUserInfo()
-        return try await registerUserAsTeamOwner(teamName: generated.teamName, setHandle: setHandle)
+        return try await registerUserAsTeamOwner(teamName: generated.teamName)
     }
 
     /// Register a team owner with a provided team name.
     /// - Parameter teamName: team name to create.
     /// - Returns: qualifiedId of the owner and ownerInfo
-    func registerUserAsTeamOwner(teamName: String, setHandle: Bool = true) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+    func registerUserAsTeamOwner(teamName: String) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
 
         let teamOwner = UserGenerator.generateUniqueUserInfo()
         teamOwner.teamName = teamName
@@ -247,11 +247,6 @@ class UserHelper {
             email: teamOwner.email,
             password: teamOwner.password
         )
-
-        if setHandle {
-            try await selfUserAPI.updateHandle(handle: teamOwner.username)
-        }
-
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }

@@ -22,26 +22,27 @@ final class SSOTests: WireUITestCase {
 
     @MainActor
     func testSSOLogin_TC_8967() async throws {
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner(setHandle: false)
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("teamOwner.teamID is nil")
         }
         try await ssoHelper.enableSSOFeature(teamID: teamID)
 
-        let ssoUser = try await ssoHelper.createSSOUserAsSelf(user: teamOwner)
-        
-        //Sleep: Delay added to allow Okta app assignment to fully sync and otherwise it throws 403 error - app not assigned
+        let ssoMember = UserGenerator.generateUniqueUserInfo()
+        let ssoUser = try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
+
+        // Sleep: Delay added to allow Okta app assignment to fully sync and otherwise it throws 403 error - app not assigned
         try await Task.sleep(nanoseconds: 20_000_000_000)
         let ssoCode = try ssoHelper.getSSOCode()
         print(ssoUser)
-        
+
         _ = try await WelcomePage()
             .enterSSOCode(ssoCode)
-            .oktaLogin(email: teamOwner.email, password: teamOwner.password)
+            .oktaLogin(email: ssoUser.email, password: ssoUser.password)
             .acceptFirstTimeAlert()
             .acceptPopupOnTeamMemberSetup()
-            .setUsername(teamOwner.username)
-        
+            .setUsername(ssoUser.username)
+
         print(ssoCode)
         XCTAssertFalse(ssoUser.email.isEmpty)
         XCTAssertTrue(ssoUser.isSSOUser)

@@ -35,7 +35,13 @@ class SSOHelper {
     @discardableResult
     func createSSOUserAsSelf(user: UserInfo) async throws -> UserInfo {
         let owner = try await createSSOUserForOkta(user: user)
-        return try await addUserToOkta(owner: owner)
+        return try await addUserToOkta(user: owner)
+    }
+
+    @discardableResult
+    func createSSOUser(owner: UserInfo, ssoUser: UserInfo) async throws -> UserInfo {
+        _ = try await createSSOUserForOkta(user: owner)
+        return try await addUserToOkta(user: ssoUser)
     }
 
     @discardableResult
@@ -51,13 +57,15 @@ class SSOHelper {
     }
 
     @discardableResult
-    func addUserToOkta(owner: UserInfo) async throws -> UserInfo {
-        owner.isSSOUser = true
+    func addUserToOkta(user: UserInfo) async throws -> UserInfo {
+        user.password = "SSO\(user.password)"
+        user.name = user.email
+        user.isSSOUser = true
 
-        _ = try await createOktaUser(name: owner.name, email: owner.email, password: owner.password)
+        _ = try await createOktaUser(name: user.name, email: user.email, password: user.password)
 
-        userHelper.addUser(owner)
-        return owner
+        userHelper.addUser(user)
+        return user
     }
 
     /// Enables the SSO feature through BackOffice.
@@ -219,7 +227,7 @@ class SSOHelper {
             )
         }
     }
-    
+
     private func waitForAppGroupLink(applicationId: String, groupId: String) async throws {
         let url = oktaBaseURL
             .appendingPathComponent("api")
@@ -229,7 +237,7 @@ class SSOHelper {
             .appendingPathComponent("groups")
             .appendingPathComponent(groupId)
 
-        for _ in 0..<30 {
+        for _ in 0 ..< 30 {
             do {
                 let (_, response) = try await httpClient.send(
                     url: url,
@@ -246,7 +254,7 @@ class SSOHelper {
                     return
                 }
             } catch {
-                // ignore and retry
+                // ignore
             }
 
             try await Task.sleep(nanoseconds: 700_000_000)
@@ -410,21 +418,39 @@ class SSOHelper {
         let sanitizedBackend = backend.hasSuffix("/") ? String(backend.dropLast()) : backend
         return sanitizedBackend + "/sso/finalize-login"
     }
-    
+
     func cleanUpOktaResources() async {
-            if let oktaApplicationId {
-                do {
-                    let deactivateURL = oktaBaseURL
+        if let oktaApplicationId {
+            do {
+                let deactivateURL = oktaBaseURL
+                    .appendingPathComponent("api")
+                    .appendingPathComponent("v1")
+                    .appendingPathComponent("apps")
+                    .appendingPathComponent(oktaApplicationId)
+                    .appendingPathComponent("lifecycle")
+                    .appendingPathComponent("deactivate")
+
+                let (_, deactivateResponse) = try await httpClient.send(
+                    url: deactivateURL,
+                    method: .post,
+                    body: Data(),
+                    headers: [
+                        HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                        HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                        HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
+                    ]
+                )
+
+                if deactivateResponse.statusCode == 200 {
+                    let deleteURL = oktaBaseURL
                         .appendingPathComponent("api")
                         .appendingPathComponent("v1")
                         .appendingPathComponent("apps")
                         .appendingPathComponent(oktaApplicationId)
-                        .appendingPathComponent("lifecycle")
-                        .appendingPathComponent("deactivate")
 
-    let (_, deactivateResponse) = try await httpClient.send(
-                        url: deactivateURL,
-                        method: .post,
+                    let (_, deleteResponse) = try await httpClient.send(
+                        url: deleteURL,
+                        method: .delete,
                         body: Data(),
                         headers: [
                             HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
@@ -433,48 +459,48 @@ class SSOHelper {
                         ]
                     )
 
-    if deactivateResponse.statusCode == 200 {
-                        let deleteURL = oktaBaseURL
-                            .appendingPathComponent("api")
-                            .appendingPathComponent("v1")
-                            .appendingPathComponent("apps")
-                            .appendingPathComponent(oktaApplicationId)
-
-    let (_, deleteResponse) = try await httpClient.send(
-                            url: deleteURL,
-                            method: .delete,
-                            body: Data(),
-                            headers: [
-                                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
-                                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-                                HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
-                            ]
-                        )
-
-    if deleteResponse.statusCode != 204 {
-                            print("❌ Failed to delete Okta application (oktaApplicationId)")
-                        }
-                    } else {
-                        print("❌ Failed to deactivate Okta application (oktaApplicationId)")
+                    if deleteResponse.statusCode != 204 {
+                        print("❌ Failed to delete Okta application (oktaApplicationId)")
                     }
-                } catch {
-                    print("❌ Failed to clean up Okta application: (error)")
+                } else {
+                    print("❌ Failed to deactivate Okta application (oktaApplicationId)")
                 }
+            } catch {
+                print("❌ Failed to clean up Okta application: (error)")
             }
+        }
 
-    for userId in oktaUserIds {
-                do {
-                    let deactivateURL = oktaBaseURL
+        for userId in oktaUserIds {
+            do {
+                let deactivateURL = oktaBaseURL
+                    .appendingPathComponent("api")
+                    .appendingPathComponent("v1")
+                    .appendingPathComponent("users")
+                    .appendingPathComponent(userId)
+                    .appendingPathComponent("lifecycle")
+                    .appendingPathComponent("deactivate")
+
+                let (_, deactivateResponse) = try await httpClient.send(
+                    url: deactivateURL,
+                    method: .post,
+                    body: Data(),
+                    headers: [
+                        HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                        HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                        HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
+                    ]
+                )
+
+                if deactivateResponse.statusCode == 200 {
+                    let deleteURL = oktaBaseURL
                         .appendingPathComponent("api")
                         .appendingPathComponent("v1")
                         .appendingPathComponent("users")
                         .appendingPathComponent(userId)
-                        .appendingPathComponent("lifecycle")
-                        .appendingPathComponent("deactivate")
 
-    let (_, deactivateResponse) = try await httpClient.send(
-                        url: deactivateURL,
-                        method: .post,
+                    let (_, deleteResponse) = try await httpClient.send(
+                        url: deleteURL,
+                        method: .delete,
                         body: Data(),
                         headers: [
                             HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
@@ -483,33 +509,15 @@ class SSOHelper {
                         ]
                     )
 
-    if deactivateResponse.statusCode == 200 {
-                        let deleteURL = oktaBaseURL
-                            .appendingPathComponent("api")
-                            .appendingPathComponent("v1")
-                            .appendingPathComponent("users")
-                            .appendingPathComponent(userId)
-
-    let (_, deleteResponse) = try await httpClient.send(
-                            url: deleteURL,
-                            method: .delete,
-                            body: Data(),
-                            headers: [
-                                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
-                                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-                                HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
-                            ]
-                        )
-
-    if deleteResponse.statusCode != 204 {
-                            print("❌ Failed to delete Okta user (userId)")
-                        }
-                    } else {
-                        print("❌ Failed to deactivate Okta user (userId)")
+                    if deleteResponse.statusCode != 204 {
+                        print("❌ Failed to delete Okta user (userId)")
                     }
-                } catch {
-                    print("❌ Failed to clean up Okta user (userId): (error)")
+                } else {
+                    print("❌ Failed to deactivate Okta user (userId)")
                 }
+            } catch {
+                print("❌ Failed to clean up Okta user (userId): (error)")
             }
         }
+    }
 }
