@@ -207,8 +207,9 @@ private extension FilesView {
     }
 }
 
-private extension FilesViewModel.FolderMenuOption {
+// MARK: - folder menu title
 
+private extension FilesViewModel.FolderMenuOption {
     var title: String {
         switch self {
         case let .folder(_, title):
@@ -217,8 +218,35 @@ private extension FilesViewModel.FolderMenuOption {
             Strings.Files.navigationTitle
         }
     }
-
 }
+
+// MARK: - template / create file
+
+private extension WireDriveFileTemplate.Kind {
+    var title: String {
+        switch self {
+        case .document:
+            Strings.Files.List.CreateFile.document
+        case .spreadsheet:
+            Strings.Files.List.CreateFile.spreadsheet
+        case .presentation:
+            Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .document:
+            "text.document"
+        case .spreadsheet:
+            "tablecells"
+        case .presentation:
+            "sparkles.tv"
+        }
+    }
+}
+
+// MARK: - Preview
 
 #Preview {
     NavigationStack {

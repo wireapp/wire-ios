@@ -995,43 +995,6 @@ package final class FilesViewModel: ObservableObject {
     }
 }
 
-private extension FilesSortingViewModel.SortingKey {
-    var sortField: String {
-        switch self {
-        case .date:
-            "mtime"
-        case .name:
-            "name"
-        case .size:
-            "size"
-        }
-    }
-}
-
-extension WireDriveFileTemplate.Kind {
-    var title: String {
-        switch self {
-        case .document:
-            Strings.Files.List.CreateFile.document
-        case .spreadsheet:
-            Strings.Files.List.CreateFile.spreadsheet
-        case .presentation:
-            Strings.Files.List.CreateFile.presentation
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .document:
-            "text.document"
-        case .spreadsheet:
-            "tablecells"
-        case .presentation:
-            "sparkles.tv"
-        }
-    }
-}
-
 private extension Sequence {
     @MainActor
     func asyncMap<T>(_ transform: @MainActor (Element) async throws -> T) async rethrows -> [T] {

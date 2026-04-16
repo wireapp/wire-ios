@@ -63,6 +63,17 @@ final class FilesSortingViewModel: ObservableObject {
                 Strings.Key.size
             }
         }
+        
+        var sortField: String {
+            switch self {
+            case .date:
+                "mtime"
+            case .name:
+                "name"
+            case .size:
+                "size"
+            }
+        }
     }
 
     struct SortingSelection {
