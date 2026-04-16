@@ -574,6 +574,7 @@ package final class FilesViewModel: ObservableObject {
             case .pending, .failed:
                 _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
+                viewingURL = nil
                 let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url
             case .downloading:
