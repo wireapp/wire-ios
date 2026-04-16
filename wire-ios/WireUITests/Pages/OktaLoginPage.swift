@@ -40,22 +40,20 @@ class OktaLoginPage: PageModel {
     var signinButton: XCUIElement {
         webView.buttons["Sign In"]
     }
-    
-    var keyboardNext: XCUIElement {
-        webView.keyboards.firstMatch.buttons["Next"]
-    }
  
     @MainActor
-    func oktaLogin(email: String, password: String) async throws -> SetUsernamePage {
+    func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
         usernameTextField.typeText(email)
         
-        keyboardNext.tap()
+        webView.tap()
+        
+        passwordSecureTextField.waitAndTap()
         passwordSecureTextField.typeText(password + "\n")
        
           if signinButton.exists && signinButton.isHittable {
               signinButton.tap()
           }
 
-        return try SetUsernamePage()
+        return try FirstTimePage()
     }
 }

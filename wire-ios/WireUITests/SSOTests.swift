@@ -21,7 +21,7 @@ import XCTest
 final class SSOTests: WireUITestCase {
 
     @MainActor
-    func test_SSOLogin_TC_8967() async throws {
+    func testSSOLogin_TC_8967() async throws {
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner(setHandle: false)
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("teamOwner.teamID is nil")
@@ -38,6 +38,8 @@ final class SSOTests: WireUITestCase {
         _ = try await WelcomePage()
             .enterSSOCode(ssoCode)
             .oktaLogin(email: teamOwner.email, password: teamOwner.password)
+            .acceptFirstTimeAlert()
+            .acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
         
         print(ssoCode)

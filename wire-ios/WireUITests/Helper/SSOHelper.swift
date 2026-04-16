@@ -147,6 +147,7 @@ class SSOHelper {
 
         let everyoneGroupId = try await fetchGroupId(named: "Everyone")
         try await assignApplicationToGroup(applicationId: applicationId, groupId: everyoneGroupId)
+        try await waitForAppGroupLink(applicationId: applicationId, groupId: everyoneGroupId)
 
         return applicationId
     }
@@ -217,6 +218,41 @@ class SSOHelper {
                 "assignApplicationToGroup failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
+    }
+    
+    private func waitForAppGroupLink(applicationId: String, groupId: String) async throws {
+        let url = oktaBaseURL
+            .appendingPathComponent("api")
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent(applicationId)
+            .appendingPathComponent("groups")
+            .appendingPathComponent(groupId)
+
+        for _ in 0..<30 {
+            do {
+                let (_, response) = try await httpClient.send(
+                    url: url,
+                    method: .get,
+                    body: Data(),
+                    headers: [
+                        HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                        HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                        HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
+                    ]
+                )
+
+                if response.statusCode == 200 {
+                    return
+                }
+            } catch {
+                // ignore and retry
+            }
+
+            try await Task.sleep(nanoseconds: 700_000_000)
+        }
+
+        throw RuntimeError("waitForAppGroupLink: timed out")
     }
 
     func getOktaApplicationMetadata() async throws -> String {
