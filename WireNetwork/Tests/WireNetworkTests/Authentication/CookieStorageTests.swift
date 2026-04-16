@@ -37,7 +37,7 @@ final class CookieStorageTests: XCTestCase {
             userID: Scaffolding.userID,
             cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain,
-            cache: nil
+            cache: CookieStorageCache(sharedStorage: .init(initialState: [:]))
         )
     }
 
@@ -146,6 +146,7 @@ final class CookieStorageTests: XCTestCase {
             encryptionKey: cookieEncryptionKey
         )
 
+        keychain.updateItemQueryAttributesToUpdate_MockMethod = { _, _ in }
         // Mock existing cookie.
         keychain.setFetchItemQuery_MockValue(storedCookieData)
 

@@ -236,13 +236,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             userSession?.selfUser.remoteIdentifier
         }) else { return }
 
-        let epoch = CookieStorageEpoch(sharedDefaults: .shared())
         let cookieStorage = CookieStorage(
             userID: selfUserID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: WireFoundation.Keychain(),
-            cache: CookieStorageCache(epoch: epoch),
-            epoch: epoch
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         // Forces the access token request to fail with 403 (invalid credentials)

@@ -51,6 +51,7 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
     case service(String)
     case account(String)
+    case generic(Data)
     case itemClass(ItemClass)
     case accessible(ItemAccessibility)
     case returningData(Bool)
@@ -76,6 +77,9 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
         case let .account(string):
             (kSecAttrAccount, string)
+
+        case let .generic(data):
+            (kSecAttrGeneric, data)
 
         case .itemClass(.genericPassword):
             (kSecClass, kSecClassGenericPassword)

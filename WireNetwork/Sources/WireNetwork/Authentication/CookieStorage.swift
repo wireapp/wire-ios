@@ -34,9 +34,6 @@ public protocol CookieStorageProtocol: Sendable {
 ///
 /// This class is thread-safe and can be shared across multiple `CookieStorage` instances.
 /// It is intended to be used as a singleton within a process to avoid redundant keychain reads.
-///
-/// - Warning: Do not use in app extensions. If the authentication cookie is updated in the
-/// main app, the cache in the extension will be stale.
 
 public final class CookieStorageCache: Sendable {
 
@@ -47,32 +44,18 @@ public final class CookieStorageCache: Sendable {
 
     public static let sharedStorage = OSAllocatedUnfairLock<[UUID: Item]>(initialState: [:])
 
-    private let epoch: CookieStorageEpoch
     private let cache: OSAllocatedUnfairLock<[UUID: Item]>
 
-    public init(
-        epoch: CookieStorageEpoch,
-        sharedStorage: OSAllocatedUnfairLock<[UUID: Item]> = CookieStorageCache.sharedStorage
-    ) {
-        self.epoch = epoch
+    public init(sharedStorage: OSAllocatedUnfairLock<[UUID: Item]> = CookieStorageCache.sharedStorage) {
         self.cache = sharedStorage
     }
 
-    func get(for userID: UUID) -> [HTTPCookie]? {
-        cache.withLock {
-            guard let item = $0[userID] else { return nil }
-
-            if item.epoch == epoch.value(userID: userID) {
-                return item.cookies
-            } else {
-                $0[userID] = nil
-                return nil
-            }
-        }
+    func get(for userID: UUID) -> Item? {
+        cache.withLock { $0[userID] }
     }
 
-    func set(_ cookies: [HTTPCookie], for userID: UUID) {
-        cache.withLock { $0[userID] = Item(cookies: cookies, epoch: epoch.value(userID: userID)) }
+    func set(_ item: Item, for userID: UUID) {
+        cache.withLock { $0[userID] = item }
     }
 
     func remove(for userID: UUID) {
@@ -81,37 +64,6 @@ public final class CookieStorageCache: Sendable {
 
     func removeAll() {
         cache.withLock { $0.removeAll() }
-    }
-
-}
-
-public final class CookieStorageEpoch: @unchecked Sendable {
-
-    private let sharedDefaults: UserDefaults
-
-    public init(sharedDefaults: UserDefaults) {
-        self.sharedDefaults = sharedDefaults
-    }
-
-    func increment(userID: UUID) {
-        let epoch = UUID()
-        sharedDefaults.set(epoch.uuidString, forKey: Self.key(for: userID))
-    }
-
-    func value(userID: UUID) -> UUID {
-        if
-            let epochString = sharedDefaults.string(forKey: Self.key(for: userID)),
-            let epoch = UUID(uuidString: epochString) {
-            return epoch
-        } else {
-            let epoch = UUID()
-            sharedDefaults.set(epoch.uuidString, forKey: Self.key(for: userID))
-            return epoch
-        }
-    }
-
-    private static func key(for userID: UUID) -> String {
-        "wire.com.cookieStorageEpoch.\(userID.uuidString)"
     }
 
 }
@@ -136,25 +88,35 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     ///  - userID: The unique identifier for the user whose cookies are being stored.
     ///  - cookieEncryptionKey: A key used to encrypt and decrypt cookie data. This key should be stored in defaults
     ///  so that it is destroyed when the app is deleted.
-    ///  - keychain: An instance of a type conforming to `KeychainProtocol` for performing keychain operations.
-    ///  - cache: An optional `CookieStorageCache` for caching fetched cookies in memory.
-    ///  Pass `nil` to disable caching (e.g. in app extensions).
 
+    public init(
+        userID: UUID,
+        cookieEncryptionKey: Data
+    ) {
+        storage = _CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookieEncryptionKey,
+            keychain: Keychain(),
+            cache: CookieStorageCache(),
+        )
+    }
+
+    #if DEBUG
+    /// Creates a new `CookieStorage` with an injected storage instance for testing purposes only.
     public init(
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
-        cache: CookieStorageCache?,
-        epoch: CookieStorageEpoch
+        cache: CookieStorageCache
     ) {
         storage = _CookieStorage(
             userID: userID,
             cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain,
             cache: cache,
-            epoch: epoch
         )
     }
+    #endif
 
     /// Store cookies.
     ///
@@ -165,7 +127,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// - Parameter cookies: The cookies to store.
 
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try Self.lock.withLock { try storage.storeCookies(cookies) }
+        try Self.lock.withLock { try storage.storeCookies(cookies, epoch: UUID()) }
     }
 
     /// Fetch stored cookies.
@@ -204,51 +166,70 @@ private final class _CookieStorage: Sendable {
     private let userID: UUID
     private let cookieEncryptionKey: Data
     private let keychain: any KeychainProtocol
-    private let cache: CookieStorageCache?
-    private let epoch: CookieStorageEpoch
+    private let cache: CookieStorageCache
 
     init(
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
-        cache: CookieStorageCache?,
-        epoch: CookieStorageEpoch
+        cache: CookieStorageCache
     ) {
         self.userID = userID
         self.cookieEncryptionKey = cookieEncryptionKey
         self.keychain = keychain
         self.cache = cache
-        self.epoch = epoch
     }
 
-    func storeCookies(_ cookies: [HTTPCookie]) throws {
+    func storeCookies(_ cookies: [HTTPCookie], epoch: UUID) throws {
+        let newEpoch = UUID().data
         let cookieData = try Self.encodeAndEncryptCookies(cookies, key: cookieEncryptionKey)
 
         do {
             // The typical case is updating so try that first.
-            try keychain.updateItem(query: baseQuery(), attributesToUpdate: [.data(cookieData)])
-            cache?.remove(for: userID)
-            epoch.increment(userID: userID)
+            try keychain.updateItem(query: baseQuery(), attributesToUpdate: [.data(cookieData), .generic(newEpoch)])
         } catch let KeychainError.errorStatus(status) where status == errSecItemNotFound {
-            try keychain.addItem(query: addQuery(cookieData: cookieData))
+            try keychain.addItem(query: addQuery(cookieData: cookieData, epoch: newEpoch))
         }
     }
 
     func fetchCookies() throws -> [HTTPCookie] {
-        if let cached = cache?.get(for: userID) { return cached }
-
-        guard let data: Data = try keychain.fetchItem(query: fetchQuery()) else {
-            return []
+        if let cached = cache.get(for: userID), let epoch = try fetchEpoch(), cached.epoch == epoch {
+            return cached.cookies
         }
 
-        let cookies = try Self.decryptAndDecodeCookies(data, key: cookieEncryptionKey)
-        cache?.set(cookies, for: userID)
-        return cookies
+        guard let cookiesAndEpoch = try fetchCookiesFromKeychain() else { return [] }
+        cache.set(.init(cookies: cookiesAndEpoch.cookies, epoch: cookiesAndEpoch.epoch), for: userID)
+        return cookiesAndEpoch.cookies
     }
 
     func removeCookies() throws {
         try keychain.deleteItem(query: baseQuery())
-        cache?.remove(for: userID)
+        cache.remove(for: userID)
+    }
+
+    // MARK: - Fetching
+
+    private func fetchCookiesFromKeychain() throws -> (cookies: [HTTPCookie], epoch: UUID)? {
+        guard let data: Data = try keychain.fetchItem(query: fetchQuery()) else { return nil }
+        let cookies = try Self.decryptAndDecodeCookies(data, key: cookieEncryptionKey)
+
+        if let epoch = try fetchEpoch() {
+            return (cookies, epoch)
+        } else {
+            let newEpoch = UUID()
+            try storeCookies(cookies, epoch: newEpoch)
+            return (cookies, newEpoch)
+        }
+    }
+
+    private func fetchEpoch() throws -> UUID? {
+        guard let attributes: [String: Any] = try keychain.fetchItem(query: fetchAttributesQuery()),
+              let epochData = attributes[kSecAttrGeneric as String] as? Data,
+              epochData.count == MemoryLayout<UUID>.size else {
+            return nil
+        }
+
+        return epochData.withUnsafeBytes { $0.load(as: UUID.self) }
     }
 
     // MARK: - Queries
@@ -267,10 +248,18 @@ private final class _CookieStorage: Sendable {
         return query
     }
 
-    private func addQuery(cookieData: Data) -> Set<KeychainQueryItem> {
+    private func addQuery(cookieData: Data, epoch: Data) -> Set<KeychainQueryItem> {
         var query = baseQuery()
         query.insert(.data(cookieData))
         query.insert(.accessible(.afterFirstUnlock))
+        query.insert(.generic(epoch))
+        return query
+    }
+
+    private func fetchAttributesQuery() -> Set<KeychainQueryItem> {
+        var query = baseQuery()
+        query.insert(.returningData(false))
+        query.insert(.returningAttributes(true))
         return query
     }
 
@@ -308,6 +297,14 @@ private final class _CookieStorage: Sendable {
         }
 
         return try HTTPCookieCodec.decodeData(cookieData)
+    }
+
+}
+
+private extension UUID {
+
+    var data: Data {
+        withUnsafeBytes(of: self.uuid, { Data($0) })
     }
 
 }

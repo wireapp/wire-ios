@@ -293,10 +293,7 @@ public final class SharingSession {
         let metadata = try await networkStack.resolvedBackendMetadata()
         let cookieStorage = CookieStorage(
             userID: accountIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain(),
-            cache: nil, // App extensions should not use a cache.
-            epoch: CookieStorageEpoch(sharedDefaults: .shared())
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]

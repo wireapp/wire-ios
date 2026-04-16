@@ -260,16 +260,11 @@ public struct SharingSessionLoader {
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
         let legacyEnvironment = BackendEnvironment(environment)
-        // Don't cache the cookie because if the user logs out and back in again in the main app
-        // process, then the cached cookie will be invalid.
         let legacyCookieStorage = LegacyCookieStorage(
             userIdentifier: accountID,
             cookieStorage: CookieStorage(
                 userID: accountID,
-                cookieEncryptionKey: UserDefaults.cookiesKey(),
-                keychain: Keychain(),
-                cache: nil,
-                epoch: CookieStorageEpoch(sharedDefaults: .shared())
+                cookieEncryptionKey: UserDefaults.cookiesKey()
             )
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {
@@ -366,8 +361,7 @@ public struct SharingSessionLoader {
             userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
-            cache: nil, // App extensions should not use a cache.
-            epoch: CookieStorageEpoch(sharedDefaults: .shared())
+            cache: CookieStorageCache()
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,

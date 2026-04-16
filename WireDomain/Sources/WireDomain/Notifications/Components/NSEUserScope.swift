@@ -78,10 +78,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         shared {
             CookieStorage(
                 userID: accountID,
-                cookieEncryptionKey: dependency.cookieEncryptionKey,
-                keychain: Keychain(),
-                cache: nil, // App extensions should not use a cache.
-                epoch: CookieStorageEpoch(sharedDefaults: .shared())
+                cookieEncryptionKey: dependency.cookieEncryptionKey
             )
         }
     }

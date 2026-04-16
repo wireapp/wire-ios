@@ -22,13 +22,9 @@ import WireTransport
 
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> LegacyCookieStorage {
-        let epoch = CookieStorageEpoch(sharedDefaults: .shared())
         let cookieStorage = CookieStorage(
             userID: account.userIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: WireFoundation.Keychain(),
-            cache: CookieStorageCache(epoch: epoch),
-            epoch: epoch
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
         return LegacyCookieStorage(
             userIdentifier: account.userIdentifier,
