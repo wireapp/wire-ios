@@ -43,6 +43,7 @@ class OktaLoginPage: PageModel {
 
     @MainActor
     func oktaLogin(email: String, password: String) async throws -> FirstTimePage {
+        usernameTextField.waitAndTap()
         usernameTextField.typeText(email)
         webView.tap()
 

@@ -35,9 +35,4 @@ extension XCUIApplication {
             .enterPassword(password)
             .acceptFirstTimeAlert()
     }
-
-    func hardWait(inSeconds: TimeInterval) async {
-        let nanoseconds = UInt64(inSeconds * 1_000_000_000)
-        try? await Task.sleep(nanoseconds: nanoseconds)
-    }
 }

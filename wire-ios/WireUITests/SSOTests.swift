@@ -33,7 +33,7 @@ final class SSOTests: WireUITestCase {
 
         /// Wait to allow Okta application assignment to fully propagate; without this delay, the login may fail with a
         /// 403 (app not assigned) error.
-        await app.hardWait(inSeconds: 20)
+        await hardWait(inSeconds: 20)
         let ssoCode = try ssoHelper.getSSOCode()
 
         _ = try await WelcomePage()
