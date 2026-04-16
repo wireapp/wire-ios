@@ -31,10 +31,13 @@ struct ConversationMessageContext: Equatable {
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
+
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestRefreshForMessage message: ZMConversationMessage
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
     )
+
 }
 
 extension ZMConversationMessage {
@@ -243,7 +246,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else {
             privateDefaults.saveWasUncollapsed(message)
         }
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
 
     func collapse() {
@@ -664,14 +671,34 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        var animated = true
+        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
+            // WPB-24283: prevent flickering of composite messages
+            // When only button states changed, skip animation.
+            // The NSFetchedResultsController will handle the update via
+            // controllerDidChangeContent, which is already debounced.
+            // Firing both paths causes duplicate reloads and visible flickering.
+            animated = false
+        }
+
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: animated
+        )
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
+
 }
 
 extension ConversationMessageSectionController {
