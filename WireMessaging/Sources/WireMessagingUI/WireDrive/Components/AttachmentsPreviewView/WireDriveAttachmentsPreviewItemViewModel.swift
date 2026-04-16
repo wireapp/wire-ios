@@ -72,6 +72,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self.isDeleted = false
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
             Task { await self?.handleAsset() }
         }
 
