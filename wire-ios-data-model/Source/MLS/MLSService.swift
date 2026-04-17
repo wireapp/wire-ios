@@ -180,7 +180,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
-        try await coreCrypto.transaction {
+        try await coreCrypto.extendedTransaction {
             let exists = try? await $0.conversationExists(conversationId: groupID.conversationId)
             if exists == true {
                 return try await $0.conversationEpoch(conversationId: groupID.conversationId)
@@ -201,7 +201,7 @@ public final class MLSService: MLSServiceInterface {
 
             let keyLength: UInt32 = 32
 
-            return try await coreCrypto.transaction {
+            return try await coreCrypto.extendedTransaction {
                 let epoch = try await $0.conversationEpoch(conversationId: subconversationGroupID.conversationId)
 
                 let secretKey = try await $0.exportSecretKey(
@@ -237,7 +237,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
-            return try await coreCrypto.transaction {
+            return try await coreCrypto.extendedTransaction {
                 try await $0.getClientIds(conversationId: subconversationGroupID.conversationId).compactMap {
                     MLSClientID(data: $0.copyBytes())
                 }
@@ -568,7 +568,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("wiping group", attributes: groupID.safeAttributes)
 
         do {
-            try await coreCrypto.transaction { [self] in
+            try await coreCrypto.extendedTransaction { [self] in
                 guard try await $0.conversationExists(
                     conversationId: groupID.conversationId
                 ) else {
@@ -654,7 +654,7 @@ public final class MLSService: MLSServiceInterface {
             }
 
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
-            let estimatedLocalKeyPackageCount = try await coreCrypto.transaction {
+            let estimatedLocalKeyPackageCount = try await coreCrypto.extendedTransaction {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
@@ -711,7 +711,7 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
-            keyPackages = try await coreCrypto.transaction {
+            keyPackages = try await coreCrypto.extendedTransaction {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(
                     ciphersuite: ciphersuite,
@@ -762,7 +762,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
-        try await coreCrypto.transaction { coreCrypto in
+        try await coreCrypto.extendedTransaction { coreCrypto in
             try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
         }.copyBytes()
     }
@@ -770,7 +770,7 @@ public final class MLSService: MLSServiceInterface {
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
 
         logger.info("checking if group (\(groupID)) exists...")
-        let result = try await coreCrypto.transaction { coreCrypto in
+        let result = try await coreCrypto.extendedTransaction { coreCrypto in
             try await coreCrypto.conversationExists(conversationId: groupID.conversationId)
         }
         logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
@@ -1161,7 +1161,7 @@ public final class MLSService: MLSServiceInterface {
     private func outOfSyncConversations(in context: NSManagedObjectContext) async throws
         -> [OutOfSyncConversationInfo] {
 
-        let conversations = try await coreCrypto.transaction { coreCrypto in
+        let conversations = try await coreCrypto.extendedTransaction { coreCrypto in
 
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
@@ -1232,7 +1232,7 @@ public final class MLSService: MLSServiceInterface {
         subgroup: MLSSubgroup?,
         context: NSManagedObjectContext
     ) async throws -> Bool {
-        try await coreCrypto.transaction {
+        try await coreCrypto.extendedTransaction {
             await self.isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
@@ -1823,7 +1823,7 @@ public final class MLSService: MLSServiceInterface {
                 parentGroupID: parentGroupID
             )
 
-            try await coreCrypto.transaction {
+            try await coreCrypto.extendedTransaction {
                 try await $0.wipeConversation(conversationId: subconversationGroupID.conversationId)
             }
         } catch {
