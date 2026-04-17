@@ -252,6 +252,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             )
         case .headless:
             showLaunchScreen(completion: completion)
+        case .loading:
+            completion()
         case let .locked(userSession):
             screenCurtainWindow.userSession = userSession
             showAppLock(userSession: userSession, completion: completion)
