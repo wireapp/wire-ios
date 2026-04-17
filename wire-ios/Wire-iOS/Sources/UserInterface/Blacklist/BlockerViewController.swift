@@ -164,9 +164,7 @@ final class BlockerViewController: LaunchImageViewController {
                     title: Strings.retry,
                     style: .cancel,
                     handler: { _ in
-                        Task {
-                            _ = await sessionManager.select(account)
-                        }
+                        sessionManager.select(account)
                     }
                 )
             )
@@ -453,9 +451,7 @@ extension BlockerViewController {
     }
 
     private func handleSwitch(to account: Account) {
-        Task {
-            await sessionManager?.switchTo(account: account)
-        }
+        sessionManager?.switchTo(account: account)
     }
 
     private func handleLogout() {

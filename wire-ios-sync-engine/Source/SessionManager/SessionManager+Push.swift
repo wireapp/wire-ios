@@ -77,7 +77,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // route to user session
         do {
             let userSession = try await loadSession(userInfo: response.notification.userInfo)
-            return await userSession.userNotificationCenter(center, didReceive: response)
+            await userSession.userNotificationCenter(center, didReceive: response)
         } catch let error as NSError {
             let errorString = error.safeForLoggingDescription
             let responseString = response.safeForLoggingDescription
@@ -117,17 +117,21 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         return try await withSession(for: account)
     }
 
-    fileprivate func activateAccount(for session: ZMUserSession) async {
+    fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {
         if session == activeUserSession {
+            completion()
             return
         }
 
         var foundSession = false
-        for (accountId, backgroundSession) in backgroundUserSessions {
-            if session == backgroundSession, let account = accountManager.account(with: accountId) {
-                _ = await select(account)
+        backgroundUserSessions.forEach { accountId, backgroundSession in
+            if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
+
+                self.select(account, completion: { _ in
+                    completion()
+                })
                 foundSession = true
-                break
+                return
             }
         }
 
@@ -148,16 +152,14 @@ public extension SessionManager {
             return
         }
 
-        Task {
-            await activateAccount(for: session)
-            presentationDelegate?.showConversation(conversation, at: message)
+        activateAccount(for: session) {
+            self.presentationDelegate?.showConversation(conversation, at: message)
         }
     }
 
     func showConversationList(in session: ZMUserSession) {
-        Task {
-            await activateAccount(for: session)
-            presentationDelegate?.showConversationList()
+        activateAccount(for: session) {
+            self.presentationDelegate?.showConversationList()
         }
     }
 

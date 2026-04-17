@@ -72,16 +72,31 @@ class MockAccountSelector: AccountSelector {
     // MARK: - switchTo
 
     var switchToAccount_Invocations: [Account] = []
-    var switchToAccount_MockMethod: ((Account) async -> Void)?
+    var switchToAccount_MockMethod: ((Account) -> Void)?
 
-    func switchTo(account: Account) async {
+    func switchTo(account: Account) {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
             fatalError("no mock for `switchToAccount`")
         }
 
-        await mock(account)
+        mock(account)
+    }
+
+    // MARK: - switchTo
+
+    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
+    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
+
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
+        switchToAccountCompletion_Invocations.append((account: account, completion: completion))
+
+        guard let mock = switchToAccountCompletion_MockMethod else {
+            fatalError("no mock for `switchToAccountCompletion`")
+        }
+
+        mock(account, completion)
     }
 
 }
