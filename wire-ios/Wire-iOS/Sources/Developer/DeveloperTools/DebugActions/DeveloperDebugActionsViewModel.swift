@@ -237,7 +237,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }) else { return }
 
         let cookieStorage = CookieStorage(
-            userID: selfUserID,
             cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
@@ -265,6 +264,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         networkService.executeRequest_MockValue = (data, httpURLResponse)
 
         let authenticationManager = AuthenticationManager(
+            userID: selfUserID,
             clientID: UUID().uuidString,
             cookieStorage: cookieStorage,
             networkService: networkService

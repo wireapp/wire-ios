@@ -263,7 +263,6 @@ public struct SharingSessionLoader {
         let legacyCookieStorage = LegacyCookieStorage(
             userIdentifier: accountID,
             cookieStorage: CookieStorage(
-                userID: accountID,
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
         )
@@ -358,7 +357,6 @@ public struct SharingSessionLoader {
             localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
-            userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey(),
             keychain: Keychain(),
             cache: CookieStorageCache()

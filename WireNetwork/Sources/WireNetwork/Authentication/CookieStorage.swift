@@ -25,9 +25,9 @@ import WireCrypto
 // sourcery: AutoMockable
 public protocol CookieStorageProtocol: Sendable {
 
-    func storeCookies(_ cookies: [HTTPCookie]) throws
-    func fetchCookies() throws -> [HTTPCookie]
-    func removeCookies() throws
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws
+    func fetchCookies(userID: UUID) throws -> [HTTPCookie]
+    func removeCookies(userID: UUID) throws
 }
 
 /// A cache for cookies, keyed by user ID.
@@ -80,41 +80,34 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     private static let lock = OSAllocatedUnfairLock()
 
-    private let storage: _CookieStorage
+    private let cookieEncryptionKey: Data
+    private let keychain: any KeychainProtocol
+    private let cache: CookieStorageCache
 
     /// Creates a new `CookieStorage`.
     ///
     /// - Parameters:
-    ///  - userID: The unique identifier for the user whose cookies are being stored.
     ///  - cookieEncryptionKey: A key used to encrypt and decrypt cookie data. This key should be stored in defaults
     ///  so that it is destroyed when the app is deleted.
 
     public init(
-        userID: UUID,
         cookieEncryptionKey: Data
     ) {
-        storage = _CookieStorage(
-            userID: userID,
-            cookieEncryptionKey: cookieEncryptionKey,
-            keychain: Keychain(),
-            cache: CookieStorageCache(),
-        )
+        self.cookieEncryptionKey = cookieEncryptionKey
+        self.keychain = Keychain()
+        self.cache = CookieStorageCache()
     }
 
     #if DEBUG
-    /// Creates a new `CookieStorage` with an injected storage instance for testing purposes only.
+    /// Creates a new `CookieStorage` with injected dependencies for testing purposes only.
     public init(
-        userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol,
         cache: CookieStorageCache
     ) {
-        storage = _CookieStorage(
-            userID: userID,
-            cookieEncryptionKey: cookieEncryptionKey,
-            keychain: keychain,
-            cache: cache,
-        )
+        self.cookieEncryptionKey = cookieEncryptionKey
+        self.keychain = keychain
+        self.cache = cache
     }
     #endif
 
@@ -124,10 +117,20 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// different installations of the application, such as when the app is
     /// deleted without the user logging out.
     ///
-    /// - Parameter cookies: The cookies to store.
+    /// - Parameters:
+    ///   - cookies: The cookies to store.
+    ///   - userID: The unique identifier for the user whose cookies are being stored.
 
-    public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try Self.lock.withLock { try storage.storeCookies(cookies, epoch: UUID()) }
+    public func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
+        try Self.lock.withLock {
+            let storage = _CookieStorage(
+                userID: userID,
+                cookieEncryptionKey: cookieEncryptionKey,
+                keychain: keychain,
+                cache: cache
+            )
+            try storage.storeCookies(cookies, epoch: UUID())
+        }
     }
 
     /// Fetch stored cookies.
@@ -136,22 +139,40 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     /// account, however it is likely that fetching an old cookie would result
     /// in a decoding error.
     ///
+    /// - Parameter userID: The unique identifier for the user whose cookies are being fetched.
     /// - Returns: The stored cookies.
 
-    public func fetchCookies() throws -> [HTTPCookie] {
-        try Self.lock.withLock { try storage.fetchCookies() }
+    public func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
+        try Self.lock.withLock {
+            let storage = _CookieStorage(
+                userID: userID,
+                cookieEncryptionKey: cookieEncryptionKey,
+                keychain: keychain,
+                cache: cache
+            )
+            return try storage.fetchCookies()
+        }
     }
 
     /// Remove stored cookies from the keychain.
     ///
-    /// This will delete any cookie data associated with the current user ID
+    /// This will delete any cookie data associated with the given user ID
     /// from the device keychain. This operation is irreversible and is typically
     /// used during logout or account removal.
     ///
+    /// - Parameter userID: The unique identifier for the user whose cookies are being removed.
     /// - Throws: An error if the keychain deletion fails.
 
-    public func removeCookies() throws {
-        try Self.lock.withLock { try storage.removeCookies() }
+    public func removeCookies(userID: UUID) throws {
+        try Self.lock.withLock {
+            let storage = _CookieStorage(
+                userID: userID,
+                cookieEncryptionKey: cookieEncryptionKey,
+                keychain: keychain,
+                cache: cache
+            )
+            try storage.removeCookies()
+        }
     }
 
 }

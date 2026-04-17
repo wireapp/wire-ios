@@ -111,6 +111,7 @@ public final class ClientSessionComponent {
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
+        userID: selfUserID,
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: restNetworkService,

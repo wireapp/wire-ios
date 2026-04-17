@@ -25,15 +25,15 @@ public final class StubCookieStorage: CookieStorageProtocol {
 
     public init() {}
 
-    public func storeCookies(_ cookies: [HTTPCookie]) throws {
+    public func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
         self.cookies = cookies
     }
 
-    public func fetchCookies() throws -> [HTTPCookie] {
+    public func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
         cookies
     }
 
-    public func removeCookies() throws {
+    public func removeCookies(userID: UUID) throws {
         cookies = []
     }
 

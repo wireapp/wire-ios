@@ -186,16 +186,16 @@ final class UserSessionLoader {
 
         // Store any new cookies.
         let cookieStorage = CookieStorage(
-            userID: accountID,
             cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         if let cookies = newEnvironment?.cookies {
-            try cookieStorage.storeCookies(cookies)
+            try cookieStorage.storeCookies(cookies, userID: accountID)
         }
 
         // Check if this backend supports MLS.
         if let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            accountID: accountID,
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
@@ -585,12 +585,14 @@ final class UserSessionLoader {
     }
 
     private func isBackendMLSEnabled(
+        accountID: UUID,
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
     ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
+                userID: accountID,
                 clientID: nil,
                 cookieStorage: cookieStorage,
                 networkService: networkService,

@@ -44,17 +44,20 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     }
 
     private var currentToken: CurrentToken?
+    private let userID: UUID
     private let clientID: String?
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: any NetworkServiceProtocol
     private let onAuthenticationFailure: () -> Void
 
     public init(
+        userID: UUID,
         clientID: String?,
         cookieStorage: any CookieStorageProtocol,
         networkService: any NetworkServiceProtocol,
         onAuthenticationFailure: @escaping () -> Void
     ) {
+        self.userID = userID
         self.clientID = clientID
         self.cookieStorage = cookieStorage
         self.networkService = networkService
@@ -123,7 +126,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 switch authenticationError {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
-                    try cookieStorage.removeCookies()
+                    try cookieStorage.removeCookies(userID: userID)
                     WireLogger.authentication.info(
                         "Removed cookies (invalidCredentials)", attributes: .safePublic
                     )
@@ -143,7 +146,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
         lastKnownToken: AccessToken?
     ) -> Task<AccessToken, any Error> {
         Task {
-            let cookies = try cookieStorage.fetchCookies()
+            let cookies = try cookieStorage.fetchCookies(userID: userID)
 
             var requestBuilder = try URLRequestBuilder(path: "/access")
                 .withMethod(.post)

@@ -34,7 +34,6 @@ final class CookieStorageTests: XCTestCase {
         cookieEncryptionKey = try Scaffolding.cookieEncryptionKey()
         keychain = KeychainProtocolMock()
         sut = CookieStorage(
-            userID: Scaffolding.userID,
             cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain,
             cache: CookieStorageCache(sharedStorage: .init(initialState: [:]))
@@ -56,7 +55,7 @@ final class CookieStorageTests: XCTestCase {
         // Then
         await XCTAssertThrowsErrorAsync {
             // When
-            try sut.storeCookies(cookies)
+            try sut.storeCookies(cookies, userID: Scaffolding.userID)
         } errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
@@ -72,7 +71,7 @@ final class CookieStorageTests: XCTestCase {
         // Then
         await XCTAssertThrowsErrorAsync {
             // When
-            try sut.storeCookies([invalidCookie])
+            try sut.storeCookies([invalidCookie], userID: Scaffolding.userID)
         } errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
@@ -92,7 +91,7 @@ final class CookieStorageTests: XCTestCase {
         keychain.setAddItemQuery_MockMethod { _ in }
 
         // When
-        try sut.storeCookies([validCookie])
+        try sut.storeCookies([validCookie], userID: Scaffolding.userID)
 
         // Then first we tried to update an existing cookie.
         let updateInvocations = keychain.updateItemQueryAttributesToUpdate_Invocations
@@ -114,7 +113,7 @@ final class CookieStorageTests: XCTestCase {
         keychain.setUpdateItemQueryAttributesToUpdate_MockMethod { _, _ in }
 
         // When
-        try sut.storeCookies([validCookie])
+        try sut.storeCookies([validCookie], userID: Scaffolding.userID)
 
         // Then we don't fetch or add the cookie.
         try XCTAssertCount(keychain.fetchItemQuery_Invocations, count: 0)
@@ -132,7 +131,7 @@ final class CookieStorageTests: XCTestCase {
         keychain.setFetchItemQuery_MockValue(nil)
 
         // When
-        let cookies = try sut.fetchCookies()
+        let cookies = try sut.fetchCookies(userID: Scaffolding.userID)
 
         // Then
         XCTAssertTrue(cookies.isEmpty)
@@ -151,7 +150,7 @@ final class CookieStorageTests: XCTestCase {
         keychain.setFetchItemQuery_MockValue(storedCookieData)
 
         // When
-        let cookies = try sut.fetchCookies()
+        let cookies = try sut.fetchCookies(userID: Scaffolding.userID)
 
         // Then
         try assertCookies(

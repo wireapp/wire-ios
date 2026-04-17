@@ -40,16 +40,19 @@ struct VerifyUserSessionUseCase {
 
     // MARK: - Properties
 
+    private let userID: UUID
     private let journal: any JournalProtocol
     private let cookieStorage: any WireNetwork.CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
     private let logger = WireLogger.notifications
 
     init(
+        userID: UUID,
         journal: any JournalProtocol,
         cookieStorage: any WireNetwork.CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
+        self.userID = userID
         self.journal = journal
         self.cookieStorage = cookieStorage
         self.coreData = coreData
@@ -75,7 +78,7 @@ struct VerifyUserSessionUseCase {
             attributes: .newNSE
         )
 
-        let cookies = try cookieStorage.fetchCookies()
+        let cookies = try cookieStorage.fetchCookies(userID: userID)
 
         for cookie in cookies where cookie.name == Constants.cookieName {
             if let cookieExpirationDate = cookie.expiresDate {

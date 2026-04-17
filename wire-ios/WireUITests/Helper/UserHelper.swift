@@ -709,15 +709,15 @@ private final class MockCookieStorage: CookieStorageProtocol {
         self.cookies = []
     }
 
-    func storeCookies(_ cookies: [HTTPCookie]) throws {
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
         self.cookies = cookies
     }
 
-    func fetchCookies() throws -> [HTTPCookie] {
+    func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
         cookies
     }
 
-    func removeCookies() throws {
+    func removeCookies(userID: UUID) throws {
         cookies = []
     }
 }

@@ -21,9 +21,9 @@ import WireLogging
 
 public protocol CookieStorageProtocol: Sendable {
 
-    func storeCookies(_ cookies: [HTTPCookie]) throws
-    func fetchCookies() throws -> [HTTPCookie]
-    func removeCookies() throws
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws
+    func fetchCookies(userID: UUID) throws -> [HTTPCookie]
+    func removeCookies(userID: UUID) throws
 }
 
 @objc
@@ -50,13 +50,13 @@ public class LegacyCookieStorage: NSObject {
     /// Stores the given cookies.
     @objc
     public func storeCookies(_ cookies: [HTTPCookie]) throws {
-        try cookieStorage.storeCookies(cookies)
+        try cookieStorage.storeCookies(cookies, userID: userIdentifier)
     }
 
     /// Removes all stored cookies for the user.
     @objc
     public func removeCookies() throws {
-        try cookieStorage.removeCookies()
+        try cookieStorage.removeCookies(userID: userIdentifier)
     }
 
     /// The expiration date of the authentication cookie, if it exists.
@@ -106,7 +106,7 @@ public class LegacyCookieStorage: NSObject {
 
     private func fetchCookies() -> [HTTPCookie] {
         do {
-            return try cookieStorage.fetchCookies()
+            return try cookieStorage.fetchCookies(userID: userIdentifier)
         } catch {
             WireLogger.authentication.error("Failed to fetch cookies: \(error)")
             return []
