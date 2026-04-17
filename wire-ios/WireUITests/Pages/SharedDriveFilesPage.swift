@@ -20,86 +20,82 @@ import WireLocators
 import XCTest
 
 class SharedDriveFilesPage: PageModel {
-
+    
     override var pageMainElement: XCUIElement {
         sharedDrivePageHeader
     }
-
+    
     var sharedDrivePageHeader: XCUIElement {
         app.staticTexts[Locators.WireDrive.FilesPage.sharedDrivePageHeader.rawValue]
     }
-
+    
     private var fileTexts: XCUIElementQuery {
         app.staticTexts
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
     }
-
+    
     var fileIcon: XCUIElement {
         app.images.matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0)).firstMatch
     }
-
-    var sentBy: XCUIElement {
-        fileTexts.element(boundBy: 1)
+    
+    private var fileMetadataText: XCUIElement {
+        fileTexts.firstMatch
     }
-
-    var fileName: XCUIElement {
-        fileTexts.element(boundBy: 0)
-    }
-
+    
     var deleteOnMenuContext: XCUIElement {
         app.buttons[Locators.WireDrive.FileMenu.deleteToRecycleBin.identifier]
     }
-
+    
     var deleteOptionOnBottomSheet: XCUIElement {
         app.buttons[Locators.WireDrive.FilesItemPage.confirmDeleteButton.rawValue].firstMatch
     }
-
+    
     var moreOptionOnSharedDrive: XCUIElement {
         app.buttons[Locators.WireDrive.FilesPage.moreOptions.rawValue]
     }
-
+    
     var openRecycleBinButton: XCUIElement {
         app.buttons[Locators.WireDrive.FilesPage.recycleBin.rawValue]
     }
-
+    
     var moreButton: XCUIElement {
         app.buttons
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
             .firstMatch
     }
-
+    
     @discardableResult
     func verifyFileTypeAndMetadata(
-        username: String,
+        name: String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> SharedDriveFilesPage {
         XCTAssertTrue(fileIcon.exists, file: file, line: line)
-        XCTAssertTrue(fileName.label.contains(".png"), file: file, line: line)
-        XCTAssertTrue(sentBy.label.contains(username), file: file, line: line)
+        XCTAssertTrue(fileMetadataText.label.contains(".png"), file: file, line: line)
+        XCTAssertTrue(fileMetadataText.label.contains(name), file: file, line: line)
         return try SharedDriveFilesPage()
     }
-
+    
     var fileNameText: String {
-        fileName.label
+        fileMetadataText.label
     }
-
+    
     func openMoreOptionsOnFileAndDelete()  throws -> SharedDriveFilesPage {
         moreButton.tap()
         deleteOnMenuContext.tap()
         deleteOptionOnBottomSheet.tap()
         return try SharedDriveFilesPage()
     }
-
+    
     func openRecycleBin() throws -> RecycleBinPage {
         moreOptionOnSharedDrive.tap()
         openRecycleBinButton.tap()
         return try RecycleBinPage()
-
+        
     }
-
+    
     func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
-        self.fileName.label == fileName
+        fileMetadataText.label.contains(fileName)
+        
     }
-
 }
