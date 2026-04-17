@@ -145,7 +145,7 @@ package struct LoginViaEmailView: View {
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.passwordSecureTextField))
+        .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
     }
 
     @ViewBuilder private var submitButton: some View {
@@ -160,7 +160,7 @@ package struct LoginViaEmailView: View {
         .wireButtonStyle(.primary)
         .bold()
         .disabled(!viewModel.canSubmitCredentials)
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.nextButton))
+        .accessibilityIdentifier(Locators.LoginPage.nextButton.rawValue)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -208,7 +208,7 @@ package struct LoginViaEmailView: View {
                     .cornerRadius(12)
             }
         }
-        .accessibilityIdentifier(String(describing: Locators.LoginPage.createAccountLink.rawValue))
+        .accessibilityIdentifier(Locators.LoginPage.createAccountLink.rawValue)
     }
 
     @ViewBuilder private var proxyCredentials: some View {

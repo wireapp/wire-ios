@@ -257,6 +257,7 @@ extension ConversationMessageCellDescription {
             // so re-set message from main context to avoid crash
             actionController?.message = message
         }
+        cell.accessibilityIdentifier = accessibilityIdentifier
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
