@@ -93,6 +93,11 @@
 "peoplepicker.no_matching_results.message.apps" = "无结果。";
 "peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "应用是可以改善您的工作流程的助手。";
 "peoplepicker.no_matching_results.message.apps_not_enabled" = "应用是可以改善您工作流程的助手。要启用它们，请咨询您的管理员。";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "邀请已送出";
 "peoplepicker.send_invitation.dialog.message" = "邀请两周内有效。如果过期，请发送新的邀请。";

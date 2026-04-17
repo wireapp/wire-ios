@@ -280,9 +280,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call</string>
+        <string>Verpasster Anruf</string>
         <key>other</key>
-        <string>Missed calls (%d)</string>
+        <string>Verpasste Anrufe (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -312,9 +312,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call from %2$@</string>
+        <string>Verpasster Anruf von %2$@</string>
         <key>other</key>
-        <string>Missed calls from %2$@ (%d)</string>
+        <string>Verpasste Anrufe von %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

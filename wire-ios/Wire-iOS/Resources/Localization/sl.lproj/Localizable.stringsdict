@@ -348,7 +348,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call</string>
+        <string>Zgrešen klic</string>
+        <key>two</key>
+        <string>Missed calls (%d)</string>
+        <key>few</key>
+        <string>Missed calls (%d)</string>
         <key>other</key>
         <string>Missed calls (%d)</string>
       </dict>
@@ -385,6 +389,10 @@
         <string>d</string>
         <key>one</key>
         <string>Missed call from %2$@</string>
+        <key>two</key>
+        <string>Missed calls from %2$@ (%d)</string>
+        <key>few</key>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>other</key>
         <string>Missed calls from %2$@ (%d)</string>
       </dict>
