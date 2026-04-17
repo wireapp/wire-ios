@@ -173,6 +173,7 @@ public enum Locators {
         case manageTeamButton
         case addAccountOrTeamButton
         case userProfilePicture
+        case close
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -271,11 +272,11 @@ public enum Locators {
 
     public enum UserDetailsPage: String {
 
-        case close
         case connectLeftButton
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
         case removeFromConversation = "Remove From Conversation…"
+        case close
     }
 
     public enum VerificationCodePage: AutoPrefixedEnum {
@@ -294,11 +295,6 @@ public enum Locators {
         case resetPassword = "Reset password"
     }
 
-    public enum FileVersioningPage: AutoPrefixedEnum {
-
-        case closeButton
-    }
-
     public enum ShareExtensionPage: String {
 
         case imageTile = "PXGGridLayout-Info"
@@ -312,6 +308,11 @@ public enum Locators {
 
         case acceptCall = "Accept"
         case turnOffMicrophone = "Microphone"
+    }
+
+    public enum FileVersioningPage: AutoPrefixedEnum {
+
+        case closeButton
     }
 
     public enum OngoingCallPage: String {

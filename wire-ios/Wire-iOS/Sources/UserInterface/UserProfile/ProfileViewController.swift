@@ -611,9 +611,11 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
+            closeButton.accessibilityIdentifier = Locators.UserDetailsPage.close.rawValue
+            navigationItem.rightBarButtonItem = closeButton
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {
             navigationItem.rightBarButtonItem = legalHoldItem

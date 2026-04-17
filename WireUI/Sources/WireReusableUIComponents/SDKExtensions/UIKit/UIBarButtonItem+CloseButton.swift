@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 public extension UIBarButtonItem {
     /// Creates a customized close button for use in navigation bars.
@@ -41,7 +42,6 @@ public extension UIBarButtonItem {
         closeItem.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
         closeItem.accessibilityLabel = accessibilityLabel
-        closeItem.accessibilityIdentifier = "close"
 
         return closeItem
     }
