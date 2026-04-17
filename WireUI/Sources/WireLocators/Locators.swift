@@ -387,6 +387,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case restore
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
