@@ -164,7 +164,7 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(recycleBinPage.verifyFileMovedToRecycleBin(fileName: sharedFileName))
 
     }
-    
+
     @MainActor
     func testRestoringFileFromRecycleBinToDrive_TC_8959() async throws {
 
@@ -180,14 +180,19 @@ final class WireDriveTests: WireUITestCase {
 
         activeConversationPage.waitToUploadToFinishAndSend()
 
-        let sharedDrivePage = try activeConversationPage
+        var sharedDrivePage = try activeConversationPage
             .openSharedDrive()
 
         let sharedFileName = sharedDrivePage.fileNameText
 
-        let recycleBinPage = try sharedDrivePage
+        sharedDrivePage = try sharedDrivePage
             .openMoreOptionsOnFileAndDelete()
             .openRecycleBin()
+            .openMoreOptionsOnFileAndRestoreFile()
+            .closeRecycleBin()
+
+        // THEN
+        XCTAssertTrue(sharedDrivePage.verifyFileMovedToSharedDrive(fileName: sharedFileName))
 
     }
 }

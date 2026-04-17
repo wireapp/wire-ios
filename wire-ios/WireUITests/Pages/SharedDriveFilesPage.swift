@@ -51,7 +51,7 @@ class SharedDriveFilesPage: PageModel {
     }
 
     var deleteOptionOnBottomSheet: XCUIElement {
-        app.buttons[Locators.WireDrive.FilesPage.deleteOnBottomSheet.rawValue]
+        app.buttons[Locators.WireDrive.FilesItemPage.confirmDeleteButton.rawValue].firstMatch
     }
 
     var moreOptionOnSharedDrive: XCUIElement {
@@ -97,4 +97,9 @@ class SharedDriveFilesPage: PageModel {
         return try RecycleBinPage()
 
     }
+
+    func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
+        self.fileName.label == fileName
+    }
+
 }
