@@ -164,4 +164,30 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(recycleBinPage.verifyFileMovedToRecycleBin(fileName: sharedFileName))
 
     }
+    
+    @MainActor
+    func testRestoringFileFromRecycleBinToDrive_TC_8959() async throws {
+
+        // GIVEN
+        let message = "Attachment with Text"
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        // WHEN
+        let activeConversationPage = try loginAndOpenConversation(for: teamOwner)
+            .typeMessageAndAttachSketch(message)
+
+        activeConversationPage.waitToUploadToFinishAndSend()
+
+        let sharedDrivePage = try activeConversationPage
+            .openSharedDrive()
+
+        let sharedFileName = sharedDrivePage.fileNameText
+
+        let recycleBinPage = try sharedDrivePage
+            .openMoreOptionsOnFileAndDelete()
+            .openRecycleBin()
+
+    }
 }
