@@ -41,6 +41,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
 
     var incrementalSyncDidFinish: XCTestExpectation!
+    var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         journal = Journal(
@@ -73,6 +74,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         )
 
         incrementalSyncDidFinish = XCTestExpectation(description: "incrementalSyncDidFinish")
+        cancellables = []
     }
 
     override func tearDown() {
@@ -89,6 +91,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         featureConfigRepository = nil
         mainAppPushChannelCoordinator = nil
         incrementalSyncDidFinish = nil
+        cancellables = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -292,42 +295,62 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     func testSuspend_Sync_State_Update_To_Suspended_And_Background_Task_Is_Active() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
-        let expectation = XCTestExpectation()
 
         enum Failure: Error {
             case failed
         }
-
-        // Mock
-        incrementalSync.perform_MockMethod = {
-            throw Failure.failed
-        }
+        incrementalSync.perform_MockMethod = { throw Failure.failed }
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .mockID1
 
-        var cancellable: AnyCancellable?
-
-        cancellable = syncStateSubject
-            .dropFirst()
-            .sink { state in
-                switch state {
-                case .suspended:
-                    // Then
-                    XCTAssertEqual(BackgroundActivityFactory.shared.isActive, true)
-                    expectation.fulfill()
-                default:
-                    XCTFail("Sync should be suspended")
-                }
-            }
+        // Then — assertion fires inside the sink, synchronously during send(.suspended),
+        // before endBackgroundActivity runs.
+        let suspended = expectationForSyncSuspended {
+            XCTAssertEqual(BackgroundActivityFactory.shared.isActive, true)
+        }
 
         // When
         await sut.suspend()
 
-        await fulfillment(of: [expectation])
+        await fulfillment(of: [suspended])
     }
 
-    func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
+    func test_TearDown_NilsDelegate() async {
+        // Given
+        sut.delegate = self
 
-        liveSync
+        let suspended = expectationForSyncSuspended()
+
+        // When
+        sut.tearDown()
+        await fulfillment(of: [suspended])
+
+        // Then
+        XCTAssertNil(sut.delegate)
+    }
+
+    func test_TearDown_SuspendsPushChannel() async throws {
+        // Given
+        journal[.isSyncV2Enabled] = true
+        let pushChannelClosed = expectation(description: "push channel closed")
+
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task { try? await Task.sleep(nanoseconds: 10_000_000_000) },
+                closePushChannel: { pushChannelClosed.fulfill() }
+            )
+        }
+
+        let suspended = expectationForSyncSuspended()
+
+        // Start an incremental sync to get an active token with a push channel
+        try await sut.performIncrementalSync()
+
+        // When
+        sut.tearDown()
+
+        // Then — wait for both: push channel closed and suspend() fully completed
+        // (ensures endBackgroundActivity is called before the next test starts)
+        await fulfillment(of: [pushChannelClosed, suspended], timeout: 2)
     }
 
     func testPerformIncrementalSync_V3() async throws {
@@ -349,6 +372,25 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         // Then
         XCTAssertEqual(liveSync.perform_Invocations.count, 1)
+    }
+
+    // MARK: - Helpers
+
+    private func expectationForSyncSuspended(onSuspended: (() -> Void)? = nil) -> XCTestExpectation {
+        let suspended = expectation(description: "sync suspended")
+        syncStateSubject
+            .filter { if case .suspended = $0 { true } else { false } }
+            .sink { _ in
+                onSuspended?()
+                suspended.fulfill()
+            }
+            .store(in: &cancellables)
+        return suspended
+    }
+
+    func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
+
+        liveSync
     }
 }
 
