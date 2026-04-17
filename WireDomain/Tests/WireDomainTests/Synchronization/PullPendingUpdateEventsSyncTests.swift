@@ -118,6 +118,67 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
     }
 
+    func testPull_cancelledDuringDecryption_throwsCancellationError() async throws {
+        // Mock
+        store.lastEventID_MockValue = Scaffolding.lastEventID
+        store.indexOfLastEventEnvelope_MockValue = Scaffolding.indexOfLastEventEnvelope
+
+        // page2 contains 2 envelopes, so cancellation mid-loop can be observed
+        api.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page2") { start in
+            switch start {
+            case "page2":
+                return Scaffolding.page2 // 2 events
+            default:
+                throw "unknown page: \(start ?? "nil")"
+            }
+        }
+
+        let box = ContinuationBox()
+
+        decryptor.decryptEventsInContext_MockMethod = { [box] envelope, _ in
+            // Suspend so the outer task can be cancelled before the next iteration
+            await withCheckedContinuation { continuation in
+                box.continuation = continuation
+            }
+            return EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
+        }
+
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
+        store.storeLastEventIDId_MockMethod = { _ in }
+        store.storeServerTimeDelta_MockMethod = { _ in }
+
+        // When: start pull in a task
+        let pullingEventsTask = Task { [sut] in
+            try await sut.pull(publicKeys: nil)
+        }
+
+        // Wait until the first decryption suspends
+        while box.continuation == nil {
+            try await Task.sleep(nanoseconds: 1_000_000)
+        }
+
+        // Cancel the task, then let the first decryption finish —
+        // the second iteration will hit Task.checkCancellation() and throw.
+        pullingEventsTask.cancel()
+        box.continuation?.resume()
+
+        // Then: pull throws CancellationError
+        let result = await pullingEventsTask.result
+        switch result {
+        case let .failure(error):
+            XCTAssertTrue(error is CancellationError, "Expected CancellationError, got: \(error)")
+        case .success:
+            XCTFail("Expected the task to be cancelled")
+        }
+
+        // Then: only the first envelope was decrypted (loop was interrupted)
+        XCTAssertEqual(decryptor.decryptEventsInContext_Invocations.count, 1)
+
+        // Then: no events were persisted and no last event ID was stored
+        XCTAssertTrue(store.persistEventEnvelopesIndexPublicKeys_Invocations.isEmpty)
+        XCTAssertTrue(store.storeLastEventIDId_Invocations.isEmpty)
+    }
+
     func testLastEventIDIsNotPersisted_untilTransactionIsCompleted() async throws {
         // Mock
         store.lastEventID_MockValue = Scaffolding.lastEventID
@@ -166,6 +227,10 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope4.id)
     }
 
+}
+
+private final class ContinuationBox: @unchecked Sendable {
+    var continuation: CheckedContinuation<Void, Never>?
 }
 
 private enum Scaffolding {
