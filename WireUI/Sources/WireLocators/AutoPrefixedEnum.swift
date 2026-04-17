@@ -19,7 +19,6 @@
 protocol AutoPrefixedEnum: RawRepresentable, CaseIterable where RawValue == String {}
 
 extension AutoPrefixedEnum {
-    // TODO: [WPB-24694] need to update app locators based on this file
     public var rawValue: String { "\(Self.self).\(self)" }
 
     public init?(rawValue: String) {
