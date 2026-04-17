@@ -20,50 +20,50 @@ import WireLocators
 import XCTest
 
 class SharedDriveFilesPage: PageModel {
-    
+
     override var pageMainElement: XCUIElement {
         sharedDrivePageHeader
     }
-    
+
     var sharedDrivePageHeader: XCUIElement {
         app.staticTexts[Locators.WireDrive.FilesPage.sharedDrivePageHeader.rawValue]
     }
-    
+
     private var fileTexts: XCUIElementQuery {
         app.staticTexts
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
     }
-    
+
     var fileIcon: XCUIElement {
         app.images.matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0)).firstMatch
     }
-    
+
     private var fileMetadataText: XCUIElement {
         fileTexts.firstMatch
     }
-    
+
     var deleteOnMenuContext: XCUIElement {
         app.buttons[Locators.WireDrive.FileMenu.deleteToRecycleBin.identifier]
     }
-    
+
     var deleteOptionOnBottomSheet: XCUIElement {
         app.buttons[Locators.WireDrive.FilesItemPage.confirmDeleteButton.rawValue].firstMatch
     }
-    
+
     var moreOptionOnSharedDrive: XCUIElement {
         app.buttons[Locators.WireDrive.FilesPage.moreOptions.rawValue]
     }
-    
+
     var openRecycleBinButton: XCUIElement {
         app.buttons[Locators.WireDrive.FilesPage.recycleBin.rawValue]
     }
-    
+
     var moreButton: XCUIElement {
         app.buttons
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
             .firstMatch
     }
-    
+
     @discardableResult
     func verifyFileTypeAndMetadata(
         name: String,
@@ -75,27 +75,27 @@ class SharedDriveFilesPage: PageModel {
         XCTAssertTrue(fileMetadataText.label.contains(name), file: file, line: line)
         return try SharedDriveFilesPage()
     }
-    
+
     var fileNameText: String {
         fileMetadataText.label
     }
-    
+
     func openMoreOptionsOnFileAndDelete()  throws -> SharedDriveFilesPage {
         moreButton.tap()
         deleteOnMenuContext.tap()
         deleteOptionOnBottomSheet.tap()
         return try SharedDriveFilesPage()
     }
-    
+
     func openRecycleBin() throws -> RecycleBinPage {
         moreOptionOnSharedDrive.tap()
         openRecycleBinButton.tap()
         return try RecycleBinPage()
-        
+
     }
-    
+
     func verifyFileMovedToSharedDrive(fileName: String) -> Bool {
         fileMetadataText.label.contains(fileName)
-        
+
     }
 }
