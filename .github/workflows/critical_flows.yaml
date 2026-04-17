@@ -2,6 +2,11 @@ name: Critical Flows
 
 on:
   workflow_dispatch:
+    inputs:
+      testiny_run_name:
+        description: "Testiny test run name: paste the exact run name from Testiny"
+        required: false
+        type: string
   push:
     branches:
       - 'develop'
@@ -22,4 +27,5 @@ jobs:
       test_dependencies: false
       run_critical_flows: true
       notify: always
+      testiny_run_name: ${{ inputs.testiny_run_name }}
     secrets: inherit

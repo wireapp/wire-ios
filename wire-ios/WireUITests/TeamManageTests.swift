@@ -21,9 +21,8 @@ import XCTest
 
 final class TeamManageTests: WireUITestCase {
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1299/tc/8625
     @MainActor
-    func test_Migrate_PersonalUserToTeam() async throws {
+    func testMigratePersonalUserToTeam_TC_9452() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
@@ -42,9 +41,8 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
-    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1287/tc/8800
     @MainActor
-    func test_PersonalUser_InvitedToTeam() async throws {
+    func testPersonalUserInvitedToTeam_TC_9453() async throws {
         let teamOwner = try await userHelper.createPersonalUser()
         let teamID = try await userHelper.upgradePersonalToTeam(
             teamName: teamOwner.teamName
@@ -75,10 +73,8 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
-    ///  testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8579
     @MainActor
-    func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
-
+    func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
@@ -105,9 +101,8 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1302/tc/8656
     @MainActor
-    func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
+    func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -165,9 +160,8 @@ final class TeamManageTests: WireUITestCase {
     }
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
-    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
     @MainActor
-    func test_ArchivedConversationUnarchivesWhenOpened() async throws {
+    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -192,9 +186,8 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
     @MainActor
-    func test_MentionUserInGroup() async throws {
+    func testMentionUserInGroup_TC_8865() async throws {
 
         let (teamOwner, teamMembers, _, _) = try await userHelper
             .registerTeam(

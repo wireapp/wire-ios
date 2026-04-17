@@ -44,9 +44,8 @@ final class MultiBackendSupportTests: WireUITestCase {
         return (accountPage, user)
     }
 
-    /// testniy: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8797
     @MainActor
-    func test_Add_MultiBackend_Accounts() async throws {
+    func testAddMultiBackendAccounts_TC_8940() async throws {
 
         defer { BackendContext.current = .staging }
 
