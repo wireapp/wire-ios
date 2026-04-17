@@ -280,9 +280,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call</string>
+        <string>Chamada não atendida</string>
         <key>other</key>
-        <string>Missed calls (%d)</string>
+        <string>Chamadas Perdidas</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>

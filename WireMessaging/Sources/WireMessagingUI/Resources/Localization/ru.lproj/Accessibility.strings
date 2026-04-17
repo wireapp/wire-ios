@@ -28,7 +28,7 @@
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Закрыть баннер обновления";
 
 // MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Закрыть файлы";
+"conversation.wireCells.files.close" = "Закрыть";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе";
@@ -54,3 +54,18 @@
 // MARK: - Share Link View
 "conversation.wireCells.shareLink.hidePassword" = "Скрыть пароль";
 "conversation.wireCells.shareLink.showPassword" = "Показать пароль";
+
+// MARK: - Accessibility File Icon Labels
+"conversation.wireCells.files.filetype" = "Тип файла, {0}";
+"conversation.wireCells.files.archive" = "Архивировать";
+"conversation.wireCells.files.audio" = "Аудио";
+"conversation.wireCells.files.code" = "Код";
+"conversation.wireCells.files.document" = "Документ";
+"conversation.wireCells.files.image" = "Изображение";
+"conversation.wireCells.files.other" = "Прочие";
+"conversation.wireCells.files.pdf" = "Pdf";
+"conversation.wireCells.files.presentation" = "Презентация";
+"conversation.wireCells.files.spreadsheet" = "Электронная таблица";
+"conversation.wireCells.files.video" = "Видео";
+"conversation.wireCells.files.folder" = "Папка";
+"conversation.wireCells.files.text" = "Текст";

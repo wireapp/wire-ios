@@ -21,3 +21,5 @@
 "passwordtextfield.preview.passwordrules" = "Use pelo menos 8 caracteres, com uma letra minúscula, uma letra maiúscula, um número e um carácter especial.";
 "passwordtextfield.hide_password" = "Ocultar senha";
 "passwordtextfield.show_password" = "Mostrar senha";
+
+"validationTextField.removeEntry" = "Remove entry";

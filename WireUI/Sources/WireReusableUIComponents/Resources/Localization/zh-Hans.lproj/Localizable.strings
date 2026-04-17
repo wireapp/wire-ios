@@ -21,3 +21,5 @@
 "passwordtextfield.preview.passwordrules" = "至少使用 8 个字符，包含一个小写字母、一个大写字母、一个数字和一个特殊字符。";
 "passwordtextfield.hide_password" = "隐藏密码";
 "passwordtextfield.show_password" = "显示密码";
+
+"validationTextField.removeEntry" = "Remove entry";
