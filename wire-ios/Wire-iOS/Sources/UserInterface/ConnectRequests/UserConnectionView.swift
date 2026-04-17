@@ -95,7 +95,7 @@ final class UserConnectionView: UIView, Copyable {
     private func updateFirstLabel() {
         if let handleText = handleLabelText {
             firstLabel.attributedText = handleText
-            firstLabel.accessibilityIdentifier = Locators.ConnectionRequestsPage.username.rawValue
+            firstLabel.accessibilityIdentifier = "username"
         } else {
             firstLabel.attributedText = correlationLabelText
             firstLabel.accessibilityIdentifier = "correlation"
