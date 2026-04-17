@@ -75,8 +75,12 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
+<<<<<<< HEAD
 
         let groupName = UserGenerator.generateRandomConversationName()
+=======
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -163,7 +167,11 @@ final class TeamManageTests: WireUITestCase {
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
     func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+<<<<<<< HEAD
         let groupName = UserGenerator.generateRandomConversationName()
+=======
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 

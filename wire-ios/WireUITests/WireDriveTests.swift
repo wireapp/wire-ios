@@ -51,7 +51,13 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
+<<<<<<< HEAD
     func testCreateGroupConversationWithDrive_TC_8955() async throws {
+=======
+    func test_CreateGroupConversationWithDrive_TC_8955() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()

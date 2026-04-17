@@ -47,7 +47,6 @@ final class AccountManagementTests: WireUITestCase {
 
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8796
     @MainActor
     func testAccountManagementUpdateEmailAndResetPassword_TC_8933_TC_8931() async throws {
 

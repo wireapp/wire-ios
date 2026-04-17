@@ -23,7 +23,11 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
     func testCreateBackupAndRestoreHistory_TC_8928_TC_8930_TC_8805() async throws {
+<<<<<<< HEAD
         let groupName = UserGenerator.generateRandomConversationName()
+=======
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(

@@ -135,8 +135,13 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
+<<<<<<< HEAD
     func testAddConversationAsFavourite_TC_8869() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
+=======
+    func test_AddConversationAsFavourite_TC_8869() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,
@@ -156,8 +161,13 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
+<<<<<<< HEAD
     func testFilterConversationByFavourite_TC_8874() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
+=======
+    func test_FilterConversationByFavourite_TC_8874() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1,

@@ -25,7 +25,11 @@ final class WireAuthenticationTests: WireUITestCase {
     }
 
     @MainActor
+<<<<<<< HEAD
     func testLoginWithWrongEmail_NextIsDisabled_TC_9456() throws {
+=======
+    func testLoginWithWrongEmail_NextIsDisabled_TC_9457() throws {
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
 
         let welcomePage = try WelcomePage()
             .typeEmailOrSSO("notAnEmail.com")

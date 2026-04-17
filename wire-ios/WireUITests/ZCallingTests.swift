@@ -91,7 +91,12 @@ final class ZCallingTests: WireUITestCase {
 
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
+<<<<<<< HEAD
     func test_MultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+=======
+    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+        do {
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
 
         do {
             let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)

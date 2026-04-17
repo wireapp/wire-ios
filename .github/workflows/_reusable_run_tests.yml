@@ -19,10 +19,13 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+<<<<<<< HEAD
       kalium_ref:
         type: string
         required: false
         default: ''
+=======
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
       testiny_run_name:
         type: string
         required: false
@@ -165,11 +168,14 @@ jobs:
         run: |
           bundle exec fastlane run_uitests
 
+<<<<<<< HEAD
       - name: Stop Kalium Testservice
         if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
+=======
+>>>>>>> 638558999b (fix: backporting testiny integration to 4.17 - WPB-24719 (#4567))
 
       - name: Upload XCResult results to Testiny
         if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
