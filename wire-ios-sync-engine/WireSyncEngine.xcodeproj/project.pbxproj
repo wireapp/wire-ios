@@ -227,7 +227,6 @@
 				"iOS Test Host/TestHostAppDelegate.m",
 				"Resources/UnitTests-Info.plist",
 				Source/SessionManager/PushDispatcherTests.swift,
-				Source/SessionManager/SessionManagerBuilder.swift,
 				TestsPlans/AllTests.xctestplan,
 				TestsPlans/SecurityTests.xctestplan,
 			);

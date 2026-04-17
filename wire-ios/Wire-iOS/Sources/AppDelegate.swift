@@ -46,6 +46,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
+    private let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
+
     private lazy var voIPPushManager: VoIPPushManager = .init(
         application: UIApplication.shared,
         pushTokenService: pushTokenService
@@ -400,7 +402,10 @@ private extension AppDelegate {
 
         let sessionManager: SessionManager
         do {
-            sessionManager = try createSessionManager(defaultEnvironment: defaultEnvironment)
+            sessionManager = try createSessionManager(
+                defaultEnvironment: defaultEnvironment,
+                cookieStorage: cookieStorage
+            )
         } catch {
             fatalError("sessionManager is not created")
         }
@@ -423,7 +428,10 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager(defaultEnvironment: BackendEnvironment2) throws -> SessionManager {
+    private func createSessionManager(
+        defaultEnvironment: BackendEnvironment2,
+        cookieStorage: CookieStorage
+    ) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
@@ -464,6 +472,7 @@ private extension AppDelegate {
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
+            cookieStorage: cookieStorage,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,

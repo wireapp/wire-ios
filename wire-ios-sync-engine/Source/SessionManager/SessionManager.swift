@@ -338,6 +338,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let authenticatedSessionFactory: AuthenticatedSessionFactory
     private let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    private let cookieStorage: CookieStorage
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
@@ -413,6 +414,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -468,6 +470,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
+            cookieStorage: cookieStorage,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -532,6 +535,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -559,6 +563,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
+        self.cookieStorage = cookieStorage
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -1019,6 +1024,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 let loader = try UserSessionLoader(
                     account: account,
                     accountManager: accountManager,
+                    cookieStorage: cookieStorage,
                     sharedContainerURL: sharedContainerURL,
                     defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,

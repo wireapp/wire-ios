@@ -32,6 +32,7 @@ final class UserSessionLoader {
 
     private let account: Account
     private let accountManager: AccountManager
+    private let cookieStorage: CookieStorage
     private let sharedContainerURL: URL
     private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
@@ -56,6 +57,7 @@ final class UserSessionLoader {
     init(
         account: Account,
         accountManager: AccountManager,
+        cookieStorage: CookieStorage,
         sharedContainerURL: URL,
         defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
@@ -73,6 +75,7 @@ final class UserSessionLoader {
     ) throws {
         self.account = account
         self.accountManager = accountManager
+        self.cookieStorage = cookieStorage
         self.sharedContainerURL = sharedContainerURL
         self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
@@ -185,10 +188,6 @@ final class UserSessionLoader {
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
-        let cookieStorage = CookieStorage(
-            cookieEncryptionKey: UserDefaults.cookiesKey()
-        )
-
         if let cookies = newEnvironment?.cookies {
             try cookieStorage.storeCookies(cookies, userID: accountID)
         }
