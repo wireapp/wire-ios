@@ -419,9 +419,7 @@ final class SelfProfileViewController: UIViewController {
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                 appDelegate.mediaPlaybackManager?.stop()
             }
-            Task {
-                await self.accountSelector?.switchTo(account: account)
-            }
+            self.accountSelector?.switchTo(account: account)
         }
     }
 }

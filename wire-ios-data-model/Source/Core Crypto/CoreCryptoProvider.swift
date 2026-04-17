@@ -20,6 +20,17 @@ import Foundation
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
+import WireUtilitiesPackage
+
+public extension CoreCryptoProtocol {
+
+    func extendedTransaction<T>(block: @escaping (any CoreCryptoContextProtocol) async throws -> T) async throws -> T {
+        try await withExpiringActivity(reason: "cc transation") {
+            try await self.transaction(block)
+        }
+    }
+
+}
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
@@ -106,7 +117,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCrypto()
-        _ = try await coreCrypto.transaction { context in
+        _ = try await coreCrypto.extendedTransaction { context in
             try await context.mlsInit(
                 clientId: .init(bytes: mlsClientID.data),
                 ciphersuites: [defaultCiphersuite],
@@ -122,7 +133,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         let coreCrypto = try await coreCrypto()
-        return try await coreCrypto.transaction { context in
+        return try await coreCrypto.extendedTransaction { context in
             let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
@@ -254,7 +265,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             attributes: .safePublic
         )
 
-        try await coreCrypto.transaction {
+        try await coreCrypto.extendedTransaction {
             WireLogger.coreCrypto.debug(
                 "proteus init",
                 attributes: .safePublic
@@ -297,7 +308,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 "core crypto transaction...",
                 attributes: .safePublic
             )
-            try await coreCrypto.transaction {
+            try await coreCrypto.extendedTransaction {
                 WireLogger.coreCrypto.debug(
                     "mls init",
                     attributes: .safePublic
