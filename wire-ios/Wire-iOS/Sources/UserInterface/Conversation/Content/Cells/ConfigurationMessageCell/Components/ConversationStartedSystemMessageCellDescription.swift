@@ -53,7 +53,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         super.init()
 
-        accessibilityLabel = configuration.message.string
+        accessibilityLabel = configuration.message?.string
     }
 
     init(conversation: ZMConversation) {
@@ -62,7 +62,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         super.init()
 
-        accessibilityLabel = configuration.message.string
+        accessibilityLabel = configuration.message?.string
     }
 
     private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {
@@ -81,7 +81,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         let model = makeModel(message: message)
         return View.Configuration(
             title: model.attributedHeading(),
-            message: model.attributedTitle() ?? NSAttributedString(string: ""),
+            message: model.attributedTitle(),
             selectedUsers: model.selectedUsers,
             icon: model.image()
         )
@@ -134,10 +134,9 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         let participantsString = formatParticipantNames(names)
 
         // Title
-        let message: NSAttributedString
+        let message: NSAttributedString?
         if let name = conversation.displayName, !name.isEmpty {
-            let prefix = L10n.Localizable.Content.System.Conversation.WithName.participants
-            message = "\(prefix) \(participantsString)" && font && textColor
+            message = participantsString.isEmpty ? nil : "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(participantsString)" && font && textColor
         } else if creator.isSelfUser {
             message = L10n.Localizable.Content.System.Conversation.You.started(senderName, participantsString)
                 && font && textColor

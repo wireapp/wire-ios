@@ -39,6 +39,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
 
     private var containerWidthConstraint: NSLayoutConstraint!
     private var imageContainerLeadingConstraint: NSLayoutConstraint!
+    var imageContainerHeightConstraint: NSLayoutConstraint!
     private var textLabelTrailingConstraint: NSLayoutConstraint!
     private var textLabelLeadingConstraint: NSLayoutConstraint!
     private var textLabelTopConstraint: NSLayoutConstraint!
@@ -153,12 +154,13 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
                 constant: trailingTextMargin
             )
         }
+        imageContainerHeightConstraint = imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor)
         NSLayoutConstraint.activate([
             // imageContainer
             containerWidthConstraint,
             imageContainerLeadingConstraint,
             imageContainer.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0),
-            imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
+            imageContainerHeightConstraint,
             imageContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: 0),
 
             // imageView

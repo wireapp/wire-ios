@@ -25,7 +25,7 @@ final class ConversationStartedSystemMessageCell<
 
     struct Configuration {
         let title: NSAttributedString?
-        let message: NSAttributedString
+        let message: NSAttributedString?
         var selectedUsers: [UserType]
         let icon: UIImage?
     }
@@ -54,6 +54,15 @@ final class ConversationStartedSystemMessageCell<
         imageView.isAccessibilityElement = false
         selectedUsers = object.selectedUsers
         accessibilityLabel = object.title?.string
+
+        let hasMessage = object.message != nil
+        imageContainer.isHidden = !hasMessage
+        lineView.isHidden = !hasMessage
+        textLabel.isHidden = !hasMessage
+        if !hasMessage {
+            imageContainerHeightConstraint.isActive = false
+            imageContainer.heightAnchor.constraint(equalToConstant: 0).isActive = true
+        }
     }
 
     // MARK: - UITextViewDelegate

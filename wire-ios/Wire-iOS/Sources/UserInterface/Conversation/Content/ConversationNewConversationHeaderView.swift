@@ -76,6 +76,18 @@ final class ConversationNewConversationHeaderView: UIView {
             stackView.addArrangedSubview(guestsCell)
         }
 
+        // TODO: check with Jullian if sender is same as conversation.creator
+        if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
+            let historyCell = ConversationChannelHistoryDepthSystemMessageCellDescription(
+                sender: conversation.creator,
+                historyDepth: channelHistoryDepth,
+                isNewConversation: true
+            )
+            let historyView = ConversationChannelHistoryDepthSystemMessageCellDescription.View()
+            historyView.configure(with: historyCell.configuration, animated: false)
+            stackView.addArrangedSubview(historyView)
+        }
+
         if conversation.isWireDriveEnabled {
             let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription()
             let fileCollabCell = ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>()
