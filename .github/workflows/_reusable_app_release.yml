@@ -20,7 +20,7 @@ on:
         default: false
       produce_debug_builds:
         type: boolean
-        required: true
+        required: false
         default: false
 
     secrets:
