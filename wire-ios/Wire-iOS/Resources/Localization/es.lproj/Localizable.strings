@@ -93,6 +93,11 @@
 "peoplepicker.no_matching_results.message.apps" = "Sin resultados.";
 "peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Las aplicaciones son ayudantes que pueden mejorar tu flujo de trabajo.";
 "peoplepicker.no_matching_results.message.apps_not_enabled" = "Las aplicaciones son ayudantes que pueden mejorar tu flujo de trabajo. Para habilitarlas, pide a tu administrador.";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "Invitación enviada";
 "peoplepicker.send_invitation.dialog.message" = "Puede aceptarse hasta pasadas 2 semanas. Envía una nueva si ésta caduca.";

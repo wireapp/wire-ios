@@ -348,9 +348,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call</string>
+        <string>Praleistas skambutis</string>
+        <key>few</key>
+        <string>Praleisti skambučiai</string>
+        <key>many</key>
+        <string>Praleisti skambučiai</string>
         <key>other</key>
-        <string>Missed calls (%d)</string>
+        <string>Praleisti skambučiai</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -385,6 +389,10 @@
         <string>d</string>
         <key>one</key>
         <string>Missed call from %2$@</string>
+        <key>few</key>
+        <string>Missed calls from %2$@ (%d)</string>
+        <key>many</key>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>other</key>
         <string>Missed calls from %2$@ (%d)</string>
       </dict>

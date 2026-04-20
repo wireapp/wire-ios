@@ -31,10 +31,13 @@ struct ConversationMessageContext: Equatable {
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
+
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestRefreshForMessage message: ZMConversationMessage
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
     )
+
 }
 
 extension ZMConversationMessage {
@@ -47,9 +50,9 @@ extension ZMConversationMessage {
 ///
 /// A message will be represented as a table/collection section, and the components that make
 /// the view of the message (timestamp, reply, content...) will be displayed as individual cells,
-/// to reduce the number of cells that are instanciated at a given time.
+/// to reduce the number of cells that are instantiated at a given time.
 ///
-/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
+/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeuing
 /// the cells from the table or collection view and configuring them with a message.
 
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
@@ -243,7 +246,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else {
             privateDefaults.saveWasUncollapsed(message)
         }
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
 
     func collapse() {
@@ -664,14 +671,34 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        var animated = true
+        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
+            // WPB-24283: prevent flickering of composite messages
+            // When only button states changed, skip animation.
+            // The NSFetchedResultsController will handle the update via
+            // controllerDidChangeContent, which is already debounced.
+            // Firing both paths causes duplicate reloads and visible flickering.
+            animated = false
+        }
+
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: animated
+        )
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
+
 }
 
 extension ConversationMessageSectionController {
