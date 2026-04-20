@@ -45,7 +45,7 @@ final class CookieStorageIntegrationTests {
     func `test store cookies when no existing cookies for that user`() throws {
         // Given
         try keychain.reset()
-        let cookie = Scaffolding.validCookie
+        let cookie = Scaffolding.validCookieA
         let userID = UUID()
         let epoch = UUID()
 
@@ -70,10 +70,10 @@ final class CookieStorageIntegrationTests {
         let initialEpoch = UUID()
         let updatedEpoch = UUID()
 
-        try sut.storeCookies([Scaffolding.validCookie], userID: userID, epoch: initialEpoch)
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID, epoch: initialEpoch)
 
         // When
-        try sut.storeCookies([Scaffolding.updatedCookie], userID: userID, epoch: updatedEpoch)
+        try sut.storeCookies([Scaffolding.validCookieB], userID: userID, epoch: updatedEpoch)
 
         // Then
         let item = try #require(try fetchItemFromKeychain(userID: userID))
@@ -82,7 +82,7 @@ final class CookieStorageIntegrationTests {
 
         let cookieData = try #require(item.secureValue)
         let decodedCookies = try Scaffolding.decryptAndDecodeCookieData(cookieData, encryptionKey: encryptionKey)
-        #expect(decodedCookies == [Scaffolding.updatedCookie])
+        #expect(decodedCookies == [Scaffolding.validCookieB])
     }
 
     @Test()
@@ -130,13 +130,13 @@ final class CookieStorageIntegrationTests {
         // Given
         try keychain.reset()
         let userID = UUID()
-        try sut.storeCookies([Scaffolding.validCookie], userID: userID)
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
 
         // When
         let cookies = try sut.fetchCookies(userID: userID)
 
         // Then
-        #expect(cookies == [Scaffolding.validCookie])
+        #expect(cookies == [Scaffolding.validCookieA])
     }
 
     @Test()
@@ -145,7 +145,7 @@ final class CookieStorageIntegrationTests {
         try keychain.reset()
         let userID = UUID()
         let cookieData = try Scaffolding.encodeAndEncryptCookieData(
-            for: [Scaffolding.validCookie],
+            for: [Scaffolding.validCookieA],
             encryptionKey: encryptionKey
         )
         try addItemToKeychain(userID: userID, cookieData: cookieData, epoch: nil)
@@ -154,14 +154,61 @@ final class CookieStorageIntegrationTests {
         let cookies = try sut.fetchCookies(userID: userID)
 
         // Then
-        #expect(cookies == [Scaffolding.validCookie])
+        #expect(cookies == [Scaffolding.validCookieA])
 
         let item = try #require(try fetchItemFromKeychain(userID: userID))
         #expect(item.epoch != nil)
 
         let newCookieData = try #require(item.secureValue)
         let decodedCookies = try Scaffolding.decryptAndDecodeCookieData(newCookieData, encryptionKey: encryptionKey)
-        #expect(decodedCookies == [Scaffolding.validCookie])
+        #expect(decodedCookies == [Scaffolding.validCookieA])
+    }
+
+    @Test()
+    func `test remove cookies deletes existing cookies for that user`() throws {
+        // Given
+        try keychain.reset()
+        let userID = UUID()
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        // When
+        try sut.removeCookies(userID: userID)
+
+        // Then
+        #expect(try fetchItemFromKeychain(userID: userID) == nil)
+    }
+
+    @Test()
+    func `test remove cookies results in empty fetch for that user`() throws {
+        // Given
+        try keychain.reset()
+        let userID = UUID()
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        // When
+        try sut.removeCookies(userID: userID)
+        let cookies = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(cookies.isEmpty)
+    }
+
+    @Test()
+    func `test remove cookies does not delete cookies for another user`() throws {
+        // Given
+        try keychain.reset()
+        let userA = UUID()
+        let userB = UUID()
+
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userA)
+        try sut.storeCookies([Scaffolding.validCookieB], userID: userB)
+
+        // When
+        try sut.removeCookies(userID: userA)
+
+        // Then
+        #expect(try sut.fetchCookies(userID: userA).isEmpty)
+        #expect(try sut.fetchCookies(userID: userB) == [Scaffolding.validCookieB])
     }
 
     // MARK: - Helpers
@@ -207,17 +254,17 @@ private enum Scaffolding {
         .domain: "some domain"
     ])!
 
-    static let validCookie = HTTPCookie(properties: [
+    static let validCookieA = HTTPCookie(properties: [
         .name: "zuid",
         .path: "some path",
-        .value: "some value",
+        .value: "some value A",
         .domain: "some domain"
     ])!
 
-    static let updatedCookie = HTTPCookie(properties: [
+    static let validCookieB = HTTPCookie(properties: [
         .name: "zuid",
         .path: "some path",
-        .value: "some updated value",
+        .value: "some value B",
         .domain: "some domain"
     ])!
 
