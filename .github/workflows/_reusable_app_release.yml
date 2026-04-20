@@ -121,12 +121,9 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-<<<<<<< HEAD
-=======
       UI_TEST_LOGIN_EMAIL: "test@example.com"
       UI_TEST_LOGIN_PASSWORD: "12345"
       DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
->>>>>>> db4c24d9af (chore: add debug builds option - WPB-24616 (#4583))
 
     steps:
       - name: Add Masks
