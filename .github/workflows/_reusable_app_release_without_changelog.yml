@@ -47,8 +47,6 @@ on:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
-      C1_APP_CENTER_APP_NAME_RESTRICTED:
-        required: true
       C1_S3_SUBFOLDER_PRODUCTION:
         required: true
       C1_APP_CENTER_APP_NAME_PRODUCTION:
@@ -100,7 +98,6 @@ jobs:
       DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
       C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
       C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}

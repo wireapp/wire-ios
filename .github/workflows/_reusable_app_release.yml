@@ -18,6 +18,10 @@ on:
       distribute_externals:
         type: boolean
         default: false
+      produce_debug_builds:
+        type: boolean
+        required: true
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -110,6 +114,7 @@ jobs:
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       UI_TEST_LOGIN_EMAIL: "test@example.com"
       UI_TEST_LOGIN_PASSWORD: "12345"
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks
