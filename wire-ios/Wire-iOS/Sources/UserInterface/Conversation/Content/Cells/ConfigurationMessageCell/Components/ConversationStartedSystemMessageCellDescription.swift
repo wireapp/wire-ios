@@ -56,6 +56,15 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         accessibilityLabel = configuration.message.string
     }
 
+    init(conversation: ZMConversation) {
+        self.configuration = Self.makeConfiguration(from: conversation)
+        self.actionController = nil
+
+        super.init()
+
+        accessibilityLabel = configuration.message.string
+    }
+
     private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {
         let color = LabelColors.textDefault
         let iconColor = IconColors.backgroundDefault
@@ -76,6 +85,81 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
             selectedUsers: model.selectedUsers,
             icon: model.image()
         )
+    }
+
+    private static func makeConfiguration(from conversation: ZMConversation) -> View.Configuration {
+        let font = UIFont.mediumFont
+        let largeFont = UIFont.largeSemiboldFont
+        let textColor = LabelColors.textDefault
+        let iconColor = IconColors.backgroundDefault
+        let isChannel = conversation.isChannel
+
+        let creator: UserType = conversation.creator
+        let senderName = creator.isSelfUser
+            ? L10n.Localizable.Content.System.youNominative
+            : (creator.name ?? L10n.Localizable.Conversation.Status.someone)
+
+        // Heading (only for named conversations)
+        let heading: NSAttributedString?
+        if let name = conversation.displayName, !name.isEmpty {
+            let headingText = isChannel
+                ? (creator.isSelfUser
+                    ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName)
+                    : L10n.Localizable.Content.System.Channel.WithName.title(senderName))
+                : (creator.isSelfUser
+                    ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName)
+                    : L10n.Localizable.Content.System.Conversation.WithName.title(senderName))
+            let text = headingText.attributedString && font
+            let title = name.attributedString && largeFont
+            heading = [text, title].joined(separator: "\n".attributedString) && textColor && .lineSpacing(4)
+        } else {
+            heading = nil
+        }
+
+        // Participants excluding creator, with self user placed last
+        let creatorObjectID = conversation.creator.objectID
+        let participantsExcludingCreator = conversation.sortedActiveParticipantsUserTypes.filter { participant in
+            guard let zmUser = participant as? ZMUser else { return true }
+            return zmUser.objectID != creatorObjectID
+        }
+        let hasSelf = !creator.isSelfUser && participantsExcludingCreator.contains(where: \.isSelfUser)
+        var names = participantsExcludingCreator
+            .filter { !$0.isSelfUser }
+            .compactMap(\.name)
+            .sorted()
+        if hasSelf {
+            names.append(L10n.Localizable.Content.System.youDative)
+        }
+
+        let participantsString = formatParticipantNames(names)
+
+        // Title
+        let message: NSAttributedString
+        if let name = conversation.displayName, !name.isEmpty {
+            let prefix = L10n.Localizable.Content.System.Conversation.WithName.participants
+            message = "\(prefix) \(participantsString)" && font && textColor
+        } else if creator.isSelfUser {
+            message = L10n.Localizable.Content.System.Conversation.You.started(senderName, participantsString)
+                && font && textColor
+        } else {
+            message = L10n.Localizable.Content.System.Conversation.Other.started(senderName, participantsString)
+                && font && textColor
+        }
+
+        let icon = ConversationActionType.started(name: conversation.displayName).image(with: iconColor)
+
+        return View.Configuration(title: heading, message: message, selectedUsers: [], icon: icon)
+    }
+
+    private static func formatParticipantNames(_ names: [String]) -> String {
+        switch names.count {
+        case 0: return ""
+        case 1: return names[0]
+        case 2: return L10n.Localizable.Content.System.participants1Other(names[0], names[1])
+        default:
+            let allButLast = names.dropLast().map { $0 + ", " }.joined()
+            return allButLast + L10n.Localizable.Content.System.StartedConversation.truncatedPeople(names.last!)
+        }
     }
 
 }

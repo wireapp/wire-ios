@@ -173,46 +173,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
+            // Displayed in the table header via ConversationNewConversationHeaderView.
             return []
-            
-            // TODO: move all the cells above to the header
-            var cells: [AnyConversationMessageCellDescription] = []
-
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
-            cells.append(AnyConversationMessageCellDescription(startedConversationCell))
-
-            // Only display invite user cell for team members
-            if selfUser.isTeamMember,
-               conversation.selfCanAddUsers(selfUser: selfUser),
-               conversation.isOpenGroup {
-                cells.append(
-                    AnyConversationMessageCellDescription(
-                        GuestsAllowedCellDescription(isChannel: conversation.isChannel)
-                    )
-                )
-            }
-
-            if conversation.isWireDriveEnabled {
-                let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
-                cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
-
-                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                    state: .unavailable
-                )
-                cells.append(AnyConversationMessageCellDescription(timerCell))
-            }
-
-            if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
-                let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
-                    sender: sender,
-                    historyDepth: channelHistoryDepth,
-                    isNewConversation: true
-                )
-
-                cells.append(AnyConversationMessageCellDescription(cell))
-            }
-
-            return cells
 
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {

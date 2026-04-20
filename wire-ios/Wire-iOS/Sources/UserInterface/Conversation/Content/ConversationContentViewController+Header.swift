@@ -43,7 +43,24 @@ extension ConversationContentViewController {
             headerView = connectionViewController?.view
         } else {
             defaultConversationHeaderViewController = DefaultConversationHeaderViewController(userSession: userSession)
-            headerView = defaultConversationHeaderViewController?.view
+
+            let newConversationHeader = ConversationNewConversationHeaderView(
+                conversation: conversation,
+                selfUser: userSession.selfUser
+            )
+            newConversationHeader.delegate = self
+
+            if newConversationHeader.isEmpty {
+                headerView = defaultConversationHeaderViewController?.view
+            } else {
+                let container = UIStackView()
+                container.axis = .vertical
+                if let guestWarningView = defaultConversationHeaderViewController?.view {
+                    container.addArrangedSubview(guestWarningView)
+                }
+                container.addArrangedSubview(newConversationHeader)
+                headerView = container
+            }
         }
 
         if let headerView {
