@@ -31,11 +31,8 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-<<<<<<< HEAD
       notify_secret: WIRE_IOS_BUILD_WEBHOOK
-=======
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
->>>>>>> db4c24d9af (chore: add debug builds option - WPB-24616 (#4583))
     secrets: inherit
 
 
@@ -47,11 +44,8 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-<<<<<<< HEAD
       notify_secret: WIRE_IOS_BUILD_WEBHOOK
-=======
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
->>>>>>> db4c24d9af (chore: add debug builds option - WPB-24616 (#4583))
     secrets: inherit
   
   column_3_production:
@@ -62,9 +56,6 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
-<<<<<<< HEAD
       notify_secret: WIRE_IOS_BUILD_WEBHOOK
-=======
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
->>>>>>> db4c24d9af (chore: add debug builds option - WPB-24616 (#4583))
     secrets: inherit
