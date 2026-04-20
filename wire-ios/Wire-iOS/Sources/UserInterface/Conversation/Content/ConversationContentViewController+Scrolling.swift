@@ -48,7 +48,7 @@ extension ConversationContentViewController {
             dataSource.loadMessages()
         }
 
-        updateTableViewHeaderView(message)
+        updateTableViewHeaderView()
     }
 
     /// Scrolls the tableView to the bottom-most row.

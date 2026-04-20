@@ -730,7 +730,7 @@ extension ConversationViewController: ZMConversationObserver {
             updateRightNavigationItemsButtons()
             updateLeftNavigationBarItems()
             updateOutgoingConnectionVisibility()
-            contentViewController?.updateTableViewHeaderView(note.conversation as? ZMConversationMessage)
+            contentViewController?.updateTableViewHeaderView()
             updateInputBarVisibility()
         }
 

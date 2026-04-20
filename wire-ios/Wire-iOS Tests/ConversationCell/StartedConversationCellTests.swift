@@ -49,7 +49,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     // MARK: - Started a Conversation
 
     func testThatItRendersParticipantsCellStartedConversationSelfUser() {
-        let message = cell(for: .newConversation, fromSelf: true) //<-
+        let message = cell(for: .newConversation, fromSelf: true)
         verify(message: message)
     }
 

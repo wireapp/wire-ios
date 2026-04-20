@@ -40,10 +40,6 @@ final class UserConnectionView: UIView, Copyable {
     private let guestWarningView = GuestAccountWarningView()
     private let guestWarningContainer = UIView()
     private let userSession: UserSession
-    private var message: ZMConversationMessage? = nil
-    
-    private var startedConversationCell: ConversationStartedSystemMessageCellDescription?
-    private let startedConversationView = ConversationStartedSystemMessageCellDescription.View()
 
     var user: UserType {
         didSet {
@@ -51,25 +47,11 @@ final class UserConnectionView: UIView, Copyable {
             userImageView.user = user
         }
     }
-    
-    init(user: UserType, userSession: UserSession, message: ZMConversationMessage? = nil) {
+
+    init(user: UserType, userSession: UserSession) {
         self.user = user
         self.userSession = userSession
-        self.message = message
         super.init(frame: .zero)
-        //let mock: ZMConversationMessage = ZMMessage()
-        if let message {
-            let description = ConversationStartedSystemMessageCellDescription(message: message)
-                self.startedConversationCell = description
-                
-                // Accedemos a la configuración que generó la descripción
-                let config = description.configuration
-                
-                // Y se la pasamos a la vista.
-                // Si '.configuration' da error en la vista, busca el método 'update'
-            self.startedConversationView.configure(with: config, animated: false)
-        }
-        
         userImageView.userSession = userSession
         setup()
         createConstraints()
@@ -92,7 +74,7 @@ final class UserConnectionView: UIView, Copyable {
         userImageView.size = .big
         userImageView.user = user
 
-        [labelContainer, userImageView, guestIndicator, guestWarningContainer, startedConversationView].forEach(addSubview)
+        [labelContainer, userImageView, guestIndicator, guestWarningContainer].forEach(addSubview)
 
         guestWarningContainer.addSubview(guestWarningView)
         guestWarningContainer.backgroundColor = SemanticColors.View.backgroundGreen
@@ -100,8 +82,6 @@ final class UserConnectionView: UIView, Copyable {
         [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
 
         guestIndicator.isHidden = true
-        
-        startedConversationView.isHidden = (message == nil)
 
         updateLabels()
         updateGuestAccountViews()
@@ -150,8 +130,7 @@ final class UserConnectionView: UIView, Copyable {
             labelContainer,
             guestIndicator,
             guestWarningView,
-            guestWarningContainer,
-            startedConversationView
+            guestWarningContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -171,15 +150,7 @@ final class UserConnectionView: UIView, Copyable {
             guestWarningContainer.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 0),
             guestWarningContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             guestWarningContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            //guestWarningContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
-            
-            // Restricción para la nueva vista al final
-                    startedConversationView.topAnchor.constraint(equalTo: guestWarningContainer.bottomAnchor, constant: 24.0),
-                    startedConversationView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
-                    startedConversationView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
-                    
-                    // MUY IMPORTANTE: Esta es la que define el final de la vista total
-                    startedConversationView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20.0)
+            guestWarningContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         ])
 
         guestWarningView.fitIn(view: guestWarningContainer, insets: .init(top: 12, left: 16, bottom: 12, right: 16))
