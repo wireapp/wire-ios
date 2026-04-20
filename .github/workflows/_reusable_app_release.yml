@@ -18,6 +18,10 @@ on:
       distribute_externals:
         type: boolean
         default: false
+      produce_debug_builds:
+        type: boolean
+        required: true
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -29,8 +33,6 @@ on:
       WIRE_INTERNAL_GITHUB_USER:
         required: true
       WIRE_INTERNAL_GITHUB_TOKEN:
-        required: true
-      APPCENTER_API_TOKEN:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
@@ -44,19 +46,11 @@ on:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
-      C1_APP_CENTER_APP_NAME_RESTRICTED:
-        required: true
       C1_S3_SUBFOLDER_PRODUCTION:
-        required: true
-      C1_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
-      C3_APP_CENTER_APP_NAME_RESTRICTED:
-        required: true
       C3_S3_SUBFOLDER_PRODUCTION:
-        required: true
-      C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
       PLAYGROUND_TESTFLIGHT_LINK:
         required: true
@@ -94,8 +88,6 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -104,17 +96,11 @@ jobs:
       DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
       ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
       C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C2_APP_CENTER_APP_NAME_RESTRICTED }}
       C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C2_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C2_APP_CENTER_APP_NAME_PRODUCTION }}
       C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
       EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
       PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
@@ -128,6 +114,7 @@ jobs:
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       UI_TEST_LOGIN_EMAIL: "test@example.com"
       UI_TEST_LOGIN_PASSWORD: "12345"
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks
