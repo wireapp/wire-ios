@@ -137,6 +137,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 }
             } catch is CancellationError {
                 // ignore error
+            } catch let error as NSError where error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled {
+                // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
+                // we treat it the same as a `CancellationError`
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
