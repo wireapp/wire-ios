@@ -110,15 +110,47 @@ final class ProcessCallingEventsUseCase {
 
     }
 
-    func invoke(eventBatches: [[UpdateEvent]]) async {
-        WireLogger.calling.info("WOW NSE calling: invoke started, batches=\(eventBatches.count)", attributes: .newNSE, .safePublic)
+//    func invoke(eventBatches: [[UpdateEvent]]) async {
+//        WireLogger.calling.info("WOW NSE calling: invoke started, batches=\(eventBatches.count)", attributes: .newNSE, .safePublic)
+//        callingService.start()
+//        WireLogger.calling.info("WOW NSE calling: start called", attributes: .newNSE, .safePublic)
+//        for batch in eventBatches {
+//            for event in batch {
+//                WireLogger.calling.info("WOW NSE calling: will process event \(event)", attributes: .newNSE, .safePublic)
+//                if let params = await avsParameters(from: event) {
+//                    WireLogger.calling.info("WOW NSE calling: found AVS params,currentTime = \(params.currentTime), serverTime = \(params.serverTime), conversationId = \(params.conversationId), userId = \(params.userId), clientId = \(clientID), conversationType = \(params.conversationType)", attributes: .newNSE, .safePublic)
+//                    callingService.process(
+//                        data: params.data,
+//                        currentTime: params.currentTime,
+//                        serverTime: params.serverTime,
+//                        conversationId: params.conversationId,
+//                        userId: params.userId,
+//                        clientId: clientID,
+//                        conversationType: params.conversationType
+//                    )
+//                    WireLogger.calling.info("WOW NSE calling: did process event \(event)", attributes: .newNSE, .safePublic)
+//
+//                }
+//            }
+//        }
+//        WireLogger.calling.info("WOW NSE calling: about to call end()", attributes: .newNSE, .safePublic)
+//        callingService.end()
+//        WireLogger.calling.info("WOW NSE calling: did call end()", attributes: .newNSE, .safePublic)
+//        // Wait for CXProvider report to complete before returning —
+//        // without this the NSE may terminate before the report fires.
+////        _ = await callKitReportTask?.value
+//        WireLogger.calling.info("WOW NSE calling: callKitReportTask awaited", attributes: .newNSE, .safePublic)
+//    }
+
+    func invoke(
+        eventBatches: [[UpdateEvent]],
+        callKitReportingCoordinator: CallKitReportingCoordinator
+    ) async {
         callingService.start()
-        WireLogger.calling.info("WOW NSE calling: start called", attributes: .newNSE, .safePublic)
+
         for batch in eventBatches {
             for event in batch {
-                WireLogger.calling.info("WOW NSE calling: will process event \(event)", attributes: .newNSE, .safePublic)
                 if let params = await avsParameters(from: event) {
-                    WireLogger.calling.info("WOW NSE calling: found AVS params,currentTime = \(params.currentTime), serverTime = \(params.serverTime), conversationId = \(params.conversationId), userId = \(params.userId), clientId = \(clientID), conversationType = \(params.conversationType)", attributes: .newNSE, .safePublic)
                     callingService.process(
                         data: params.data,
                         currentTime: params.currentTime,
@@ -128,19 +160,15 @@ final class ProcessCallingEventsUseCase {
                         clientId: clientID,
                         conversationType: params.conversationType
                     )
-                    WireLogger.calling.info("WOW NSE calling: did process event \(event)", attributes: .newNSE, .safePublic)
-
                 }
             }
         }
-        WireLogger.calling.info("WOW NSE calling: about to call end()", attributes: .newNSE, .safePublic)
+
         callingService.end()
-        WireLogger.calling.info("WOW NSE calling: did call end()", attributes: .newNSE, .safePublic)
-        // Wait for CXProvider report to complete before returning —
-        // without this the NSE may terminate before the report fires.
-//        _ = await callKitReportTask?.value
-        WireLogger.calling.info("WOW NSE calling: callKitReportTask awaited", attributes: .newNSE, .safePublic)
+
+        await callKitReportingCoordinator.waitForCompletion()
     }
+
 
     private func avsParameters(from event: UpdateEvent) async -> AVSCallParams? {
         switch event {

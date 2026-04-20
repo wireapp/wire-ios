@@ -72,6 +72,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
+        logger.info("🤡🤡", attributes: .newNSE, .safePublic)
         if onGoingTask != nil {
             logger.warn(
                 "onGoingtask not null: a notification is already being processed",

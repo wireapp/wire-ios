@@ -280,8 +280,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         // 3. Process calling events via AVS — CallKit is reported internally via callingService callbacks.
         _ = callKitReportingCoordinator
-        await processCallingEventsUseCase.invoke(eventBatches: eventBatches)
-        await callKitReportingCoordinator.waitForCompletion()
+        await processCallingEventsUseCase.invoke(eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator)
+        //await callKitReportingCoordinator.waitForCompletion()
 
         // 4. Generate notifications from events.
         let eventStream = AsyncStream<[UpdateEvent]> { continuation in
