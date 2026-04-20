@@ -122,6 +122,10 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     ///   - userID: The unique identifier for the user whose cookies are being stored.
 
     public func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
+        try storeCookies(cookies, userID: userID, epoch: UUID())
+    }
+
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
         try Self.lock.withLock {
             let storage = _CookieStorage(
                 userID: userID,
@@ -129,7 +133,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
                 keychain: keychain,
                 cache: cache
             )
-            try storage.storeCookies(cookies, epoch: UUID())
+            try storage.storeCookies(cookies, epoch: epoch)
         }
     }
 
@@ -202,7 +206,7 @@ private final class _CookieStorage: Sendable {
     }
 
     func storeCookies(_ cookies: [HTTPCookie], epoch: UUID) throws {
-        let newEpoch = UUID().data
+        let newEpoch = epoch.data
         let cookieData = try Self.encodeAndEncryptCookies(cookies, key: cookieEncryptionKey)
 
         do {

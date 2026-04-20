@@ -61,6 +61,10 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
     public enum ItemClass: Equatable, Sendable {
 
         case genericPassword
+        case internetPassword
+        case certificate
+        case key
+        case identity
 
     }
 
@@ -83,6 +87,18 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
         case .itemClass(.genericPassword):
             (kSecClass, kSecClassGenericPassword)
+
+        case .itemClass(.internetPassword):
+            (kSecClass, kSecClassInternetPassword)
+
+        case .itemClass(.certificate):
+            (kSecClass, kSecClassCertificate)
+
+        case .itemClass(.key):
+            (kSecClass, kSecClassKey)
+
+        case .itemClass(.identity):
+            (kSecClass, kSecClassIdentity)
 
         case .accessible(.afterFirstUnlock):
             (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)

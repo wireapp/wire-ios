@@ -106,6 +106,28 @@ public struct Keychain: KeychainProtocol {
         }
     }
 
+    /// Delete all items from the keychain.
+
+    public func reset() throws {
+        let items: [KeychainQueryItem] = [
+            .itemClass(.genericPassword),
+            .itemClass(.internetPassword),
+            .itemClass(.certificate),
+            .itemClass(.key),
+            .itemClass(.identity)
+        ]
+
+        for item in items {
+            let query = Set<KeychainQueryItem>([item]).toCFDictionary()
+            let status = SecItemDelete(query)
+            guard status == errSecSuccess || status == errSecItemNotFound else {
+                throw KeychainError.errorStatus(status)
+            }
+
+        }
+    }
+
+
 }
 
 private extension Set<KeychainQueryItem> {
