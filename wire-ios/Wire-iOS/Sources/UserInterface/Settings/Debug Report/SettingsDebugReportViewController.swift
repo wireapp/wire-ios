@@ -55,14 +55,14 @@ class SettingsDebugReportViewController: UIViewController {
     }()
 
     private lazy var sendReportButton = createButton(
-        title: Strings.TechnicalReport.sendReport.capitalized,
+        title: Strings.TechnicalReport.sendReport,
         action: UIAction { [weak self] action in
             self?.didTapSendReport(sender: action.sender as! UIButton)
         }
     )
 
     private lazy var shareReportButton: UIButton = createButton(
-        title: Strings.TechnicalReport.shareReport.capitalized,
+        title: Strings.TechnicalReport.shareReport,
         action: UIAction { [weak self] _ in self?.didTapShareReport() }
     )
 
