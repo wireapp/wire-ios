@@ -113,6 +113,57 @@ final class CookieStorageIntegrationTests {
         #expect(try fetchItemFromKeychain(userID: userID) == nil)
     }
 
+    @Test()
+    func `test fetch cookies when no existing cookies for that user`() throws {
+        // Given
+        try keychain.reset()
+
+        // When
+        let cookies = try sut.fetchCookies(userID: UUID())
+
+        // Then
+        #expect(cookies.isEmpty)
+    }
+
+    @Test()
+    func `test fetch cookies when existing cookies for that user`() throws {
+        // Given
+        try keychain.reset()
+        let userID = UUID()
+        try sut.storeCookies([Scaffolding.validCookie], userID: userID)
+
+        // When
+        let cookies = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(cookies == [Scaffolding.validCookie])
+    }
+
+    @Test()
+    func `test fetch cookies repairs missing epoch`() throws {
+        // Given
+        try keychain.reset()
+        let userID = UUID()
+        let cookieData = try Scaffolding.encodeAndEncryptCookieData(
+            for: [Scaffolding.validCookie],
+            encryptionKey: encryptionKey
+        )
+        try addItemToKeychain(userID: userID, cookieData: cookieData, epoch: nil)
+
+        // When
+        let cookies = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(cookies == [Scaffolding.validCookie])
+
+        let item = try #require(try fetchItemFromKeychain(userID: userID))
+        #expect(item.epoch != nil)
+
+        let newCookieData = try #require(item.secureValue)
+        let decodedCookies = try Scaffolding.decryptAndDecodeCookieData(newCookieData, encryptionKey: encryptionKey)
+        #expect(decodedCookies == [Scaffolding.validCookie])
+    }
+
     // MARK: - Helpers
 
     private func fetchItemFromKeychain(userID: UUID) throws -> [CFString: Any]? {
@@ -125,6 +176,22 @@ final class CookieStorageIntegrationTests {
         ]
 
         return try keychain.fetchItem(query: query)
+    }
+
+    private func addItemToKeychain(userID: UUID, cookieData: Data, epoch: UUID?) throws {
+        var query: Set<KeychainQueryItem> = [
+            .service("Wire: Credentials for wire.com"),
+            .account(userID.uuidString),
+            .itemClass(.genericPassword),
+            .data(cookieData),
+            .accessible(.afterFirstUnlock)
+        ]
+
+        if let epoch {
+            query.insert(.generic(epoch.data))
+        }
+
+        try keychain.addItem(query: query)
     }
 
 }
@@ -195,6 +262,14 @@ private extension [CFString: Any] {
 
     var secureValue: Data? {
         self[kSecValueData] as? Data
+    }
+
+}
+
+private extension UUID {
+
+    var data: Data {
+        withUnsafeBytes(of: self.uuid) { Data($0) }
     }
 
 }
