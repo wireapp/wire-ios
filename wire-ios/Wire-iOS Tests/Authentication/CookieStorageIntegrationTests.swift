@@ -20,6 +20,7 @@ import Foundation
 import Testing
 import WireCrypto
 import WireFoundation
+import WireFoundationSupport
 
 @testable import WireNetwork
 
@@ -211,6 +212,102 @@ final class CookieStorageIntegrationTests {
         #expect(try sut.fetchCookies(userID: userB) == [Scaffolding.validCookieB])
     }
 
+    // MARK: - Caching
+
+    @Test()
+    func `test fetch cookies uses in memory cache`() throws {
+        // Given
+        let userID = UUID()
+        let keychain = KeychainSpy(keychain: keychain)
+        let sut = CookieStorage(
+            cookieEncryptionKey: encryptionKey,
+            keychain: keychain,
+            cache: CookieStorageCache(sharedStorage: CookieStorageCache.sharedStorage)
+        )
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        // When - 1st fetch should fetch both data and attributes (for the epoch)
+        let firstFetch = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(firstFetch == [Scaffolding.validCookieA])
+        #expect(keychain.fetchItem_Invocations == [
+            [
+                .service("Wire: Credentials for wire.com"),
+                .account(userID.uuidString),
+                .itemClass(.genericPassword),
+                .returningData(true)
+            ],
+            [
+                .service("Wire: Credentials for wire.com"),
+                .account(userID.uuidString),
+                .itemClass(.genericPassword),
+                .returningData(false),
+                .returningAttributes(true)
+            ]
+        ])
+
+        // When - 2nd fetch should fetch only the attributes (for the epoch), not cookie data.
+        keychain.fetchItem_Invocations.removeAll()
+        let secondFetch = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(secondFetch == [Scaffolding.validCookieA])
+        #expect(keychain.fetchItem_Invocations == [
+            [
+                .service("Wire: Credentials for wire.com"),
+                .account(userID.uuidString),
+                .itemClass(.genericPassword),
+                .returningData(false),
+                .returningAttributes(true)
+            ]
+        ])
+    }
+
+    @Test()
+    func `test cache is invalidated if item deleted from keychain`() throws {
+        // Given
+        try keychain.reset()
+        let userID = UUID()
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        // When
+        let firstFetch = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(firstFetch == [Scaffolding.validCookieA])
+
+        // When
+        try Keychain().reset()
+        let secondFetch = try sut.fetchCookies(userID: userID)
+
+        // Then
+        #expect(secondFetch == [])
+    }
+
+    @Test()
+    func `test cache is invalidated if item updated in keychain`() throws {
+        // Given
+        let userID = UUID()
+        let sutA = CookieStorage(
+            cookieEncryptionKey: encryptionKey,
+            keychain: keychain,
+            cache: CookieStorageCache(sharedStorage: .init(initialState: [:]))
+        )
+        let sutB = CookieStorage(
+            cookieEncryptionKey: encryptionKey,
+            keychain: keychain,
+            cache: CookieStorageCache(sharedStorage: .init(initialState: [:]))
+        )
+        try sutA.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        // When cookies are updated from SUT B
+        try sutB.storeCookies([Scaffolding.validCookieB], userID: userID) // <- SUT B
+
+        // Then cache is invalidated in SUT A
+        #expect(try sutA.fetchCookies(userID: userID) == [Scaffolding.validCookieB])
+    }
+
     // MARK: - Helpers
 
     private func fetchItemFromKeychain(userID: UUID) throws -> [CFString: Any]? {
@@ -317,6 +414,37 @@ private extension UUID {
 
     var data: Data {
         withUnsafeBytes(of: self.uuid) { Data($0) }
+    }
+
+}
+
+private final class KeychainSpy: KeychainProtocol, @unchecked Sendable {
+
+    let keychain: WireFoundation.Keychain
+    var fetchItem_Invocations: [Set<KeychainQueryItem>] = []
+
+    init(keychain: WireFoundation.Keychain) {
+        self.keychain = keychain
+    }
+
+    func addItem(query: Set<WireFoundation.KeychainQueryItem>) throws {
+        try keychain.addItem(query: query)
+    }
+
+    func updateItem(
+        query: Set<WireFoundation.KeychainQueryItem>,
+        attributesToUpdate: Set<WireFoundation.KeychainQueryItem>
+    ) throws {
+        try keychain.updateItem(query: query, attributesToUpdate: attributesToUpdate)
+    }
+
+    func fetchItem<T>(query: Set<WireFoundation.KeychainQueryItem>) throws -> T? {
+        fetchItem_Invocations.append(query)
+        return try keychain.fetchItem(query: query)
+    }
+
+    func deleteItem(query: Set<WireFoundation.KeychainQueryItem>) throws {
+        try keychain.deleteItem(query: query)
     }
 
 }
