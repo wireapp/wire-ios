@@ -18,20 +18,16 @@ on:
       distribute_externals:
         type: boolean
         default: false
-<<<<<<< HEAD
       produce_changelog:
         type: boolean
         default: true
       notify_secret:
         type: string
         required: true
-
-=======
       produce_debug_builds:
         type: boolean
         required: true
         default: false
->>>>>>> db4c24d9af (chore: add debug builds option - WPB-24616 (#4583))
 
     secrets:
       KEYCHAIN_PASSWORD:
