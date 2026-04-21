@@ -28,7 +28,7 @@ private let logger = WireLogger.backgroundActivity
 /// A semaphore bridges the synchronous `performExpiringActivity` callback with the
 /// async world — it is signaled either when all tasks finish or when the system
 /// revokes background time.
-actor ExpiringActivityManager: ExpiringActivityManagerProtocol {
+actor ExpiringActivityManager {
 
     private let performer: any ExpiringActivityPerformerProtocol
 

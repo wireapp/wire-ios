@@ -34,7 +34,7 @@ public func withExpiringActivity(
 }
 
 func withExpiringActivity(
-    manager: some ExpiringActivityManagerProtocol,
+    manager: ExpiringActivityManager,
     reason: String,
     block: @escaping @Sendable () async -> Void
 ) async {
@@ -61,7 +61,7 @@ public func withExpiringActivity(
 }
 
 func withExpiringActivity(
-    manager: some ExpiringActivityManagerProtocol,
+    manager: ExpiringActivityManager,
     reason: String,
     block: @escaping @Sendable () async throws -> Void
 ) async throws {
