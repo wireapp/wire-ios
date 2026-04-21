@@ -403,14 +403,16 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         do {
             let conversation = try await groupConversationUseCase.invoke(
+                groupType: .group,
                 teamID: teamID,
                 messageProtocol: conversationMessageProtocol,
                 name: values.name,
+                historyDepth: nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 

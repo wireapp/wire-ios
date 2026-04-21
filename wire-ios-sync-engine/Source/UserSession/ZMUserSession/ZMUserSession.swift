@@ -393,10 +393,6 @@ public final class ZMUserSession: NSObject {
         clientSessionComponent?.createGroupConversationUseCase()
     }
 
-    public var createChannelUseCase: (some CreateChannelUseCaseProtocol)? {
-        clientSessionComponent?.createChannelUseCase()
-    }
-
     private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
