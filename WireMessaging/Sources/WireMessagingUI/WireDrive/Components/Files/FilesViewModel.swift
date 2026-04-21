@@ -580,21 +580,15 @@ package final class FilesViewModel: ObservableObject {
         let viewModel = CreateFileViewModel(
             creationTarget: target,
             path: path,
-            createFileUseCase: useCases.createFile
-        )
-
-        // to know whether we need to reload nodes.
-        viewModel.$createdNode
-            .compactMap(\.self)
-            .sink { [weak self] createdNode in
+            createFileUseCase: useCases.createFile,
+            onNodeCreated: { [weak self] createdNode in
                 guard let self else { return }
                 shouldReload = true
-
                 if case .file = target {
                     isEditing = makeFileViewItem(node: createdNode)
                 }
-
-            }.store(in: &subscriptions)
+            }
+        )
 
         let createFileView = CreateFileView(
             viewModel: viewModel

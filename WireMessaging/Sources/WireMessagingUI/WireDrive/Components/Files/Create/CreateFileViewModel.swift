@@ -31,7 +31,8 @@ final class CreateFileViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
-    @Published var createdNode: WireDriveNode?
+
+    let onNodeCreated: (WireDriveNode) -> Void
 
     var isCreateDisabled: Bool {
         errorMessage != nil || !isInputValid
@@ -107,10 +108,12 @@ final class CreateFileViewModel: ObservableObject {
         creationTarget: WireDriveCreateFileUseCase.Target,
         path: String,
         createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
+        onNodeCreated: @escaping (WireDriveNode) -> Void
     ) {
         self.creationTarget = creationTarget
         self.createFileUseCase = createFileUseCase
         self.path = path
+        self.onNodeCreated = onNodeCreated
 
         bindTextInput()
     }
@@ -121,11 +124,13 @@ final class CreateFileViewModel: ObservableObject {
         do {
             isLoading = true
 
-            createdNode = try await createFileUseCase.invoke(
+            let createdNode = try await createFileUseCase.invoke(
                 creationTarget: creationTarget,
                 path: path,
                 name: nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
             )
+
+            onNodeCreated(createdNode)
 
             isLoading = false
 

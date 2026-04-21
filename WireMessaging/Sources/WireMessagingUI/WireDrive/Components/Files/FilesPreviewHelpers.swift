@@ -461,7 +461,8 @@ extension CreateFileViewModel {
                 id: "01-Microsoft Word.docx"
             )),
             path: "Test-1/Test-2",
-            createFileUseCase: createFileUseCase
+            createFileUseCase: createFileUseCase,
+            onNodeCreated: { _ in }
         )
     }
 }
