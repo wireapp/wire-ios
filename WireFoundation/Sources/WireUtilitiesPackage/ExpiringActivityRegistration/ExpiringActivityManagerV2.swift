@@ -35,9 +35,6 @@ actor ExpiringActivityManagerV2 {
     /// Number of tasks currently being tracked.
     private var activeCount = 0
 
-    /// Whether an expiring activity is currently registered with the system.
-    private var isActive = false
-
     /// Closures that cancel each tracked task, invoked when the system revokes background time.
     private var cancellations: [@Sendable () -> Void] = []
 
@@ -59,9 +56,7 @@ actor ExpiringActivityManagerV2 {
         activeCount += 1
         cancellations.append { task.cancel() }
 
-        if !isActive {
-            isActive = true
-
+        if activeCount == 1 {
             let semaphore = DispatchSemaphore(value: 0)
             onAllTasksFinished = { semaphore.signal() }
 
@@ -97,7 +92,6 @@ actor ExpiringActivityManagerV2 {
         if activeCount == 0 {
             onAllTasksFinished?()
             onAllTasksFinished = nil
-            isActive = false
             cancellations.removeAll()
         }
     }
