@@ -50,14 +50,14 @@ struct WireDriveLargeDocumentPreviewView: View {
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
                 .frame(maxWidth: .infinity)
 
-                previewContainer {
-                    if case .failed = state {
+                if case .failed = state {
+                    previewContainer {
                         errorView(text: Self.downloadErrorMessage)
-                    } else {
-                        if let url {
+                    }
+                } else {
+                    if let url {
+                        previewContainer {
                             asyncImage(url: url)
-                        } else {
-                            errorView(text: Self.errorMessage)
                         }
                     }
                 }
