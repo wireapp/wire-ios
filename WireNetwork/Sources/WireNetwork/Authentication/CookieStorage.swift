@@ -125,16 +125,14 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
         try storeCookies(cookies, userID: userID, epoch: UUID())
     }
 
-    #if DEBUG
 
-        /// Store cookies with a specific epoch. This is intended for testing purposes only.
+    /// Store cookies with a specific epoch. This is intended for testing purposes only.
 
-        func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
-            try Self.lock.withLock {
-                try makeStorage(userID: userID).storeCookies(cookies, epoch: epoch)
-            }
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
+        try Self.lock.withLock {
+            try makeStorage(userID: userID).storeCookies(cookies, epoch: epoch)
         }
-    #endif
+    }
 
     /// Fetch stored cookies.
     ///
