@@ -31,13 +31,24 @@ import WireLogging
 /// Their completion triggers `group.leave()`, unblocking the callback naturally.
 final class ExpiringActivityManager: Sendable {
 
+    /// The underlying system API wrapper used to register expiring activities.
     private let performer: any ExpiringActivityPerformerProtocol
+
+    /// Tracks active tasks via `enter()`/`leave()`. The expiring activity's
+    /// callback blocks on `wait()`, which returns once the last task leaves.
     private let group = DispatchGroup()
+
+    /// Thread-safe mutable state guarded by an unfair lock.
     private let state = OSAllocatedUnfairLock(initialState: State())
 
     private struct State {
+
+        /// Whether an expiring activity is currently registered with the system.
         var isActive = false
+
+        /// Closures that cancel each tracked task, invoked when the system revokes background time.
         var cancellations: [@Sendable () -> Void] = []
+
     }
 
     init(performer: some ExpiringActivityPerformerProtocol) {
