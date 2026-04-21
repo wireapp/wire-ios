@@ -42,10 +42,6 @@ final class ExpiringActivityManager: Sendable {
     /// `notify` signals the semaphore to unblock the expiring activity callback.
     private let group = DispatchGroup()
 
-    /// Blocks the expiring activity callback. Signaled either by `group.notify`
-    /// (all tasks finished) or directly by `cancelAll` (system revoked time).
-    private let semaphore = DispatchSemaphore(value: 0)
-
     /// Thread-safe mutable state guarded by an unfair lock.
     private let state = OSAllocatedUnfairLock(initialState: State())
 
@@ -84,6 +80,10 @@ final class ExpiringActivityManager: Sendable {
 
         if shouldRegister {
             logger.debug("Registering expiring activity [reason: \(reason)]")
+
+            // Fresh semaphore per registration cycle to avoid stale signal
+            // values from a previous cycle's double-signal (group.notify + expiration).
+            let semaphore = DispatchSemaphore(value: 0)
 
             group.notify(queue: .global()) { [self] in
                 semaphore.signal()
