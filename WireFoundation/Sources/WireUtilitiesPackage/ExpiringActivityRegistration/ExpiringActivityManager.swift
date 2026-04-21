@@ -22,20 +22,21 @@ import WireLogging
 /// Coordinates multiple tasks under a single expiring activity so that only one
 /// thread is ever blocked, regardless of how many tasks are tracked in parallel.
 ///
-/// - When the first task is tracked, a single expiring activity is registered,
-///   blocking one thread via a semaphore.
-/// - Subsequent tasks join the same activity without blocking additional threads.
-/// - When the last task completes, the semaphore is signaled and the activity ends.
-/// - If the system revokes background time, all tracked tasks are cancelled and
-///   the semaphore is signaled so the blocked thread is released.
+/// Uses a `DispatchGroup` to track active tasks: each task enters the group on
+/// registration and leaves when it completes. The expiring activity's callback
+/// blocks on `group.wait()`, which returns once the last task leaves.
+///
+/// If the system revokes background time, all tracked tasks are cancelled.
+/// Their completion triggers `group.leave()`, unblocking the callback naturally.
 final class ExpiringActivityManager: @unchecked Sendable {
 
     private let performer: any ExpiringActivityPerformerProtocol
+    private let group = DispatchGroup()
     private let lock = NSLock()
 
     // Protected by `lock`.
-    private var cancellations: [UUID: @Sendable () -> Void] = [:]
-    private var activeSemaphore: DispatchSemaphore?
+    private var isActive = false
+    private var cancellations: [@Sendable () -> Void] = []
 
     init(performer: some ExpiringActivityPerformerProtocol) {
         self.performer = performer
@@ -48,16 +49,14 @@ final class ExpiringActivityManager: @unchecked Sendable {
     ///   - reason: A human-readable reason passed to the system for debugging.
     ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
     func track(reason: String, task: Task<some Sendable, some Error>) {
-        let id = UUID()
         let logger = WireLogger.backgroundActivity
 
+        group.enter()
+
         lock.lock()
-        cancellations[id] = { task.cancel() }
-        let shouldRegister = activeSemaphore == nil
-        if shouldRegister {
-            activeSemaphore = DispatchSemaphore(value: 0)
-        }
-        let semaphore = activeSemaphore!
+        cancellations.append { task.cancel() }
+        let shouldRegister = !isActive
+        if shouldRegister { isActive = true }
         lock.unlock()
 
         if shouldRegister {
@@ -66,47 +65,36 @@ final class ExpiringActivityManager: @unchecked Sendable {
             performer.performExpiringActivity(reason: reason) { [self] isExpiring in
                 if isExpiring {
                     logger.debug("System is revoking background time, cancelling all tasks [reason: \(reason)]")
-                    cancelAllAndSignal()
+                    cancelAll()
                 } else {
                     logger.debug("System granted background time, blocking until all tasks finish [reason: \(reason)]")
-                    semaphore.wait()
+                    group.wait()
                     logger.debug("All tasks finished, releasing expiring activity [reason: \(reason)]")
                 }
+            }
+
+            group.notify(queue: .global()) { [self] in
+                lock.lock()
+                isActive = false
+                cancellations.removeAll()
+                lock.unlock()
             }
         }
 
         Task.detached { [self] in
-            // We only need to wait for the task to complete; the result is irrelevant.
             _ = try? await task.value
-            removeAndSignalIfEmpty(id: id)
+            group.leave()
         }
     }
 
-    private func cancelAllAndSignal() {
+    private func cancelAll() {
         lock.lock()
-        let allCancellations = Array(cancellations.values)
-        cancellations.removeAll()
-        let semaphore = activeSemaphore
-        activeSemaphore = nil
+        let all = cancellations
         lock.unlock()
 
-        for cancel in allCancellations {
+        for cancel in all {
             cancel()
         }
-        semaphore?.signal()
-    }
-
-    private func removeAndSignalIfEmpty(id: UUID) {
-        lock.lock()
-        cancellations.removeValue(forKey: id)
-        let isEmpty = cancellations.isEmpty
-        let semaphore = isEmpty ? activeSemaphore : nil
-        if isEmpty {
-            activeSemaphore = nil
-        }
-        lock.unlock()
-
-        semaphore?.signal()
     }
 
 }
