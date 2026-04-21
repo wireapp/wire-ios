@@ -60,10 +60,8 @@ public class LegacyCookieStorage: NSObject {
 
     /// The expiration date of the authentication cookie, if it exists.
     public var authenticationCookieExpirationDate: Date? {
-        for cookie in fetchCookies() {
-            if cookie.name == Self.cookieName {
-                return cookie.expiresDate
-            }
+        for cookie in fetchCookies() where cookie.name == Self.cookieName {
+            return cookie.expiresDate
         }
         return nil
     }
