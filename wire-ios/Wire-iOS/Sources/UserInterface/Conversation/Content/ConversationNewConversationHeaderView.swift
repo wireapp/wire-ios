@@ -33,7 +33,9 @@ final class ConversationNewConversationHeaderView: UIView {
                 $0.delegate = delegate
             }
             stackView.arrangedSubviews
-                .compactMap { $0 as? ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription> }
+                .compactMap {
+                    $0 as? ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>
+                }
                 .forEach { $0.delegate = delegate }
         }
     }
@@ -90,7 +92,8 @@ final class ConversationNewConversationHeaderView: UIView {
 
         if conversation.isWireDriveEnabled {
             let fileCollabDesc = ConversationFileCollaborationSystemMessageCellDescription()
-            let fileCollabCell = ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>()
+            let fileCollabCell =
+                ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>()
             fileCollabCell.configure(with: fileCollabDesc.configuration, animated: false)
             stackView.addArrangedSubview(fileCollabCell)
 

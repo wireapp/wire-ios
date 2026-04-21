@@ -134,14 +134,16 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
         let participantsString = formatParticipantNames(names)
 
         // Title
-        let message: NSAttributedString?
-        if let name = conversation.displayName, !name.isEmpty {
-            message = participantsString.isEmpty ? nil : "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(participantsString)" && font && textColor
+        let message: NSAttributedString? = if let name = conversation.displayName, !name.isEmpty {
+            participantsString
+                .isEmpty ? nil :
+                "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(participantsString)" && font &&
+                textColor
         } else if creator.isSelfUser {
-            message = L10n.Localizable.Content.System.Conversation.You.started(senderName, participantsString)
+            L10n.Localizable.Content.System.Conversation.You.started(senderName, participantsString)
                 && font && textColor
         } else {
-            message = L10n.Localizable.Content.System.Conversation.Other.started(senderName, participantsString)
+            L10n.Localizable.Content.System.Conversation.Other.started(senderName, participantsString)
                 && font && textColor
         }
 
