@@ -63,7 +63,7 @@ final class FilesSortingViewModel: ObservableObject {
                 Strings.Key.size
             }
         }
-        
+
         var sortField: String {
             switch self {
             case .date:

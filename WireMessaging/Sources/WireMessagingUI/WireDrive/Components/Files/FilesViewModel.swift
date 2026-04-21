@@ -222,8 +222,6 @@ package final class FilesViewModel: ObservableObject {
         let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
         let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
     }
-    
-    private let offlineAvailableFilesHandler: OfflineAvailableFilesHandler
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
@@ -335,14 +333,6 @@ package final class FilesViewModel: ObservableObject {
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
         self.networkMonitor = networkMonitor
-        self.offlineAvailableFilesHandler = .init(
-            useCases: .init(
-                getAsset: useCases.getAsset,
-                makeAvailableOffline: useCases.makeAssetAvailableOffline,
-                removeAvailableOffline: useCases.removeAssetAvailableOffline,
-                getOfflineAvailable: useCases.getOfflineAvailableAssets
-            )
-        )
     }
 
     func setup() async {
@@ -414,12 +404,9 @@ package final class FilesViewModel: ObservableObject {
                 case .edit:
                     isEditing = item
                 case .makeAvailableOffline:
-                    offlineAvailableFilesHandler.makeAvailableOffline(item: item)
+                    makeAssetAvailableOffline(item: item)
                 case .removeAvailableOffline:
-                    offlineAvailableFilesHandler.removeAvailableOffline(item: item)
-                    if isOffline {
-                        await reload()
-                    }
+                    removeAssetAvailableOffline(item: item)
                 }
             },
             isBrowsing: isBrowsing,
@@ -687,10 +674,14 @@ package final class FilesViewModel: ObservableObject {
         }
 
         do {
-            let items = try await offlineAvailableFilesHandler.getOfflineAvailable(
+            let actionInput = LoadOfflineAvailableFilesUIAction.Input(
                 conversationName: cellName != nil ? conversations.first?.name : nil,
-                assetsPath: navigationPath.last?.filePath
+                assetsPath: navigationPath.last?.filePath,
+                getAsset: useCases.getAsset,
+                getOfflineAvailableAssets: useCases.getOfflineAvailableAssets
             )
+
+            let items = try await LoadOfflineAvailableFilesUIAction(input: actionInput)()
 
             state = .received(items: items)
         } catch {
@@ -905,5 +896,32 @@ package final class FilesViewModel: ObservableObject {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
         Task { await reload() }
+    }
+
+    // MARK: - Offline mode
+
+    private func makeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try await useCases.makeAssetAvailableOffline.invoke(nodeID: item.id)
+            } catch {
+                WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
+            }
+        }
+    }
+
+    private func removeAssetAvailableOffline(item: FilesViewItem) {
+        Task {
+            do {
+                try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+
+                if isOffline {
+                    await reload()
+                }
+            } catch {
+                WireLogger.wireDrive
+                    .error("Failed to remove asset from available offline: \(String(describing: error))")
+            }
+        }
     }
 }

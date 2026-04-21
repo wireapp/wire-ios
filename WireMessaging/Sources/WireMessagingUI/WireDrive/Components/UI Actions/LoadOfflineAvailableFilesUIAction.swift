@@ -17,47 +17,26 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireFoundation
 import WireLogging
 import WireMessagingDomain
 import WireMessagingDomainSupport
-import UniformTypeIdentifiers
 
-struct OfflineAvailableFilesHandler {
-    struct UseCases {
+struct LoadOfflineAvailableFilesUIAction {
+    struct Input {
+        let conversationName: String?
+        let assetsPath: String?
         let getAsset: WireDriveGetAssetUseCase
-        let makeAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
-        let removeAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
-        let getOfflineAvailable: WireDriveFetchOfflineAvailableAssetsUseCase
-    }
-    
-    let useCases: UseCases
-    
-    func makeAvailableOffline(item: FilesViewItem) {
-        Task {
-            do {
-                try await useCases.makeAvailableOffline.invoke(nodeID: item.id)
-            } catch {
-                WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
-            }
-        }
+        let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
     }
 
-    func removeAvailableOffline(item: FilesViewItem) {
-        Task {
-            do {
-                try await useCases.removeAvailableOffline.invoke(nodeID: item.id)
-            } catch {
-                WireLogger.wireDrive
-                    .error("Failed to remove asset from available offline: \(String(describing: error))")
-            }
-        }
-    }
-    
-    func getOfflineAvailable(conversationName: String?, assetsPath: String?) async throws -> [FilesViewItem] {
-        let offlineAssets = try await useCases.getOfflineAvailable.invoke(
-            conversationName: conversationName,
-            assetsPath: assetsPath
+    let input: Input
+
+    func callAsFunction() async throws -> [FilesViewItem] {
+        let offlineAssets = try await input.getOfflineAvailableAssets.invoke(
+            conversationName: input.conversationName,
+            assetsPath: input.assetsPath
         )
 
         let items: [FilesViewItem] = offlineAssets.map { asset in
@@ -84,9 +63,9 @@ struct OfflineAvailableFilesHandler {
                 return nextComponents.joined(separator: "/") + "/"
             }
 
-            let filesFromAllConversations = conversationName == nil
-            let basePath = assetsPath ?? asset.path.split(separator: "/").prefix(1).joined()
-            let nextFolderPath = filesFromAllConversations ? nil : nextFolderPath(from: asset.path, basePath: basePath)
+            let isAllConversations = input.conversationName == nil
+            let basePath = input.assetsPath ?? asset.path.split(separator: "/").prefix(1).joined()
+            let nextFolderPath = isAllConversations ? nil : nextFolderPath(from: asset.path, basePath: basePath)
 
             let filekind: FilesViewItem.Kind = if nextFolderPath != nil {
                 .folder
@@ -117,12 +96,12 @@ struct OfflineAvailableFilesHandler {
         }
 
         let itemsWithCreationDates: [(item: FilesViewItem, creationDate: Date)] = await items.asyncMap { item in
-            let url = try? await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+            let url = try? await input.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
             let creationDate = (try? url?.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
             return (item: item, creationDate: creationDate)
         }
 
-        let sortedItems = itemsWithCreationDates.sorted { lhs, rhs in
+        return itemsWithCreationDates.sorted { lhs, rhs in
             lhs.creationDate.compare(rhs.creationDate) == .orderedDescending
         }
         .map(\.item)
@@ -133,8 +112,6 @@ struct OfflineAvailableFilesHandler {
                 result.append(item)
             }
         }
-        
-        return sortedItems
     }
 }
 
