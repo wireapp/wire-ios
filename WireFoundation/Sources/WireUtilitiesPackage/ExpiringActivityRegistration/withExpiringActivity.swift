@@ -38,12 +38,12 @@ public func withExpiringActivity(
 }
 
 func withExpiringActivity(
-    manager: ExpiringActivityManager,
+    manager: some ExpiringActivityManagerProtocol,
     reason: String,
     block: @escaping @Sendable () async -> Void
 ) async {
     let task = Task(operation: block)
-    manager.track(reason: reason, task: task)
+    await manager.track(reason: reason, task: task)
     await withTaskCancellationHandler {
         await task.value
     } onCancel: {
@@ -65,12 +65,12 @@ public func withExpiringActivity(
 }
 
 func withExpiringActivity(
-    manager: ExpiringActivityManager,
+    manager: some ExpiringActivityManagerProtocol,
     reason: String,
     block: @escaping @Sendable () async throws -> Void
 ) async throws {
     let task = Task(operation: block)
-    manager.track(reason: reason, task: task)
+    await manager.track(reason: reason, task: task)
     try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {

@@ -33,7 +33,7 @@ private let logger = WireLogger.backgroundActivity
 /// If the system revokes background time, all tracked tasks are cancelled and
 /// the semaphore is signaled immediately so the callback can return without
 /// waiting for the tasks to finish.
-final class ExpiringActivityManager: Sendable {
+final class ExpiringActivityManager: ExpiringActivityManagerProtocol {
 
     /// The underlying system API wrapper used to register expiring activities.
     private let performer: any ExpiringActivityPerformerProtocol
