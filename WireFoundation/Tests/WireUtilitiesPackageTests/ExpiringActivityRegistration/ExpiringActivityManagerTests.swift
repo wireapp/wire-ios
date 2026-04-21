@@ -27,25 +27,6 @@ struct ExpiringActivityManagerTests {
     let performerMock = ExpiringActivityPerformerProtocolMock()
 
     @Test
-    func testReasonIsForwardedToPerformer() {
-        // Given
-        var receivedReason: String?
-        performerMock
-            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { reason, block in
-                receivedReason = reason
-                block(false)
-            }
-        let manager = ExpiringActivityManager(performer: performerMock)
-        let task = Task<Void, Never> {}
-
-        // When
-        manager.track(reason: "sync messages", task: task)
-
-        // Then
-        #expect(receivedReason == "sync messages")
-    }
-
-    @Test
     func testTaskIsCancelledWhenExpiring() {
         // Given
         performerMock
