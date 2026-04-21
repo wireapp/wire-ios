@@ -61,7 +61,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     private static let numberOfDigits = 6
 
     private let proxyCredentials: ProxyCredentials?
-    private var countdownTimer: Task<Void, Never>?
+    private(set) var countdownTimer: Task<Void, Never>?
 
     // MARK: - Life cycle
 
