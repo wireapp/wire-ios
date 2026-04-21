@@ -591,7 +591,6 @@
 				ConversationCell/LocationMessageCellTests.swift,
 				ConversationCell/MarkDownSnapshotTests.swift,
 				ConversationCell/MultiParagraphSnapshotTests.swift,
-				ConversationCell/StartedConversationCellTests.swift,
 				ConversationCell/TextMessageMentionsTests.swift,
 				ConversationCell/UnknownMessageContentTypeReceivedCellTests.swift,
 				ConversationContentViewControllerTests.swift,
