@@ -149,6 +149,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     }
 
     func requestVerificationCode() async {
+        WireLogger.authentication.info("Requesting 2FA code...")
         isResending = true
 
         do {
@@ -164,6 +165,20 @@ public final class VerificationCodeViewModel: ObservableObject {
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
+
+            case let RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
+                message,
+                retryAfter
+            ):
+                let retryMessage = if let retryAfter {
+                    " Please try again in \(Int(retryAfter)) seconds."
+                } else {
+                    ""
+                }
+                alert = Alert(
+                    title: "Too Many Requests",
+                    message: message + retryMessage
+                )
 
             default:
                 router.presentAlert(for: error)
