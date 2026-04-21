@@ -35,6 +35,10 @@ actor ExpiringActivityManagerV2: ExpiringActivityManagerProtocol {
     /// Number of tasks currently being tracked.
     private var activeCount = 0
 
+    /// Incremented when the system revokes background time to invalidate
+    /// pending `taskDidFinish` calls from the previous registration cycle.
+    private var generation = 0
+
     /// Closures that cancel each tracked task, invoked when the system revokes background time.
     private var cancellations: [@Sendable () -> Void] = []
 
@@ -55,6 +59,7 @@ actor ExpiringActivityManagerV2: ExpiringActivityManagerProtocol {
     func track(reason: String, task: Task<some Sendable, some Error>) {
         activeCount += 1
         cancellations.append { task.cancel() }
+        let trackGeneration = generation
 
         if activeCount == 1 {
             let semaphore = DispatchSemaphore(value: 0)
@@ -77,7 +82,7 @@ actor ExpiringActivityManagerV2: ExpiringActivityManagerProtocol {
 
         Task.detached { [self] in
             _ = try? await task.value
-            await self.taskDidFinish()
+            await taskDidFinish(generation: trackGeneration)
         }
     }
 
@@ -85,9 +90,14 @@ actor ExpiringActivityManagerV2: ExpiringActivityManagerProtocol {
         for cancel in cancellations {
             cancel()
         }
+        generation += 1
+        activeCount = 0
+        cancellations.removeAll()
+        onAllTasksFinished = nil
     }
 
-    private func taskDidFinish() {
+    private func taskDidFinish(generation: Int) {
+        guard generation == self.generation else { return }
         activeCount -= 1
         if activeCount == 0 {
             onAllTasksFinished?()
