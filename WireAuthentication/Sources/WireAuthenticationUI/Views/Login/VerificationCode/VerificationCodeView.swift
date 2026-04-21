@@ -102,10 +102,8 @@ package struct VerificationCodeView: View {
                 viewModel.factory.noHistoryView(result: authenticationResult)
             }
         }
-        .onAppear {
-            Task {
-                await viewModel.requestVerificationCode()
-            }
+        .task {
+            await viewModel.requestVerificationCode()
         }
     }
 
