@@ -173,21 +173,17 @@ public final class VerificationCodeViewModel: ObservableObject {
                 alert = .invalidEmail
 
             case let RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
-                message,
+                _,
                 retryAfter
             ):
                 if let retryAfter {
                     startCountdown(seconds: Int(retryAfter))
-                    alert = Alert(
-                        title: "Too Many Requests",
-                        message: message
-                    )
-                } else {
-                    alert = Alert(
-                        title: "Too Many Requests",
-                        message: message
-                    )
                 }
+
+                alert = Alert(
+                    title: "Check your inbox",
+                    message: "A code was already sent to \(email). You can request a new code later."
+                )
 
             default:
                 router.presentAlert(for: error)
