@@ -20,6 +20,10 @@ private let sharedManager = ExpiringActivityManager(
     performer: ExpiringActivityProcessInfoWrapper()
 )
 
+private let sharedManagerV2 = ExpiringActivityManagerV2(
+    performer: ExpiringActivityProcessInfoWrapper()
+)
+
 // MARK: - Non-throwing
 
 public func withExpiringActivity(
@@ -72,4 +76,21 @@ func withExpiringActivity(
     } onCancel: {
         task.cancel()
     }
+}
+
+// MARK: - Throwing v2
+
+public func withExpiringActivityV2(
+    reason: String,
+    block: @escaping @Sendable () async throws -> Void
+) async throws {
+
+    let task = Task(operation: block)
+    await sharedManagerV2.track(reason: reason, task: task)
+    try await withTaskCancellationHandler {
+        try await task.value
+    } onCancel: {
+        task.cancel()
+    }
+
 }
