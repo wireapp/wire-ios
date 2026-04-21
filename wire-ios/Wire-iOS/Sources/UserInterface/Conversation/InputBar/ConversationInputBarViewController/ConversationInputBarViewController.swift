@@ -237,7 +237,7 @@ final class ConversationInputBarViewController: UIViewController,
     let publishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol
     let clearPublishedDraftsUseCase: WireDriveClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireDriveObserveDraftsUseCaseProtocol
-    private let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
+    let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireDriveRetryUploadDraftUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
@@ -1133,7 +1133,17 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
                 viewModel: attachmentsCarouselViewModel,
-                onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
+                onTap: { [weak self] item in
+                    guard let self, let draft = attachmentsCarouselViewModel.draft(for: item), let data = draft.data else { return }
+                    let sendableImage = SendableImage(
+                        id: draft.nodeID,
+                        name: nil,
+                        utType: nil,
+                        data: data
+                    )
+                    
+                    showConfirmationForImage(sendableImage, isFromCamera: false)
+                },
                 onRemove: { [deleteDraftUseCase] item in
                     Task.detached {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)

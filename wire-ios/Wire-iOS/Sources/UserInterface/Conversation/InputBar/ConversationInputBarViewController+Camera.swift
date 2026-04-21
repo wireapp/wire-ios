@@ -108,10 +108,16 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         didSelectImage image: SendableImage,
         isFromCamera: Bool
     ) {
-        showConfirmationForImage(
-            image,
-            isFromCamera: isFromCamera
-        )
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
+            let dataToSend = image.data
+            let utType: UTType = image.utType ?? .image
+            uploadDraft(data: dataToSend, type: utType)
+        } else {
+            showConfirmationForImage(
+                image,
+                isFromCamera: isFromCamera
+            )
+        }
     }
 
     @objc
@@ -156,7 +162,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     func showConfirmationForImage(
         _ image: SendableImage,
-        isFromCamera: Bool
+        isFromCamera: Bool,
+        nodeID: UUID? = nil
     ) {
         let mediaAsset: MediaAsset = if
             image.utType == .gif,
@@ -186,7 +193,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
                     if self.userSession.isWireDriveEnabled,
                        self.conversation.isWireDriveEnabled {
-                        self.uploadDraft(data: dataToSend, type: utType)
+                        self.uploadDraft(data: dataToSend, type: utType, nodeID: image.id)
                     } else {
                         let image = SendableImage(
                             name: nil,
@@ -329,11 +336,11 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         }
     }
 
-    private func uploadDraft(data: Data, type: UTType) {
+    private func uploadDraft(data: Data, type: UTType, nodeID: UUID? = nil) {
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {
-                try await uploadDraftUseCase.invoke(data: data, type: type)
+                try await uploadDraftUseCase.invoke(data: data, type: type, nodeID: nodeID)
             } catch {
                 WireLogger.conversation.error("Failed to upload file: \(error)")
             }

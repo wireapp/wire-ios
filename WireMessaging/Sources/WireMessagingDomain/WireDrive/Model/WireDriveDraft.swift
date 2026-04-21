@@ -86,6 +86,8 @@ public struct WireDriveDraft: Hashable, Sendable {
     /// placeholders before a preview has been downloaded.
 
     public let metadata: Metadata?
+    
+    public let data: Data?
 
     package init(
         nodeID: UUID,
@@ -97,7 +99,8 @@ public struct WireDriveDraft: Hashable, Sendable {
         bytes: Int,
         mimeType: String?,
         requiresCleanup: Bool,
-        metadata: Metadata?
+        metadata: Metadata?,
+        data: Data?
     ) {
         self.nodeID = nodeID
         self.versionID = versionID
@@ -109,5 +112,6 @@ public struct WireDriveDraft: Hashable, Sendable {
         self.mimeType = mimeType
         self.requiresCleanup = requiresCleanup
         self.metadata = metadata
+        self.data = data
     }
 }

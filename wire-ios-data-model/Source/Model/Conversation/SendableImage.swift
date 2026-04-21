@@ -20,11 +20,13 @@ import UniformTypeIdentifiers
 
 public struct SendableImage {
 
+    public let id: UUID
     public let name: String
     public let utType: UTType?
     public let data: Data
 
     public init(
+        id: UUID = UUID(),
         name: String?,
         utType: UTType?,
         data: Data
@@ -44,6 +46,7 @@ public struct SendableImage {
         }
 
         self.data = data
+        self.id = id
     }
 
     private static func determineUTType(from data: Data) -> UTType? {

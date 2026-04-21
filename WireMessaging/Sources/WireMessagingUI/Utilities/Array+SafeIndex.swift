@@ -16,28 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import UniformTypeIdentifiers
+import Foundation
 
-/// Uploads file as a draft to the drive server.
+extension Array {
+    public subscript(safeIndex index: Int) -> Element? {
+        guard index >= 0, index < endIndex else {
+            return nil
+        }
 
-public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
-
-    /// Uploads the file at `fileURL` to the drive server.
-
-    func invoke(fileURL: URL) async throws
-
-    /// Creates a file using `imageData` and uploads it to the drive server.
-
-    func invoke(data: Data, type: UTType, nodeID: UUID?) async throws
-
-    var charactersToReplace: [Character] { get }
-}
-
-public enum WireDriveUploadDraftUseCaseError: Error, Sendable {
-
-    /// The file size of the requested file cannot be determined.
-
-    case missingFileSize
-
+        return self[index]
+    }
 }

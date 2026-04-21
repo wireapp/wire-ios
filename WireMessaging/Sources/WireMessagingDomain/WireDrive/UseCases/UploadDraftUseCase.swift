@@ -109,7 +109,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
     }
 
-    package func invoke(data: Data, type: UTType) async throws {
+    package func invoke(data: Data, type: UTType, nodeID: UUID?) async throws {
         let filename = await filenameGenerator.generateFilename(type: type)
 
         let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -118,15 +118,25 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
 
         try data.write(to: url)
-        try await invoke(fileURL: url, requiresCleanup: true)
+        try await invoke(fileURL: url, data: data, nodeID: nodeID, requiresCleanup: true)
     }
 
     // MARK: - Private Methods
 
-    private func invoke(fileURL: URL, requiresCleanup: Bool) async throws {
+    private func invoke(
+        fileURL: URL,
+        data: Data? = nil,
+        nodeID: UUID? = nil,
+        requiresCleanup: Bool
+    ) async throws {
         let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
         guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
             throw WireDriveUploadDraftUseCaseError.missingFileSize
+        }
+        
+        if let nodeID {
+            let latestNode = try await nodesAPI.getNode(nodeID: nodeID)
+            try await nodesAPI.deleteFile(node: latestNode)
         }
 
         var filename = fileURL.lastPathComponent
@@ -136,7 +146,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
 
         let draft = WireDriveDraft(
-            nodeID: UUID(),
+            nodeID: nodeID ?? UUID(),
             versionID: UUID(),
             assetURL: fileURL,
             fileType: resourceValues.contentType,
@@ -145,10 +155,16 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             bytes: fileSize,
             mimeType: nil,
             requiresCleanup: requiresCleanup,
-            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType)
+            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType),
+            data: data
         )
+        
+        if nodeID == nil {
+            await draftRepository.addDraft(draft, for: cellName)
+        } else {
+            await draftRepository.updateDraft(draft, for: cellName)
+        }
 
-        await draftRepository.addDraft(draft, for: cellName)
         try await invoke(nodeID: draft.nodeID)
     }
 

@@ -62,6 +62,11 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             thumbnails.removeAll()
         }
     }
+    
+    public func draft(for item: AttachmentsCarouselItem) -> WireDriveDraft? {
+        guard let index = items.firstIndex(of: item) else { return nil }
+        return drafts[safeIndex: index]
+    }
 
     private func refreshItems() {
         items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.versionID]) }

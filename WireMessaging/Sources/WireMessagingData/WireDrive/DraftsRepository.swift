@@ -167,6 +167,10 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
         drafts.value[cellName]?[new.nodeID] = new
     }
+    
+    package func deleteDraft(node: WireDriveNode) async throws {
+        try await nodesAPI.deleteFile(node: node)
+    }
 
     // MARK: - Private
 
