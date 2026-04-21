@@ -25,8 +25,6 @@ final class ConversationNewConversationHeaderView: UIView {
 
     private let stackView = UIStackView()
 
-    var isEmpty: Bool { stackView.arrangedSubviews.isEmpty }
-
     weak var delegate: ConversationMessageCellDelegate? {
         didSet {
             stackView.arrangedSubviews.compactMap { $0 as? GuestsAllowedCell }.forEach {

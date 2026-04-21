@@ -21,7 +21,7 @@ import WireSyncEngine
 
 extension ConversationContentViewController {
     func updateTableViewHeaderView() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         let headerView: UIView?
 

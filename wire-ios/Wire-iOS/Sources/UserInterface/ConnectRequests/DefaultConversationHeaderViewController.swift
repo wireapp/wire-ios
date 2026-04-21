@@ -50,9 +50,7 @@ final class DefaultConversationHeaderViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.addArrangedSubview(DefaultConversationHeaderView())
-        if !header.isEmpty {
-            stackView.addArrangedSubview(header)
-        }
+        stackView.addArrangedSubview(header)
         view = stackView
     }
 }

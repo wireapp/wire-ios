@@ -32,6 +32,7 @@ final class ConversationStartedSystemMessageCell<
 
     private let titleLabel = UILabel()
     private var selectedUsers: [UserType] = []
+    private var imageContainerZeroHeightConstraint: NSLayoutConstraint?
 
     override func configureSubviews() {
         super.configureSubviews()
@@ -59,10 +60,11 @@ final class ConversationStartedSystemMessageCell<
         imageContainer.isHidden = !hasMessage
         lineView.isHidden = !hasMessage
         textLabel.isHidden = !hasMessage
-        if !hasMessage {
-            imageContainerHeightConstraint.isActive = false
-            imageContainer.heightAnchor.constraint(equalToConstant: 0).isActive = true
+        imageContainerHeightConstraint.isActive = hasMessage
+        if imageContainerZeroHeightConstraint == nil {
+            imageContainerZeroHeightConstraint = imageContainer.heightAnchor.constraint(equalToConstant: 0)
         }
+        imageContainerZeroHeightConstraint?.isActive = !hasMessage
     }
 
     // MARK: - UITextViewDelegate

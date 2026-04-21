@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireDesign
-import WireSyncEngine
 
 final class DefaultConversationHeaderView: UIView {
 
-    private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
-        lightFont: FontSpec(.small, .light),
-        boldFont: FontSpec(.small, .medium),
-        color: SemanticColors.Label.textDefault
-    )
-
     private let guestWarningView = GuestAccountWarningView()
-    private let guestWarningContainer = UIView()
 
     init() {
         super.init(frame: .zero)
@@ -42,26 +35,12 @@ final class DefaultConversationHeaderView: UIView {
     }
 
     private func setup() {
-
-        [guestWarningContainer].forEach(addSubview)
-
-        guestWarningContainer.addSubview(guestWarningView)
-        guestWarningContainer.backgroundColor = SemanticColors.View.backgroundGreen
+        backgroundColor = SemanticColors.View.backgroundGreen
+        addSubview(guestWarningView)
     }
 
     private func createConstraints() {
-        [
-            guestWarningView,
-            guestWarningContainer
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        NSLayoutConstraint.activate([
-            guestWarningContainer.topAnchor.constraint(equalTo: topAnchor),
-            guestWarningContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            guestWarningContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            guestWarningContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
-        ])
-
-        guestWarningView.fitIn(view: guestWarningContainer, insets: .init(top: 12, left: 16, bottom: 12, right: 16))
+        guestWarningView.translatesAutoresizingMaskIntoConstraints = false
+        guestWarningView.fitIn(view: self, insets: .init(top: 12, left: 16, bottom: 12, right: 16))
     }
 }
