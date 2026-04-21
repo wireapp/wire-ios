@@ -60,8 +60,8 @@ struct LegacyCookieStorageTests {
         cookiesStorage.cookies = [
             HTTPCookie.validCookies(string: "yuid=aaa; Expires=Thu, 08-Apr-2026 14:00:00 GMT"),
             HTTPCookie.validCookies(string: "zuid=bbb; Expires=Thu, 09-Apr-2026 15:00:00 GMT"), // <--- This cookie
-            HTTPCookie.validCookies(string: "zuid=ccc; Expires=Fri, 10-Apr-2026 16:00:00 GMT"),
-        ].flatMap { $0 }
+            HTTPCookie.validCookies(string: "zuid=ccc; Expires=Fri, 10-Apr-2026 16:00:00 GMT")
+        ].flatMap(\.self)
 
         // when
         let expiration = sut.authenticationCookieExpirationDate

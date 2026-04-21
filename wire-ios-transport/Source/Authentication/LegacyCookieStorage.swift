@@ -31,8 +31,7 @@ public class LegacyCookieStorage: NSObject {
 
     private static let cookieName = "zuid"
 
-    @objc
-    public let userIdentifier: UUID
+    @objc public let userIdentifier: UUID
 
     private let cookieStorage: any CookieStorageProtocol
 
@@ -72,8 +71,7 @@ public class LegacyCookieStorage: NSObject {
     /// Whether there is an authentication cookie stored.
     ///
     /// - warning: This only checks for the presence of the cookie, not whether it is valid or not.
-    @objc
-    public var hasAuthenticationCookie: Bool {
+    @objc public var hasAuthenticationCookie: Bool {
         authenticationCookieExpirationDate != nil
     }
 

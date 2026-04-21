@@ -199,7 +199,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
-
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
 

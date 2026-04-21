@@ -18,8 +18,8 @@
 
 import Foundation
 
-import WireTransportSupport
 import WireDataModelSupport
+import WireTransportSupport
 @testable import WireSyncEngine
 
 class ApplicationStatusDirectoryTests: MessagingTest {

@@ -127,7 +127,6 @@ public struct Keychain: KeychainProtocol {
         }
     }
 
-
 }
 
 private extension Set<KeychainQueryItem> {

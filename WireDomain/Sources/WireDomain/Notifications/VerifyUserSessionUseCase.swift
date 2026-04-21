@@ -17,9 +17,9 @@
 //
 
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
-import WireFoundation
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSessionUseCase {

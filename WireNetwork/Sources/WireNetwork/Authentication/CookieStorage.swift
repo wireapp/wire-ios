@@ -99,16 +99,16 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
     }
 
     #if DEBUG
-    /// Creates a new `CookieStorage` with injected dependencies for testing purposes only.
-    public init(
-        cookieEncryptionKey: Data,
-        keychain: any KeychainProtocol,
-        cache: CookieStorageCache
-    ) {
-        self.cookieEncryptionKey = cookieEncryptionKey
-        self.keychain = keychain
-        self.cache = cache
-    }
+        /// Creates a new `CookieStorage` with injected dependencies for testing purposes only.
+        public init(
+            cookieEncryptionKey: Data,
+            keychain: any KeychainProtocol,
+            cache: CookieStorageCache
+        ) {
+            self.cookieEncryptionKey = cookieEncryptionKey
+            self.keychain = keychain
+            self.cache = cache
+        }
     #endif
 
     /// Store cookies.
@@ -127,13 +127,13 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     #if DEBUG
 
-    /// Store cookies with a specific epoch. This is intended for testing purposes only.
+        /// Store cookies with a specific epoch. This is intended for testing purposes only.
 
-    func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
-        try Self.lock.withLock {
-            try makeStorage(userID: userID).storeCookies(cookies, epoch: epoch)
+        func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
+            try Self.lock.withLock {
+                try makeStorage(userID: userID).storeCookies(cookies, epoch: epoch)
+            }
         }
-    }
     #endif
 
     /// Fetch stored cookies.
@@ -327,7 +327,7 @@ private final class _CookieStorage: Sendable {
 private extension UUID {
 
     var data: Data {
-        withUnsafeBytes(of: self.uuid, { Data($0) })
+        withUnsafeBytes(of: uuid) { Data($0) }
     }
 
 }

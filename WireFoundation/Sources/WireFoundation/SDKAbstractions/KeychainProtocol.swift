@@ -108,6 +108,7 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
         case let .data(data):
             (kSecValueData, data)
+
         case let .returningAttributes(bool):
             (kSecReturnAttributes, bool)
         }

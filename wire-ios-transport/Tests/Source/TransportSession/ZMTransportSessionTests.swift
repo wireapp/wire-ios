@@ -18,8 +18,8 @@
 
 import Foundation
 import WireTesting
-@testable import WireTransport
 import WireTransportSupport
+@testable import WireTransport
 
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {

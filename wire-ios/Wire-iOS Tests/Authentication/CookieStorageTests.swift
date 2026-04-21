@@ -185,9 +185,9 @@ final class CookieStorageTests {
         } throws: { error in
             switch error {
             case HTTPCookieCodecError.invalidCookieData:
-                return true
+                true
             default:
-                return false
+                false
             }
         }
 
@@ -401,7 +401,6 @@ private enum Scaffolding {
 
 }
 
-
 private extension [CFString: Any] {
 
     var accessible: CFString? {
@@ -423,7 +422,7 @@ private extension [CFString: Any] {
 private extension UUID {
 
     var data: Data {
-        withUnsafeBytes(of: self.uuid) { Data($0) }
+        withUnsafeBytes(of: uuid) { Data($0) }
     }
 
 }
