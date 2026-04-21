@@ -26,19 +26,25 @@ private let logger = WireLogger.backgroundActivity
 /// thread is ever blocked, regardless of how many tasks are tracked in parallel.
 ///
 /// Uses a `DispatchGroup` to track active tasks: each task enters the group on
-/// registration and leaves when it completes. The expiring activity's callback
-/// blocks on `group.wait()`, which returns once the last task leaves.
+/// registration and leaves when it completes. A semaphore blocks the expiring
+/// activity's callback and is signaled either by `group.notify` (all tasks
+/// finished) or directly when the system revokes background time.
 ///
-/// If the system revokes background time, all tracked tasks are cancelled.
-/// Their completion triggers `group.leave()`, unblocking the callback naturally.
+/// If the system revokes background time, all tracked tasks are cancelled and
+/// the semaphore is signaled immediately so the callback can return without
+/// waiting for the tasks to finish.
 final class ExpiringActivityManager: Sendable {
 
     /// The underlying system API wrapper used to register expiring activities.
     private let performer: any ExpiringActivityPerformerProtocol
 
-    /// Tracks active tasks via `enter()`/`leave()`. The expiring activity's
-    /// callback blocks on `wait()`, which returns once the last task leaves.
+    /// Tracks active tasks via `enter()`/`leave()`. When the last task leaves,
+    /// `notify` signals the semaphore to unblock the expiring activity callback.
     private let group = DispatchGroup()
+
+    /// Blocks the expiring activity callback. Signaled either by `group.notify`
+    /// (all tasks finished) or directly by `cancelAll` (system revoked time).
+    private let semaphore = DispatchSemaphore(value: 0)
 
     /// Thread-safe mutable state guarded by an unfair lock.
     private let state = OSAllocatedUnfairLock(initialState: State())
@@ -79,21 +85,23 @@ final class ExpiringActivityManager: Sendable {
         if shouldRegister {
             logger.debug("Registering expiring activity [reason: \(reason)]")
 
+            group.notify(queue: .global()) { [self] in
+                semaphore.signal()
+                state.withLock {
+                    $0.isActive = false
+                    $0.cancellations.removeAll()
+                }
+            }
+
             performer.performExpiringActivity(reason: "ExpiringActivityManager") { [self] isExpiring in
                 if isExpiring {
                     logger.debug("System is revoking background time, cancelling all tasks [reason: \(reason)]")
                     cancelAll()
+                    semaphore.signal()
                 } else {
                     logger.debug("System granted background time, blocking until all tasks finish [reason: \(reason)]")
-                    group.wait()
+                    semaphore.wait()
                     logger.debug("All tasks finished, releasing expiring activity [reason: \(reason)]")
-                }
-            }
-
-            group.notify(queue: .global()) { [self] in
-                state.withLock {
-                    $0.isActive = false
-                    $0.cancellations.removeAll()
                 }
             }
         }
