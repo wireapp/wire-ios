@@ -645,8 +645,8 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
-            state = .received(items: receivedItems)
+            let receivedItems = refreshing ? newItems : state.items + newItems
+            state = .received(items: receivedItems.latestModified())
             hasMore = !isLastPage
         } catch is CancellationError {
             return // developer-driven error, discard
@@ -716,7 +716,7 @@ package final class FilesViewModel: ObservableObject {
 
         var currentItems = state.items
         currentItems.removeAll { $0.id == asset.id }
-        state = .received(items: Self.processItems(currentItems))
+        state = .received(items: currentItems.latestModified())
 
         do {
             try await useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
@@ -725,7 +725,7 @@ package final class FilesViewModel: ObservableObject {
 
             var currentItems = state.items
             currentItems.append(asset)
-            state = .received(items: Self.processItems(currentItems))
+            state = .received(items: currentItems.latestModified())
         }
     }
 
@@ -762,7 +762,7 @@ package final class FilesViewModel: ObservableObject {
 
         var currentItems = state.items
         currentItems.removeAll { $0.id == asset.id }
-        state = .received(items: Self.processItems(currentItems))
+        state = .received(items: currentItems.latestModified())
 
         let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
 
@@ -775,31 +775,8 @@ package final class FilesViewModel: ObservableObject {
 
             var currentItems = state.items
             currentItems.append(asset)
-            state = .received(items: Self.processItems(currentItems))
+            state = .received(items: currentItems.latestModified())
         }
-    }
-
-    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
-    private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
-        var latestByID: [UUID: FilesViewItem] = [:]
-        for item in items {
-            if let existing = latestByID[item.id] {
-                let existingDate = existing.modifiedAt ?? .distantPast
-                let newDate = item.modifiedAt ?? .distantPast
-                if newDate > existingDate {
-                    latestByID[item.id] = item
-                }
-            } else {
-                latestByID[item.id] = item
-            }
-        }
-
-        var results: [FilesViewItem] = []
-        for item in items where item == latestByID[item.id] {
-            results.append(item)
-        }
-
-        return results
     }
 
     private func makeFileRenameView(
@@ -923,5 +900,30 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
+    }
+}
+
+private extension Collection<FilesViewItem> {
+    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
+    func latestModified() -> [FilesViewItem] {
+        var latestByID: [UUID: FilesViewItem] = [:]
+        for item in self {
+            if let existing = latestByID[item.id] {
+                let existingDate = existing.modifiedAt ?? .distantPast
+                let newDate = item.modifiedAt ?? .distantPast
+                if newDate > existingDate {
+                    latestByID[item.id] = item
+                }
+            } else {
+                latestByID[item.id] = item
+            }
+        }
+
+        var results: [FilesViewItem] = []
+        for item in self where item == latestByID[item.id] {
+            results.append(item)
+        }
+
+        return results
     }
 }
