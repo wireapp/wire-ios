@@ -22,7 +22,7 @@ import Testing
 @testable import WireUtilitiesPackage
 @testable import WireUtilitiesPackageSupport
 
-struct ExpiringActivityPerformerTests {
+struct ExpiringActivityManagerTests {
 
     let performerMock = ExpiringActivityPerformerProtocolMock()
 
@@ -31,15 +31,15 @@ struct ExpiringActivityPerformerTests {
         // Given
         var receivedReason: String?
         performerMock
-            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure =
-            { reason, block in
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { reason, block in
                 receivedReason = reason
                 block(false)
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
         let task = Task<Void, Never> {}
 
         // When
-        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync messages", task: task)
+        manager.track(reason: "sync messages", task: task)
 
         // Then
         #expect(receivedReason == "sync messages")
@@ -52,12 +52,13 @@ struct ExpiringActivityPerformerTests {
             .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
                 block(true)
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
         let task = Task<Void, Never> {
             try? await Task.sleep(for: .seconds(60))
         }
 
         // When
-        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+        manager.track(reason: "sync", task: task)
 
         // Then
         #expect(task.isCancelled)
@@ -80,9 +81,10 @@ struct ExpiringActivityPerformerTests {
                     Task { await flag.set() }
                 }
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When
-        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+        manager.track(reason: "sync", task: task)
 
         // Then — the block should still be waiting because the task hasn't finished.
         try await Task.sleep(for: .milliseconds(200))
@@ -117,9 +119,10 @@ struct ExpiringActivityPerformerTests {
                     Task { await flag.set() }
                 }
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When — register the activity, which grants time and blocks.
-        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+        manager.track(reason: "sync", task: task)
 
         // The block should still be waiting because the task hasn't finished.
         try await Task.sleep(for: .milliseconds(200))
@@ -153,14 +156,93 @@ struct ExpiringActivityPerformerTests {
                     Task { await flag.set() }
                 }
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When
-        performerMock.performTaskCancellationAsExpiringActivity(reason: "sync", task: task)
+        manager.track(reason: "sync", task: task)
 
         // Then — block should return despite the task throwing.
         try await Task.sleep(for: .milliseconds(200))
         let didReturn = await flag.value
         #expect(didReturn)
+    }
+
+    @Test
+    func testMultipleTasksBlockOnlyOneThread() async throws {
+        // Given
+        let (stream1, continuation1) = AsyncStream<Void>.makeStream()
+        let (stream2, continuation2) = AsyncStream<Void>.makeStream()
+        let flag = Flag()
+        var performCallCount = 0
+
+        let task1 = Task<Void, Never> { for await _ in stream1 {} }
+        let task2 = Task<Void, Never> { for await _ in stream2 {} }
+
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                performCallCount += 1
+                DispatchQueue.global().async {
+                    block(false)
+                    Task { await flag.set() }
+                }
+            }
+        let manager = ExpiringActivityManager(performer: performerMock)
+
+        // When — track two tasks.
+        manager.track(reason: "sync", task: task1)
+        manager.track(reason: "sync", task: task2)
+
+        // Then — only one expiring activity should have been registered.
+        #expect(performCallCount == 1)
+
+        // The block should still be waiting because both tasks are running.
+        try await Task.sleep(for: .milliseconds(200))
+        var didReturn = await flag.value
+        #expect(!didReturn)
+
+        // Finish the first task — block should still wait for the second.
+        continuation1.finish()
+        try await Task.sleep(for: .milliseconds(200))
+        didReturn = await flag.value
+        #expect(!didReturn)
+
+        // Finish the second task — now the block should return.
+        continuation2.finish()
+        try await Task.sleep(for: .milliseconds(200))
+        didReturn = await flag.value
+        #expect(didReturn)
+    }
+
+    @Test
+    func testSystemExpirationCancelsAllTrackedTasks() async throws {
+        // Given
+        let (stream1, _) = AsyncStream<Void>.makeStream()
+        let (stream2, _) = AsyncStream<Void>.makeStream()
+        var capturedBlock: (@Sendable (Bool) -> Void)?
+
+        let task1 = Task<Void, Never> { for await _ in stream1 {} }
+        let task2 = Task<Void, Never> { for await _ in stream2 {} }
+
+        performerMock
+            .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
+                capturedBlock = block
+                DispatchQueue.global().async {
+                    block(false)
+                }
+            }
+        let manager = ExpiringActivityManager(performer: performerMock)
+
+        // When
+        manager.track(reason: "sync", task: task1)
+        manager.track(reason: "sync", task: task2)
+
+        try await Task.sleep(for: .milliseconds(200))
+        capturedBlock?(true)
+
+        // Then — both tasks should be cancelled.
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(task1.isCancelled)
+        #expect(task2.isCancelled)
     }
 
     @Test
@@ -175,9 +257,10 @@ struct ExpiringActivityPerformerTests {
                     block(false)
                 }
             }
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         let outerTask = Task {
-            await withExpiringActivity(performer: performerMock, reason: "sync") {
+            await withExpiringActivity(manager: manager, reason: "sync") {
                 await blockStarted.set()
                 while !Task.isCancelled {
                     try? await Task.sleep(for: .milliseconds(10))
