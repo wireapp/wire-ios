@@ -111,16 +111,11 @@ final class MessagingTests: WireUITestCase {
         let activeConversationPage = try conversationsPage.openConversation()
 
         // THEN
-        XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.exists,
-            "Expected image attachment not found"
-        )
-
-        let senderName = activeConversationPage.getSenderName()
-        XCTAssertEqual(
-            senderName,
-            teamMembers[0].name,
-            "Sender info didn't match expected value \(teamMembers[0].name)"
+        verifyMessageReceivedAndSenderInfo(
+            attachment: activeConversationPage.fileTypeIcons.firstMatch,
+            on: activeConversationPage,
+            expectedSenderName: teamMembers[0].name,
+            failureMessage: "Expected image attachment not found"
         )
     }
 
@@ -166,16 +161,86 @@ final class MessagingTests: WireUITestCase {
         let activeConversationPage = try conversationsPage.openConversation()
 
         // THEN
+        verifyMessageReceivedAndSenderInfo(
+            attachment: activeConversationPage.fileTypeIcons.firstMatch,
+            on: activeConversationPage,
+            expectedSenderName: teamMembers[0].name,
+            failureMessage: "Expected file attachment not found"
+        )
+    }
+
+    @MainActor
+    func testSendAndReceiveVideoFileInGroupConversation_TC_8836_8843() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+
+        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
+
+        let conversationDomain = BackendContext.current.domainInfo
+
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        // WHEN member sends video file
+        let videoURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
+        let videoExtension = videoURL.pathExtension
+
+        try await testServicesClient.sendFile(
+            type: videoExtension,
+            user: teamMembers[0],
+            fileName: "testVideo.mp4",
+            filepath: videoURL.path,
+            convoId: conversationId,
+            domain: conversationDomain
+        )
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.exists,
-            "Expected file attachment not found"
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        verifyMessageReceivedAndSenderInfo(
+            attachment: activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4"),
+            on: activeConversationPage,
+            expectedSenderName: teamMembers[0].name,
+            failureMessage: "Expected MP4 video attachment not found"
+        )
+    }
+
+    private func verifyMessageReceivedAndSenderInfo(
+        attachment: XCUIElement,
+        on activeConversationPage: ActiveConversationPage,
+        expectedSenderName: String,
+        timeout: TimeInterval = 5,
+        failureMessage: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            attachment.waitForExistence(timeout: timeout),
+            "\(failureMessage) Debug: \(attachment.debugDescription)",
+            file: file,
+            line: line
         )
 
         let senderName = activeConversationPage.getSenderName()
         XCTAssertEqual(
             senderName,
-            teamMembers[0].name,
-            "Sender info didn't match expected value \(teamMembers[0].name)"
+            expectedSenderName,
+            "Sender info didn't match expected value \(expectedSenderName)",
+            file: file,
+            line: line
         )
     }
 }
