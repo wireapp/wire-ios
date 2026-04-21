@@ -39,6 +39,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var isResending = false
     @Published var alert: Alert?
+    @Published private(set) var retryAfterSeconds: Int = 0
 
     let email: String
     let password: String
@@ -46,6 +47,10 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     var isConfirmButtonDisabled: Bool {
         code.contains { $0.isEmpty }
+    }
+
+    var isResendButtonDisabled: Bool {
+        isResending || retryAfterSeconds > 0
     }
 
     // MARK: - Dependencies
@@ -56,6 +61,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     private static let numberOfDigits = 6
 
     private let proxyCredentials: ProxyCredentials?
+    private var countdownTimer: Task<Void, Never>?
 
     // MARK: - Life cycle
 
@@ -170,15 +176,18 @@ public final class VerificationCodeViewModel: ObservableObject {
                 message,
                 retryAfter
             ):
-                let retryMessage = if let retryAfter {
-                    " Please try again in \(Int(retryAfter)) seconds."
+                if let retryAfter {
+                    startCountdown(seconds: Int(retryAfter))
+                    alert = Alert(
+                        title: "Too Many Requests",
+                        message: message
+                    )
                 } else {
-                    ""
+                    alert = Alert(
+                        title: "Too Many Requests",
+                        message: message
+                    )
                 }
-                alert = Alert(
-                    title: "Too Many Requests",
-                    message: message + retryMessage
-                )
 
             default:
                 router.presentAlert(for: error)
@@ -227,6 +236,20 @@ public final class VerificationCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials
             )
         }.value
+    }
+
+    private func startCountdown(seconds: Int) {
+        countdownTimer?.cancel()
+        retryAfterSeconds = seconds
+
+        countdownTimer = Task { @MainActor in
+            while retryAfterSeconds > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                if !Task.isCancelled {
+                    retryAfterSeconds -= 1
+                }
+            }
+        }
     }
 
 }

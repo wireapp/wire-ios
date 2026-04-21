@@ -72,10 +72,15 @@ package struct VerificationCodeView: View {
             Button(action: {
                 Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
-                Text(Strings.VerificationCode.resendCode)
+                if viewModel.retryAfterSeconds > 0 {
+                    Text(Strings.VerificationCode.resendCodeAfterSeconds(viewModel.retryAfterSeconds))
+                        .monospacedDigit()
+                } else {
+                    Text(Strings.VerificationCode.resendCode)
+                }
             })
             .wireButtonStyle(.link)
-            .disabled(viewModel.isResending)
+            .disabled(viewModel.isResendButtonDisabled)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
