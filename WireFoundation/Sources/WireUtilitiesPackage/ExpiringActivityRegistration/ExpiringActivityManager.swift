@@ -59,7 +59,9 @@ final class ExpiringActivityManager: Sendable {
     /// active task, an expiring activity is registered with the system.
     ///
     /// - Parameters:
-    ///   - reason: A human-readable reason passed to the system for debugging.
+    ///   - reason: A human-readable reason used for logging. The system-level
+    ///     expiring activity always uses a static reason since multiple tasks
+    ///     share a single registration.
     ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
     func track(reason: String, task: Task<some Sendable, some Error>) {
         let logger = WireLogger.backgroundActivity
@@ -76,7 +78,7 @@ final class ExpiringActivityManager: Sendable {
         if shouldRegister {
             logger.debug("Registering expiring activity [reason: \(reason)]")
 
-            performer.performExpiringActivity(reason: reason) { [self] isExpiring in
+            performer.performExpiringActivity(reason: "ExpiringActivityManager") { [self] isExpiring in
                 if isExpiring {
                     logger.debug("System is revoking background time, cancelling all tasks [reason: \(reason)]")
                     cancelAll()
