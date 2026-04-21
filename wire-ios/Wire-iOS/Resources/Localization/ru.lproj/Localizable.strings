@@ -93,6 +93,11 @@
 "peoplepicker.no_matching_results.message.apps" = "Ничего не найдено.";
 "peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс.";
 "peoplepicker.no_matching_results.message.apps_not_enabled" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы включить их, обратитесь к администратору.";
+"peoplepicker.no_apps_added.title" = "Ваша команда еще не добавила приложения";
+"peoplepicker.no_apps_added.ask_admin_message" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы воспользоваться ими, обратитесь к администратору вашей команды.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Как администратор команды, вы можете добавить их в управлении командой.";
+"peoplepicker.app_details.created_by" = "Создано %@";
+"peoplepicker.app_details.description" = "Описание";
 
 "peoplepicker.send_invitation.dialog.title" = "Приглашение отправлено";
 "peoplepicker.send_invitation.dialog.message" = "Оно будет актуально в течение 2 недель. Вы можете отправить новое приглашение, если срок этого истечет.";
