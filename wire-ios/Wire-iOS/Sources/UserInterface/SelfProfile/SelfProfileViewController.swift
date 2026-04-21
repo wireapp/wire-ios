@@ -23,6 +23,7 @@ import WireDesign
 import WireDomainPackage
 import WireFoundation
 import WireIndividualToTeamMigrationUI
+import WireLocators
 import WireMainNavigationUI
 import WireMultiBackendUI
 import WireNetwork
@@ -216,9 +217,11 @@ final class SelfProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         selfProfileViewsMonitor.onDidViewSelfProfile()
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+        let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.dismiss()
         }, accessibilityLabel: L10n.Localizable.General.close)
+        closeButton.accessibilityIdentifier = Locators.UserProfilePage.close.rawValue
+        navigationItem.rightBarButtonItem = closeButton
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.backButtonDisplayMode = .minimal
     }
@@ -419,9 +422,7 @@ final class SelfProfileViewController: UIViewController {
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                 appDelegate.mediaPlaybackManager?.stop()
             }
-            Task {
-                await self.accountSelector?.switchTo(account: account)
-            }
+            self.accountSelector?.switchTo(account: account)
         }
     }
 }

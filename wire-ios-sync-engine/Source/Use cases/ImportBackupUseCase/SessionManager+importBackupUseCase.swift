@@ -50,12 +50,17 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
 
     @MainActor
     func reportMigrationNeeded() async {
-        await sessionManager.prepareForRestoreWithMigration()
+        await withCheckedContinuation { continuation in
+            sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
+        }
     }
 
     @MainActor
     func selectAccountAndTriggerSlowSync(_ account: Account) async {
-        guard let userSession = await sessionManager.select(account) else { return }
+        let userSession = await withCheckedContinuation { continuation in
+            sessionManager.select(account, completion: { continuation.resume(returning: $0) })
+        }
+        guard let userSession else { return }
         do {
             try await userSession.syncAgent?.performInitialSync()
         } catch {
