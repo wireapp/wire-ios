@@ -25,7 +25,7 @@ import WireFoundationSupport
 @testable import WireNetwork
 
 @Suite(.serialized)
-final class CookieStorageIntegrationTests {
+final class CookieStorageTests {
 
     private let encryptionKey: Data
     private let keychain = Keychain()
