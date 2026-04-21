@@ -125,17 +125,16 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
         try storeCookies(cookies, userID: userID, epoch: UUID())
     }
 
+    #if DEBUG
+
+    /// Store cookies with a specific epoch. This is intended for testing purposes only.
+
     func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
         try Self.lock.withLock {
-            let storage = _CookieStorage(
-                userID: userID,
-                cookieEncryptionKey: cookieEncryptionKey,
-                keychain: keychain,
-                cache: cache
-            )
-            try storage.storeCookies(cookies, epoch: epoch)
+            try makeStorage(userID: userID).storeCookies(cookies, epoch: epoch)
         }
     }
+    #endif
 
     /// Fetch stored cookies.
     ///
@@ -148,13 +147,7 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     public func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
         try Self.lock.withLock {
-            let storage = _CookieStorage(
-                userID: userID,
-                cookieEncryptionKey: cookieEncryptionKey,
-                keychain: keychain,
-                cache: cache
-            )
-            return try storage.fetchCookies()
+            try makeStorage(userID: userID).fetchCookies()
         }
     }
 
@@ -169,14 +162,19 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
 
     public func removeCookies(userID: UUID) throws {
         try Self.lock.withLock {
-            let storage = _CookieStorage(
-                userID: userID,
-                cookieEncryptionKey: cookieEncryptionKey,
-                keychain: keychain,
-                cache: cache
-            )
-            try storage.removeCookies()
+            try makeStorage(userID: userID).removeCookies()
         }
+    }
+
+    // MARK: - Helper
+
+    private func makeStorage(userID: UUID) -> _CookieStorage {
+        _CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookieEncryptionKey,
+            keychain: keychain,
+            cache: cache
+        )
     }
 
 }
@@ -218,7 +216,7 @@ private final class _CookieStorage: Sendable {
     }
 
     func fetchCookies() throws -> [HTTPCookie] {
-        if let cached = cache.get(for: userID), let epoch = try fetchEpoch(), cached.epoch == epoch {
+        if let cached = cache.get(for: userID), let epoch = try fetchEpochFromKeychain(), cached.epoch == epoch {
             return cached.cookies
         }
 
@@ -235,10 +233,10 @@ private final class _CookieStorage: Sendable {
     // MARK: - Fetching
 
     private func fetchCookiesFromKeychain() throws -> (cookies: [HTTPCookie], epoch: UUID)? {
-        guard let data: Data = try keychain.fetchItem(query: fetchQuery()) else { return nil }
+        guard let data: Data = try keychain.fetchItem(query: fetchValueQuery()) else { return nil }
         let cookies = try Self.decryptAndDecodeCookies(data, key: cookieEncryptionKey)
 
-        if let epoch = try fetchEpoch() {
+        if let epoch = try fetchEpochFromKeychain() {
             return (cookies, epoch)
         } else {
             let newEpoch = UUID()
@@ -247,7 +245,7 @@ private final class _CookieStorage: Sendable {
         }
     }
 
-    private func fetchEpoch() throws -> UUID? {
+    private func fetchEpochFromKeychain() throws -> UUID? {
         guard let attributes: [String: Any] = try keychain.fetchItem(query: fetchAttributesQuery()),
               let epochData = attributes[kSecAttrGeneric as String] as? Data,
               epochData.count == MemoryLayout<UUID>.size else {
@@ -267,7 +265,7 @@ private final class _CookieStorage: Sendable {
         ]
     }
 
-    private func fetchQuery() -> Set<KeychainQueryItem> {
+    private func fetchValueQuery() -> Set<KeychainQueryItem> {
         var query = baseQuery()
         query.insert(.returningData(true))
         return query
