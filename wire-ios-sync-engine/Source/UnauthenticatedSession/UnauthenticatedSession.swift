@@ -166,7 +166,7 @@ extension UnauthenticatedSession: UserInfoParser {
         do {
             try cookieStorage.storeCookies(userInfo.cookies)
         } catch {
-            WireLogger.authentication.error("Failed to store cookies: \(error)")
+            WireLogger.authentication.critical("Failed to store cookies: \(error)")
         }
         authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
@@ -185,7 +185,7 @@ extension UnauthenticatedSession: UserInfoParser {
         do {
             try cookieStorage.storeCookies(userInfo.cookies)
         } catch {
-            WireLogger.authentication.error("Failed to store cookies: \(error)")
+            WireLogger.authentication.critical("Failed to store cookies: \(error)")
         }
         authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
