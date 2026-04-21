@@ -20,6 +20,8 @@ import Foundation
 import os
 import WireLogging
 
+private let logger = WireLogger.backgroundActivity
+
 /// Coordinates multiple tasks under a single expiring activity so that only one
 /// thread is ever blocked, regardless of how many tasks are tracked in parallel.
 ///
@@ -64,7 +66,6 @@ final class ExpiringActivityManager: Sendable {
     ///     share a single registration.
     ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
     func track(reason: String, task: Task<some Sendable, some Error>) {
-        let logger = WireLogger.backgroundActivity
 
         group.enter()
 
