@@ -40,14 +40,16 @@ public protocol MLSActionExecutorProtocol {
     /// - Parameters:
     ///   - invitees: The key packages of the clients to add.
     ///   - groupID: The group ID of the group to add members to.
-    /// - Returns: Update events returned by the backend.
+    ///   - context: if provided, the operation will run within the existing transaction
+    ///     and `performNonReentrant` will be skipped (ordering is guaranteed by the transaction).
     ///
     /// If any new CRL distribution points are found, they will be published.
     /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func addMembers(
         _ invitees: [KeyPackage],
-        to groupID: MLSGroupID
+        to groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol?
     ) async throws
 
     /// Creates and sends a commit bundle to remove clients from a group.
@@ -64,10 +66,12 @@ public protocol MLSActionExecutorProtocol {
 
     /// Creates and sends a commit bundle to update the key material for a group.
     ///
-    /// - Parameter groupID: The group ID of the group to update key material for.
-    /// - Returns: Update events returned by the backend.
+    /// - Parameters:
+    ///   - groupID: The group ID of the group to update key material for.
+    ///   - context: if provided, the operation will run within the existing transaction
+    ///     and `performNonReentrant` will be skipped (ordering is guaranteed by the transaction).
 
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws
+    func updateKeyMaterial(for groupID: MLSGroupID, context: CoreCryptoContextProtocol?) async throws
 
     /// Creates and sends a commit bundle to commit the pending proposals for a group.
     ///
@@ -235,33 +239,45 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         return MLSGroupID(welcomeBundle.id)
     }
 
-    public func addMembers(_ invitees: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
-        try await performNonReentrant(groupID: groupID) {
-            do {
-                WireLogger.mls.info("adding members to group...", attributes: groupID.safeAttributes)
-
-                let crlNewDistributionPoints = try await coreCrypto.extendedTransaction {
-                    try await $0.addClientsToConversation(
-                        conversationId: groupID.conversationId,
-                        keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
-                    )
+    public func addMembers(
+        _ invitees: [WireDataModel.KeyPackage],
+        to groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol?
+    ) async throws {
+        if let context {
+            try await addMembersInternal(invitees, to: groupID, context: context)
+        } else {
+            try await performNonReentrant(groupID: groupID) {
+                try await coreCrypto.extendedTransaction {
+                    try await self.addMembersInternal(invitees, to: groupID, context: $0)
                 }
-
-                if let newDistributionPoints = CRLsDistributionPoints(
-                    from: crlNewDistributionPoints
-                ) {
-                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
-                }
-
-                WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
-            } catch {
-                WireLogger.mls
-                    .error(
-                        "failed: adding members to group: \(String(describing: error))",
-                        attributes: groupID.safeAttributes
-                    )
-                throw error
             }
+        }
+    }
+
+    private func addMembersInternal(
+        _ invitees: [WireDataModel.KeyPackage],
+        to groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol
+    ) async throws {
+        do {
+            WireLogger.mls.info("adding members to group...", attributes: groupID.safeAttributes)
+         
+            let crlNewDistributionPoints = try await context.addClientsToConversation(
+                conversationId: groupID.conversationId,
+                keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
+            )
+            if let newDistributionPoints = CRLsDistributionPoints(from: crlNewDistributionPoints) {
+                onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+            }
+            
+            WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
+        } catch {
+            WireLogger.mls.error(
+                "failed: adding members to group: \(String(describing: error))",
+                attributes: groupID.safeAttributes
+            )
+            throw error
         }
     }
 
@@ -286,21 +302,28 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    public func updateKeyMaterial(for groupID: MLSGroupID) async throws {
-        try await performNonReentrant(groupID: groupID) {
-            do {
-                WireLogger.mls.info("updating key material for group...", attributes: groupID.safeAttributes)
-                return try await coreCrypto.extendedTransaction {
-                    try await $0.updateKeyingMaterial(conversationId: groupID.conversationId)
+    public func updateKeyMaterial(for groupID: MLSGroupID, context: CoreCryptoContextProtocol?) async throws {
+        if let context {
+            try await updateKeyMaterialInternal(for: groupID, context: context)
+        } else {
+            try await performNonReentrant(groupID: groupID) {
+                try await coreCrypto.extendedTransaction {
+                    try await self.updateKeyMaterialInternal(for: groupID, context: $0)
                 }
-            } catch {
-                WireLogger.mls
-                    .error(
-                        "error: updating key material for group: \(String(describing: error))",
-                        attributes: groupID.safeAttributes
-                    )
-                throw error
             }
+        }
+    }
+    
+    private func updateKeyMaterialInternal(for groupID: MLSGroupID, context: CoreCryptoContextProtocol) async throws {
+        do {
+            WireLogger.mls.info("updating key material for group...", attributes: groupID.safeAttributes)
+            try await context.updateKeyingMaterial(conversationId: groupID.conversationId)
+        } catch {
+            WireLogger.mls.error(
+                "error: updating key material for group: \(String(describing: error))",
+                attributes: groupID.safeAttributes
+            )
+            throw error
         }
     }
 

@@ -80,17 +80,25 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     /// Creates a new group with the given ID and adds users to it
     ///
+    /// Creates a new MLS group and adds members to it atomically within a single CoreCrypto transaction.
+    ///
+    /// Key packages are claimed before the transaction opens. Inside the transaction,
+    /// `createConversation` runs first, then `addClientsToConversation`.
+    /// If the add step fails, `wipeConversation` is called on the same context before
+    /// the transaction closes, leaving no orphaned epoch-0 group.
+    ///
+    /// The self user is appended to the user list internally — callers should pass
+    /// only the invited users.
+    ///
+    /// Recoverable commit rejections (stale message, client mismatch) trigger an automatic
+    /// retry with backoff. Non-recoverable errors and `failedToClaimKeyPackages` propagate
+    /// immediately.
+    ///
     /// - Parameters:
-    ///   - groupID: The ID of the group to create
-    ///   - users: The users to add to the group
-    ///   - removalKeys: External senders
-    /// - Returns: The ciphersuite used to create the group
-    /// - Throws: An error if the group creation fails or if adding users fails
-    ///
-    /// Calls ``MLSService/createGroup(for:parentGroupID:)`` to create the group,
-    /// then calls ``MLSService/addMembersToConversation(with:for:)`` to add the users and the self user.
-    ///
-    /// If group creation fails, it wipes the group using ``MLSService/wipeGroup(_:)``
+    ///   - groupID: The ID of the group to create.
+    ///   - users: The users to add to the group (excluding self).
+    ///   - removalKeys: External senders, if already available.
+    /// - Returns: The ciphersuite used to create the group.
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/557220341/Use+case+create+a+group+conversation+MLS)
 
