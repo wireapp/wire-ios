@@ -139,7 +139,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // ignore error
             } catch URLError.cancelled {
                 // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
-                // we treat it the same as a `CancellationError`.
+                // we treat it the same as a `CancellationError`
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
