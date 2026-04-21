@@ -97,9 +97,9 @@ final class ConversationNewConversationHeaderView: UIView {
             fileCollabCell.configure(with: fileCollabDesc.configuration, animated: false)
             stackView.addArrangedSubview(fileCollabCell)
 
-            let timerDesc = ConversationMessageTimerSystemMessageCellDescription(state: .unavailable)
+            let timerDescription = ConversationMessageTimerSystemMessageCellDescription(state: .unavailable)
             let timerCell = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>()
-            timerCell.configure(with: timerDesc.configuration, animated: false)
+            timerCell.configure(with: timerDescription.configuration, animated: false)
             stackView.addArrangedSubview(timerCell)
         }
     }

@@ -21,13 +21,9 @@ import WireSyncEngine
 
 extension ConversationContentViewController {
     func updateTableViewHeaderView() {
-        guard let userSession = ZMUserSession.shared()  else {
-            // Don't display the conversation header if the message window doesn't include the first message and it is
-            // not a connection
-            return
-        }
+        guard let userSession = ZMUserSession.shared() else { return }
 
-        var headerView: UIView?
+        let headerView: UIView?
 
         let otherParticipant: ZMUser? = if conversation.conversationType == .connection {
             conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
@@ -42,25 +38,12 @@ extension ConversationContentViewController {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
             headerView = connectionViewController?.view
         } else {
-            defaultConversationHeaderViewController = DefaultConversationHeaderViewController(userSession: userSession)
-
-            let newConversationHeader = ConversationNewConversationHeaderView(
+            defaultConversationHeaderViewController = DefaultConversationHeaderViewController(
                 conversation: conversation,
                 selfUser: userSession.selfUser
             )
-            newConversationHeader.delegate = self
-
-            if newConversationHeader.isEmpty {
-                headerView = defaultConversationHeaderViewController?.view
-            } else {
-                let container = UIStackView()
-                container.axis = .vertical
-                if let guestWarningView = defaultConversationHeaderViewController?.view {
-                    container.addArrangedSubview(guestWarningView)
-                }
-                container.addArrangedSubview(newConversationHeader)
-                headerView = container
-            }
+            defaultConversationHeaderViewController?.delegate = self
+            headerView = defaultConversationHeaderViewController?.view
         }
 
         if let headerView {

@@ -17,26 +17,42 @@
 //
 
 import UIKit
-import WireSyncEngine
+import WireDataModel
 
+/// Header view controller for group and channel conversations.
+/// Stacks the guest-warning banner above the conversation-started summary.
 final class DefaultConversationHeaderViewController: UIViewController {
 
-    fileprivate var defaultConversationHeaderView: DefaultConversationHeaderView!
+    private let conversation: ZMConversation
+    private let selfUser: any UserType
+    private var newConversationHeader: ConversationNewConversationHeaderView?
 
-    let userSession: ZMUserSession
+    weak var delegate: ConversationMessageCellDelegate? {
+        didSet { newConversationHeader?.delegate = delegate }
+    }
 
-    init(userSession: ZMUserSession) {
-        self.userSession = userSession
-        super.init(nibName: .none, bundle: .none)
+    init(conversation: ZMConversation, selfUser: any UserType) {
+        self.conversation = conversation
+        self.selfUser = selfUser
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     override func loadView() {
-        defaultConversationHeaderView = DefaultConversationHeaderView()
-        view = defaultConversationHeaderView
+        let header = ConversationNewConversationHeaderView(
+            conversation: conversation,
+            selfUser: selfUser
+        )
+        newConversationHeader = header
+
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.addArrangedSubview(DefaultConversationHeaderView())
+        if !header.isEmpty {
+            stackView.addArrangedSubview(header)
+        }
+        view = stackView
     }
 }
