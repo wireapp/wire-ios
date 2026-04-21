@@ -20,11 +20,16 @@ on:
         default: false
       produce_changelog:
         type: boolean
+<<<<<<< HEAD
         default: true
       notify_secret:
         type: string
         required: true
 
+=======
+        required: false
+        default: false
+>>>>>>> b2ff663576 (fix: too many login requests - WPB-24616 (#4591))
 
     secrets:
       KEYCHAIN_PASSWORD:
