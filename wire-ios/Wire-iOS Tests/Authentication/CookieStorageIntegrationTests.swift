@@ -167,6 +167,32 @@ final class CookieStorageIntegrationTests {
         #expect(decodedCookies == [Scaffolding.validCookieA])
     }
 
+    @Test()
+    func `test fetch cookies with different encryption key throws an error`() throws {
+        // Given
+        let userID = UUID()
+        try sut.storeCookies([Scaffolding.validCookieA], userID: userID)
+
+        let differentEncryptionKey = try AES256Crypto.generateRandomEncryptionKey()
+        let sutWithDifferentKey = CookieStorage(
+            cookieEncryptionKey: differentEncryptionKey,
+            keychain: keychain,
+            cache: CookieStorageCache(sharedStorage: .init(initialState: [:]))
+        )
+
+        #expect {
+            _ = try sutWithDifferentKey.fetchCookies(userID: userID)
+        } throws: { error in
+            switch error {
+            case HTTPCookieCodecError.invalidCookieData:
+                return true
+            default:
+                return false
+            }
+        }
+
+    }
+
     // MARK: - Remove
 
     @Test()
