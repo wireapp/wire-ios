@@ -154,7 +154,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         isLoading = false
     }
 
-    func requestVerificationCode() async {
+    func requestVerificationCode(informSuccess: Bool) async {
         WireLogger.authentication.info("Requesting 2FA code...")
         isResending = true
 
@@ -164,6 +164,9 @@ public final class VerificationCodeViewModel: ObservableObject {
             }
 
             try await resendVerificationCode(email: email)
+            if informSuccess {
+                alert = .verificationCodeSent(email: email)
+            }
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
             WireLogger.authentication.error("Resend 2FA login failed: \(error)")
@@ -180,10 +183,7 @@ public final class VerificationCodeViewModel: ObservableObject {
                     startCountdown(seconds: Int(retryAfter))
                 }
 
-                alert = Alert(
-                    title: "Check your inbox",
-                    message: "A code was already sent to \(email). You can request a new code later."
-                )
+                alert = .verificationCodeAlreadySent(email: email)
 
             default:
                 router.presentAlert(for: error)

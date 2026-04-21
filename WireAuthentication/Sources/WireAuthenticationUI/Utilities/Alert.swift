@@ -68,6 +68,20 @@ extension Alert {
         message: Message.accountSuspended
     )
 
+    static func verificationCodeSent(email: String) -> Alert {
+        Alert(
+            title: L10n.Localizable.VerificationCode.CodeSent.alertTitle,
+            message: L10n.Localizable.VerificationCode.CodeSent.alertMessage(email)
+        )
+    }
+
+    static func verificationCodeAlreadySent(email: String) -> Alert {
+        Alert(
+            title: L10n.Localizable.VerificationCode.CodeSent.alertTitle,
+            message: L10n.Localizable.VerificationCode.CodeAlreadySent.alertMessage(email)
+        )
+    }
+
     static let obsoleteClient = Alert(
         title: L10n.Localizable.ObsoleteClient.Alert.title,
         message: L10n.Localizable.ObsoleteClient.Alert.message
