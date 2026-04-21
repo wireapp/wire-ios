@@ -125,7 +125,6 @@ public struct CookieStorage: CookieStorageProtocol, Sendable {
         try storeCookies(cookies, userID: userID, epoch: UUID())
     }
 
-
     /// Store cookies with a specific epoch. This is intended for testing purposes only.
 
     func storeCookies(_ cookies: [HTTPCookie], userID: UUID, epoch: UUID) throws {
