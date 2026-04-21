@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ExpiringActivityManagerProtocol: Sendable {
+protocol ExpiringActivityManagerProtocol: Actor {
 
     /// Track a task under the shared expiring activity. If this is the first
     /// active task, an expiring activity is registered with the system.
@@ -24,6 +24,6 @@ protocol ExpiringActivityManagerProtocol: Sendable {
     /// - Parameters:
     ///   - reason: A human-readable reason used for logging.
     ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
-    func track(reason: String, task: Task<some Sendable, some Error>) async
+    func track(reason: String, task: Task<some Sendable, some Error>)
 
 }

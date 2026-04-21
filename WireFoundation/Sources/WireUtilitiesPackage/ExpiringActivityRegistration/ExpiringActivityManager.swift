@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import os
 import WireLogging
 
 private let logger = WireLogger.backgroundActivity
@@ -25,35 +24,27 @@ private let logger = WireLogger.backgroundActivity
 /// Coordinates multiple tasks under a single expiring activity so that only one
 /// thread is ever blocked, regardless of how many tasks are tracked in parallel.
 ///
-/// Uses a `DispatchGroup` to track active tasks: each task enters the group on
-/// registration and leaves when it completes. A semaphore blocks the expiring
-/// activity's callback and is signaled either by `group.notify` (all tasks
-/// finished) or directly when the system revokes background time.
-///
-/// If the system revokes background time, all tracked tasks are cancelled and
-/// the semaphore is signaled immediately so the callback can return without
-/// waiting for the tasks to finish.
-final class ExpiringActivityManager: ExpiringActivityManagerProtocol {
+/// The actor serializes all state access, eliminating the need for explicit locks.
+/// A semaphore bridges the synchronous `performExpiringActivity` callback with the
+/// async world — it is signaled either when all tasks finish or when the system
+/// revokes background time.
+actor ExpiringActivityManager: ExpiringActivityManagerProtocol {
 
-    /// The underlying system API wrapper used to register expiring activities.
     private let performer: any ExpiringActivityPerformerProtocol
 
-    /// Tracks active tasks via `enter()`/`leave()`. When the last task leaves,
-    /// `notify` signals the semaphore to unblock the expiring activity callback.
-    private let group = DispatchGroup()
+    /// Number of tasks currently being tracked.
+    private var activeCount = 0
 
-    /// Thread-safe mutable state guarded by an unfair lock.
-    private let state = OSAllocatedUnfairLock(initialState: State())
+    /// Incremented when the system revokes background time to invalidate
+    /// pending `taskDidFinish` calls from the previous registration cycle.
+    private var generation = 0
 
-    private struct State {
+    /// Closures that cancel each tracked task, invoked when the system revokes background time.
+    private var cancellations: [@Sendable () -> Void] = []
 
-        /// Whether an expiring activity is currently registered with the system.
-        var isActive = false
-
-        /// Closures that cancel each tracked task, invoked when the system revokes background time.
-        var cancellations: [@Sendable () -> Void] = []
-
-    }
+    /// Signals the semaphore to unblock the expiring activity callback.
+    /// Set when an activity is registered, cleared on reset.
+    private var onAllTasksFinished: (@Sendable () -> Void)?
 
     init(performer: some ExpiringActivityPerformerProtocol) {
         self.performer = performer
@@ -63,40 +54,23 @@ final class ExpiringActivityManager: ExpiringActivityManagerProtocol {
     /// active task, an expiring activity is registered with the system.
     ///
     /// - Parameters:
-    ///   - reason: A human-readable reason used for logging. The system-level
-    ///     expiring activity always uses a static reason since multiple tasks
-    ///     share a single registration.
+    ///   - reason: A human-readable reason used for logging.
     ///   - task: The task to protect. It will be cancelled if the system reclaims background time.
     func track(reason: String, task: Task<some Sendable, some Error>) {
+        activeCount += 1
+        cancellations.append { task.cancel() }
+        let trackGeneration = generation
 
-        group.enter()
-
-        let shouldRegister = state.withLock {
-            $0.cancellations.append { task.cancel() }
-            let isFirst = !$0.isActive
-            if isFirst { $0.isActive = true }
-            return isFirst
-        }
-
-        if shouldRegister {
-            logger.debug("Registering expiring activity [reason: \(reason)]")
-
-            // Fresh semaphore per registration cycle to avoid stale signal
-            // values from a previous cycle's double-signal (group.notify + expiration).
+        if activeCount == 1 {
             let semaphore = DispatchSemaphore(value: 0)
+            onAllTasksFinished = { semaphore.signal() }
 
-            group.notify(queue: .global()) { [self] in
-                semaphore.signal()
-                state.withLock {
-                    $0.isActive = false
-                    $0.cancellations.removeAll()
-                }
-            }
+            logger.debug("Registering expiring activity [reason: \(reason)]")
 
             performer.performExpiringActivity(reason: "ExpiringActivityManager") { [self] isExpiring in
                 if isExpiring {
                     logger.debug("System is revoking background time, cancelling all tasks [reason: \(reason)]")
-                    cancelAll()
+                    Task { await self.cancelAll() }
                     semaphore.signal()
                 } else {
                     logger.debug("System granted background time, blocking until all tasks finish [reason: \(reason)]")
@@ -108,14 +82,27 @@ final class ExpiringActivityManager: ExpiringActivityManagerProtocol {
 
         Task.detached { [self] in
             _ = try? await task.value
-            group.leave()
+            await taskDidFinish(generation: trackGeneration)
         }
     }
 
     private func cancelAll() {
-        let all = state.withLock { $0.cancellations }
-        for cancel in all {
+        for cancel in cancellations {
             cancel()
+        }
+        generation += 1
+        activeCount = 0
+        cancellations.removeAll()
+        onAllTasksFinished = nil
+    }
+
+    private func taskDidFinish(generation: Int) {
+        guard generation == self.generation else { return }
+        activeCount -= 1
+        if activeCount == 0 {
+            onAllTasksFinished?()
+            onAllTasksFinished = nil
+            cancellations.removeAll()
         }
     }
 

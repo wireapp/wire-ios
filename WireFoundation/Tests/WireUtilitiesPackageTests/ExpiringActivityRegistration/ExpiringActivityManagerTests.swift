@@ -33,7 +33,7 @@ struct ExpiringActivityManagerTests {
             .performExpiringActivityReasonStringUsingBlockSendableEscapingIsExpiringBoolVoidVoidClosure = { _, block in
                 block(true)
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
         let task = Task<Void, Never> {
             try? await Task.sleep(for: .seconds(60))
         }
@@ -63,7 +63,7 @@ struct ExpiringActivityManagerTests {
                     Task { await flag.set() }
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When
         await manager.track(reason: "sync", task: task)
@@ -101,7 +101,7 @@ struct ExpiringActivityManagerTests {
                     Task { await flag.set() }
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When — register the activity, which grants time and blocks.
         await manager.track(reason: "sync", task: task)
@@ -138,7 +138,7 @@ struct ExpiringActivityManagerTests {
                     Task { await flag.set() }
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When
         await manager.track(reason: "sync", task: task)
@@ -168,7 +168,7 @@ struct ExpiringActivityManagerTests {
                     Task { await flag.set() }
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When — track two tasks.
         await manager.track(reason: "sync", task: task1)
@@ -212,7 +212,7 @@ struct ExpiringActivityManagerTests {
                     block(false)
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         // When
         await manager.track(reason: "sync", task: task1)
@@ -239,7 +239,7 @@ struct ExpiringActivityManagerTests {
                     block(false)
                 }
             }
-        let manager = ExpiringActivityManagerV2(performer: performerMock)
+        let manager = ExpiringActivityManager(performer: performerMock)
 
         let outerTask = Task {
             await withExpiringActivity(manager: manager, reason: "sync") {
