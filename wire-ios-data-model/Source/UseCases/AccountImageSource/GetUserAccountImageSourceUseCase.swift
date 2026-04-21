@@ -35,8 +35,7 @@ public struct GetUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase
         // in case it's not set on account yet).
         if
             let data = account.imageData ?? user.imageData(for: .preview),
-            let accountImage = UIImage(data: data)
-        {
+            let accountImage = UIImage(data: data) {
             return .image(accountImage)
         }
 
