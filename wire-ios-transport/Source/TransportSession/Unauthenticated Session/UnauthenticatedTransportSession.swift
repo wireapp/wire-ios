@@ -278,7 +278,7 @@ extension ZMTransportResponse {
     @objc
     public func extractUserInfo() -> UserInfo? {
         guard
-            extractCookies().data != nil, // TODO: Validate this in another way.
+            extractCookies().data != nil, // TODO: [WPB-24887] Validate this in another way.
             let cookies = extractCookies().array,
             let id = extractUserIdentifier()
         else {
