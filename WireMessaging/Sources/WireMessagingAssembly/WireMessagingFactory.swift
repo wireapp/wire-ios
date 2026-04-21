@@ -216,6 +216,7 @@ public extension WireMessagingFactory {
                         updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
                         getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
+                        getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesAPI),
                         makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                             localAssetRepository: localAssetRepository
                         ),

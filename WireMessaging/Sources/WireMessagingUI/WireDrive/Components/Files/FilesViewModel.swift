@@ -174,6 +174,7 @@ package final class FilesViewModel: ObservableObject {
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
             updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
             getDriveConversations: any WireDriveGetConversationsUseCaseProtocol,
+            getFileTemplates: any WireDriveFetchFileTemplatesUseCaseProtocol,
             makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase,
             removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
             getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
@@ -196,6 +197,7 @@ package final class FilesViewModel: ObservableObject {
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
             self.getDriveConversations = getDriveConversations
+            self.getFileTemplates = getFileTemplates
             self.makeAssetAvailableOffline = makeAssetAvailableOffline
             self.removeAssetAvailableOffline = removeAssetAvailableOffline
             self.getOfflineAvailableAssets = getOfflineAvailableAssets
@@ -218,6 +220,7 @@ package final class FilesViewModel: ObservableObject {
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
         let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
+        let getFileTemplates: any WireDriveFetchFileTemplatesUseCaseProtocol
         let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
         let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
         let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
@@ -494,28 +497,7 @@ package final class FilesViewModel: ObservableObject {
 
     private func fetchTemplates() {
         Task {
-            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
-            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
-            templates = [
-                .init(
-                    kind: .document,
-                    editable: true,
-                    label: "Microsoft Word",
-                    id: "01-Microsoft Word.docx"
-                ),
-                .init(
-                    kind: .spreadsheet,
-                    editable: true,
-                    label: "Microsoft Excel",
-                    id: "02-Microsoft Excel.xlsx"
-                ),
-                .init(
-                    kind: .presentation,
-                    editable: true,
-                    label: "Microsoft PowerPoint",
-                    id: "03-Microsoft PowerPoint.pptx"
-                )
-            ]
+            templates = try await useCases.getFileTemplates.invoke()
         }
     }
 

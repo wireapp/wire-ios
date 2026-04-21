@@ -98,6 +98,9 @@ extension FilesViewModel {
                 getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
                 ),
+                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                    repository: previewNodesRepository()
+                ),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
                     localAssetRepository: localAssetRepository
                 ),
@@ -265,6 +268,28 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
         let page = request.offset < nodes.count ? Array(nodes[request.offset ..< end]) : []
         let nextOffset = end < nodes.count ? end : nil
         return (page, nextOffset)
+    }
+    repository.getTemplates_MockMethod = {
+        [
+            .init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            ),
+            .init(
+                kind: .spreadsheet,
+                editable: true,
+                label: "Microsoft Excel",
+                id: "02-Microsoft Excel.xlsx"
+            ),
+            .init(
+                kind: .presentation,
+                editable: true,
+                label: "Microsoft PowerPoint",
+                id: "03-Microsoft PowerPoint.pptx"
+            )
+        ]
     }
     return repository
 }
