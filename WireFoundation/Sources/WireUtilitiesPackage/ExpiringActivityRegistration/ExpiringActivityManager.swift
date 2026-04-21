@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireLogging
 
 /// Coordinates multiple tasks under a single expiring activity so that only one
@@ -28,15 +29,16 @@ import WireLogging
 ///
 /// If the system revokes background time, all tracked tasks are cancelled.
 /// Their completion triggers `group.leave()`, unblocking the callback naturally.
-final class ExpiringActivityManager: @unchecked Sendable {
+final class ExpiringActivityManager: Sendable {
 
     private let performer: any ExpiringActivityPerformerProtocol
     private let group = DispatchGroup()
-    private let lock = NSLock()
+    private let state = OSAllocatedUnfairLock(initialState: State())
 
-    // Protected by `lock`.
-    private var isActive = false
-    private var cancellations: [@Sendable () -> Void] = []
+    private struct State {
+        var isActive = false
+        var cancellations: [@Sendable () -> Void] = []
+    }
 
     init(performer: some ExpiringActivityPerformerProtocol) {
         self.performer = performer
@@ -53,11 +55,12 @@ final class ExpiringActivityManager: @unchecked Sendable {
 
         group.enter()
 
-        lock.lock()
-        cancellations.append { task.cancel() }
-        let shouldRegister = !isActive
-        if shouldRegister { isActive = true }
-        lock.unlock()
+        let shouldRegister = state.withLock {
+            $0.cancellations.append { task.cancel() }
+            let isFirst = !$0.isActive
+            if isFirst { $0.isActive = true }
+            return isFirst
+        }
 
         if shouldRegister {
             logger.debug("Registering expiring activity [reason: \(reason)]")
@@ -74,10 +77,10 @@ final class ExpiringActivityManager: @unchecked Sendable {
             }
 
             group.notify(queue: .global()) { [self] in
-                lock.lock()
-                isActive = false
-                cancellations.removeAll()
-                lock.unlock()
+                state.withLock {
+                    $0.isActive = false
+                    $0.cancellations.removeAll()
+                }
             }
         }
 
@@ -88,10 +91,7 @@ final class ExpiringActivityManager: @unchecked Sendable {
     }
 
     private func cancelAll() {
-        lock.lock()
-        let all = cancellations
-        lock.unlock()
-
+        let all = state.withLock { $0.cancellations }
         for cancel in all {
             cancel()
         }
