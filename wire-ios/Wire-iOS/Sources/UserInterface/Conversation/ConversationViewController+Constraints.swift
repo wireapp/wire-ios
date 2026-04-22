@@ -62,7 +62,8 @@ extension ConversationViewController {
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
             exchangeableContentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             exchangeableContentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            exchangeableContentViewController.view.topAnchor.constraint(equalTo: conversationBarController.view.bottomAnchor)
+            exchangeableContentViewController.view.topAnchor
+                .constraint(equalTo: conversationBarController.view.bottomAnchor)
         ])
 
         exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)
