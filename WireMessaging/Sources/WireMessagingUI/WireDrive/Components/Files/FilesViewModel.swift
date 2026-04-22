@@ -232,6 +232,7 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
     private var sortingSelection: FilesSortingViewModel.SortingSelection = .default
+    private var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
 
     let useCases: UseCases
     let isBrowsing: Bool
@@ -455,7 +456,11 @@ package final class FilesViewModel: ObservableObject {
     func performPrimaryAction(item: FilesViewItem) async {
         switch item.kind {
         case .file:
-            await viewAsset(item: item)
+            if failedItemActions[item.id] == .makeAvailableOffline {
+                makeAssetAvailableOffline(item: item)
+            } else {
+                await viewAsset(item: item)
+            }
         case .folder:
             openFolder(item: item)
         }
@@ -973,8 +978,14 @@ package final class FilesViewModel: ObservableObject {
         Task {
             do {
                 try await useCases.makeAssetAvailableOffline.invoke(nodeID: item.id)
+                failedItemActions[item.id] = nil
             } catch {
-                WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
+                if error is CancellationError {
+                    WireLogger.wireDrive.error("Cancelled make asset available offline")
+                } else {
+                    failedItemActions[item.id] = .makeAvailableOffline
+                    WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
+                }
             }
         }
     }
