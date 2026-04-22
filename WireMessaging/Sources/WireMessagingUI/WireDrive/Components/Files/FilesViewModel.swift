@@ -493,6 +493,10 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    var isInFolder: Bool {
+        !navigationPath.isEmpty
+    }
+
     // MARK: - Private
 
     private func fetchTemplates() {
@@ -627,13 +631,10 @@ package final class FilesViewModel: ObservableObject {
         } catch is CancellationError {
             return // developer-driven error, discard
         } catch {
-            let urlError = (error as? URLError)?.code
-            let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
-
             if state.items.isEmpty {
-                state = .error(isConnectionError: isNoInternetError)
+                state = .error(isConnectionError: error.isNoInternetError)
             } else {
-                if isNoInternetError {
+                if error.isNoInternetError {
                     // no-op, offline bar is dynamically shown/hidden on top of the list
                 } else {
                     alert = .unknownError

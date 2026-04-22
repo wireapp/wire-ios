@@ -71,20 +71,17 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     /// The main content to be displayed in the Move to Folder page
     enum ContentState: Hashable, Sendable {
-
         case initialLoad
         case loaded(items: [MoveToFolderItem], hasMore: Bool, isLoading: Bool)
-        case empty(title: String?, message: String, showsReload: Bool)
-
+        case empty
+        case error(isConnectionError: Bool)
     }
 
     /// The state of the move button
     enum MoveButtonState {
-
         case enabled
         case disabled
         case loading
-
     }
 
     enum SheetNavigation: Identifiable {
@@ -186,25 +183,16 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     var content: ContentState {
         switch (isLoadingContent, nodes.isEmpty) {
         case (true, true):
-            return .initialLoad
+            .initialLoad
         case (true, false):
-            return .loaded(items: items, hasMore: hasMoreContent, isLoading: true)
+            .loaded(items: items, hasMore: hasMoreContent, isLoading: true)
         case (false, false):
-            return .loaded(items: items, hasMore: hasMoreContent, isLoading: false)
+            .loaded(items: items, hasMore: hasMoreContent, isLoading: false)
         case (false, true):
             if let error = loadingContentError {
-                let alert = Self.alert(error: error)
-                return .empty(
-                    title: alert.title,
-                    message: alert.message,
-                    showsReload: true
-                )
+                .error(isConnectionError: error.isNoInternetError)
             } else {
-                return .empty(
-                    title: nil,
-                    message: Strings.Files.MoveToFolder.noSubfolders,
-                    showsReload: false
-                )
+                .empty
             }
         }
     }
@@ -340,7 +328,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
             false
         case .loaded:
             true
-        case .empty:
+        case .empty, .error:
             loadingContentError == nil
         }
     }
