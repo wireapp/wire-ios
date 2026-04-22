@@ -61,6 +61,8 @@ actor ExpiringActivityManager {
         cancellations.append { task.cancel() }
         let trackGeneration = generation
 
+        logger.debug("Tracking task [reason: \(reason), activeCount: \(activeCount)]")
+
         if activeCount == 1 {
             let semaphore = DispatchSemaphore(value: 0)
             onAllTasksFinished = { semaphore.signal() }
@@ -82,6 +84,7 @@ actor ExpiringActivityManager {
 
         Task.detached { [self] in
             _ = try? await task.value
+            logger.debug("Task finished [reason: \(reason)]")
             await taskDidFinish(generation: trackGeneration)
         }
     }
