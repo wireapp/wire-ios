@@ -471,4 +471,11 @@ public enum Locators {
             case confirmRestoreButton
         }
     }
+
+    public enum BlockerPage: String {
+
+        case mainContent
+        case clientObsoleteAlertTitle = "Update required"
+
+    }
 }
