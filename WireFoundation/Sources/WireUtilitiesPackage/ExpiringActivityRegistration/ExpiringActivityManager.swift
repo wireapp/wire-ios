@@ -69,13 +69,13 @@ actor ExpiringActivityManager {
 
             performer.performExpiringActivity(reason: "ExpiringActivityManager") { [self] isExpiring in
                 if isExpiring {
-                    logger.debug("System is revoking background time, cancelling all tasks [reason: \(reason)]")
+                    logger.debug("System is revoking background time, cancelling all tasks")
                     Task { await self.cancelAll() }
                     semaphore.signal()
                 } else {
-                    logger.debug("System granted background time, blocking until all tasks finish [reason: \(reason)]")
+                    logger.debug("System granted background time, blocking until all tasks finish")
                     semaphore.wait()
-                    logger.debug("All tasks finished, releasing expiring activity [reason: \(reason)]")
+                    logger.debug("All tasks finished, releasing expiring activity")
                 }
             }
         }
