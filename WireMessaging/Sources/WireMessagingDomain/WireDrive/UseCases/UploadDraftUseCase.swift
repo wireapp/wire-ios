@@ -133,11 +133,6 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
             throw WireDriveUploadDraftUseCaseError.missingFileSize
         }
-        
-        if let nodeID {
-            let latestNode = try await nodesAPI.getNode(nodeID: nodeID)
-            try await nodesAPI.deleteFile(node: latestNode)
-        }
 
         var filename = fileURL.lastPathComponent
 
@@ -158,11 +153,12 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType),
             data: data
         )
-        
-        if nodeID == nil {
-            await draftRepository.addDraft(draft, for: cellName)
-        } else {
+
+        if let nodeID {
             await draftRepository.updateDraft(draft, for: cellName)
+            try await nodesAPI.deleteFile(nodeID: nodeID)
+        } else {
+            await draftRepository.addDraft(draft, for: cellName)
         }
 
         try await invoke(nodeID: draft.nodeID)

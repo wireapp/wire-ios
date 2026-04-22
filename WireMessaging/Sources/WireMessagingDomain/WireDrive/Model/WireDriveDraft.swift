@@ -56,7 +56,7 @@ public struct WireDriveDraft: Hashable, Sendable {
 
     /// The URL of the asset that contains the file data.
 
-    package let assetURL: URL
+    public let assetURL: URL
 
     /// The type of the file, represented as a Uniform Type Identifier (UTType). This value is determined locally.
 
@@ -86,7 +86,7 @@ public struct WireDriveDraft: Hashable, Sendable {
     /// placeholders before a preview has been downloaded.
 
     public let metadata: Metadata?
-    
+
     public let data: Data?
 
     package init(
@@ -113,5 +113,15 @@ public struct WireDriveDraft: Hashable, Sendable {
         self.requiresCleanup = requiresCleanup
         self.metadata = metadata
         self.data = data
+    }
+}
+
+public extension WireDriveDraft {
+    var isImage: Bool {
+        fileType?.conforms(to: .image) ?? (data != nil)
+    }
+
+    var isVideo: Bool {
+        fileType?.conforms(to: .movie) ?? false
     }
 }

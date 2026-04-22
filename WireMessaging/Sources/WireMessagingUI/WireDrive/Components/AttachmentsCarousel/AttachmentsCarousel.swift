@@ -79,6 +79,7 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
+                    .contentShape(Rectangle())
                     .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)

@@ -82,24 +82,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 present(videoEditor, animated: true) {}
             }
         } else {
-            let context = ConfirmAssetViewController.Context(
-                asset: .video(url: videoURL),
-                onConfirm: { [unowned self] _ in
-                    dismiss(animated: true)
-                    uploadFiles(at: [videoURL])
-                },
-                onCancel: { [unowned self] in
-                    dismiss(animated: true) {
-                        self.mode = .camera
-                        self.inputBar.textView.becomeFirstResponder()
-                    }
-                }
-            )
-            let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
-            confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
-
-            view.window?.endEditing(true)
-            present(confirmVideoViewController, animated: true)
+            if useWireDrive() {
+                uploadFiles(at: [videoURL])
+            } else {
+                showConfirmationForVideo(url: videoURL)
+            }
         }
     }
 
@@ -160,6 +147,29 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
+    func showConfirmationForVideo(url: URL) {
+        let context = ConfirmAssetViewController.Context(
+            asset: .video(url: url),
+            onConfirm: { [unowned self] _ in
+                dismiss(animated: true)
+                if !useWireDrive() {
+                    uploadFiles(at: [url])
+                }
+            },
+            onCancel: { [unowned self] in
+                dismiss(animated: true) {
+                    self.mode = .camera
+                    self.inputBar.textView.becomeFirstResponder()
+                }
+            }
+        )
+        let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
+        confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
+
+        view.window?.endEditing(true)
+        present(confirmVideoViewController, animated: true)
+    }
+
     func showConfirmationForImage(
         _ image: SendableImage,
         isFromCamera: Bool,
@@ -191,8 +201,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         image.utType ?? .image
                     }
 
-                    if self.userSession.isWireDriveEnabled,
-                       self.conversation.isWireDriveEnabled {
+                    if self.useWireDrive() {
+                        guard editedImage != nil else { return }
                         self.uploadDraft(data: dataToSend, type: utType, nodeID: image.id)
                     } else {
                         let image = SendableImage(
@@ -317,8 +327,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    if self.userSession.isWireDriveEnabled,
-                       self.conversation.isWireDriveEnabled {
+                    if self.useWireDrive() {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
                         let image = SendableImage(
@@ -336,7 +345,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         }
     }
 
-    private func uploadDraft(data: Data, type: UTType, nodeID: UUID? = nil) {
+    func uploadDraft(data: Data, type: UTType, nodeID: UUID? = nil) {
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {

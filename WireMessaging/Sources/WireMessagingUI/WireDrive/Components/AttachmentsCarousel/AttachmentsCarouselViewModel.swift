@@ -62,7 +62,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             thumbnails.removeAll()
         }
     }
-    
+
     public func draft(for item: AttachmentsCarouselItem) -> WireDriveDraft? {
         guard let index = items.firstIndex(of: item) else { return nil }
         return drafts[safeIndex: index]

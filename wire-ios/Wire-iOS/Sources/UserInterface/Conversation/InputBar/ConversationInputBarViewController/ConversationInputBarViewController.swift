@@ -1134,15 +1134,20 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             rootView: AttachmentsCarousel(
                 viewModel: attachmentsCarouselViewModel,
                 onTap: { [weak self] item in
-                    guard let self, let draft = attachmentsCarouselViewModel.draft(for: item), let data = draft.data else { return }
-                    let sendableImage = SendableImage(
-                        id: draft.nodeID,
-                        name: nil,
-                        utType: nil,
-                        data: data
-                    )
-                    
-                    showConfirmationForImage(sendableImage, isFromCamera: false)
+                    guard let self, let draft = attachmentsCarouselViewModel.draft(for: item) else { return }
+
+                    if draft.isImage, let data = draft.data {
+                        let sendableImage = SendableImage(
+                            id: draft.nodeID,
+                            name: nil,
+                            utType: nil,
+                            data: data
+                        )
+
+                        showConfirmationForImage(sendableImage, isFromCamera: false)
+                    } else if draft.isVideo {
+                        showConfirmationForVideo(url: draft.assetURL)
+                    }
                 },
                 onRemove: { [deleteDraftUseCase] item in
                     Task.detached {
@@ -1259,7 +1264,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    private func useWireDrive() -> Bool {
+    func useWireDrive() -> Bool {
         userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 

@@ -157,13 +157,13 @@ final class AWSClient: Sendable {
             }
         }
     }
-    
+
     func delete(node: WireDriveNodeNetworkModel) async throws {
         let deleteObjectInput = DeleteObjectInput(
             bucket: Constants.bucket,
             key: node.path
         )
-            
+
         let response = try await s3.deleteObject(input: deleteObjectInput)
         print(response)
     }
@@ -206,14 +206,14 @@ final class AWSClient: Sendable {
             key: node.path,
             metadata: node.createDraftNodeMetadata(versionID: versionID)
         )
-        
+
         print("here: \(path)")
         print("here: \(input.key)")
         print("here: \(input.metadata)")
 
         try await withTaskCancellationHandler {
             do {
-                
+
                 _ = try await s3.putObject(input: input)
             } catch {
                 if Task.isCancelled {

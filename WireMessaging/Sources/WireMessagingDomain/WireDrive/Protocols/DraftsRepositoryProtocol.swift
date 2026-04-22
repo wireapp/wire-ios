@@ -28,6 +28,5 @@ package protocol DraftsRepositoryProtocol: Sendable {
     func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
     func deleteDraft(nodeID: UUID, cellName: String) async
     func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func deleteDraft(node: WireDriveNode) async throws
 
 }

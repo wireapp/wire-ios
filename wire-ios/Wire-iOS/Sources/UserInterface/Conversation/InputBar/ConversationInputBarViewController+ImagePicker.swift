@@ -17,6 +17,7 @@
 //
 
 import AVFoundation
+import PhotosUI
 import UIKit
 import WireSyncEngine
 
@@ -44,28 +45,40 @@ extension ConversationInputBarViewController {
 
         let presentController = { [self] in
 
-            let pickerController = UIImagePickerController()
-            pickerController.sourceType = sourceType
-            pickerController.preferredContentSize = .IPadPopover.preferredContentSize
-            pickerController.delegate = self
-            pickerController.allowsEditing = allowsEditing
-            pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = userSession.maxVideoLength
-            pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
-            if sourceType == .camera {
-                let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
-                pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
-            }
+            if useWireDrive(), sourceType != .camera {
+                // Allows multiple media selection on Wire drive conversations.
+                // Non-drive conversations use the (legacy) `UIImagePickerController` API.
+                var config = PHPickerConfiguration()
+                config.selectionLimit = 0
+                config.filter = .any(of: [.images, .videos])
 
-            if sourceType != .camera,
-               let popoverPresentationController = pickerController.popoverPresentationController {
-                popoverPresentationController.sourceView = pointToView.superview
-                popoverPresentationController.sourceRect = pointToView.frame
-                popoverPresentationController.backgroundColor = .white
-                popoverPresentationController.permittedArrowDirections = .down
-            }
+                let picker = PHPickerViewController(configuration: config)
+                picker.delegate = self
+                present(picker, animated: true)
+            } else {
+                let pickerController = UIImagePickerController()
+                pickerController.sourceType = sourceType
+                pickerController.preferredContentSize = .IPadPopover.preferredContentSize
+                pickerController.delegate = self
+                pickerController.allowsEditing = allowsEditing
+                pickerController.mediaTypes = mediaTypes
+                pickerController.videoMaximumDuration = userSession.maxVideoLength
+                pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
+                if sourceType == .camera {
+                    let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
+                    pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
+                }
 
-            present(pickerController, animated: true)
+                if sourceType != .camera,
+                   let popoverPresentationController = pickerController.popoverPresentationController {
+                    popoverPresentationController.sourceView = pointToView.superview
+                    popoverPresentationController.sourceRect = pointToView.frame
+                    popoverPresentationController.backgroundColor = .white
+                    popoverPresentationController.permittedArrowDirections = .down
+                }
+
+                present(pickerController, animated: true)
+            }
         }
 
         if sourceType == .camera {
