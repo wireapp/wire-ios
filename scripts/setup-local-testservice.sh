@@ -130,8 +130,7 @@ echo "Log file: $LOG_FILE"
 READY_PID=$!
 
 cd "$REPO_ROOT"
-exec > >(tee "$LOG_FILE") 2>&1
-exec java -jar "$JAR_FILE" server "$CONFIG_PATH"
+java -jar "$JAR_FILE" server "$CONFIG_PATH" 2>&1 | tee "$LOG_FILE"
 
 if ! wait "$READY_PID"; then
   READINESS_STATUS=$?
