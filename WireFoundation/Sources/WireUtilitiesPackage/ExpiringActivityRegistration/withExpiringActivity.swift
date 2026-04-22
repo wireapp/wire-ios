@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+private let sharedManager = ExpiringActivityManager(
+    performer: ExpiringActivityProcessInfoWrapper()
+)
+
 // MARK: - Non-throwing
 
 public func withExpiringActivity(
@@ -23,19 +27,19 @@ public func withExpiringActivity(
     block: @escaping @Sendable () async -> Void
 ) async {
     await withExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
+        manager: sharedManager,
         reason: reason,
         block: block
     )
 }
 
 func withExpiringActivity(
-    performer: some ExpiringActivityPerformerProtocol,
+    manager: ExpiringActivityManager,
     reason: String,
     block: @escaping @Sendable () async -> Void
 ) async {
     let task = Task(operation: block)
-    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
+    await manager.track(reason: reason, task: task)
     await withTaskCancellationHandler {
         await task.value
     } onCancel: {
@@ -50,19 +54,19 @@ public func withExpiringActivity<T>(
     block: @escaping @Sendable () async throws -> T
 ) async throws -> T where T: Sendable {
     try await withExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
+        manager: sharedManager,
         reason: reason,
         block: block
     )
 }
 
 func withExpiringActivity<T>(
-    performer: some ExpiringActivityPerformerProtocol,
+    manager: ExpiringActivityManager,
     reason: String,
     block: @escaping @Sendable () async throws -> T
 ) async throws -> T where T: Sendable {
     let task = Task(operation: block)
-    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
+    await manager.track(reason: reason, task: task)
     return try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {
