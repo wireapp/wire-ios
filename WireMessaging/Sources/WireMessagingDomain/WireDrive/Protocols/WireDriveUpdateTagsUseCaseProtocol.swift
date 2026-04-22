@@ -18,6 +18,7 @@
 
 public import Foundation
 
+// sourcery: AutoMockable
 public protocol WireDriveUpdateTagsUseCaseProtocol: Sendable {
     func invoke(nodeID: UUID, tags: [String]) async throws
 }

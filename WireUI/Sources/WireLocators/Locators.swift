@@ -182,6 +182,7 @@ public enum Locators {
         case manageTeamButton
         case addAccountOrTeamButton
         case userProfilePicture
+        case close
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -288,11 +289,11 @@ public enum Locators {
 
     public enum UserDetailsPage: String {
 
-        case close
         case connectLeftButton
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
         case removeFromConversation = "Remove From Conversation…"
+        case close
     }
 
     public enum VerificationCodePage: AutoPrefixedEnum {
@@ -324,6 +325,11 @@ public enum Locators {
 
         case acceptCall = "Accept"
         case turnOffMicrophone = "Microphone"
+    }
+
+    public enum FileVersioningPage: AutoPrefixedEnum {
+
+        case closeButton
     }
 
     public enum OngoingCallPage: String {
@@ -381,6 +387,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case restore
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
@@ -463,5 +470,12 @@ public enum Locators {
             case confirmDeleteButton
             case confirmRestoreButton
         }
+    }
+
+    public enum BlockerPage: String {
+
+        case mainContent
+        case clientObsoleteAlertTitle = "Update required"
+
     }
 }

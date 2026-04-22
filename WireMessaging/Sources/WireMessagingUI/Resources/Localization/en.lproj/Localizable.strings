@@ -143,6 +143,7 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Learn more";
+"conversation.wireCells.files.emptyFolder.message" = "Add files to this folder to stay organized.";
 "conversation.wireCells.files.noSearchResults.title" = "No results found";
 "conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
@@ -162,7 +163,10 @@
 "conversation.wireCells.files.newFolder.title" = "Folder name";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
-"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ file";
+"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ (%@)";
+"conversation.wireCells.files.newFile.presentation" = "presentation";
+"conversation.wireCells.files.newFile.spreadsheet" = "spreadsheet";
+"conversation.wireCells.files.newFile.document" = "document";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.fileName.title" = "File name";
@@ -185,6 +189,7 @@
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
+"conversation.wireCells.recycleBin.emptyFolder.message" = "This folder is empty.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "This will permanently delete the file \"%@\" for all participants. Everyone will lose access and there is no way to recover the file.";

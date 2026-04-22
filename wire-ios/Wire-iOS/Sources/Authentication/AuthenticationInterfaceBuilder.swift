@@ -307,9 +307,7 @@ final class AuthenticationInterfaceBuilder {
         let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
             .map { account in
                 account.toUIModel { [weak self] in
-                    Task {
-                        await self?.accountSelector?.switchTo(account: account)
-                    }
+                    self?.accountSelector?.switchTo(account: account)
                 }
             }
         let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {

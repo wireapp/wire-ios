@@ -59,6 +59,15 @@ struct WireDriveDocumentHeaderView: View {
                     .font(for: .subline1)
                     .lineLimit(1)
                     .layoutPriority(1)
+
+                Spacer()
+
+                if !isDraftPreview {
+                    stateTextView()
+                        .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
+                        .font(for: .subline1)
+                        .lineLimit(1)
+                }
             }
             .padding(.horizontal, 8)
             .padding(.top, 8)
