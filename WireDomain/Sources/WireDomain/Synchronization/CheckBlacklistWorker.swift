@@ -103,9 +103,17 @@ public actor CheckBlacklistWorker {
         AsyncStream { continuation in
             continuation.yield()
 
+            // Differs from the cherry-picked commit: this branch targets iOS 16.4,
+            // where NWPathMonitor's AsyncSequence conformance is unavailable (iOS 17+),
+            // so we bridge pathUpdateHandler into an AsyncStream instead.
             let isOnlineTrigger = Task {
                 let monitor = NWPathMonitor()
-                for await path in monitor where path.status == .satisfied {
+                let pathStream = AsyncStream<NWPath> { pathContinuation in
+                    monitor.pathUpdateHandler = { pathContinuation.yield($0) }
+                    pathContinuation.onTermination = { _ in monitor.cancel() }
+                    monitor.start(queue: DispatchQueue(label: "CheckBlacklistWorker.NWPathMonitor"))
+                }
+                for await path in pathStream where path.status == .satisfied {
                     continuation.yield()
                 }
             }
