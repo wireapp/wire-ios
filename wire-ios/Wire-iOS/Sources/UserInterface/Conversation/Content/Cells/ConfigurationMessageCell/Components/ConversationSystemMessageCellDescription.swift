@@ -173,7 +173,7 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
-            // Displayed in the table header via ConversationNewConversationHeaderView.
+            // Displayed in the table header via GroupConversationHeaderView.
             return []
 
         case .failedToAddParticipants:

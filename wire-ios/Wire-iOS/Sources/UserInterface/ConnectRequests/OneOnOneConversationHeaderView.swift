@@ -20,9 +20,9 @@ import WireDesign
 import WireLocators
 import WireSyncEngine
 
-final class UserConnectionView: UIView, Copyable {
+final class OneOnOneConversationHeaderView: UIView, Copyable {
 
-    convenience init(instance: UserConnectionView) {
+    convenience init(instance: OneOnOneConversationHeaderView) {
         self.init(user: instance.user, userSession: instance.userSession)
     }
 
@@ -147,9 +147,9 @@ final class UserConnectionView: UIView, Copyable {
             guestIndicator.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 8.0),
             guestIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-            guestWarningContainer.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 0),
-            guestWarningContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            guestWarningContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
+            guestWarningContainer.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor),
+            guestWarningContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            guestWarningContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             guestWarningContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         ])
 

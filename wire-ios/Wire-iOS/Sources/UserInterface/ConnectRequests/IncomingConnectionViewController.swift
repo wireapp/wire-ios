@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import UIKit
 import WireSyncEngine
 
 enum IncomingConnectionAction: UInt {
@@ -64,31 +62,4 @@ final class IncomingConnectionViewController: UIViewController {
         view = connectionView
     }
 
-}
-
-final class UserConnectionViewController: UIViewController {
-
-    fileprivate var userConnectionView: UserConnectionView!
-
-    let userSession: ZMUserSession
-    let user: ZMUser
-
-    init(userSession: ZMUserSession, user: ZMUser) {
-        self.userSession = userSession
-        self.user = user
-        super.init(nibName: .none, bundle: .none)
-
-        guard !self.user.isConnected else { return }
-        user.refreshData()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        userConnectionView = UserConnectionView(user: user, userSession: userSession)
-        view = userConnectionView
-    }
 }

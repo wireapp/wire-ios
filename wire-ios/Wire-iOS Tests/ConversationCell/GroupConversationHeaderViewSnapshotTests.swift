@@ -22,7 +22,7 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
-final class ConversationNewConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
+final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -150,7 +150,7 @@ final class ConversationNewConversationHeaderViewSnapshotTests: ZMSnapshotTestCa
         selfUser: MockUserType? = nil
     ) -> UIView {
         let selfUser = selfUser ?? makeSelfUser()
-        let headerView = ConversationNewConversationHeaderView(
+        let headerView = GroupConversationHeaderView(
             conversation: conversation,
             selfUser: selfUser
         )

@@ -18,10 +18,11 @@
 
 import UIKit
 import WireDataModel
+import WireDesign
 
 /// Header view shown at the start of a group or channel conversation, displaying
 /// the conversation-started summary plus optional invite and Wire Drive status cells.
-final class ConversationNewConversationHeaderView: UIView {
+final class GroupConversationHeaderView: UIView {
 
     private let stackView = UIStackView()
 
@@ -59,7 +60,19 @@ final class ConversationNewConversationHeaderView: UIView {
         ])
     }
 
+    private func makeGuestWarningBanner() -> UIView {
+        let warningView = GuestAccountWarningView()
+        warningView.translatesAutoresizingMaskIntoConstraints = false
+        let container = UIView()
+        container.backgroundColor = SemanticColors.View.backgroundGreen
+        container.addSubview(warningView)
+        warningView.fitIn(view: container, insets: .init(top: 12, left: 16, bottom: 12, right: 16))
+        return container
+    }
+
     private func populate(conversation: ZMConversation, selfUser: any UserType) {
+        stackView.addArrangedSubview(makeGuestWarningBanner())
+
         let startedCell = ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>()
         startedCell.configure(
             with: ConversationStartedSystemMessageCellDescription(conversation: conversation).configuration,

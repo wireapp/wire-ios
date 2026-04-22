@@ -118,8 +118,6 @@ final class ConversationContentViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
-    var connectionViewController: UserConnectionViewController?
-    var defaultConversationHeaderViewController: DefaultConversationHeaderViewController?
     var digitalSignatureToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
@@ -399,6 +397,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     func setConversationHeaderView(_ headerView: UIView) {
+        headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         headerView.frame = headerViewFrame(view: headerView)
         tableView.tableHeaderView = headerView
     }

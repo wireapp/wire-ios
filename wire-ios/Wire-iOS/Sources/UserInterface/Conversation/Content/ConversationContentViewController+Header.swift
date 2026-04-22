@@ -41,19 +41,20 @@ extension ConversationContentViewController {
             .conversationType == .oneOnOne
 
         if connectionOrOneOnOne, let otherParticipant {
-            connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)
-            headerView = connectionViewController?.view
+            if !otherParticipant.isConnected {
+                otherParticipant.refreshData()
+            }
+            headerView = OneOnOneConversationHeaderView(user: otherParticipant, userSession: userSession)
         } else {
-            defaultConversationHeaderViewController = DefaultConversationHeaderViewController(
+            let groupHeaderView = GroupConversationHeaderView(
                 conversation: conversation,
                 selfUser: userSession.selfUser
             )
-            defaultConversationHeaderViewController?.delegate = self
-            headerView = defaultConversationHeaderViewController?.view
+            groupHeaderView.delegate = self
+            headerView = groupHeaderView
         }
 
         if let headerView {
-            headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
             setConversationHeaderView(headerView)
         } else {
             tableView.tableHeaderView = nil

@@ -37,15 +37,15 @@ extension UIView {
     }
 }
 
-// MARK: - UserConnectionViewSnapshotTests
+// MARK: - OneOnOneConversationHeaderViewSnapshotTests
 
-final class UserConnectionViewSnapshotTests: XCTestCase {
+final class OneOnOneConversationHeaderViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
     private var mockUser: MockUserType!
-    private var sut: UserConnectionView!
+    private var sut: OneOnOneConversationHeaderView!
 
     // MARK: - setUp
 
@@ -67,14 +67,14 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
     // MARK: - Helper Method
 
-    func sutForUser(_ mockUser: MockUserType, isFederated: Bool = false) -> UserConnectionView {
+    func sutForUser(_ mockUser: MockUserType, isFederated: Bool = false) -> OneOnOneConversationHeaderView {
         mockUser.isPendingApprovalByOtherUser = true
         mockUser.isPendingApprovalBySelfUser = false
         mockUser.isConnected = false
         mockUser.isFederated = isFederated
         mockUser.domain = "wire.com"
 
-        let connectionView = UserConnectionView(user: mockUser, userSession: UserSessionMock())
+        let connectionView = OneOnOneConversationHeaderView(user: mockUser, userSession: UserSessionMock())
         connectionView.layoutForTest()
         connectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         return connectionView
