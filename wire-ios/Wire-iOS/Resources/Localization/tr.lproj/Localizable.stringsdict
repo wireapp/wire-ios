@@ -304,7 +304,7 @@
     <key>content.system.call.missed-call.groups</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%2$@ %#@missed_call_from@</string>
+      <string>%#@missed_call_from@</string>
       <key>missed_call_from</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
@@ -312,9 +312,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>kişisinden cevapsız çağrı</string>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>kişisinden cevapsız çağrılar</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

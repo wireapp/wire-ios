@@ -71,19 +71,19 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     // MARK: - Public interface
 
     public func isTrustAnchorRegistered() async throws -> Bool {
-        try await coreCryptoProvider.coreCrypto().transaction { context in
+        try await coreCryptoProvider.coreCrypto().extendedTransaction { context in
             try await context.e2eiIsPkiEnvSetup()
         }
     }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
-        try await coreCryptoProvider.coreCrypto().transaction { context in
+        try await coreCryptoProvider.coreCrypto().extendedTransaction { context in
             try await context.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
         }
     }
 
     public func registerFederationCertificate(_ certificate: String) async throws {
-        try await coreCryptoProvider.coreCrypto().transaction { context in
+        _ = try await coreCryptoProvider.coreCrypto().extendedTransaction { context in
             try await context.e2eiRegisterIntermediateCa(certPem: certificate)
         }
     }
@@ -121,7 +121,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
-        return try await coreCrypto.transaction {
+        return try await coreCrypto.extendedTransaction {
             if isUpgradingClient {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 if e2eiIsEnabled {

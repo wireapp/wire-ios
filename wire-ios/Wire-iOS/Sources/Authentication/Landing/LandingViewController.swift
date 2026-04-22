@@ -554,9 +554,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private func cancelButtonTapped() {
         guard let account = SessionManager.shared?.firstAuthenticatedAccount else { return }
-        Task {
-            _ = await SessionManager.shared!.select(account)
-        }
+        SessionManager.shared!.select(account)
     }
 
     // MARK: - AuthenticationCoordinatedViewController

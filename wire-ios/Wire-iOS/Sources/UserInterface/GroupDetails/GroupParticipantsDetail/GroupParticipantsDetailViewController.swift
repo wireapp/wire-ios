@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
@@ -53,6 +54,8 @@ final class GroupParticipantsDetailViewController: UIViewController {
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
     }()
+
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     // State tracking
     private var isFirstLayout = true
@@ -136,6 +139,11 @@ final class GroupParticipantsDetailViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
 
         view.addSubview(collectionView)
         collectionViewController.collectionView = collectionView

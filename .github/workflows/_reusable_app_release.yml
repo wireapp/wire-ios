@@ -37,8 +37,6 @@ on:
         required: true
       WIRE_INTERNAL_GITHUB_TOKEN:
         required: true
-      APPCENTER_API_TOKEN:
-        required: true
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
@@ -96,8 +94,6 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -122,8 +118,6 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      UI_TEST_LOGIN_EMAIL: "test@example.com"
-      UI_TEST_LOGIN_PASSWORD: "12345"
 
     steps:
       - name: Add Masks
@@ -192,6 +186,10 @@ jobs:
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()

@@ -34,7 +34,7 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
 
     let containsHighlightableContent: Bool = false
 
-    let accessibilityIdentifier: String? = nil
+    let accessibilityIdentifier: String?
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
@@ -57,6 +57,7 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
         )
 
         self.accessibilityLabel = model.attributedTitle()?.string
+        self.accessibilityIdentifier = model.accessibilityIdentifier
         self.actionController = nil
     }
 }

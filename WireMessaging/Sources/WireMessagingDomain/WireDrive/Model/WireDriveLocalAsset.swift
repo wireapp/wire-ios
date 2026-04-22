@@ -58,6 +58,11 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
         }
     }
 
+    public enum FileSize: Sendable, Equatable {
+        case large
+        case small
+    }
+
     /// The identifier of the asset on the Wire Drive backend.
 
     public let nodeID: UUID
@@ -87,6 +92,10 @@ public struct WireDriveLocalAsset: Equatable, Sendable {
     /// The download state of the asset.
 
     public var downloadState: DownloadState
+
+    /// Whether the file is considered as `large` or `small`
+
+    public var fileSize: FileSize = .small
 
     package init(
         nodeID: UUID,

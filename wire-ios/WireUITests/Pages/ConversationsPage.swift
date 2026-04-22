@@ -44,6 +44,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var unreadMessagesCount: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
+    }
+
     var textFilteredByFavourites: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
     }
@@ -108,6 +112,10 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
     }
 
+    func getGroupName() -> String? {
+        conversationCell.label as? String
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -141,6 +149,7 @@ class ConversationsPage: PageModel {
         return try ConnectionRequestsPage()
     }
 
+    @discardableResult
     func openConversation() throws -> ActiveConversationPage {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
@@ -151,6 +160,7 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
@@ -204,6 +214,10 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    func getUnreadMessageCountValue() throws -> String {
+        unreadMessagesCount.value as! String
     }
 
     enum Error: Swift.Error {

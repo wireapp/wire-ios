@@ -85,7 +85,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
+        let crlNewDistributionPoints = try await coreCrypto.extendedTransaction { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
@@ -117,7 +117,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             return mlsGroupIDs
         }
 
-        try await coreCrypto.transaction { context in
+        try await coreCrypto.extendedTransaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
                     try await context.e2eiRotate(conversationId: groupID.conversationId)
@@ -144,7 +144,11 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        try await coreCrypto.transaction { coreCryptoContext in
+        try await coreCrypto.extendedTransaction { coreCryptoContext in
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
+
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
@@ -157,9 +161,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
-            try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: ciphersuite.coreCryptoCipherSuite
-            )
         }
     }
 

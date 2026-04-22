@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 protocol UserSearchResultsViewControllerDelegate: AnyObject {
     func didSelect(user: UserType)
@@ -325,6 +326,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
             cell.backgroundColor = SemanticColors.View.backgroundUserCell
         }
 
+        cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
         return cell
     }
 

@@ -759,7 +759,7 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        syncAgent?.delegate = nil
+        syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
@@ -1227,6 +1227,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishInitialSync() {
+        // initialSync includes resolving all 1:1 so mark it as done here
+        didAlreadyResolveAllOneOnOnes = true
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 

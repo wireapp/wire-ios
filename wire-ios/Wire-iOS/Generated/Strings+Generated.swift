@@ -2145,9 +2145,9 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.call.missed-call", p1, fallback: "Plural format key: \"%#@missed_call@\"")
           }
           internal enum MissedCall {
-            /// Plural format key: "%#@missed_call_from@ %2$@"
-            internal static func groups(_ p1: Int, _ p2: Any) -> String {
-              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, String(describing: p2), fallback: "Plural format key: \"%#@missed_call_from@ %2$@\"")
+            /// Plural format key: "%#@missed_call_from@"
+            internal static func groups(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, fallback: "Plural format key: \"%#@missed_call_from@\"")
             }
           }
         }
@@ -4767,6 +4767,14 @@ internal enum L10n {
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
       internal static let searchPlaceholder = L10n.tr("Localizable", "peoplepicker.search_placeholder", fallback: "Search by name or username")
+      internal enum AppDetails {
+        /// Created by %@
+        internal static func createdBy(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "peoplepicker.app_details.created_by", String(describing: p1), fallback: "Created by %@")
+        }
+        /// Description
+        internal static let description = L10n.tr("Localizable", "peoplepicker.app_details.description", fallback: "Description")
+      }
       internal enum Apps {
         internal enum AddApp {
           /// Add app
@@ -4840,6 +4848,14 @@ internal enum L10n {
       internal enum NavigationHeader {
         /// New conversation
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
+      internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.
+        internal static let addInTmMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.add_in_tm_message", fallback: "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.")
+        /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
+        internal static let askAdminMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.ask_admin_message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        /// Your team hasn’t added apps yet
+        internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
       }
       internal enum NoMatchingResults {
         internal enum Action {
