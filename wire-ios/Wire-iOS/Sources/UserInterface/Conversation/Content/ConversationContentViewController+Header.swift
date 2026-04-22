@@ -46,22 +46,16 @@ extension ConversationContentViewController {
             }
             headerView = OneOnOneConversationHeaderView(user: otherParticipant, userSession: userSession)
         } else {
-            let hasVisibleRows = !dataSource.currentSections.isEmpty
             let groupHeaderView = GroupConversationHeaderView(
                 conversation: conversation,
-                selfUser: userSession.selfUser,
-                addsSpacer: !hasVisibleRows
+                selfUser: userSession.selfUser
             )
             groupHeaderView.delegate = self
             headerView = groupHeaderView
-            if let headerView {
-                setConversationHeaderView(headerView, compressedHeight: hasVisibleRows)
-            }
-            return
         }
 
         if let headerView {
-            setConversationHeaderView(headerView)
+            setConversationHeaderView(headerView, compressedHeight: !connectionOrOneOnOne)
         } else {
             tableView.tableHeaderView = nil
         }
