@@ -93,6 +93,11 @@
 "peoplepicker.no_matching_results.message.apps" = "Keine Ergebnisse.";
 "peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps sind Helfer, die den Workflow verbessern können.";
 "peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps sind Helfer, die den Workflow verbessern können. Um sie zu aktivieren, wenden Sie sich bitte an Ihren Admin.";
+"peoplepicker.no_apps_added.title" = "Ihr Team hat noch keine Apps hinzugefügt";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps sind Helfer, die Ihren Workflow verbessern können. Um sie zu verwenden, fragen Sie bitte Ihren Team-Admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps sind Helfer, die Ihren Workflow verbessern können. Als Team-Admin können Sie diese im Team-Management hinzufügen.";
+"peoplepicker.app_details.created_by" = "Erstellt von %@";
+"peoplepicker.app_details.description" = "Beschreibung";
 
 "peoplepicker.send_invitation.dialog.title" = "Einladung versendet";
 "peoplepicker.send_invitation.dialog.message" = "Diese Einladung ist 2 Wochen gültig. Senden Sie eine neue, wenn diese abläuft.";
@@ -1637,7 +1642,7 @@
 
 "registration.country_select.title" = "Land";
 
-"registration.push_access_denied.hero.title" = "Verpassen Sie keinen Anrufe oder Nachrichten.";
+"registration.push_access_denied.hero.title" = "Verpassen Sie keine Anrufe oder Nachrichten.";
 "registration.push_access_denied.hero.paragraph1" = "Aktivieren Sie Benachrichtigungen in den Einstellungen.";
 "registration.push_access_denied.settings_button.title" = "Einstellungen öffnen";
 "registration.push_access_denied.maybe_later_button.title" = "Vielleicht später";

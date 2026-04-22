@@ -18,6 +18,7 @@
 
 package import SwiftUI
 import WireDesign
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -80,9 +81,13 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                             }
                         }
                 case let .error(isConnectionError):
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
+                    FilesInfoView(
+                        scope: .files(conversation: isBrowsing ? .all : .one),
+                        kind: .error(isConnectionError: isConnectionError),
+                        onRetry: {
+                            reloadTask()
+                        }
+                    )
                 }
                 Spacer()
             }
@@ -131,7 +136,7 @@ private extension FilesContentView {
         List {
             Group {
                 itemsSection
-                if viewModel.hasMore { loadMoreRow }
+                if showLoadMoreRow { loadMoreRow }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
@@ -147,24 +152,42 @@ private extension FilesContentView {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.openItem(item: item) } }
+                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+                .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
+        }
+    }
+
+    private func infoViewScope() -> FilesInfoView.Scope {
+        if viewModel.isRecycleBin {
+            .recycleBin(isFolder: viewModel.isInFolder)
+        } else if !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty {
+            .search
+        } else {
+            .files(conversation: isBrowsing ? .all : .one, isFolder: viewModel.isInFolder)
         }
     }
 
     @ViewBuilder private var listBackgroundView: some View {
+        let scope = infoViewScope()
+
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(
-                info: .noFilesFound(
-                    scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
-                )
-            )
+            FilesInfoView(scope: scope, kind: .empty)
         case .pending:
-            FilesInfoView(info: .preparingFiles)
+            FilesInfoView(scope: scope, kind: .preparing)
         default:
             EmptyView()
         }
+    }
+
+    private var showLoadMoreRow: Bool {
+        // workaround: when filtering by conversation, BE returns sometimes empty payload with hasMore flag set to true
+        // which wrongly displays the load more row on an empty state screen so we need here to explicitly check that
+        // the items are empty.
+        let hasMore = viewModel.hasMore
+        let isEmptyItems = viewModel.state.items.isEmpty
+
+        return hasMore && !isEmptyItems
     }
 }
 
@@ -178,7 +201,7 @@ private extension FilesContentView {
     }
 
     var loadMoreRow: some View {
-        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
+        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMoreTask)
     }
 }
 
@@ -188,6 +211,7 @@ private extension FilesContentView {
 
     var confirmButton: some View {
         Button(L10n.Localizable.General.confirm, action: {})
+            .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.confirm)
     }
 }
 
@@ -203,7 +227,7 @@ private extension FilesContentView {
         Task { await viewModel.loadMoreIfNeeded(index: index) }
     }
 
-    func loadMore() {
+    func loadMoreTask() {
         let lastRowIndex = viewModel.state.items.count - 1
         Task { await viewModel.loadMoreIfNeeded(index: lastRowIndex) }
     }
@@ -234,6 +258,7 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
+        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 

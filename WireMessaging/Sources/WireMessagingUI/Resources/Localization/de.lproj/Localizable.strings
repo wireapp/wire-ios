@@ -80,6 +80,8 @@
 "conversation.creationForm.apps.toggle" = "Apps zulassen";
 "conversation.creationForm.guests.toggle" = "Gäste zulassen";
 "conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
+"conversation.creationForm.appsDisabled.title" = "Ihr Team verwendet noch keine Apps";
+"conversation.creationForm.appsDisabled.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden. Bitte wenden Sie sich an Ihren Team-Admin.";
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
@@ -119,6 +121,7 @@
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
+"conversation.wireCells.files.item.menu.cancelDownload" = "Laden abbrechen...";
 "conversation.wireCells.files.item.menu.shareLink" = "Teilen";
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
 "conversation.wireCells.files.item.menu.editFile" = "Datei bearbeiten";
@@ -153,12 +156,15 @@
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
 "conversation.wireCells.files.list.createFile" = "Datei erstellen";
 "conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
-"conversation.wireCells.files.list.createFile.spreadsheet" = "Tabelle";
+"conversation.wireCells.files.list.createFile.spreadsheet" = "Kalkulationstabelle";
 "conversation.wireCells.files.list.createFile.document" = "Dokument";
 "conversation.wireCells.files.newFolder.title" = "Ordnername";
 "conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Ordner erstellen";
-"conversation.wireCells.files.newFile.navigationTitle" = "%@ Datei erstellen";
+"conversation.wireCells.files.newFile.navigationTitle" = "%@ erstellen (%@)";
+"conversation.wireCells.files.newFile.presentation" = "Präsentation";
+"conversation.wireCells.files.newFile.spreadsheet" = "Tabellenkalkulation";
+"conversation.wireCells.files.newFile.document" = "Dokument";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.fileName.title" = "Dateiname";
@@ -173,6 +179,11 @@
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
 "conversation.wireCells.files.renameFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.openRecycleBin" = "Papierkorb öffnen";
+"conversation.wireCells.files.readyToOpenAfterDownload" = "Bereit zum Öffnen";
+"conversation.wireCells.files.tapToCancelDownload" = "Tippen, um Laden abzubrechen";
+"conversation.wireCells.files.downloadFailed" = "Laden unmöglich, wiederholen";
+
+// MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
@@ -187,30 +198,6 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Der Ordner \"%@\" mit all seinen Dateien und Unterordnern wird wiederhergestellt und allen in dieser Unterhaltung zur Verfügung gestellt.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Übergeordneten Ordner wiederherstellen";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Sie können keine Ordner oder Dateien aus einem gelöschten Ordner wiederherstellen. Um das gewünschte Objekt wiederzuverwenden, müssen Sie den übergeordneten Ordner wiederherstellen.\n\nDer Ordner \"%@\" mit allen Dateien und Unterordnern wird wiederhergestellt und steht allen Teilnehmern dieser Unterhaltung zur Verfügung.";
-"conversation.wireCells.filter.clearAll" = "Entfernen";
-"conversation.wireCells.filter.tags.navigationTitle" = "Nach Tags filtern";
-"conversation.wireCells.filter.tags.emptyTitle" = "Noch keine Tags erstellt.";
-"conversation.wireCells.filter.tags.notFoundBySearch" = "Keine Tags gefunden.";
-"conversation.wireCells.filter.tags.searchPrompt" = "Tags suchen";
-"conversation.wireCells.filter.conversation.navigationTitle" = "Nach Unterhaltung filtern";
-"conversation.wireCells.filter.owner.navigationTitle" = "Nach Besitzer filtern";
-"conversation.wireCells.filter.sharedLink.navigationTitle" = "Nach Link-Freigabe filtern";
-"conversation.wireCells.filter.sharedLink.option.withLink" = "Verfügt über öffentlichen Link";
-"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Von mir außerhalb Wire geteilt";
-"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Kein öffentlicher Link";
-"conversation.wireCells.filter.fileType.navigationTitle" = "Nach Dateityp filtern";
-"conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
-"conversation.wireCells.filter.fileType.typeName.doc" = "Dokumente";
-"conversation.wireCells.filter.fileType.typeName.image" = "Bilder";
-"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Tabellen";
-"conversation.wireCells.filter.fileType.typeName.presentation" = "Präsentationen";
-"conversation.wireCells.filter.fileType.typeName.video" = "Videos";
-"conversation.wireCells.filter.fileType.typeName.audio" = "Audiodateien";
-"conversation.wireCells.filter.fileType.typeName.folder" = "Ordner";
-"conversation.wireCells.filter.fileType.typeName.other" = "Andere";
-"conversation.wireCells.filter.fileType.typeName.code" = "Code";
-"conversation.wireCells.filter.fileType.typeName.archive" = "Archive";
-"conversation.wireCells.filter.fileType.typeName.text" = "Textdateien";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Tags hinzufügen oder entfernen";
@@ -311,3 +298,28 @@
 "conversation.wireCells.filtering.owner" = "Erstellt von";
 "conversation.wireCells.filtering.sharedLink" = "Per Link geteilt";
 "conversation.wireCells.filtering.removeAllFilters" = "Alle Filter entfernen";
+
+"conversation.wireCells.filter.clearAll" = "Entfernen";
+"conversation.wireCells.filter.tags.navigationTitle" = "Nach Tags filtern";
+"conversation.wireCells.filter.tags.emptyTitle" = "Noch keine Tags erstellt.";
+"conversation.wireCells.filter.tags.notFoundBySearch" = "Keine Tags gefunden.";
+"conversation.wireCells.filter.tags.searchPrompt" = "Tags suchen";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Nach Unterhaltung filtern";
+"conversation.wireCells.filter.owner.navigationTitle" = "Nach Besitzer filtern";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Nach Link-Freigabe filtern";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "Verfügt über öffentlichen Link";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Von mir außerhalb Wire geteilt";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "Kein öffentlicher Link";
+"conversation.wireCells.filter.fileType.navigationTitle" = "Nach Dateityp filtern";
+"conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
+"conversation.wireCells.filter.fileType.typeName.doc" = "Dokumente";
+"conversation.wireCells.filter.fileType.typeName.image" = "Bilder";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Kalkulationstabellen";
+"conversation.wireCells.filter.fileType.typeName.presentation" = "Präsentationen";
+"conversation.wireCells.filter.fileType.typeName.video" = "Videos";
+"conversation.wireCells.filter.fileType.typeName.audio" = "Audiodateien";
+"conversation.wireCells.filter.fileType.typeName.folder" = "Ordner";
+"conversation.wireCells.filter.fileType.typeName.other" = "Andere";
+"conversation.wireCells.filter.fileType.typeName.code" = "Code";
+"conversation.wireCells.filter.fileType.typeName.archive" = "Archive";
+"conversation.wireCells.filter.fileType.typeName.text" = "Textdateien";

@@ -76,6 +76,10 @@ public struct SelfUser: Equatable, Sendable {
 
     public let expiresAt: Date?
 
+    /// App information associated with this user
+
+    public let app: AppInfo?
+
     /// Service information associated with this self user
 
     public let service: Service?

@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireDataModel
 import WireLogging
 import WireNetwork
+import WireUtilitiesPackage
 
 protocol NSEClientScopeDependency: Dependency {
 

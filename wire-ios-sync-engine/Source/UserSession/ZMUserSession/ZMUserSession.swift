@@ -402,7 +402,7 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var checkBlacklistWorker: Worker = .checkBlacklist(
+    private lazy var checkBlacklistWorker: Worker? = .checkBlacklist(
         useCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
         onIsBuildBlacklisted: { [weak self] in
             guard let self else { return }
@@ -412,7 +412,7 @@ public final class ZMUserSession: NSObject {
         }
     )
 
-    private let updateBackendMetadataWorker: Worker
+    private var updateBackendMetadataWorker: Worker?
 
     let logFilesProvider: LogFilesProviding
 
@@ -594,8 +594,6 @@ public final class ZMUserSession: NSObject {
         startEphemeralTimers()
         restoreDebugCommandsState()
         configureRecurringActions()
-        checkBlacklistWorker.start()
-        updateBackendMetadataWorker.start()
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
@@ -698,6 +696,8 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
+        checkBlacklistWorker?.start()
+        updateBackendMetadataWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -775,7 +775,7 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        syncAgent?.delegate = nil
+        syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
@@ -786,6 +786,8 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+        checkBlacklistWorker = nil
+        updateBackendMetadataWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
@@ -1242,6 +1244,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishInitialSync() {
+        // initialSync includes resolving all 1:1 so mark it as done here
+        didAlreadyResolveAllOneOnOnes = true
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
@@ -1626,6 +1630,9 @@ extension ZMUserSession {
             AppVersionMigration_4_12_2(
                 coreDataStack: coreDataStack,
                 coreCryptoProvider: coreCryptoProvider
+            ),
+            AppVersionMigration_4_18_0(
+                coreDataStack: coreDataStack
             )
         ]
 

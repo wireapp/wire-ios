@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WebKit
+import WireLocators
 
 // MARK: - EditFileView
 
@@ -40,25 +41,20 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
                     ProgressView()
                 case let .loaded(url):
                     WebView(url: url)
-                case let .error(title, message):
-                    MoveToFolderEmptyStateView(
-                        title: title,
-                        message: message,
-                        onReload: {
-                            Task {
-                                await viewModel.load()
-                            }
+                case let .error(isConnectionError):
+                    FilesInfoView(
+                        scope: .editFile,
+                        kind: .error(isConnectionError: isConnectionError),
+                        onRetry: {
+                            Task { await viewModel.load() }
                         }
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .onAppear(perform: {
-                Task {
-                    await viewModel.load()
-
-                }
-            })
+            .onAppear {
+                Task { await viewModel.load() }
+            }
             .navigationTitle(viewModel.fileName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -79,7 +75,7 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
                     .frame(width: 44, height: 44, alignment: .trailing)
             }
         )
-        .accessibilityIdentifier("close")
+        .accessibilityIdentifier(Locators.WireDrive.EditFilePage.close)
     }
 }
 

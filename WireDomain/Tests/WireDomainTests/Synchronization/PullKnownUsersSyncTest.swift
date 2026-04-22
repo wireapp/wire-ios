@@ -84,6 +84,7 @@ private enum Scaffolding {
         deleted: false,
         email: "john.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled
@@ -100,6 +101,7 @@ private enum Scaffolding {
         deleted: false,
         email: "jane.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled

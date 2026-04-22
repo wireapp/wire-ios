@@ -22,7 +22,7 @@ import WireLogging
 public enum URLAction: Equatable {
 
     /// Connect to a service user (bot)
-    case connectBot(serviceUser: ServiceUserData)
+    case connectBot(providerID: UUID, serviceID: UUID)
 
     /// The SSO login successfully completed
     case companyLoginSuccess(userInfo: UserInfo)
@@ -169,7 +169,7 @@ extension URLAction {
                   let providerUUID = UUID(uuidString: provider) else {
                 throw DeepLinkRequestError.malformedLink
             }
-            self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
+            self = .connectBot(providerID: providerUUID, serviceID: serviceUUID)
 
         case URL.Host.accessBackend:
             guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),

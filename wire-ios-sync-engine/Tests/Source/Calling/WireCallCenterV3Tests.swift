@@ -1887,6 +1887,52 @@ extension WireCallCenterV3Tests {
         )
     }
 
+    func testThatClosingAGroupCallResetsVideoState() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .started)
+
+        // when
+        sut.closeCall(conversationId: groupConversationID)
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
+    func testThatRejoiningGroupCallAfterEnablingVideoStartsWithVideoDisabled() {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: true,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sut.setVideoState(conversationId: groupConversationID, videoState: .started)
+        sut.closeCall(conversationId: groupConversationID)
+
+        // when
+        sut.handleEstablishedCall(conversationId: groupConversationID.serialized)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(sut.videoState(conversationId: groupConversationID), .stopped)
+    }
+
     func testThatItWhenClosingAOneOnOneCallItDoesNotSetTheCallStateToIncomingInactive() {
         // given
         sut.handleIncomingCall(
@@ -2702,89 +2748,6 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
-    func test_EndsCall_WhenOtherParticipantDropsFromEstablishedToConnecting() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: true)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .established)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
-    }
-
-    func test_DoesNotEndCall_WhenCallIsNotEstablished() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: true)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-
-        // Then
-        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
-    }
-
-    func test_DoesNotEndCall_WhenUseSFTForOneToOneCallsIsFalse() throws {
-        // Given
-        oneOnOneConversation.messageProtocol = .mls
-        conferenceCalling.status = .enabled
-        conferenceCalling.config = try JSONEncoder().encode(
-            Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: false)
-        )
-
-        sut.handleIncomingCall(
-            conversationId: oneOnOneConversationID.serialized,
-            messageTime: Date(),
-            userId: otherUserID.serialized,
-            clientId: otherUserClientID,
-            isVideoCall: false,
-            shouldRing: true,
-            conversationType: .oneToOne
-        )
-        sut.handleEstablishedCall(conversationId: oneOnOneConversationID.serialized)
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .established)
-
-        // When
-        handleParticipantChange(selfAudioState: .established, otherAudioState: .connecting)
-
-        // Then
-        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
-    }
-
 }
 
 // MARK: - Helpers
@@ -2803,34 +2766,4 @@ private extension AVSActiveSpeakersChange {
         let encoded = try! JSONEncoder().encode(self)
         return String(decoding: encoded, as: UTF8.self)
     }
-}
-
-private extension WireCallCenterV3Tests {
-
-    func handleParticipantChange(
-        selfAudioState: AudioState,
-        otherAudioState: AudioState
-    ) {
-        let selfMember = AVSParticipantsChange.Member(
-            userid: selfUserID.serialized,
-            clientid: clientID,
-            aestab: selfAudioState,
-            vrecv: .stopped,
-            muted: .unmuted
-        )
-        let otherMember = AVSParticipantsChange.Member(
-            userid: otherUserID.serialized,
-            clientid: otherUserClientID,
-            aestab: otherAudioState,
-            vrecv: .stopped,
-            muted: .unmuted
-        )
-        let change = AVSParticipantsChange(
-            convid: oneOnOneConversationID.serialized,
-            members: [selfMember, otherMember]
-        )
-        let data = String(decoding: try! JSONEncoder().encode(change), as: UTF8.self)
-        sut.handleParticipantChange(conversationId: oneOnOneConversationID.serialized, data: data)
-    }
-
 }

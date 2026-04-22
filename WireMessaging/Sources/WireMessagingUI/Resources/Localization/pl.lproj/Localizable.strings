@@ -80,6 +80,8 @@
 "conversation.creationForm.apps.toggle" = "Allow apps";
 "conversation.creationForm.guests.toggle" = "Zezwalaj na gości";
 "conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
+"conversation.creationForm.appsDisabled.title" = "Your team doesn't use apps yet";
+"conversation.creationForm.appsDisabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 
 "conversation.creationForm.readReceipts.toggle" = "Potwierdzenie odczytu";
 "conversation.creationForm.readReceipts.description" = "Gdy włączone, rozmówcy mogą zobaczyć, kiedy ich wiadomości zostały odczytane w tej rozmowie.";
@@ -119,6 +121,7 @@
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Otwórz";
+"conversation.wireCells.files.item.menu.cancelDownload" = "Cancel loading...";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "Pobierz";
 "conversation.wireCells.files.item.menu.editFile" = "Edit file";
@@ -158,7 +161,10 @@
 "conversation.wireCells.files.newFolder.title" = "Nazwa folderu";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
-"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ file";
+"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ (%@)";
+"conversation.wireCells.files.newFile.presentation" = "presentation";
+"conversation.wireCells.files.newFile.spreadsheet" = "spreadsheet";
+"conversation.wireCells.files.newFile.document" = "document";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.fileName.title" = "File name";
@@ -173,6 +179,11 @@
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
+"conversation.wireCells.files.readyToOpenAfterDownload" = "Ready to open";
+"conversation.wireCells.files.tapToCancelDownload" = "Tap to cancel loading";
+"conversation.wireCells.files.downloadFailed" = "Unable to load, retry";
+
+// MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
@@ -187,30 +198,6 @@
 "conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "This folder \"%@\" with all files and subfolders will be restored and available again to everyone in this conversation.";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Restore Parent Folder";
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "You can’t restore folders or files from a deleted folder. To restore the desired item, you must restore its parent folder.\n\nThe folder \"%@\" with all files and subfolders will be restored and available to everyone in this conversation.";
-"conversation.wireCells.filter.clearAll" = "Clear all";
-"conversation.wireCells.filter.tags.navigationTitle" = "Filter by tags";
-"conversation.wireCells.filter.tags.emptyTitle" = "No tags were created yet.";
-"conversation.wireCells.filter.tags.notFoundBySearch" = "No tags found.";
-"conversation.wireCells.filter.tags.searchPrompt" = "Search tags";
-"conversation.wireCells.filter.conversation.navigationTitle" = "Filter by conversation";
-"conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
-"conversation.wireCells.filter.sharedLink.navigationTitle" = "Filter by link sharing";
-"conversation.wireCells.filter.sharedLink.option.withLink" = "Has public link";
-"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Shared by me outside Wire";
-"conversation.wireCells.filter.sharedLink.option.withoutLink" = "No public link";
-"conversation.wireCells.filter.fileType.navigationTitle" = "Filter by file type";
-"conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
-"conversation.wireCells.filter.fileType.typeName.doc" = "Documents";
-"conversation.wireCells.filter.fileType.typeName.image" = "Zdjęcia";
-"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Spreadsheets";
-"conversation.wireCells.filter.fileType.typeName.presentation" = "Presentations";
-"conversation.wireCells.filter.fileType.typeName.video" = "Filmów";
-"conversation.wireCells.filter.fileType.typeName.audio" = "Audio files";
-"conversation.wireCells.filter.fileType.typeName.folder" = "Folders";
-"conversation.wireCells.filter.fileType.typeName.other" = "Other";
-"conversation.wireCells.filter.fileType.typeName.code" = "Code";
-"conversation.wireCells.filter.fileType.typeName.archive" = "Archives";
-"conversation.wireCells.filter.fileType.typeName.text" = "Text files";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Add or remove tags";
@@ -311,3 +298,28 @@
 "conversation.wireCells.filtering.owner" = "Created by";
 "conversation.wireCells.filtering.sharedLink" = "Shared via link";
 "conversation.wireCells.filtering.removeAllFilters" = "Remove all filters";
+
+"conversation.wireCells.filter.clearAll" = "Clear all";
+"conversation.wireCells.filter.tags.navigationTitle" = "Filter by tags";
+"conversation.wireCells.filter.tags.emptyTitle" = "No tags were created yet.";
+"conversation.wireCells.filter.tags.notFoundBySearch" = "No tags found.";
+"conversation.wireCells.filter.tags.searchPrompt" = "Search tags";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Filter by conversation";
+"conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Filter by link sharing";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "Has public link";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Shared by me outside Wire";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "No public link";
+"conversation.wireCells.filter.fileType.navigationTitle" = "Filter by file type";
+"conversation.wireCells.filter.fileType.typeName.pdf" = "PDFs";
+"conversation.wireCells.filter.fileType.typeName.doc" = "Documents";
+"conversation.wireCells.filter.fileType.typeName.image" = "Zdjęcia";
+"conversation.wireCells.filter.fileType.typeName.spreadsheet" = "Spreadsheets";
+"conversation.wireCells.filter.fileType.typeName.presentation" = "Presentations";
+"conversation.wireCells.filter.fileType.typeName.video" = "Filmów";
+"conversation.wireCells.filter.fileType.typeName.audio" = "Audio files";
+"conversation.wireCells.filter.fileType.typeName.folder" = "Folders";
+"conversation.wireCells.filter.fileType.typeName.other" = "Other";
+"conversation.wireCells.filter.fileType.typeName.code" = "Code";
+"conversation.wireCells.filter.fileType.typeName.archive" = "Archives";
+"conversation.wireCells.filter.fileType.typeName.text" = "Text files";

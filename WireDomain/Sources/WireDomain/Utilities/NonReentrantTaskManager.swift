@@ -60,8 +60,7 @@ public extension NonReentrantTaskManager where Failure == any Error {
         switch state {
         case let .inFlight(task):
             // Wait for existing task.
-            return try await task.value
-
+            return try await performWithTaskCancellationHandler(task: task)
         case .idle:
             // Create a new task.
             let task = Task {
@@ -69,7 +68,16 @@ public extension NonReentrantTaskManager where Failure == any Error {
             }
 
             state = .inFlight(task)
-            return try await task.value
+
+            return try await performWithTaskCancellationHandler(task: task)
+        }
+    }
+
+    private func performWithTaskCancellationHandler(task: Task<Success, Failure>) async throws -> Success {
+        try await withTaskCancellationHandler {
+            try await task.value
+        } onCancel: {
+            task.cancel()
         }
     }
 
@@ -90,7 +98,7 @@ public extension NonReentrantTaskManager where Failure == Never {
         switch state {
         case let .inFlight(task):
             // Wait for existing task.
-            return await task.value
+            return await performWithTaskCancellationHandler(task: task)
 
         case .idle:
             // Create a new task.
@@ -99,8 +107,15 @@ public extension NonReentrantTaskManager where Failure == Never {
             }
 
             state = .inFlight(task)
-            return await task.value
+            return await performWithTaskCancellationHandler(task: task)
         }
     }
 
+    private func performWithTaskCancellationHandler(task: Task<Success, Failure>) async -> Success {
+        await withTaskCancellationHandler {
+            await task.value
+        } onCancel: {
+            task.cancel()
+        }
+    }
 }

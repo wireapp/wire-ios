@@ -21,6 +21,7 @@ import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -114,7 +115,7 @@ private extension FilesView {
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier("close")
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.close.rawValue)
         .tint(ColorTheme.Base.primary(accentColor).color)
     }
 
@@ -130,6 +131,7 @@ private extension FilesView {
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
+            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFolder.rawValue)
 
             Menu {
                 ForEach(viewModel.templates, id: \.self) { template in
@@ -153,6 +155,7 @@ private extension FilesView {
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
+            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
 
             Button {
                 onOpenRecycleBin()
@@ -164,6 +167,7 @@ private extension FilesView {
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
+            .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
         } label: {
             Image(systemName: "ellipsis.circle")
         }

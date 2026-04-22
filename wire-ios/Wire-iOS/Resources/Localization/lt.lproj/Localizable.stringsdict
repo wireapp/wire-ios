@@ -388,13 +388,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Skambino %2$@</string>
+        <string>Missed call from %2$@</string>
         <key>few</key>
-        <string>Skambino %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>many</key>
-        <string>Skambino %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>other</key>
-        <string>Skambino %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

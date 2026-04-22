@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 enum ConversationActionType {
 
@@ -252,6 +253,15 @@ final class ParticipantsCellViewModel {
             )
         } else {
             return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, isChannel: isChannel)
+        }
+    }
+
+    var accessibilityIdentifier: String? {
+        switch action {
+        case .left:
+            Locators.ConversationsPage.useLeftSystemMessage.rawValue
+        default:
+            nil
         }
     }
 
