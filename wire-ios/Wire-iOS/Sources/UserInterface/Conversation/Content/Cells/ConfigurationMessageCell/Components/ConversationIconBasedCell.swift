@@ -191,7 +191,11 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             bottomContentView.topAnchor.constraint(greaterThanOrEqualTo: textLabel.bottomAnchor),
             bottomContentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomContentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentViewTopConstraint
+            contentViewTopConstraint,
+            // Resist expansion from stack-view fill pressure (priority 250) while allowing
+            // subclasses that add content to bottomContentView to override at required (1000).
+            bottomContentView.heightAnchor.constraint(equalToConstant: 0)
+                .withPriority(UILayoutPriority(rawValue: 251))
         ])
     }
 

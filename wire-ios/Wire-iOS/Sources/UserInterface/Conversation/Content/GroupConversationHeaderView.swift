@@ -39,10 +39,10 @@ final class GroupConversationHeaderView: UIView {
         }
     }
 
-    init(conversation: ZMConversation, selfUser: any UserType) {
+    init(conversation: ZMConversation, selfUser: any UserType, addsSpacer: Bool) {
         super.init(frame: .zero)
         setupStackView()
-        populate(conversation: conversation, selfUser: selfUser)
+        populate(conversation: conversation, selfUser: selfUser, addsSpacer: addsSpacer)
     }
 
     @available(*, unavailable)
@@ -70,7 +70,13 @@ final class GroupConversationHeaderView: UIView {
         return container
     }
 
-    private func populate(conversation: ZMConversation, selfUser: any UserType) {
+    private func populate(conversation: ZMConversation, selfUser: any UserType, addsSpacer: Bool) {
+        if addsSpacer {
+            let spacer = UIView()
+            spacer.setContentHuggingPriority(.init(rawValue: 1), for: .vertical)
+            stackView.addArrangedSubview(spacer)
+        }
+
         stackView.addArrangedSubview(makeGuestWarningBanner())
 
         let startedCell = ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>()

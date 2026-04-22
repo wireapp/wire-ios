@@ -78,6 +78,7 @@ final class ConversationContentViewController: UIViewController {
 
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
+    var headerUsesCompressedHeight = false
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -396,9 +397,12 @@ final class ConversationContentViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
-    func setConversationHeaderView(_ headerView: UIView) {
+    func setConversationHeaderView(_ headerView: UIView, compressedHeight: Bool = false) {
+        headerUsesCompressedHeight = compressedHeight
         headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        headerView.frame = headerViewFrame(view: headerView)
+        headerView.frame = compressedHeight
+            ? compressedHeaderViewFrame(view: headerView)
+            : headerViewFrame(view: headerView)
         tableView.tableHeaderView = headerView
     }
 
