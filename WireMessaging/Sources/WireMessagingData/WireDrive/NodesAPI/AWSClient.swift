@@ -164,8 +164,7 @@ final class AWSClient: Sendable {
             key: node.path
         )
 
-        let response = try await s3.deleteObject(input: deleteObjectInput)
-        print(response)
+        try await s3.deleteObject(input: deleteObjectInput)
     }
 
     private func upload(
@@ -206,10 +205,6 @@ final class AWSClient: Sendable {
             key: node.path,
             metadata: node.createDraftNodeMetadata(versionID: versionID)
         )
-
-        print("here: \(path)")
-        print("here: \(input.key)")
-        print("here: \(input.metadata)")
 
         try await withTaskCancellationHandler {
             do {

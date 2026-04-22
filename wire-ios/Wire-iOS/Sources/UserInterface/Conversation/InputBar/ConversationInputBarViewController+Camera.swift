@@ -95,7 +95,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         didSelectImage image: SendableImage,
         isFromCamera: Bool
     ) {
-        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
+        if useWireDrive() {
             let dataToSend = image.data
             let utType: UTType = image.utType ?? .image
             uploadDraft(data: dataToSend, type: utType)

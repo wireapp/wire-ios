@@ -28,6 +28,7 @@ public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
     func invoke(fileURL: URL) async throws
 
     /// Creates a file using `imageData` and uploads it to the drive server.
+    /// When a `nodeID` is provided, an existing asset is being updated.
 
     func invoke(data: Data, type: UTType, nodeID: UUID?) async throws
 
