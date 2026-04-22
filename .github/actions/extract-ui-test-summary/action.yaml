@@ -1,0 +1,140 @@
+name: "Extract UI test summary"
+description: "Parse xcresult bundles and expose passed, failed, skipped, total, and failed test details"
+
+inputs:
+  xcresult_search_path:
+    description: "Directory to search for .xcresult bundles"
+    required: false
+    default: "artifacts"
+
+outputs:
+  passed:
+    description: "Number of passed tests"
+    value: ${{ steps.extract.outputs.passed }}
+  failed:
+    description: "Number of failed tests"
+    value: ${{ steps.extract.outputs.failed }}
+  skipped:
+    description: "Number of skipped tests"
+    value: ${{ steps.extract.outputs.skipped }}
+  total:
+    description: "Total number of tests"
+    value: ${{ steps.extract.outputs.total }}
+  failed_details:
+    description: "Failed test names with one-line error summary"
+    value: ${{ steps.extract.outputs.failed_details }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract summary from xcresult
+      id: extract
+      shell: bash
+      run: |
+        set +e
+
+        if ! command -v jq >/dev/null 2>&1; then
+          echo "[WARN] jq is not available on the runner"
+          echo "passed=0" >> "$GITHUB_OUTPUT"
+          echo "failed=0" >> "$GITHUB_OUTPUT"
+          echo "skipped=0" >> "$GITHUB_OUTPUT"
+          echo "total=0" >> "$GITHUB_OUTPUT"
+          echo "failed_details=Summary unavailable: jq is not installed" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        if ! xcrun --find xcresulttool >/dev/null 2>&1; then
+          echo "[WARN] xcresulttool is not available on the runner"
+          echo "passed=0" >> "$GITHUB_OUTPUT"
+          echo "failed=0" >> "$GITHUB_OUTPUT"
+          echo "skipped=0" >> "$GITHUB_OUTPUT"
+          echo "total=0" >> "$GITHUB_OUTPUT"
+          echo "failed_details=Summary unavailable: xcresulttool is not installed" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        PASSED=0
+        FAILED=0
+        SKIPPED=0
+        TOTAL=0
+        PARSED_SUMMARY=0
+
+        mapfile -t XCRESULTS < <(find "${{ inputs.xcresult_search_path }}" -type d -name '*.xcresult' 2>/dev/null)
+
+        if [ ${#XCRESULTS[@]} -eq 0 ]; then
+          echo "passed=0" >> "$GITHUB_OUTPUT"
+          echo "failed=0" >> "$GITHUB_OUTPUT"
+          echo "skipped=0" >> "$GITHUB_OUTPUT"
+          echo "total=0" >> "$GITHUB_OUTPUT"
+          echo "failed_details=None" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        TMP_JSON="$(mktemp)"
+        for XCRESULT in "${XCRESULTS[@]}"; do
+          if ! xcrun xcresulttool get test-results summary --path "$XCRESULT" --format json > "$TMP_JSON" 2>/dev/null; then
+            echo "[WARN] Could not read test summary from $XCRESULT"
+            continue
+          fi
+
+          P=$(jq '[.. | objects | select(has("passedTests")) | .passedTests // 0] | add // 0' "$TMP_JSON")
+          F=$(jq '[.. | objects | select(has("failedTests")) | .failedTests // 0] | add // 0' "$TMP_JSON")
+          S=$(jq '[.. | objects | select(has("skippedTests")) | .skippedTests // 0] | add // 0' "$TMP_JSON")
+
+          PASSED=$((PASSED + P))
+          FAILED=$((FAILED + F))
+          SKIPPED=$((SKIPPED + S))
+          PARSED_SUMMARY=1
+        done
+
+        TOTAL=$((PASSED + FAILED + SKIPPED))
+
+        if [ "$PARSED_SUMMARY" -eq 0 ]; then
+          echo "passed=0" >> "$GITHUB_OUTPUT"
+          echo "failed=0" >> "$GITHUB_OUTPUT"
+          echo "skipped=0" >> "$GITHUB_OUTPUT"
+          echo "total=0" >> "$GITHUB_OUTPUT"
+          echo "failed_details=Summary unavailable: could not parse any xcresult bundle" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        FAILED_LINES=""
+        for XCRESULT in "${XCRESULTS[@]}"; do
+          CURRENT_FAILED=$(xcrun xcresulttool get test-results tests --path "$XCRESULT" --format json 2>/dev/null | jq -r '
+            def nodes: recurse(.subtests[]?);
+            [nodes
+             | select((.testStatus? // "") == "Failure")
+             | {
+                 name: (.name // .identifier // "Unknown test"),
+                 message: ([.failureText?, .summary?] | map(select(. != null and . != "")) | .[0] // "No failure message available")
+               }
+            ]
+            | .[:5]
+            | map("- \(.name): \(.message | gsub(\"\\n\"; \" \") | .[0:220])")
+            | join("\n")
+          ')
+
+          if [ -n "$CURRENT_FAILED" ]; then
+            if [ -n "$FAILED_LINES" ]; then
+              FAILED_LINES="$FAILED_LINES\n$CURRENT_FAILED"
+            else
+              FAILED_LINES="$CURRENT_FAILED"
+            fi
+          fi
+        done
+
+        FAILED_LINES=$(printf '%b' "$FAILED_LINES" | awk '!seen[$0]++' | head -n 5)
+
+        if [ -z "$FAILED_LINES" ]; then
+          FAILED_LINES="None"
+        fi
+
+        echo "passed=$PASSED" >> "$GITHUB_OUTPUT"
+        echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
+        echo "skipped=$SKIPPED" >> "$GITHUB_OUTPUT"
+        echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+        {
+          echo "failed_details<<EOF"
+          echo "$FAILED_LINES"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"

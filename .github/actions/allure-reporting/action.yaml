@@ -8,6 +8,17 @@ inputs:
     required: false
     default: "html-report-${{ github.run_number }}"
 
+outputs:
+  report-url:
+    description: "Direct download URL for the uploaded Allure artifact"
+    value: ${{ steps.upload-allure-report.outputs.artifact-url }}
+  report-name:
+    description: "Uploaded Allure artifact name"
+    value: ${{ inputs.allure_artifact_name }}
+  report-available:
+    description: "Check Allure report was generated and uploaded as an artifact"
+    value: ${{ env.ALLURE_REPORT_AVAILABLE }}
+    
 runs:
   using: "composite"
   steps:
@@ -23,6 +34,7 @@ runs:
       run: bash ./scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
         
     - name: Upload Allure Report Artifact
+      id: upload-allure-report
       if: ${{ env.ALLURE_REPORT_AVAILABLE == 'true' }}
       uses: actions/upload-artifact@v4
       with:

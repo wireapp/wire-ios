@@ -196,6 +196,13 @@ jobs:
             --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
+      - name: Extract UI test summary
+        if: ${{ always() && inputs.run_critical_flows }}
+        id: ui-test-summary
+        uses: ./.github/actions/extract-ui-test-summary
+        with:
+          xcresult_search_path: artifacts
+
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
@@ -268,6 +275,7 @@ jobs:
           comment_title: "Test Results"
 
       - name: Publish test results + Allure report
+        id: allure-report
         if: always()
         uses: ./.github/actions/allure-reporting
         with:
@@ -333,8 +341,11 @@ jobs:
 
             **Title:** ${{ env.commit_message }}
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            ${{ inputs.run_critical_flows && format('**Results:** {0}/{1} passed · {2} failed · {3} skipped', steps.ui-test-summary.outputs.passed, steps.ui-test-summary.outputs.total, steps.ui-test-summary.outputs.failed, steps.ui-test-summary.outputs.skipped) || '' }}
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ inputs.run_critical_flows && steps.ui-test-summary.outputs.failed != '0' && format('**Failed tests:**\n{0}', steps.ui-test-summary.outputs.failed_details) || '' }}
+            ${{ inputs.run_critical_flows && steps.allure-report.outputs.report-available == 'true' && format('**Report:** [{0}]({1})', steps.allure-report.outputs.report-name, steps.allure-report.outputs.report-url) || '' }}
 
       - name: Only Notify on Wire failures
         uses: 8398a7/action-slack@v3
@@ -346,9 +357,12 @@ jobs:
             **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
             **Title:** ${{ env.commit_message }}
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            ${{ inputs.run_critical_flows && format('**Results:** {0}/{1} passed · {2} failed · {3} skipped', steps.ui-test-summary.outputs.passed, steps.ui-test-summary.outputs.total, steps.ui-test-summary.outputs.failed, steps.ui-test-summary.outputs.skipped) || '' }}
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ inputs.run_critical_flows && steps.ui-test-summary.outputs.failed != '0' && format('**Failed tests:**\n{0}', steps.ui-test-summary.outputs.failed_details) || '' }}
+            ${{ inputs.run_critical_flows && steps.allure-report.outputs.report-available == 'true' && format('**Report:** [{0}]({1})', steps.allure-report.outputs.report-name, steps.allure-report.outputs.report-url) || '' }}
 
   analyze-xcresults:
     needs: run-tests
