@@ -55,7 +55,8 @@ extension ConversationContentViewController {
         }
 
         if let headerView {
-            setConversationHeaderView(headerView, compressedHeight: !connectionOrOneOnOne)
+            let isConnection = conversation.conversationType == .connection
+            setConversationHeaderView(headerView, compressedHeight: !isConnection)
         } else {
             tableView.tableHeaderView = nil
         }
