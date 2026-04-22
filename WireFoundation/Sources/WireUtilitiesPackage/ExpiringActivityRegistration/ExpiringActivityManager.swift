@@ -24,6 +24,13 @@ private let logger = WireLogger.backgroundActivity
 /// Coordinates multiple tasks under a single expiring activity so that only one
 /// thread is ever blocked, regardless of how many tasks are tracked in parallel.
 ///
+/// The manager requests a single window from the system to let the app continue
+/// work before being suspended. Within this window, ``track(reason:task:)`` can
+/// be called any number of times. If all tasks finish within the window, the
+/// expiring activity is released early. If the system revokes background time
+/// before all tasks finish, the expiring activity ends immediately and all
+/// tracked tasks are cancelled.
+///
 /// The actor serializes all state access, eliminating the need for explicit locks.
 /// A semaphore bridges the synchronous `performExpiringActivity` callback with the
 /// async world — it is signaled either when all tasks finish or when the system
@@ -37,6 +44,12 @@ actor ExpiringActivityManager {
 
     /// Incremented when the system revokes background time to invalidate
     /// pending `taskDidFinish` calls from the previous registration cycle.
+    ///
+    /// Under normal conditions (all tasks finish on their own), the generation never changes. It only matters when the
+    /// system revokes background time. In that case, we cancel all tasks and immediately reset the manager so it's
+    /// ready for new work. But the old cancelled tasks may still be winding down — when they eventually finish, the
+    /// generation check tells them "you belong to a previous cycle, ignore your cleanup." Without it, their cleanup
+    /// would interfere with the new cycle's state.
     private var generation = 0
 
     /// Closures that cancel each tracked task, invoked when the system revokes background time.
