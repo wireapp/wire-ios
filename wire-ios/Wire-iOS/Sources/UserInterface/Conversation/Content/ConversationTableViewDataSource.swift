@@ -565,7 +565,9 @@ final class ConversationTableViewDataSource: NSObject {
         guard let section = index(of: message) else {
             return nil
         }
-
+        guard section < tableView.numberOfSections else {
+            return nil
+        }
         // The table view is upside down. The first visible cell of the message has the last index
         // in the message section.
         let numberOfMessageComponents = tableView.numberOfRows(inSection: section)
