@@ -249,7 +249,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     // TODO: [WPB-19777] deduplicate

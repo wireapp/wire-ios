@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
-    public internal(set) var isBuildBlacklisted = false
+    public private(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -402,6 +402,16 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
+    private lazy var checkBlacklistWorker: CheckBlacklistWorker? = .init(
+        isBuildBlacklistedUseCase: userSessionComponent.makeIsBuildBlacklistedUseCase(),
+        onIsBuildBlacklisted: { [weak self] in
+            guard let self else { return }
+
+            isBuildBlacklisted = true
+            delegate?.userSessionDidDiscoverBuildIsBlacklisted()
+        }
+    )
+
     let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
@@ -682,6 +692,7 @@ public final class ZMUserSession: NSObject {
         }
 
         await startWorkAgentAndGenerators()
+        checkBlacklistWorker?.start()
     }
 
     private func startWorkAgentAndGenerators() async {
@@ -770,6 +781,7 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+        checkBlacklistWorker = nil
 
         // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
         // are left to be cleaned up when ZMUserSession is deallocated to avoid
@@ -869,7 +881,6 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {

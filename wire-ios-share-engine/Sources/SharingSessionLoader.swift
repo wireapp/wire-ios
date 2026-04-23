@@ -246,7 +246,7 @@ public struct SharingSessionLoader {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     private func makeSharingSession(
