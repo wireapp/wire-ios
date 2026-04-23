@@ -20,6 +20,7 @@ import NeedleFoundation
 import UserNotifications
 import WireDataModel
 import WireLogging
+import WireUtilitiesPackage
 
 /// Receives and process a push notification through a flow of several steps:
 /// 1. Process push notification request (`ProcessNotificationRequestStep`)
@@ -110,9 +111,12 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                     contentHandler: notificationContentHandler
                 )
             } catch {
-                // TODO: [WPB-19762] show errors
                 logError(error)
-                notificationContentHandler(.emptyNotification)
+                if DeveloperFlag.showNSEErrors.isOn {
+                    notificationContentHandler(errorNotification(for: error))
+                } else {
+                    notificationContentHandler(.emptyNotification)
+                }
             }
         }
     }
@@ -120,6 +124,18 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     public func serviceExtensionTimeWillExpire() {
         logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
         onGoingTask?.cancel()
+    }
+}
+
+// MARK: - Error notification
+
+extension NotificationServiceExtension {
+    private func errorNotification(for error: any Error) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = "NSE Error"
+        content.body = String(describing: error)
+        content.interruptionLevel = .active
+        return content
     }
 }
 
