@@ -40,6 +40,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
+    case showNSEErrors
 
     public var description: String {
         switch self {
@@ -96,6 +97,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"
+
+        case .showNSEErrors:
+            "Turn on to show Notification Service Extension errors as notifications"
         }
     }
 
