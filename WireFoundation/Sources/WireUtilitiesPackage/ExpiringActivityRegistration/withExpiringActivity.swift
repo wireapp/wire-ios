@@ -22,10 +22,10 @@ private let sharedManager = ExpiringActivityManager(
 
 // MARK: - Non-throwing
 
-public func withExpiringActivity(
+public func withExpiringActivity<T>(
     reason: String,
-    block: @escaping @Sendable () async -> Void
-) async {
+    block: @escaping @Sendable () async -> T
+) async -> T where T: Sendable {
     await withExpiringActivity(
         manager: sharedManager,
         reason: reason,
@@ -33,14 +33,14 @@ public func withExpiringActivity(
     )
 }
 
-func withExpiringActivity(
+func withExpiringActivity<T>(
     manager: ExpiringActivityManager,
     reason: String,
-    block: @escaping @Sendable () async -> Void
-) async {
+    block: @escaping @Sendable () async -> T
+) async -> T where T: Sendable {
     let task = Task(operation: block)
     await manager.track(reason: reason, task: task)
-    await withTaskCancellationHandler {
+    return await withTaskCancellationHandler {
         await task.value
     } onCancel: {
         task.cancel()
@@ -60,24 +60,14 @@ public func withExpiringActivity<T>(
     )
 }
 
-<<<<<<< HEAD
 func withExpiringActivity<T>(
-    performer: some ExpiringActivityPerformerProtocol,
-=======
-func withExpiringActivity(
     manager: ExpiringActivityManager,
->>>>>>> 00e3c98c64 (fix: prevent deadlock when using withExpiringActivity - WPB-24585 (#4601))
     reason: String,
     block: @escaping @Sendable () async throws -> T
 ) async throws -> T where T: Sendable {
     let task = Task(operation: block)
-<<<<<<< HEAD
-    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    return try await withTaskCancellationHandler {
-=======
     await manager.track(reason: reason, task: task)
-    try await withTaskCancellationHandler {
->>>>>>> 00e3c98c64 (fix: prevent deadlock when using withExpiringActivity - WPB-24585 (#4601))
+    return try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {
         task.cancel()
