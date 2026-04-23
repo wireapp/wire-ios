@@ -19,6 +19,9 @@
       <Group
          location = "group:extract-ui-test-summary"
          name = "extract-ui-test-summary">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
       </Group>
       <Group
          location = "group:notify-wire"

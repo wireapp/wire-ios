@@ -57,9 +57,11 @@ runs:
         FAILED=0
         SKIPPED=0
         TOTAL=0
-        PARSED_SUMMARY=0
 
-        mapfile -t XCRESULTS < <(find "${{ inputs.xcresult_search_path }}" -type d -name '*.xcresult' 2>/dev/null)
+        XCRESULTS=()
+        while IFS= read -r line; do
+          XCRESULTS+=("$line")
+        done < <(find "${{ inputs.xcresult_search_path }}" -type d -name '*.xcresult' 2>/dev/null)
 
         if [ ${#XCRESULTS[@]} -eq 0 ]; then
           echo "passed=0" >> "$GITHUB_OUTPUT"
@@ -72,30 +74,24 @@ runs:
 
         TMP_JSON="$(mktemp)"
         for XCRESULT in "${XCRESULTS[@]}"; do
-          if ! xcrun xcresulttool get test-results summary --path "$XCRESULT" --format json > "$TMP_JSON" 2>/dev/null; then
-            echo "[WARN] Could not read test summary from $XCRESULT"
+          if ! xcrun xcresulttool get test-results tests --path "$XCRESULT" --format json > "$TMP_JSON" 2>/dev/null; then
+            echo "[WARN] Could not read test results from $XCRESULT"
             continue
           fi
 
-          P=$(jq '[.. | objects | select(has("passedTests")) | .passedTests // 0] | add // 0' "$TMP_JSON")
-          F=$(jq '[.. | objects | select(has("failedTests")) | .failedTests // 0] | add // 0' "$TMP_JSON")
-          S=$(jq '[.. | objects | select(has("skippedTests")) | .skippedTests // 0] | add // 0' "$TMP_JSON")
+          P=$(jq '[.. | objects | select((.nodeType? // "") == "Test Case" and (.testStatus? // "") == "Success")] | length' "$TMP_JSON")
+          F=$(jq '[.. | objects | select((.nodeType? // "") == "Test Case" and (.testStatus? // "") == "Failure")] | length' "$TMP_JSON")
+          S=$(jq '[.. | objects | select((.nodeType? // "") == "Test Case" and ((.testStatus? // "") == "Skipped" or (.testStatus? // "") == "Expected Failure"))] | length' "$TMP_JSON")
 
           PASSED=$((PASSED + P))
           FAILED=$((FAILED + F))
           SKIPPED=$((SKIPPED + S))
-          PARSED_SUMMARY=1
         done
 
         TOTAL=$((PASSED + FAILED + SKIPPED))
 
-        if [ "$PARSED_SUMMARY" -eq 0 ]; then
-          echo "passed=0" >> "$GITHUB_OUTPUT"
-          echo "failed=0" >> "$GITHUB_OUTPUT"
-          echo "skipped=0" >> "$GITHUB_OUTPUT"
-          echo "total=0" >> "$GITHUB_OUTPUT"
-          echo "failed_details=Summary unavailable: could not parse any xcresult bundle" >> "$GITHUB_OUTPUT"
-          exit 0
+        if [ "$TOTAL" -eq 0 ]; then
+          echo "[WARN] Parsed xcresult bundles but found no test case counts"
         fi
 
         FAILED_LINES=""
@@ -103,7 +99,7 @@ runs:
           CURRENT_FAILED=$(xcrun xcresulttool get test-results tests --path "$XCRESULT" --format json 2>/dev/null | jq -r '
             def nodes: recurse(.subtests[]?);
             [nodes
-             | select((.testStatus? // "") == "Failure")
+             | select((.nodeType? // "") == "Test Case" and (.testStatus? // "") == "Failure")
              | {
                  name: (.name // .identifier // "Unknown test"),
                  message: ([.failureText?, .summary?] | map(select(. != null and . != "")) | .[0] // "No failure message available")
