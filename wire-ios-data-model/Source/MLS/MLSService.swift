@@ -344,13 +344,13 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("updating key material for group", attributes: groupID.safeAttributes)
             try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         } catch {
             WireLogger.mls
                 .warn(
-                    "failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    "failed to update key material for group: \(String(describing: error))", attributes: groupID.safeAttributes
                 )
             throw error
         }
@@ -439,7 +439,7 @@ public final class MLSService: MLSServiceInterface {
             }
             return ciphersuite
         } catch {
-            logger.error("create group for self conversation failed: \(error.localizedDescription)")
+            logger.error("create group for self conversation failed: \(error.localizedDescription)", attributes: groupID.safeAttributes)
             throw error
         }
     }
@@ -486,7 +486,7 @@ public final class MLSService: MLSServiceInterface {
         } catch {
             logger
                 .warn(
-                    "failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    "failed to add members to group: \(String(describing: error))", attributes: groupID.safeAttributes
                 )
             throw error
         }
@@ -556,7 +556,7 @@ public final class MLSService: MLSServiceInterface {
         } catch {
             logger
                 .warn(
-                    "failed to remove members from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    "failed to remove members from group: \(String(describing: error))", attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
             throw error
         }
@@ -769,11 +769,11 @@ public final class MLSService: MLSServiceInterface {
 
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
 
-        logger.info("checking if group (\(groupID)) exists...")
+        logger.info("checking if mls group exists...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
         let result = try await coreCrypto.extendedTransaction { coreCrypto in
             try await coreCrypto.conversationExists(conversationId: groupID.conversationId)
         }
-        logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
+        logger.info("... group" + (result ? "exists!" : "does not exist!"), attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
         return result
     }
 
@@ -1398,15 +1398,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalCommitPendingProposals(in groupID: MLSGroupID) async throws {
         do {
-            logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
+            logger.info("committing pending proposals", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
             try await mlsActionExecutor.commitPendingProposals(in: groupID)
             await clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch {
-            logger
-                .info(
-                    "failed to commit pending proposals in \(groupID.safeForLoggingDescription): \(String(describing: error))"
-                )
+            logger.error("failed to commit pending proposals: \(String(describing: error))", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
             throw error
         }
     }
