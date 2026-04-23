@@ -68,7 +68,7 @@ extension UIApplication: ApplicationProtocol {
                 case .authorized:
                     grantedHandler(true)
                 case .limited:
-                    fallthrough
+                    grantedHandler(true)
                 @unknown default:
                     break
                 }

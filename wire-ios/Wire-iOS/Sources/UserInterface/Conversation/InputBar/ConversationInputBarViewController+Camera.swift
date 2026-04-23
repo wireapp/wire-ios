@@ -18,7 +18,8 @@
 
 import FLAnimatedImage
 import MobileCoreServices
-import Photos
+import PhotosUI
+import UniformTypeIdentifiers
 import WireCommonComponents
 import WireLogging
 import WireReusableUIComponents
@@ -220,7 +221,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
                 switch status {
-                case .authorized:
+                case .authorized, .limited:
                     closure(true)
                 default:
                     closure(false)
@@ -346,6 +347,19 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
+        // On Mac, both CameraKeyboardViewController and PHPickerViewController connect to
+        // PHPhotoLibrary via XPC, which hangs when the library is in a cloud-synced path.
+        // UIDocumentPickerViewController reads directly from the filesystem and avoids
+        // Photos Library entirely.
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            let types: [UTType] = [.image, .jpeg, .png, .heic, .gif, .movie, .video, .mpeg4Movie]
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
+            picker.allowsMultipleSelection = false
+            picker.delegate = macMediaPickerCoordinator
+            present(picker, animated: true)
+            return
+        }
+
         UIApplication.wr_requestVideoAccess { [mediaShareRestrictionManager] _ in
             if SecurityFlags.cameraRoll.isEnabled,
                mediaShareRestrictionManager.hasAccessToCameraRoll {
@@ -378,5 +392,52 @@ extension ConversationInputBarViewController {
             })
             checker.performAction()
         }
+    }
+}
+
+// MARK: - Mac media picker
+
+/// Handles UIDocumentPickerViewController for the camera button on Mac.
+/// A separate delegate is used so it doesn't conflict with the file-upload
+/// UIDocumentPickerDelegate already conforming to ConversationInputBarViewController.
+private final class MacMediaPickerCoordinator: NSObject, UIDocumentPickerDelegate {
+
+    weak var inputBar: ConversationInputBarViewController?
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let vc = inputBar, let url = urls.first else { return }
+
+        let type = UTType(filenameExtension: url.pathExtension)
+        if type?.conforms(to: .audiovisualContent) == true || type?.conforms(to: .movie) == true {
+            vc.processRecordedVideoAt(url)
+        } else if type?.conforms(to: .image) == true {
+            guard let data = try? Data(contentsOf: url),
+                  let image = UIImage(data: data),
+                  let jpegData = image.jpegData(compressionQuality: 0.9)
+            else { return }
+            let sendable = SendableImage(name: nil, utType: .jpeg, data: jpegData)
+            vc.showConfirmationForImage(sendable, isFromCamera: false)
+        }
+    }
+}
+
+private var macMediaPickerCoordinatorKey: UInt8 = 0
+
+extension ConversationInputBarViewController {
+
+    fileprivate var macMediaPickerCoordinator: MacMediaPickerCoordinator {
+        if let existing = objc_getAssociatedObject(self, &macMediaPickerCoordinatorKey)
+            as? MacMediaPickerCoordinator {
+            return existing
+        }
+        let coordinator = MacMediaPickerCoordinator()
+        coordinator.inputBar = self
+        objc_setAssociatedObject(
+            self,
+            &macMediaPickerCoordinatorKey,
+            coordinator,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+        return coordinator
     }
 }
