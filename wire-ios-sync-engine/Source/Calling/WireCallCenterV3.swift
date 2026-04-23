@@ -868,6 +868,11 @@ public extension WireCallCenterV3 {
                 parentGroupID: mlsParentIDs.1
             )
         }
+
+        if let snapshot = callSnapshots[conversationId], !snapshot.isGroup {
+            handle(callState: .terminating(reason: reason), conversationId: conversationId)
+        }
+
     }
 
     /// Rejects an incoming call in the conversation.
