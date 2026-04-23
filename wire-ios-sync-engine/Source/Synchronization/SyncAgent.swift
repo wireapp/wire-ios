@@ -41,6 +41,10 @@ protocol SyncAgentProtocol {
 
 final class SyncAgent: NSObject, SyncAgentProtocol {
 
+    enum Failure: Error {
+        case incrementalSyncFailed(Error)
+    }
+    
     var isSyncV2Enabled: Bool {
         journal[.isSyncV2Enabled]
     }
@@ -140,6 +144,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             } catch URLError.cancelled {
                 // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
                 // we treat it the same as a `CancellationError`
+            } catch Failure.incrementalSyncFailed(let error) where error is CancellationError {
+                // ignore
+                print("😁 CancellationError")
+            } catch Failure.incrementalSyncFailed(let error) where (error as? URLError)?.code == .cancelled {
+                // ignore
+                print("😁 URLErrorcancelled")
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
@@ -271,9 +281,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     syncStateSubject.send(.suspended)
                     // ignore error and don't retry, the sync will be resumed once the app is unlocked
                 } catch {
-                    WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                     syncStateSubject.send(.suspended)
-                    throw error
+                    throw Failure.incrementalSyncFailed(error)
                 }
             }
         }
