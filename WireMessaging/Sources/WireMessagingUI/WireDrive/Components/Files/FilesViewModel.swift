@@ -558,6 +558,8 @@ package final class FilesViewModel: ObservableObject {
     private func viewAsset(item: FilesViewItem) async {
         precondition(item.kind == .file)
 
+        guard sheetNavigation == nil else { return }
+
         do {
             let downloadState = try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
             switch downloadState {
