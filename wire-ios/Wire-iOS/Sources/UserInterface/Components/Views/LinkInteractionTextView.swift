@@ -28,8 +28,17 @@ final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 
     override var selectedTextRange: UITextRange? {
-        get { nil }
-        set { /* no-op */ }
+        get {
+            guard !ProcessInfo.processInfo.isiOSAppOnMac else { return super.selectedTextRange }
+            return nil
+        }
+        set {
+            guard !ProcessInfo.processInfo.isiOSAppOnMac else {
+                super.selectedTextRange = newValue
+                return
+            }
+            // no-op on iOS: prevents accidental text selection when tapping a message
+        }
     }
 
     // URLs with these schemes should be handled by the os.
@@ -51,6 +60,8 @@ final class LinkInteractionTextView: UITextView {
     }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        // On macOS let the text view receive all hits so text can be selected with cursor.
+        guard !ProcessInfo.processInfo.isiOSAppOnMac else { return super.point(inside: point, with: event) }
         let isInside = super.point(inside: point, with: event)
         guard !UIMenuController.shared.isMenuVisible else { return false }
         guard let position = characterRange(at: point), isInside else { return false }
