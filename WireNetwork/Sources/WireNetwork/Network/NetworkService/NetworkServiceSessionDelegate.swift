@@ -69,9 +69,16 @@ final class NetworkServiceSessionDelegate: NSObject, URLSessionWebSocketDelegate
         task: URLSessionTask,
         didCompleteWithError error: (any Error)?
     ) {
-        // NOTE: This method is not called when when using async/await APIs.
+        // NOTE: This method is not called when using async/await APIs.
         if let error {
-            WireLogger.network.error("task did complete with error: \(error)")
+            let nsError = error as NSError
+            if nsError.domain == URLError.errorDomain, nsError.code == NSURLErrorCancelled {
+                // skip logging Cancelled error
+            } else if nsError.domain == NSPOSIXErrorDomain, nsError.code == 53 {
+                // skip logging Software caused connection abort
+            } else {
+                WireLogger.network.error("task did complete with error: \(error)")
+            }
         } else {
             WireLogger.network.debug("task did complete")
         }
