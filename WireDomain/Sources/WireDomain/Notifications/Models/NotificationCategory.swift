@@ -44,6 +44,15 @@ public enum NotificationCategory: String, CaseIterable {
         }
     }
 
+    var interruptionLevel: UNNotificationInterruptionLevel {
+        switch self {
+        case .incomingCall, .unmutedConversation:
+            .timeSensitive
+        case .missedCall, .nonActionable, .incomingConnectionRequest:
+            .active
+        }
+    }
+
     private func make() -> UNNotificationCategory {
         let userActions = actions.map { $0.makeUNNotificationAction() }
 

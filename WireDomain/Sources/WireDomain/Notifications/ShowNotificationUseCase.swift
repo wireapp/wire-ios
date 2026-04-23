@@ -84,20 +84,25 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         _ notifications: [UNMutableNotificationContent]
     ) async throws {
         var notification: UNMutableNotificationContent
+        let interruptionLevel: UNNotificationInterruptionLevel
 
         switch notifications.count {
         case 0:
             // Nothing to show
             notification = .emptyNotification
+            interruptionLevel = .active
         case 1:
             notification = notifications[0]
+            let category = NotificationCategory(rawValue: notification.categoryIdentifier)
+            interruptionLevel = category?.interruptionLevel ?? .timeSensitive
         default:
             notification = UNMutableNotificationContent()
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
+            interruptionLevel = .timeSensitive
         }
 
-        notification.interruptionLevel = .timeSensitive
+        notification.interruptionLevel = interruptionLevel
         notification.badge = try await getNotificationBadge()
 
         WireLogger.notifications.info(
