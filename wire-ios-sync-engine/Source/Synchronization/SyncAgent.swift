@@ -41,8 +41,15 @@ protocol SyncAgentProtocol {
 
 final class SyncAgent: NSObject, SyncAgentProtocol {
 
-    enum Failure: Error {
+    enum Failure: WrappingError {
+        case initialSyncFailed(Error)
         case incrementalSyncFailed(Error)
+
+        var underlyingError: any Error {
+            switch self {
+            case .initialSyncFailed(let e), .incrementalSyncFailed(let e): e
+            }
+        }
     }
     
     var isSyncV2Enabled: Bool {
@@ -139,22 +146,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         try await self?.performSync()
                     }
                 }
-            } catch is CancellationError {
-                // ignore error
-            } catch URLError.cancelled {
-                // ignore error, this is a result of cancelling the sync while a `URLSessionDataTask` is in progress,
-                // we treat it the same as a `CancellationError`
-            } catch Failure.incrementalSyncFailed(let error) where error is CancellationError {
-                // ignore
-                print("😁 CancellationError")
-            } catch Failure.incrementalSyncFailed(let error) where (error as? URLError)?.code == .cancelled {
-                // ignore
-                print("😁 URLErrorcancelled")
             } catch {
-                delegate?.syncAgentDidFailSyncing(
-                    self,
-                    error: error
-                )
+                guard !error.isCancelledError else { return }
+                delegate?.syncAgentDidFailSyncing(self, error: error)
             }
 
         }
@@ -310,8 +304,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     journal[.isInitialSyncRequired] = false
                     delegate?.syncAgentDidFinishInitialSync(self)
                 } catch {
-                    WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
-                    throw error
+                    throw Failure.initialSyncFailed(error)
                 }
             }
         }

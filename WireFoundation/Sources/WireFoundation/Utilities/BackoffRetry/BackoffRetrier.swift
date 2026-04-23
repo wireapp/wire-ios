@@ -25,8 +25,14 @@ public actor BackoffRetrier {
         _ seconds: Double
     ) async throws -> Void
 
-    public enum Failure: Error {
+    public enum Failure: WrappingError {
         case exceededMaxAttempts(latestError: any Error)
+
+        public var underlyingError: any Error {
+            switch self {
+            case .exceededMaxAttempts(let e): e
+            }
+        }
     }
 
     private let policy: BackoffRetryPolicy
