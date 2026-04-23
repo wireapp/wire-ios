@@ -64,6 +64,7 @@ class WireUITestCase: XCTestCase {
         await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
         userHelper = nil
+        BackendContext.current = .staging
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {

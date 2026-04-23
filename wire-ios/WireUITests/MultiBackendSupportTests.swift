@@ -47,8 +47,6 @@ final class MultiBackendSupportTests: WireUITestCase {
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
 
-        defer { BackendContext.current = .staging }
-
         var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
         _ = try accountPageBackend1
