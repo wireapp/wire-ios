@@ -16,12 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol ExpiringActivityPerformerProtocol: Sendable {
+import WireLocators
+import XCTest
 
-    func performExpiringActivity(
-        reason: String,
-        using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-    )
+class BlockerPage: PageModel {
 
+    override var pageMainElement: XCUIElement {
+        mainContent
+    }
+
+    var mainContent: XCUIElement {
+        app.otherElements[Locators.BlockerPage.mainContent.rawValue]
+    }
+
+    var clientObsoleteAlert: XCUIElement {
+        app.alerts[Locators.BlockerPage.clientObsoleteAlertTitle.rawValue]
+    }
 }

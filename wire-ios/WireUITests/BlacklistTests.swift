@@ -16,12 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-protocol ExpiringActivityPerformerProtocol: Sendable {
+import XCTest
 
-    func performExpiringActivity(
-        reason: String,
-        using block: @escaping @Sendable (_ isExpiring: Bool) -> Void
-    )
+final class BlacklistTests: WireUITestCase {
 
+    override func setUpWithError() throws {
+        uiTestConfig.isBuildBlacklisted = true
+
+        try super.setUpWithError()
+    }
+
+    @MainActor
+    func testBlacklistAfterLogin__TC_9483() async throws {
+        let user = try await userHelper.createPersonalUser()
+        _ = try app.loginUser(email: user.email, password: user.password)
+
+        let blockerPage = try BlockerPage()
+
+        XCTAssertTrue(
+            blockerPage.clientObsoleteAlert.waitForExistence(timeout: 10),
+            "Client obsolete alert did not appear"
+        )
+    }
 }
