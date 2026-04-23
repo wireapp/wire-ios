@@ -36,7 +36,6 @@ package struct FilesViewContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let accentColorProvider: () -> WireAccentColor
 
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
 
@@ -57,8 +56,7 @@ package struct FilesViewContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        accentColorProvider: @escaping () -> WireAccentColor
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -69,7 +67,6 @@ package struct FilesViewContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
@@ -102,8 +99,7 @@ package struct FilesViewContainer: View {
                         localAssetRepository: localAssetRepository,
                         nodeCache: nodeCache,
                         nodeRenameNotifier: nodeRenameNotifier,
-                        fileCache: fileCache,
-                        accentColorProvider: accentColorProvider
+                        fileCache: fileCache
                     )
                 }
             }
@@ -178,8 +174,7 @@ package struct FilesViewContainer: View {
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: false,
-            triggerReload: triggerReloadFiles,
-            accentColorProvider: accentColorProvider
+            triggerReload: triggerReloadFiles
         )
     }
 }

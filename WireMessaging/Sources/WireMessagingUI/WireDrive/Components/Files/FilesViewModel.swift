@@ -233,14 +233,13 @@ package final class FilesViewModel: ObservableObject {
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
-    private let accentColorProvider: () -> WireAccentColor
     private var sortingSelection: FilesSortingViewModel.SortingSelection = .default
 
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
-    var shouldReload: Bool = false
+    var shouldReload: Bool = false //TODO: refactor and remove
     let title: String?
     var showSearchBar: Bool {
         guard !isOffline else {
@@ -319,7 +318,6 @@ package final class FilesViewModel: ObservableObject {
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
-        accentColorProvider: @escaping () -> WireAccentColor,
         networkMonitor: NetworkMonitor = .shared
     ) {
         self.useCases = useCases
@@ -334,7 +332,6 @@ package final class FilesViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
-        self.accentColorProvider = accentColorProvider
         self.networkMonitor = networkMonitor
     }
 
@@ -813,9 +810,6 @@ package final class FilesViewModel: ObservableObject {
     private func makeFileVersioningView(
         item: FilesViewItem
     ) -> FileVersioningView {
-        // always reload this view when file versioning is dismissed
-        shouldReload = true
-
         let viewModel = FileVersioningViewModel(
             nodeID: item.id,
             name: item.name,
@@ -823,7 +817,9 @@ package final class FilesViewModel: ObservableObject {
             fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
             restoreNodeVersionUseCase: useCases.restoreNodeVersion,
             getAssetUseCase: useCases.getAsset,
-            accentColorProvider: accentColorProvider
+            onVersionRestored: { [weak self] in
+                Task { await self?.reload() }
+            }
         )
 
         return FileVersioningView(viewModel: viewModel)

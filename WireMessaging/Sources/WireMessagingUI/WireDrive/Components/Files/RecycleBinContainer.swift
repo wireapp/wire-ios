@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-package import WireFoundation
+import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
@@ -35,7 +35,6 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let accentColorProvider: () -> WireAccentColor
 
     package init(
         cellName: String,
@@ -46,8 +45,7 @@ package struct RecycleBinContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        accentColorProvider: @escaping () -> WireAccentColor
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -58,7 +56,6 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
@@ -137,8 +134,7 @@ package struct RecycleBinContainer: View {
             fileCache: fileCache,
             cellName: cellName,
             isBrowsing: false,
-            isRecycleBin: true,
-            accentColorProvider: accentColorProvider
+            isRecycleBin: true
         )
     }
 }

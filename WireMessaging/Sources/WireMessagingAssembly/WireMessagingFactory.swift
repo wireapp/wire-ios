@@ -162,9 +162,9 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
-                fileCache: fileCache,
-                accentColorProvider: accentColorProvider
-            ).environment(\.wireAccentColor, accentColorProvider())
+                fileCache: fileCache
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
@@ -231,10 +231,10 @@ public extension WireMessagingFactory {
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isBrowsing: true,
-                    accentColorProvider: accentColorProvider
+                    isBrowsing: true
                 )
-            ).environment(\.wireAccentColor, accentColorProvider())
+            )
+            .environment(\.wireAccentColor, accentColorProvider())
         )
     }
 

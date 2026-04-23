@@ -117,8 +117,7 @@ extension FilesViewModel {
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isBrowsing: isBrowsing,
-            accentColorProvider: { .default }
+            isBrowsing: isBrowsing
         )
     }
 }
@@ -193,7 +192,6 @@ extension FileVersionItemViewModel {
                 title: "5:46AM",
                 subtitle: "Deniz Agha · 13MB"
             ),
-            accentColor: .default,
             onRestore: { _ in }
         )
     }
@@ -241,7 +239,7 @@ extension FileVersioningViewModel {
                 localAssetRepository: localAssetsRepository,
                 fileCache: MockFileCache()
             ),
-            accentColorProvider: { .default }
+            onVersionRestored: {}
         )
     }
 }
