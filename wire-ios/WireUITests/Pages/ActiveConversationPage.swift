@@ -127,6 +127,18 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
 
+    var photoButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var firstPhotoCell: XCUIElement {
+        app.images.element(boundBy: 0).firstMatch
+    }
+
+    var okToSend: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.ok.rawValue].firstMatch
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -201,5 +213,32 @@ class ActiveConversationPage: PageModel {
         conversationTitleButton.waitAndTap()
         sharedDriveButton.tap()
         return try SharedDriveFilesPage()
+    }
+
+    func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
+        photoButton.waitAndTap()
+
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        let allowButton = springboard.buttons["Allow"].firstMatch
+        if allowButton.waitForExistence(timeout: 2) {
+            allowButton.tap()
+        }
+
+        let allowFullAccessButton = springboard.buttons[
+            Locators.ActiveConversationPage.allowFullAccess.rawValue
+        ].firstMatch
+        if allowFullAccessButton.waitForExistence(timeout: 2) {
+            allowFullAccessButton.tap()
+        }
+
+        app.activate()
+        return self
+    }
+
+    func selectFirstImageAndSend() throws -> ActiveConversationPage {
+        firstPhotoCell.waitAndTap()
+        okToSend.waitAndTap()
+        return self
     }
 }

@@ -243,12 +243,12 @@ final class MessagingTests: WireUITestCase {
             line: line
         )
     }
-    
+
     @MainActor
-    func testSendAndReceiveImageInOneOnOneConversation_TC_8820_8827() async throws {
+    func testSendImageInOneOnOneConversation_TC_8820() async throws {
 
         // GIVEN
-        let (teamOwner, teamMembers, _ ,_) = try await userHelper
+        let (teamOwner, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1
             )
@@ -260,11 +260,36 @@ final class MessagingTests: WireUITestCase {
             .searchUserByUserHandle(teamOwner.username)
             .tapSearchedUserCell()
             .tapStartConversationButton()
-        
+            .openPhotosAndGrantPermission()
+            .selectFirstImageAndSend()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: 2), "No Image cell found"
+        )
+    }
+
+    @MainActor
+    func testReceiveImageInOneOnOneConversation_TC_8827() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1
+            )
+
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapSearchBox()
+            .searchUserByUserHandle(teamOwner.username)
+            .tapSearchedUserCell()
+            .tapStartConversationButton()
+
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
-        
+
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
-        
+
         let imageURL = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
@@ -279,25 +304,18 @@ final class MessagingTests: WireUITestCase {
             conversationId: conversationId,
             domain: conversationDomain
         )
-//
-//        XCTAssertTrue(
-//            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
-//            "Unread messages count element did not appear"
-//        )
-
-//        let activeConversationPage = try conversationsPage.openConversation()
 
         // THEN
-//        XCTAssertTrue(
-//            activeConversationPage.fileTypeIcons.firstMatch.exists,
-//            "Expected image attachment not found"
-//        )
-//
-//        let senderName = activeConversationPage.getSenderName()
-//        XCTAssertEqual(
-//            senderName,
-//            teamMembers1[0].name,
-//            "Sender info didn't match expected value \(teamMembers1[0].name)"
-//        )
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 2),
+            "Expected image attachment not found"
+        )
+
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamOwner.name,
+            "Sender info didn't match expected value \(teamOwner.name)"
+        )
     }
 }

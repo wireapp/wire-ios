@@ -133,6 +133,9 @@ public enum Locators {
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
+        case photoButton
+        case allowFullAccess = "Allow Full Access"
+        case ok = "OK"
     }
 
     public enum BackupOrRestorePage: String {
