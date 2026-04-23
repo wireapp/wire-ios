@@ -26,7 +26,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private enum Error: Swift.Error {
         case failedToActivateConversation
         case failedToFetchConversation
-        case failedToEstablishGroup(Swift.Error)
+        case failedToEstablishGroup(Swift.Error, MLSGroupID)
     }
 
     // MARK: - Properties
@@ -177,20 +177,13 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             let keys = mlsPublicKeys.flatMap {
                 WireDataModel.BackendMLSPublicKeys(removal: $0.toDataModel())
             }
-
-            do {
-                try await setupMLSGroup(
-                    mlsConversation: mlsConversation,
-                    groupID: mlsGroupID,
-                    mlsPublicKeys: keys,
-                    userID: userID
-                )
-            } catch {
-                WireLogger.conversation.error(
-                    "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
-                )
-                throw error
-            }
+            
+            try await setupMLSGroup(
+                mlsConversation: mlsConversation,
+                groupID: mlsGroupID,
+                mlsPublicKeys: keys,
+                userID: userID
+            )
         }
 
         try await switchLocalConversationToMLS(
@@ -238,7 +231,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 )
 
             } catch {
-                throw Error.failedToEstablishGroup(error)
+                throw Error.failedToEstablishGroup(error, groupID)
             }
         } else {
             try await mlsService.joinGroup(with: groupID)
