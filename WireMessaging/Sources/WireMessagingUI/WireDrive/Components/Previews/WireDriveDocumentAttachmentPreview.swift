@@ -57,14 +57,25 @@ struct WireDriveDocumentAttachmentPreview: View {
 
 #Preview {
     VStack {
-        WireDriveDocumentAttachmentPreview(
-            headerIcon: Image(WireDriveFileType.pdf.imageResource),
-            headerText: "PDF (336 KB)",
-            labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-            state: .loading(progress: 0.7, isLargeFile: false),
-            isDraftPreview: false,
-            minHeight: nil
-        )
+        Group {
+            WireDriveDocumentAttachmentPreview(
+                headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                headerText: "PDF (336 KB)",
+                labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
+                state: .loading(progress: 0.7, isLargeFile: false),
+                isDraftPreview: false,
+                minHeight: nil
+            )
+
+            WireDriveDocumentAttachmentPreview(
+                headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                headerText: "PDF (336 KB)",
+                labelText: "Filename",
+                state: .loading(progress: 0.7, isLargeFile: false),
+                isDraftPreview: false,
+                minHeight: nil
+            )
+        }
         .frame(width: 222)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
