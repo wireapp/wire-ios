@@ -72,7 +72,31 @@ final class MessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendAndReceiveImageInGroupConversation_TC_8834_8841() async throws {
+    func testSendImageInGroupConversation_TC_8834() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (_, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+
+        // WHEN
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .openConversation()
+            .openPhotosAndGrantPermission()
+            .selectFirstImageAndSend()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.imageCell.waitForExistence(timeout: 2), "No Image cell found"
+        )
+    }
+
+    @MainActor
+    func testReceiveImageInGroupConversation_TC_8841() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
@@ -253,6 +277,7 @@ final class MessagingTests: WireUITestCase {
                 withMemberCount: 1
             )
 
+        // WHEN
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
