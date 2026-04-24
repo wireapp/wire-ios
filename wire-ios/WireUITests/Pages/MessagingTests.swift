@@ -22,7 +22,34 @@ import XCTest
 final class MessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendAndReceiveTextInGroupConversation_TC_8833_8840() async throws {
+    func testSendTextInGroupConversation_TC_8833() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let message = UserGenerator.generateRandomMessage()
+
+        let (teamOwner, _, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+
+        // WHEN
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .openConversation()
+            .sendMessage(message)
+
+        // THEN
+        let sentMessage = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            sentMessage.contains(message),
+            "Expected message '\(message)' not found in sent messages: \(sentMessage)"
+        )
+    }
+
+    @MainActor
+    func testReceiveTextInGroupConversation_TC_8840() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
