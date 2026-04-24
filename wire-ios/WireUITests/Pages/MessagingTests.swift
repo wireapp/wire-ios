@@ -123,4 +123,59 @@ final class MessagingTests: WireUITestCase {
             "Sender info didn't match expected value \(teamMembers[0].name)"
         )
     }
+
+    @MainActor
+    func testSendAndReceiveAudioInGroupConversation_TC_8835_8842() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+
+        let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
+
+        let conversationDomain = BackendContext.current.domainInfo
+
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try firstTimePage.acceptPopup()
+
+        let durationInMillis = 5000
+        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
+
+        // WHEN member sends audio file
+        try await testServicesClient.sendFile(
+            type: "audio",
+            user: teamMembers[0],
+            fileName: "audio-message",
+            filepath: nil,
+            convoId: conversationId,
+            domain: conversationDomain,
+            audio: [
+                "durationInMillis": durationInMillis,
+                "normalizedLoudness": normalizedLoudness
+            ]
+        )
+        XCTAssertTrue(
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.exists,
+            "Expected file attachment not found"
+        )
+
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamMembers[0].name,
+            "Sender info didn't match expected value \(teamMembers[0].name)"
+        )
+    }
 }
