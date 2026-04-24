@@ -63,7 +63,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                         .frame(height: isFilterBarPresented ? nil : 0)
                         .padding(.bottom, isFilterBarPresented ? 15 : 0)
 
-                        FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                        FilesSortingView(viewModel: viewModel.filesSortingViewModel())
                     }
                     .padding(.top, 4)
 
