@@ -178,13 +178,14 @@ private extension FilesView {
 // MARK: - Sheet Navigation
 
 private extension FilesView {
-
     @ViewBuilder
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
-        case let .editTags(fileItem: fileItem):
+        case let .create(target):
+            viewModel.makeCreateFileView(target: target)
+        case let .editTags(fileItem: item):
             TagsEditView(
-                fileItem: fileItem,
+                fileItem: item,
                 useCases: .init(
                     updateTags: viewModel.useCases.updateTags,
                     getSuggestions: viewModel.useCases.getTagSuggestions
@@ -193,16 +194,14 @@ private extension FilesView {
                     await viewModel.reload()
                 }
             )
-        case let .shareLink(shareLinkView):
-            shareLinkView
-        case let .renameFile(fileRenameView):
-            fileRenameView
-        case let .create(folderView):
-            folderView
-        case let .versionHistory(versionHistoryView):
-            versionHistoryView
-        case let .moveToFolder(fileItem):
-            viewModel.moveToFolderView(item: fileItem)
+        case let .shareLink(item):
+            viewModel.makeShareLinkView(item: item)
+        case let .renameFile(item):
+            viewModel.makeFileRenameView(item: item)
+        case let .versionHistory(item):
+            viewModel.makeFileVersioningView(item: item)
+        case let .moveToFolder(item):
+            viewModel.moveToFolderView(item: item)
         }
     }
 }

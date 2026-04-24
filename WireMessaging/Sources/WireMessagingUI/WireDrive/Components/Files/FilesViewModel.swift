@@ -39,27 +39,27 @@ package final class FilesViewModel: ObservableObject {
     }
 
     enum SheetNavigation: Identifiable {
+        case create(target: WireDriveCreateFileUseCase.Target)
         case editTags(fileItem: FilesViewItem)
-        case shareLink(view: ShareLinkView)
+        case shareLink(fileItem: FilesViewItem)
         case moveToFolder(fileItem: FilesViewItem)
-        case renameFile(view: FileRenameView)
-        case create(view: CreateFileView)
-        case versionHistory(view: FileVersioningView)
+        case renameFile(fileItem: FilesViewItem)
+        case versionHistory(fileItem: FilesViewItem)
 
         var id: String {
             switch self {
-            case let .editTags(fileItem: item):
+            case let .create(target):
+                "create(\(target.id))"
+            case let .editTags(item):
                 "editTags(\(item.id))"
-            case let .shareLink(view):
-                "shareLink(\(view.id))"
-            case let .moveToFolder(fileItem):
-                "moveToFolder(\(fileItem.id))"
-            case let .create(view):
-                "create(\(view.id))"
-            case let .renameFile(view):
-                "renameFile(\(view.id))"
-            case let .versionHistory(view):
-                "versionHistory(\(view.id))"
+            case let .shareLink(item):
+                "shareLink(\(item.id))"
+            case let .moveToFolder(item):
+                "moveToFolder(\(item.id))"
+            case let .renameFile(item):
+                "renameFile(\(item.id))"
+            case let .versionHistory(item):
+                "versionHistory(\(item.id))"
             }
         }
     }
@@ -261,15 +261,15 @@ package final class FilesViewModel: ObservableObject {
                 case .restore:
                     await restoreItem(item)
                 case .rename:
-                    sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
+                    sheetNavigation = .renameFile(fileItem: item)
                 case .editTags:
                     sheetNavigation = .editTags(fileItem: item)
                 case .shareLink:
-                    sheetNavigation = .shareLink(view: makeShareLinkView(item: item))
+                    sheetNavigation = .shareLink(fileItem: item)
                 case .moveToFolder:
                     sheetNavigation = .moveToFolder(fileItem: item)
                 case .showVersionHistory:
-                    sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
+                    sheetNavigation = .versionHistory(fileItem: item)
                 case .edit:
                     isEditing = item
                 case .makeAvailableOffline:
@@ -435,31 +435,35 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func onCreate(target: WireDriveCreateFileUseCase.Target) {
-        guard let cellName else { return }
-
-        // When navigation path is empty, file/folder is created at the root path (cell name)
-        let path = navigationPath.last?.filePath ?? cellName
-
-        let viewModel = CreateFileViewModel(
-            creationTarget: target,
-            path: path,
-            createFileUseCase: useCases.createFile,
-            onNodeCreated: { [weak self] createdNode in
-                guard let self else { return }
-                if case .file = target {
-                    isEditing = makeFileViewItem(node: createdNode)
+        guard cellName != nil else { return }
+        sheetNavigation = .create(target: target)
+    }
+    
+    @ViewBuilder
+    func makeCreateFileView(target: WireDriveCreateFileUseCase.Target) -> some View {
+        if let cellName {
+            // When navigation path is empty, file/folder is created at the root path (cell name)
+            let path = navigationPath.last?.filePath ?? cellName
+            
+            let viewModel = CreateFileViewModel(
+                creationTarget: target,
+                path: path,
+                createFileUseCase: useCases.createFile,
+                onNodeCreated: { [weak self] createdNode in
+                    guard let self else { return }
+                    if case .file = target {
+                        isEditing = makeFileViewItem(node: createdNode)
+                    }
+                    Task {
+                        await reload()
+                    }
                 }
-                Task {
-                    await reload()
-                }
-            }
-        )
-
-        let createFileView = CreateFileView(
-            viewModel: viewModel
-        )
-
-        sheetNavigation = .create(view: createFileView)
+            )
+            
+            CreateFileView(
+                viewModel: viewModel
+            )
+        }
     }
 
     // MARK: - Private
@@ -617,9 +621,8 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func makeFileRenameView(
-        item: FilesViewItem
-    ) -> FileRenameView {
+    @ViewBuilder
+    func makeFileRenameView(item: FilesViewItem) -> some View {
         let viewModel = FileRenameViewModel(
             renameNodeUseCase: useCases.renameNode,
             model: .init(
@@ -633,13 +636,11 @@ package final class FilesViewModel: ObservableObject {
             }
         )
 
-        return FileRenameView(viewModel: viewModel)
+        FileRenameView(viewModel: viewModel)
     }
 
-    private func makeShareLinkView(
-        item: FilesViewItem
-    ) -> ShareLinkView {
-
+    @ViewBuilder
+    func makeShareLinkView(item: FilesViewItem) -> some View {
         let viewModel = ShareLinkView.ViewModel(
             fileItem: item,
             useCases: ShareLinkView.ViewModel.UseCases(
@@ -662,12 +663,11 @@ package final class FilesViewModel: ObservableObject {
             }
         )
 
-        return ShareLinkView(viewModel: viewModel)
+        ShareLinkView(viewModel: viewModel)
     }
 
-    private func makeFileVersioningView(
-        item: FilesViewItem
-    ) -> FileVersioningView {
+    @ViewBuilder
+    func makeFileVersioningView(item: FilesViewItem) -> some View {
         let viewModel = FileVersioningViewModel(
             nodeID: item.id,
             name: item.name,
@@ -680,7 +680,7 @@ package final class FilesViewModel: ObservableObject {
             }
         )
 
-        return FileVersioningView(viewModel: viewModel)
+        FileVersioningView(viewModel: viewModel)
     }
 
     // MARK: - Sorting & Filtering
