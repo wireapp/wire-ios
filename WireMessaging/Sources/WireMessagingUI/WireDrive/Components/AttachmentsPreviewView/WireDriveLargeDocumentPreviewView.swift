@@ -39,7 +39,7 @@ struct WireDriveLargeDocumentPreviewView: View {
 
     var body: some View {
         WireDriveAttachmentPreview {
-            VStack {
+            VStack(spacing: 0) {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
