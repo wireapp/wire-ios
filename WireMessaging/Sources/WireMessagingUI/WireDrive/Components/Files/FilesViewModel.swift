@@ -17,7 +17,6 @@
 //
 
 package import Combine
-import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
 import WireLogging
@@ -244,7 +243,7 @@ package final class FilesViewModel: ObservableObject {
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(
+        .init(
             item: state.items[index],
             selectedSortingKey: sortingSelection.sortingKey,
             conversationName: isBrowsing ? state.items[index].conversationName : nil,
@@ -283,39 +282,31 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
-    func moveToFolderView(item: FilesViewItem) -> some View {
+    func moveToFolderViewModel(item: FilesViewItem) -> MoveToFolderViewModel {
         let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
-        let nodesRepository = nodesRepository
-        let assetRepository = localAssetRepository
-        let useCases = useCases
-        return MoveToFolderView(
-            viewModel: MoveToFolderViewModel(
-                containerPath: containerPath,
-                nodeID: item.id,
-                nodeName: item.name,
-                onFinish: { [weak self] in
-                    self?.sheetNavigation = nil
-                    Task { await self?.reload(refreshing: true) }
-                },
+        return .init(
+            containerPath: containerPath,
+            nodeID: item.id,
+            nodeName: item.name,
+            onFinish: { [weak self] in
+                self?.sheetNavigation = nil
+                Task { await self?.reload(refreshing: true) }
+            },
+            nodesRepository: nodesRepository,
+            localAssetRepository: localAssetRepository,
+            moveNodeUseCase: WireDriveMoveNodeUseCase(
                 nodesRepository: nodesRepository,
-                localAssetRepository: assetRepository,
-                moveNodeUseCase: WireDriveMoveNodeUseCase(
-                    nodesRepository: nodesRepository,
-                    localAssetRepository: assetRepository
-                ),
-                createFileUseCase: useCases.createFile
-            )
+                localAssetRepository: localAssetRepository
+            ),
+            createFileUseCase: useCases.createFile
         )
     }
 
-    func editFileView(item: FilesViewItem) -> some View {
-        let getEditingURLUseCase = useCases.getEditingURL
-        return EditFileView(
-            viewModel: EditFileViewModel(
-                nodeID: item.id,
-                fileName: item.name,
-                getEditingURLUseCase: getEditingURLUseCase
-            )
+    func editFileViewModel(item: FilesViewItem) -> EditFileViewModel {
+        .init(
+            nodeID: item.id,
+            fileName: item.name,
+            getEditingURLUseCase: useCases.getEditingURL
         )
     }
 
@@ -439,31 +430,24 @@ package final class FilesViewModel: ObservableObject {
         sheetNavigation = .create(target: target)
     }
     
-    @ViewBuilder
-    func makeCreateFileView(target: WireDriveCreateFileUseCase.Target) -> some View {
-        if let cellName {
-            // When navigation path is empty, file/folder is created at the root path (cell name)
-            let path = navigationPath.last?.filePath ?? cellName
-            
-            let viewModel = CreateFileViewModel(
-                creationTarget: target,
-                path: path,
-                createFileUseCase: useCases.createFile,
-                onNodeCreated: { [weak self] createdNode in
-                    guard let self else { return }
-                    if case .file = target {
-                        isEditing = makeFileViewItem(node: createdNode)
-                    }
-                    Task {
-                        await reload()
-                    }
+    func createFileViewModel(target: WireDriveCreateFileUseCase.Target) -> CreateFileViewModel {
+        // When navigation path is empty, file/folder is created at the root path (cell name)
+        let path = navigationPath.last?.filePath ?? cellName ?? ""
+        
+        return CreateFileViewModel(
+            creationTarget: target,
+            path: path,
+            createFileUseCase: useCases.createFile,
+            onNodeCreated: { [weak self] createdNode in
+                guard let self else { return }
+                if case .file = target {
+                    isEditing = makeFileViewItem(node: createdNode)
                 }
-            )
-            
-            CreateFileView(
-                viewModel: viewModel
-            )
-        }
+                Task {
+                    await reload()
+                }
+            }
+        )
     }
 
     // MARK: - Private
@@ -621,9 +605,8 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    @ViewBuilder
-    func makeFileRenameView(item: FilesViewItem) -> some View {
-        let viewModel = FileRenameViewModel(
+    func fileRenameViewModel(item: FilesViewItem) -> FileRenameViewModel {
+        .init(
             renameNodeUseCase: useCases.renameNode,
             model: .init(
                 nodeID: item.id,
@@ -635,13 +618,10 @@ package final class FilesViewModel: ObservableObject {
                 Task { await self?.reload() }
             }
         )
-
-        FileRenameView(viewModel: viewModel)
     }
 
-    @ViewBuilder
-    func makeShareLinkView(item: FilesViewItem) -> some View {
-        let viewModel = ShareLinkView.ViewModel(
+    func shareLinkViewModel(item: FilesViewItem) -> ShareLinkView.ViewModel {
+        .init(
             fileItem: item,
             useCases: ShareLinkView.ViewModel.UseCases(
                 getLinkData: useCases.getPublicLinkData,
@@ -662,13 +642,10 @@ package final class FilesViewModel: ObservableObject {
                 }
             }
         )
-
-        ShareLinkView(viewModel: viewModel)
     }
 
-    @ViewBuilder
-    func makeFileVersioningView(item: FilesViewItem) -> some View {
-        let viewModel = FileVersioningViewModel(
+    func fileVersioningViewModel(item: FilesViewItem) -> FileVersioningViewModel {
+        .init(
             nodeID: item.id,
             name: item.name,
             eTag: item.eTag,
@@ -679,8 +656,6 @@ package final class FilesViewModel: ObservableObject {
                 Task { await self?.reload() }
             }
         )
-
-        FileVersioningView(viewModel: viewModel)
     }
 
     // MARK: - Sorting & Filtering

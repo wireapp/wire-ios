@@ -68,7 +68,7 @@ package struct FilesView: View {
                 Task { await viewModel.reload() }
             },
             content: { item in
-                viewModel.editFileView(item: item)
+                EditFileView(viewModel: viewModel.editFileViewModel(item: item))
             }
         )
     }
@@ -182,7 +182,7 @@ private extension FilesView {
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
         case let .create(target):
-            viewModel.makeCreateFileView(target: target)
+            CreateFileView(viewModel: viewModel.createFileViewModel(target: target))
         case let .editTags(fileItem: item):
             TagsEditView(
                 fileItem: item,
@@ -195,13 +195,13 @@ private extension FilesView {
                 }
             )
         case let .shareLink(item):
-            viewModel.makeShareLinkView(item: item)
+            ShareLinkView(viewModel: viewModel.shareLinkViewModel(item: item))
         case let .renameFile(item):
-            viewModel.makeFileRenameView(item: item)
+            FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
         case let .versionHistory(item):
-            viewModel.makeFileVersioningView(item: item)
+            FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
         case let .moveToFolder(item):
-            viewModel.moveToFolderView(item: item)
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
         }
     }
 }
