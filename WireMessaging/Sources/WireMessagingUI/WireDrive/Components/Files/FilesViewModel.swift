@@ -17,70 +17,11 @@
 //
 
 package import Combine
-package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
-package import WireFoundation
+import WireFoundation
 import WireLogging
 package import WireMessagingDomain
-import WireMessagingDomainSupport
-
-/// An item in the `FilesView`.
-package struct FilesViewItem: Identifiable, Hashable {
-
-    /// The kind of item
-    enum Kind {
-
-        /// A file.
-        case file
-
-        /// A folder.
-        case folder
-    }
-
-    /// Identifier of this item on the wire drive backend.
-    package let id: UUID
-
-    /// The ETag of this item.
-    let eTag: String
-
-    /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
-    /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
-    var recycleBinTopFolderId: UUID?
-
-    /// The kind of this item - file or folder.
-    let kind: Kind
-
-    /// The name of the this item.
-    let name: String
-
-    /// The filepath of the item.
-    let filePath: String
-
-    /// The name of the user who owns (uploaded) this file.
-    let ownedBy: String?
-
-    /// The date when the item was last modified.
-    let modifiedAt: Date?
-
-    /// The icon representing the item's type.
-    let icon: WireDriveFileType
-
-    /// The tags that users have added for that file.
-    let tags: [String]
-
-    /// Whether the item can be edited.
-    let isEditable: Bool
-
-    /// The public link identifier if the item has a public link.
-    let publicLinkID: String?
-
-    /// The name of the conversation the node is attached to.
-    let conversationName: String?
-
-    /// The size of of this item
-    let size: UInt64?
-}
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -155,77 +96,6 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    package struct UseCases {
-        package init(
-            fetchNodes: WireDriveFetchNodesPageUseCase,
-            deleteNodes: WireDriveDeleteNodesUseCase,
-            restoreNodes: WireDriveRestoreNodesUseCase,
-            renameNode: any WireDriveRenameNodeUseCaseProtocol,
-            updateTags: any WireDriveUpdateTagsUseCaseProtocol,
-            getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            createFile: any WireDriveCreateFileUseCaseProtocol,
-            fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
-            restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
-            getEditingURL: WireDriveGetEditingURLUseCase,
-            getAsset: WireDriveGetAssetUseCase,
-            getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol,
-            createPublicLink: WireDriveCreatePublicLinkUseCase,
-            deletePublicLink: WireDriveDeletePublicLinkUseCase,
-            updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
-            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
-            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol,
-            getFileTemplates: any WireDriveFetchFileTemplatesUseCaseProtocol,
-            makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase,
-            removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
-            getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
-        ) {
-
-            self.fetchNodes = fetchNodes
-            self.deleteNodes = deleteNodes
-            self.restoreNodes = restoreNodes
-            self.renameNode = renameNode
-            self.updateTags = updateTags
-            self.getTagSuggestions = getTagSuggestions
-            self.createFile = createFile
-            self.fetchNodeVersions = fetchNodeVersions
-            self.restoreNodeVersion = restoreNodeVersion
-            self.getEditingURL = getEditingURL
-            self.getAsset = getAsset
-            self.getPublicLinkData = getPublicLinkData
-            self.createPublicLink = createPublicLink
-            self.deletePublicLink = deletePublicLink
-            self.updatePublicLinkExpiration = updatePublicLinkExpiration
-            self.updatePublicLinkPassword = updatePublicLinkPassword
-            self.getDriveConversations = getDriveConversations
-            self.getFileTemplates = getFileTemplates
-            self.makeAssetAvailableOffline = makeAssetAvailableOffline
-            self.removeAssetAvailableOffline = removeAssetAvailableOffline
-            self.getOfflineAvailableAssets = getOfflineAvailableAssets
-        }
-
-        let fetchNodes: WireDriveFetchNodesPageUseCase
-        let deleteNodes: WireDriveDeleteNodesUseCase
-        let restoreNodes: WireDriveRestoreNodesUseCase
-        let renameNode: any WireDriveRenameNodeUseCaseProtocol
-        let updateTags: any WireDriveUpdateTagsUseCaseProtocol
-        let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
-        let createFile: any WireDriveCreateFileUseCaseProtocol
-        let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
-        let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
-        let getEditingURL: WireDriveGetEditingURLUseCase
-        let getAsset: WireDriveGetAssetUseCase
-        let getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol
-        let createPublicLink: WireDriveCreatePublicLinkUseCase
-        let deletePublicLink: WireDriveDeletePublicLinkUseCase
-        let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
-        let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
-        let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
-        let getFileTemplates: any WireDriveFetchFileTemplatesUseCaseProtocol
-        let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
-        let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
-        let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
-    }
-
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
@@ -238,7 +108,7 @@ package final class FilesViewModel: ObservableObject {
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
-    let triggerReload: PassthroughSubject<Void, Never> //TODO: check if needed
+    let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
     var showSearchBar: Bool {
         guard !isOffline else {
