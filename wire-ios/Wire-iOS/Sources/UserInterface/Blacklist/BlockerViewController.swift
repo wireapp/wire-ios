@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireLocators
 import WireLogging
 import WireMultiBackendUI
 import WireSyncEngine
@@ -54,6 +55,7 @@ final class BlockerViewController: LaunchImageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.accessibilityIdentifier = Locators.BlockerPage.mainContent.rawValue
         setupApplicationNotifications()
     }
 
