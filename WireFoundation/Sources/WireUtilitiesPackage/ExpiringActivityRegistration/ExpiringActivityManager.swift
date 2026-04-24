@@ -95,7 +95,10 @@ actor ExpiringActivityManager {
             }
         }
 
-        Task.detached { [self] in
+        // Use .userInitiated priority to match the QoS of the thread that
+        // performExpiringActivity uses for its handler, avoiding priority inversion
+        // on the semaphore.
+        Task.detached(priority: .userInitiated) { [self] in
             _ = try? await task.value
             logger.debug("Task finished [reason: \(reason)]")
             await taskDidFinish(generation: trackGeneration)
