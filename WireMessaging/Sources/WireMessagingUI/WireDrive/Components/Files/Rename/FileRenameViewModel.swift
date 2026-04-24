@@ -37,7 +37,8 @@ final class FileRenameViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
-    @Published var didRename: Bool = false
+
+    let onRenamed: () -> Void
 
     var isSaveDisabled: Bool {
         errorMessage != nil || !isInputValid
@@ -102,12 +103,14 @@ final class FileRenameViewModel: ObservableObject {
     init(
         renameNodeUseCase: any WireDriveRenameNodeUseCaseProtocol,
         model: Model,
-        kind: FilesViewItem.Kind
+        kind: FilesViewItem.Kind,
+        onRenamed: @escaping () -> Void
     ) {
         self.renameNodeUseCase = renameNodeUseCase
         self.filenameInput = kind == .folder ? model.filename : Self.removeFileExtension(from: model.filename)
         self.model = model
         self.kind = kind
+        self.onRenamed = onRenamed
 
         bindTextInput()
     }
@@ -133,7 +136,7 @@ final class FileRenameViewModel: ObservableObject {
                     isFolder: kind == .folder
                 )
 
-                didRename = true
+                onRenamed()
             }
 
             return true

@@ -76,8 +76,14 @@ extension ShareLinkView {
         // MARK: - UI State
 
         @Published var sheetNavigation: SheetNavigation?
-        @Published var publicLinkState: PublicLinkState
+        @Published var publicLinkState: PublicLinkState {
+            didSet {
+                onLinkStateChanged(publicLinkState)
+            }
+        }
         @Published var isPresentingError = false
+
+        let onLinkStateChanged: (PublicLinkState) -> Void
 
         init(
             fileItem: FilesViewItem,
@@ -87,10 +93,12 @@ extension ShareLinkView {
                 TimeZone.autoupdatingCurrent
             ),
             useCases: UseCases,
+            onLinkStateChanged: @escaping (PublicLinkState) -> Void
         ) {
             self.fileItem = fileItem
             self.context = context
             self.useCases = useCases
+            self.onLinkStateChanged = onLinkStateChanged
             self.publicLinkState = if let linkID = fileItem.publicLinkID {
                 .initial(id: linkID)
             } else {

@@ -238,8 +238,7 @@ package final class FilesViewModel: ObservableObject {
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
-    let triggerReload: PassthroughSubject<Void, Never>
-    var shouldReload: Bool = false //TODO: refactor and remove
+    let triggerReload: PassthroughSubject<Void, Never> //TODO: check if needed
     let title: String?
     var showSearchBar: Bool {
         guard !isOffline else {
@@ -483,13 +482,6 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(newPath)
     }
 
-    func onSheetDismissed() async {
-        if shouldReload {
-            await reload()
-            shouldReload = false
-        }
-    }
-
     var isInFolder: Bool {
         !navigationPath.isEmpty
     }
@@ -584,9 +576,11 @@ package final class FilesViewModel: ObservableObject {
             createFileUseCase: useCases.createFile,
             onNodeCreated: { [weak self] createdNode in
                 guard let self else { return }
-                shouldReload = true
                 if case .file = target {
                     isEditing = makeFileViewItem(node: createdNode)
+                }
+                Task {
+                    await reload()
                 }
             }
         )
@@ -763,14 +757,11 @@ package final class FilesViewModel: ObservableObject {
                 filename: item.name,
                 filepath: item.filePath,
             ),
-            kind: item.kind
+            kind: item.kind,
+            onRenamed: { [weak self] in
+                Task { await self?.reload() }
+            }
         )
-
-        // to know whether we need to reload items.
-        viewModel.$didRename
-            .sink { [weak self] didRename in
-                self?.shouldReload = didRename
-            }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)
     }
@@ -790,19 +781,16 @@ package final class FilesViewModel: ObservableObject {
                 getPublicLinkPasswordUseCase: WireDriveGetPublicLinkPasswordUseCase(keychain: Keychain()),
                 storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase(keychain: Keychain()),
                 deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase(keychain: Keychain())
-            )
-        )
-
-        viewModel.$publicLinkState
-            .sink { [weak self] state in
+            ),
+            onLinkStateChanged: { [weak self] state in
                 switch state {
                 case .enabled, .disabled:
-                    self?.shouldReload = true
+                    Task { await self?.reload() }
                 default:
                     break
                 }
-
-            }.store(in: &subscriptions)
+            }
+        )
 
         return ShareLinkView(viewModel: viewModel)
     }

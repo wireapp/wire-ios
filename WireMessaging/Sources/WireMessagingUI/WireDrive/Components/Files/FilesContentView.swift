@@ -114,9 +114,6 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
             .sheet(
                 item: $viewModel.sheetNavigation,
-                onDismiss: {
-                    Task { await viewModel.onSheetDismissed() }
-                },
                 content: { navigationItem in
                     sheetContent(navigationItem)
                 }
