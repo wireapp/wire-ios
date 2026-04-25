@@ -18,6 +18,7 @@
 
 import Down
 import Foundation
+import UIKit
 
 extension NSAttributedString {
 
@@ -30,7 +31,14 @@ extension NSAttributedString {
             NSMutableAttributedString(string: text)
         }
 
-        if result.string.last == "\n" {
+        // Paragraph-break newlines emitted by Down carry an explicit paragraphStyle (with
+        // paragraphSpacing > 0), whereas soft-break newlines carry no paragraphStyle at all.
+        // Insert an actual blank-line newline after each paragraph break so that a double-
+        // newline in the original text renders as a visible empty line.
+        result.insertEmptyLinesAtParagraphBreaks()
+
+        // There may now be two trailing newlines (paragraph break + blank line); remove both.
+        while result.string.last == "\n" {
             result.deleteCharacters(in: NSRange(location: result.length - 1, length: 1))
         }
 
@@ -39,6 +47,47 @@ extension NSAttributedString {
         }
 
         return result
+    }
+}
+
+private extension NSMutableAttributedString {
+
+    /// Inserts a blank-line newline after every paragraph-break newline.
+    ///
+    /// Down marks paragraph-break newlines with an explicit `.paragraphStyle` whose
+    /// `paragraphSpacing > 0`.  Soft-break newlines have no paragraph style at all.
+    /// By inserting a second `\n` (carrying only `minimumLineHeight`) we create a real
+    /// empty line rather than relying on `paragraphSpacing`, which can be too subtle.
+    func insertEmptyLinesAtParagraphBreaks() {
+        // Collect the indices of paragraph-break newlines in a first pass.
+        var breakIndices = [Int]()
+        let nsString = string as NSString
+        var i = 0
+        while i < length {
+            if nsString.character(at: i) == 0x0A,
+               let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.paragraphSpacing > 0 {
+                breakIndices.append(i)
+            }
+            i += 1
+        }
+
+        // Process in reverse so earlier insertions don't shift later indices.
+        for breakIndex in breakIndices.reversed() {
+            // Build the blank-line style: same minimumLineHeight as the paragraph break so
+            // the blank line is the same height as a text line; no paragraphSpacing so the
+            // gap is exactly one line tall.
+            let existingStyle = attribute(.paragraphStyle, at: breakIndex, effectiveRange: nil) as? NSParagraphStyle
+            let blankStyle = NSMutableParagraphStyle()
+            blankStyle.minimumLineHeight = existingStyle?.minimumLineHeight ?? 22
+            blankStyle.paragraphSpacing = 0
+
+            let blankLine = NSAttributedString(
+                string: "\n",
+                attributes: [.paragraphStyle: blankStyle as NSParagraphStyle]
+            )
+            insert(blankLine, at: breakIndex + 1)
+        }
     }
 }
 
