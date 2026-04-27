@@ -10,7 +10,7 @@ op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.x
 Note: the xcconfig cannot handle "//", so take care when adding values
 
 
-### Run Testservice UI tests (e.g., `MessagingTests`) locally
+### Run Testservice UI tests (e.g., `*MessagingTests`) locally
 
 #### Prerequisites
 

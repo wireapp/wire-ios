@@ -120,7 +120,9 @@ public enum Locators {
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case imageCell = "ImageCell"
+        case imageCell
+        case videoCell
+        case videoPlayButton
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
@@ -141,7 +143,7 @@ public enum Locators {
         case stopRecording = "Stop recording"
         case helium = "Helium"
         case sendAudio = "Send"
-        case playAudioFile = "AudioActionButton"
+        case playAudioFile
         case recordingTime
 
     }

@@ -60,6 +60,17 @@ export PATH="$JAVA_HOME/bin:$PATH"
 echo "JAVA_HOME=$JAVA_HOME"
 java -version
 
+echo "== Seeding simulator media =="
+SEED_MEDIA_SCRIPT="$SCRIPT_DIR/seed-media.sh"
+if [[ -f "$SEED_MEDIA_SCRIPT" ]]; then
+  if bash "$SEED_MEDIA_SCRIPT"; then
+    echo "✅ Simulator media seeded successfully"
+  else
+    echo "WARNING: Failed to seed simulator media using $SEED_MEDIA_SCRIPT. Continuing local testservice setup."
+  fi
+else
+  echo "WARNING: seed-media.sh not found at $SEED_MEDIA_SCRIPT. Skipping simulator media seeding."
+fi
 
 echo "== Cleaning previous local state =="
 if [[ -f "$PID_FILE" ]]; then

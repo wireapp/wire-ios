@@ -39,7 +39,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .tapSearchedUserCell()
             .tapStartConversationButton()
             .openPhotosAndGrantPermission()
-            .selectFirstImageAndSend()
+            .selectImageAndSend()
 
         // THEN
         XCTAssertTrue(

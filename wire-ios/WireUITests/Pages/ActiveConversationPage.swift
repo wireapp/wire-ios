@@ -70,7 +70,15 @@ class ActiveConversationPage: PageModel {
     }
 
     var imageCell: XCUIElement {
-        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
+    }
+
+    var videoCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCell.rawValue].firstMatch
+    }
+
+    var videoPlayButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
     var userRemovedSystemMessage: XCUIElement {
@@ -131,7 +139,11 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
 
-    var firstPhotoCell: XCUIElement {
+    var imageToChoose: XCUIElement {
+        app.images.element(boundBy: 1).firstMatch
+    }
+
+    var videoToChoose: XCUIElement {
         app.images.element(boundBy: 0).firstMatch
     }
 
@@ -264,15 +276,37 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func selectFirstImageAndSend() throws -> ActiveConversationPage {
-        firstPhotoCell.waitAndTap()
+    func openPhotosAgain() throws -> ActiveConversationPage {
+        photoButton.waitAndTap()
+        return self
+    }
+
+    func selectImageAndSend() throws -> ActiveConversationPage {
+        imageToChoose.waitAndTap()
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "OK button did not appear after selecting media"
+        )
+        okToSend.waitAndTap()
+        return self
+    }
+
+    func selectVideoAndSend() throws -> ActiveConversationPage {
+        videoToChoose.waitAndTap()
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "OK button did not appear after selecting media"
+        )
         okToSend.waitAndTap()
         return self
     }
 
     func recordAudioAndSend() throws -> ActiveConversationPage {
         audioButton.tap()
-        startRecording.tap()
+        if audioButton.waitForExistence(timeout: 1), audioButton.isHittable {
+            audioButton.tap()
+        }
+        startRecording.waitAndTap()
 
         let predicate = NSPredicate(format: "value == %@ OR label == %@", "0:04", "0:04")
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: recordingTimeLabel)
