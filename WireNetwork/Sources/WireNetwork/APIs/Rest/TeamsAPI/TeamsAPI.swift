@@ -105,7 +105,7 @@ public protocol TeamsAPI {
     func notifications(
         sinceEventID: UUID?,
         maxResults: UInt
-    ) throws -> PayloadPager<UpdateEventBatch> TODO: don't use UpdateEventBatch and UpdateEventListResponseV0
+    ) throws -> PayloadPager<TeamNotificationBatch>
 
 }
 
@@ -114,7 +114,7 @@ public extension TeamsAPI {
     /// Calls `notifications(sinceEventID:maxResults:)` with `maxResults` set to 1000.
     func notifications(
         sinceEventID: UUID?
-    ) throws -> PayloadPager<UpdateEventBatch> {
+    ) throws -> PayloadPager<TeamNotificationBatch> {
         try notifications(sinceEventID: sinceEventID, maxResults: 1000)
     }
 
