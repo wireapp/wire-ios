@@ -26,10 +26,12 @@ enum StorableTeamEvent: Equatable, Codable, Sendable {
     case memberUpdate(StorableTeamMemberUpdateEvent)
     case create(StorableTeamCreateEvent)
 
-    init(_ value: WireNetwork.TeamEvent) {
+    init?(_ value: WireNetwork.TeamEvent) {
         switch value {
         case .delete:
             self = .delete
+        case .memberJoin:
+            return nil // not a storable event
         case let .memberLeave(memberLeave):
             self = .memberLeave(StorableTeamMemberLeaveEvent(memberLeave))
         case let .memberUpdate(memberUpdate):

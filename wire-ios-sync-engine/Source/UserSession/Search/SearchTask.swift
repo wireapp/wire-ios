@@ -108,6 +108,17 @@ public final class SearchTask {
         // print(missingUsers.map(\.name).joined(separator: "\n"))
         print(missingUsers.first)
 
+
+        do {
+            let ep = try! teamsAPI.notifications(sinceEventID: .none)
+            for try await ep in ep {
+                print(ep)
+            }
+        } catch {
+            fatalError("\(error)")
+        }
+
+
         guard case .pending = status else {
             assertionFailure()
             return SearchResult()

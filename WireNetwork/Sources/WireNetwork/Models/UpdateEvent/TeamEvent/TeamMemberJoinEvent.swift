@@ -16,27 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireNetwork
+public import Foundation
 
-struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
+/// An event where a team member joined the team.
 
-    private let id: UUID
-    private let events: [StorableUpdateEvent]
-    private let isTransient: Bool
+public struct TeamMemberJoinEvent: Equatable, Sendable { // TODO: verify properties
 
-    init(_ value: WireNetwork.UpdateEventEnvelope) {
-        self.id = value.id
-        self.events = value.events.compactMap(StorableUpdateEvent.init)
-        self.isTransient = value.isTransient
-    }
+    /// The team id.
 
-    func toAPIModel() -> WireNetwork.UpdateEventEnvelope {
-        .init(
-            id: id,
-            events: events.map { $0.toAPIModel() },
-            isTransient: isTransient
-        )
+    public let teamID: UUID
+
+    /// The id of the member who left.
+
+    public let userID: UUID
+
+    /// The time at which the member left.
+
+    public let time: Date
+
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
     }
 
 }
