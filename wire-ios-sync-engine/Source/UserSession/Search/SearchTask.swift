@@ -105,7 +105,8 @@ public final class SearchTask {
         let allIDs = us.map(\.id)
 
         let missingIDs = (Set(allIDs).subtracting(storedIDs)).sorted()
-        print(missingIDs)
+        let missingUsers = us.filter { missingIDs.contains($0.id) }.sorted { $0.name < $1.name }
+        print(missingUsers)
 
 
         guard case .pending = status else {
