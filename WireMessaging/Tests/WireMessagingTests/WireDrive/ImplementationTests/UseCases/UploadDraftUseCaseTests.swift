@@ -285,7 +285,7 @@ final class UploadDraftUseCaseTests {
         let data = Data("This is a test file content.".utf8)
 
         // When
-        try await sut.invoke(data: data, type: type)
+        try await sut.invoke(data: data, type: type, nodeID: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
@@ -305,7 +305,7 @@ final class UploadDraftUseCaseTests {
         let data = Data("This is a test file content.".utf8)
 
         // When
-        try await sut.invoke(data: data, type: .plainText)
+        try await sut.invoke(data: data, type: .plainText, nodeID: nil)
 
         // Then
         let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
