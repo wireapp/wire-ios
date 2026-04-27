@@ -43,4 +43,72 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssertTrue(loginPage.nextButton.waitForExistence(timeout: 2.0))
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
+
+    @MainActor
+    func testAccountSwitching() async throws {
+        // Create user A on staging with a single conversation
+        let userA = try await userHelper.createPersonalUser()
+        let conversationA = "Conversation A"
+        try await userHelper.createGroupConversations(qualifiedIds: [], owner: userA, groupName: conversationA)
+
+        // Create user B on staging with a single conversation
+        let userB = try await userHelper.createPersonalUser()
+        let conversationB = "Conversation B"
+        try await userHelper.createGroupConversations(qualifiedIds: [], owner: userB, groupName: conversationB)
+
+        // Create user C on anta with a single conversation
+        BackendContext.current = .anta
+        let antaUserHelper = UserHelper(environment: .anta)
+        let userC = try await antaUserHelper.createPersonalUser()
+        let conversationC = "Conversation C"
+        try await antaUserHelper.createGroupConversations(qualifiedIds: [], owner: userC, groupName: conversationC)
+        BackendContext.current = .staging
+
+        // Login to user A
+        _ = try app
+            .loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+
+        // Login to user B
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app
+            .loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+
+        // Login to user C
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        try switchBackend(target: .anta)
+
+        _ = try app
+            .loginUser(email: userC.email, password: userC.password)
+            .acceptPopup()
+
+        // Switch account to user A and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userA.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationA).waitForExistence(timeout: 2.0))
+
+        // Switch account to user B and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userB.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationB).waitForExistence(timeout: 2.0))
+
+        // Switch account to user C and verify the correct conversation is shown
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userC.name)
+
+        XCTAssert(try ConversationsPage().conversationCell(named: conversationC).waitForExistence(timeout: 2.0))
+    }
+
 }
