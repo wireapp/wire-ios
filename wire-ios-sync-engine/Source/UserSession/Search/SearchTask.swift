@@ -83,6 +83,44 @@ public final class SearchTask {
 
     /// Start the search task. Errors will be logged only.
     public func start() async -> SearchResult {
+
+        let context = contextProvider.viewContext
+        let storedIDs = try! await context.perform {
+            let fr = ZMUser.fetchRequest()
+            let users = try context.fetch(fr) as! [ZMUser]
+            return users.map { $0.remoteIdentifier! }
+        }
+
+        struct U: Decodable {
+            var id: UUID
+            var name: String
+            var email: String
+            var user_name: String
+            var password: String
+        }
+        let url = Bundle.main.url(forResource: "2000-users-for-staging", withExtension: "json")!
+        let data = try! Data(contentsOf: url)
+        let us = try! JSONDecoder().decode([U].self, from: data)
+        let allIDs = us.map(\.id)
+
+        let missingIDs = (Set(allIDs).subtracting(storedIDs)).sorted()
+        let missingUsers = us.filter { missingIDs.contains($0.id) }.sorted { $0.name < $1.name }
+        // print(missingUsers.map(\.name).joined(separator: "\n"))
+        print(missingUsers.first)
+
+
+    TODO:
+        target 4.19
+        do {
+            let ep = try! teamsAPI.notifications(sinceEventID: .none)
+            for try await ep in ep {
+                print(ep)
+            }
+        } catch {
+            fatalError("\(error)")
+        }
+
+
         guard case .pending = status else {
             assertionFailure()
             return SearchResult()
