@@ -413,7 +413,6 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    //TODO: remove
     func onCreate(target: WireDriveCreateFileUseCase.Target) {
         guard cellName != nil else { return }
         sheetNavigation = .create(target: target)
