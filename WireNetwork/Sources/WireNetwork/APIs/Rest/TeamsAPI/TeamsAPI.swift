@@ -105,6 +105,17 @@ public protocol TeamsAPI {
     func notifications(
         sinceEventID: UUID?,
         maxResults: UInt
-    ) throws -> PayloadPager<[String]> // TODO: fix return type
+    ) throws -> PayloadPager<UpdateEventBatch>
+
+}
+
+public extension TeamsAPI {
+
+    /// Calls `notifications(sinceEventID:maxResults:)` with `maxResults` set to 1000.
+    func notifications(
+        sinceEventID: UUID?
+    ) throws -> PayloadPager<UpdateEventBatch> {
+        try notifications(sinceEventID: sinceEventID, maxResults: 1000)
+    }
 
 }

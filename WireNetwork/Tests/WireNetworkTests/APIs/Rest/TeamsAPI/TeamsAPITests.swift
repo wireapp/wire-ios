@@ -262,7 +262,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidQueryParmeter) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidQueryParameter) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),

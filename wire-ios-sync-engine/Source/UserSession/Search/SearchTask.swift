@@ -84,7 +84,6 @@ public final class SearchTask {
     /// Start the search task. Errors will be logged only.
     public func start() async -> SearchResult {
 
-
         let context = contextProvider.viewContext
         let storedIDs = try! await context.perform {
             let fr = ZMUser.fetchRequest()
@@ -108,7 +107,6 @@ public final class SearchTask {
         let missingUsers = us.filter { missingIDs.contains($0.id) }.sorted { $0.name < $1.name }
         // print(missingUsers.map(\.name).joined(separator: "\n"))
         print(missingUsers.first)
-
 
         guard case .pending = status else {
             assertionFailure()
