@@ -759,7 +759,7 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        syncAgent?.tearDown()
+        syncAgent?.delegate = nil
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
