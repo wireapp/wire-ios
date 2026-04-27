@@ -28,7 +28,8 @@ package struct WireDriveMakeAssetAvailableOfflineUseCase {
     }
 
     package func invoke(nodeID: UUID) async throws {
-        if var asset = try localAssetRepository.asset(nodeID: nodeID), asset.downloadState.cacheKey != nil {
+        if var asset = try localAssetRepository.asset(nodeID: nodeID), asset.downloadState.cacheKey != nil,
+           asset.conversationName != nil {
             asset.isAvailableOffline = true
             try localAssetRepository.updateAsset(asset)
         } else {

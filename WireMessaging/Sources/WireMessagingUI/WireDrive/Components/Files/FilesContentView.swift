@@ -190,11 +190,11 @@ private extension FilesContentView {
                 if viewModel.isOffline {
                     FilesOfflineBarView()
                 }
-                
+
                 Spacer()
-                
+
                 FilesInfoView(scope: scope, kind: .empty)
-                
+
                 Spacer()
             }
         case .pending:
