@@ -63,37 +63,4 @@ final class AccountTests: XCTestCase {
         XCTAssertThrowsError(try Keychain.fetchItem(item))
     }
 
-    func test_deleteKeychainItems_removesEARKeysFromKeychain() throws {
-        // Given
-        let accountID = UUID()
-        let account = Account(userName: "", userIdentifier: accountID)
-        let keyGenerator = EARKeyGenerator()
-        let keyRepository = EARKeyRepository()
-
-        let primaryPublicDesc = PublicEARKeyDescription.primaryKeyDescription(accountID: accountID)
-        let secondaryPublicDesc = PublicEARKeyDescription.secondaryKeyDescription(accountID: accountID)
-        let databaseKeyDesc = DatabaseEARKeyDescription.keyDescription(accountID: accountID)
-
-        let (primaryPublicKey, _) = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "test-account-primary")
-        let (secondaryPublicKey, _) = try keyGenerator
-            .generateSecondaryPublicPrivateKeyPair(id: "test-account-secondary")
-        try keyRepository.storePublicKey(description: primaryPublicDesc, key: primaryPublicKey)
-        try keyRepository.storePublicKey(description: secondaryPublicDesc, key: secondaryPublicKey)
-        try keyRepository.storeDatabaseKey(description: databaseKeyDesc, key: .randomEncryptionKey())
-
-        // When
-        account.deleteKeychainItems()
-
-        // Then — all EAR keys are gone
-        XCTAssertThrowsError(try keyRepository.fetchPublicKey(description: primaryPublicDesc)) { error in
-            XCTAssertEqual(error as? EARKeyRepositoryFailure, .keyNotFound)
-        }
-        XCTAssertThrowsError(try keyRepository.fetchPublicKey(description: secondaryPublicDesc)) { error in
-            XCTAssertEqual(error as? EARKeyRepositoryFailure, .keyNotFound)
-        }
-        XCTAssertThrowsError(try keyRepository.fetchDatabaseKey(description: databaseKeyDesc)) { error in
-            XCTAssertEqual(error as? EARKeyRepositoryFailure, .keyNotFound)
-        }
-    }
-
 }

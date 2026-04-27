@@ -380,9 +380,6 @@
 		87E2CE312119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */; };
 		8807C2282F3DCE2A00396366 /* EARServiceIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */; };
 		8807C22A2F3DD66D00396366 /* EARServiceTestsBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */; };
-		880A415A2F7D6D8D00446049 /* RemoveEARKeysUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880A41592F7D6D8D00446049 /* RemoveEARKeysUseCase.swift */; };
-		880A44402F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880A443F2F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift */; };
-		880A44422F7EB49500446049 /* EARKeyRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880A44412F7EB49500446049 /* EARKeyRepositoryTests.swift */; };
 		882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */; };
 		882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */; };
 		882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */; };
@@ -1121,9 +1118,6 @@
 		87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Cleared.swift"; sourceTree = "<group>"; };
 		8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceIntegrationTests.swift; sourceTree = "<group>"; };
 		8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceTestsBase.swift; sourceTree = "<group>"; };
-		880A41592F7D6D8D00446049 /* RemoveEARKeysUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveEARKeysUseCase.swift; sourceTree = "<group>"; };
-		880A443F2F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveEARKeysUseCaseTests.swift; sourceTree = "<group>"; };
-		880A44412F7EB49500446049 /* EARKeyRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepositoryTests.swift; sourceTree = "<group>"; };
 		882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeyTracker.swift; sourceTree = "<group>"; };
 		882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeysTrackerTests.swift; sourceTree = "<group>"; };
 		882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1881,7 +1875,6 @@
 				0667958F2B8C9E4700FF6A25 /* UpdateMLSGroupVerificationStatusUseCase.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
 				882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */,
-				880A41592F7D6D8D00446049 /* RemoveEARKeysUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -1895,7 +1888,6 @@
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 				06E2ABBC2B8C9D2C0094F567 /* UpdateMLSGroupVerificationStatusUseCaseTests.swift */,
 				882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */,
-				880A443F2F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -2131,7 +2123,6 @@
 		E6E5044B2BC56EA0004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
-				880A44412F7EB49500446049 /* EARKeyRepositoryTests.swift */,
 				8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */,
 				8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */,
 				E6E5044A2BC56EA0004948E7 /* EARServiceTests.swift */,
@@ -3498,7 +3489,6 @@
 				5E67168E2174B9AF00522E61 /* LoginCredentials.swift in Sources */,
 				069BCC5A2B30945500DF4EC2 /* E2EIClientID.swift in Sources */,
 				63DA335E286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift in Sources */,
-				880A415A2F7D6D8D00446049 /* RemoveEARKeysUseCase.swift in Sources */,
 				CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */,
 				E6E504422BC542C5004948E7 /* AuthenticationContext.swift in Sources */,
 				EEAAD75A252C6D2700E6A44E /* UnreadMessages.swift in Sources */,
@@ -3924,7 +3914,6 @@
 				F9A7083E1CAEEB7500C2F5FE /* NSFetchRequestTests+ZMRelationshipKeyPaths.m in Sources */,
 				E6E504502BC571BF004948E7 /* AuthenticationContextTests.swift in Sources */,
 				5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */,
-				880A44422F7EB49500446049 /* EARKeyRepositoryTests.swift in Sources */,
 				D5FA30CB2063ECD400716618 /* BackupMetadataTests.swift in Sources */,
 				EEE83B4A1FBB496B00FC0296 /* ZMMessageTimerTests.swift in Sources */,
 				F9B71F931CB2BF00001DB03F /* ZMMessageTests.m in Sources */,
@@ -4043,7 +4032,6 @@
 				F9DBA5291E29162A00BE23C0 /* MessageObserverTests.swift in Sources */,
 				BF1B980D1EC3410000DE033B /* PermissionsTests.swift in Sources */,
 				63E313D3274D5F57002EAF1D /* ZMConversationTests+Team.swift in Sources */,
-				880A44402F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift in Sources */,
 				069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */,
 				63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */,
 				546D3DE91CE5D24C00A6047F /* RichAssetFileTypeTests.swift in Sources */,
