@@ -17,7 +17,7 @@
 //
 
 package import Combine
-import UniformTypeIdentifiers
+import Foundation
 import WireLogging
 package import WireMessagingDomain
 
@@ -31,7 +31,6 @@ package final class FilesViewModel: ObservableObject {
     private typealias LoadItemsTask = Task<(items: [FilesViewItem], isLastPage: Bool), any Error>
 
     private enum Constants {
-
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
     }
@@ -69,7 +68,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     enum State: Equatable {
-
         case loading
         case received(items: [FilesViewItem])
         case pending // drive is not ready yet
@@ -174,6 +172,8 @@ package final class FilesViewModel: ObservableObject {
             .first(where: \.isSelfUser)?.id
     }
 
+    //MARK: init
+    
     package init(
         useCases: UseCases,
         title: String? = nil,
@@ -217,7 +217,6 @@ package final class FilesViewModel: ObservableObject {
     ///
     /// Cancels any ongoing load operation and starts a new one.
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
-
     func reload(refreshing: Bool = false) async {
         guard networkMonitor.currentStatus != nil else { return  }
 
@@ -425,7 +424,7 @@ package final class FilesViewModel: ObservableObject {
         hasMore = false
     }
 
-    private nonisolated func fetchItems(
+    private func fetchItems(
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
@@ -436,35 +435,10 @@ package final class FilesViewModel: ObservableObject {
             offset: offset
         )
 
-        let items: [FilesViewItem] = nodes.compactMap(makeFileViewItem(node:))
+        let items: [FilesViewItem] = nodes.compactMap(FilesViewItem.fromNode(_:))
 
         try Task.checkCancellation()
         return (items, isLastPage)
-    }
-
-    nonisolated func makeFileViewItem(node: WireDriveNode) -> FilesViewItem? {
-        guard let eTag = node.eTag else { return nil }
-
-        let url = URL(string: node.path)
-        let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
-        return FilesViewItem(
-            id: node.id,
-            eTag: eTag,
-            kind: kind,
-            name: url?.lastPathComponent ?? node.path,
-            filePath: node.path,
-            ownedBy: node.ownerUserName,
-            modifiedAt: node.modified,
-            icon: kind == .folder ? .folder : .make(
-                type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
-                fileExtension: url?.pathExtension
-            ),
-            tags: node.tags,
-            isEditable: node.isEditable,
-            publicLinkID: node.publicLinkID?.string,
-            conversationName: node.conversation?.name,
-            size: node.size
-        )
     }
     
     func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {

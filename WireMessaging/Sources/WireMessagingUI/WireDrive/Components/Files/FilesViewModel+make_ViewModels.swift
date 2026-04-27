@@ -71,7 +71,7 @@ extension FilesViewModel {
             onNodeCreated: { [weak self] createdNode in
                 guard let self else { return }
                 if case .file = target {
-                    isEditing = makeFileViewItem(node: createdNode)
+                    isEditing = FilesViewItem.fromNode(createdNode)
                 }
                 Task {
                     await reload()

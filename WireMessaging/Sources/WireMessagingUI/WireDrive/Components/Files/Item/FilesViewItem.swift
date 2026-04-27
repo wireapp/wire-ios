@@ -18,6 +18,7 @@
 
 package import Foundation
 import WireMessagingDomain
+import UniformTypeIdentifiers
 
 /// An item in the `FilesView`.
 package struct FilesViewItem: Identifiable, Hashable {
@@ -74,4 +75,31 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The size of of this item
     let size: UInt64?
+}
+
+extension FilesViewItem {
+    static func fromNode(_ node: WireDriveNode) -> FilesViewItem? {
+        guard let eTag = node.eTag else { return nil }
+
+        let url = URL(string: node.path)
+        let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
+        return FilesViewItem(
+            id: node.id,
+            eTag: eTag,
+            kind: kind,
+            name: url?.lastPathComponent ?? node.path,
+            filePath: node.path,
+            ownedBy: node.ownerUserName,
+            modifiedAt: node.modified,
+            icon: kind == .folder ? .folder : .make(
+                type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
+                fileExtension: url?.pathExtension
+            ),
+            tags: node.tags,
+            isEditable: node.isEditable,
+            publicLinkID: node.publicLinkID?.string,
+            conversationName: node.conversation?.name,
+            size: node.size
+        )
+    }
 }
