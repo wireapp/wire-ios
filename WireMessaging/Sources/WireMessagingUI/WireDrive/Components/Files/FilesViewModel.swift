@@ -94,31 +94,16 @@ package final class FilesViewModel: ObservableObject {
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private var subscriptions = Set<AnyCancellable>()
-    
     let cellName: String? // nil when browsing all files
     let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     let nodesRepository: any WireDriveNodesRepositoryProtocol
     let navigationPath: [FilesViewItem]
     var sortingSelection: FilesSortingViewModel.SortingSelection = .default
-
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
-    
-    var showSearchBar: Bool {
-        guard !isOffline else {
-            return false
-        }
-
-        return switch state {
-        case .loading, .received:
-            true
-        case .pending, .error:
-            false
-        }
-    }
 
     var navigationTitle: String {
         if let title {
@@ -132,21 +117,10 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    /// Whether the view model is currently loading items.
-    var isLoading: Bool {
-        loadMoreTask != nil
-    }
-
-    var networkStatus: NetworkMonitor.NetworkStatus? {
-        networkMonitor.currentStatus
-    }
-
-    var isOffline: Bool {
-        networkMonitor.currentStatus == .disconnected
-    }
-
-    var shouldShowOfflineBar: Bool {
-        isOffline && !state.items.isEmpty
+    private var selfUserID: String? {
+        conversations
+            .flatMap(\.participants)
+            .first(where: \.isSelfUser)?.id
     }
 
     @Published var hasMore = true
@@ -156,20 +130,11 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createView: CreateFileView?
-    @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
-
-    @Published private var networkMonitor: NetworkMonitor
-
-    private var selfUserID: String? {
-        conversations
-            .flatMap(\.participants)
-            .first(where: \.isSelfUser)?.id
-    }
+    @Published var networkMonitor: NetworkMonitor
 
     //MARK: init
     
@@ -200,13 +165,46 @@ package final class FilesViewModel: ObservableObject {
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
     }
+    
+    // MARK: setup
 
     func setup() async {
-        await fetchConversations()
-        bindSearch()
+        fetchConversations()
         fetchTemplates()
+        bindSearch()
         Task { await reload() }
     }
+    
+    private func fetchTemplates() {
+        Task {
+            templates = try await useCases.getFileTemplates.invoke()
+        }
+    }
+
+    private func fetchConversations() {
+        Task {
+            let allDriveConversations = await useCases.getDriveConversations.invoke()
+            
+            if let cellName {
+                conversations = allDriveConversations.filter { $0.id == cellName }
+            } else {
+                conversations = allDriveConversations
+            }
+        }
+    }
+
+    private func bindSearch() {
+        $searchText
+            .removeDuplicates()
+            .dropFirst()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    // MARK: item list loading
 
     /// Reloads the items, clearing any previously loaded items.
     /// - Parameters:
@@ -237,123 +235,10 @@ package final class FilesViewModel: ObservableObject {
             await loadMore()
         }
     }
-
-    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
-    /// cancels the download.
-    func performPrimaryAction(item: FilesViewItem) async {
-        switch item.kind {
-        case .file:
-            await viewAsset(item: item)
-        case .folder:
-            openFolder(item: item)
-        }
-    }
-
-    var folderMenuOptions: [FolderMenuOption] {
-        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.name) }
-        options.append(.root)
-        options.removeFirst()
-        return options
-    }
-
-    func selectFolderMenuOption(_ option: FolderMenuOption) {
-        let newPath: [FilesViewItem] = switch option {
-        case let .folder(nodeID, _):
-            if let index = navigationPath.firstIndex(where: { $0.id == nodeID }) {
-                Array(navigationPath.prefix(upTo: index + 1))
-            } else {
-                []
-            }
-        case .root:
-            []
-        }
-
-        setNavigation(newPath)
-    }
-
-    var isInFolder: Bool {
-        !navigationPath.isEmpty
-    }
-
-    private func fetchTemplates() {
-        Task {
-            templates = try await useCases.getFileTemplates.invoke()
-        }
-    }
-
-    private func fetchConversations() async {
-        let allDriveConversations = await useCases.getDriveConversations.invoke()
-
-        if let cellName {
-            conversations = allDriveConversations.filter { $0.id == cellName }
-        } else {
-            conversations = allDriveConversations
-        }
-    }
-
-    private func bindSearch() {
-        $searchText
-            .removeDuplicates()
-            .dropFirst()
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task { await self?.reload() }
-            }
-            .store(in: &subscriptions)
-    }
-
-    /// Navigates to the folder represented by the given item.
-    private func openFolder(item: FilesViewItem) {
-        precondition(item.kind == .folder)
-
-        var targetItem = item
-
-        if isRecycleBin {
-            let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
-            if pathComponents.count == 3 {
-                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be
-                // restored
-                targetItem.recycleBinTopFolderId = targetItem.id
-            } else if pathComponents.count > 3 {
-                // for the next subfolder, just assign the id of the same top folder
-                if let previousItem = navigationPath.last,
-                   let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
-                    targetItem.recycleBinTopFolderId = recycleBinTopFolderId
-                }
-            }
-        }
-
-        setNavigation(navigationPath + [targetItem])
-    }
-
-    /// Downloads if necessary or views the asset represented by the given item or cancels the download.
-    private func viewAsset(item: FilesViewItem) async {
-        precondition(item.kind == .file)
-
-        do {
-            let downloadState = try await useCases.getAsset.downloadState(nodeID: item.id) ?? .pending
-            switch downloadState {
-            case .pending, .failed:
-                _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
-            case .downloaded:
-                viewingURL = nil
-                let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
-                viewingURL = url
-            case .downloading:
-                await useCases.getAsset.cancelDownload(nodeID: item.id)
-            }
-        } catch is CancellationError {
-            // Cancelled by the user, ignore.
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            alert = .noInternet
-        } catch {
-            alert = .unknownError
-        }
-    }
-
-    func onCreate(target: WireDriveCreateFileUseCase.Target) {
-        guard cellName != nil else { return }
-        sheetNavigation = .create(target: target)
+    
+    /// Whether the view model is currently loading items.
+    var isLoading: Bool {
+        loadMoreTask != nil
     }
     
     private func cancelLoad() {
@@ -438,6 +323,104 @@ package final class FilesViewModel: ObservableObject {
         return (items, isLastPage)
     }
     
+    // MARK: folders
+
+    var folderMenuOptions: [FolderMenuOption] {
+        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.name) }
+        options.append(.root)
+        options.removeFirst()
+        return options
+    }
+
+    func selectFolderMenuOption(_ option: FolderMenuOption) {
+        let newPath: [FilesViewItem] = switch option {
+        case let .folder(nodeID, _):
+            if let index = navigationPath.firstIndex(where: { $0.id == nodeID }) {
+                Array(navigationPath.prefix(upTo: index + 1))
+            } else {
+                []
+            }
+        case .root:
+            []
+        }
+
+        setNavigation(newPath)
+    }
+
+    var isInFolder: Bool {
+        !navigationPath.isEmpty
+    }
+    
+    // MARK: open file/folder
+    
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
+    /// cancels the download.
+    func performPrimaryAction(item: FilesViewItem) async {
+        switch item.kind {
+        case .file:
+            await viewAsset(item: item)
+        case .folder:
+            openFolder(item: item)
+        }
+    }
+
+    /// Navigates to the folder represented by the given item.
+    private func openFolder(item: FilesViewItem) {
+        precondition(item.kind == .folder)
+
+        var targetItem = item
+
+        if isRecycleBin {
+            let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
+            if pathComponents.count == 3 {
+                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be
+                // restored
+                targetItem.recycleBinTopFolderId = targetItem.id
+            } else if pathComponents.count > 3 {
+                // for the next subfolder, just assign the id of the same top folder
+                if let previousItem = navigationPath.last,
+                   let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
+                    targetItem.recycleBinTopFolderId = recycleBinTopFolderId
+                }
+            }
+        }
+
+        setNavigation(navigationPath + [targetItem])
+    }
+
+    /// Downloads if necessary or views the asset represented by the given item or cancels the download.
+    private func viewAsset(item: FilesViewItem) async {
+        precondition(item.kind == .file)
+
+        do {
+            let downloadState = try await useCases.getAsset.downloadState(nodeID: item.id) ?? .pending
+            switch downloadState {
+            case .pending, .failed:
+                _ = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+            case .downloaded:
+                viewingURL = nil
+                let url = try await useCases.getAsset.invoke(nodeID: item.id, eTag: item.eTag)
+                viewingURL = url
+            case .downloading:
+                await useCases.getAsset.cancelDownload(nodeID: item.id)
+            }
+        } catch is CancellationError {
+            // Cancelled by the user, ignore.
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            alert = .noInternet
+        } catch {
+            alert = .unknownError
+        }
+    }
+
+    //TODO: remove
+    func onCreate(target: WireDriveCreateFileUseCase.Target) {
+        guard cellName != nil else { return }
+        sheetNavigation = .create(target: target)
+    }
+    
+    // MARK: recycle bin
+    
     func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
@@ -483,19 +466,48 @@ package final class FilesViewModel: ObservableObject {
             state = .received(items: currentItems.latestModified())
         }
     }
+    
+    // MARK: search
+    
+    var showSearchBar: Bool {
+        guard !isOffline else {
+            return false
+        }
 
-    func resetFilters() {
-        filtersSelection = .empty
-        sortingSelection = .default
+        return switch state {
+        case .loading, .received:
+            true
+        case .pending, .error:
+            false
+        }
     }
-
+    
+    // MARK: filters
+    
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
         Task { await reload() }
     }
 
-    // MARK: - Offline mode
+    func resetFilters() {
+        filtersSelection = .empty
+        sortingSelection = .default
+    }
+
+    // MARK: offline mode
+    
+    var networkStatus: NetworkMonitor.NetworkStatus? {
+        networkMonitor.currentStatus
+    }
+
+    var isOffline: Bool {
+        networkMonitor.currentStatus == .disconnected
+    }
+
+    var shouldShowOfflineBar: Bool {
+        isOffline && !state.items.isEmpty
+    }
 
     func makeAssetAvailableOffline(item: FilesViewItem) {
         Task {
