@@ -218,12 +218,6 @@ final class UserSessionLoader {
             contextStorage: contextStorage
         )
 
-        // Check if this build is blacklisted.
-        if await isBuildBlacklisted(userSession: userSession) {
-            await userSession.close(deleteCookie: false)
-            throw Failure.buildIsBlacklisted
-        }
-
         // Perform pending migrations.
         do {
             try await performPendingMigrations(
@@ -610,11 +604,6 @@ final class UserSessionLoader {
             // Don't block session loading, we'll try again later.
             return nil
         }
-    }
-
-    private func isBuildBlacklisted(userSession: ZMUserSession) async -> Bool {
-        let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
-        return await useCase.invoke()
     }
 
     private func performPendingMigrations(
