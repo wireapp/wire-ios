@@ -139,6 +139,34 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.ok.rawValue].firstMatch
     }
 
+    var audioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.audioButton.rawValue].firstMatch
+    }
+
+    var startRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.startRecording.rawValue].firstMatch
+    }
+
+    var stopRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.stopRecording.rawValue].firstMatch
+    }
+
+    var heliumButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.helium.rawValue].firstMatch
+    }
+
+    var sendAudioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sendAudio.rawValue].firstMatch
+    }
+
+    var playAudioFile: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.playAudioFile.rawValue].firstMatch
+    }
+
+    var recordingTimeLabel: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -239,6 +267,20 @@ class ActiveConversationPage: PageModel {
     func selectFirstImageAndSend() throws -> ActiveConversationPage {
         firstPhotoCell.waitAndTap()
         okToSend.waitAndTap()
+        return self
+    }
+
+    func recordAudioAndSend() throws -> ActiveConversationPage {
+        audioButton.tap()
+        startRecording.tap()
+
+        let predicate = NSPredicate(format: "value == %@ OR label == %@", "0:04", "0:04")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: recordingTimeLabel)
+        _ = XCTWaiter.wait(for: [expectation], timeout: 6)
+
+        stopRecording.tap()
+        heliumButton.tap()
+        sendAudioButton.tap()
         return self
     }
 }

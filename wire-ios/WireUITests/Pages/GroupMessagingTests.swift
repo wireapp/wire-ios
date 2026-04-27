@@ -19,7 +19,7 @@
 import WireFoundation
 import XCTest
 
-final class MessagingTests: WireUITestCase {
+final class GroupMessagingTests: WireUITestCase {
 
     @MainActor
     func testSendTextInGroupConversation_TC_8833() async throws {
@@ -171,7 +171,30 @@ final class MessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendAndReceiveAudioInGroupConversation_TC_8835_8842() async throws {
+    func testSendAudioInGroupConversation_TC_8835() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (_, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                conversation: .group(groupName)
+            )
+
+        // WHEN
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .openConversation()
+            .recordAudioAndSend()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.playAudioFile.waitForExistence(timeout: 2), "No audio found"
+        )
+    }
+
+    @MainActor
+    func testReceiveAudioInGroupConversation_TC_8842() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()

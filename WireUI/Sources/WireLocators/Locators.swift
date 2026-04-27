@@ -136,6 +136,14 @@ public enum Locators {
         case photoButton
         case allowFullAccess = "Allow Full Access"
         case ok = "OK"
+        case audioButton
+        case startRecording = "Start recording"
+        case stopRecording = "Stop recording"
+        case helium = "Helium"
+        case sendAudio = "Send"
+        case playAudioFile = "AudioActionButton"
+        case recordingTime
+
     }
 
     public enum BackupOrRestorePage: String {
