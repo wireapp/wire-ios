@@ -89,7 +89,7 @@ public final class SearchTask {
         let storedHandles = try! await context.perform {
             let fr = ZMUser.fetchRequest()
             let users = try context.fetch(fr) as! [ZMUser]
-            return users.map(\.handle)
+            return users.map { $0.handle! }
         }
 
         struct U: Decodable {
@@ -104,7 +104,7 @@ public final class SearchTask {
         let us = try! JSONDecoder().decode([U].self, from: data)
         let allHandles = us.map(\.user_name)
 
-        let missingHandles = Set(storedHandles).subtracting(allHandles)
+        let missingHandles = (Set(allHandles).subtracting(storedHandles)).sorted()
         print(missingHandles)
 
 
