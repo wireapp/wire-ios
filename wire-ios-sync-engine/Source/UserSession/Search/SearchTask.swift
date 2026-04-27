@@ -86,14 +86,14 @@ public final class SearchTask {
 
 
         let context = contextProvider.viewContext
-        let storedHandles = try! await context.perform {
+        let storedIDs = try! await context.perform {
             let fr = ZMUser.fetchRequest()
             let users = try context.fetch(fr) as! [ZMUser]
-            return users.map { $0.handle! }
+            return users.map { $0.remoteIdentifier! }
         }
 
         struct U: Decodable {
-            var id: String
+            var id: UUID
             var name: String
             var email: String
             var user_name: String
@@ -102,10 +102,10 @@ public final class SearchTask {
         let url = Bundle.main.url(forResource: "2000-users-for-staging", withExtension: "json")!
         let data = try! Data(contentsOf: url)
         let us = try! JSONDecoder().decode([U].self, from: data)
-        let allHandles = us.map(\.user_name)
+        let allIDs = us.map(\.id)
 
-        let missingHandles = (Set(allHandles).subtracting(storedHandles)).sorted()
-        print(missingHandles)
+        let missingIDs = (Set(allIDs).subtracting(storedIDs)).sorted()
+        print(missingIDs)
 
 
         guard case .pending = status else {
