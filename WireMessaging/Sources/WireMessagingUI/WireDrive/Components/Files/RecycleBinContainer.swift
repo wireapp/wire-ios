@@ -131,7 +131,6 @@ package struct RecycleBinContainer: View {
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
-            fileCache: fileCache,
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: true

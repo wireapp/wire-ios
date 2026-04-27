@@ -64,7 +64,7 @@ extension FilesViewModel {
         // When navigation path is empty, file/folder is created at the root path (cell name)
         let path = navigationPath.last?.filePath ?? cellName ?? ""
         
-        return CreateFileViewModel(
+        return .init(
             creationTarget: target,
             path: path,
             createFileUseCase: useCases.createFile,
@@ -162,7 +162,7 @@ extension FilesViewModel {
     }
 
     func filesSortingViewModel() -> FilesSortingViewModel {
-        FilesSortingViewModel(
+        .init(
             isBrowsing: isBrowsing,
             subfolderName: navigationPath.last?.name
         ) { [weak self] sortingSelection in

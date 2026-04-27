@@ -230,7 +230,6 @@ public extension WireMessagingFactory {
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
-                    fileCache: fileCache,
                     isBrowsing: true
                 )
             )

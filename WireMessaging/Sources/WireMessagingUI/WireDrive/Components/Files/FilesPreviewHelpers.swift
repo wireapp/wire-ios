@@ -115,7 +115,6 @@ extension FilesViewModel {
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: previewNodesRepository(),
-            fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isBrowsing: isBrowsing
         )

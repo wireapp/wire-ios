@@ -93,7 +93,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
-    private let fileCache: any FileCache
     private var subscriptions = Set<AnyCancellable>()
     
     let cellName: String? // nil when browsing all files
@@ -182,7 +181,6 @@ package final class FilesViewModel: ObservableObject {
         isCellsStatePending: Bool,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodesRepository: any WireDriveNodesRepositoryProtocol,
-        fileCache: any FileCache,
         cellName: String? = nil,
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
@@ -195,7 +193,6 @@ package final class FilesViewModel: ObservableObject {
         self.setNavigation = setNavigation
         self.localAssetRepository = localAssetRepository
         self.nodesRepository = nodesRepository
-        self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isBrowsing = isBrowsing
