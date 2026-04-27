@@ -44,10 +44,11 @@ class UserHelper {
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
+    private let environment: BackendEnvironment
 
     init(
         apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        environment: BackendEnvironment = BackendContext.backendEnvironment
+        environment: BackendEnvironment = .staging
     ) {
         self.apiVersion = apiVersion
         self.backendURL = environment.url
@@ -67,6 +68,7 @@ class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.environment = environment
     }
 
     /// Fetch basicAuth Info from Env variable
@@ -268,7 +270,7 @@ class UserHelper {
     /// - Parameter user: userInfo
     func disableConsentPopup(for user: UserInfo) async throws {
 
-        let baseURL = BackendContext.backendEnvironment.url
+        let baseURL = environment.url
         let versionedURL = baseURL
             .appendingPathComponent(String(describing: apiVersion))
             .appendingPathComponent("properties")
