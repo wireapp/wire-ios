@@ -100,4 +100,11 @@ public protocol TeamsAPI {
         with prefix: String
     ) throws -> PayloadPager<[WhitelistedBotProfile]>
 
+    /// This endpoint lists `member-join` events. It can be used to discover users and apps which are cut off the
+    /// `/list-users` result in large teams (2000+ members).
+    func notifications(
+        sinceEventID: UUID?,
+        maxResults: UInt
+    ) throws -> PayloadPager<[String]> // TODO: fix return type
+
 }
