@@ -83,6 +83,31 @@ public final class SearchTask {
 
     /// Start the search task. Errors will be logged only.
     public func start() async -> SearchResult {
+
+
+        let context = contextProvider.viewContext
+        let storedHandles = try! await context.perform {
+            let fr = ZMUser.fetchRequest()
+            let users = try context.fetch(fr) as! [ZMUser]
+            return users.map(\.handle)
+        }
+
+        struct U: Decodable {
+            var id: String
+            var name: String
+            var email: String
+            var user_name: String
+            var password: String
+        }
+        let url = Bundle.main.url(forResource: "2000-users-for-staging", withExtension: "json")!
+        let data = try! Data(contentsOf: url)
+        let us = try! JSONDecoder().decode([U].self, from: data)
+        let allHandles = us.map(\.user_name)
+
+        let missingHandles = Set(storedHandles).subtracting(allHandles)
+        print(missingHandles)
+
+
         guard case .pending = status else {
             assertionFailure()
             return SearchResult()
