@@ -28,10 +28,6 @@ public enum TeamEvent: Equatable, Sendable {
 
     /// A user has left a team.
 
-    case memberJoin(TeamMemberJoinEvent)
-
-    /// A user has left a team.
-
     case memberLeave(TeamMemberLeaveEvent)
 
     /// A user's team membership was updated.

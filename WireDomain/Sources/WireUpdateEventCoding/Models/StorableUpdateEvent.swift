@@ -28,7 +28,7 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
     case team(StorableTeamEvent)
     case unknown(eventType: String)
 
-    init?(_ value: WireNetwork.UpdateEvent) {
+    init(_ value: WireNetwork.UpdateEvent) {
         switch value {
         case let .conversation(conversation):
             self = .conversation(StorableConversationEvent(conversation))
@@ -39,8 +39,7 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
         case let .user(user):
             self = .user(StorableUserEvent(user))
         case let .team(team):
-            guard let storableTeamEvent = StorableTeamEvent(team) else { return nil }
-            self = .team(storableTeamEvent)
+            self = .team(StorableTeamEvent(team))
         case let .unknown(eventType):
             self = .unknown(eventType: eventType)
         }

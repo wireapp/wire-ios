@@ -109,6 +109,8 @@ public final class SearchTask {
         print(missingUsers.first)
 
 
+    TODO:
+        target 4.19
         do {
             let ep = try! teamsAPI.notifications(sinceEventID: .none)
             for try await ep in ep {

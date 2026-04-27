@@ -102,8 +102,6 @@ public extension UpdateEvent {
             switch event {
             case .delete:
                 "team.delete"
-            case .memberJoin:
-                "team.memberJoin"
             case .memberLeave:
                 "team.memberLeave"
             case .memberUpdate:

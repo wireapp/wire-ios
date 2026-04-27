@@ -27,7 +27,7 @@ struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
 
     init(_ value: WireNetwork.UpdateEventEnvelope) {
         self.id = value.id
-        self.events = value.events.compactMap(StorableUpdateEvent.init)
+        self.events = value.events.map(StorableUpdateEvent.init)
         self.isTransient = value.isTransient
     }
 
