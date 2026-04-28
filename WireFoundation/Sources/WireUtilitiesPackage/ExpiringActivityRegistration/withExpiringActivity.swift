@@ -16,27 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+private let sharedManager = ExpiringActivityManager(
+    performer: ExpiringActivityProcessInfoWrapper()
+)
+
 // MARK: - Non-throwing
 
-public func withExpiringActivity(
+public func withExpiringActivity<T>(
     reason: String,
-    block: @escaping @Sendable () async -> Void
-) async {
+    block: @escaping @Sendable () async -> T
+) async -> T where T: Sendable {
     await withExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
+        manager: sharedManager,
         reason: reason,
         block: block
     )
 }
 
-func withExpiringActivity(
-    performer: some ExpiringActivityPerformerProtocol,
+func withExpiringActivity<T>(
+    manager: ExpiringActivityManager,
     reason: String,
-    block: @escaping @Sendable () async -> Void
-) async {
+    block: @escaping @Sendable () async -> T
+) async -> T where T: Sendable {
     let task = Task(operation: block)
-    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    await withTaskCancellationHandler {
+    await manager.track(reason: reason, task: task)
+    return await withTaskCancellationHandler {
         await task.value
     } onCancel: {
         task.cancel()
@@ -45,25 +49,25 @@ func withExpiringActivity(
 
 // MARK: - Throwing
 
-public func withExpiringActivity(
+public func withExpiringActivity<T>(
     reason: String,
-    block: @escaping @Sendable () async throws -> Void
-) async throws {
+    block: @escaping @Sendable () async throws -> T
+) async throws -> T where T: Sendable {
     try await withExpiringActivity(
-        performer: ExpiringActivityProcessInfoWrapper(),
+        manager: sharedManager,
         reason: reason,
         block: block
     )
 }
 
-func withExpiringActivity(
-    performer: some ExpiringActivityPerformerProtocol,
+func withExpiringActivity<T>(
+    manager: ExpiringActivityManager,
     reason: String,
-    block: @escaping @Sendable () async throws -> Void
-) async throws {
+    block: @escaping @Sendable () async throws -> T
+) async throws -> T where T: Sendable {
     let task = Task(operation: block)
-    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
-    try await withTaskCancellationHandler {
+    await manager.track(reason: reason, task: task)
+    return try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {
         task.cancel()

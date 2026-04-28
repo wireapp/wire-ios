@@ -91,7 +91,7 @@ final class ZCallingTests: WireUITestCase {
 
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
-    func test_MultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
         do {
             let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)

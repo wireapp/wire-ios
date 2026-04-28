@@ -85,6 +85,12 @@ class ActiveConversationPage: PageModel {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
+    func fileAttachment(name: String, type: String) -> XCUIElement {
+        app.buttons.containing(
+            NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
+        ).firstMatch
+    }
+
     var labelSharedDriveIsOn: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
     }
@@ -162,13 +168,12 @@ class ActiveConversationPage: PageModel {
     }
 
     func chooseUser(nameOfUser: String) {
-        let predicate = NSPredicate(
-            format: "identifier == %@ AND label == %@",
-            Locators.ActiveConversationPage.userCellName.rawValue,
-            nameOfUser
-        )
-        let user = app.staticTexts.matching(predicate).firstMatch
-        user.tap()
+        let userCell = app.cells
+            .matching(identifier: Locators.ActiveConversationPage.userCellName.rawValue)
+            .containing(.staticText, identifier: nameOfUser)
+            .firstMatch
+
+        userCell.tap()
     }
 
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {

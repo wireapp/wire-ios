@@ -46,6 +46,7 @@ final class ButtonState: ZMManagedObject {
             ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
+            guard newValue.rawValue != stateValue else { return }
             stateValue = newValue.rawValue
         }
     }
@@ -60,16 +61,17 @@ public enum ButtonMessageState: Int16 {
 extension Set where Element: ButtonState {
     func confirmButtonState(buttonID: String?) {
         for button in self {
-            button.state = if let buttonID, button.remoteIdentifier == buttonID {
+            let newState: ButtonMessageState = if let buttonID, button.remoteIdentifier == buttonID {
                 .confirmed
             } else {
                 .unselected
             }
+            button.state = newState
         }
     }
 
     func resetExpired() {
-        for button in self {
+        for button in self where button.isExpired {
             button.isExpired = false
         }
     }

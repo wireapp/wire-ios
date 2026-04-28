@@ -27,6 +27,7 @@ public extension Account {
         try? Keychain.deleteItem(item)
 
         try? RemoveCoreCryptoKeysUseCase().invoke(userID: userIdentifier)
+        RemoveEARKeysUseCase().invoke(accountID: userIdentifier)
     }
 
 }
