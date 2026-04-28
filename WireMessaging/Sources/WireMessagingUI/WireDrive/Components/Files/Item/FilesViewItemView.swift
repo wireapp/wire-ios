@@ -365,20 +365,6 @@ struct FilesItemView: View {
             )
         }
 
-        #if DEBUG
-            switch viewModel.fileTracker.state {
-            case .loaded:
-                Divider()
-
-                Button(role: .destructive) {
-                    viewModel.deleteAsset()
-                } label: {
-                    Label("[DEBUG ONLY] Delete asset from cache", systemImage: "trash")
-                }
-            default:
-                EmptyView()
-            }
-        #endif
     }
 
     @ViewBuilder
