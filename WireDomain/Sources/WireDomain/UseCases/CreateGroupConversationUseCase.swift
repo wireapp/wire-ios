@@ -21,29 +21,33 @@ import WireLogging
 import WireNetwork
 
 // sourcery: AutoMockable
-/// Creates and setup a group conversation
+/// Creates and sets up a group conversation or a channel.
+///
+/// Channels are group conversations that belong to a team, have a name, and always use MLS.
+/// Pass `.channel` as `groupType` for channels or `.group` for regular group conversations.
 public protocol CreateGroupConversationUseCaseProtocol {
     func invoke(
+        groupType: WireNetwork.ConversationGroupType,
         teamID: UUID?,
         messageProtocol: WireNetwork.ConversationMessageProtocol,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
-        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation
 }
 
-/// Channels are MLS conversations which belong to a team and have a name.
 public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProtocol {
 
     public enum Failure: Error {
         case missingSelfClientID
         case missingConversationID
         case conversationNotFound
-        case failedToCreateGroup(Error)
+        case failedToCreate(Error)
         case missingLegalholdConsent
         case nonFederatingDomains(Set<String>)
         case notConnected
@@ -58,19 +62,17 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
     private let context: NSManagedObjectContext
     private let localDomain: String?
     private let isFederationEnabled: Bool
-    private let isMLSEnabled: Bool
     private let logger: WireLogger = .conversation
 
     // MARK: - Object lifecycle
 
     public init(
-        api: ConversationsAPI,
-        store: ConversationLocalStoreProtocol,
+        api: any ConversationsAPI,
+        store: any ConversationLocalStoreProtocol,
         mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
         localDomain: String?,
-        isFederationEnabled: Bool,
-        isMLSEnabled: Bool
+        isFederationEnabled: Bool
     ) {
         self.api = api
         self.store = store
@@ -78,30 +80,35 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         self.context = context
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
-        self.isMLSEnabled = isMLSEnabled
     }
 
+    // MARK: - Invoke
+
     public func invoke(
+        groupType: WireNetwork.ConversationGroupType,
         teamID: UUID?,
         messageProtocol: WireNetwork.ConversationMessageProtocol,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
-        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         do {
-            return try await createGroup(
+            return try await createConversation(
+                groupType: groupType,
                 teamID: teamID,
                 messageProtocol: messageProtocol,
                 name: name,
+                historyDepth: historyDepth,
+                cells: cells,
                 users: users,
                 accessMode: accessMode,
                 accessRoles: accessRoles,
                 enableReceipts: enableReceipts,
-                cells: cells,
                 isMLSEnabled: isMLSEnabled
             )
         } catch let error as ConversationsAPIError {
@@ -111,44 +118,52 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                     users.forEach { $0.needsToBeUpdatedFromBackend = true }
                     context.enqueueDelayedSave()
                 }
-
                 throw Failure.notConnected
+
             case .missingLegalHoldConsent:
                 throw Failure.missingLegalholdConsent
+
             case let .nonFederatingBackends(domains):
                 do {
-                    return try await createGroupExcludingDomains(
+                    return try await createConversationExcludingDomains(
                         domains,
+                        groupType: groupType,
                         teamID: teamID,
                         messageProtocol: messageProtocol,
                         name: name,
+                        historyDepth: historyDepth,
+                        cells: cells,
+                        users: users,
                         accessMode: accessMode,
                         accessRoles: accessRoles,
                         enableReceipts: enableReceipts,
-                        cells: cells,
-                        users: users
+                        isMLSEnabled: isMLSEnabled
                     )
                 } catch {
                     throw Failure.nonFederatingDomains(Set(domains))
                 }
+
             default:
-                throw Failure.failedToCreateGroup(error)
+                throw Failure.failedToCreate(error)
             }
         } catch {
-            throw Failure.failedToCreateGroup(error)
+            throw Failure.failedToCreate(error)
         }
-
     }
 
-    private func createGroup(
+    // MARK: - Core creation
+
+    private func createConversation(
+        groupType: WireNetwork.ConversationGroupType,
         teamID: UUID?,
         messageProtocol: WireNetwork.ConversationMessageProtocol,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
-        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         let (
@@ -174,15 +189,13 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 unqualifiedUserIDs = usersExcludingSelfUser.compactMap(\.remoteIdentifier)
             }
 
-            return (
-                selfClientID,
-                qualifiedUserIDs,
-                unqualifiedUserIDs
-            )
+            return (selfClientID, qualifiedUserIDs, unqualifiedUserIDs)
         }
 
+        // TODO: [WPB-18347] - add historyDepth to body when API is ready
+
         let apiParameters = CreateGroupConversationParameters(
-            groupType: .group,
+            groupType: groupType,
             messageProtocol: messageProtocol,
             creatorClientID: selfClientID,
             qualifiedUserIDs: qualifiedUserIds,
@@ -201,19 +214,15 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         )
 
         let localConversation = try await createConversationLocally(
-            remoteConversation
+            remoteConversation,
+            isMLSEnabled: isMLSEnabled
         )
 
-        switch messageProtocol {
-        case .mls:
-
+        if messageProtocol == .mls {
             try await setupMLS(
                 for: localConversation,
                 with: users
             )
-
-        case .mixed, .proteus:
-            break
         }
 
         return localConversation
@@ -221,38 +230,39 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
     // MARK: - API error handling
 
-    private func createGroupExcludingDomains(
+    private func createConversationExcludingDomains(
         _ excludedDomains: [String],
+        groupType: WireNetwork.ConversationGroupType,
         teamID: UUID?,
         messageProtocol: WireNetwork.ConversationMessageProtocol,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
+        users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
-        cells: Bool?,
-        users: Set<ZMUser>
+        isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         let (unreachableUsers, reachableUsers) = await context.perform {
             let unreachableUsers = users.belongingTo(domains: Set(excludedDomains))
-            let reachableUsers = Set(users).subtracting(unreachableUsers)
-
-            return (unreachableUsers, reachableUsers)
+            return (unreachableUsers, Set(users).subtracting(unreachableUsers))
         }
 
-        // Retrying with reachable users (with federated domains)
-        let conversation = try await createGroup(
+        let conversation = try await createConversation(
+            groupType: groupType,
             teamID: teamID,
             messageProtocol: messageProtocol,
             name: name,
+            historyDepth: historyDepth,
+            cells: cells,
             users: reachableUsers,
             accessMode: accessMode,
             accessRoles: accessRoles,
             enableReceipts: enableReceipts,
-            cells: cells,
             isMLSEnabled: isMLSEnabled
         )
 
-        // Add system message for unreachable users (with non federated domains)
         await appendFailedToAddUsersMessage(
             in: conversation,
             users: unreachableUsers
@@ -261,136 +271,11 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         return conversation
     }
 
-    // MARK: - MLS
-
-    private func setupMLS(
-        for conversation: ZMConversation,
-        with participants: Set<ZMUser>
-    ) async throws {
-        let (mlsGroupID, isMLSConversation) = await context.perform {
-            (
-                conversation.mlsGroupID,
-                conversation.messageProtocol == .mls
-            )
-        }
-
-        guard isMLSConversation, let mlsGroupID, let mlsService else { return }
-
-        let ciphersuite = try await mlsService.createGroup(
-            for: mlsGroupID,
-            removalKeys: nil
-        )
-
-        await context.perform {
-            // Self user is creator, so we don't need to process a welcome message
-            conversation.mlsStatus = .ready
-            conversation.ciphersuite = ciphersuite
-            context.saveOrRollback()
-        }
-
-        try await validate(
-            users: participants,
-            conversation: conversation
-        )
-
-        try await addMLSParticipants(
-            participants,
-            to: conversation
-        )
-    }
-
-    private func validate(
-        users: Set<ZMUser>,
-        conversation: ZMConversation
-    ) async throws {
-        try await context.perform {
-            guard
-                conversation.conversationType == .group,
-                !users.isEmpty
-            else {
-                throw Failure.invalidOperation
-            }
-        }
-    }
-
-    private func addMLSParticipants(
-        _ users: Set<ZMUser>,
-        to conversation: ZMConversation
-    ) async throws {
-        guard let mlsService else { return }
-
-        let (qualifiedID, groupID) = await context.perform {
-            (conversation.qualifiedID, conversation.mlsGroupID)
-        }
-
-        WireLogger.mls.info(
-            "adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))"
-        )
-
-        guard let groupID else {
-            WireLogger.mls.warn(
-                "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
-            )
-            throw Failure.invalidOperation
-        }
-
-        let mlsUsers = await context.perform {
-            users.compactMap {
-                MLSUser(from: $0, localDomain: localDomain)
-            }
-        }
-
-        do {
-
-            try await mlsService.addMembersToConversation(
-                with: mlsUsers,
-                for: groupID
-            )
-
-            try await context.perform {
-                try context.save()
-            }
-
-        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
-            let failedUsers = await context.perform {
-                users.filter {
-                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
-                }
-            }
-
-            try await handleNotClaimedKeyPackages(
-                failedUsers: Set(failedUsers),
-                users: users,
-                conversation: conversation
-            )
-
-        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
-
-            try await handleNonFederatingDomains(
-                domains,
-                users: users,
-                conversation: conversation
-            )
-
-        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
-
-            try await handleUnreachableDomains(
-                domains,
-                users: users,
-                conversation: conversation
-            )
-
-        } catch {
-            WireLogger.mls.warn(
-                "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
-            )
-            throw error
-        }
-
-    }
+    // MARK: - Local store
 
     private func createConversationLocally(
-        _ conversation: WireNetwork.Conversation
+        _ conversation: WireNetwork.Conversation,
+        isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         await store.storeConversation(
             conversation.toDomainModel(),
@@ -411,7 +296,6 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             domain: conversationDomain
         )
 
-        // Conversation should be stored locally
         guard let localConversation else {
             throw Failure.conversationNotFound
         }
@@ -423,28 +307,148 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         return localConversation
     }
 
+    // MARK: - MLS
+
+    private func setupMLS(
+        for conversation: ZMConversation,
+        with participants: Set<ZMUser>
+    ) async throws {
+        let (mlsGroupID, isMLSConversation) = await context.perform {
+            (
+                conversation.mlsGroupID,
+                conversation.messageProtocol == .mls
+            )
+        }
+
+        guard isMLSConversation, let mlsGroupID, let mlsService else { return }
+
+        try await validate(
+            users: participants,
+            conversation: conversation
+        )
+
+        let ciphersuite = try await establishMLSGroup(
+            participants,
+            for: mlsGroupID,
+            conversation: conversation
+        )
+
+        await context.perform {
+            // Self user is creator, so we don't need to process a welcome message
+            conversation.mlsStatus = .ready
+            conversation.ciphersuite = ciphersuite
+            context.saveOrRollback()
+        }
+    }
+
+    private func validate(
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        try await context.perform {
+            guard
+                conversation.conversationType == .group,
+                !users.isEmpty
+            else {
+                throw Failure.invalidOperation
+            }
+        }
+    }
+
+    /// Creates an MLS group and adds participants atomically, with error handling and retries.
+    ///
+    /// On key package or federation failures, retries with the filtered user set.
+    /// Each retry creates a fresh group (the prior attempt was rolled back).
+
+    private func establishMLSGroup(
+        _ users: Set<ZMUser>,
+        for groupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async throws -> WireDataModel.MLSCipherSuite {
+        guard let mlsService else { throw Failure.invalidOperation }
+
+        let qualifiedID = await context.perform { conversation.qualifiedID }
+
+        WireLogger.mls.info(
+            "establishing MLS group for conversation (\(String(describing: qualifiedID))) with \(users.count) participants"
+        )
+
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
+
+        do {
+            return try await mlsService.establishGroup(
+                for: groupID,
+                with: mlsUsers,
+                removalKeys: nil
+            )
+
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
+            let failedUsers = await context.perform {
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
+            }
+            return try await handleNotClaimedKeyPackages(
+                failedUsers: Set(failedUsers),
+                users: users,
+                for: groupID,
+                conversation: conversation
+            )
+
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
+            return try await handleNonFederatingDomains(
+                domains,
+                users: users,
+                for: groupID,
+                conversation: conversation
+            )
+
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
+            return try await handleUnreachableDomains(
+                domains,
+                users: users,
+                for: groupID,
+                conversation: conversation
+            )
+
+        } catch {
+            WireLogger.mls.warn(
+                "failed to establish MLS group for conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
+            )
+            throw error
+        }
+    }
+
     // MARK: - MLS error handling
 
     private func handleNotClaimedKeyPackages(
         failedUsers: Set<ZMUser>,
         users: Set<ZMUser>,
+        for groupID: MLSGroupID,
         conversation: ZMConversation
-    ) async throws {
+    ) async throws -> WireDataModel.MLSCipherSuite {
         guard !failedUsers.isEmpty else {
-            return Flow.addParticipants.checkpoint(
+            Flow.addParticipants.checkpoint(
                 description: "unexpected failedToClaimKeyPackages but no failed users"
             )
+            throw Failure.invalidOperation
         }
 
-        let users = Set(users)
-        if failedUsers != users {
+        let allUsers = Set(users)
+        var ciphersuite: WireDataModel.MLSCipherSuite?
 
-            // Operation was aborted because some users didn't have key packages
-            // We filter them out and retry once
+        if failedUsers != allUsers {
+            // Filter out users without key packages and retry with the remainder.
+            // This creates a fresh group (the prior attempt was rolled back).
             Flow.addParticipants.checkpoint(description: "retrying failedUsers begin")
-            try await addMLSParticipants(
-                users.subtracting(failedUsers),
-                to: conversation
+            ciphersuite = try await establishMLSGroup(
+                allUsers.subtracting(failedUsers),
+                for: groupID,
+                conversation: conversation
             )
             Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
         }
@@ -457,32 +461,37 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
         )
 
-        await appendFailedToAddUsersMessage(
-            in: conversation,
-            users: failedUsers
-        )
+        await appendFailedToAddUsersMessage(in: conversation, users: failedUsers)
+
+        guard let ciphersuite else {
+            throw Failure.failedToCreate(
+                MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: Array(failedUsers).compactMap {
+                    MLSUser(from: $0, localDomain: localDomain)
+                })
+            )
+        }
+
+        return ciphersuite
     }
 
     private func handleUnreachableDomains(
         _ domains: Set<String>,
         users: Set<ZMUser>,
+        for groupID: MLSGroupID,
         conversation: ZMConversation
-    ) async throws {
+    ) async throws -> WireDataModel.MLSCipherSuite {
         let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
 
         if unreachableUsers.isEmpty {
-
             /// Backend is not able to determine which users are unreachable.
-            /// We just insert a message and do not attempt to retry
-
-            await appendFailedToAddUsersMessage(
-                in: conversation,
-                users: Set(users)
-            )
+            /// We just insert a message and do not attempt to retry.
+            await appendFailedToAddUsersMessage(in: conversation, users: Set(users))
+            throw Failure.invalidOperation
         } else {
-            try await retryAddingMLSParticipants(
+            return try await retryEstablishingMLSGroup(
                 users,
-                to: conversation,
+                for: groupID,
+                conversation: conversation,
                 excludingDomains: domains
             )
         }
@@ -491,34 +500,33 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
     private func handleNonFederatingDomains(
         _ domains: Set<String>,
         users: Set<ZMUser>,
+        for groupID: MLSGroupID,
         conversation: ZMConversation
-    ) async throws {
-        try await retryAddingMLSParticipants(
+    ) async throws -> WireDataModel.MLSCipherSuite {
+        try await retryEstablishingMLSGroup(
             users,
-            to: conversation,
+            for: groupID,
+            conversation: conversation,
             excludingDomains: domains
         )
     }
 
-    private func retryAddingMLSParticipants(
+    private func retryEstablishingMLSGroup(
         _ users: Set<ZMUser>,
-        to conversation: ZMConversation,
+        for groupID: MLSGroupID,
+        conversation: ZMConversation,
         excludingDomains domains: Set<String>
-    ) async throws {
+    ) async throws -> WireDataModel.MLSCipherSuite {
         let usersToExclude = await context.perform { users.belongingTo(domains: domains) }
         let usersToAdd = Set(users).subtracting(usersToExclude)
 
-        await appendFailedToAddUsersMessage(
-            in: conversation,
-            users: usersToExclude
-        )
+        await appendFailedToAddUsersMessage(in: conversation, users: usersToExclude)
 
-        guard !usersToAdd.isEmpty else { return }
+        guard !usersToAdd.isEmpty else {
+            throw Failure.invalidOperation
+        }
 
-        try await addMLSParticipants(
-            usersToAdd,
-            to: conversation
-        )
+        return try await establishMLSGroup(usersToAdd, for: groupID, conversation: conversation)
     }
 
     // MARK: - Helpers

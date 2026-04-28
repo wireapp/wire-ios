@@ -220,7 +220,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let channelUseCase = session.createChannelUseCase else {
+        guard let channelUseCase = session.createGroupConversationUseCase else {
             return
         }
 
@@ -236,14 +236,17 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
 
         do {
             let conversation = try await channelUseCase.invoke(
+                groupType: .channel,
                 teamID: teamID,
+                messageProtocol: .mls,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
                 cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
-                enableReceipts: values.enableReceipts
+                enableReceipts: values.enableReceipts,
+                isMLSEnabled: true
             )
 
             // Switching back to UI context
@@ -258,7 +261,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 didCreateConversation: syncedConversation
             )
 
-        } catch let error as CreateChannelUseCase.Failure {
+        } catch let error as CreateGroupConversationUseCase.Failure {
 
             switch error {
             case .missingLegalholdConsent:

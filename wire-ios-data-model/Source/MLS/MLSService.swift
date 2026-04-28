@@ -345,7 +345,7 @@ public final class MLSService: MLSServiceInterface {
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
-            try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+            try await mlsActionExecutor.updateKeyMaterial(for: groupID, context: nil)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         } catch {
             WireLogger.mls
@@ -371,24 +371,136 @@ public final class MLSService: MLSServiceInterface {
     ) async throws -> MLSCipherSuite {
         guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
 
-        do {
-            let ciphersuite = try await createGroup(for: groupID, removalKeys: removalKeys)
-            let mlsSelfUser = await context.perform {
-                let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser, localDomain: self.localDomain)
+        logger.info("establishing group atomically", attributes: groupID.safeAttributes)
+
+        // Append self user last so that the other party's key packages are claimed first.
+        // This avoids depleting our own key packages if the other user has none
+        // (particularly relevant for 1:1).
+        let mlsSelfUser = await context.perform {
+            MLSUser(from: ZMUser.selfUser(in: context), localDomain: self.localDomain)
+        }
+        let usersWithSelf = users.filter { $0 != mlsSelfUser } + [mlsSelfUser]
+
+        let mlsConfig = await featureRepository.fetchMLS().config
+        guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+            throw MLSGroupCreationError.invalidCiphersuite
+        }
+
+        let externalSenders = try await fetchExternalSenders(
+            removalKeys: removalKeys,
+            ciphersuite: ciphersuite
+        )
+
+        try await retryOnCommitFailure(
+            for: groupID,
+            operation: {
+                try await self.claimAndEstablishGroup(
+                    groupID: groupID,
+                    users: users,
+                    ciphersuite: ciphersuite,
+                    externalSenders: externalSenders
+                )
+            },
+            groupOutOfSyncHandler: { missingUsers in
+                // The group was wiped on the prior failure — merge the missing users
+                // and re-establish from scratch. No further groupOutOfSync retry is
+                // applied (no handler passed), preventing infinite recursion.
+                let additionalUsers = missingUsers.map { MLSUser($0, selfClientID: nil) }
+                let mergedUsers = users + additionalUsers.filter { !users.contains($0) }
+                try await self.claimAndEstablishGroup(
+                    groupID: groupID,
+                    users: mergedUsers,
+                    ciphersuite: ciphersuite,
+                    externalSenders: externalSenders
+                )
             }
-            // make sure we have the selfUser but only once
-            // add self in last position so - if the other user doesn't have key packages for 1-1 - we don't deplete our
-            // keypackages
-            // for nothing
-            let usersWithSelfUser = users.filter { $0 != mlsSelfUser } + [mlsSelfUser]
-            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
-            return ciphersuite
+        )
+
+        return ciphersuite
+    }
+
+    /// Claims key packages and runs the atomic create+add transaction.
+    ///
+    /// This is the unit that gets retried on recoverable commit failures. Each retry
+    /// re-claims key packages (old ones may have been consumed) and re-creates the
+    /// group from scratch (it was wiped on the prior failure).
+    ///
+    private func claimAndEstablishGroup(
+        groupID: MLSGroupID,
+        users: [MLSUser],
+        ciphersuite: MLSCipherSuite,
+        externalSenders: [ExternalSenderKey]
+    ) async throws {
+
+        // Claim key packages outside the transaction — this is a network call.
+        // failedToClaimKeyPackages propagates immediately without retry.
+        let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
+
+        // Single CoreCrypto transaction: create the group and send the first commit atomically.
+        // createConversation is local-only; the commit (addMembers or updateKeyMaterial) is
+        // routed through MLSActionExecutor with the open context, so CRL point publishing
+        // and the executor's invariants are preserved.
+        // On failure of the commit step, wipe the group on the same open context so no
+        // epoch-0 orphan is left behind.
+        try await coreCrypto.extendedTransaction { context in
+            let e2eiIsEnabled = try await context.e2eiIsEnabled(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
+            let config = ConversationConfiguration(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
+                externalSenders: externalSenders,
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+            )
+
+            try await context.createConversation(
+                conversationId: groupID.conversationId,
+                creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
+                config: config
+            )
+
+            do {
+                if keyPackages.isEmpty {
+                    // CoreCrypto does not accept an empty key-package list in addClients,
+                    // but we still need to send a commit to the backend to advance the epoch.
+                    try await self.mlsActionExecutor.updateKeyMaterial(for: groupID, context: context)
+                } else {
+                    try await self.mlsActionExecutor.addMembers(keyPackages, to: groupID, context: context)
+                }
+            } catch {
+                self.logger.warn(
+                    "failed to add clients to group, wiping to avoid orphaned epoch-0 group",
+                    attributes: groupID.safeAttributes
+                )
+                try? await context.wipeConversation(conversationId: groupID.conversationId)
+                throw error
+            }
+        }
+
+        staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+    }
+
+    private func fetchExternalSenders(
+        removalKeys: BackendMLSPublicKeys?,
+        ciphersuite: MLSCipherSuite
+    ) async throws -> [ExternalSenderKey] {
+        if let removalKeys {
+            return removalKeys.externalSenderKey(for: ciphersuite)
+        }
+
+        logger.info("fetching backend public keys for external senders")
+
+        do {
+            let backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(
+                in: notificationContext
+            )
+            return backendPublicKeys.externalSenderKey(for: ciphersuite)
         } catch {
-            try await wipeGroup(groupID)
-            throw error
+            logger.warn("failed to fetch backend public keys: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToGetExternalSenders
         }
     }
+
+    // MARK: - Group creation
 
     public func createGroup(
         for groupID: MLSGroupID,
@@ -423,25 +535,9 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
-        do {
-            guard let context else { throw MLSAddMembersError.noManagedObjectContext }
-            let ciphersuite = try await createGroup(for: groupID)
-            let mlsSelfUser = await context.perform {
-                let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser, localDomain: self.localDomain)
-            }
-
-            do {
-                try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
-            } catch MLSAddMembersError.noInviteesToAdd {
-                logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
-                try await updateKeyMaterial(for: groupID)
-            }
-            return ciphersuite
-        } catch {
-            logger.error("create group for self conversation failed: \(error.localizedDescription)")
-            throw error
-        }
+        // Pass an empty user list — establishGroup appends the self user internally.
+        // The empty-key-packages case (no other devices) is handled by updateKeyMaterial.
+        try await establishGroup(for: groupID, with: [])
     }
 
     // MARK: - Add member
@@ -479,9 +575,9 @@ public final class MLSService: MLSServiceInterface {
                 // CC does not accept empty keypackages in addMembers, but
                 // when creating a group we still need to send a commit to backend
                 // to inform we are in the group
-                try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+                try await mlsActionExecutor.updateKeyMaterial(for: groupID, context: nil)
             } else {
-                try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
+                try await mlsActionExecutor.addMembers(keyPackages, to: groupID, context: nil)
             }
         } catch {
             logger
@@ -1480,9 +1576,19 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
+    /// Handles recoverable backend commit rejections for any commit-generating operation.
+    ///
+    /// - `retryAfterBackoff`: re-runs `operation` with exponential backoff.
+    /// - `retryAfterAddingMissingUsers`: if `groupOutOfSyncHandler` is provided, delegates to it
+    ///   (used when the group state must be rebuilt, e.g. initial group creation). Otherwise uses
+    ///   the default behaviour: adds the missing users to the existing group then retries `operation`.
+    /// - `resetBrokenMLSConversation`: notifies the delegate and returns.
+    /// - `giveUp`: throws `MLSRetryError.nonRecoverableError`.
+
     private func retryOnCommitFailure(
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void,
+        groupOutOfSyncHandler: ((_ missingUsers: Set<QualifiedID>) async throws -> Void)? = nil,
         retryCount: Int = 0
     ) async throws {
         let logAttributes: LogAttributes = [
@@ -1509,36 +1615,45 @@ public final class MLSService: MLSServiceInterface {
                 }
 
             case let .retryAfterAddingMissingUsers(missingUsers):
-                guard retryCount <= maxRetryAttempts else {
-                    logger.error(
-                        "failed to send commit due to missing users and reached max attempts",
+                if let handler = groupOutOfSyncHandler {
+                    // Custom handler: used when the group cannot simply be patched in place
+                    // (e.g. during initial group creation where the group was wiped on failure).
+                    // The handler is responsible for any further recovery; no additional retry
+                    // is applied here, preventing infinite recursion without a counter.
+                    logger.warn(
+                        "failed to send commit due to missing users, delegating to group-out-of-sync handler",
                         attributes: logAttributes
                     )
-                    throw MLSRetryError.retryLimitReached
+                    try await handler(missingUsers)
+                } else {
+                    // Default behaviour for existing groups: add the missing users to the group
+                    // then retry the original operation.
+                    guard retryCount <= maxRetryAttempts else {
+                        logger.error(
+                            "failed to send commit due to missing users and reached max attempts",
+                            attributes: logAttributes
+                        )
+                        throw MLSRetryError.retryLimitReached
+                    }
+
+                    logger.warn(
+                        "failed to send commit due to missing users. Adding users then retrying operation - attempt: \(retryCount)...",
+                        attributes: logAttributes
+                    )
+
+                    let users = missingUsers.map { MLSUser($0, selfClientID: nil) }
+
+                    // Call the internal method directly to avoid re-entering the commit
+                    // failure handler for this add, which would cause an infinite loop.
+                    try await internalAddMembersToConversation(with: users, for: groupID)
+
+                    try await retryOnCommitFailure(
+                        for: groupID,
+                        operation: operation,
+                        groupOutOfSyncHandler: nil,
+                        retryCount: retryCount + 1
+                    )
                 }
-
-                logger.warn(
-                    "failed to send commit due to missing users. Adding users then retrying operation - attempt: \(retryCount)...",
-                    attributes: logAttributes
-                )
-
-                let users = missingUsers.map {
-                    MLSUser($0, selfClientID: nil)
-                }
-
-                // It's important to call the internal method because
-                // we don't want to re-enter the commit failure handling
-                // again for this action, otherwise we may end up in a loop.
-                try await internalAddMembersToConversation(
-                    with: users,
-                    for: groupID
-                )
-
-                try await retryOnCommitFailure(
-                    for: groupID,
-                    operation: operation,
-                    retryCount: retryCount + 1
-                )
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
