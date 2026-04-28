@@ -21,7 +21,7 @@ import WireMessagingDomain
 import UniformTypeIdentifiers
 
 /// An item in the `FilesView`.
-package struct FilesViewItem: Identifiable, Hashable {
+package struct FilesViewItem: Identifiable, Hashable, Sendable {
 
     /// The kind of item
     enum Kind {

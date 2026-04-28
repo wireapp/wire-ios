@@ -28,13 +28,6 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 @MainActor
 package final class FilesViewModel: ObservableObject {
 
-    private typealias LoadItemsTask = Task<(items: [FilesViewItem], isLastPage: Bool), any Error>
-
-    private enum Constants {
-        /// How close to the end of the list before loading more items.
-        static let loadMoreThreshold = 5
-    }
-
     enum SheetNavigation: Identifiable {
         case create(target: WireDriveCreateFileUseCase.Target)
         case editTags(fileItem: FilesViewItem)
@@ -65,31 +58,6 @@ package final class FilesViewModel: ObservableObject {
     enum FolderMenuOption: Hashable {
         case folder(nodeID: UUID, title: String)
         case root
-    }
-
-    enum State: Equatable {
-        case loading
-        case received(items: [FilesViewItem])
-        case pending // drive is not ready yet
-        case error(isConnectionError: Bool)
-
-        var items: [FilesViewItem] {
-            switch self {
-            case let .received(items):
-                items
-            default:
-                []
-            }
-        }
-
-        var isLoaded: Bool {
-            switch self {
-            case .loading, .pending, .error:
-                false
-            case .received:
-                true
-            }
-        }
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -123,18 +91,20 @@ package final class FilesViewModel: ObservableObject {
             .first(where: \.isSelfUser)?.id
     }
 
-    @Published var hasMore = true
-    @Published private var loadMoreTask: LoadItemsTask?
     @Published var searchText = ""
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
-    @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
+    @Published var filesListLoader: FilesListLoader
+    
+    var state: FilesListLoader.Loader.State {
+        filesListLoader.loader.state
+    }
 
     //MARK: init
     
@@ -159,21 +129,71 @@ package final class FilesViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self.nodesRepository = nodesRepository
         self.cellName = cellName
-        self.state = isCellsStatePending ? .pending : .loading
         self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
+        self.filesListLoader = .init(networkMonitor: networkMonitor)
+        self.filesListLoader.loader.state = isCellsStatePending ? .pending : .loading
     }
     
     // MARK: setup
 
     func setup() async {
+        setupFilesLoader()
         fetchConversations()
         fetchTemplates()
         bindSearch()
         Task { await reload() }
     }
+    
+    func setupFilesLoader() {
+        filesListLoader.onFetchOnlineFiles = { [weak self] offset in
+            guard let self else { return (items: [], isLastPage: true) }
+            
+            let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
+                searchTerm: searchText.isEmpty ? nil : searchText,
+                metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
+                sortField: sortingSelection.sortingKey?.sortField,
+                sortDirDesc: sortingSelection.sortingOrder == .descending,
+                offset: offset
+            )
+
+            let items: [FilesViewItem] = nodes.compactMap(FilesViewItem.fromNode(_:))
+            
+            return (items, isLastPage)
+        }
+        
+        filesListLoader.onFetchOfflineFiles = { [weak self] in
+            guard let self else { return [] }
+            
+            let actionInput = LoadOfflineAvailableFilesUIAction.Input(
+                conversationName: cellName != nil ? conversations.first?.name : nil,
+                assetsPath: navigationPath.last?.filePath,
+                getAsset: useCases.getAsset,
+                getOfflineAvailableAssets: useCases.getOfflineAvailableAssets
+            )
+
+            return try await LoadOfflineAvailableFilesUIAction(input: actionInput)()
+        }
+        
+        filesListLoader.onErrorToPresent = { [weak self] _ in
+            self?.alert = .unknownError
+        }
+    }
+    
+    private func bindSearch() {
+        $searchText
+            .removeDuplicates()
+            .dropFirst()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    // MARK: fetch general data
     
     private func fetchTemplates() {
         Task {
@@ -193,134 +213,16 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func bindSearch() {
-        $searchText
-            .removeDuplicates()
-            .dropFirst()
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task { await self?.reload() }
-            }
-            .store(in: &subscriptions)
-    }
-    
-    // MARK: item list loading
+    // MARK: load files
 
-    /// Reloads the items, clearing any previously loaded items.
-    /// - Parameters:
-    ///   - refreshing: Whether the reload was triggered by a pull-to-refresh action.
-    ///
-    /// Cancels any ongoing load operation and starts a new one.
-    /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
     func reload(refreshing: Bool = false) async {
-        guard networkMonitor.currentStatus != nil else { return  }
-
-        cancelLoad()
-        state = refreshing ? state : .loading
-        hasMore = !refreshing
-
-        await loadMore(refreshing: refreshing)
+        guard networkMonitor.currentStatus != nil else { return }
+        
+        await filesListLoader.loader.reload(refreshing: refreshing)
     }
 
-    /// Loads more items if available and `index` is towards the end of the list.
-    ///
-    /// This method checks if the `index` is within the threshold for loading more items. For example given a threshold
-    /// of 5, when 10 items are loaded, it will load more when the index is 5 or above - i.e. when one of the last 5
-    /// items is being displayed.
-    ///
-    /// - Parameter index: The index of the item which requested load more.
     func loadMoreIfNeeded(index: Int) async {
-        let remaining = state.items.count - index - 1
-        if remaining < Constants.loadMoreThreshold, hasMore {
-            await loadMore()
-        }
-    }
-    
-    /// Whether the view model is currently loading items.
-    var isLoading: Bool {
-        loadMoreTask != nil
-    }
-    
-    private func cancelLoad() {
-        loadMoreTask?.cancel()
-        loadMoreTask = nil
-    }
-
-    private func loadMore(refreshing: Bool = false) async {
-        if isOffline {
-            await loadOfflineFiles()
-        } else {
-            await loadOnlineFiles(refreshing: refreshing)
-        }
-    }
-
-    private func loadOnlineFiles(refreshing: Bool) async {
-        guard loadMoreTask == nil else { return }
-
-        let offset = refreshing ? 0 : state.items.count
-        let task = Task { try await fetchItems(offset: offset) }
-
-        loadMoreTask = task
-        do {
-            let (newItems, isLastPage) = try await task.value
-            let receivedItems = refreshing ? newItems : state.items + newItems
-            state = .received(items: receivedItems.latestModified())
-            hasMore = !isLastPage
-        } catch is CancellationError {
-            return // developer-driven error, discard
-        } catch {
-            if state.items.isEmpty {
-                state = .error(isConnectionError: error.isNoInternetError)
-            } else {
-                if error.isNoInternetError {
-                    // no-op, offline bar is dynamically shown/hidden on top of the list
-                } else {
-                    alert = .unknownError
-                }
-            }
-            hasMore = state.items.isEmpty ? true : hasMore
-        }
-        loadMoreTask = nil
-    }
-
-    private func loadOfflineFiles() async {
-        guard !isRecycleBin else {
-            return state = .received(items: [])
-        }
-
-        do {
-            let actionInput = LoadOfflineAvailableFilesUIAction.Input(
-                conversationName: cellName != nil ? conversations.first?.name : nil,
-                assetsPath: navigationPath.last?.filePath,
-                getAsset: useCases.getAsset,
-                getOfflineAvailableAssets: useCases.getOfflineAvailableAssets
-            )
-
-            let items = try await LoadOfflineAvailableFilesUIAction(input: actionInput)()
-
-            state = .received(items: items)
-        } catch {
-            alert = .unknownError
-            WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
-        }
-        hasMore = false
-    }
-
-    private func fetchItems(
-        offset: Int
-    ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
-        let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
-            searchTerm: searchText.isEmpty ? nil : searchText,
-            metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
-            sortField: sortingSelection.sortingKey?.sortField,
-            sortDirDesc: sortingSelection.sortingOrder == .descending,
-            offset: offset
-        )
-
-        let items: [FilesViewItem] = nodes.compactMap(FilesViewItem.fromNode(_:))
-
-        try Task.checkCancellation()
-        return (items, isLastPage)
+        await filesListLoader.loader.loadMoreIfNeeded(index: index)
     }
     
     // MARK: folders
@@ -426,18 +328,8 @@ package final class FilesViewModel: ObservableObject {
             return
         }
 
-        var currentItems = state.items
-        currentItems.removeAll { $0.id == asset.id }
-        state = .received(items: currentItems.latestModified())
-
-        do {
-            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
-        } catch {
-            guard state.isLoaded else { return }
-
-            var currentItems = state.items
-            currentItems.append(asset)
-            state = .received(items: currentItems.latestModified())
+        await filesListLoader.removeItem(asset) { [weak self] in
+            try await self?.useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
         }
     }
 
@@ -446,23 +338,12 @@ package final class FilesViewModel: ObservableObject {
             WireLogger.wireDrive.error("Attempt to restore asset while not visible", attributes: .safePublic)
             return
         }
-
-        var currentItems = state.items
-        currentItems.removeAll { $0.id == asset.id }
-        state = .received(items: currentItems.latestModified())
-
-        let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
-
-        do {
+        
+        await filesListLoader.removeItem(asset) { [weak self] in
+            guard let self else { return }
+            let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
             try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
-
             setNavigation([])
-        } catch {
-            guard state.isLoaded else { return }
-
-            var currentItems = state.items
-            currentItems.append(asset)
-            state = .received(items: currentItems.latestModified())
         }
     }
     
@@ -531,30 +412,5 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
-    }
-}
-
-private extension Collection<FilesViewItem> {
-    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
-    func latestModified() -> [FilesViewItem] {
-        var latestByID: [UUID: FilesViewItem] = [:]
-        for item in self {
-            if let existing = latestByID[item.id] {
-                let existingDate = existing.modifiedAt ?? .distantPast
-                let newDate = item.modifiedAt ?? .distantPast
-                if newDate > existingDate {
-                    latestByID[item.id] = item
-                }
-            } else {
-                latestByID[item.id] = item
-            }
-        }
-
-        var results: [FilesViewItem] = []
-        for item in self where item == latestByID[item.id] {
-            results.append(item)
-        }
-
-        return results
     }
 }
