@@ -515,7 +515,7 @@ private extension AppDelegate {
             let data = try Data(contentsOf: URL(filePath: path))
             return try BackendEnvironment2.fromJSON(data, environmentType: .default)
         } catch {
-            fatalError("unable to fetch default environment: \(error)")
+            fatalError("unabled to fetch default environment: \(error)")
         }
     }
 

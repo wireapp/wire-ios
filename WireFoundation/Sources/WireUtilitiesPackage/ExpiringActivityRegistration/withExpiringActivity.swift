@@ -16,31 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-private let sharedManager = ExpiringActivityManager(
-    performer: ExpiringActivityProcessInfoWrapper()
-)
-
 // MARK: - Non-throwing
 
-public func withExpiringActivity<T>(
+public func withExpiringActivity(
     reason: String,
-    block: @escaping @Sendable () async -> T
-) async -> T where T: Sendable {
+    block: @escaping @Sendable () async -> Void
+) async {
     await withExpiringActivity(
-        manager: sharedManager,
+        performer: ExpiringActivityProcessInfoWrapper(),
         reason: reason,
         block: block
     )
 }
 
-func withExpiringActivity<T>(
-    manager: ExpiringActivityManager,
+func withExpiringActivity(
+    performer: some ExpiringActivityPerformerProtocol,
     reason: String,
-    block: @escaping @Sendable () async -> T
-) async -> T where T: Sendable {
+    block: @escaping @Sendable () async -> Void
+) async {
     let task = Task(operation: block)
-    await manager.track(reason: reason, task: task)
-    return await withTaskCancellationHandler {
+    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
+    await withTaskCancellationHandler {
         await task.value
     } onCancel: {
         task.cancel()
@@ -54,19 +50,19 @@ public func withExpiringActivity<T>(
     block: @escaping @Sendable () async throws -> T
 ) async throws -> T where T: Sendable {
     try await withExpiringActivity(
-        manager: sharedManager,
+        performer: ExpiringActivityProcessInfoWrapper(),
         reason: reason,
         block: block
     )
 }
 
 func withExpiringActivity<T>(
-    manager: ExpiringActivityManager,
+    performer: some ExpiringActivityPerformerProtocol,
     reason: String,
     block: @escaping @Sendable () async throws -> T
 ) async throws -> T where T: Sendable {
     let task = Task(operation: block)
-    await manager.track(reason: reason, task: task)
+    performer.performTaskCancellationAsExpiringActivity(reason: reason, task: task)
     return try await withTaskCancellationHandler {
         try await task.value
     } onCancel: {
