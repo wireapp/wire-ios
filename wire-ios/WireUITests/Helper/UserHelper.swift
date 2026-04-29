@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import os
+import WireNetwork
 
 struct Member {
     let name: String
@@ -33,7 +33,7 @@ final class UserHelper {
         let backend: BackendTarget
     }
 
-    private static var instances =  OSAllocatedUnfairLock<[InstanceKey: UserHelper] >(uncheckedState: [:])
+    private static var instances = OSAllocatedUnfairLock<[InstanceKey: UserHelper]>(uncheckedState: [:])
 
     private let httpClient = HttpClient()
 
