@@ -101,13 +101,13 @@ package final class FilesViewModel: ObservableObject {
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
     @Published var filesListLoader: FilesListLoader
-    
+
     var state: FilesListLoader.Loader.State {
         filesListLoader.loader.state
     }
 
-    //MARK: init
-    
+    // MARK: init
+
     package init(
         useCases: UseCases,
         title: String? = nil,
@@ -134,9 +134,9 @@ package final class FilesViewModel: ObservableObject {
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
         self.filesListLoader = .init(networkMonitor: networkMonitor)
-        self.filesListLoader.loader.state = isCellsStatePending ? .pending : .loading
+        filesListLoader.loader.state = isCellsStatePending ? .pending : .loading
     }
-    
+
     // MARK: setup
 
     func setup() async {
@@ -146,11 +146,11 @@ package final class FilesViewModel: ObservableObject {
         bindSearch()
         Task { await reload() }
     }
-    
+
     func setupFilesLoader() {
         filesListLoader.onFetchOnlineFiles = { [weak self] offset in
             guard let self else { return (items: [], isLastPage: true) }
-            
+
             let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
                 searchTerm: searchText.isEmpty ? nil : searchText,
                 metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
@@ -160,13 +160,13 @@ package final class FilesViewModel: ObservableObject {
             )
 
             let items: [FilesViewItem] = nodes.compactMap(FilesViewItem.fromNode(_:))
-            
+
             return (items, isLastPage)
         }
-        
+
         filesListLoader.onFetchOfflineFiles = { [weak self] in
             guard let self else { return [] }
-            
+
             let actionInput = LoadOfflineAvailableFilesUIAction.Input(
                 conversationName: cellName != nil ? conversations.first?.name : nil,
                 assetsPath: navigationPath.last?.filePath,
@@ -176,12 +176,12 @@ package final class FilesViewModel: ObservableObject {
 
             return try await LoadOfflineAvailableFilesUIAction(input: actionInput)()
         }
-        
+
         filesListLoader.onErrorToPresent = { [weak self] _ in
             self?.alert = .unknownError
         }
     }
-    
+
     private func bindSearch() {
         $searchText
             .removeDuplicates()
@@ -192,9 +192,9 @@ package final class FilesViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
+
     // MARK: fetch general data
-    
+
     private func fetchTemplates() {
         Task {
             templates = try await useCases.getFileTemplates.invoke()
@@ -204,7 +204,7 @@ package final class FilesViewModel: ObservableObject {
     private func fetchConversations() {
         Task {
             let allDriveConversations = await useCases.getDriveConversations.invoke()
-            
+
             if let cellName {
                 conversations = allDriveConversations.filter { $0.id == cellName }
             } else {
@@ -217,14 +217,14 @@ package final class FilesViewModel: ObservableObject {
 
     func reload(refreshing: Bool = false) async {
         guard networkMonitor.currentStatus != nil else { return }
-        
+
         await filesListLoader.loader.reload(refreshing: refreshing)
     }
 
     func loadMoreIfNeeded(index: Int) async {
         await filesListLoader.loader.loadMoreIfNeeded(index: index)
     }
-    
+
     // MARK: folders
 
     var folderMenuOptions: [FolderMenuOption] {
@@ -252,9 +252,9 @@ package final class FilesViewModel: ObservableObject {
     var isInFolder: Bool {
         !navigationPath.isEmpty
     }
-    
+
     // MARK: open file/folder
-    
+
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
     /// cancels the download.
     func performPrimaryAction(item: FilesViewItem) async {
@@ -319,9 +319,9 @@ package final class FilesViewModel: ObservableObject {
         guard cellName != nil else { return }
         sheetNavigation = .create(target: target)
     }
-    
+
     // MARK: recycle bin
-    
+
     func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
@@ -338,7 +338,7 @@ package final class FilesViewModel: ObservableObject {
             WireLogger.wireDrive.error("Attempt to restore asset while not visible", attributes: .safePublic)
             return
         }
-        
+
         await filesListLoader.removeItem(asset) { [weak self] in
             guard let self else { return }
             let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
@@ -346,9 +346,9 @@ package final class FilesViewModel: ObservableObject {
             setNavigation([])
         }
     }
-    
+
     // MARK: search
-    
+
     var showSearchBar: Bool {
         guard !isOffline else {
             return false
@@ -361,9 +361,9 @@ package final class FilesViewModel: ObservableObject {
             false
         }
     }
-    
+
     // MARK: filters
-    
+
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
         filtersSelection = filters
@@ -376,7 +376,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: offline mode
-    
+
     var networkStatus: NetworkMonitor.NetworkStatus? {
         networkMonitor.currentStatus
     }

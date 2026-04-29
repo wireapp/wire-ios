@@ -158,7 +158,7 @@ final class FileVersioningViewModel: ObservableObject {
             }
 
             viewingURL = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            
+
             onVersionRestored()
         } catch {
             alert = AlertModel(

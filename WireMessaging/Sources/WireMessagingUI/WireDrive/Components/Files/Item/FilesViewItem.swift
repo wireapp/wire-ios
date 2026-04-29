@@ -17,8 +17,8 @@
 //
 
 package import Foundation
-import WireMessagingDomain
 import UniformTypeIdentifiers
+import WireMessagingDomain
 
 /// An item in the `FilesView`.
 package struct FilesViewItem: Identifiable, Hashable, Sendable {

@@ -18,8 +18,8 @@
 
 package import WireMessagingDomain
 
-extension FilesViewModel {
-    package struct UseCases {
+package extension FilesViewModel {
+    struct UseCases {
         let fetchNodes: WireDriveFetchNodesPageUseCase
         let deleteNodes: WireDriveDeleteNodesUseCase
         let restoreNodes: WireDriveRestoreNodesUseCase
@@ -41,7 +41,7 @@ extension FilesViewModel {
         let makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase
         let removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase
         let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
-        
+
         package init(
             fetchNodes: WireDriveFetchNodesPageUseCase,
             deleteNodes: WireDriveDeleteNodesUseCase,

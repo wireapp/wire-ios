@@ -30,13 +30,13 @@ package struct WireDriveCreateFileUseCase: WireDriveCreateFileUseCaseProtocol {
     package enum Target: Equatable, Identifiable {
         case folder
         case file(WireDriveFileTemplate)
-        
+
         package var id: String {
             switch self {
             case .folder:
-                return "folder"
+                "folder"
             case let .file(template):
-                return "file:\(template.id)"
+                "file:\(template.id)"
             }
         }
     }

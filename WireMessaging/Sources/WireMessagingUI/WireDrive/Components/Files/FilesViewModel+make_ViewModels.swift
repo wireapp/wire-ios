@@ -59,11 +59,11 @@ extension FilesViewModel {
             isInRecycleBin: isRecycleBin,
         )
     }
-    
+
     func createFileViewModel(target: WireDriveCreateFileUseCase.Target) -> CreateFileViewModel {
         // When navigation path is empty, file/folder is created at the root path (cell name)
         let path = navigationPath.last?.filePath ?? cellName ?? ""
-        
+
         return .init(
             creationTarget: target,
             path: path,
@@ -107,7 +107,7 @@ extension FilesViewModel {
             getEditingURLUseCase: useCases.getEditingURL
         )
     }
-    
+
     func fileRenameViewModel(item: FilesViewItem) -> FileRenameViewModel {
         .init(
             renameNodeUseCase: useCases.renameNode,

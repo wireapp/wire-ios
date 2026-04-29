@@ -119,7 +119,7 @@ final class FilesItemViewModel: ObservableObject {
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
             guard let asset = self?.asset, !asset.isAvailableOffline else { return }
-            self?.performAction(.primaryAction) //TODO: this is also called when a file is downloaded after restoring a file version. this needs to be fixed.
+            self?.performAction(.primaryAction)
         }
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in

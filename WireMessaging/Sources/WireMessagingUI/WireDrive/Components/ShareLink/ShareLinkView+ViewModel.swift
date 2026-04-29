@@ -81,6 +81,7 @@ extension ShareLinkView {
                 onLinkStateChanged(publicLinkState)
             }
         }
+
         @Published var isPresentingError = false
 
         let onLinkStateChanged: (PublicLinkState) -> Void

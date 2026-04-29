@@ -24,13 +24,13 @@ import Observation
 class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observable, ObservableObject {
     private typealias LoadTask = Task<(items: [Item], isLastPage: Bool), any Error>
     typealias ItemsData = (items: [Item], isLastPage: Bool)
-    
+
     enum State: Hashable {
         case loading
         case received(items: [Item])
         case pending
         case error(isConnectionError: Bool)
-        
+
         var items: [Item] {
             switch self {
             case let .received(items):
@@ -39,7 +39,7 @@ class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observabl
                 []
             }
         }
-        
+
         var isLoaded: Bool {
             switch self {
             case .loading, .pending, .error:
@@ -49,18 +49,18 @@ class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observabl
             }
         }
     }
-    
+
     /// How close to the end of the list before loading more items.
     var loadMoreThreshold = 5
-    
+
     @Published var state: State = .pending
     @Published var hasMore = true
-    
+
     private var loadTask: LoadTask?
-    
+
     var onFetch: ((Int) async throws -> ItemsData)?
     var onError: ((any Error) -> Void)?
-    
+
     /// Reloads the items, clearing any previously loaded items.
     /// - Parameters:
     ///   - refreshing: Whether the reload was triggered by a pull-to-refresh action.
@@ -68,15 +68,13 @@ class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observabl
     /// Cancels any ongoing load operation and starts a new one.
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
     func reload(refreshing: Bool = false) async {
-        //TODO: guard networkMonitor.currentStatus != nil else { return }
-        
         cancelLoad()
         state = refreshing ? state : .loading
         hasMore = !refreshing
-        
+
         await loadMore(refreshing: refreshing)
     }
-    
+
     /// Loads more items if available and `index` is towards the end of the list.
     ///
     /// This method checks if the `index` is within the threshold for loading more items. For example given a threshold
@@ -90,7 +88,7 @@ class IncrementalListLoader<Item: Identifiable & Hashable & Sendable>: Observabl
             await loadMore()
         }
     }
-    
+
     var isLoading: Bool {
         loadTask != nil
     }
@@ -112,7 +110,7 @@ private extension IncrementalListLoader {
 
         loadTask = task
         defer { loadTask = nil }
-        
+
         do {
             let (newItems, isLastPage) = try await task.value
             let receivedItems = refreshing ? newItems : state.items + newItems

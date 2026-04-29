@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 import Observation
 import WireLogging
 
@@ -25,21 +25,21 @@ import WireLogging
 @MainActor
 class FilesListLoader: Observable, ObservableObject {
     typealias Loader = IncrementalListLoader<FilesViewItem>
-    
+
     @Published private(set) var networkMonitor: NetworkMonitor
     @Published private(set) var loader: Loader
-    
+
     var onFetchOnlineFiles: ((Int) async throws -> (items: [FilesViewItem], isLastPage: Bool))?
     var onFetchOfflineFiles: (() async throws -> [FilesViewItem])?
     var onErrorToPresent: ((any Error) -> Void)?
 
     init(networkMonitor: NetworkMonitor = .shared) {
         self.networkMonitor = networkMonitor
-        
-        loader = .init()
+
+        self.loader = .init()
         loader.onFetch = { [weak self] offset in
             guard let self else { return (items: [], isLastPage: true) }
-            
+
             if isOffline {
                 let items = try await onFetchOfflineFiles?() ?? []
                 return (items: items, isLastPage: true)
@@ -50,7 +50,7 @@ class FilesListLoader: Observable, ObservableObject {
         }
         loader.onError = { [weak self] error in
             guard let self else { return }
-            
+
             if isOffline {
                 WireLogger.wireDrive.error("Error fetching offline assets:\n\(error)")
                 onErrorToPresent?(error)
@@ -66,14 +66,14 @@ class FilesListLoader: Observable, ObservableObject {
             }
         }
     }
-    
+
     private var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
-    
+
     /// Removes an item from the list, then performs an async action.
     /// If the action fails, restores the list to how it was before removing the item.
-    func removeItem(_ item: FilesViewItem, withAction action: @escaping () async throws -> ()) async {
+    func removeItem(_ item: FilesViewItem, withAction action: @escaping () async throws -> Void) async {
         let items = loader.state.items
         let changedItems = items.filter { $0.id != item.id }
         loader.state = .received(items: changedItems)

@@ -256,7 +256,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     }
 
     private func makeCreateFileViewModel() -> CreateFileViewModel {
-        let viewModel = CreateFileViewModel(
+        .init(
             creationTarget: .folder,
             path: containerPath,
             createFileUseCase: createFileUseCase,
@@ -264,8 +264,6 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
                 Task { await self?.reload() }
             }
         )
-
-        return viewModel
     }
 
     /// Returns the title for a given path.
