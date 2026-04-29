@@ -20,19 +20,6 @@ import XCTest
 
 final class MultiBackendSupportTests: WireUITestCase {
 
-    private var antaUserHelper: UserHelper!
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        antaUserHelper = UserHelper(backend: .anta)
-    }
-
-    override func tearDown() async throws {
-        await antaUserHelper.deleteCreatedUsers()
-        antaUserHelper = nil
-        try await super.tearDown()
-    }
-
     @MainActor
     private func testLoginToBackend(
         _ backend: BackendTarget
@@ -40,13 +27,13 @@ final class MultiBackendSupportTests: WireUITestCase {
 
         let selectedUserHelper = switch backend {
         case .staging:
-            self.userHelper
+            UserHelper.default
         case .anta:
-            self.antaUserHelper
+            UserHelper.instance(backend: .anta)
         case .bella:
             fatalError("Unsupported backend: bella")
         }
-        let user = try await selectedUserHelper!.createPersonalUser()
+        let user = try await selectedUserHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 

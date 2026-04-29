@@ -25,7 +25,7 @@ final class WireDriveTests: WireUITestCase {
         _ conversation: CreateConversationOption,
         memberCount: Int = 2
     ) async throws -> UserInfo {
-        let (teamOwner, _, _, _) = try await userHelper.registerTeam(
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
             withMemberCount: memberCount,
             conversation: conversation,
             driveEnabled: true
@@ -54,14 +54,14 @@ final class WireDriveTests: WireUITestCase {
         memberCount: Int = 2,
         channelEnabled: Bool = false
     ) async throws -> (teamOwner: UserInfo, teamMembers: [UserInfo]) {
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: memberCount)
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: memberCount)
         let teamID = try XCTUnwrap(teamOwner.teamID)
 
         if channelEnabled {
-            try await userHelper.unlockAndEnableChannelFeature(teamID: teamID)
+            try await UserHelper.default.unlockAndEnableChannelFeature(teamID: teamID)
         }
 
-        try await userHelper.unlockAndEnableDriveFeature(teamID: teamID)
+        try await UserHelper.default.unlockAndEnableDriveFeature(teamID: teamID)
         return (teamOwner, teamMembers)
     }
 

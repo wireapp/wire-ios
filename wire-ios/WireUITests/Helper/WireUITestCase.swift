@@ -26,7 +26,6 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    var userHelper: UserHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
     var uiTestConfig = UITestConfig()
@@ -44,8 +43,6 @@ class WireUITestCase: XCTestCase {
             "--useEnvStaging"
         ]
 
-        userHelper = UserHelper()
-
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
@@ -62,8 +59,7 @@ class WireUITestCase: XCTestCase {
 
     override func tearDown() async throws {
         await callingServiceClient.destroyCreatedInstances()
-        await userHelper.deleteCreatedUsers()
-        userHelper = nil
+        await UserHelper.deleteCreatedUsers()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {

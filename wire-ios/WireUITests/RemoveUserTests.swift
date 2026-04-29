@@ -29,8 +29,8 @@ class RemoveUserTests: WireUITestCase {
     @MainActor
     func testUserDeletedForPersonalUser_TC_9490() async throws {
         // GIVEN
-        let member1 = try await userHelper.createPersonalUser()
-        let member2 = try await userHelper.createPersonalUser()
+        let member1 = try await UserHelper.default.createPersonalUser()
+        let member2 = try await UserHelper.default.createPersonalUser()
 
         _ = try await loginToBackend(user: member2)
             .openUserProfilePage()
@@ -84,7 +84,7 @@ class RemoveUserTests: WireUITestCase {
     @MainActor
     private func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
         // GIVEN
-        let team = try await userHelper.registerTeam(withMemberCount: 2)
+        let team = try await UserHelper.default.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
 
@@ -134,6 +134,6 @@ class RemoveUserTests: WireUITestCase {
     }
 
     private func deleteMember(_ user: UserInfo) async throws {
-        try await userHelper.deleteUser(user)
+        try await UserHelper.default.deleteUser(user)
     }
 }

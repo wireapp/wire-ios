@@ -27,6 +27,14 @@ struct Member {
 }
 
 class UserHelper {
+    private struct InstanceKey: Hashable {
+        let apiVersion: APIVersion
+        let backend: BackendTarget
+    }
+
+    private static let instancesLock = NSLock()
+    private static var instances: [InstanceKey: UserHelper] = [:]
+
     private let httpClient = HttpClient()
 
     let backend: BackendTarget
@@ -47,7 +55,42 @@ class UserHelper {
     private let authenticationManager = MockAuthManager()
     private let environment: BackendEnvironment
 
-    init(
+    static func instance(
+        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
+        backend: BackendTarget = .staging
+    ) -> UserHelper {
+        let key = InstanceKey(apiVersion: apiVersion, backend: backend)
+
+        instancesLock.lock()
+        defer { instancesLock.unlock() }
+
+        if let instance = instances[key] {
+            return instance
+        }
+
+        let instance = UserHelper(apiVersion: apiVersion, backend: backend)
+        instances[key] = instance
+        return instance
+    }
+
+    static var `default`: UserHelper {
+        instance(
+            apiVersion: APIVersion.productionVersions.max()!,
+            backend: .staging
+        )
+    }
+
+    static func deleteCreatedUsers() async {
+        instancesLock.lock()
+        let instances = Array(instances.values)
+        instancesLock.unlock()
+
+        for instance in instances {
+            await instance.deleteTrackedUsers()
+        }
+    }
+
+    private init(
         apiVersion: APIVersion = APIVersion.productionVersions.max()!,
         backend: BackendTarget = .staging
     ) {
@@ -198,9 +241,17 @@ class UserHelper {
         try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
     }
 
-    /// Delete  created test users
-    func deleteCreatedUsers() async {
-        for user in createdUsers {
+    /// Delete created test users for this helper instance.
+    private func deleteTrackedUsers() async {
+        let users = createdUsers
+        createdUsers.removeAll()
+
+        defer {
+            cookieStorage.cookies = []
+            authenticationManager.accessToken = nil
+        }
+
+        for user in users {
             do {
                 if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team

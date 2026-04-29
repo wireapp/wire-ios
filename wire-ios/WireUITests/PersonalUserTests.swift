@@ -59,7 +59,7 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func testLoginAsExistingPersonalUser_TC_8804() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
         _ = try  firstTimePage.acceptPopup()
@@ -71,8 +71,8 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
-        let userA = try await userHelper.createPersonalUser()
-        let userB = try await userHelper.createPersonalUser()
+        let userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
@@ -137,7 +137,7 @@ final class PersonalUsersTests: WireUITestCase {
     @MainActor
     func testAddConversationAsFavourite_TC_8869() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, _, _, _) = try await userHelper
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
@@ -158,7 +158,7 @@ final class PersonalUsersTests: WireUITestCase {
     @MainActor
     func testFilterConversationByFavourite_TC_8874() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, _, _, _) = try await userHelper
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)

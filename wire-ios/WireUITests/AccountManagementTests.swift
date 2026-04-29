@@ -28,7 +28,7 @@ final class AccountManagementTests: WireUITestCase {
 
         let passcode = UserGenerator.generateAppPasscode()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let page = try await app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -53,7 +53,7 @@ final class AccountManagementTests: WireUITestCase {
 
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()

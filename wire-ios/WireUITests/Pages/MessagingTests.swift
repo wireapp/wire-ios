@@ -28,7 +28,7 @@ final class MessagingTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomConversationName()
         let messageFromMember1 = UserGenerator.generateRandomMessage()
 
-        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
+        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
@@ -36,7 +36,7 @@ final class MessagingTests: WireUITestCase {
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let conversationDomain = userHelper.backend.domainInfo
+        let conversationDomain = UserHelper.default.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()
@@ -76,7 +76,7 @@ final class MessagingTests: WireUITestCase {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, teamMembers, _, conversationID) = try await userHelper
+        let (teamOwner, teamMembers, _, conversationID) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
@@ -84,7 +84,7 @@ final class MessagingTests: WireUITestCase {
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let conversationDomain = userHelper.backend.domainInfo
+        let conversationDomain = UserHelper.default.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()
