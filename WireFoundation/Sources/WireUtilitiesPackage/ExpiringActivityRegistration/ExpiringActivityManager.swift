@@ -77,9 +77,6 @@ actor ExpiringActivityManager {
         logger.debug("Tracking task [reason: \(reason), activeCount: \(activeCount)]")
 
         if activeCount == 1 {
-
-            warnIfApplicationNotActive(logger: logger)
-
             let semaphore = DispatchSemaphore(value: 0)
             onAllTasksFinished = { semaphore.signal() }
 
