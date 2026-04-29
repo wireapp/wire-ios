@@ -45,6 +45,11 @@ func warnIfApplicationNotActive(logger: WireLogger) {
 
             }
         }
+    #else
+        logger.info(
+            "Creating an expiring activity from an extension",
+            attributes: .safePublic
+        )
     #endif
 
 }
