@@ -21,8 +21,8 @@ import Foundation
 class TestServicesClient {
 
     let testServiceURL = "http://localhost:8080"
-    let CONNECT_TIMEOUT: TimeInterval = 120
-    let RESPONSE_TIMEOUT: TimeInterval = 120
+    let CONNECT_TIMEOUT: TimeInterval = 300
+    let RESPONSE_TIMEOUT: TimeInterval = 300
     private var instanceCache: [String: String] = [:]
 
     func sendHttpRequest(url: String, body: [String: Any], requestType: String) async throws -> (Data, URLResponse) {
