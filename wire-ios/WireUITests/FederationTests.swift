@@ -23,9 +23,6 @@ final class FederationTests: WireUITestCase {
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
 
-        defer {
-            BackendContext.current = .staging
-        }
         userHelper = UserHelper(environment: .bella)
         try switchBackend(target: .bella)
         let bellaTeam = try await userHelper.registerTeam(withMemberCount: 0)

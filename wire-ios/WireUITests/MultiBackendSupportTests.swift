@@ -47,8 +47,6 @@ final class MultiBackendSupportTests: WireUITestCase {
     @MainActor
     func testAddMultiBackendAccounts_TC_8940() async throws {
 
-        defer { BackendContext.current = .staging }
-
         var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
         _ = try accountPageBackend1
@@ -74,6 +72,67 @@ final class MultiBackendSupportTests: WireUITestCase {
             accountPage: accountPageBackend1,
             expectedUser: userBackend1,
             expectedDomain: BackendTarget.staging.domainInfo
+        )
+    }
+
+    @MainActor
+    func testReLoginWhenMultipleBackends_TC_10550() async throws {
+        // Login to account A
+        let userA = try await UserHelper(environment: .staging).createPersonalUser()
+        _ = try app
+            .loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+
+        // Go to Anta login
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        try switchBackend(target: .anta)
+
+        // Login to account B
+        let userB = try await UserHelper(environment: .anta).createPersonalUser()
+        _ = try app
+            .loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+
+        // Switch to account A
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userA.name)
+
+        // Switch to account B
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: userB.name)
+
+        // Logout account B
+        _ = try ConversationsPage()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(userB.password, expectWelcomePage: false)
+
+        // Go to Anta login
+        _ = try ConversationsPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        try switchBackend(target: .anta)
+
+        // Re-login to account B
+        _ = try app
+            .loginUser(email: userB.email, password: userB.password)
+
+        // Verify logged into account B
+        let accountSettingsPage = try ConversationsPage()
+            .openSettings()
+            .openAccountSettings()
+
+        try verifySwitchingAccount(
+            accountPage: accountSettingsPage,
+            expectedUser: userB,
+            expectedDomain: BackendTarget.anta.domainInfo
         )
     }
 
