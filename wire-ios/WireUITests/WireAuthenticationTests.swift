@@ -20,6 +20,10 @@ import XCTest
 
 final class WireAuthenticationTests: WireUITestCase {
 
+    override func tearDownWithError() throws {
+        app = nil
+    }
+
     @MainActor
     func testLoginWithWrongEmail_NextIsDisabled_TC_9456() throws {
 
@@ -39,5 +43,4 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssertTrue(loginPage.nextButton.waitForExistence(timeout: 2.0))
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
-
 }
