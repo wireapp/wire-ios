@@ -87,7 +87,15 @@ actor ExpiringActivityManager {
             DispatchQueue.main.async {
                 let applicationState = UIApplication.shared.applicationState
                 if applicationState != .active {
-                    logger.warn("Creating an expiring activity when the app is not active", attributes: .safePublic)
+                    let stringValue = switch applicationState {
+                    case .active: "active"
+                    case .inactive: "inactive"
+                    case .background: "background"
+                    @unknown default: "unknown (\(applicationState.rawValue))"
+                    }
+                    logger.warn(
+                        "Creating an expiring activity when the app is \(stringValue)",
+                        attributes: .safePublic)
                 }
             }
             #endif
