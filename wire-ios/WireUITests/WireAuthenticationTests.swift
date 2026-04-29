@@ -20,8 +20,20 @@ import XCTest
 
 final class WireAuthenticationTests: WireUITestCase {
 
-    override func tearDownWithError() throws {
+    private var antaUserHelper: UserHelper!
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        antaUserHelper = UserHelper(backend: .anta)
+    }
+
+    override func tearDown() async throws {
+        if let antaUserHelper {
+            await antaUserHelper.deleteCreatedUsers()
+        }
+        antaUserHelper = nil
         app = nil
+        try await super.tearDown()
     }
 
     @MainActor
@@ -57,12 +69,9 @@ final class WireAuthenticationTests: WireUITestCase {
         try await userHelper.createGroupConversations(qualifiedIds: [], owner: userB, groupName: conversationB)
 
         // Create user C on anta with a single conversation
-        BackendContext.current = .anta
-        let antaUserHelper = UserHelper(environment: .anta)
         let userC = try await antaUserHelper.createPersonalUser()
         let conversationC = "Conversation C"
         try await antaUserHelper.createGroupConversations(qualifiedIds: [], owner: userC, groupName: conversationC)
-        BackendContext.current = .staging
 
         // Login to user A
         _ = try app

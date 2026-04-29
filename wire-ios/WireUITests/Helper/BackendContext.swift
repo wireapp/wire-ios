@@ -17,11 +17,6 @@
 //
 
 import Foundation
-import WireNetwork
-
-public enum BackendContext {
-    static var current: BackendTarget = .staging
-}
 
 public enum BackendTarget {
     case staging

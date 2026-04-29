@@ -36,7 +36,7 @@ final class MessagingTests: WireUITestCase {
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let conversationDomain = BackendContext.current.domainInfo
+        let conversationDomain = userHelper.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()
@@ -84,7 +84,7 @@ final class MessagingTests: WireUITestCase {
 
         let conversationId = try XCTUnwrap(conversationID, "conversationId is nil")
 
-        let conversationDomain = BackendContext.current.domainInfo
+        let conversationDomain = userHelper.backend.domainInfo
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationsPage = try firstTimePage.acceptPopup()

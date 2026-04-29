@@ -151,8 +151,8 @@ struct EnvironmentVariables {
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
     }
 
-    var inbucketURL: URL {
-        switch BackendContext.current {
+    func inbucketURL(for target: BackendTarget) -> URL {
+        switch target {
         case .anta:
             antaInbucketURL
         case .staging:
@@ -162,8 +162,8 @@ struct EnvironmentVariables {
         }
     }
 
-    var backendURL: URL {
-        switch BackendContext.current {
+    func backendURL(for target: BackendTarget) -> URL {
+        switch target {
         case .anta:
             antaBackendURL
         case .staging:

@@ -29,6 +29,7 @@ struct Member {
 class UserHelper {
     private let httpClient = HttpClient()
 
+    let backend: BackendTarget
     let backendURL: URL
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
@@ -48,8 +49,11 @@ class UserHelper {
 
     init(
         apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        environment: BackendEnvironment = .staging
+        backend: BackendTarget = .staging
     ) {
+        let environment = backend.environment
+
+        self.backend = backend
         self.apiVersion = apiVersion
         self.backendURL = environment.url
         self.createdUsers = []
@@ -72,9 +76,8 @@ class UserHelper {
     }
 
     /// Fetch basicAuth Info from Env variable
-    /// - Parameter backend: backend
     /// - Returns: basicAuth String
-    func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
+    func basicAuth() -> String {
         switch backend {
         case .staging:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"] else {
@@ -192,7 +195,7 @@ class UserHelper {
     }
 
     func getVerificationCode(user: UserInfo) async throws -> String {
-        try await InbucketClient.getVerificationCode(email: user.email)
+        try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
     }
 
     /// Delete  created test users
@@ -202,7 +205,7 @@ class UserHelper {
                 if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team
                     try await authenticationAPI.requestVerificationCode(for: user.email)
-                    let code = try await InbucketClient.getVerificationCode(email: user.email)
+                    let code = try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
                     // If no team, delete user
@@ -692,6 +695,19 @@ extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+extension BackendTarget {
+    var environment: BackendEnvironment {
+        switch self {
+        case .staging:
+            .staging
+        case .anta:
+            .anta
+        case .bella:
+            .bella
+        }
+    }
 }
 
 enum CreateConversationOption {

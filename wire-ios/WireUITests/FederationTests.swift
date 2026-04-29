@@ -20,20 +20,31 @@ import XCTest
 
 final class FederationTests: WireUITestCase {
 
+    private var bellaUserHelper: UserHelper!
+    private var antaUserHelper: UserHelper!
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        bellaUserHelper = UserHelper(backend: .bella)
+        antaUserHelper = UserHelper(backend: .anta)
+    }
+
+    override func tearDown() async throws {
+        await bellaUserHelper.deleteCreatedUsers()
+        await antaUserHelper.deleteCreatedUsers()
+        bellaUserHelper = nil
+        antaUserHelper = nil
+        try await super.tearDown()
+    }
+
     @MainActor
     func testConnectFederatedUsers_TC_9459() async throws {
-
-        defer {
-            BackendContext.current = .staging
-        }
-        userHelper = UserHelper(environment: .bella)
         try switchBackend(target: .bella)
-        let bellaTeam = try await userHelper.registerTeam(withMemberCount: 0)
+        let bellaTeam = try await bellaUserHelper.registerTeam(withMemberCount: 0)
         _ = try await loginToBackend(user: bellaTeam.teamOwner)
 
-        userHelper = UserHelper(environment: .anta)
         try switchBackend(target: .anta)
-        let antaTeam = try await userHelper.registerTeam(withMemberCount: 0)
+        let antaTeam = try await antaUserHelper.registerTeam(withMemberCount: 0)
         let conversationsPage = try await loginToBackend(user: antaTeam.teamOwner)
 
         // WHEN

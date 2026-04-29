@@ -106,8 +106,6 @@ class WireUITestCase: XCTestCase {
 
         let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
-        // need to change for Inbucket
-        BackendContext.current = target
     }
 
     func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
