@@ -68,12 +68,15 @@ final class SSOHelper {
         user.name = user.email
         user.isSSOUser = true
 
-        _ = try await createOktaUser(
+        let oktaUserId = try await createOktaUser(
             name: user.name,
             email: user.email,
             password: user.password
         )
 
+        if oktaApplicationId != nil {
+            try await assignUserToApplication(userId: oktaUserId)
+        }
         userHelper.addUser(user)
         return user
     }
@@ -338,6 +341,26 @@ final class SSOHelper {
 
         oktaUserIds.append(id)
         return id
+    }
+
+    func assignUserToApplication(userId: String) async throws {
+        guard let oktaApplicationId else {
+            throw RuntimeError("assignUserToApplication: oktaApplicationId is nil")
+        }
+
+        let body = try JSONSerialization.data(withJSONObject: ["id": userId], options: [])
+
+        let (data, response) = try await sendOktaRequest(
+            path: ["apps", oktaApplicationId, "users"],
+            method: .post,
+            body: body
+        )
+
+        guard response.statusCode == 200 else {
+            throw RuntimeError(
+                "assignUserToApplication failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
     }
 
     func getSSOCode() throws -> String {

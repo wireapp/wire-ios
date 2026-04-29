@@ -21,7 +21,7 @@ import XCTest
 final class SSOTests: WireUITestCase {
 
     @MainActor
-    func testSSOLoginViaDomainLookup_TC_8967() async throws {
+    func testSSOLoginWithSSOCode_TC_8966() async throws {
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("teamOwner.teamID is nil")
@@ -30,10 +30,6 @@ final class SSOTests: WireUITestCase {
 
         let ssoMember = UserGenerator.generateUniqueUserInfo()
         let ssoUser = try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
-
-        /// Wait to allow Okta application assignment to fully propagate; without this delay, the login may fail with a
-        /// 403 (app not assigned) error.
-        await hardWait(inSeconds: 20)
         let ssoCode = try ssoHelper.getSSOCode()
 
         _ = try await WelcomePage()

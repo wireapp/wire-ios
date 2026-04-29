@@ -148,9 +148,4 @@ class WireUITestCase: XCTestCase {
                 return true
             }
     }
-
-    func hardWait(inSeconds: TimeInterval) async {
-        let nanoseconds = UInt64(inSeconds * 1_000_000_000)
-        try? await Task.sleep(nanoseconds: nanoseconds)
-    }
 }
