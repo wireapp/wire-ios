@@ -19,11 +19,6 @@
 import Foundation
 import WireLogging
 
-#if !IS_EXTENSION
-// used for logging `applicationState`
-import UIKit
-#endif
-
 private let logger = WireLogger.backgroundActivity
 
 /// Coordinates multiple tasks under a single expiring activity so that only one
@@ -83,22 +78,7 @@ actor ExpiringActivityManager {
 
         if activeCount == 1 {
 
-            #if !IS_EXTENSION
-            DispatchQueue.main.async {
-                let applicationState = UIApplication.shared.applicationState
-                if applicationState != .active {
-                    let stringValue = switch applicationState {
-                    case .active: "active"
-                    case .inactive: "inactive"
-                    case .background: "background"
-                    @unknown default: "unknown (\(applicationState.rawValue))"
-                    }
-                    logger.warn(
-                        "Creating an expiring activity when the app is \(stringValue)",
-                        attributes: .safePublic)
-                }
-            }
-            #endif
+            warnIfApplicationNotActive(logger: logger)
 
             let semaphore = DispatchSemaphore(value: 0)
             onAllTasksFinished = { semaphore.signal() }
