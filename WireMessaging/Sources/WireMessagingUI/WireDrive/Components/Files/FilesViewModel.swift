@@ -197,7 +197,11 @@ package final class FilesViewModel: ObservableObject {
 
     private func fetchTemplates() {
         Task {
-            templates = try await useCases.getFileTemplates.invoke()
+            do {
+                templates = try await useCases.getFileTemplates.invoke()
+            } catch {
+                WireLogger.wireDrive.error("Failed to fetch templates: \(error)", attributes: .safePublic)
+            }
         }
     }
 
