@@ -129,7 +129,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     private var preview: WireDriveNodePreview? {
-        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
+        node?.previews.max(by: { $0.dimension < $1.dimension })
     }
 
     private var isProcessing: Bool {
