@@ -58,6 +58,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        await app.terminate()
         await callingServiceClient.destroyCreatedInstances()
         await UserHelper.deleteCreatedUsers()
     }
