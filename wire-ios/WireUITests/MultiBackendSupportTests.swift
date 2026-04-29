@@ -25,15 +25,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         _ backend: BackendTarget
     ) async throws -> (AccountSettingsPage, UserInfo) {
 
-        let selectedUserHelper = switch backend {
-        case .staging:
-            UserHelper.default
-        case .anta:
-            UserHelper.instance(backend: .anta)
-        case .bella:
-            fatalError("Unsupported backend: bella")
-        }
-        let user = try await selectedUserHelper.createPersonalUser()
+        let user = try await UserHelper.instance(backend: backend).createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
 
@@ -63,7 +55,7 @@ final class MultiBackendSupportTests: WireUITestCase {
 
         try switchBackend(target: .anta)
 
-        let (accountPageBackend2, userBackend2) = try await testLoginToBackend(.anta)
+        let (accountPageBackend2, _) = try await testLoginToBackend(.anta)
 
         accountPageBackend1 = try accountPageBackend2
             .backToSettings()

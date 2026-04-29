@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import os
 
 struct Member {
     let name: String
@@ -26,14 +27,13 @@ struct Member {
     var id: String?
 }
 
-class UserHelper {
+final class UserHelper {
     private struct InstanceKey: Hashable {
         let apiVersion: APIVersion
         let backend: BackendTarget
     }
 
-    private static let instancesLock = NSLock()
-    private static var instances: [InstanceKey: UserHelper] = [:]
+    private static var instances =  OSAllocatedUnfairLock<[InstanceKey: UserHelper] >(uncheckedState: [:])
 
     private let httpClient = HttpClient()
 
@@ -61,15 +61,12 @@ class UserHelper {
     ) -> UserHelper {
         let key = InstanceKey(apiVersion: apiVersion, backend: backend)
 
-        instancesLock.lock()
-        defer { instancesLock.unlock() }
-
-        if let instance = instances[key] {
+        if let instance = instances.withLock({ $0[key] }) {
             return instance
         }
 
         let instance = UserHelper(apiVersion: apiVersion, backend: backend)
-        instances[key] = instance
+        instances.withLock { $0[key] = instance }
         return instance
     }
 
@@ -80,19 +77,18 @@ class UserHelper {
         )
     }
 
+    /// Deletes users created by all instances of UserHelper.
     static func deleteCreatedUsers() async {
-        instancesLock.lock()
-        let instances = Array(instances.values)
-        instancesLock.unlock()
+        let instances = instances.withLock { $0 }.values
 
         for instance in instances {
-            await instance.deleteTrackedUsers()
+            await instance.deleteCreatedUsers()
         }
     }
 
     private init(
-        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        backend: BackendTarget = .staging
+        apiVersion: APIVersion,
+        backend: BackendTarget
     ) {
         let environment = backend.environment
 
@@ -242,7 +238,7 @@ class UserHelper {
     }
 
     /// Delete created test users for this helper instance.
-    private func deleteTrackedUsers() async {
+    private func deleteCreatedUsers() async {
         let users = createdUsers
         createdUsers.removeAll()
 

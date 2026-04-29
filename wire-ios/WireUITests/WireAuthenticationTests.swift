@@ -108,8 +108,4 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssert(try ConversationsPage().conversationCell(named: conversationC).waitForExistence(timeout: 2.0))
     }
 
-    override func tearDownWithError() throws {
-        app = nil
-    }
-
 }
