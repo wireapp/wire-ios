@@ -111,7 +111,6 @@
 		012CF9E62F3A8C1F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Model/ReactionData.swift,
 				Utilis/CoreCryptoContextProtocolExt.swift,
 			);
 			publicHeaders = (
