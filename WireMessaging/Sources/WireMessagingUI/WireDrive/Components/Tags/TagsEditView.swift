@@ -162,7 +162,7 @@ struct TagsEditView: View {
 
     @ViewBuilder
     private func tagNameValidationError() -> some View {
-        if let message = viewModel.validationErrorMessage() {
+        if let message = viewModel.validationErrorMessage {
             validationText(message)
         }
     }

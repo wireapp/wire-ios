@@ -75,7 +75,7 @@ extension TagsEditView {
             validator.validate(enteredTag, for: .fileTag)
         }
 
-        func validationErrorMessage() -> String? {
+        var validationErrorMessage: String? {
             validationResult.firstLocalizedViolationMessage(for: .fileTag)
         }
 
