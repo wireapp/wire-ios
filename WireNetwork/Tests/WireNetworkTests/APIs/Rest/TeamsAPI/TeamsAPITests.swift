@@ -635,7 +635,7 @@ final class TeamsAPITests: XCTestCase {
 
             // When
             try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
-                let pager = try sut.getNotifications(sinceEventID: nil)
+                let pager = try sut.getNotifications(sinceNotificationID: nil)
                 let notifications = try await pager.reduce(into: []) { $0 += $1 }
 
                 // Then

@@ -179,7 +179,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     // MARK: - Notifications
 
     func getNotifications(
-        sinceEventID _: UUID?,
+        sinceNotificationID _: UUID?,
         maxResults _: UInt
     ) throws -> PayloadPager<[TeamNotification]> {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion

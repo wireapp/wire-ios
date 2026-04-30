@@ -163,12 +163,12 @@ class TeamsAPIV5: TeamsAPIV4 {
     // MARK: - Notifications
 
     override func getNotifications(
-        sinceEventID: UUID?,
+        sinceNotificationID: UUID?,
         maxResults: UInt
     ) throws -> PayloadPager<[TeamNotification]> {
         let resourcePath = "\(pathPrefix)/teams/notifications"
 
-        return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
+        return PayloadPager(start: sinceNotificationID?.transportString()) { nextSince in
             var requestBuilder = try URLRequestBuilder(path: resourcePath)
                 .withMethod(.get)
                 .withQueryItem(name: "size", value: "\(maxResults)")
