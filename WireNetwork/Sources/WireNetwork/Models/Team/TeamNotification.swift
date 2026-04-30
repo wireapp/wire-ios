@@ -16,9 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-public struct TeamNotificationBatch {
-    public let time: Date?
-    public let notifications: [TeamNotification]
-}
+public struct TeamNotification {}

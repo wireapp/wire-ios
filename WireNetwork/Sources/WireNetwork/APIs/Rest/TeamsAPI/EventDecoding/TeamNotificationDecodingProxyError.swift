@@ -16,9 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-public struct TeamNotificationBatch {
-    public let time: Date?
-    public let notifications: [TeamNotification]
+    /// The type of the notification being decoding.
+
+    public let notificationType: String
+
+    /// The error that occurred when decoding.
+
+    public let decodingError: any Error
+
+    /// A textual representation of the error.
+
+    public var description: String {
+        "failed to decode notification '\(notificationType)': \(decodingError)"
+    }
+
 }

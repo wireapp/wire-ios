@@ -16,41 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct TeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
 
-struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
-
-    let notifications: [UpdateEventEnvelopeV0]
+    let notifications: [TeamNotificationV5]
     let time: UTCTime?
     let hasMore: Bool?
 
     enum CodingKeys: String, CodingKey {
-
         case notifications
         case time
         case hasMore = "has_more"
-
     }
 
-    func toAPIModel() -> PayloadPager<UpdateEventBatch>.Page {
-        let eventEnvelopes = notifications.map {
+    func toAPIModel() -> PayloadPager<TeamNotificationBatch>.Page {
+        let notifications = notifications.map {
             $0.toAPIModel()
         }
 
-        let lastNonTransientEvent = eventEnvelopes.last {
-            !$0.isTransient
-        }
-
-        let updateEventBatch = UpdateEventBatch(
-            time: time?.date,
-            updateEventEnvelopes: notifications.map { $0.toAPIModel() }
-        )
-
-        return .init(
-            element: updateEventBatch,
-            hasMore: hasMore ?? false,
-            nextStart: lastNonTransientEvent?.id.transportString() ?? "" // TODO: what if one batch doesn't contain any non-transitive event?
-        )
+        fatalError() // TODO: finish
+        // let updateEventBatch = TeamNotificationBatch(
+        //     time: time?.date,
+        //     notifications: notifications.map { $0.toAPIModel() }
+        // )
+        //
+        // return .init(
+        //     element: updateEventBatch,
+        //     hasMore: hasMore ?? false,
+        //     nextStart: lastNonTransientEvent?.id.transportString() ?? ""
+        // )
     }
 
 }

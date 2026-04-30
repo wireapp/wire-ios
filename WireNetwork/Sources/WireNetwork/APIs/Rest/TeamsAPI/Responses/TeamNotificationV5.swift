@@ -16,9 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-public struct TeamNotificationBatch {
-    public let time: Date?
-    public let notifications: [TeamNotification]
+struct TeamNotificationV5: Decodable {
+
+    let id: UUID
+    let payload: [TeamNotificationDecodingProxy]
+
+    func toAPIModel() -> TeamNotification {
+        fatalError() // TODO: fix
+        // UpdateEventEnvelope(
+        //     id: id,
+        //     events: (payload ?? []).map(\.updateEvent),
+        //     isTransient: transient ?? false,
+        //     deliveryTag: nil
+        // )
+    }
+
 }

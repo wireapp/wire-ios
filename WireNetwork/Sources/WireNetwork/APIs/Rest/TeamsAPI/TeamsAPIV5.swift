@@ -165,7 +165,7 @@ class TeamsAPIV5: TeamsAPIV4 {
     override func notifications(
         sinceEventID: UUID?,
         maxResults: UInt
-    ) throws -> PayloadPager<UpdateEventBatch> {
+    ) throws -> PayloadPager<TeamNotificationBatch> {
         let resourcePath = "\(pathPrefix)/teams/notifications"
 
         return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
@@ -185,7 +185,7 @@ class TeamsAPIV5: TeamsAPIV4 {
             )
 
             return try ResponseParser()
-                .success(code: .ok, type: UpdateEventListResponseV0.self)
+                .success(code: .ok, type: TeamNotificationsResponseV5.self)
                 .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
                 .failure(code: .notFound, error: TeamsAPIError.selfUserIsNotTeamMember)
                 .parse(code: response.statusCode, data: data)
