@@ -157,6 +157,13 @@ extension Collection<TextValidator.Rule> {
 }
 
 extension TextValidator.ValidationResult {
+    var violatedRules: [TextValidator.Rule] {
+        switch self {
+        case .valid: []
+        case let .invalid(violatedRules): violatedRules
+        }
+    }
+
     func firstLocalizedViolationMessage(for kind: TextValidator.Kind) -> String? {
         switch self {
         case .valid:
