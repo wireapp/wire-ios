@@ -178,7 +178,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     // MARK: - Notifications
 
-    func notifications(
+    func getNotifications(
         sinceEventID _: UUID?,
         maxResults _: UInt
     ) throws -> PayloadPager<TeamNotificationBatch> {

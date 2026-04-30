@@ -162,7 +162,7 @@ class TeamsAPIV5: TeamsAPIV4 {
 
     // MARK: - Notifications
 
-    override func notifications(
+    override func getNotifications(
         sinceEventID: UUID?,
         maxResults: UInt
     ) throws -> PayloadPager<TeamNotificationBatch> {

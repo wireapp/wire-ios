@@ -635,53 +635,41 @@ final class TeamsAPITests: XCTestCase {
 
             // When
             try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
-                let pager = try sut.getNotifications(for: Scaffolding.teamID, with: "")
-                let bots = try await pager.reduce(into: []) { $0 += $1 }
+                let pager = try sut.getNotifications(sinceEventID: nil)
+                let notifications = try await pager.reduce(into: TeamNotificationBatch(notifications: [])) {
+                    $0 = TeamNotificationBatch(notifications: $0.notifications + $1.notifications)
+                }
 
                 // Then
-                let expectedBots = [
-                    WhitelistedBotProfile(
-                        id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
-                        qualifiedID: .init(
-                            id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
-                            domain: "example.com"
-                        ),
-                        name: "Google Calendar",
-                        summary: "Calendar",
-                        description: "Google Calendar integration for Wire",
-                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
-                        handle: "some-handle",
-                        teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
-                        accentID: 2_147_483_647,
-                        assets: [],
-                        isDeleted: false
-                    ),
-                    WhitelistedBotProfile(
-                        id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
-                        qualifiedID: nil,
-                        name: "Secure Alert",
-                        summary: "Sends alarms",
-                        description: "for Alarms",
-                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
-                        handle: "",
-                        teamID: nil,
-                        accentID: nil,
-                        assets: [
-                            UserAsset(
-                                key: "lorem-ipsum",
-                                size: .complete,
-                                type: .image
-                            ),
-                            UserAsset(
-                                key: "dolor",
-                                size: .preview,
-                                type: .image
-                            )
-                        ],
-                        isDeleted: false
-                    )
-                ]
-                XCTAssertEqual(bots, expectedBots, "failed for apiVersion \(apiVersion)")
+                let expectedNotifications = TeamNotificationBatch(
+                    notifications: [
+// TODO: finish
+                    ]
+                )
+//                    {
+//                        "has_more": false,
+//                        "notifications": [
+//                            {
+//                                "payload": [{
+//                                    "data": {"user": "c05922f8-2b42-45c6-911a-56394ab8474d"},
+//                                    "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+//                                    "time": "2026-04-27T08:00:24.215142065Z",
+//                                    "type": "team.member-join"
+//                                }],
+//                                "id": "2541e4a1-420f-11f1-8001-0ee6e9ab7c8d"
+//                            },
+//                            {
+//                                "payload": [{
+//                                    "data": {"user": "bbaf8e02-db59-4577-91ce-4750ece8e8f8"},
+//                                    "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+//                                    "time": "2026-04-27T08:00:24.265610179Z",
+//                                    "type": "team.member-join"
+//                                }],
+//                                "id": "254b3ac0-420f-11f1-8001-0ee6e9ab7c8d"
+//                            }
+//                        ]
+//                    }
+                XCTAssertEqual(notifications, expectedNotifications, "failed for apiVersion \(apiVersion)")
             }
         }
 

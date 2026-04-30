@@ -102,7 +102,7 @@ public protocol TeamsAPI {
 
     /// This endpoint lists `member-join` events. It can be used to discover users and apps which are cut off the
     /// `/list-users` result in large teams (2000+ members).
-    func notifications(
+    func getNotifications(
         sinceEventID: UUID?,
         maxResults: UInt
     ) throws -> PayloadPager<TeamNotificationBatch>
@@ -112,10 +112,10 @@ public protocol TeamsAPI {
 public extension TeamsAPI {
 
     /// Calls `notifications(sinceEventID:maxResults:)` with `maxResults` set to 1000.
-    func notifications(
+    func getNotifications(
         sinceEventID: UUID?
     ) throws -> PayloadPager<TeamNotificationBatch> {
-        try notifications(sinceEventID: sinceEventID, maxResults: 1000)
+        try getNotifications(sinceEventID: sinceEventID, maxResults: 1000)
     }
 
 }
