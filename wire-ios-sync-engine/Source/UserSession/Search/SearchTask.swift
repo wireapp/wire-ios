@@ -104,21 +104,28 @@ public final class SearchTask {
         let allIDs = us.map(\.id)
 
         let missingIDs = (Set(allIDs).subtracting(storedIDs)).sorted()
-        let missingUsers = us.filter { missingIDs.contains($0.id) }.sorted { $0.name < $1.name }
+        var missingUsers = us.filter { missingIDs.contains($0.id) }.sorted { $0.name < $1.name }
         // print(missingUsers.map(\.name).joined(separator: "\n"))
-        print(missingUsers.first)
+        //print(missingUsers.first)
 
 
-    TODO:
-        target 4.19
         do {
-            let ep = try! teamsAPI.notifications(sinceEventID: .none)
+            let ep = try! teamsAPI.getNotifications(sinceEventID: .none)
             for try await ep in ep {
-                print(ep)
+                for n in ep {
+                    switch n {
+                    case .memberJoin(let memberJoinNotification):
+                        missingUsers.removeAll { u in
+                            u.id == memberJoinNotification.userID
+                        }
+                    }
+                }
             }
         } catch {
             fatalError("\(error)")
         }
+
+        print(missingUsers)
 
 
         guard case .pending = status else {
