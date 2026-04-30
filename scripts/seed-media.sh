@@ -22,7 +22,7 @@ set -Eeuo pipefail
 VIDEO_PATH="${1:-${REPO_ROOT:-$(pwd)}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4}"
 SIMULATOR_ID="${IOS_SIM_ID:-booted}"
 
-if [ ! -f "$VIDEO_PATH" ]; then
+if [[ ! -f "$VIDEO_PATH" ]]; then
   echo >&2 "[ERROR] Missing test video: $VIDEO_PATH"
   exit 1
 fi
