@@ -108,7 +108,6 @@
 		59CB3F212F6AEB6D003616C7 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 59CB3F202F6AEB6D003616C7 /* WireData */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
-		59D431612F9F5F5B0017B1C2 /* 2000-users-for-staging.json in Resources */ = {isa = PBXBuildFile; fileRef = 59D431602F9F5F5B0017B1C2 /* 2000-users-for-staging.json */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
@@ -400,7 +399,6 @@
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59D431602F9F5F5B0017B1C2 /* 2000-users-for-staging.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "2000-users-for-staging.json"; path = "/Users/christoph/Downloads/2000-users-for-staging.json"; sourceTree = "<absolute>"; };
 		87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Entitlements-Dev.entitlements"; path = "Wire-iOS/Entitlements-Dev.entitlements"; sourceTree = "<group>"; };
 		87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Entitlements-Prod.entitlements"; path = "Wire-iOS/Entitlements-Prod.entitlements"; sourceTree = "<group>"; };
 		8F42C538199244A700288E4D /* Wire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wire.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1171,7 +1169,6 @@
 				01B71B912D6D2DAB002C5A38 /* emojis.json */,
 				01B71B922D6D2DAB002C5A38 /* emoticons.min.json */,
 				01B71B932D6D2DAB002C5A38 /* Settings.bundle */,
-				59D431602F9F5F5B0017B1C2 /* 2000-users-for-staging.json */,
 			);
 			name = Resources;
 			path = "Wire-iOS/Resources";
@@ -1677,7 +1674,6 @@
 				01B71BA02D6D2DAB002C5A38 /* Settings.bundle in Resources */,
 				01B71BA12D6D2DAB002C5A38 /* ping_from_them.caf in Resources */,
 				01B71BA22D6D2DAB002C5A38 /* first_message.caf in Resources */,
-				59D431612F9F5F5B0017B1C2 /* 2000-users-for-staging.json in Resources */,
 				01B71BA32D6D2DAB002C5A38 /* Localizable.strings in Resources */,
 				01B71BA42D6D2DAB002C5A38 /* new_message.caf in Resources */,
 				01B71BA52D6D2DAB002C5A38 /* silence.m4a in Resources */,
