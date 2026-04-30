@@ -63,14 +63,14 @@ final class ExpirationDatePickerViewTests: XCTestCase {
                 viewModel = .init(
                     linkID: "test",
                     calendar: Calendar(identifier: .gregorian),
-                    expirationDate: .distantFuture,
+                    expirationDate: .init(timeIntervalSince1970: TimeInterval(60 * 60 * 24 * 365 * 1100)),
                     didSave: { _ in },
                     updatePublicLinkExpiration: updatePublicLinkExpiration
                 )
             }
 
             let view = makeView()
-            
+
             snapshotHelper.verify(matching: view, named: testCase.rawValue, variants: .colorSchemes)
         }
     }
