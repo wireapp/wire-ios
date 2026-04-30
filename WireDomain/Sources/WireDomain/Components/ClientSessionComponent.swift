@@ -360,6 +360,8 @@ public final class ClientSessionComponent {
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
     private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
+    // TODO: add use case here?
+
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
