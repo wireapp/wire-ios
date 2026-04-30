@@ -23,6 +23,7 @@ class TestServicesClient {
     let testServiceURL = "http://localhost:8080"
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
+    private var instanceCache: [String: String] = [:]
 
     func sendHttpRequest(url: String, body: [String: Any], requestType: String) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
@@ -50,6 +51,10 @@ class TestServicesClient {
         verificationCode: String?
     ) async throws -> String {
 
+        if let cachedInstanceId = instanceCache[email] {
+            return cachedInstanceId
+        }
+
         let url = URL(string: "\(testServiceURL)/api/v1/instance")
         guard let requestUrl = url else { fatalError() }
 
@@ -76,6 +81,7 @@ class TestServicesClient {
             CreateInstanceResponse.self,
             from: responseData
         )
+        instanceCache[email] = instanceResponse.instanceId
         return instanceResponse.instanceId
     }
 
