@@ -624,6 +624,69 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    func testTeamNotifications_givenV5AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v5.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetNotificationsResponseV5")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let pager = try sut.getNotifications(for: Scaffolding.teamID, with: "")
+                let bots = try await pager.reduce(into: []) { $0 += $1 }
+
+                // Then
+                let expectedBots = [
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                        qualifiedID: .init(
+                            id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                            domain: "example.com"
+                        ),
+                        name: "Google Calendar",
+                        summary: "Calendar",
+                        description: "Google Calendar integration for Wire",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "some-handle",
+                        teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
+                        accentID: 2_147_483_647,
+                        assets: [],
+                        isDeleted: false
+                    ),
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
+                        qualifiedID: nil,
+                        name: "Secure Alert",
+                        summary: "Sends alarms",
+                        description: "for Alarms",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "",
+                        teamID: nil,
+                        accentID: nil,
+                        assets: [
+                            UserAsset(
+                                key: "lorem-ipsum",
+                                size: .complete,
+                                type: .image
+                            ),
+                            UserAsset(
+                                key: "dolor",
+                                size: .preview,
+                                type: .image
+                            )
+                        ],
+                        isDeleted: false
+                    )
+                ]
+                XCTAssertEqual(bots, expectedBots, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
+
     // MARK: - V15
 
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
