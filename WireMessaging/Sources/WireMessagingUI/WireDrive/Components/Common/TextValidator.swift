@@ -19,20 +19,20 @@
 import Foundation
 
 struct TextValidator {
-    enum Rule {
+    enum Rule: Hashable {
         case notEmptyOrWhitespace
         case maxLength(Int)
         case doesntContain([Character])
         case doesntStartWithDot
     }
     
-    enum Kind {
+    enum Kind: Hashable {
         case fileName
         case folderName
         case fileTag
     }
     
-    enum ValidationResult {
+    enum ValidationResult: Hashable {
         case valid
         case invalid(violatedRules: [Rule])
     }
@@ -155,5 +155,16 @@ extension TextValidator.Rule {
 extension Collection<TextValidator.Rule> {
     func localizedViolationMessages(for kind: TextValidator.Kind) -> [String] {
         compactMap { $0.localizedViolationMessage(for: kind) }
+    }
+}
+
+extension TextValidator.ValidationResult {
+    func firstLocalizedViolationMessage(for kind: TextValidator.Kind) -> String? {
+        switch self {
+        case .valid:
+            nil
+        case let .invalid(violatedRules):
+            violatedRules.compactMap(\.self).first?.localizedViolationMessage(for: kind)
+        }
     }
 }
