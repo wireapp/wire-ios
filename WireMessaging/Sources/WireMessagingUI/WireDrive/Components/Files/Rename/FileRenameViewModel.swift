@@ -37,6 +37,7 @@ final class FileRenameViewModel: ObservableObject {
             validate()
         }
     }
+
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
@@ -163,14 +164,14 @@ final class FileRenameViewModel: ObservableObject {
         case .file: .fileName
         case .folder: .folderName
         }
-        
+
         let validationResult = validator.validate(trimmed(filenameInput), for: validatorKind)
-        
+
         isInputValid = switch validationResult {
         case .valid: true
         case .invalid: false
         }
-        
+
         errorMessage = validationResult.firstLocalizedViolationMessage(for: validatorKind)
     }
 

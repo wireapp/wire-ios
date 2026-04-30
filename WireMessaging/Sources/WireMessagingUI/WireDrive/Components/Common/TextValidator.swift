@@ -25,18 +25,18 @@ struct TextValidator {
         case doesntContain([Character])
         case doesntStartWithDot
     }
-    
+
     enum Kind: Hashable {
         case fileName
         case folderName
         case fileTag
     }
-    
+
     enum ValidationResult: Hashable {
         case valid
         case invalid(violatedRules: [Rule])
     }
-    
+
     func validate(_ text: String, for kind: Kind) -> ValidationResult {
         let violatedRules = kind.rules.filter { rule in !isTextValid(text, for: rule) }
         return if violatedRules.isEmpty {
@@ -45,10 +45,10 @@ struct TextValidator {
             .invalid(violatedRules: violatedRules)
         }
     }
-    
+
     private func isTextValid(_ text: String, for rule: Rule) -> Bool {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         return switch rule {
         case .notEmptyOrWhitespace:
             !trimmed.isEmpty
@@ -70,13 +70,13 @@ extension TextValidator.Kind {
                 .notEmptyOrWhitespace,
                 .doesntStartWithDot,
                 .maxLength(64),
-                .doesntContain(["/", "\\", "\""]),
+                .doesntContain(["/", "\\", "\""])
             ]
         case .fileTag:
             [
                 .notEmptyOrWhitespace,
                 .maxLength(30),
-                .doesntContain([",", ";", "/", "\\", "\"", "'", "<", ">"]),
+                .doesntContain([",", ";", "/", "\\", "\"", "'", "<", ">"])
             ]
         }
     }
@@ -85,11 +85,11 @@ extension TextValidator.Kind {
 extension TextValidator.Rule {
     func localizedViolationMessage(for kind: TextValidator.Kind) -> String? {
         typealias Strings = L10n.Localizable.Conversation.WireCells
-        
+
         switch self {
         case .notEmptyOrWhitespace:
             return nil
-        case .maxLength(_):
+        case .maxLength:
             switch kind {
             case .fileTag:
                 return Strings.Tags.Error.nameTooLong
@@ -123,18 +123,18 @@ extension TextValidator.Rule {
             }
         }
     }
-    
+
     private func invalidCharactersForFileName() -> [Character] {
         // find the rules for file name validation:
         let fileNameRules = TextValidator.Kind.fileName.rules
-        
+
         // find the rule about the invalid characters:
         let invalidCharactersRule = fileNameRules.first { rule in
             if case .doesntContain = rule { true } else { false }
         }
-        
+
         // extract the invalid characters from the rule:
-        let invalidCharacters: [Character] = invalidCharactersRule.map { rule in
+        return invalidCharactersRule.map { rule in
             switch rule {
             case let .doesntContain(characters):
                 characters
@@ -142,10 +142,8 @@ extension TextValidator.Rule {
                 fatalError()
             }
         } ?? []
-        
-        return invalidCharacters
     }
-    
+
     private func formattedInvalidCharacters(_ characters: [Character]) -> String {
         let nonBreakingSpace = "\u{A0}"
         return characters.map { String($0) }.joined(separator: nonBreakingSpace)

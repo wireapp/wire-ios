@@ -35,7 +35,7 @@ extension TagsEditView {
         @Published var allExistingTags: [String] = []
         @Published var isPerformingSave = false
         @Published var isSaveErrorMessagePresented = false
-        
+
         private let validator = TextValidator()
 
         let dismiss = PassthroughSubject<Void, Never>()

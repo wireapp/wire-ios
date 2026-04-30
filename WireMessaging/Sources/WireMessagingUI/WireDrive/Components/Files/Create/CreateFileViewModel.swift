@@ -31,6 +31,7 @@ final class CreateFileViewModel: ObservableObject {
             validate()
         }
     }
+
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
@@ -160,14 +161,14 @@ final class CreateFileViewModel: ObservableObject {
         case .file: .fileName
         case .folder: .folderName
         }
-        
+
         let validationResult = validator.validate(trimmed(nameInput), for: validatorKind)
-        
+
         isInputValid = switch validationResult {
         case .valid: true
         case .invalid: false
         }
-        
+
         errorMessage = validationResult.firstLocalizedViolationMessage(for: validatorKind)
     }
 
