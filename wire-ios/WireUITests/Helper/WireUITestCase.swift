@@ -33,6 +33,7 @@ class WireUITestCase: XCTestCase {
     var uiTestConfig = UITestConfig()
     private var notificationPermissionMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
         dismissAllowIfPresent()
@@ -62,6 +63,7 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    @MainActor
     override func tearDown() async throws {
         await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()

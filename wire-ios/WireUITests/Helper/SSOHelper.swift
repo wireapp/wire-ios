@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import OktaSdk
+import WireNetwork
 
 @MainActor
 final class SSOHelper {
@@ -377,6 +377,7 @@ final class SSOHelper {
             HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
         ]
     }
+
     private func oktaSDKClient() throws -> OktaClient {
         if let oktaClient {
             return oktaClient
