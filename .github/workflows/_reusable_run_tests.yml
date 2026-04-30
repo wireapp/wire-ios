@@ -145,13 +145,6 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
-      - name: Seed simulator with UI test video
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          chmod +x ./scripts/seed-media.sh
-          ./scripts/seed-media.sh
-
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
@@ -160,6 +153,18 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
+
+      - name: Seed simulator with test video file
+        if: ${{ inputs.run_critical_flows }}
+        run: |
+          VIDEO_PATH="${REPO_ROOT}/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+
+          if [ ! -f "$VIDEO_PATH" ]; then
+            echo "Missing test video: $VIDEO_PATH"
+            exit 1
+          fi
+
+          xcrun simctl addmedia booted "$VIDEO_PATH"
           
       - name: Setup Kalium Testservice
         if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
@@ -432,3 +437,4 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
+

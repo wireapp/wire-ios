@@ -61,15 +61,15 @@ echo "JAVA_HOME=$JAVA_HOME"
 java -version
 
 echo "== Seeding simulator media =="
-SEED_MEDIA_SCRIPT="$SCRIPT_DIR/seed-media.sh"
-if [[ -f "$SEED_MEDIA_SCRIPT" ]]; then
-  if bash "$SEED_MEDIA_SCRIPT"; then
+VIDEO_PATH="$REPO_ROOT/wire-ios/WireUITests/TestServicesData/Video/testVideo.mp4"
+if [[ -f "$VIDEO_PATH" ]]; then
+  if xcrun simctl addmedia booted "$VIDEO_PATH"; then
     echo "✅ Simulator media seeded successfully"
   else
-    echo "WARNING: Failed to seed simulator media using $SEED_MEDIA_SCRIPT. Continuing local testservice setup."
+    echo "WARNING: Failed to seed simulator media with $VIDEO_PATH. Continuing local testservice setup."
   fi
 else
-  echo "WARNING: seed-media.sh not found at $SEED_MEDIA_SCRIPT. Skipping simulator media seeding."
+  echo "WARNING: Test video not found at $VIDEO_PATH. Skipping simulator media seeding."
 fi
 
 echo "== Cleaning previous local state =="

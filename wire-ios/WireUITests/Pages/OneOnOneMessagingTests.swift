@@ -22,7 +22,106 @@ import XCTest
 final class OneOnOneMessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendImageInOneOnOneConversation_TC_8820() async throws {
+    func testSendTextAndAudioInOneOnOneConversation_TC_8819_8821() async throws {
+
+        // GIVEN
+        let message = UserGenerator.generateRandomMessage()
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1
+            )
+
+        // WHEN
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapSearchBox()
+            .searchUserByUserHandle(teamOwner.username)
+            .tapSearchedUserCell()
+            .tapStartConversationButton()
+            .sendMessage(message)
+            .recordAudioAndSend()
+
+        // THEN
+        let sentMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            sentMessages.contains(message),
+            "Expected message '\(message)' not found in sent messages: \(sentMessages)"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.playAudioFile.waitForExistence(timeout: 2),
+            "No audio found"
+        )
+    }
+
+    @MainActor
+    func testReceiveTextAndAudioInOneOnOneConversation_TC_8826_8828() async throws {
+
+        // GIVEN
+        let message = UserGenerator.generateRandomMessage()
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1
+            )
+
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        let activeConversationPage = try firstTimePage.acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapSearchBox()
+            .searchUserByUserHandle(teamOwner.username)
+            .tapSearchedUserCell()
+            .tapStartConversationButton()
+
+        let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
+        let conversationDomain = try XCTUnwrap(domain, "domain is nil")
+
+        let durationInMillis = 5000
+        let normalizedLoudness = (0 ..< 10).map { _ in Int.random(in: 0 ... 255) }
+
+        // WHEN member sends text and audio file
+        try await testServicesClient.sendText(
+            user: teamOwner,
+            text: message,
+            conversationId: conversationId,
+            domain: conversationDomain
+        )
+
+        try await testServicesClient.sendFile(
+            type: "audio",
+            user: teamOwner,
+            fileName: "audio-message",
+            filepath: nil,
+            convoId: conversationId,
+            domain: conversationDomain,
+            audio: [
+                "durationInMillis": durationInMillis,
+                "normalizedLoudness": normalizedLoudness
+            ]
+        )
+
+        // THEN
+        let receivedMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            receivedMessages.contains(message),
+            "Expected message '\(message)' not found in received messages: \(receivedMessages)"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 2),
+            "Expected audio attachment not found"
+        )
+
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamOwner.name,
+            "Sender info didn't match expected value \(teamOwner.name)"
+        )
+    }
+
+    @MainActor
+    func testSendImageAndVideoInOneOnOneConversation_TC_8820_8822() async throws {
 
         // GIVEN
         let (teamOwner, teamMembers, _, _) = try await userHelper
@@ -40,15 +139,28 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .tapStartConversationButton()
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
+            .openPhotosAgain()
+            .selectVideoAndSend()
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.imageCell.waitForExistence(timeout: 2), "No Image cell found"
+            activeConversationPage.imageCell.waitForExistence(timeout: 2),
+            "No Image cell found"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.videoCell.waitForExistence(timeout: 2),
+            "No Video cell found"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.videoPlayButton.waitForExistence(timeout: 2),
+            "No Video play button found"
         )
     }
 
     @MainActor
-    func testReceiveImageInOneOnOneConversation_TC_8827() async throws {
+    func testReceiveImageAndVideoInOneOnOneConversation_TC_8827_8829() async throws {
 
         // GIVEN
         let (teamOwner, teamMembers, _, _) = try await userHelper
@@ -65,7 +177,6 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .tapStartConversationButton()
 
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
-
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
         let imageURL = URL(fileURLWithPath: #filePath)
@@ -74,7 +185,13 @@ final class OneOnOneMessagingTests: WireUITestCase {
             .appendingPathComponent("TestServicesData/Img/testImage.jpg")
         let imageExtension = imageURL.pathExtension
 
-        // WHEN member send image
+        let videoURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData/Video/testVideo.mp4")
+        let videoExtension = videoURL.pathExtension
+
+        // WHEN member sends image and video files
         try await testServicesClient.sendImage(
             user: teamOwner,
             fileURL: imageURL,
@@ -83,9 +200,18 @@ final class OneOnOneMessagingTests: WireUITestCase {
             domain: conversationDomain
         )
 
+        try await testServicesClient.sendFile(
+            type: videoExtension,
+            user: teamOwner,
+            fileName: "testVideo.mp4",
+            filepath: videoURL.path,
+            convoId: conversationId,
+            domain: conversationDomain
+        )
+
         // THEN
         XCTAssertTrue(
-            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 2),
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
             "Expected image attachment not found"
         )
 
@@ -94,6 +220,11 @@ final class OneOnOneMessagingTests: WireUITestCase {
             senderName,
             teamOwner.name,
             "Sender info didn't match expected value \(teamOwner.name)"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.fileAttachment(name: "TESTVIDEO", type: "MP4").waitForExistence(timeout: 5),
+            "Expected MP4 video attachment not found"
         )
     }
 }
