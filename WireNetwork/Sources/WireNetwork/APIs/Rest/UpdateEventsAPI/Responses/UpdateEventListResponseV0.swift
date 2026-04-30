@@ -49,7 +49,7 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
         return .init(
             element: updateEventBatch,
             hasMore: hasMore ?? false,
-            nextStart: lastNonTransientEvent?.id.transportString() ?? "" // TODO: what if one batch doesn't contain any non-transitive event?
+            nextStart: lastNonTransientEvent?.id.transportString() ?? "" // TODO: what if one batch doesn't contain any non-transitive event, will we start fetching from the beginning? (`nextStart` being `nil`) Will it ever come to an end? Will we always miss some events?
         )
     }
 
