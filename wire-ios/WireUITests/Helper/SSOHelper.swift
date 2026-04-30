@@ -18,7 +18,9 @@
 
 import Foundation
 import WireNetwork
+import OktaSdk
 
+@MainActor
 final class SSOHelper {
     private let userHelper: UserHelper
     private let httpClient: HttpClient
@@ -26,6 +28,7 @@ final class SSOHelper {
 
     private var oktaApplicationId: String?
     private var oktaUserIds: [String] = []
+    private var oktaClient: OktaClient?
     private(set) var identityProviderId: String?
 
     init(
@@ -91,39 +94,37 @@ final class SSOHelper {
 
     @discardableResult
     func createOktaApplication(label: String, finalizeURL: String) async throws -> String {
-        let body: [String: Any] = [
-            "label": label,
-            "visibility": [
-                "autoSubmitToolbar": false
-            ],
-            "signOnMode": "SAML_2_0",
-            "credentials": [
-                "userNameTemplate": [
-                    "template": "${fn:substringBefore(source.login, \"@\")}",
-                    "type": "BUILT_IN"
-                ]
-            ],
-            "settings": [
-                "signOn": [
-                    "ssoAcsUrl": finalizeURL,
-                    "idpIssuer": "https://www.okta.com/${org.externalKey}",
-                    "audience": finalizeURL,
-                    "recipient": finalizeURL,
-                    "destination": finalizeURL,
-                    "subjectNameIdTemplate": "${user.email}",
-                    "subjectNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-                    "responseSigned": true,
-                    "assertionSigned": true,
-                    "signatureAlgorithm": "RSA_SHA256",
-                    "digestAlgorithm": "SHA256",
-                    "honorForceAuthn": true,
-                    "authnContextClassRef": "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
-                    "requestCompressed": false
-                ]
-            ]
-        ]
+        let application = SamlApplication(
+            label: label,
+            signOnMode: .saml20,
+            visibility: ApplicationVisibility(autoSubmitToolbar: false),
+            credentials: ApplicationCredentials(
+                userNameTemplate: ApplicationCredentialsUsernameTemplate(
+                    template: "${fn:substringBefore(source.login, \"@\")}",
+                    type: "BUILT_IN"
+                )
+            ),
+            settings: SamlApplicationSettings(
+                signOn: SamlApplicationSettingsSignOn(
+                    assertionSigned: true,
+                    audience: finalizeURL,
+                    authnContextClassRef: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+                    destination: finalizeURL,
+                    digestAlgorithm: "SHA256",
+                    honorForceAuthn: true,
+                    idpIssuer: "https://www.okta.com/${org.externalKey}",
+                    recipient: finalizeURL,
+                    requestCompressed: false,
+                    responseSigned: true,
+                    signatureAlgorithm: "RSA_SHA256",
+                    ssoAcsUrl: finalizeURL,
+                    subjectNameIdFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+                    subjectNameIdTemplate: "${user.email}"
+                )
+            )
+        )
 
-        let data = try JSONSerialization.data(withJSONObject: body, options: [])
+        let data = try JSONEncoder().encode(application)
 
         let (responseData, response) = try await sendOktaRequest(
             path: ["apps"],
@@ -153,68 +154,41 @@ final class SSOHelper {
     }
 
     func fetchGroupId(named groupName: String) async throws -> String {
-        let (data, response) = try await sendOktaRequest(
-            path: ["groups"],
-            method: .get,
-            body: Data()
-        )
+        let groups = try await oktaSDKClient()
+            .group
+            .listGroups(q: groupName, limit: 100)
+            .result
 
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "fetchGroupId failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
-            )
-        }
-
-        let object = try JSONSerialization.jsonObject(with: data, options: [])
-        guard let groups = object as? [[String: Any]] else {
-            throw RuntimeError("fetchGroupId: failed to parse groups response")
-        }
-
-        for group in groups {
-            if let profile = group["profile"] as? [String: Any],
-               let name = profile["name"] as? String,
-               name == groupName,
-               let id = group["id"] as? String {
-                return id
-            }
+        if let group = groups.first(where: { $0.profile?.name == groupName }),
+           let id = group.id {
+            return id
         }
 
         throw RuntimeError("fetchGroupId: group not found: \(groupName)")
     }
 
     func assignApplicationToGroup(applicationId: String, groupId: String) async throws {
-        let body = try JSONSerialization.data(withJSONObject: [:], options: [])
-
-        let (data, response) = try await sendOktaRequest(
-            path: ["apps", applicationId, "groups", groupId],
-            method: .put,
-            body: body
-        )
-
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "assignApplicationToGroup failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+        _ = try await oktaSDKClient()
+            .application
+            .createApplicationGroupAssignment(
+                appId: applicationId,
+                groupId: groupId,
+                applicationGroupAssignment: ApplicationGroupAssignment()
             )
-        }
     }
 
     private func waitForAppGroupLink(applicationId: String, groupId: String) async throws {
         for _ in 0 ..< 30 {
             do {
-                let (_, response) = try await sendOktaRequest(
-                    path: ["apps", applicationId, "groups", groupId],
-                    method: .get,
-                    body: Data()
-                )
-
-                if response.statusCode == 200 {
-                    return
-                }
+                _ = try await oktaSDKClient()
+                    .application
+                    .getApplicationGroupAssignment(appId: applicationId, groupId: groupId)
+                return
             } catch {
                 // ignore
             }
 
-            try await Task.sleep(nanoseconds: 700_000_000)
+            try await Task.sleep(for: .seconds(0.7))
         }
 
         throw RuntimeError("waitForAppGroupLink: timed out")
@@ -287,55 +261,32 @@ final class SSOHelper {
 
     @discardableResult
     func createOktaUser(name: String, email: String, password: String) async throws -> String {
-        var components = URLComponents(
-            url: oktaURL(path: ["users"]),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = [URLQueryItem(name: "activate", value: "true")]
-
-        guard let url = components?.url else {
-            throw RuntimeError("createOktaUser: failed to build URL")
-        }
-
-        let body: [String: Any] = [
-            "profile": [
-                "firstName": name,
-                "lastName": name,
-                "email": email,
-                "login": email
-            ],
-            "credentials": [
-                "password": [
-                    "value": password
-                ],
-                "recovery_question": [
-                    "question": "What is the answer to life, the universe and everything?",
-                    "answer": "fortytwo"
-                ]
-            ]
-        ]
-
-        let jsonBody = try JSONSerialization.data(withJSONObject: body, options: [])
-        let (data, response) = try await httpClient.send(
-            url: url,
-            method: .post,
-            body: jsonBody,
-            headers: [
-                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
-                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-                HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
-            ]
+        let profile = UserProfile(
+            email: email,
+            firstName: name,
+            lastName: name,
+            login: email
         )
 
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "createOktaUser failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+        let credentials = UserCredentials(
+            password: PasswordCredential(value: password),
+            recoveryQuestion: RecoveryQuestionCredential(
+                answer: "fortytwo",
+                question: "What is the answer to life, the universe and everything?"
             )
-        }
+        )
 
-        let object = try JSONSerialization.jsonObject(with: data, options: [])
-        guard let json = object as? [String: Any],
-              let id = json["id"] as? String else {
+        let request = CreateUserRequest(
+            credentials: credentials,
+            profile: profile
+        )
+
+        let user = try await oktaSDKClient()
+            .user
+            .createUser(body: request, activate: true)
+            .result
+
+        guard let id = user.id else {
             throw RuntimeError("createOktaUser: failed to parse Okta user id")
         }
 
@@ -348,19 +299,12 @@ final class SSOHelper {
             throw RuntimeError("assignUserToApplication: oktaApplicationId is nil")
         }
 
-        let body = try JSONSerialization.data(withJSONObject: ["id": userId], options: [])
-
-        let (data, response) = try await sendOktaRequest(
-            path: ["apps", oktaApplicationId, "users"],
-            method: .post,
-            body: body
-        )
-
-        guard response.statusCode == 200 else {
-            throw RuntimeError(
-                "assignUserToApplication failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+        _ = try await oktaSDKClient()
+            .application
+            .assignUserToApplication(
+                appId: oktaApplicationId,
+                appUser: AppUser(id: userId)
             )
-        }
     }
 
     func getSSOCode() throws -> String {
@@ -384,29 +328,9 @@ final class SSOHelper {
 
     private func cleanUpOktaApplication(_ appId: String) async {
         do {
-            let deactivateURL = oktaURL(path: ["apps", appId, "lifecycle", "deactivate"])
-            let (_, deactivateResponse) = try await httpClient.send(
-                url: deactivateURL,
-                method: .post,
-                body: Data(),
-                headers: try oktaJSONHeaders()
-            )
-
-            if deactivateResponse.statusCode == 200 {
-                let deleteURL = oktaURL(path: ["apps", appId])
-                let (_, deleteResponse) = try await httpClient.send(
-                    url: deleteURL,
-                    method: .delete,
-                    body: Data(),
-                    headers: try oktaJSONHeaders()
-                )
-
-                if deleteResponse.statusCode != 204 {
-                    print("❌ Failed to delete Okta application \(appId)")
-                }
-            } else {
-                print("❌ Failed to deactivate Okta application \(appId)")
-            }
+            let applicationClient = try oktaSDKClient().application
+            try await applicationClient.deactivateApplication(appId: appId)
+            try await applicationClient.deleteApplication(appId: appId)
         } catch {
             print("❌ Failed to clean up Okta application \(appId): \(error)")
         }
@@ -414,29 +338,9 @@ final class SSOHelper {
 
     private func cleanUpOktaUser(_ userId: String) async {
         do {
-            let deactivateURL = oktaURL(path: ["users", userId, "lifecycle", "deactivate"])
-            let (_, deactivateResponse) = try await httpClient.send(
-                url: deactivateURL,
-                method: .post,
-                body: Data(),
-                headers: try oktaJSONHeaders()
-            )
-
-            if deactivateResponse.statusCode == 200 {
-                let deleteURL = oktaURL(path: ["users", userId])
-                let (_, deleteResponse) = try await httpClient.send(
-                    url: deleteURL,
-                    method: .delete,
-                    body: Data(),
-                    headers: try oktaJSONHeaders()
-                )
-
-                if deleteResponse.statusCode != 204 {
-                    print("❌ Failed to delete Okta user \(userId)")
-                }
-            } else {
-                print("❌ Failed to deactivate Okta user \(userId)")
-            }
+            let userClient = try oktaSDKClient().user
+            try await userClient.deactivateUser(userId: userId, sendEmail: false)
+            try await userClient.deactivateOrDeleteUser(userId: userId, sendEmail: false)
         } catch {
             print("❌ Failed to clean up Okta user \(userId): \(error)")
         }
@@ -473,8 +377,30 @@ final class SSOHelper {
             HttpClient.HeaderKey.authorization: try oktaAuthorizationHeader()
         ]
     }
+    private func oktaSDKClient() throws -> OktaClient {
+        if let oktaClient {
+            return oktaClient
+        }
 
-    private func oktaAuthorizationHeader() throws -> String {
+        guard var domain = oktaBaseURL.host else {
+            throw RuntimeError("Invalid Okta base URL: \(oktaBaseURL)")
+        }
+
+        if let port = oktaBaseURL.port {
+            domain += ":\(port)"
+        }
+
+        let client = OktaClient(
+            configuration: .init(
+                apiKey: try oktaAPIKey(),
+                domain: domain
+            )
+        )
+        oktaClient = client
+        return client
+    }
+
+    private func oktaAPIKey() throws -> String {
         let apiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"]?
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -482,7 +408,11 @@ final class SSOHelper {
             throw RuntimeError("Missing OKTA_API_KEY_IOS")
         }
 
-        return "SSWS \(apiKey)"
+        return apiKey
+    }
+
+    private func oktaAuthorizationHeader() throws -> String {
+        "SSWS \(try oktaAPIKey())"
     }
 
     private func getFinalizeURLDependingOnBackend() -> String {
