@@ -165,7 +165,7 @@ class TeamsAPIV5: TeamsAPIV4 {
     override func getNotifications(
         sinceEventID: UUID?,
         maxResults: UInt
-    ) throws -> PayloadPager<TeamNotificationBatch> {
+    ) throws -> PayloadPager<[TeamNotification]> {
         let resourcePath = "\(pathPrefix)/teams/notifications"
 
         return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
@@ -210,7 +210,7 @@ private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelCo
         .init(
             element: services.map { $0.toAPIModel() },
             hasMore: hasMore ?? false,
-            nextStart: services.last?.id.uuidString ?? ""
+            nextStart: services.last?.id.transportString() ?? ""
         )
     }
 

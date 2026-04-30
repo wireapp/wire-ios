@@ -636,16 +636,12 @@ final class TeamsAPITests: XCTestCase {
             // When
             try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
                 let pager = try sut.getNotifications(sinceEventID: nil)
-                let notifications = try await pager.reduce(into: TeamNotificationBatch(notifications: [])) {
-                    $0 = TeamNotificationBatch(notifications: $0.notifications + $1.notifications)
-                }
+                let notifications = try await pager.reduce(into: []) { $0 += $1 }
 
                 // Then
-                let expectedNotifications = TeamNotificationBatch(
-                    notifications: [
-// TODO: finish
-                    ]
-                )
+                let expectedNotifications = [
+                    // TODO: finish
+                ] as [TeamNotification]
 //                    {
 //                        "has_more": false,
 //                        "notifications": [

@@ -28,22 +28,12 @@ struct TeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
         case hasMore = "has_more"
     }
 
-    func toAPIModel() -> PayloadPager<TeamNotificationBatch>.Page {
-        let notifications = notifications.map {
-            $0.toAPIModel()
-        }
-
-        fatalError() // TODO: finish
-        // let updateEventBatch = TeamNotificationBatch(
-        //     time: time?.date,
-        //     notifications: notifications.map { $0.toAPIModel() }
-        // )
-        //
-        // return .init(
-        //     element: updateEventBatch,
-        //     hasMore: hasMore ?? false,
-        //     nextStart: lastNonTransientEvent?.id.transportString() ?? ""
-        // )
+    func toAPIModel() -> PayloadPager<[TeamNotification]>.Page {
+        .init(
+            element: notifications.map { $0.toAPIModel() },
+            hasMore: hasMore ?? false,
+            nextStart: notifications.last?.id.transportString() ?? ""
+        )
     }
 
 }

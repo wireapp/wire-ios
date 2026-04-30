@@ -27,11 +27,11 @@ struct TeamNotificationDecodingProxy: Decodable {
     }
 
     public init(from decoder: any Decoder) throws {
-        // let container = try decoder.container(keyedBy: CodingKeys.self)
-        // let eventType = try container.decode(String.self, forKey: .eventType)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let notificationType = try container.decode(String.self, forKey: .notificationType)
 
         do {
-            // switch UpdateEventType(eventType) {
+            switch TeamNotificationType(rawValue: notificationType) {
             // case let .conversation(eventType):
             //     try self.init(eventType: eventType, from: decoder)
             //
@@ -49,12 +49,16 @@ struct TeamNotificationDecodingProxy: Decodable {
             //
             // case let .unknown(eventType):
             //     self.init(updateEvent: .unknown(eventType: eventType))
-            // }
+            case .none:
+                <#code#>
+            case .some(_):
+                <#code#>
+            }
         } catch {
-            // throw TeamNotificationDecodingProxyError(
-            //     notificationType: notificationType,
-            //     decodingError: error
-            // )
+            throw TeamNotificationDecodingProxyError(
+                notificationType: notificationType,
+                decodingError: error
+            )
         }
 
         fatalError("TODO") // TODO: delete

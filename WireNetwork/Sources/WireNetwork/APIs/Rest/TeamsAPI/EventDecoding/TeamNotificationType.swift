@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct TeamNotificationBatch {
-    public let notifications: [TeamNotification]
+enum TeamNotificationType: String {
+
+    case memberJoin = "team.member-join"
+
 }
-// TODO: see PaginatedWhitelistedBotProfileResponseV5
