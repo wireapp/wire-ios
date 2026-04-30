@@ -16,24 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct TeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
+enum TeamNotificationCodingKeys: String, CodingKey {
 
-    let notifications: [TeamNotificationV5]
-    let time: UTCTime?
-    let hasMore: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case notifications
-        case time
-        case hasMore = "has_more"
-    }
-
-    func toAPIModel() -> PayloadPager<[TeamNotification]>.Page {
-        .init(
-            element: notifications.flatMap { $0.toAPIModel() },
-            hasMore: hasMore ?? false,
-            nextStart: notifications.last?.id.transportString() ?? ""
-        )
-    }
+    case time
+    case teamID = "team"
+    case payload = "data"
+    case notificationType = "type"
 
 }

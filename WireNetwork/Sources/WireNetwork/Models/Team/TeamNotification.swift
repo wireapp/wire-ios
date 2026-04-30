@@ -16,4 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct TeamNotification: Equatable, Sendable {}
+public enum TeamNotification: Equatable, Sendable {
+
+    /// A user has joined a team.
+
+    case memberJoin(TeamMemberJoinNotification)
+
+}

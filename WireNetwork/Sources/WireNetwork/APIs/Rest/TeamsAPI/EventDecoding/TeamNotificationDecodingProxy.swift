@@ -20,39 +20,23 @@ import Foundation
 
 struct TeamNotificationDecodingProxy: Decodable {
 
-    let updateEvent: UpdateEvent // TODO: replace
+    let notification: TeamNotification
 
-    init(updateEvent: UpdateEvent) {
-        self.updateEvent = updateEvent
+    init(notification: TeamNotification) {
+        self.notification = notification
     }
 
     public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: TeamNotificationCodingKeys.self)
         let notificationType = try container.decode(String.self, forKey: .notificationType)
 
         do {
             switch TeamNotificationType(rawValue: notificationType) {
-            // case let .conversation(eventType):
-            //     try self.init(eventType: eventType, from: decoder)
-            //
-            // case let .featureConfig(eventType):
-            //     try self.init(eventType: eventType, from: decoder)
-            //
-            // case let .federation(eventType):
-            //     try self.init(eventType: eventType, from: decoder)
-            //
-            // case let .user(eventType):
-            //     try self.init(eventType: eventType, from: decoder)
-            //
-            // case let .team(eventType):
-            //     try self.init(eventType: eventType, from: decoder)
-            //
-            // case let .unknown(eventType):
-            //     self.init(updateEvent: .unknown(eventType: eventType))
+            case .memberJoin:
+                let notification = try TeamMemberJoinNotificationDecoder().decode(from: container)
+                self.notification = .memberJoin(notification)
             case .none:
-                <#code#>
-            case .some(_):
-                <#code#>
+                throw UnknownTeamNotificationTypeError()
             }
         } catch {
             throw TeamNotificationDecodingProxyError(
@@ -60,12 +44,8 @@ struct TeamNotificationDecodingProxy: Decodable {
                 decodingError: error
             )
         }
-
-        fatalError("TODO") // TODO: delete
     }
 
-    private enum CodingKeys: String, CodingKey {
-        case notificationType = "type"
-    }
+    struct UnknownTeamNotificationTypeError: Error {}
 
 }

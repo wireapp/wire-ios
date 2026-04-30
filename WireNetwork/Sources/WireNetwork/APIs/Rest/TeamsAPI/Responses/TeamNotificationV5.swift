@@ -23,14 +23,8 @@ struct TeamNotificationV5: Decodable {
     let id: UUID
     let payload: [TeamNotificationDecodingProxy]
 
-    func toAPIModel() -> TeamNotification {
-        fatalError() // TODO: fix
-        // UpdateEventEnvelope(
-        //     id: id,
-        //     events: (payload ?? []).map(\.updateEvent),
-        //     isTransient: transient ?? false,
-        //     deliveryTag: nil
-        // )
+    func toAPIModel() -> [TeamNotification] {
+        payload.map(\.notification)
     }
 
 }

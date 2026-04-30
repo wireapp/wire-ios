@@ -16,24 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct TeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
+public import Foundation
 
-    let notifications: [TeamNotificationV5]
-    let time: UTCTime?
-    let hasMore: Bool?
+/// An event where a user joined the team.
 
-    enum CodingKeys: String, CodingKey {
-        case notifications
-        case time
-        case hasMore = "has_more"
-    }
+public struct TeamMemberJoinNotification: Equatable, Sendable {
 
-    func toAPIModel() -> PayloadPager<[TeamNotification]>.Page {
-        .init(
-            element: notifications.flatMap { $0.toAPIModel() },
-            hasMore: hasMore ?? false,
-            nextStart: notifications.last?.id.transportString() ?? ""
-        )
+    /// The team id.
+
+    public let teamID: UUID
+
+    /// The id of the member who left.
+
+    public let userID: UUID
+
+    /// The time at which the member left.
+
+    public let time: Date
+
+    public init(
+        teamID: UUID,
+        userID: UUID,
+        time: Date
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+        self.time = time
     }
 
 }
