@@ -644,14 +644,16 @@ final class TeamsAPITests: XCTestCase {
                         .init(
                             teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f")!,
                             userID: UUID(uuidString: "c05922f8-2b42-45c6-911a-56394ab8474d")!,
-                            time: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2026-04-27T08:00:24.215142065Z")!
+                            time: ISO8601DateFormatter.fractionalInternetDateTime
+                                .date(from: "2026-04-27T08:00:24.215142065Z")!
                         )
                     ),
                     TeamNotification.memberJoin(
                         .init(
                             teamID: UUID(uuidString: "9f00f4e7-2426-4d6d-b2b1-9190b204556f")!,
                             userID: UUID(uuidString: "bbaf8e02-db59-4577-91ce-4750ece8e8f8")!,
-                            time: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2026-04-27T08:00:24.265610179Z")!
+                            time: ISO8601DateFormatter.fractionalInternetDateTime
+                                .date(from: "2026-04-27T08:00:24.265610179Z")!
                         )
                     )
                 ]
