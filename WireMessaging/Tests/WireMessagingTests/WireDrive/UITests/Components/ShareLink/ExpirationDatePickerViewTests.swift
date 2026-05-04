@@ -69,7 +69,7 @@ final class ExpirationDatePickerViewTests: XCTestCase {
                 )
             }
 
-            let view = makeView()
+            let view = makeView().environment(\.locale, Locale(identifier: "en_US"))
 
             snapshotHelper.verify(matching: view, named: testCase.rawValue, variants: .colorSchemes)
         }
