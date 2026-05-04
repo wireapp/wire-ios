@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,9 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             uiMOC: uiMOC,
             flowManager: mockFlowManager,
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         let aliceId = AVSIdentifier.stub
@@ -188,13 +190,14 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 
     func setupCallSnapshot() {
         mockWireCallCenterV3.callSnapshots[conversationId] = CallSnapshot(
+            messageProtocol: .proteus,
             callParticipants: CallParticipantsSnapshot(
                 conversationId: conversationId,
                 members: [],
                 callCenter: mockWireCallCenterV3
             ),
             callState: .established,
-            callStarter: aliceIphone.avsIdentifier,
+            callStarter: aliceIphone.avsIdentifier(isFederationEnabled: false),
             isVideo: false,
             isGroup: true,
             isConstantBitRate: false,
@@ -211,7 +214,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     private func setupUsersAndClients() {
         performPretendingUiMocIsSyncMoc {
             self.selfUser = ZMUser.selfUser(in: self.uiMOC)
-            self.selfUser.remoteIdentifier = self.aliceIphone.avsIdentifier.identifier
+            self.selfUser.remoteIdentifier = self.aliceIphone.avsIdentifier(isFederationEnabled: false).identifier
 
             self.selfClient = UserClient.insertNewObject(in: self.uiMOC)
             self.selfClient.user = self.selfUser
@@ -223,7 +226,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             self.client1.remoteIdentifier = self.aliceDesktop.clientId
 
             self.user2 = ZMUser.fetchOrCreate(
-                with: self.bobIphone.avsIdentifier.identifier,
+                with: self.bobIphone.avsIdentifier(isFederationEnabled: false).identifier,
                 domain: nil,
                 in: self.uiMOC
             )

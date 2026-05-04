@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,12 @@ extension AlertResultConfiguration {
 extension ConversationActionController {
 
     func request<T: AlertResultConfiguration>(_ result: T.Type, handler: @escaping (T) -> Void) {
-        present(result.controller(handler))
+        let alertController = result.controller(handler)
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView?.superview
+            popoverPresentationController.sourceRect = sourceView?.frame ?? .zero
+        }
+        present(alertController)
     }
 
 }

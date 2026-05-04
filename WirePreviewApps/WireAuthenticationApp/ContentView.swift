@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,41 +16,76 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
-import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
+import WireFoundation
+import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 
 struct ContentView: View {
 
-    let authenticationAPI: AuthenticationAPI
+    let configuration: Configuration
 
     var body: some View {
-        BackgroundView()
-            .sheet(isPresented: .constant(true)) {
-                WireAuthenticationAssembly().assemble(
-                    authenticationAPI: authenticationAPI,
-                    accountsURL: URL(string: "https://example.com")!,
-                    passwordValidator: LoginPasswordValidator()
-                )
-            }
+        WireAuthenticationAssembly()
+            .assemble(
+                authenticationType: .new,
+                environmentType: configuration.defaultBackendEnvironment,
+                environment: BackendEnvironment2(
+                    title: "Mock backend",
+                    endpoints: Endpoints(
+                        backendURL: URL(string: "https://prod-nginz-https.wire.com")!,
+                        backendWSURL: URL(string: "https://prod-nginz-ssl.wire.com")!,
+                        blackListURL: URL(string: "https://clientblacklist.wire.com/prod")!,
+                        teamsURL: URL(string: "https://teams.wire.com")!,
+                        accountsURL: URL(string: "https://account.wire.com")!,
+                        websiteURL: URL(string: "https://wire.com")!,
+                        countlyURL: URL(string: "https://wire.count.ly")!,
+                    ),
+                    proxySettings: nil,
+                    pinnedKeys: nil
+                ),
+                minTLSVersion: configuration.minTLSVersion,
+                preferredAPIVersion: .v8,
+                accountsURL: configuration.accountsURL,
+                howToChangeEmailURL: URL(string: "www.example.com")!,
+                howToDeleteAccountURL: URL(string: "www.example.com")!,
+                privacyPolicyURL: URL(string: "www.example.com")!,
+                termsOfUseURL: URL(string: "www.example.com")!,
+                passwordValidator: configuration.passwordValidator,
+                ssoCallbackURLScheme: "some scheme",
+                appStoreURL: URL(string: "www.example.com")!,
+                accountsPublisher: CurrentValuePublisher<[AccountUIModel]>(
+                    subject: CurrentValueSubject<[AccountUIModel], Never>(
+                        [
+                            AccountUIModel(
+                                avatarSource: .text("FF"),
+                                name: "Name",
+                                handle: "@handle",
+                                teamName: "Team",
+                                backendName: "Backedn",
+                                action: {}
+                            ),
+                            AccountUIModel(
+                                avatarSource: .text("DS"),
+                                name: "Name 2",
+                                handle: "@handle 2",
+                                teamName: "Team two",
+                                backendName: "Backend two",
+                                action: {}
+                            )
+                        ]
+                    )
+                ),
+                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
+            ).view
     }
 
 }
 
 #Preview {
-    ContentView(authenticationAPI: makeAuthenticationAPI())
-}
-
-private struct LoginPasswordValidator: PasswordValidator {
-
-    func validate(_ password: String) -> Bool {
-        !password.isEmpty
-    }
-
-    var localizedRulesDescription: String? {
-        "Password rules"
-    }
-
+    ContentView(configuration: .live)
 }

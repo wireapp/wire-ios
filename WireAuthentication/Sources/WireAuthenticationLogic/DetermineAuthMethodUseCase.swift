@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,37 +17,33 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    private let validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase
+    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
+    private let urlSession: URLSession
 
-    package init(validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase, authenticationAPI: AuthenticationAPI) {
+    package init(
+        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
+        authenticationAPI: AuthenticationAPI,
+        urlSession: URLSession
+    ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
+        self.urlSession = urlSession
     }
 
     package func invoke(
         emailOrSSOCode: String
-    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+    ) async throws -> AuthenticationMethod {
         let emailOrSSOCode = try validateEmailOrSSOCode(input: emailOrSSOCode)
 
         switch emailOrSSOCode {
         case let .email(email, domain):
-            do {
-                return try await determineAuthMethod(email: email, domain: domain)
-            } catch let error as DetermineAuthMethodUseCaseFailure {
-                throw error
-            } catch AuthenticationAPIError.invalidResponse {
-                throw .invalidResponse
-            } catch let error as URLError {
-                throw .urlError(error)
-            } catch {
-                throw .unknown
-            }
+            return try await determineAuthMethod(email: email, domain: domain)
         case let .ssoCode(ssoCode):
             return .loginViaSSO(code: ssoCode)
         }
@@ -79,30 +75,61 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             } catch AuthenticationAPIError.configNotFound, AuthenticationAPIError.domainNotFound {
                 return .loginOrRegisterViaEmail(email: email)
             }
+        } catch AuthenticationAPIError.serviceUnavailable {
+            return .loginOrRegisterViaEmail(email: email)
         }
 
         switch configuration.domainRedirect {
-        case .none where configuration.isCloudAccountAlreadyRegistered == true:
-            throw DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: email))
+        case .noRegistration where configuration.isCloudAccountAlreadyRegistered == true:
+            // The email domain has been claimed by an on-prem backend,
+            // but there's already an existing cloud account registered.
+            return .loginViaEmail(email: email, didDetectDomainConflict: true)
 
         case .none, .locked, .preAuthorized:
             return .loginOrRegisterViaEmail(email: email)
 
         case .noRegistration:
-            return .loginViaEmail(email: email)
+            return .loginViaEmail(email: email, didDetectDomainConflict: false)
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {
-                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+                throw AuthenticationAPIError.invalidResponse
             }
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
-            guard let backendURL = configuration.backendURL else {
-                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+            guard let configURL = configuration.backendURL else {
+                throw AuthenticationAPIError.invalidResponse
             }
-            return .onPremLogin(email: email, backendConfig: backendURL)
+
+            do {
+                let backendURL = try await fetchBackendConfigURL(from: configURL)
+                return .onPremLogin(email: email, backendConfig: backendURL)
+            } catch {
+                throw AuthenticationAPIError.invalidResponse
+            }
         }
+    }
+
+    private func fetchBackendConfigURL(from backendURL: URL) async throws -> URL {
+        let (data, _) = try await urlSession.data(from: backendURL)
+
+        let decoder = JSONDecoder()
+        let domainInfo = try decoder.decode(DomainInfo.self, from: data)
+
+        return domainInfo.configJsonURL
+    }
+
+}
+
+private struct DomainInfo: Codable {
+
+    let configJsonURL: URL
+    let webappWelcomeURL: URL
+
+    private enum CodingKeys: String, CodingKey {
+        case configJsonURL = "config_json_url"
+        case webappWelcomeURL = "webapp_welcome_url"
     }
 
 }

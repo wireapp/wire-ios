@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
+
+import WireAuthenticationAPI
 import WireAuthenticationUI
+import WireNetwork
 
 public struct WireAuthenticationUIDebugView: View {
 
@@ -49,34 +52,41 @@ public struct WireAuthenticationUIDebugView: View {
                 label: { Text("Verification code") }
             )
         }
-        .fullScreenCover(item: $presentedItem, content: { item in
-            switch item {
-            case .background:
-                fullscreenCover(content: { BackgroundView() })
-            case .switchBackend:
-                fullscreenCover(content: {
-                    BackgroundView()
-                        .overlay(
-                            ZStack {
-                                SwitchBackendConfirmationPreview()
-                                    .padding()
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        )
-                })
-            case .verificationCode:
-                fullscreenCover(content: {
-                    BackgroundView()
-                        .overlay {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(maxHeight: .infinity)
-                                VerificationCodeView_Previews(code: [])
-                            }
+        .fullScreenCover(
+            item: $presentedItem,
+            content: { item in
+                switch item {
+                case .background:
+                    fullscreenCover(content: { BackgroundView() })
+                case .switchBackend:
+                    fullscreenCover(
+                        content: {
+                            BackgroundView()
+                                .overlay(
+                                    ZStack {
+                                        SwitchBackendConfirmation(
+                                            environment: .preview,
+                                            onConfirm: { _ in }
+                                        ).padding()
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                )
                         }
-                })
+                    )
+                case .verificationCode:
+                    fullscreenCover(content: {
+                        BackgroundView()
+                            .overlay {
+                                VStack(spacing: 0) {
+                                    Spacer()
+                                        .frame(maxHeight: .infinity)
+                                    VerificationCodeView_Previews(code: [])
+                                }
+                            }
+                    })
+                }
             }
-        })
+        )
     }
 
     @ViewBuilder
@@ -108,4 +118,26 @@ public struct WireAuthenticationUIDebugView: View {
     NavigationView {
         WireAuthenticationUIDebugView()
     }
+}
+
+private extension BackendEnvironment2 {
+
+    static let preview = BackendEnvironment2(
+        title: "Example backend",
+        environmentType: .default,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "example.com")!,
+                websocketURL: URL(string: "example.com")!,
+                blacklistURL: URL(string: "example.com")!,
+                teamsURL: URL(string: "example.com")!,
+                accountsURL: URL(string: "example.com")!,
+                websiteURL: URL(string: "example.com")!,
+                countlyURL: nil
+            ),
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
+    )
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
-extension WireAPI.MLSCipherSuite {
+extension WireNetwork.MLSCipherSuite {
 
     func toDomainModel() -> WireDataModel.MLSCipherSuite {
         switch self {
@@ -39,9 +39,29 @@ extension WireAPI.MLSCipherSuite {
             .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
         }
     }
+
+    func toConfigModel() -> Feature.MLS.Config.MLSCipherSuite {
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+            .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            .MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
+        }
+    }
+
 }
 
-extension WireAPI.ConversationAccessRoleLegacy {
+extension WireNetwork.ConversationAccessRoleLegacy {
 
     func toDomainModel() -> WireDataModel.ConversationAccessRole {
         switch self {
@@ -57,7 +77,7 @@ extension WireAPI.ConversationAccessRoleLegacy {
     }
 }
 
-extension WireAPI.ConversationMessageProtocol {
+extension WireNetwork.ConversationMessageProtocol {
 
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
@@ -72,7 +92,7 @@ extension WireAPI.ConversationMessageProtocol {
 
 }
 
-extension WireAPI.ConversationMemberLeaveReason {
+extension WireNetwork.ConversationMemberLeaveReason {
 
     func toDomainModel() -> ZMSystemMessageType {
         switch self {
@@ -84,7 +104,7 @@ extension WireAPI.ConversationMemberLeaveReason {
     }
 }
 
-extension WireAPI.ConversationType {
+extension WireNetwork.ConversationType {
 
     func toDomainModel() -> WireDataModel.BackendConversationType {
         switch self {
@@ -101,18 +121,18 @@ extension WireAPI.ConversationType {
 
 }
 
-extension WireAPI.Conversation.Members {
+extension WireNetwork.Conversation.Members {
 
     func toDomainModel() -> WireDomain.Conversation.Members {
         .init(
             others: others.map { $0.toDomainModel() },
-            selfMember: selfMember.toDomainModel()
+            selfMember: selfMember?.toDomainModel()
         )
     }
 
 }
 
-extension WireAPI.Conversation.Member {
+extension WireNetwork.Conversation.Member {
 
     func toDomainModel() -> WireDomain.Conversation.Members.Member {
         .init(
@@ -133,7 +153,7 @@ extension WireAPI.Conversation.Member {
 
 }
 
-extension WireAPI.Conversation {
+extension WireNetwork.Conversation {
 
     func toDomainModel() -> WireDomain.Conversation {
         .init(
@@ -151,12 +171,85 @@ extension WireAPI.Conversation {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access?.map(\.rawValue),
-            accessRoles: accessRoles?.map(\.rawValue),
+            access: access?.map { $0.toDomainModel() },
+            accessRoles: accessRoles?.map { $0.toDomainModel() },
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime,
+            groupType: groupType?.toDomainModel(),
+            addPermission: addPermission?.toDomainModel(),
+            cellsState: cellsState?.toDomainModel()
         )
     }
+}
 
+extension WireNetwork.ConversationAccessRole {
+    func toDomainModel() -> String {
+        switch self {
+        case .teamMember:
+            "team_member"
+        case .nonTeamMember:
+            "non_team_member"
+        case .guest:
+            "guest"
+        case .app:
+            "service"
+        }
+    }
+
+}
+
+extension WireNetwork.ConversationAccessMode {
+    func toDomainModel() -> String {
+        switch self {
+
+        case .private:
+            "private"
+        case .invite:
+            "invite"
+        case .link:
+            "link"
+        case .code:
+            "code"
+        }
+    }
+}
+
+extension WireNetwork.ConversationGroupType {
+
+    func toDomainModel() -> WireDomain.Conversation.GroupType {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
+    }
+
+}
+
+extension WireNetwork.ChannelPermission {
+
+    func toDomainModel() -> WireDomain.Conversation.ChannelPermission {
+        switch self {
+        case .admins:
+            .admins
+        case .everyone:
+            .everyone
+        }
+    }
+
+}
+
+extension WireNetwork.Conversation.CellsState {
+    func toDomainModel() -> WireDomain.Conversation.CellsState {
+        switch self {
+        case .ready:
+            .ready
+        case .pending:
+            .pending
+        case .disabled:
+            .disabled
+        }
+    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 import Foundation
 
-final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
+public final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
 
-    let host: String
-    let port: Int
-    let needsAuthentication: Bool
+    public let host: String
+    public let port: Int
+    public let needsAuthentication: Bool
 
-    init(
+    public init(
         host: String,
         port: Int,
         needsAuthentication: Bool = false
@@ -36,7 +36,7 @@ final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
         super.init()
     }
 
-    func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
+    public func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
         var proxyDictionary: [AnyHashable: Any] = [
             "SOCKSEnable": 1,
             "SOCKSProxy": host,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant("invalid"),
             passwordIsWrong: .constant(true),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
-            cancelAction: {}
+            cancelAction: {},
+            isContextMenuAllowed: true
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -59,8 +61,10 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant("G00dPassword!"),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
-            cancelAction: {}
+            cancelAction: {},
+            isContextMenuAllowed: true
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -77,8 +81,10 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant(""),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
-            cancelAction: {}
+            cancelAction: {},
+            isContextMenuAllowed: true
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -92,8 +98,10 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant(""),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
-            cancelAction: {}
+            cancelAction: {},
+            isContextMenuAllowed: true
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

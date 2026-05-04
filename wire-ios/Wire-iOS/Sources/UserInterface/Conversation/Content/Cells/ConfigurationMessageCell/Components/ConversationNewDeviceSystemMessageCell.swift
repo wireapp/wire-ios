@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,19 @@
 import UIKit
 import WireDataModel
 
-final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationNewDeviceSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
-    static let userClientURL: URL = .init(string: "settings://user-client")!
+    static var userClientURL: URL {
+        URL(string: "settings://user-client")!
+    }
 
     var linkTarget: LinkTarget?
 
     enum LinkTarget {
-        case user(UserType)
-        case conversation(ZMConversation)
+        case user(_ id: Any, (_ id: Any) -> Void)
+        case conversation(_ id: Any, (_ id: Any) -> Void)
     }
 
     struct Configuration {
@@ -57,11 +61,7 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
         linkTarget = object.linkTarget
     }
 
-}
-
-// MARK: - UITextViewDelegate
-
-extension ConversationNewDeviceSystemMessageCell {
+    // MARK: - UITextViewDelegate
 
     override func textView(
         _ textView: UITextView,
@@ -70,15 +70,13 @@ extension ConversationNewDeviceSystemMessageCell {
         interaction: UITextItemInteraction
     ) -> Bool {
 
-        guard let linkTarget,
-              url == type(of: self).userClientURL,
-              let zClientViewController = ZClientViewController.shared else { return false }
+        guard let linkTarget else { return false }
 
         switch linkTarget {
-        case let .user(user):
-            zClientViewController.openClientListScreen(for: user)
-        case let .conversation(conversation):
-            zClientViewController.openDetailScreen(for: conversation)
+        case let .user(user, onUserTapped):
+            onUserTapped(user)
+        case let .conversation(conversation, onConversationTapped):
+            onConversationTapped(conversation)
         }
 
         return false

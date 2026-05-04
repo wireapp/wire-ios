@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,12 +45,13 @@ extension ConversationContentViewController {
             actionResponder: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
-        let canvasViewController = CanvasViewController()
+        let canvasViewController = CanvasViewController(userSession: userSession)
         if let imageData = message.imageMessageData?.imageData {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
@@ -93,15 +94,26 @@ extension ConversationContentViewController {
             }
         case .delete:
             assert(message.canBeDeleted)
+            let attachments = message.multipartMessageData?.attachments
 
             deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: presentedViewController ?? self)
             deletionDialogPresenter?.presentDeletionAlertController(
                 forMessage: message,
                 source: view,
                 userSession: userSession
-            ) { deleted in
+            ) { [weak self] deleted, deletionType in
+                guard let self else { return }
+
                 if deleted {
-                    self.presentedViewController?.dismiss(animated: true)
+                    presentedViewController?.dismiss(animated: true)
+                    if let attachments, let deletionType {
+                        delegate?.conversationContentViewController(
+                            self,
+                            didDeleteMultipartMessage: message,
+                            withAttachments: attachments,
+                            deletionType: deletionType
+                        )
+                    }
                 }
             }
         case .present:
@@ -162,30 +174,26 @@ extension ConversationContentViewController {
                 message: message,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
 
             let navigationController = UINavigationController(rootViewController: detailsViewController)
             navigationController.modalPresentationStyle = .formSheet
 
             parent?.present(navigationController, animated: true)
-        case .resetSession:
-            guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
-            activityIndicator.start()
-            userClientToken = UserClientChangeInfo.add(observer: self, for: client)
-            client.resetSession()
         case let .react(reaction):
             userSession.perform {
                 let useCase = self.userSession.makeToggleMessageReactionUseCase()
                 useCase.invoke(reaction, for: message, in: self.conversation)
             }
         case .visitLink:
-            if let textMessageData = message.textMessageData,
-               let path = textMessageData.linkPreview?.originalURLString ?? textMessageData.messageText,
-               let url = URL(string: path),
-               UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
+            let textMessageData = message.textMessageData
+            let content = textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+            guard let content, let url = linkDetector?.detectLinks(in: content).first else { return }
+            UIApplication.shared.open(url)
+        case .collapse:
+            dataSource.collapse(message: message)
         }
     }
 
@@ -209,18 +217,6 @@ extension ConversationContentViewController {
     }
 }
 
-// MARK: - UserClientObserver
-
-extension ConversationContentViewController: UserClientObserver {
-
-    func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
-        if changeInfo.sessionHasBeenReset {
-            userClientToken = nil
-            activityIndicator.stop()
-        }
-    }
-}
-
 // MARK: - SignatureObserver
 
 extension ConversationContentViewController: SignatureObserver {
@@ -236,7 +232,7 @@ extension ConversationContentViewController: SignatureObserver {
 
     func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
         dismissDigitalSignatureVerification { [weak self] in
-            ZMUserSession.shared()?.perform {
+            self?.userSession.perform {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {

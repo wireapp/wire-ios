@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 enum ConversationActionType {
 
@@ -94,15 +95,19 @@ final class ParticipantsCellViewModel {
         isSelfIncludedInUsers ? 14 : 15
     }
 
+    private var isChannel: Bool {
+        message.conversationLike?.isChannel == true
+    }
+
     private var showServiceUserWarning: Bool {
         guard case .added = action,
               let messageData = message.systemMessageData,
               let conversation = message.conversationLike else { return false }
         guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
 
-        let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areServicesPresent
-        let serviceAdded = users.any(\.isServiceUser)
-        return selfAddedToServiceConversation || serviceAdded
+        let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areAppsPresent
+        let appOrBotAdded = users.any(\.isAppOrBot)
+        return selfAddedToServiceConversation || appOrBotAdded
     }
 
     /// Users displayed in the system message, up to 17 when not collapsed
@@ -222,7 +227,12 @@ final class ParticipantsCellViewModel {
         else { return nil }
 
         let senderName = name(for: sender).capitalized
-        return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
+        return formatter.heading(
+            senderName: senderName,
+            senderIsSelf: sender.isSelfUser,
+            convName: conversationName,
+            isChannel: isChannel
+        )
     }
 
     func attributedTitle() -> NSAttributedString? {
@@ -238,16 +248,26 @@ final class ParticipantsCellViewModel {
                 senderName: senderName,
                 senderIsSelf: sender.isSelfUser,
                 names: nameList,
-                isSelfIncludedInUsers: isSelfIncludedInUsers
+                isSelfIncludedInUsers: isSelfIncludedInUsers,
+                isChannel: isChannel
             )
         } else {
-            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser)
+            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, isChannel: isChannel)
+        }
+    }
+
+    var accessibilityIdentifier: String? {
+        switch action {
+        case .left:
+            Locators.ConversationsPage.useLeftSystemMessage.rawValue
+        default:
+            nil
         }
     }
 
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
-        return L10n.Localizable.Content.System.Services.warning
+        return L10n.Localizable.Content.System.Apps.warning
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {

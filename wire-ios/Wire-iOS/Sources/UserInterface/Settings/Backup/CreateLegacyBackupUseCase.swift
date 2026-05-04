@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,12 @@
 //
 
 import Foundation
-import WireDomainPkg
+import WireDomainPackage
+import WireFoundation
 import WireSettingsUI
 import WireSyncEngine
+
+// TODO: [WPB-14592] clean up everything around the legacy backup creation
 
 /// Use case for creating a backup file which can only used by iOS apps.
 struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
@@ -37,14 +40,8 @@ struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
 
                     let sessionManager = sessionManager()
 
-                    continuation.yield(.progress(0.5))
-
-                    let url = try await withCheckedThrowingContinuation { continuation in
-                        sessionManager.backupActiveAccount(password: password) { result in
-                            continuation.resume(with: result)
-                        }
-                    }
-
+                    continuation.yield(.progress(current: 1, total: 2))
+                    let url = try await sessionManager.backupActiveAccount(password: password)
                     continuation.yield(.done(url))
                     continuation.finish()
 

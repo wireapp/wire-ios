@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,11 +68,14 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
             context: context,
             proteusParticipantsService: ProteusConversationParticipantsService(context: context),
-            mlsParticipantsService: MLSConversationParticipantsService(context: context)
+            mlsParticipantsService: MLSConversationParticipantsService(context: context, localDomain: localDomain)
         )
     }
 
@@ -287,6 +290,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
             try await mlsParticipantsService.removeParticipant(user, from: conversation)
+        }
+
+        try await context.perform { [weak context] in
+            try context?.save()
         }
     }
 

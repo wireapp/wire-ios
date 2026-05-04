@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,22 +44,22 @@ extension SourceryPlugin: BuildToolPlugin {
         context: PackagePlugin.PluginContext,
         target: PackagePlugin.Target
     ) async throws -> [PackagePlugin.Command] {
-        Diagnostics.remark("SourceryPlugin work directory: \(context.pluginWorkDirectory)")
+        Diagnostics.remark("SourceryPlugin work directory: \(context.pluginWorkDirectoryURL.path())")
 
         // Find configuration from possible paths where there may be a config file:
         // 1. root of package
         // 2. target directory
         // 3. target directory subfolder named 'Sourcery'
-        let configuration = [
-            context.package.directory,
-            target.directory,
-            target.directory.appending(subpath: "Sourcery")
+        let configURL = [
+            context.package.directoryURL,
+            target.directoryURL,
+            target.directoryURL.appending(path: "Sourcery", directoryHint: .isDirectory)
         ]
-        .map { $0.appending(Constant.configFileName) }
-        .filter { FileManager.default.fileExists(atPath: $0.string) }
+        .map { (url: URL) in url.appending(path: Constant.configFileName, directoryHint: .notDirectory) }
+        .filter { url in FileManager.default.fileExists(atPath: url.path()) }
         .first
 
-        guard let configuration else {
+        guard let configURL else {
             Diagnostics.error(
                 """
                 No configurations found for target \(target.name). If you would like to generate sources for this \
@@ -75,32 +75,32 @@ extension SourceryPlugin: BuildToolPlugin {
         return [
             try makePrebuildCommand(
                 context: context,
-                configuration: configuration,
-                targetDirectory: target.directory
+                configURL: configURL,
+                targetDirectoryURL: target.directoryURL
             )
         ]
     }
 
     private func makePrebuildCommand(
         context: PackagePlugin.PluginContext,
-        configuration: Path,
-        targetDirectory: Path
+        configURL: URL,
+        targetDirectoryURL: URL
     ) throws -> PackagePlugin.Command {
         .prebuildCommand(
             displayName: Constant.displayName,
-            executable: try context.tool(named: Constant.toolName).path,
+            executable: try context.tool(named: Constant.toolName).url,
             arguments: [
                 "--config",
-                configuration.string,
+                configURL.path(),
                 "--cacheBasePath",
-                context.pluginWorkDirectory
+                context.pluginWorkDirectoryURL.path()
             ],
             environment: [
-                Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory,
-                Constant.Environment.packageRootDirectory: context.package.directory,
-                Constant.Environment.targetDirectory: targetDirectory.string
+                Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectoryURL.path(),
+                Constant.Environment.packageRootDirectory: context.package.directoryURL.path(),
+                Constant.Environment.targetDirectory: targetDirectoryURL.path()
             ],
-            outputFilesDirectory: context.pluginWorkDirectory
+            outputFilesDirectory: context.pluginWorkDirectoryURL
         )
     }
 }

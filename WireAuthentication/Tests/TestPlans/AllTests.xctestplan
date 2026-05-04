@@ -25,13 +25,6 @@
         "identifier" : "WireAuthenticationLogicTests",
         "name" : "WireAuthenticationLogicTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireAuthentication",
-        "identifier" : "WireAuthenticationTests",
-        "name" : "WireAuthenticationTests"
-      }
     }
   ],
   "version" : 1

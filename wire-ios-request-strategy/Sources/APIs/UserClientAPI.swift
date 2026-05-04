@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol UserClientAPI {
 
-    func deleteUserClient(clientId: String, password: String) async throws
+    func deleteUserClient(clientId: String, password: String?) async throws
 
 }
 
@@ -36,7 +36,7 @@ class UserClientAPIV0: UserClientAPI {
         .v0
     }
 
-    func deleteUserClient(clientId: String, password: String) async throws {
+    func deleteUserClient(clientId: String, password: String?) async throws {
         let requestsFactory = UserClientRequestFactory()
 
         let request = requestsFactory.deleteClientRequest(
@@ -93,6 +93,34 @@ class UserClientAPIV7: UserClientAPIV6 {
     override var apiVersion: APIVersion { .v7 }
 }
 
-final class UserClientAPIV8: UserClientAPIV7 {
+class UserClientAPIV8: UserClientAPIV7 {
     override var apiVersion: APIVersion { .v8 }
+}
+
+class UserClientAPIV9: UserClientAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+class UserClientAPIV10: UserClientAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
+}
+
+class UserClientAPIV11: UserClientAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
+}
+
+class UserClientAPIV12: UserClientAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
+}
+
+class UserClientAPIV13: UserClientAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
+}
+
+class UserClientAPIV14: UserClientAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class UserClientAPIV15: UserClientAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }

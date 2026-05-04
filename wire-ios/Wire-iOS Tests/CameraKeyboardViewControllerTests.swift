@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,10 +52,9 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
 
     var cameraKeyboardViewControllerDidSelectImageDataHitCount: UInt = 0
     func cameraKeyboardViewController(
-        _ controller: CameraKeyboardViewController,
-        didSelectImageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        _ controller: Wire.CameraKeyboardViewController,
+        didSelectImage image: WireDataModel.SendableImage,
+        isFromCamera: Bool
     ) {
         cameraKeyboardViewControllerDidSelectImageDataHitCount += 1
     }
@@ -188,7 +187,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
     private func setupSut(permissions: PhotoPermissionsController) {
         sut = CameraKeyboardViewController(
             splitLayoutObservable: splitView,
-            permissions: permissions
+            permissions: permissions,
+            userSession: UserSessionMock()
         )
     }
 
@@ -198,7 +198,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
         sut = CallingMockCameraKeyboardViewController(
             splitLayoutObservable: splitView,
-            permissions: permissions
+            permissions: permissions,
+            userSession: UserSessionMock()
         )
 
         snapshotHelper.verify(matching: prepareForSnapshot())

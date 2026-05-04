@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 /// An asset message (image, file, ...)
@@ -27,7 +28,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     var cachedUnderlyingAssetMessage: GenericMessage?
 
     convenience init(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         nonce: UUID,
         managedObjectContext: NSManagedObjectContext,
         expiresAfter timeout: TimeInterval?

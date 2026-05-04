@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 import WireDataModel
 import WireLogging
 
-final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
+public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Error
 
-    enum Error: Swift.Error {
-        case failedToFetchFeatureLocally
+    public enum Error: Swift.Error {
+        case failedToFetchFeatureLocally(Feature.Name)
     }
 
     // MARK: - Properties
@@ -33,7 +33,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext
     ) {
         self.context = context
@@ -49,19 +49,18 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
                 name: name,
                 context: context
             ) else {
-                throw Error.failedToFetchFeatureLocally
+                throw Error.failedToFetchFeatureLocally(name)
             }
 
             return feature
         }
     }
 
-    public func storeFeature(
-        needsNotifyUser: Bool,
+    public func isFeatureEnabled(
         feature: Feature
-    ) async {
+    ) async -> Bool {
         await context.perform {
-            feature.needsToNotifyUser = needsNotifyUser
+            feature.status == .enabled
         }
     }
 
@@ -70,14 +69,6 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
     ) async -> (status: Feature.Status, config: Data?) {
         await context.perform {
             (feature.status, feature.config)
-        }
-    }
-
-    func featureNeedsNotifyUser(
-        feature: Feature
-    ) async -> Bool {
-        await context.perform {
-            feature.needsToNotifyUser
         }
     }
 

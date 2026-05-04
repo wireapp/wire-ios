@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,15 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 enum CallSnapshotTestFixture {
     static func degradedCallSnapshot(
         conversationId: AVSIdentifier,
         user: ZMUser,
-        callCenter: WireCallCenterV3
+        callCenter: WireCallCenterV3,
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callMember = AVSCallMember(client: AVSClient(
@@ -38,6 +40,7 @@ enum CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantSnapshot,
             callState: .established,
             callStarter: AVSIdentifier.stub,
@@ -59,7 +62,8 @@ enum CallSnapshotTestFixture {
         callCenter: WireCallCenterV3,
         clients: [AVSClient],
         state: CallState = .established,
-        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = []
+        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = [],
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callParticipantsSnapshot = CallParticipantsSnapshot(
@@ -69,6 +73,7 @@ enum CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantsSnapshot,
             callState: state,
             callStarter: AVSIdentifier.stub,

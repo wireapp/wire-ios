@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,29 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    var focusPasswordFieldOnAppear = true
+    private let isContextMenuAllowed: Bool
+
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
+
+    init(
+        viewModel: SetBackupPasswordViewModel,
+        focusPasswordFieldOnAppear: Bool = true,
+        isContextMenuAllowed: Bool
+    ) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.focusPasswordFieldOnAppear = focusPasswordFieldOnAppear
+        self.isContextMenuAllowed = isContextMenuAllowed
+    }
 
     var body: some View {
         NavigationStack {
@@ -50,12 +63,8 @@ struct SetBackupPasswordView: View {
     @ViewBuilder private var setBackupPasswordView: some View {
         VStack {
 
-            if #available(iOS 16.4, *) {
-                ScrollView(content: scrollViewContent)
-                    .scrollBounceBehavior(.basedOnSize)
-            } else {
-                ScrollView(content: scrollViewContent)
-            }
+            ScrollView(content: scrollViewContent)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer()
 
@@ -64,7 +73,7 @@ struct SetBackupPasswordView: View {
                 .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
-                .accessibilityIdentifier("back up now")
+                .accessibilityIdentifier(Locators.SetPasswordPage.backUpNowButton.rawValue)
         }
     }
 
@@ -98,7 +107,8 @@ struct SetBackupPasswordView: View {
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
             placeholderColor: passwordFieldPlaceholderColor,
-            focusOnAppear: true
+            focusOnAppear: focusPasswordFieldOnAppear,
+            isContextMenuAllowed: isContextMenuAllowed
         )
         .tint(passwordFieldBorderColor)
     }
@@ -112,7 +122,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -125,7 +135,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -138,7 +148,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 

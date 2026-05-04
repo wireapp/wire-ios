@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -635,7 +635,7 @@ class TestUserProfileUpdateStatus: UserProfileUpdateStatus {
 
     var recordedDidFailEmailUpdate: [Error] = []
     var recordedDidUpdateEmailSuccessfully = 0
-    var recordedDidChangePhoneSuccesfully = 0
+    var recordedDidChangePhonesuccessfully = 0
     var recordedDidFailPasswordUpdate = 0
     var recordedDidUpdatePasswordSuccessfully = 0
     var recordedDidFailChangingPhone: [Error] = []

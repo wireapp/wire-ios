@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,36 +17,38 @@
 //
 
 import UIKit
+import WireSyncEngine
 
 struct HorizontalMargins {
     var left: CGFloat
     var right: CGFloat
+    var chatBubbleMinimumLeading: CGFloat
+    var chatBubbleMinimumTrailing: CGFloat
 
-    init(left: CGFloat, right: CGFloat) {
+    init(left: CGFloat, right: CGFloat, chatBubbleMinimumLeading: CGFloat, chatBubbleMinimumTrailing: CGFloat) {
         self.left = left
         self.right = right
+        self.chatBubbleMinimumLeading = chatBubbleMinimumLeading
+        self.chatBubbleMinimumTrailing = chatBubbleMinimumTrailing
     }
 
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            self.left = 96
-            self.right = 96
+            self.left = 56
+            self.right = 16
+            self.chatBubbleMinimumLeading = 136.0
+            self.chatBubbleMinimumTrailing = 136.0
         default:
             self.left = 56
             self.right = 16
+            self.chatBubbleMinimumLeading = 104.0
+            self.chatBubbleMinimumTrailing = 72.0
         }
     }
-}
 
-extension UITraitEnvironment {
-    var conversationHorizontalMargins: HorizontalMargins {
-        conversationHorizontalMargins()
-    }
-
-    func conversationHorizontalMargins(
-        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame
-            .width ?? UIScreen.main.bounds.width
+    static func conversationHorizontalMargins(
+        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width
     ) -> HorizontalMargins {
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
@@ -60,11 +62,23 @@ extension UITraitEnvironment {
         return HorizontalMargins(userInterfaceSizeClass: userInterfaceSizeClass)
     }
 
+}
+
+extension UITraitEnvironment {
+    var conversationHorizontalMargins: HorizontalMargins {
+        HorizontalMargins.conversationHorizontalMargins()
+    }
+
     var directionAwareConversationLayoutMargins: HorizontalMargins {
         let margins = conversationHorizontalMargins
 
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-            return HorizontalMargins(left: margins.right, right: margins.left)
+            return HorizontalMargins(
+                left: margins.right,
+                right: margins.left,
+                chatBubbleMinimumLeading: margins.chatBubbleMinimumTrailing,
+                chatBubbleMinimumTrailing: margins.chatBubbleMinimumLeading
+            )
         } else {
             return margins
         }

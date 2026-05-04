@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,87 +17,142 @@
 //
 
 import Foundation
-import WireAPI
+import WireDataModel
 import WireLogging
+import WireNetwork
 
 public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
     private let selfClientID: String
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
+    private let journal: Journal
     private let decryptor: any UpdateEventDecryptorProtocol
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let jsonEncoder = JSONEncoder()
 
     public init(
         selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
-        decryptor: any UpdateEventDecryptorProtocol
+        journal: Journal,
+        decryptor: any UpdateEventDecryptorProtocol,
+        coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store
+        self.journal = journal
         self.decryptor = decryptor
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
-    public func pull() async throws {
-        WireLogger.sync.debug("pulling pending events")
-
+    @discardableResult
+    public func pull(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]> {
+        var lastEventID: UUID?
         // We want all events since this event.
-        guard let lastEventID = store.lastEventID() else {
-            throw PullPendingUpdateEventsSyncError.noLastEventID
+        if let lastStoredEventID = store.lastEventID() {
+            lastEventID = lastStoredEventID
         }
 
-        // We'll insert new events from this index.
-        var currentIndex = try await store.indexOfLastEventEnvelope() + 1
+        WireLogger.sync.debug("pulling pending events since: \(String(describing: lastEventID))")
 
-        // Events are fetched in batches.
-        for try await envelopes in api.getUpdateEvents(
+        var events: [UpdateEvent] = []
+
+        let timestampedUpdateEvents = api.getUpdateEvents(
             selfClientID: selfClientID,
             sinceEventID: lastEventID
-        ) {
+        )
+
+        // Events are fetched in batches.
+        for try await timestampedEnvelope in timestampedUpdateEvents {
+            let envelopes = timestampedEnvelope.updateEventEnvelopes
+            let timestamp = timestampedEnvelope.time
             let batchCount = envelopes.count
             var count = 0
 
-            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
+            if let timestamp {
+                WireLogger.sync.debug("storing server time delta")
+                await store.storeServerTimeDelta(
+                    timestamp.timeIntervalSinceNow
+                )
+            }
+
+            if batchCount > 0 {
+                WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
+            } else {
+                WireLogger.sync.debug("no new events on remote")
+                continue
+            }
 
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
 
-            func log(_ message: String, envelopeID: UUID?) {
+            // We'll insert new events from this index.
+            let currentIndex = try await store.indexOfLastEventEnvelope() + 1
+
+            var lastEnvelopeID: UUID?
+
+            // We are decrypting the batch within one core crypto transaction
+            try await coreCryptoProvider.coreCrypto().transaction { context in
                 WireLogger.sync.debug(
-                    "event \(count) os \(batchCount): \(message)",
-                    attributes: [.eventEnvelopeID: envelopeID]
-                )
-            }
-
-            for envelope in envelopes {
-                count += 1
-
-                log("decrypting...", envelopeID: envelope.id)
-                var decryptedEnvelope = envelope
-                decryptedEnvelope.events = try await decryptor.decryptEvents(in: envelope)
-
-                // We can only decrypt once so store the decrypted events for later retrieval.
-                log("encoding...", envelopeID: envelope.id)
-                let decryptedEnvelopeData = try jsonEncoder.encode(decryptedEnvelope)
-
-                log("storing...", envelopeID: envelope.id)
-                try await store.persistEventEnvelope(
-                    decryptedEnvelopeData,
-                    index: currentIndex
+                    "decrypting batch of \(envelopes.count) envelopes",
+                    attributes: .safePublic
                 )
 
-                currentIndex += 1
+                var decryptedEnvelopes: [UpdateEventEnvelope] = []
+                var brokenMLSGroupIDs = Set<String>()
+                for envelope in envelopes {
+                    try Task.checkCancellation()
+                    count += 1
 
-                if !envelope.isTransient {
-                    // We keep track of the last event id so next time we fetch
-                    // only new events. We don't track tranisent events because
-                    // these events aren't stored in the backend.
-                    log("storing last event id...", envelopeID: envelope.id)
-                    store.storeLastEventID(id: envelope.id)
+                    WireLogger.sync.debug(
+                        "event \(count) of \(batchCount): decrypting...",
+                        attributes: [.eventEnvelopeID: envelope.id]
+                    )
+
+                    var decryptedEnvelope = envelope
+                    let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
+                    let decryptedEvents = decryptionEventsResult.events
+                    decryptedEnvelope.events = decryptedEvents
+
+                    events.append(contentsOf: decryptedEvents)
+                    decryptedEnvelopes.append(decryptedEnvelope)
+
+                    brokenMLSGroupIDs = brokenMLSGroupIDs.union(decryptionEventsResult.brokenMLSGroupIDs)
+
+                    if !envelope.isTransient {
+                        lastEnvelopeID = envelope.id
+                    }
                 }
+
+                journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+
+                WireLogger.sync.debug("persisting \(decryptedEnvelopes.count) decrypted event(s)")
+
+                try await store.persistEventEnvelopes(
+                    decryptedEnvelopes,
+                    index: currentIndex,
+                    publicKeys: publicKeys
+                )
             }
+
+            if let lastEnvelopeID {
+                // We keep track of the last event id so next time we fetch
+                // only new events. We don't track transient events because
+                // these events aren't stored in the backend.
+                //
+                // NOTE: it's important the we are updating the last event ID
+                // after the CC transaction has successfully completed,
+                // otherwise we risk data loss in case of a crash.
+                WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
+                store.storeLastEventID(id: lastEnvelopeID)
+            }
+        }
+
+        return AsyncStream {
+            $0.yield(events)
+            $0.finish()
         }
     }
 

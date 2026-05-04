@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,6 +61,14 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
 
         return await context.perform {
             selfUser.remoteIdentifier
+        }
+    }
+
+    public func selfTeamID() async -> UUID? {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.teamIdentifier
         }
     }
 
@@ -219,14 +227,42 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
     }
 
     public func selfUserInfo() async -> (id: UUID, clientId: String?) {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await userLocalStore.selfUserInfo()
+    }
 
-        return await context.perform {
-            (
-                id: selfUser.remoteIdentifier,
-                clientId: selfUser.selfClient()?.remoteIdentifier
+    public func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async {
+        await context.perform { [context] in
+            let team = Team.fetchOrCreate(
+                with: identifier,
+                in: context
             )
+
+            let selfUser = ZMUser.selfUser(in: context)
+
+            _ = Member.getOrUpdateMember(
+                for: selfUser,
+                in: team,
+                context: context
+            )
+
+            team.name = name
+            team.creator = ZMUser.fetchOrCreate(
+                with: creator,
+                domain: nil,
+                in: context
+            )
+
+            team.pictureAssetId = icon
+            team.pictureAssetKey = iconKey
+
         }
+
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
 
 import Foundation
 
-extension Payload {
+public extension Payload {
     struct ConversationEvent<T: CodableEventData>: Codable {
 
-        let id: UUID?
-        let data: T
-        let from: UUID?
-        let qualifiedID: QualifiedID?
-        let qualifiedFrom: QualifiedID?
-        let timestamp: Date?
-        let type: String?
+        public let id: UUID?
+        public let data: T
+        public let from: UUID?
+        public let qualifiedID: QualifiedID?
+        public let qualifiedFrom: QualifiedID?
+        public let subconversationType: SubgroupType?
+        public let timestamp: Date?
+        public let type: String?
 
         enum CodingKeys: String, CodingKey {
             case id = "conversation"
@@ -35,6 +36,7 @@ extension Payload {
             case from
             case qualifiedID = "qualified_conversation"
             case qualifiedFrom = "qualified_from"
+            case subconversationType = "subconv"
             case timestamp = "time"
             case type
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,19 @@
 - (void)setUp {
     [super setUp];
 
-    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                       inMemoryStore:YES];
-    [self setupCachesIn:self.coreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
+    [self.dispatchGroup enter];
+    [self setupCachesIn:self.coreDataStack completionHandler:^{
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
     [self setUpLinkPreviewMessage];
     self.linkPreviewMessageExcludedByPredicate.nonce = nil;

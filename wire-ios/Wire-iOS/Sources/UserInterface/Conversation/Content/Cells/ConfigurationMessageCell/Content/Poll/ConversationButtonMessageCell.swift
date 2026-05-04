@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,16 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
+
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var errorMessage: String? {
         didSet {
@@ -35,14 +39,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         }
     }
 
-    private let button = SpinnerButton.alarmButton()
+    private let button = {
+        let button = SpinnerButton.alarmButton()
+        button.textTransform = .none
+        return button
+    }()
+
     private var buttonAction: Completion?
 
     private let errorLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
         label.textColor = UIColor.AlarmButton.alarmRed
-
         return label
     }()
 
@@ -90,6 +98,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         config = object
+        guard let userSession = config?.userSession,
+              accentColorChangeHandler == nil else {
+            return
+        }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        button.updateAlarmButtonColor(color: color)
     }
 
     struct Configuration {
@@ -97,10 +117,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         let state: ButtonMessageState
         let buttonAction: Completion
         let hasError: Bool
-    }
-
-    convenience init() {
-        self.init(frame: .zero)
+        let userSession: UserSession
     }
 
     override init(frame: CGRect) {
@@ -110,6 +127,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         createConstraints()
 
         button.addTarget(self, action: #selector(buttonTouched(sender:)), for: .touchUpInside)
+
     }
 
     @objc
@@ -133,15 +151,17 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
         let errorLabelTopConstraint = errorLabel.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 0)
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
-            button.leadingAnchor.constraint(equalTo: leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: trailingAnchor),
+            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.right),
 
             errorLabelTopConstraint,
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            errorLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
+            bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
 
         self.errorLabelTopConstraint = errorLabelTopConstraint
@@ -151,13 +171,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: Float = .ConversationButtonMessageCell.verticalInset
-
-    var isFullWidth: Bool = false
-
     var supportsActions: Bool = false
-
-    var showEphemeralTimer: Bool = false
 
     var containsHighlightableContent: Bool = false
 
@@ -167,7 +181,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var actionController: ConversationMessageActionController?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     var accessibilityIdentifier: String? = "PollCell"
 
@@ -177,13 +191,15 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
         text: String?,
         state: ButtonMessageState,
         hasError: Bool,
+        userSession: UserSession,
         buttonAction: @escaping Completion
     ) {
         self.configuration = View.Configuration(
             text: text,
             state: state,
             buttonAction: buttonAction,
-            hasError: hasError
+            hasError: hasError,
+            userSession: userSession
         )
     }
 }

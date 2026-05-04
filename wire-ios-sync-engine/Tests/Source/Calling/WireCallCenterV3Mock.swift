@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,12 @@ public class MockAVSWrapper: AVSWrapperType {
 
     var receivedCallEvents: [(CallEvent, AVSConversationType)] = []
 
-    public required init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        observer: UnsafeMutableRawPointer?,
+        isFederationEnabled: Bool
+    ) {
         // do nothing
     }
 
@@ -106,6 +111,14 @@ public class MockAVSWrapper: AVSWrapperType {
         // do nothing
     }
 
+    public func networkInterfaceChanged() {
+        // do nothing
+    }
+
+    public func setLiveSyncPaused(_ paused: Bool) {
+        // do nothing
+    }
+
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
 
     public func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo) {
@@ -129,9 +142,16 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
-        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        self.mockAVSWrapper = MockAVSWrapper(
+            userId: userId,
+            clientId: clientId,
+            observer: nil,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(
             userId: userId,
             clientId: clientId,
@@ -139,7 +159,9 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
             uiMOC: uiMOC,
             flowManager: flowManager,
             transport: transport,
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -168,9 +190,16 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
-        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        self.mockAVSWrapper = MockAVSWrapper(
+            userId: userId,
+            clientId: clientId,
+            observer: nil,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(
             userId: userId,
             clientId: clientId,
@@ -178,7 +207,9 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             uiMOC: uiMOC,
             flowManager: flowManager,
             transport: transport,
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 

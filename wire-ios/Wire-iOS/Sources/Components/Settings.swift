@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ extension Notification.Name {
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
     case chatHeadsDisabled = "ZDevOptionChatHeadsDisabled"
-    case voIPNotificationsOnly = "VoIPNotificationsOnly"
     case lastViewedConversation = "LastViewedConversation"
     case colorScheme = "ColorScheme"
     case lastViewedScreen = "LastViewedScreen"
@@ -59,15 +58,14 @@ enum SettingKey: String, CaseIterable {
     case disableCallKit = "UserDefaultDisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
     case enableBatchCollections = "UserDefaultEnableBatchCollections"
-    case callingProtocolStrategy = "CallingProtocolStrategy"
 
     // MARK: Link opening options
 
-    case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 }
 
 /// Model object for locally stored (not in SE or AVS) user app settings
@@ -148,8 +146,6 @@ class Settings {
         ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
-        startLogging()
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidEnterBackground(_:)),
@@ -200,17 +196,5 @@ class Settings {
         if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
-    }
-
-    // MARK: - Debug
-
-    private func startLogging() {
-        #if !targetEnvironment(simulator)
-            loadEnabledLogs()
-        #endif
-
-        #if !DISABLE_LOGGING
-            ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
-        #endif
     }
 }

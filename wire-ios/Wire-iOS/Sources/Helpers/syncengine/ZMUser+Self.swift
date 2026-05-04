@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import WireSyncEngine
             } else {
                 guard let session = ZMUserSession.shared() else { return nil }
 
-                return ZMUser.selfUser(inUserSession: session)
+                return ZMUser.selfUser(in: session.viewContext)
             }
         }
     }
@@ -52,7 +52,7 @@ import WireSyncEngine
         static func selfUser() -> ZMUser? {
             guard let session = ZMUserSession.shared() else { return nil }
 
-            return ZMUser.selfUser(inUserSession: session)
+            return ZMUser.selfUser(in: session.viewContext)
         }
     }
 #endif

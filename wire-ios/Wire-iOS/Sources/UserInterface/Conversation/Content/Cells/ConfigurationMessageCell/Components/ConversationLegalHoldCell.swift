@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,15 +21,17 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<ConversationLegalHoldCellDescription>,
+    ConversationMessageCell {
 
-    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
-    var conversation: ZMConversation?
+    static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
+
+    var conversation: ConversationLike?
 
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var conversation: ZMConversation?
+        var conversation: ConversationLike?
     }
 
     override init(frame: CGRect) {
@@ -55,17 +57,19 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLegalHoldSystemMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.conversation = message.conversationLike
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -94,8 +98,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            L10n.Localizable.Content.System.MessageLegalHold
-                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold.enabled(View.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
             L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:

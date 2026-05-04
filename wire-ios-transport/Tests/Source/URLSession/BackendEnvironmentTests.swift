@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireFoundationSupport
 import XCTest
+
 @testable import WireTransport
 
 class BackendEnvironmentTests: XCTestCase {
@@ -25,9 +27,13 @@ class BackendEnvironmentTests: XCTestCase {
     var backendBundle: Bundle!
     var defaultsProd: UserDefaults!
     var defaultsCustom: UserDefaults!
+    private var mockDateProvider: CurrentDateProvidingMock!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+
+        mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
+
         continueAfterFailure = false
         let mainBundle = Bundle(for: type(of: self))
         // Note: this is a copy of public config:
@@ -40,7 +46,7 @@ class BackendEnvironmentTests: XCTestCase {
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
         defaultsCustom = UserDefaults(suiteName: "custom")
-        EnvironmentType.production.save(in: defaultsProd)
+        EnvironmentType.default.save(in: defaultsProd)
         EnvironmentType.custom(url: URL(string: "https://custom.backend.com")!).save(in: defaultsCustom)
 
         continueAfterFailure = true
@@ -48,7 +54,7 @@ class BackendEnvironmentTests: XCTestCase {
 
     override func tearDown() {
         backendBundle = nil
-        super.tearDown()
+        mockDateProvider = nil
     }
 
     func createBackendEnvironment() -> BackendEnvironment {
@@ -65,7 +71,7 @@ class BackendEnvironmentTests: XCTestCase {
             countlyURL: baseURL.appendingPathComponent("dummyCountlyURL")
         )
         let proxySettings = ProxySettings(host: "127.0.0.1", port: 1080, needsAuthentication: true)
-        let trust = ServerCertificateTrust(trustData: [])
+        let trust = ServerCertificateTrust(trustData: [], currentDateProvider: mockDateProvider)
         let environmentType = EnvironmentType.custom(url: configURL)
         return BackendEnvironment(
             title: title,
