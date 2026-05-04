@@ -94,7 +94,6 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     }
 
     if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
-        [self.timedDownstreamSync readyForNextRequestIfNotBusy];
         request = [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion];
     }
 

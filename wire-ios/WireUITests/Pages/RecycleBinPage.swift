@@ -74,4 +74,25 @@ class RecycleBinPage: PageModel {
         closeRecycleBinButton.tap()
         return try SharedDriveFilesPage()
     }
+
+    var deletePermanentlyOnMenuContext: XCUIElement {
+        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue]
+    }
+
+    var deletePermanentlyOptionOnBottomSheet: XCUIElement {
+        app.buttons[Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue].firstMatch
+    }
+
+    func deleteFilePermanently() -> Self {
+        moreButton.tap()
+        deletePermanentlyOnMenuContext.tap()
+        deletePermanentlyOptionOnBottomSheet.tap()
+        return self
+    }
+
+    func verifyRecycleBinIsEmpty() -> Bool {
+        let file = app.staticTexts[Locators.WireDrive.FilesContentPage.fileItem(0)]
+        return !file.waitForExistence(timeout: 3)
+    }
+
 }
