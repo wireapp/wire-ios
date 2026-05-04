@@ -47,41 +47,38 @@ final class ExpirationDatePickerViewTests: XCTestCase {
         updatePublicLinkExpiration = nil
     }
 
-    // TODO: [WPB-25202] - fix snapshot test currently failing on the CI
-    /*
     @MainActor
-    func testExpirationDatePickerView() async {
-        for testCase in TestCase.allCases {
-            switch testCase {
-            case .noExpirationDate:
-                viewModel = .init(
-                    linkID: "test",
-                    calendar: Calendar(identifier: .gregorian),
-                    expirationDate: nil,
-                    didSave: { _ in },
-                    updatePublicLinkExpiration: updatePublicLinkExpiration
-                )
-            case .hasExpirationDate:
-                viewModel = .init(
-                    linkID: "test",
-                    calendar: Calendar(identifier: .gregorian),
-                    expirationDate: .distantFuture,
-                    didSave: { _ in },
-                    updatePublicLinkExpiration: updatePublicLinkExpiration
-                )
-            }
+    func testNoExpirationDatePickerView() async {
+        let viewModel = ExpirationDatePickerView.ViewModel(
+            linkID: "test",
+            calendar: Calendar(identifier: .gregorian),
+            expirationDate: nil,
+            didSave: { _ in },
+            updatePublicLinkExpiration: updatePublicLinkExpiration
+        )
 
-            let view = makeView()
+        let view = ExpirationDatePickerView(viewModel: viewModel)
+            .frame(width: 375, height: 667)
 
-            snapshotHelper.verify(matching: view, named: testCase.rawValue, variants: .colorSchemes)
-        }
+        snapshotHelper.verify(matching: view, variants: .colorSchemes)
     }
-    */
 
-    enum TestCase: String, CaseIterable {
-        case hasExpirationDate
-        case noExpirationDate
-    }
+    // TODO: [WPB-25202] - fix snapshot test currently failing on the CI
+    // @MainActor
+    // func testHasExpirationDatePickerView() async {
+    //    let viewModel = ExpirationDatePickerView.ViewModel(
+    //        linkID: "test",
+    //        calendar: Calendar(identifier: .gregorian),
+    //        expirationDate: .distantFuture,
+    //        didSave: { _ in },
+    //        updatePublicLinkExpiration: updatePublicLinkExpiration
+    //    )
+    //
+    //    let view = ExpirationDatePickerView(viewModel: viewModel)
+    //        .frame(width: 375, height: 667)
+    //
+    //    snapshotHelper.verify(matching: view, variants: .colorSchemes)
+    // }
 
     @MainActor
     private func makeView() -> some View {
