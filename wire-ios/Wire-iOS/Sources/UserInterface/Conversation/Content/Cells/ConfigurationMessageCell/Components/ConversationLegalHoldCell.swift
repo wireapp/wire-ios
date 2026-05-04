@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<Co
 
     static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
 
-    var conversation: ZMConversation?
+    var conversation: ConversationLike?
 
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var conversation: ZMConversation?
+        var conversation: ConversationLike?
     }
 
     override init(frame: CGRect) {
@@ -57,9 +57,16 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<Co
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLegalHoldSystemMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.conversation = message.conversationLike
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import SwiftProtobuf
 import WireDataModel
 import WireImages
@@ -28,6 +29,12 @@ public final class ClientMessageRequestFactory: NSObject {
 
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
+
+    private let localDomain: String?
+
+    public init(localDomain: String?) {
+        self.localDomain = localDomain
+    }
 
     public func upstreamRequestForFetchingClients(
         conversationId: UUID,
@@ -41,10 +48,12 @@ public final class ClientMessageRequestFactory: NSObject {
         switch apiVersion {
 
         case .v0:
-            path = "/" + ["conversations",
-                          conversationId.transportString(),
-                          "otr",
-                          "messages"].joined(separator: "/")
+            path = "/" + [
+                "conversations",
+                conversationId.transportString(),
+                "otr",
+                "messages"
+            ].joined(separator: "/")
 
             // In wire protos this is annotated as deprecated, and recommended to use QualifiedNewOtrMessage
             // So, not sure if we should use it with v0 on non-federated endpoints
@@ -56,8 +65,8 @@ public final class ClientMessageRequestFactory: NSObject {
                 missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8:
-            let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil

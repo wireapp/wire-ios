@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         sut = ConversationEventProcessor(
             context: syncMOC,
             conversationService: conversationService,
-            mlsEventProcessor: mockMLSEventProcessor
+            mlsEventProcessor: mockMLSEventProcessor,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         BackendInfo.apiVersion = .v0
     }
@@ -91,6 +93,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 from: otherUser.remoteIdentifier,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: otherUser.qualifiedID,
+                subconversationType: nil,
                 timestamp: nil,
                 type: "conversation.member-join"
             )
@@ -151,7 +154,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMLS() async throws {
         // given
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
         // then
         try await internalTest_UpdateConversationMemberLeave(
@@ -163,7 +166,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMixed() async throws {
         // given
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
         // then
         try await internalTest_UpdateConversationMemberLeave(
@@ -273,7 +276,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
 
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
-            let payload = Payload.Conversation.stub(
+            let payload = Payload.CreatedConversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 name: "Hello World",
@@ -850,7 +853,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     }
 
     private func enableE2EI() {
-        FeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
     }
 
 }

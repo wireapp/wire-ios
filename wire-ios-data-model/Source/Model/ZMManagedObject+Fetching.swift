@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public extension ZMManagedObject {
     /// aren't associated with a domain the domain parameter will be ignored.
     @objc
     static func fetch(with remoteIdentifier: UUID, domain: String?, in context: NSManagedObjectContext) -> Self? {
-        let domain: String? = if BackendInfo.isFederationEnabled, let domain, !domain.isEmpty { domain } else { .none }
+        let domain: String? = if context.isFederationEnabled, let domain, !domain.isEmpty { domain } else { .none }
 
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ extension CLPlacemark {
         let lines: [String]?
 
         lines = [subThoroughfare, thoroughfare, locality, subLocality, administrativeArea, postalCode, country]
-            .compactMap { $0 }
+            .compactMap(\.self)
 
         return includeCountry ? lines?.joined(separator: ", ") : lines?.dropLast().joined(separator: ", ")
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,39 +47,42 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
-        sut = ConfirmAssetViewController(
-            context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg")))
-        )
 
         accentColor = .green
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))),
+            userSession: UserSessionMock()
+        )
         sut.previewTitle = "Matterhorn"
 
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
-        sut = ConfirmAssetViewController(
-            context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg")))
-        )
 
         accentColor = .red
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))),
+            userSession: UserSessionMock()
+        )
         sut.previewTitle = "Burger & Beer"
 
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
+
+        accentColor = .red
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
                 .Context(asset: .image(
                     mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg")
                         .imageScaled(with: 0.5)!
-                ))
+                )),
+            userSession: UserSessionMock()
         )
-
-        accentColor = .red
         sut.previewTitle = "Sea Food"
 
         snapshotHelper.verify(matching: sut)
@@ -91,7 +94,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         // GIVEN & WHEN
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif"))),
+            userSession: UserSessionMock()
         )
 
         // THEN
@@ -103,7 +107,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
         let data = dataInTestBundleNamed("animated.gif")
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
-                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data)))
+                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))),
+            userSession: UserSessionMock()
         )
 
         // THEN

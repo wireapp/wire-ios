@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,10 +31,6 @@ public enum Logging {
     /// For logs related to network requests.
 
     public static let network = ZMSLog(tag: "Network")
-
-    /// For logs related to push notifications.
-
-    public static let push = ZMSLog(tag: "Push")
 
     /// For logs related to encryption at rest.
 

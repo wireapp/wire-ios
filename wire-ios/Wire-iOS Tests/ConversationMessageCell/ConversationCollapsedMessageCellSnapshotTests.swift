@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
 
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
     }
 
     override func tearDown() {
@@ -46,7 +46,11 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         super.tearDown()
     }
 
-    func testUploadedCell_fromThisDevice() {
+    // Skipping the tests because collapsing own messages feature is
+    // temporarily disabled due to conflicts with chat bubbles
+    // https://wearezeta.atlassian.net/browse/WPB-18939
+
+    func disabled_testUploadedCell_fromThisDevice() {
         let messages: [String: MockMessage] = [
             "file": message,
             "audio": MockMessageFactory.audioMessage()!,
@@ -55,21 +59,47 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
             "location": MockMessageFactory.locationMessage(),
             "text": MockMessageFactory
                 .textMessage(
-                    withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+                    withText:
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
                 )
         ]
         messages.forEach { verify(message: $0.value, named: $0.key) }
     }
 
-    func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
+    func disabled_testTextCollapsed() {
+        let messages: [String: MockMessage] = [
+            "singleLineText": MockMessageFactory.textMessage(withText: "Single Line text"),
+            "twoLineText": MockMessageFactory.textMessage(withText: "First Line text\n Second line"),
+            "threeLineText": MockMessageFactory.textMessage(
+                withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+            ),
+            "moreThenThreeLineText": MockMessageFactory
+                .textMessage(
+                    withText:
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
+                )
+        ]
+        messages.forEach { verify(message: $0.value, named: $0.key) }
+
+    }
+
+    func disabled_testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-        mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
 
         verify(message: message)
     }
 
-    func testUploadedCell_fromOtherUser() {
+    func disabled_testUploadedCell_fromOtherUser() {
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
@@ -77,7 +107,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         verify(message: message)
     }
 
-    func testWithErrorMessage() {
+    func disabled_testWithErrorMessage() {
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
 
         message.backingFileMessageData.transferState = .uploaded

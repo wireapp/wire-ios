@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
     private var sut: ConversationMessageAddEventNotificationBuilder!
@@ -82,7 +82,8 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
             conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
             conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
             conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
-            conversationTextMessageNotificationBuilder: conversationTextNotificationBuilder
+            conversationTextMessageNotificationBuilder: conversationTextNotificationBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
         )
     }
 
@@ -113,7 +114,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
 
         // When
 
-        let userNotification = try await sut.buildContent(
+        _ = try await sut.buildContent(
             event: .left(Scaffolding.mlsTextMessageEvent)
         )
 
@@ -121,7 +122,8 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
 
-    func testGenerateNotification_Proteus_Text_Message_Content_It_Invokes_Text_Notification_Builder() async throws {
+    func testGenerateNotifications_Multiple_MLS_Text_Message_Content_It_Invokes_Text_Notification_Builder(
+    ) async throws {
 
         // Mock
         let conversation = await context.perform { [self] in
@@ -136,7 +138,52 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
 
         // When
 
-        let userNotification = try await sut.buildContent(
+        _ = try await sut.buildContent(
+            event: .left(Scaffolding.mlsTextMessageEvents)
+        )
+
+        // Then
+        XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 2)
+    }
+
+    func testGenerateNotification_MLS_Does_Not_Fail_If_No_Messages_Found() async throws {
+        // When
+        let result = try await sut.buildContent(
+            event: .left(Scaffolding.mlsEmptyMessageEvent)
+        )
+
+        // Then
+        XCTAssertNil(result)
+    }
+
+    func testGenerateNotification_Proteus_Text_Message_Content_It_Invokes_Text_Notification_Builder() async throws {
+        // Then
+        await XCTAssertThrowsErrorAsync(
+            ConversationMessageAddEventNotificationBuilder.Failure.proteusMessageMissing
+        ) {
+            // When
+            _ = try await self.sut.buildContent(
+                event: .right(Scaffolding.proteusEmptyMessageEvent)
+            )
+        }
+    }
+
+    func testGenerateNotification_Proteus_It_Fails_If_No_Decrypted_Message() async throws {
+
+        // Mock
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+        conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
+        conversationTextNotificationBuilder
+            .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
+        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
+        conversationLocalStore.shouldHideNotification_MockValue = false
+
+        // When
+
+        _ = try await sut.buildContent(
             event: .right(Scaffolding.proteusTextMessageEvent)
         )
 
@@ -147,8 +194,18 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
     // TODO: [WPB-17284] Add UTs (if possible) for other message content types
 
     private enum Scaffolding {
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
+
+        static let mlsEmptyMessageEvent = ConversationMLSMessageAddEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            subconversation: "",
+            message: messageContent,
+            timestamp: .now,
+            decryptedMessages: [] // No application messages
+        )
+
         static let mlsTextMessageEvent = ConversationMLSMessageAddEvent(
             conversationID: conversationID,
             senderID: userID,
@@ -161,11 +218,39 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
             )]
         )
 
+        static let mlsTextMessageEvents = ConversationMLSMessageAddEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            subconversation: "",
+            message: messageContent,
+            timestamp: .now,
+            decryptedMessages: [
+                .init(
+                    message: Scaffolding.base64EncodedString, // text content
+                    senderClientID: UUID.mockID1.uuidString
+                ),
+                .init(
+                    message: Scaffolding.base64EncodedString, // text content
+                    senderClientID: UUID.mockID1.uuidString
+                )
+            ]
+        )
+
         static let proteusTextMessageEvent = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: userID,
             timestamp: .now,
             message: MessageContent(encryptedMessage: "", decryptedMessage: base64EncodedString), // text content
+            externalData: nil,
+            messageSenderClientID: UUID.mockID1.uuidString,
+            messageRecipientClientID: UUID.mockID2.uuidString
+        )
+
+        static let proteusEmptyMessageEvent = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            message: MessageContent(encryptedMessage: "", decryptedMessage: nil), // not decrypted
             externalData: nil,
             messageSenderClientID: UUID.mockID1.uuidString,
             messageRecipientClientID: UUID.mockID2.uuidString

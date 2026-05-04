@@ -1,0 +1,89 @@
+// swift-tools-version: 6.2
+
+import PackageDescription
+
+let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
+
+let package = Package(
+    name: "WireCalling",
+    defaultLocalization: "en",
+    platforms: [.iOS("17.0"), .macOS(.v12)],
+    products: [
+        .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
+        .library(name: "WireCallingUI", targets: ["WireCallingUI"])
+    ],
+    dependencies: [
+        .package(path: "../WireFoundation"),
+        .package(path: "../WirePlugins"),
+        .package(path: "../WireLogging"),
+        .package(name: "WireUI", path: "../WireUI")
+    ],
+    targets: [
+        .target(
+            name: "WireCallingDomain",
+            dependencies: [
+                "WireFoundation",
+                "WireLogging"
+            ]
+        ),
+        .target(
+            name: "WireCallingDomainSupport",
+            dependencies: [
+                "WireCallingDomain",
+                "WireCallingData"
+            ],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireCallingData",
+            dependencies: [
+                "WireCallingDomain",
+                "WireLogging"
+            ]
+        ),
+        .target(
+            name: "WireCallingAssembly",
+            dependencies: [
+                "WireCallingDomain",
+                "WireCallingUI",
+                "WireCallingData"
+            ]
+        ),
+        .target(
+            name: "WireCallingUI",
+            dependencies: [
+                "WireCallingDomain",
+                "WireCallingDomainSupport",
+                .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireReusableUIComponents", package: "WireUI"),
+                "WireFoundation"
+            ],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .testTarget(
+            name: "WireCallingTests",
+            dependencies: [
+                "WireCallingUI",
+                "WireCallingDomain",
+                "WireCallingDomainSupport",
+                "WireCallingData",
+                .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireFoundationSupport", package: "WireFoundation")
+            ],
+        ),
+    ]
+)
+
+for target in package.targets {
+    if target.isTest {
+        target.dependencies += [WireTestingPackage]
+    }
+}
+
+for target in package.targets {
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("ExistentialAny")
+    ]
+}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
+import WireSyncEngine
 
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }
@@ -46,7 +48,9 @@ final class PasscodeSetupViewController: UIViewController {
 
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
 
-    private lazy var presenter: PasscodeSetupPresenter = .init(userInterface: self)
+    private let userSession: UserSession
+
+    private lazy var presenter: PasscodeSetupPresenter = .init(userInterface: self, userSession: userSession)
 
     private let stackView: UIStackView = .verticalStackView()
 
@@ -54,7 +58,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private lazy var createButton: LegacyButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-        button.accessibilityIdentifier = "createPasscodeButton"
+        button.accessibilityIdentifier = Locators.SetPasscodePage.createPasscodeButton.rawValue
 
         button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
         button.isEnabled = false
@@ -133,10 +137,12 @@ final class PasscodeSetupViewController: UIViewController {
     required init(
         useCompactLayout: Bool? = nil,
         context: Context,
+        userSession: UserSession,
         callback: ResultHandler?
     ) {
         self.callback = callback
         self.context = context
+        self.userSession = userSession
 
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         let windowHeight = appDelegate?.mainWindow?.frame.height ?? UIScreen.main.bounds.height
@@ -272,11 +278,13 @@ final class PasscodeSetupViewController: UIViewController {
 
     static func createKeyboardAvoidingFullScreenView(
         context: Context,
+        userSession: UserSession,
         delegate: PasscodeSetupViewControllerDelegate? = nil
     )
         -> KeyboardAvoidingAuthenticationCoordinatedViewController {
         let passcodeSetupViewController = PasscodeSetupViewController(
             context: context,
+            userSession: userSession,
             callback: nil
         )
 

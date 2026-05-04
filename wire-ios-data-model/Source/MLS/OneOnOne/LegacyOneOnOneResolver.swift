@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,10 +68,18 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
                         try await self.resolveOneOnOneConversation(with: userID, in: context)
                     } catch {
                         // skip conversation migration for this user
-                        WireLogger.conversation.error(
-                            "resolve 1-1 conversation failed: \(error)",
-                            attributes: [.senderUserId: userID.safeForLoggingDescription]
-                        )
+                        switch error {
+                        case MigrateMLSOneOnOneConversationError.alreadyMigrated:
+                            WireLogger.conversation.warn(
+                                "Skipping conversation migration: the 1-1 conversation for this user is already migrated.",
+                                attributes: [.senderUserId: userID.safeForLoggingDescription]
+                            )
+                        default:
+                            WireLogger.conversation.error(
+                                "resolve 1-1 conversation failed: \(error)",
+                                attributes: [.senderUserId: userID.safeForLoggingDescription]
+                            )
+                        }
                     }
                 }
             }
@@ -90,9 +98,23 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        // If MLS is enabled and there are no common protocols, then
+        // there is no possibility to communicate and the 1-1 will be marked
+        // read only (follow case below). However in all other cases
+        // the conversation should be unmarked so that if they were
+        // previously blocked they are now unblocked.
+        if !(messageProtocol == .none && isMLSEnabled) {
+            await setReadOnly(
+                to: false,
+                forOneOnOneWithUser: userID,
+                in: context
+            )
+        }
+
         let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled:
+
             action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
@@ -129,7 +151,8 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             attributes: [.senderUserId: userID.safeForLoggingDescription]
         )
 
-        return try await context.perform {
+        var mlsGroupToWipe: MLSGroupID?
+        let action: OneOnOneConversationResolution = try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
 
             let source = OneOnOneSource(context: context)
@@ -153,9 +176,25 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
                 otherUser: user,
                 conversation: best
             )
-
+            if user.isAccountDeleted {
+                mlsGroupToWipe = best.mlsGroupID
+            }
             return .archivedAsReadOnly
         }
+
+        if let mlsService = await context.perform({ context.mlsService }),
+
+           let groupID = mlsGroupToWipe {
+            WireLogger.mls.info(
+                "wiping group of deleted user",
+                attributes: [
+                    .senderUserId: userID.safeForLoggingDescription,
+                    .mlsGroupID: groupID.safeForLoggingDescription
+                ]
+            )
+            try await mlsService.wipeGroup(groupID)
+        }
+        return action
     }
 
     private func makeConversationReadOnly(
@@ -189,36 +228,39 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        do {
-            let mlsGroupID = try await migrator.migrateToMLS(
-                userID: userID,
-                in: context
-            )
-            await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
-            return .migratedToMLSGroup(identifier: mlsGroupID)
-        } catch let MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error) {
-            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
-            throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
-        } catch {
-            throw error
-        }
+        let mlsGroupID = try await migrator.migrateToMLS(
+            userID: userID,
+            in: context
+        )
+
+        return .migratedToMLSGroup(identifier: mlsGroupID)
     }
 
+    @discardableResult
     private func setReadOnly(
         to readOnly: Bool,
         forOneOnOneWithUser userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async {
+    ) async -> ZMConversation? {
         await context.perform {
             guard
                 let otherUser = ZMUser.fetch(with: userID, in: context),
                 let conversation = otherUser.oneOnOneConversation,
                 conversation.isForcedReadOnly != readOnly
             else {
-                return
+                return nil
             }
 
             conversation.isForcedReadOnly = readOnly
+            WireLogger.conversation.info(
+                "set conversation as readonly",
+                attributes: [
+                    .conversationId: conversation.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+                    .senderUserId: otherUser.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                ],
+                .safePublic
+            )
+            return conversation
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 @import WireImages;
 @import WireUtilities;
 @import WireTransport;
-@import WireCryptobox;
 @import MobileCoreServices;
 @import WireImages;
 
@@ -75,6 +74,9 @@ NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
 NSString *const ZMConversationPrivateChannelPermission = @"privateChannelPermission";
 NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
+NSString *const ZMConversationCellNameKey = @"cellName";
+NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
+NSString *const ZMConversationCellsState = @"cellsState";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -362,7 +364,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationIsPendingInitialFetch,
             ZMConversationGroupTypeKey,
             ZMConversationPrivateChannelPermission,
-            ZMConversationMigratedToMLS
+            ZMConversationMigratedToMLS,
+            ZMConversationCellNameKey,
+            ZMConversationWireCellsMessageAttachmentDraftsKey,
+            ZMConversationCellsState
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -378,7 +383,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     (self.conversationType == ZMConversationTypeInvalid) ||
     (self.conversationType == ZMConversationTypeSelf) ||
     (self.conversationType == ZMConversationTypeConnection) ||
-    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember);
+    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember) ||
+    (self.conversationType == ZMConversationTypeOneOnOne && self.connectedUser.isAccountDeleted == YES);
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;
@@ -386,7 +392,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, ZMConversationIsForcedReadOnlyKey, nil];
 }
 
-+ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;
++ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ZMContextProvider>)session;
 {
     NOT_USED(session);
     return otherUser.oneOnOneConversation;
@@ -397,9 +403,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [self willChangeValueForKey:ZMConversationClearedTimeStampKey];
     [self setPrimitiveValue:clearedTimeStamp forKey:ZMConversationClearedTimeStampKey];
     [self didChangeValueForKey:ZMConversationClearedTimeStampKey];
-    if (self.managedObjectContext.zm_isSyncContext) {
-        [self deleteOlderMessages];
-    }
 }
 
 - (void)setLastReadServerTimeStamp:(NSDate *)lastReadServerTimeStamp
@@ -792,24 +795,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     static const int HOUR_IN_SEC = 60 * 60;
     static const NSTimeInterval STALENESS = -36 * HOUR_IN_SEC;
     return (self.isFault) || (self.lastModifiedDate == nil) || (self.lastModifiedDate.timeIntervalSinceNow > STALENESS);
-}
-
-@end
-
-
-@implementation ZMConversation (History)
-
-
-- (void)clearMessageHistory
-{
-    self.isArchived = YES;
-    self.clearedTimeStamp = self.lastServerTimeStamp; // the setter of this deletes all messages
-    self.lastReadServerTimeStamp = self.lastServerTimeStamp;
-}
-
-- (void)revealClearedConversation
-{
-    self.isArchived = NO;
 }
 
 @end

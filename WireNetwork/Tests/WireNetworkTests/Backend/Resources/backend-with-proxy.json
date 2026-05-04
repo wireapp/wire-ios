@@ -1,0 +1,16 @@
+{
+    "title": "Test Backend With Proxy",
+    "endpoints": {
+        "backendURL": "https://api-proxy.example.com",
+        "backendWSURL": "https://ws-proxy.example.com",
+        "blackListURL": "https://blacklist.example.com",
+        "teamsURL": "https://teams-proxy.example.com",
+        "accountsURL": "https://accounts-proxy.example.com",
+        "websiteURL": "https://proxy.example.com"
+    },
+    "apiProxy": {
+        "host": "proxy.example.com",
+        "port": 8080,
+        "needsAuthentication": true
+    }
+}

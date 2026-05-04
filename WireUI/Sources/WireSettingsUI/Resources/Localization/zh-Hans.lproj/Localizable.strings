@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 "backup.export.action" = "立即备份";
-"backup.export.description" = "创建备份以保存您的对话历史记录。如果您丢失了计算机或更换了新计算机，您可以使用该备份来恢复历史记录。备份文件不受 Wire 端到端加密保护，因此请将其存储在安全的地方。";
+"backup.export.description" = "创建备份以保存您的对话历史记录。这样，如果您丢失设备或更换了新设备，就可以恢复历史记录。备份文件并非端到端加密。请妥善保管。";
 
 "backup.import.action" = "从备份还原";
 "backup.import.description" = "此设备上的现有历史记录将被保留，并将由新备份补全。您可以从所有设备和不同平台恢复历史记录，但不能从其他账户恢复。";
@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "继续";
 
 "importBackup.alert.ok" = "好";
-"importBackup.alert.success.title" = "成功";
 "importBackup.alert.success.message" = "您的历史记录已恢复。";
 "importBackup.alert.genericError.title" = "好像出了点问题。";
 "importBackup.alert.genericError.message" = "无法恢复您的历史记录。请重试或联系 Wire 顾客支持。";
@@ -55,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "此备份由较新或过时的 Wire 版本创建，无法在此处恢复。";
 "importBackup.alert.wrongFileError.title" = "错误的备份文件";
 "importBackup.alert.wrongFileError.message" = "您无法从其他账户恢复历史记录。";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "键入密码";
 "importBackup.enterPassword.description" = "此备份受密码保护。";
@@ -64,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "继续";
 
 "importBackup.restoringHistory.title" = "恢复历史记录中…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "加载对话中…";

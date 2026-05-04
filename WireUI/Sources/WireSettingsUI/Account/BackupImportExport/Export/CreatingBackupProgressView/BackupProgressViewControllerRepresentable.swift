@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,15 +20,15 @@ import SwiftUI
 
 struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
 
-    var progressDescription = ""
-    var progressValue = Float()
-    var backupURL: URL?
-    var completedAction: (_ completed: Bool) -> Void = { _ in }
+    let progressDescription: String
+    let progressValues: (current: Int, total: Int)
+    let backupURL: URL?
+    let completedAction: (_ completed: Bool) -> Void
 
     func makeUIViewController(context: Context) -> CreatingBackupProgressViewController {
         let viewController = CreatingBackupProgressViewController()
         viewController.progressDescription = progressDescription
-        viewController.progressValue = progressValue
+        viewController.progressValues = progressValues
         viewController.backupURL = backupURL
         viewController.completedAction = completedAction
         return viewController
@@ -36,7 +36,7 @@ struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable 
 
     func updateUIViewController(_ viewController: CreatingBackupProgressViewController, context: Context) {
         viewController.progressDescription = progressDescription
-        viewController.progressValue = progressValue
+        viewController.progressValues = progressValues
         viewController.backupURL = backupURL
         viewController.completedAction = completedAction
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireLogging
+import WireNetwork
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSessionUseCase {
@@ -31,19 +32,24 @@ struct VerifyUserSessionUseCase {
     enum Failure: Error {
         case coreDataMissingSharedContainer
         case coreDataMigrationRequired
+        case syncV2IsNotEnabled
         case unableToLoadStores(Error)
         case userUnauthenticated
     }
 
     // MARK: - Properties
 
+    private let journal: any JournalProtocol
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
+    private let logger = WireLogger.notifications
 
     init(
+        journal: any JournalProtocol,
         cookieStorage: any CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
+        self.journal = journal
         self.cookieStorage = cookieStorage
         self.coreData = coreData
     }
@@ -51,6 +57,10 @@ struct VerifyUserSessionUseCase {
     /// Ensures user is properly authenticated.
 
     func invoke() async throws {
+        guard journal[.isSyncV2Enabled] else {
+            throw Failure.syncV2IsNotEnabled
+        }
+
         guard try await isAuthenticated() else {
             throw Failure.userUnauthenticated
         }
@@ -59,6 +69,11 @@ struct VerifyUserSessionUseCase {
     }
 
     private func isAuthenticated() async throws -> Bool {
+        logger.info(
+            "Verifying whether user is authenticated..",
+            attributes: .newNSE
+        )
+
         let cookies = try await cookieStorage.fetchCookies()
 
         for cookie in cookies where cookie.name == Constants.cookieName {
@@ -82,15 +97,10 @@ struct VerifyUserSessionUseCase {
             throw Failure.coreDataMigrationRequired
         }
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            coreData.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: Failure.unableToLoadStores(error))
-                } else {
-                    continuation.resume()
-                }
-            }
-
+        do {
+            try await coreData.load()
+        } catch {
+            throw Failure.unableToLoadStores(error)
         }
     }
 }

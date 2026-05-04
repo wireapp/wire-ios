@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,14 +32,35 @@ final class MarkdownBarView: UIView {
 
     private let stackView = UIStackView()
 
-    private let enabledStateIconColor = SemanticColors.Button.textInputBarItemEnabled
-    private let highlightedStateIconColor = SemanticColors.Button.textInputBarItemHighlighted
+    private var enabledStateIconColor: UIColor {
+        SemanticColors.Button.textInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
 
-    private let enabledStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemEnabled
-    private let highlightedStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemHighlighted
+    private var highlightedStateIconColor: UIColor {
+        SemanticColors.Button.textInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
 
-    private let enabledStateBorderColor = SemanticColors.Button.borderInputBarItemEnabled
-    private let highlightedStateBorderColor = SemanticColors.Button.borderInputBarItemHighlighted
+    private var enabledStateBackgroundColor: UIColor {
+        SemanticColors.Button.backgroundInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var highlightedStateBackgroundColor: UIColor {
+        SemanticColors.Button.backgroundInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var enabledStateBorderColor: UIColor {
+        SemanticColors.Button.borderInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var highlightedStateBorderColor: UIColor {
+        SemanticColors.Button.borderInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
 
     let headerButton         = PopUpIconButton()
     let boldButton           = IconButton()
@@ -53,6 +74,8 @@ final class MarkdownBarView: UIView {
     private var buttonMargin: CGFloat {
         conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
+
+    private var prevMarkdown: Markdown?
 
     required init() {
         self.buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
@@ -200,6 +223,8 @@ final class MarkdownBarView: UIView {
             button.setBorderColor(borderColor, for: .normal)
             button.setBackgroundImageColor(backgroundColor, for: .normal)
         }
+
+        prevMarkdown = markdown
     }
 
     @objc
@@ -215,6 +240,13 @@ final class MarkdownBarView: UIView {
         buttons.forEach { $0.isAccessibilityElement = isAccessible }
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateIcons(for: prevMarkdown ?? Markdown())
+        }
+    }
 }
 
 extension MarkdownBarView: PopUpIconButtonDelegate {

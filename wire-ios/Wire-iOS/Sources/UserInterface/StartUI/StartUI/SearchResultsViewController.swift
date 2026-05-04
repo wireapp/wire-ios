@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
-    case services
+    case apps
+    case bots
 }
 
 extension SearchGroup {
@@ -31,7 +32,7 @@ extension SearchGroup {
         switch self {
         case .people:
             return true
-        case .services:
+        case .apps, .bots:
             guard let user = SelfUser.provider?.providedSelfUser else {
                 assertionFailure("expected available 'user'!")
                 return false
@@ -42,10 +43,19 @@ extension SearchGroup {
 
     #if ADD_SERVICE_DISABLED
         // remove service from the tab
-        static let all: [SearchGroup] = [.people]
+        static func all(for messageProtocol: MessageProtocol) -> [SearchGroup] { [.people] }
     #else
-        static var all: [SearchGroup] {
-            [.people, .services].filter(\.accessible)
+        static func all(for messageProtocol: MessageProtocol) -> [SearchGroup] {
+            switch messageProtocol {
+            case .mls:
+                [.people, .apps]
+                    .filter(\.accessible)
+            case .proteus:
+                [.people, .bots]
+                    .filter(\.accessible)
+            case .mixed:
+                [.people]
+            }
         }
     #endif
 
@@ -53,33 +63,10 @@ extension SearchGroup {
         switch self {
         case .people:
             L10n.Localizable.Peoplepicker.Header.people
-        case .services:
-            L10n.Localizable.Peoplepicker.Header.services
+        case .apps, .bots:
+            L10n.Localizable.Peoplepicker.Header.apps
         }
     }
-}
-
-protocol SearchResultsViewControllerDelegate: AnyObject {
-
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnUser user: UserType,
-        indexPath: IndexPath,
-        section: SearchResultsViewControllerSection
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didDoubleTapOnUser user: UserType,
-        indexPath: IndexPath
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnConversation conversation: ZMConversation
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
-    )
 }
 
 enum SearchResultsViewControllerMode: Int {
@@ -95,7 +82,8 @@ enum SearchResultsViewControllerSection: Int {
     case teamMembers
     case conversations
     case directory
-    case services
+    case apps
+    case bots
     case federation
 }
 
@@ -154,18 +142,19 @@ final class SearchResultsViewController: UIViewController {
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
     let teamMemberAndContactsSection: ContactsSectionController = .init()
-    let directorySection = DirectorySectionController()
+    let directorySection: DirectorySectionController
     let conversationsSection: GroupConversationsSectionController = .init()
     let federationSection = FederationSectionController()
 
-    lazy var topPeopleSection: TopPeopleSectionController = {
-        let userSession = (userSession as? ZMUserSession)
-        let directory = userSession?.topConversationsDirectory
-
-        return TopPeopleSectionController(topConversationsDirectory: directory)
+    private(set) lazy var topPeopleSection = {
+        let zmUserSession = userSession as? ZMUserSession
+        let directory = zmUserSession?.topConversationsDirectory
+        return TopPeopleSectionController(topConversationsDirectory: directory, userSession: userSession)
     }()
 
-    let servicesSection: SearchServicesSectionController
+    let appsSection: SearchAppsSectionController
+    let botsSection: SearchAppsSectionController
+
     let inviteTeamMemberSection: InviteTeamMemberSection
 
     var isAddingParticipants: Bool
@@ -187,20 +176,22 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    init(
+    init?(
         userSelection: UserSelection,
         userSession: UserSession,
         isAddingParticipants: Bool = false,
         shouldIncludeGuests: Bool,
         isFederationEnabled: Bool
     ) {
+        guard let searchUsersUseCase = userSession.makeSearchUsersUseCase() else { return nil }
+
         self.userSelection = userSelection
         self.userSession = userSession
         self.isAddingParticipants = isAddingParticipants
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
-        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()
+        self.searchUsersUseCase = searchUsersUseCase
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -211,14 +202,12 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        self
-            .servicesSection = SearchServicesSectionController(
-                canSelfUserManageTeam: userSession.selfUser
-                    .canManageTeam
-            )
+        self.appsSection = SearchAppsSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
+        self.botsSection = SearchAppsSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
+        self.directorySection = DirectorySectionController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -227,7 +216,8 @@ final class SearchResultsViewController: UIViewController {
         directorySection.delegate = self
         topPeopleSection.delegate = self
         conversationsSection.delegate = self
-        servicesSection.delegate = self
+        appsSection.delegate = self
+        botsSection.delegate = self
         inviteTeamMemberSection.delegate = self
         federationSection.delegate = self
     }
@@ -262,24 +252,19 @@ final class SearchResultsViewController: UIViewController {
         options: SearchOptions
     ) {
         pendingSearchTask?.cancel()
-        pendingSearchTask = nil
         searchResultsView.emptyResultContainer.isHidden = true
 
         pendingSearchTask = Task {
-            do {
-                var options = options
-                options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
+            var options = options
+            options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
 
-                let result = try await searchUsersUseCase.invoke(
-                    query: query,
-                    options: options,
-                    messageProtocol: filterConversation?.messageProtocol
-                )
+            let result = await searchUsersUseCase.invoke(
+                query: query,
+                options: options,
+                messageProtocol: filterConversation?.messageProtocol
+            )
 
-                handleSearchResult(result: result, isCompleted: true)
-            } catch {
-                WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
-            }
+            handleSearchResult(result: result)
         }
     }
 
@@ -302,8 +287,12 @@ final class SearchResultsViewController: UIViewController {
         performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
-    func searchForServices(withQuery query: String) {
-        performSearch(query: query, options: [.services])
+    func searchForApps(withQuery query: String) {
+        performSearch(query: query, options: [.apps])
+    }
+
+    func searchForBots(withQuery query: String) {
+        performSearch(query: query, options: [.bots])
     }
 
     func searchContactList() {
@@ -316,12 +305,9 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    func handleSearchResult(result: SearchResult, isCompleted: Bool) {
+    func handleSearchResult(result: SearchResult) {
         updateSections(withSearchResult: result)
-
-        if isCompleted {
-            isResultEmpty = sectionController.visibleSections.isEmpty
-        }
+        isResultEmpty = sectionController.visibleSections.isEmpty
     }
 
     func updateVisibleSections() {
@@ -329,8 +315,10 @@ final class SearchResultsViewController: UIViewController {
         let team = userSession.selfUser.membership?.team
 
         switch (searchGroup, isAddingParticipants) {
-        case (.services, _):
-            sections = [servicesSection]
+        case (.apps, _):
+            sections = [appsSection]
+        case (.bots, _):
+            sections = [botsSection]
         case (.people, true):
             switch (mode, team != nil) {
             case (.search, false):
@@ -368,29 +356,33 @@ final class SearchResultsViewController: UIViewController {
 
     func updateSections(withSearchResult searchResult: SearchResult) {
 
-        var contacts = searchResult.contacts
-        var teamContacts = searchResult.teamMembers
+        var filteredContacts = searchResult.contacts
+        var filteredTeamContacts = searchResult.teamMembers
+        var filteredApps = searchResult.apps
 
-        if let filteredParticpants = filterConversation?.localParticipants {
-            contacts = contacts.filter {
+        if let filteredParticipants = filterConversation?.localParticipants {
+            filteredContacts = filteredContacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
-                return !filteredParticpants.contains(user)
+                return !filteredParticipants.contains(user)
             }
-            teamContacts = teamContacts.filter {
+            filteredTeamContacts = filteredTeamContacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
-                return !filteredParticpants.contains(user)
+                return !filteredParticipants.contains(user)
             }
+            filteredApps = filteredApps
+                .compactMap { $0 as? ZMUser }
+                .filter { !filteredParticipants.contains($0) }
         }
 
-        contactsSection.contacts = contacts
+        contactsSection.contacts = filteredContacts
 
         // Access mode is not set, or the guests are allowed.
         if shouldIncludeGuests {
-            teamMemberAndContactsSection.contacts = Set(teamContacts + contacts).sorted {
+            teamMemberAndContactsSection.contacts = Set(filteredTeamContacts + filteredContacts).sorted {
                 let name0 = $0.name ?? ""
                 let name1 = $1.name ?? ""
 
@@ -402,12 +394,13 @@ final class SearchResultsViewController: UIViewController {
                 return name0.compare(name1) == .orderedAscending
             }
         } else {
-            teamMemberAndContactsSection.contacts = teamContacts
+            teamMemberAndContactsSection.contacts = filteredTeamContacts
         }
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        servicesSection.services = searchResult.services
+        appsSection.apps = filteredApps
+        botsSection.apps = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
@@ -424,8 +417,10 @@ final class SearchResultsViewController: UIViewController {
             .conversations
         } else if controller === directorySection {
             .directory
-        } else if controller === servicesSection {
-            .services
+        } else if controller === appsSection {
+            .apps
+        } else if controller === botsSection {
+            .bots
         } else if controller === federationSection {
             .federation
         } else {
@@ -442,15 +437,17 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
-        if let user = user as? ZMUser {
+        if let user = user as? ZMUser, user.type == .regular {
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: user,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let service = user as? ServiceUser, service.isServiceUser {
-            delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
+        } else if let user = user as? ZMUser, user.type == .app {
+            delegate?.searchResultsViewController(self, didTapOnApp: user)
+        } else if user.isAppOrBot {
+            delegate?.searchResultsViewController(self, didTapOnBot: user)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,
@@ -480,12 +477,12 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
 
 extension SearchResultsViewController: InviteTeamMemberSectionDelegate {
     func inviteSectionDidRequestTeamManagement() {
-        URL.manageTeam(source: .onboarding).openInApp(above: self)
+        URL.manageTeam(source: .onboarding).open(from: self)
     }
 }
 
-extension SearchResultsViewController: SearchServicesSectionDelegate {
-    func addServicesSectionDidRequestOpenServicesAdmin() {
-        URL.manageTeam(source: .settings).openInApp(above: self)
+extension SearchResultsViewController: SearchAppsSectionDelegate {
+    func addBotsSectionDidRequestOpenBotsAdmin() {
+        URL.manageTeam(source: .settings).open(from: self)
     }
 }

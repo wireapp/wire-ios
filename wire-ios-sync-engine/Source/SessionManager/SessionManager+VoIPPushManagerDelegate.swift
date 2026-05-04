@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,47 +22,40 @@ import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
-    public func processPendingCallEvents(accountID: UUID) {
+    public func processPendingCallEvents(accountID: UUID) async {
         WireLogger.calling.info("process pending call events preemptively")
 
         guard
             let account = accountManager.account(with: accountID)
         else {
-            WireLogger.calling
-                .error("failed to process pending call events preemptively: account not found for \(accountID))")
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively: account not found",
+                attributes: .safePublic
+            )
             return
         }
 
         guard
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
         else {
-            WireLogger.calling.error("failed to process pending call events preemptively: activity not started")
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively: activity not started",
+                attributes: .safePublic
+            )
             return
         }
 
-        withSession(for: account) { session in
-            session.processPendingCallEvents {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
+        do {
+            let session = try await withSession(for: account)
+            await session.processPendingCallEvents(only: true)
+        } catch let error as NSError {
+            let errorMessage = error.safeForLoggingDescription
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively failed: cannot load session - \(errorMessage)",
+                attributes: .safePublic
+            )
         }
-    }
-
-    // MARK: Helpers
-
-    private func accountId(from dictionary: [AnyHashable: Any]) -> UUID? {
-        let pushChannelDataKey = "data"
-        let pushChannelUserIDKey = "user"
-
-        guard let userInfoData = dictionary[pushChannelDataKey] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload")
-            return nil
-        }
-
-        guard let userIdString = userInfoData[pushChannelUserIDKey] as? String else {
-            return nil
-        }
-
-        return UUID(uuidString: userIdString)
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
 }
 

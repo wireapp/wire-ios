@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,6 +86,11 @@ public extension ZMConversation {
 
     /// combination of domain and remoteIdentifier
     @NSManaged internal private(set) var primaryKey: String
+
+    // MARK: - WireCells
+
+    @NSManaged var cellName: String?
+    @NSManaged var wireCellsMessageAttachmentDrafts: Set<WireCellsMessageAttachmentDraftEntity>
 
     private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {

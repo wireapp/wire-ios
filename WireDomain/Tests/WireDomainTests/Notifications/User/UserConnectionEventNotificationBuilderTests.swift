@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class UserConnectionEventNotificationBuilderTests: XCTestCase {
     private var sut: UserConnectionEventNotificationBuilder!
@@ -58,12 +58,26 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
 
     func testGenerateUserConnectionNotifications() async {
         // Given
-        let connectionEvents = [Scaffolding.userPendingConnectionEvent, Scaffolding.userAcceptedConnectionEvent]
+        let connectionEvents = [
+            Scaffolding.userPendingConnectionEvent,
+            Scaffolding.userAcceptedConnectionEvent,
+            Scaffolding.userPendingConnectionEventNoUsername,
+            Scaffolding.userAcceptedConnectionEventNoUsername,
+            Scaffolding.userIgnoredConnectionEvent // should be discarded
+        ]
 
         // Mock
 
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
+        }
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
+
+        userLocalStore.nameFor_MockValue = await context.perform {
+            .some(nil)
         }
 
         userLocalStore.idFor_MockValue = .mockID1
@@ -80,29 +94,38 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
 
             let userNotification = await sut.buildContent(event: connectionEvent)
 
-            guard case let .text(notificationContent) = userNotification else {
-                return
-            }
-
-            // Then
-            XCTAssertEqual(notificationContent.title, "")
-            XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
-
             switch connectionEvent.connection.status {
-
             case .pending:
-                XCTAssertEqual(notificationContent.body, "\(Scaffolding.username) wants to connect")
+                guard case let .text(notificationContent) = userNotification else {
+                    return
+                }
+
+                if connectionEvent.userName != nil {
+                    XCTAssertEqual(notificationContent.body, "\(Scaffolding.username) wants to connect")
+                } else {
+                    XCTAssertEqual(notificationContent.body, "Someone wants to connect")
+                }
+
                 XCTAssertEqual(
                     notificationContent.categoryIdentifier,
                     NotificationCategory.incomingConnectionRequest.rawValue
                 )
 
             case .accepted:
-                XCTAssertEqual(notificationContent.body, "You and \(Scaffolding.username) are now connected")
+                guard case let .text(notificationContent) = userNotification else {
+                    return
+                }
+
+                if connectionEvent.userName != nil {
+                    XCTAssertEqual(notificationContent.body, "You and \(Scaffolding.username) are now connected")
+                } else {
+                    XCTAssertEqual(notificationContent.body, "You have a new connection")
+                }
+
                 XCTAssertEqual(notificationContent.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
 
             default:
-                XCTFail()
+                XCTAssertNil(userNotification)
             }
         }
     }
@@ -113,9 +136,25 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             userName: Scaffolding.username,
             connection: pendingConnection
         )
+
+        static let userPendingConnectionEventNoUsername = UserConnectionEvent(
+            userName: nil,
+            connection: pendingConnection
+        )
+
         static let userAcceptedConnectionEvent = UserConnectionEvent(
             userName: Scaffolding.username,
             connection: acceptedConnection
+        )
+
+        static let userAcceptedConnectionEventNoUsername = UserConnectionEvent(
+            userName: nil,
+            connection: acceptedConnection
+        )
+
+        static let userIgnoredConnectionEvent = UserConnectionEvent(
+            userName: nil,
+            connection: ignoredConnection
         )
 
         static let pendingConnection = Connection(
@@ -136,6 +175,16 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             qualifiedConversationID: nil,
             lastUpdate: .distantPast,
             status: .accepted
+        )
+
+        static let ignoredConnection = Connection(
+            senderID: .mockID1,
+            receiverID: .mockID2,
+            receiverQualifiedID: nil,
+            conversationID: nil,
+            qualifiedConversationID: nil,
+            lastUpdate: .distantPast,
+            status: .ignored
         )
     }
 

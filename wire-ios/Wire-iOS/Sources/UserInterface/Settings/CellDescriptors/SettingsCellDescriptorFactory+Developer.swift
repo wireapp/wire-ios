@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import SwiftUI
+import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
 
@@ -36,7 +37,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Send broken message",
                 isDestructive: true,
-                selectAction: DebugActions.sendBrokenMessage
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.sendBrokenMessage(userSession: session)
+                }
             )
         )
 
@@ -44,7 +48,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "First unread conversation (badge count)",
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
+                }
             )
         )
 
@@ -52,7 +59,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "First unread conversation (back arrow count)",
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBackArrowDot
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBackArrowDot(userSession: session)
+                }
             )
         )
 
@@ -60,12 +70,14 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Delete invalid conversations",
                 isDestructive: false,
-                selectAction: DebugActions.deleteInvalidConversations
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.deleteInvalidConversations(userSession: session)
+                }
             )
         )
 
-        developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor())
-        developerCellDescriptors.append(SettingsShareCryptoboxCellDescriptor())
+        developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor(userSession: userSession))
 
         developerCellDescriptors.append(
             Button(
@@ -79,22 +91,30 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Re-calculate badge count",
                 isDestructive: false,
-                selectAction: DebugActions.recalculateBadgeCount
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.recalculateBadgeCount(userSession: session)
+                }
             )
         )
 
         developerCellDescriptors.append(
-            Button(title: "Append N messages to the top conv (not sending)", isDestructive: true) { _ in
+            Button(
+                title: "Append N messages to the top conv (not sending)",
+                isDestructive: true
+            ) { [weak userSession] _ in
+                guard let session = userSession as? ZMUserSession else { return }
                 DebugActions.askNumber(title: "Enter count of messages") { count in
-                    DebugActions.appendMessagesInBatches(count: count)
+                    DebugActions.appendMessagesInBatches(count: count, userSession: session)
                 }
             }
         )
 
         developerCellDescriptors.append(
-            Button(title: "Spam the top conv", isDestructive: true) { _ in
+            Button(title: "Spam the top conv", isDestructive: true) { [weak userSession] _ in
+                guard let session = userSession as? ZMUserSession else { return }
                 DebugActions.askNumber(title: "Enter count of messages") { count in
-                    DebugActions.spamWithMessages(amount: count)
+                    DebugActions.spamWithMessages(amount: count, userSession: session)
                 }
             }
         )
@@ -104,7 +124,10 @@ extension SettingsCellDescriptorFactory {
                 title: "Show database statistics",
                 isDestructive: false,
                 presentationStyle: .navigation,
-                presentationAction: { DatabaseStatisticsController() }
+                presentationAction: { [weak userSession] in
+                    guard let userSession else { return nil }
+                    return DatabaseStatisticsController(userSession: userSession)
+                }
             )
         )
 
@@ -120,7 +143,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Trigger slow sync",
                 isDestructive: false,
-                selectAction: DebugActions.triggerSlowSync
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.triggerSlowSync(userSession: session)
+                }
             )
         )
 
@@ -128,7 +154,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Trigger resyncResources",
                 isDestructive: false,
-                selectAction: { _ in DebugActions.triggerResyncResources() }
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.triggerResyncResources(userSession: session)
+                }
             )
         )
 
@@ -138,7 +167,8 @@ extension SettingsCellDescriptorFactory {
             icon: .robot,
             accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .developerOptions,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

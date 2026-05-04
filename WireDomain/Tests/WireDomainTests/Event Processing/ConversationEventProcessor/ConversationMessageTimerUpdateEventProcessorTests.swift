@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
 
@@ -98,8 +98,8 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         static let id = UUID()
         static let domain = "domain.com"
         static let event = ConversationMessageTimerUpdateEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
+            conversationID: ConversationID(id: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             timestamp: .now,
             newTimer: 10_000
         )

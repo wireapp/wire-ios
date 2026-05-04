@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ extension Notification.Name {
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
     case chatHeadsDisabled = "ZDevOptionChatHeadsDisabled"
-    case voIPNotificationsOnly = "VoIPNotificationsOnly"
     case lastViewedConversation = "LastViewedConversation"
     case colorScheme = "ColorScheme"
     case lastViewedScreen = "LastViewedScreen"
@@ -59,11 +58,9 @@ enum SettingKey: String, CaseIterable {
     case disableCallKit = "UserDefaultDisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
     case enableBatchCollections = "UserDefaultEnableBatchCollections"
-    case callingProtocolStrategy = "CallingProtocolStrategy"
 
     // MARK: Link opening options
 
-    case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
     case callingConstantBitRate = "CallingConstantBitRate"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ protocol SimpleTextFieldDelegate: AnyObject {
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
 
-final class SimpleTextField: UITextField, DynamicTypeCapable {
+final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapable {
 
     // MARK: - Properties
 
@@ -61,17 +61,13 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: Initialization
 
-    /// Init with kind for keyboard style and validator type. Default is .unknown
-    ///
-    /// - Parameter kind: the type of text field
     init() {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
-        super.init(frame: .zero)
-
+        super.init(frame: .zero, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setupTextFieldProperties()
 
         tintColor = .accent()

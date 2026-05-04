@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public class ClaimMLSKeyPackageAction: EntityAction {
 
@@ -109,5 +110,15 @@ public struct KeyPackage: Codable, Equatable {
         self.keyPackage = keyPackage
         self.keyPackageRef = keyPackageRef
         self.userID = userID
+    }
+
+}
+
+extension KeyPackage {
+    var coreCryptoKeyPackage: WireCoreCryptoUniffi.KeyPackage? {
+        guard let decodedData = keyPackage.base64DecodedData else {
+            return nil
+        }
+        return .init(bytes: decodedData)
     }
 }

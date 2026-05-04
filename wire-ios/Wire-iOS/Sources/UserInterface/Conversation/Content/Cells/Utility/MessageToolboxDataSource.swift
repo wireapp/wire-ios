@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ final class MessageToolboxDataSource {
     private func makeCallList() -> String {
         guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
               let timestamp = timestampString(message) else {
-            return timestampString(message) ?? "-"
+            return timestampString(message) ?? ""
         }
 
         let childrenTimestamps = childMessages

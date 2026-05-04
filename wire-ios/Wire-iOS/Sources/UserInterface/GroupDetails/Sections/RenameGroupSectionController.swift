@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     var titleFooter: String {
-        L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        L10n.Localizable.Participants.Section.Name
+            .footer(ZMConversation.getMaxParticipants(isChannel: conversation.isChannel).formatted(.number))
     }
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {

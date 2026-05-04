@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,12 @@
 //
 
 public import WireFoundation
-public import Foundation
 
-public class MockCurrentDateProviding: CurrentDateProviding, @unchecked Sendable {
+public actor KeychainProtocolMock: KeychainProtocol {
 
-    // MARK: - Life cycle
+    // MARK: - Init
 
     public init() {}
-
-    // MARK: - now
-
-    public var now: Date {
-        get { return underlyingNow }
-        set(value) { underlyingNow = value }
-    }
-
-    public var underlyingNow: Date!
-
-}
-
-public actor MockKeychainProtocol: KeychainProtocol {
 
     // MARK: - addItem
 

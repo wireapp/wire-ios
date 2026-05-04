@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,15 +35,18 @@ struct ConversationEventPayloadProcessor {
 
     private let mlsEventProcessor: MLSEventProcessing
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
     init(
         mlsEventProcessor: MLSEventProcessing,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
+        isFederationEnabled: Bool
     ) {
         self.mlsEventProcessor = mlsEventProcessor
         self.removeLocalConversation = removeLocalConversation
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Conversation creation
@@ -75,7 +78,7 @@ struct ConversationEventPayloadProcessor {
     }
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.Conversation>,
+        _ payload: Payload.ConversationEvent<Payload.CreatedConversation>,
         in context: NSManagedObjectContext
     ) async {
         guard let timestamp = payload.timestamp else {
@@ -83,8 +86,33 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
+        let conversation = Payload.Conversation(
+            qualifiedID: payload.data.qualifiedID,
+            id: payload.data.id,
+            type: payload.data.type,
+            creator: payload.data.creator,
+            cipherSuite: payload.data.cipherSuite,
+            access: payload.data.access,
+            legacyAccessRole: payload.data.legacyAccessRole,
+            accessRoles: payload.data.accessRoles,
+            name: payload.data.name,
+            members: payload.data.members,
+            lastEvent: payload.data.lastEvent,
+            lastEventTime: payload.data.lastEventTime,
+            teamID: payload.data.teamID,
+            messageTimer: payload.data.messageTimer,
+            readReceiptMode: payload.data.readReceiptMode,
+            messageProtocol: payload.data.messageProtocol,
+            mlsGroupID: payload.data.mlsGroupID,
+            epoch: payload.data.epoch,
+            epochTimestamp: payload.data.epochTimestamp,
+            groupType: payload.data.groupType,
+            addPermission: payload.data.addPermission,
+            cellState: payload.data.cellsState
+        )
+
         await updateOrCreateConversation(
-            from: payload.data,
+            from: conversation,
             serverTimestamp: timestamp,
             source: .eventStream,
             in: context
@@ -192,7 +220,7 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
         if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
@@ -551,6 +579,17 @@ struct ConversationEventPayloadProcessor {
 
             conversation.privateChannelPermission = payload.addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
+            conversation.cellsState = payload.cellsState.map { cellsState in
+                switch cellsState {
+                case .ready:
+                    .ready
+                case .pending:
+                    .pending
+                case .disabled:
+                    .disabled
+                }
+            } ?? .disabled
+
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
@@ -596,16 +635,26 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+    private func linkOneOnOneUserIfNeeded(
+        for localConversation: ZMConversation
+    ) {
+        guard localConversation.conversationType == .oneOnOne else {
             return
         }
 
-        conversation.oneOnOneUser = otherUser
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            localConversation.isForcedReadOnly = true
+            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                localConversation.mlsStatus = .invalid
+            }
+            return
+        }
+
+        guard otherUser.oneOnOneConversation == nil else {
+            return
+        }
+
+        localConversation.oneOnOneUser = otherUser
     }
 
     @discardableResult
@@ -735,7 +784,10 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context
+                in: context,
+                setNeedsToBeUpdatedFromBackend: false  // for 1:1 we don't want to trigger a sync with backend since it
+                // only returns the 1:1 conversations once the first commit bundle is processed (MLS) which would lead
+                // on the conversation being deleted.
             )
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
@@ -763,7 +815,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
+        conversation.domain = isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
         if let epoch = payload.epoch {
@@ -958,7 +1010,7 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
         guard mlsFeature.isEnabled else { return }
 
         await mlsEventProcessor.updateConversationIfNeeded(
@@ -1080,11 +1132,11 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchUserAndRole(
-        from payload: Payload.ConversationMember,
+        from payload: Payload.ConversationMember?,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+        guard let payload, let userID = payload.id ?? payload.qualifiedID?.uuid else {
             return nil
         }
 
