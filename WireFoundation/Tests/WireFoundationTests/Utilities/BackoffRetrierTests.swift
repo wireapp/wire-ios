@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ final class BackoffRetrierTests: XCTestCase {
 
     func testBackOffRetrier_It_Eventually_Succeeds_With_Exponential_Sleep_Durations() async throws {
         // Given
-        var callCount = 0
+        let callCounter = Counter()
         let recorder = SleepRecorder()
 
         let policy = BackoffRetryPolicy(
@@ -51,18 +51,17 @@ final class BackoffRetrierTests: XCTestCase {
         })
 
         // When, simulating 3 calls, first 2 fail, third succeeds
-        let result = try await retrier.retry {
-            defer {
-                callCount += 1
-            }
-
-            if callCount < 4 {
+        let result = try await retrier.retry { @Sendable in
+            if await callCounter.value < 4 {
+                await callCounter.increment()
                 throw NSError(domain: "Test", code: -1)
             }
+            await callCounter.increment()
             return "Success"
         }
 
         // Then
+        let callCount = await callCounter.value
         XCTAssertEqual(result, "Success")
         XCTAssertEqual(callCount, 5) // initial + 4 retries
 
@@ -105,5 +104,12 @@ private actor SleepRecorder {
 
     func getAll() -> [Double] {
         recordedSleeps
+    }
+}
+
+private actor Counter {
+    private(set) var value = 0
+    func increment() {
+        value += 1
     }
 }

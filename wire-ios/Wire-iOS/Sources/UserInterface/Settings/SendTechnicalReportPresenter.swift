@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
 
     @MainActor
     func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration) {
-        let mailRecipient = WireEmail.shared.callingSupportEmail
+        let mailRecipient = WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
             // we will be stuck on the blocker screen after that

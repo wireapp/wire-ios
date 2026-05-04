@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireProtos
+import GenericMessageProtocol
 
 public extension Availability {
 
-    init(proto: WireProtos.Availability) {
+    init(proto: GenericMessageProtocol.Availability) {
         switch proto.type {
         case .none:
             self = .none
@@ -34,10 +34,10 @@ public extension Availability {
     }
 }
 
-public extension WireProtos.Availability {
+public extension GenericMessageProtocol.Availability {
 
     init(_ availability: Availability) {
-        self = WireProtos.Availability.with { populator in
+        self = GenericMessageProtocol.Availability.with { populator in
             switch availability {
             case .none:
                 populator.type = .none

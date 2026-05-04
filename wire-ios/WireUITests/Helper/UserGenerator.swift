@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +22,22 @@ enum UserGenerator {
 
     static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()
-        let time = Int(NSDate().timeIntervalSince1970 * 1000)
-        let username = "smoketester\(time)"
+
+        let time = Int(Date().timeIntervalSince1970 * 1000)
+        let random = Int.random(in: 100 ... 999)
+
+        let username = "smoketester\(time)\(random)"
         let domain = "wire.engineering"
-        let name = "Smoke Tester \(time)"
-        return UserInfo(name: name, username: username, domain: domain, password: password)
+        let name = "Smoke Tester \(time)\(random)"
+        let teamName = "Team-Smoke \(time)\(random)"
+        return UserInfo(
+            name: name,
+            username: username,
+            password: password,
+            domain: domain,
+            teamName: teamName,
+            teamID: nil
+        )
     }
 
     static func generateRandomPassword() -> String {
@@ -48,6 +59,33 @@ enum UserGenerator {
         let randomIndex = Int.random(in: 0 ..< array.count)
         let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
         return String(character)
+    }
+
+    static func generateRandomConversationName() -> String {
+        let timestamp = Int(Date().timeIntervalSince1970) % 100_000
+        let hex = String(format: "%03x", Int.random(in: 0 ... 0xFFF))
+        return "Conversation_\(timestamp)\(hex)"
+    }
+
+    static func generateRandomMessage() -> String {
+        let timestamp = Int(Date().timeIntervalSince1970 * 1000)
+        let random = Int.random(in: 100_000 ... 999_999)
+        return "hello! \(timestamp)_\(random)"
+    }
+
+    static func generateAppPasscode(length: Int = 8) -> String {
+        let sets = [
+            "abcdefghijklmnopqrstuvwxyz",
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "0123456789",
+            "!@#$%^&*()-_=+{}[]|:;,.<>?/`~"
+        ]
+        var password = sets.compactMap { $0.randomElement() }
+        let all = sets.joined()
+        while password.count < length {
+            password.append(all.randomElement()!)
+        }
+        return String(password.shuffled())
     }
 
 }

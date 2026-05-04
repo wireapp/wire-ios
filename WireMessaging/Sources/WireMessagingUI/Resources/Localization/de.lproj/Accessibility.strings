@@ -1,0 +1,71 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// MARK: - Navigation
+
+"general.loading" = "Wird geladen…";
+"general.confirm" = "OK";
+"general.failure" = "Ein Fehler ist aufgetreten";
+"general.save" = "Speichern";
+"general.cancel" = "Abbrechen";
+
+// MARK: Channel History
+"conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Upgrade-Banner schließen";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.close" = "Schließen";
+"conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
+"conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
+"conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
+"conversation.wireCells.files.noSearchResults.title" = "Keine Ergebnisse gefunden";
+"conversation.wireCells.files.noSearchResults.message" = "Versuchen Sie, Ihre Suche anzupassen.";
+"conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
+"conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
+"conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
+"conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
+"conversation.wireCells.files.error.message" = "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"conversation.wireCells.files.error.retry" = "Wiederholen";
+"conversation.wireCells.files.error.noConnection.title" = "Dateien können nicht geladen werden";
+"conversation.wireCells.files.error.noConnection.message" = "Ihre Datei-Liste konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+"conversation.wireCells.files.error.noConnection.retry" = "Erneut versuchen";
+"conversation.wireCells.files.moreActionsButton" = "Mehr";
+"conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
+"conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.removeTag" = "Tag entfernen {0}";
+"conversation.wireCells.tags.addTag" = "Tag hinzufügen {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Passwort ausblenden";
+"conversation.wireCells.shareLink.showPassword" = "Passwort anzeigen";
+
+// MARK: - Accessibility File Icon Labels
+"conversation.wireCells.files.filetype" = "Dateityp, {0}";
+"conversation.wireCells.files.archive" = "Archiv";
+"conversation.wireCells.files.audio" = "Audio";
+"conversation.wireCells.files.code" = "Code";
+"conversation.wireCells.files.document" = "Dokument";
+"conversation.wireCells.files.image" = "Bild";
+"conversation.wireCells.files.other" = "Andere";
+"conversation.wireCells.files.pdf" = "PDF";
+"conversation.wireCells.files.presentation" = "Präsentation";
+"conversation.wireCells.files.spreadsheet" = "Kalkulationstabelle";
+"conversation.wireCells.files.video" = "Video";
+"conversation.wireCells.files.folder" = "Ordner";
+"conversation.wireCells.files.text" = "Text";

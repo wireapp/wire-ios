@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,51 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireUtilitiesPackage
 public import WireFoundation
 public import WireLogging
 
 import Foundation
 @preconcurrency import KaliumBackup
 
-public struct CreateBackupUseCase<
-    BackupLocalStore: BackupLocalStoreProtocol,
-    FileArchiver: FileArchiverProtocol
->: CreateBackupUseCaseProtocol {
+public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     private let selfUserID: QualifiedID
-    private let selfUserHandle: String?
-    private let backupLocalStore: BackupLocalStore
-    private let fileArchiver: FileArchiver
-    private let currentDateProvider: any CurrentDateProviding
+    private let backupLocalStore: any BackupLocalStoreProtocol
+    private let fileArchiver: any FileArchiverProtocol
+    // TODO: [WPB-14297] Try making LoggerProtocol `Sendable` (implementations might be @unchecked Sendable) and
+    // then the `logger` can be injected without closure.
     private let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,
-        selfUserHandle: String?,
-        backupLocalStore: BackupLocalStore,
-        fileArchiver: FileArchiver,
-        currentDateProvider: any CurrentDateProviding,
+        backupLocalStore: any BackupLocalStoreProtocol,
+        fileArchiver: any FileArchiverProtocol,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.backupLocalStore = backupLocalStore
         self.fileArchiver = fileArchiver
-        self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
-        self.selfUserHandle = selfUserHandle
         self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [
-                // swiftlint:disable closure_parameter_position
-                currentDateProvider,
-                fileArchiver,
-                logger,
-                selfUserID,
-                selfUserHandle
-                // swiftlint:enable closure_parameter_position
-            ] in
+            let task = Task<Void, Never> { [fileArchiver, logger, selfUserID] in
 
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
@@ -119,15 +105,7 @@ public struct CreateBackupUseCase<
 
                     // create the file
                     let outputFileURL = try await backupCreator.finalize(password: password)
-                    // rename
-                    let iso8601Date = Date.ISO8601FormatStyle(timeSeparator: .omitted).format(currentDateProvider.now)
-                    let filename = "Wire-" + (selfUserHandle.map { "\($0)-" } ?? "") + "Backup_" + iso8601Date + ".wbu"
-                    let finalPath = outputFileURL
-                        .deletingLastPathComponent()
-                        .appending(path: filename, directoryHint: .notDirectory)
-                    try fileManager.moveItem(at: outputFileURL, to: finalPath)
-
-                    continuation.yield(.done(finalPath))
+                    continuation.yield(.done(outputFileURL))
                     continuation.finish()
 
                 } catch {

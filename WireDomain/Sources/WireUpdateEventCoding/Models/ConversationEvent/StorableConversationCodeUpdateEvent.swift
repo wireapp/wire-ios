@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationCodeUpdateEvent: Equatable, Codable, Sendable {
 
@@ -27,7 +27,7 @@ struct StorableConversationCodeUpdateEvent: Equatable, Codable, Sendable {
     private let code: String
     private let isPasswordProtected: Bool
 
-    init(_ value: WireAPI.ConversationCodeUpdateEvent) {
+    init(_ value: WireNetwork.ConversationCodeUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.uri = value.uri
@@ -36,7 +36,7 @@ struct StorableConversationCodeUpdateEvent: Equatable, Codable, Sendable {
         self.isPasswordProtected = value.isPasswordProtected
     }
 
-    func toAPIModel() -> WireAPI.ConversationCodeUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationCodeUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

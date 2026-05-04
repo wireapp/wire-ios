@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireNetwork
 import WireTransport
 
 @testable import WireSyncEngine
@@ -70,19 +72,18 @@ public extension MessagingTest {
     }
 
     @objc
-    func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let stack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
             inMemoryStore: shouldUseInMemoryStore,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        stack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
-
+        try await stack.load()
         return stack
     }
 
@@ -90,9 +91,37 @@ public extension MessagingTest {
     func setBackendInfoDefaults() {
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
+    }
 
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = false
+    @objc
+    @discardableResult
+    func createSelfClient() -> UserClient {
+        createSelfClient(capabilities: [])
+    }
+
+    func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
+        let selfClient = setupSelfClient(inMoc: syncMOC)
+        let time = Date().transportString()
+        var payload: [String: AnyObject] = [
+            "id": selfClient.remoteIdentifier as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": time as AnyObject
+        ]
+
+        if capabilities.isEmpty == false {
+            let rawCapabilities: [String] = capabilities.map {
+                switch $0 {
+                case .consumableNotifications:
+                    "consumable-notifications"
+                case .legalholdConsent:
+                    "legalhold-implicit-consent"
+                }
+            }
+            payload["capabilities"] = rawCapabilities as AnyObject
+        }
+        _ = UserClient.createOrUpdateSelfUserClient(payload, context: syncMOC)
+        syncMOC.saveOrRollback()
+        return selfClient
     }
 
 }

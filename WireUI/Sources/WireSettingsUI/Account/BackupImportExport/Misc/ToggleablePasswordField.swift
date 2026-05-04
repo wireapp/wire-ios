@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
+import WireReusableUIComponents
 
 struct ToggleablePasswordField: View {
 
@@ -25,6 +27,7 @@ struct ToggleablePasswordField: View {
     var placeholder: String
     var placeholderColor: Color
     var focusOnAppear = true
+    var isContextMenuAllowed: Bool
 
     @State private var isPasswordVisible = false
 
@@ -73,26 +76,29 @@ struct ToggleablePasswordField: View {
     }
 
     @ViewBuilder private var textField: some View {
-        TextField(text: $password) {
-            Text(placeholder)
-                .font(.body)
-                .foregroundStyle(placeholderColor)
-        }
-        .textContentType(.password)
-        .autocapitalization(.none)
+        ContextMenuControllableTextField(
+            text: $password,
+            placeholder: placeholder,
+            isSecureTextEntry: false,
+            placeholderColor: placeholderColor,
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
+        )
         .focused($focusedField, equals: .textField)
-        .accessibilityIdentifier("password input")
+        .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
 
     @ViewBuilder private var secureField: some View {
-        SecureField(text: $password) {
-            Text(placeholder)
-                .font(.body)
-                .foregroundStyle(placeholderColor)
-        }
-        .textContentType(.password)
+        ContextMenuControllableTextField(
+            text: $password,
+            placeholder: placeholder,
+            isSecureTextEntry: true,
+            placeholderColor: placeholderColor,
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
+        )
         .focused($focusedField, equals: .secureField)
-        .accessibilityIdentifier("password input")
+        .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
 
     private var toggleButtonAccessibilityLabel: String {
@@ -124,7 +130,8 @@ struct ToggleablePasswordField: View {
     ToggleablePasswordField(
         password: .constant(""),
         placeholder: "Placeholder Text",
-        placeholderColor: BaseColorPalette.Neutrals.black.color
+        placeholderColor: BaseColorPalette.Neutrals.black.color,
+        isContextMenuAllowed: true
     )
     .tint(.purple)
     .padding()

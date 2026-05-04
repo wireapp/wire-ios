@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ final class ColorKnobView: UIView {
 
     // MARK: - Properties
 
+    let knobOuterDiameter: CGFloat = 18
+
     var isSelected = false {
         didSet {
             borderCircleLayer.borderColor = knobBorderColor?.cgColor
@@ -38,7 +40,7 @@ final class ColorKnobView: UIView {
         }
     }
 
-    var knobDiameter: CGFloat = 12
+    var knobDiameter: CGFloat
 
     /// The actual circle knob, filled with the color
     private var innerCircleLayer: CALayer = .init()
@@ -47,7 +49,8 @@ final class ColorKnobView: UIView {
 
     // MARK: - Init
 
-    init() {
+    init(knobDiameter: CGFloat) {
+        self.knobDiameter = knobDiameter
         super.init(frame: .zero)
 
         layer.addSublayer(innerCircleLayer)
@@ -73,16 +76,15 @@ final class ColorKnobView: UIView {
         innerCircleLayer.cornerRadius = knobDiameter / 2
         innerCircleLayer.borderWidth = 1
 
-        let knobBorderDiameter = knobDiameter + 12
         borderCircleLayer.bounds = CGRect(
             origin: .zero,
             size: CGSize(
-                width: knobBorderDiameter,
-                height: knobBorderDiameter
+                width: knobOuterDiameter,
+                height: knobOuterDiameter
             )
         )
         borderCircleLayer.position = centerPos
-        borderCircleLayer.cornerRadius = knobBorderDiameter / 2
+        borderCircleLayer.cornerRadius = knobOuterDiameter / 2
     }
 
     // MARK: - Helpers

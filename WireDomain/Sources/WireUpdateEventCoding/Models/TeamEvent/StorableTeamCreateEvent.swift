@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableTeamCreateEvent: Equatable, Codable, Sendable {
 
@@ -28,7 +28,7 @@ struct StorableTeamCreateEvent: Equatable, Codable, Sendable {
     private let iconKey: String?
     private let splashScreen: String?
 
-    init(_ value: WireAPI.TeamCreateEvent) {
+    init(_ value: WireNetwork.TeamCreateEvent) {
         self.identifier = value.identifier
         self.name = value.name
         self.creator = value.creator
@@ -37,7 +37,7 @@ struct StorableTeamCreateEvent: Equatable, Codable, Sendable {
         self.splashScreen = value.splashScreen
     }
 
-    func toAPIModel() -> WireAPI.TeamCreateEvent {
+    func toAPIModel() -> WireNetwork.TeamCreateEvent {
         .init(
             identifier: identifier,
             name: name,

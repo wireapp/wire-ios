@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserDeleteEvent: Equatable, Codable, Sendable {
 
     private let qualifiedUserID: StorableQualifiedID
     private let time: Date
 
-    init(_ value: WireAPI.UserDeleteEvent) {
+    init(_ value: WireNetwork.UserDeleteEvent) {
         self.qualifiedUserID = StorableQualifiedID(value.qualifiedUserID)
         self.time = value.time
     }
 
-    func toAPIModel() -> WireAPI.UserDeleteEvent {
+    func toAPIModel() -> WireNetwork.UserDeleteEvent {
         .init(
             qualifiedUserID: qualifiedUserID.toAPIModel(),
             time: time

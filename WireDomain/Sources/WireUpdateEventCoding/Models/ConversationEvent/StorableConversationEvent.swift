@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableConversationEvent: Equatable, Codable, Sendable {
 
@@ -37,8 +37,9 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
     case rename(StorableConversationRenameEvent)
     case typing(StorableConversationTypingEvent)
     case permissionUpdate(StorableConversationAddPermissionEvent)
+    case mlsReset(StorableConversationMLSResetEvent)
 
-    init(_ value: WireAPI.ConversationEvent) {
+    init(_ value: WireNetwork.ConversationEvent) {
         switch value {
         case let .accessUpdate(event):
             self = .accessUpdate(StorableConversationAccessUpdateEvent(event))
@@ -72,10 +73,12 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
             self = .typing(StorableConversationTypingEvent(event))
         case let .permissionUpdate(event):
             self = .permissionUpdate(StorableConversationAddPermissionEvent(event))
+        case let .mlsReset(event):
+            self = .mlsReset(StorableConversationMLSResetEvent(event))
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationEvent {
+    func toAPIModel() -> WireNetwork.ConversationEvent {
         switch self {
         case let .accessUpdate(event):
             .accessUpdate(event.toAPIModel())
@@ -109,6 +112,8 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
             .typing(event.toAPIModel())
         case let .permissionUpdate(event):
             .permissionUpdate(event.toAPIModel())
+        case let .mlsReset(event):
+            .mlsReset(event.toAPIModel())
         }
     }
 

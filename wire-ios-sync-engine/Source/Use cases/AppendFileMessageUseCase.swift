@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,20 @@
 
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 
 public protocol AppendFileMessageUseCaseProtocol {
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         with fileMetadata: ZMFileMetadata,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws
 }
 
 public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 

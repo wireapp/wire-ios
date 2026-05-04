@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -74,7 +75,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
@@ -87,12 +88,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let trailing = containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right
-        )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
@@ -101,12 +97,14 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         heightConstraint?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom,
             widthConstraint!,
-            heightConstraint!
+            heightConstraint!,
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
         ])
     }
 
@@ -169,6 +167,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }
+
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
@@ -180,7 +179,9 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         didSet {
             if let message {
                 configuration.message = message
-                configuration.image = message.imageMessageData!
+                if let imageMessageData = message.imageMessageData {
+                    configuration.image = imageMessageData
+                }
             }
         }
     }
@@ -190,6 +191,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"

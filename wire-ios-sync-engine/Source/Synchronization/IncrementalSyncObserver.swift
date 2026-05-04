@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,9 +55,12 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 .receive(on: decryptionQueue)
                 .sink { [weak self] syncState in
                     switch syncState {
-                    case .incrementalSyncing(.pullPendingEvents):
+                    case .incrementalSyncing(.pullPendingEvents),
+                         .incrementalSyncing(.receivingLiveEvents):
                         self?.decryptionState = .inProgress
-                    case .incrementalSyncing(.processPendingEvents), .liveSyncing:
+                    case .incrementalSyncing(.processPendingEvents),
+                         .suspended,
+                         .liveSyncing:
                         self?.decryptionState = .done
                     default:
                         self?.decryptionState = .notStarted
@@ -102,8 +105,10 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
 
             var cancellable: AnyCancellable?
             await withCheckedContinuation { continuation in
+                var resumed = false
                 cancellable = $decryptionState.sink { newDecryptionState in
-                    if newDecryptionState == .done {
+                    if newDecryptionState == .done, !resumed {
+                        resumed = true
                         continuation.resume()
                         cancellable?.cancel()
                     }

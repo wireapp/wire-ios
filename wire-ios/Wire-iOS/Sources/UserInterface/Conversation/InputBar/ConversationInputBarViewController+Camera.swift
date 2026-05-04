@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             fatal("SplitViewController is not created")
         }
         let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
-        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitLayoutObserver)
+        let cameraKeyboardViewController = CameraKeyboardViewController(
+            splitLayoutObservable: splitLayoutObserver,
+            userSession: userSession
+        )
         cameraKeyboardViewController.delegate = self
         self.cameraKeyboardViewController = cameraKeyboardViewController
         return cameraKeyboardViewController
@@ -92,7 +95,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
                 }
             )
-            let confirmVideoViewController = ConfirmAssetViewController(context: context)
+            let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
 
             view.window?.endEditing(true)
@@ -102,11 +105,13 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
-        didSelectImageData imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        didSelectImage image: SendableImage,
+        isFromCamera: Bool
     ) {
-        showConfirmationForImage(imageData, isFromCamera: isFromCamera, uti: uti)
+        showConfirmationForImage(
+            image,
+            isFromCamera: isFromCamera
+        )
     }
 
     @objc
@@ -150,40 +155,46 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func showConfirmationForImage(
-        _ imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        _ image: SendableImage,
+        isFromCamera: Bool
     ) {
-        let mediaAsset: MediaAsset = if uti == UTType.gif.identifier,
-                                        let gifImage = FLAnimatedImage(animatedGIFData: imageData),
-                                        gifImage.frameCount > 1 {
+        let mediaAsset: MediaAsset = if
+            image.utType == .gif,
+            let gifImage = FLAnimatedImage(animatedGIFData: image.data),
+            gifImage.frameCount > 1 {
             gifImage
         } else {
-            UIImage(data: imageData) ?? UIImage()
+            UIImage(data: image.data) ?? UIImage()
         }
 
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
-            onConfirm: { [weak self, wireCellsUploadFileUseCase] (editedImage: UIImage?) in
+            onConfirm: { [weak self] (editedImage: UIImage?) in
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
-                        imageData: imageData,
+                        imageData: image.data,
                         isFromCamera: isFromCamera
                     )
-                    let dataToSend = editedImage?.pngData() ?? imageData
-                    if DeveloperFlag.wireCells.isOn {
-                        Task.detached {
-                            // We don't care about the result of the operation here as we will be observing changes.
-                            do {
-                                try await wireCellsUploadFileUseCase.invoke(imageData: dataToSend)
-                            } catch {
-                                WireLogger.conversation.error("Failed to upload file: \(error)")
-                            }
-                        }
+
+                    let dataToSend = editedImage?.pngData() ?? image.data
+                    let utType: UTType = if editedImage != nil {
+                        .png
                     } else {
+                        image.utType ?? .image
+                    }
+
+                    if self.userSession.isWireDriveEnabled,
+                       self.conversation.isWireDriveEnabled {
+                        self.uploadDraft(data: dataToSend, type: utType)
+                    } else {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: utType,
+                            data: dataToSend
+                        )
                         self.sendController.sendMessage(
-                            withImageData: dataToSend,
+                            image: image,
                             userSession: self.userSession
                         )
                     }
@@ -198,7 +209,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         view.window?.endEditing(true)
@@ -220,7 +231,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     private func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
         guard isFromCamera,
-              MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll,
+              mediaShareRestrictionManager.hasAccessToCameraRoll,
               SecurityFlags.cameraRoll.isEnabled,
               let image = UIImage(data: imageData as Data)
         else {
@@ -290,18 +301,44 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
 
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
-    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+    func canvasViewController(
+        _ canvasViewController: CanvasViewController,
+        didExportImage image: UIImage
+    ) {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                    if self.userSession.isWireDriveEnabled,
+                       self.conversation.isWireDriveEnabled {
+                        self.uploadDraft(data: imageData, type: .png)
+                    } else {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .png,
+                            data: imageData
+                        )
+                        self.sendController.sendMessage(
+                            image: image,
+                            userSession: self.userSession
+                        )
+                    }
                 }
             }
         }
     }
 
+    private func uploadDraft(data: Data, type: UTType) {
+        Task.detached { [uploadDraftUseCase] in
+            // We don't care about the result of the operation here as we will be observing changes.
+            do {
+                try await uploadDraftUseCase.invoke(data: data, type: type)
+            } catch {
+                WireLogger.conversation.error("Failed to upload file: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - CameraViewController
@@ -309,9 +346,9 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
-        UIApplication.wr_requestVideoAccess { _ in
+        UIApplication.wr_requestVideoAccess { [mediaShareRestrictionManager] _ in
             if SecurityFlags.cameraRoll.isEnabled,
-               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+               mediaShareRestrictionManager.hasAccessToCameraRoll {
                 self.executeWithCameraRollPermission { _ in
                     self.mode = .camera
                     self.inputBar.textView.becomeFirstResponder()

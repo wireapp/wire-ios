@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireLogging
 
 public enum UpdateEventSource: String {
@@ -36,7 +37,7 @@ public extension ZMUpdateEvent {
              .conversationOtrMessageAdd,
              .conversationOtrAssetAdd,
              .conversationMLSMessageAdd:
-            let message = GenericMessage(from: self)
+            let message = GenericMessage(from: self, validate: true)
             guard let messageID = message?.messageID else {
                 return nil
             }

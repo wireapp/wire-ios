@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import CoreData
-import WireAPI
+import WireNetwork
 
 public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
 
     private let api: any UserClientsAPI
     private let store: any UserClientsLocalStoreProtocol
 
-    init(
+    public init(
         api: any UserClientsAPI,
         store: any UserClientsLocalStoreProtocol
     ) {
@@ -58,7 +58,7 @@ public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
 
     func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         await store.updateClient(
@@ -68,26 +68,4 @@ public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
         )
     }
 
-}
-
-public extension PullSelfUserClientsSync {
-
-    static func make(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
-        context: NSManagedObjectContext
-    ) -> PullSelfUserClientsSyncProtocol {
-        let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(context: context)
-
-        let userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
-
-        let userClientsLocalStore = UserClientsLocalStore(context: context)
-
-        return PullSelfUserClientsSync(api: userClientsAPI, store: userClientsLocalStore)
-    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension ConversationViewController {
     func updateOutgoingConnectionVisibility() {
 
         let outgoingConnection: Bool = conversation.relatedConnectionState == .sent
-        contentViewController.tableView.isScrollEnabled = !outgoingConnection
+        contentViewController?.tableView.isScrollEnabled = !outgoingConnection
 
         if outgoingConnection {
             if outgoingConnectionViewController != nil {
@@ -52,7 +52,7 @@ extension ConversationViewController {
     func createConstraints() {
         [
             conversationBarController.view,
-            contentViewController.view,
+            exchangeableContentViewController.view,
             inputBarController.view
         ].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -60,12 +60,13 @@ extension ConversationViewController {
             conversationBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             conversationBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            contentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            exchangeableContentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            exchangeableContentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            exchangeableContentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         ])
 
-        contentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
+        exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)
+            .isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),

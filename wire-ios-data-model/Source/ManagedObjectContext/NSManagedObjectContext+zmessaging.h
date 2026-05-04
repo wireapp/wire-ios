@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 
 extern NSString * _Nonnull const IsUserInterfaceContextKey;
 extern NSString * _Nonnull const IsSyncContextKey;
-extern NSString * _Nonnull const IsSearchContextKey;
 extern NSString * _Nonnull const IsEventContextKey;
 
 @interface NSManagedObjectContext (zmessaging)
@@ -37,9 +36,6 @@ extern NSString * _Nonnull const IsEventContextKey;
 /// Inverse of @c zm_isSyncContext
 @property (readonly) BOOL zm_isUserInterfaceContext;
 
-/// Returns @c YES if the receiver is a context that is used for searching.
-@property (readonly) BOOL zm_isSearchContext;
-
 /// Returns @c YES if the context should refresh objects following the policy for the sync context
 @property (readonly) BOOL zm_shouldRefreshObjectsWithSyncContextPolicy;
 
@@ -48,6 +44,12 @@ extern NSString * _Nonnull const IsEventContextKey;
 
 /// Returns @c YES if the context is still valid, false if it has been torn down
 @property (readonly) BOOL zm_isValidContext;
+
+/// Marks the context as a sync context (direct assignment, must be called on context's queue)
+- (void)markAsSyncContext;
+
+/// Marks the context as a sync context (wrapped in performBlockAndWait, safe to call from any thread)
+- (void)performMarkAsSyncContext;
 
 /// Returns @c self in case this is a sync context, or attached sync context, if present
 @property (nonatomic, null_unspecified) NSManagedObjectContext* zm_syncContext;

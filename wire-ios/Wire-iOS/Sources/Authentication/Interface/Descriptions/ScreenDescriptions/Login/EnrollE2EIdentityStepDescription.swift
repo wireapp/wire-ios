@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 /// The step informing the user that they need to enroll into end-2-end identity
 
 class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
+
     let backButton: BackButtonDescription? = nil
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

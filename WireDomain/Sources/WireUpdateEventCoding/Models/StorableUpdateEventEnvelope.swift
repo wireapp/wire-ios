@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
 
@@ -25,13 +25,13 @@ struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
     private let events: [StorableUpdateEvent]
     private let isTransient: Bool
 
-    init(_ value: WireAPI.UpdateEventEnvelope) {
+    init(_ value: WireNetwork.UpdateEventEnvelope) {
         self.id = value.id
         self.events = value.events.map(StorableUpdateEvent.init)
         self.isTransient = value.isTransient
     }
 
-    func toAPIModel() -> WireAPI.UpdateEventEnvelope {
+    func toAPIModel() -> WireNetwork.UpdateEventEnvelope {
         .init(
             id: id,
             events: events.map { $0.toAPIModel() },

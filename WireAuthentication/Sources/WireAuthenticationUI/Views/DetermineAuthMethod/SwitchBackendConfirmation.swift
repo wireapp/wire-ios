@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireNetwork
 
 public struct SwitchBackendConfirmation: View {
 
-    private typealias Strings = L10n.SwitchBackendConfirmation
+    private typealias Strings = L10n.Localizable.SwitchBackendConfirmation
 
     private struct Item {
 
@@ -41,56 +42,46 @@ public struct SwitchBackendConfirmation: View {
     private let onConfirm: (Bool) -> Void
 
     public init(
-        backendConfig: BackendConfig,
+        environment: BackendEnvironment2,
         onConfirm: @escaping (Bool) -> Void
     ) {
         var items = [
             Item(
                 title: Strings.backendName,
-                value: backendConfig.title,
+                value: environment.title,
                 isURL: false
             ),
             Item(
                 title: Strings.backendUrl,
-                value: backendConfig.endpoints.backendURL.absoluteString,
+                value: environment.config.endpoints.restAPIURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.backendWsurl,
-                value: backendConfig.endpoints.backendWSURL.absoluteString,
+                value: environment.config.endpoints.websocketURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.blacklistUrl,
-                value: backendConfig.endpoints.blackListURL.absoluteString,
+                value: environment.config.endpoints.blacklistURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.teamsUrl,
-                value: backendConfig.endpoints.teamsURL.absoluteString,
+                value: environment.config.endpoints.teamsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.accountsUrl,
-                value: backendConfig.endpoints.accountsURL.absoluteString,
+                value: environment.config.endpoints.accountsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.websiteUrl,
-                value: backendConfig.endpoints.websiteURL.absoluteString,
+                value: environment.config.endpoints.websiteURL.absoluteString,
                 isURL: true
             )
         ]
-
-        if let countlyURL = backendConfig.endpoints.countlyURL {
-            items.append(
-                Item(
-                    title: Strings.countlyUrl,
-                    value: countlyURL.absoluteString,
-                    isURL: true
-                )
-            )
-        }
 
         self.items = items
         self.onConfirm = onConfirm
@@ -118,7 +109,7 @@ public struct SwitchBackendConfirmation: View {
 
     private var title: some View {
         Text(Strings.title)
-            .font(.textStyle(.h2))
+            .font(for: .h2)
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
             .lineLimit(nil)
@@ -184,7 +175,7 @@ public struct SwitchBackendConfirmation: View {
                     }
                 } label: {
                     Text(Strings.showDetails)
-                        .font(.textStyle(.body1))
+                        .font(for: .body1)
                 }
                 .wireButtonStyle(.link)
             }
@@ -221,7 +212,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(false)
         } label: {
             Text(Strings.cancel)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .wireButtonStyle(.secondary)
     }
@@ -232,7 +223,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(true)
         } label: {
             Text(Strings.proceed)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .wireButtonStyle(.primary)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
@@ -35,7 +36,8 @@ enum ConversationSystemMessageCellDescription {
               let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
-            preconditionFailure("Invalid system message")
+            assertionFailure("Invalid system message")
+            return []
         }
 
         switch systemMessageData.systemMessageType {
@@ -70,7 +72,8 @@ enum ConversationSystemMessageCellDescription {
             let senderCell = ConversationSenderMessageCellDescription(
                 sender: sender,
                 selfUser: selfUser,
-                message: message
+                message: message,
+                userSession: userSession
             )
             return [AnyConversationMessageCellDescription(senderCell)]
 
@@ -80,10 +83,7 @@ enum ConversationSystemMessageCellDescription {
             }
 
             let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData,
-                timer: timer,
-                sender: sender
+                state: .updated(message: message, data: systemMessageData, timer: timer, sender: sender)
             )
             return [AnyConversationMessageCellDescription(timerCell)]
 
@@ -174,6 +174,15 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
+
+            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
+                variant: (
+                    wireCells: conversation.isWireDriveEnabled,
+                    isChannel: conversation.isChannel
+                )
+            )
+            cells.append(AnyConversationMessageCellDescription(welcomeCell))
+
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
@@ -187,9 +196,25 @@ enum ConversationSystemMessageCellDescription {
                     )
                 )
             }
-            if conversation.isOpenGroup {
-                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
-                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
+
+            if conversation.isWireDriveEnabled {
+                let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
+                cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
+
+                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
+                    state: .unavailable
+                )
+                cells.append(AnyConversationMessageCellDescription(timerCell))
+            }
+
+            if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
+                let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
+                    sender: sender,
+                    historyDepth: channelHistoryDepth,
+                    isNewConversation: true
+                )
+
+                cells.append(AnyConversationMessageCellDescription(cell))
             }
 
             return cells
@@ -226,9 +251,25 @@ enum ConversationSystemMessageCellDescription {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
-        case .invalid:
-            let unknownMessage = UnknownMessageCellDescription()
+        case .unknownMessageContentTypeReceived:
+            let unknownMessage = UnknownStoredMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
+
+        case .invalid:
+            // Nothing to display.
+            WireLogger.conversation.warn("No cell to display for ZMSystemMessageType.invalid.")
+
+        case .channelHistoryDepthModified:
+            let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
+                sender: sender,
+                historyDepth: conversation.channelHistoryDepth,
+                isNewConversation: false
+            )
+            return [AnyConversationMessageCellDescription(cell)]
+
+        case .userRemovedFromTeam:
+            let cell = UserRemovedFromTeamSystemMessageCellDescription()
+            return [AnyConversationMessageCellDescription(cell)]
         }
 
         return []

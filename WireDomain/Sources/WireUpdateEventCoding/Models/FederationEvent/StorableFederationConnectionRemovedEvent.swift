@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableFederationConnectionRemovedEvent: Equatable, Codable, Sendable {
 
     private let domains: [String]
 
-    init(_ value: WireAPI.FederationConnectionRemovedEvent) {
+    init(_ value: WireNetwork.FederationConnectionRemovedEvent) {
         self.domains = Array(value.domains)
     }
 
-    func toAPIModel() -> WireAPI.FederationConnectionRemovedEvent {
+    func toAPIModel() -> WireNetwork.FederationConnectionRemovedEvent {
         .init(domains: Set(domains))
     }
 

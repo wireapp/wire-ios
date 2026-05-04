@@ -530,8 +530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone added you"
+            "state" : "translated",
+            "value" : "Alguien te ha añadido"
           }
         },
         "et" : {
@@ -655,8 +655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming call"
+            "state" : "translated",
+            "value" : "Llamada entrante"
           }
         },
         "et" : {
@@ -780,8 +780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling"
+            "state" : "translated",
+            "value" : "Llamada a %@"
           }
         },
         "et" : {
@@ -905,8 +905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ new messages"
+            "state" : "translated",
+            "value" : "%@ mensajes nuevos"
           }
         },
         "et" : {
@@ -1126,6 +1126,131 @@
         }
       }
     },
+    "push.notification.body.connectionAccepted.noUsername" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لديك تواصل جديد"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du har en ny forbindelse"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie haben einen neuen Kontakt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have a new connection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tienes un nuevo contacto"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sul on uus kontakt"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sinulla on uusi kontakti"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez une nouvelle connexion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai una nuova connessione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたは新しい連絡先があります"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turite naują kontaktą"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt een nieuw contact"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masz nowe zaproszenie"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você tem uma nova conexão"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У вас есть новый контакт"
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imaš novo povezavo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni bir bağlantın var"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У вас з'явились нові контакти"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您有一个新的好友"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您有一個新的連絡"
+          }
+        }
+      }
+    },
     "push.notification.body.connectionPending" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1247,6 +1372,131 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@想連絡您"
+          }
+        }
+      }
+    },
+    "push.notification.body.connectionPending.noUsername" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شخص يريد التواصل معك"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nogen ønsker at forbinde sig"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jemand möchte Sie als Kontakt hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone wants to connect"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguien quiere conectarse contigo"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keegi soovib sinuga ühenduda"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joku haluaa luoda kontaktin"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelqu'un souhaite se connecter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcuno vuole connettersi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つながりをリクエストされています"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kažkas nori užmegzti kontaktą"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iemand wil met je verbinden"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ktoś chce się połączyć"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguém quer se conectar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кто-то хочет подключиться"
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nekdo si želi povezati"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birisi bağlanmak istiyor"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хтось був доданий до ваших контактів"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有人想加您为好友"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "某人想要加您為連絡人"
           }
         }
       }
@@ -1405,8 +1655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone created a conversation"
+            "state" : "translated",
+            "value" : "Alguien creó una conversación"
           }
         },
         "et" : {
@@ -1530,8 +1780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone deleted the group"
+            "state" : "translated",
+            "value" : "Alguien eliminó el grupo"
           }
         },
         "et" : {
@@ -2030,8 +2280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Pinged you"
+            "state" : "translated",
+            "value" : "Te ha hecho ping"
           }
         },
         "et" : {
@@ -2155,8 +2405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone removed you"
+            "state" : "translated",
+            "value" : "Alguien te eliminó"
           }
         },
         "et" : {
@@ -2280,8 +2530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone replied to you"
+            "state" : "translated",
+            "value" : "Alguien te respondió"
           }
         },
         "et" : {
@@ -2655,8 +2905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ created a conversation"
+            "state" : "translated",
+            "value" : "%@ creó un chat"
           }
         },
         "et" : {
@@ -2780,8 +3030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ deleted the group"
+            "state" : "translated",
+            "value" : "%@ eliminó el grupo"
           }
         },
         "et" : {
@@ -2905,8 +3155,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ pinged you"
+            "state" : "translated",
+            "value" : "%@ te hizo ping"
           }
         },
         "et" : {
@@ -3155,8 +3405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ turned off the message timer"
+            "state" : "translated",
+            "value" : "%@ apagó el temporizador de mensajes"
           }
         },
         "et" : {
@@ -3280,8 +3530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ set the message timer to %@"
+            "state" : "translated",
+            "value" : "%@ estableció el temporizador de mensajes a %@"
           }
         },
         "et" : {
@@ -3405,8 +3655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared an audio message"
+            "state" : "translated",
+            "value" : "%@ envió un mensaje de audio"
           }
         },
         "et" : {
@@ -3530,8 +3780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a file"
+            "state" : "translated",
+            "value" : "%@ envió un archivo"
           }
         },
         "et" : {
@@ -3655,8 +3905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a location"
+            "state" : "translated",
+            "value" : "%@ envió una ubicación"
           }
         },
         "et" : {
@@ -3780,8 +4030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a picture"
+            "state" : "translated",
+            "value" : "%@ envió una foto"
           }
         },
         "et" : {
@@ -3905,8 +4155,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a video"
+            "state" : "translated",
+            "value" : "%@ envió un vídeo"
           }
         },
         "et" : {
@@ -4155,8 +4405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone turned off the timer"
+            "state" : "translated",
+            "value" : "Alguien apagó el temporizador"
           }
         },
         "et" : {
@@ -4280,8 +4530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone set the timer to %@"
+            "state" : "translated",
+            "value" : "Alguien estableció el temporizador a %@"
           }
         },
         "et" : {
@@ -5030,8 +5280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention: %@"
+            "state" : "translated",
+            "value" : "Mención: %@"
           }
         },
         "et" : {
@@ -5155,8 +5405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention from %@: %@"
+            "state" : "translated",
+            "value" : "Mención de %@: %@"
           }
         },
         "et" : {
@@ -5280,8 +5530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply: %@"
+            "state" : "translated",
+            "value" : "Respuesta: %@"
           }
         },
         "et" : {
@@ -5405,8 +5655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply from %@: %@"
+            "state" : "translated",
+            "value" : "Respuesta de %@: %@"
           }
         },
         "et" : {
@@ -5530,8 +5780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming video call"
+            "state" : "translated",
+            "value" : "Videollamada entrante"
           }
         },
         "et" : {
@@ -5655,8 +5905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling with video"
+            "state" : "translated",
+            "value" : "Llamada %@ con vídeo"
           }
         },
         "et" : {
@@ -5780,8 +6030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ in %@"
+            "state" : "translated",
+            "value" : "%@ en %@"
           }
         },
         "et" : {

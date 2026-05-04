@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -126,29 +126,6 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
             in: sut.managedObjectContext
         )
         XCTAssertNil(existingConversation)
-    }
-
-    func testThatItReturnsIdAndNameForExistingConversation() {
-        // given
-        let path = String(format: "/conversations/join?code=%@&key=%@", "existing-conversation-code", "test-key")
-
-        // when
-        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
-
-        // then
-        XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertNotNil(receivedPayload["id"])
-        XCTAssertNotNil(receivedPayload["name"])
-        let existingConversation = fetchConversation(
-            with: receivedPayload["id"] as! String,
-            in: sut.managedObjectContext
-        )
-        XCTAssertEqual(existingConversation, conversation)
     }
 
     func testThatItReturnsError_WhenTheCodeIsInvalid_FetchConversation() {

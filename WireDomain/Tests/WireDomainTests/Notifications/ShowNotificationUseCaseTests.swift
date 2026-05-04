@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ShowNotificationUseCaseTests: XCTestCase {
     private var sut: ShowNotificationUseCase!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var databaseSaver: MockDatabaseSaverProtocol!
     private var didDisplayNotification = false
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        databaseSaver = MockDatabaseSaverProtocol()
 
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let url = applicationSupport.appendingPathComponent(
@@ -40,7 +42,12 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             contentHandler: { _ in self.didDisplayNotification = true },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
-            accountManager: AccountManager(sharedDirectory: url)
+            accountManager: try AccountManager(
+                currentAppVersion: "1.0.0",
+                directory: url,
+                defaults: .temporary()
+            ),
+            databaseSaver: databaseSaver
         )
     }
 
@@ -48,6 +55,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         sut = nil
         conversationLocalStore = nil
         didDisplayNotification = false
+        databaseSaver = nil
     }
 
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
@@ -59,6 +67,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         ]
 
         conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
 
         // When
         try await sut.invoke(
@@ -67,6 +76,8 @@ final class ShowNotificationUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(didDisplayNotification, true)
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.unreadConversationCount_Invocations.count, 1)
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullEventsUseCaseTests: XCTestCase {
     private var sut: PullEventsUseCase!
@@ -46,7 +46,7 @@ final class PullEventsUseCaseTests: XCTestCase {
     func testStartsSync_It_Invokes_Methods() async throws {
 
         // Mock
-        eventsSync.pull_MockValue = AsyncStream {
+        eventsSync.pullPublicKeys_MockValue = AsyncStream {
             [
                 UpdateEvent.user(.pushRemove),
                 UpdateEvent.user(.pushRemove)
@@ -54,10 +54,10 @@ final class PullEventsUseCaseTests: XCTestCase {
         }
 
         // When
-        let asyncStream = try await sut.invoke()
+        let asyncStream = try await sut.invoke(publicKeys: nil)
 
         // Then
-        XCTAssertEqual(eventsSync.pull_Invocations.count, 1)
+        XCTAssertEqual(eventsSync.pullPublicKeys_Invocations.count, 1)
         let containsEvents = await asyncStream.contains(
             [.user(.pushRemove), .user(.pushRemove)]
         )
@@ -73,11 +73,11 @@ final class PullEventsUseCaseTests: XCTestCase {
 
         updateEventsLocalStore.lastEventID_MockValue = .some(nil)
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
-        eventsSync.pull_MockError = MockError.someError
+        eventsSync.pullPublicKeys_MockError = MockError.someError
 
         do {
             // When
-            _ = try await sut.invoke()
+            _ = try await sut.invoke(publicKeys: nil)
 
         } catch {
             // Then
