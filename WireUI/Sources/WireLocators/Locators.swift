@@ -236,6 +236,7 @@ public enum Locators {
         case cancel
         case usernameCell
         case createNewChannelButton
+        case userCellInContactList
     }
 
     public enum OnMyiPhonePage: String {

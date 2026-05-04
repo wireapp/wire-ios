@@ -26,7 +26,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
 
         // GIVEN
         let message = UserGenerator.generateRandomMessage()
-        let (teamOwner, teamMembers, _, _) = try await userHelper
+        let (_, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1
             )
@@ -35,9 +35,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
-            .tapSearchBox()
-            .searchUserByUserHandle(teamOwner.username)
-            .tapSearchedUserCell()
+            .openUserDetailsInContactList()
             .tapStartConversationButton()
             .sendMessage(message)
             .recordAudioAndSend()
@@ -124,7 +122,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
     func testSendImageAndVideoInOneOnOneConversation_TC_8820_8822() async throws {
 
         // GIVEN
-        let (teamOwner, teamMembers, _, _) = try await userHelper
+        let (_, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 1
             )
@@ -133,9 +131,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
-            .tapSearchBox()
-            .searchUserByUserHandle(teamOwner.username)
-            .tapSearchedUserCell()
+            .openUserDetailsInContactList()
             .tapStartConversationButton()
             .openPhotosAndGrantPermission()
             .selectImageAndSend()
