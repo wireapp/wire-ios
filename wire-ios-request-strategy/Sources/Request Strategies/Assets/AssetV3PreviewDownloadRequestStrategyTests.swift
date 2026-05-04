@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 import WireTransport
+
 @testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(
@@ -33,11 +35,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     var sut: AssetV3PreviewDownloadRequestStrategy!
     var conversation: ZMConversation!
 
-    var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
+    var apiVersion: APIVersion = .v0
 
     typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
 
@@ -48,12 +46,11 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             self.sut = AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: self.syncMOC,
-                applicationStatus: self.mockApplicationStatus
+                applicationStatus: self.mockApplicationStatus,
+                localDomain: "wire.com"
             )
             self.conversation = self.createConversation()
         }
-
-        apiVersion = .v0
     }
 
     override func tearDown() {
@@ -80,7 +77,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             UUID.create().transportString()
         )
         var uploaded = GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: otrKey, sha256: sha),
             nonce: message.nonce!,
             expiresAfter: conversation.activeMessageDestructionTimeoutValue
         )
@@ -109,19 +106,19 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             UUID.create().transportString()
         )
 
-        let remote = WireProtos.Asset.RemoteData(
+        let remote = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: otr,
             sha256: sha,
             assetId: assetId,
             assetToken: token,
             assetDomain: domain
         )
-        let preview = WireProtos.Asset.Preview.with {
+        let preview = GenericMessageProtocol.Asset.Preview.with {
             $0.size = 512
             $0.mimeType = "image/jpg"
             $0.remote = remote
         }
-        let asset = WireProtos.Asset(original: nil, preview: preview)
+        let asset = GenericMessageProtocol.Asset(original: nil, preview: preview)
 
         let previewMeta = (otr, sha, assetId, token, domain)
         return (GenericMessage(content: asset, nonce: nonce), previewMeta)

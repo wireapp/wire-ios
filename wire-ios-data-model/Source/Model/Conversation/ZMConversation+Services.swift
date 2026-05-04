@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,10 @@
 import Foundation
 
 public extension ZMConversation {
+
     class func existingConversation(
         in moc: NSManagedObjectContext,
-        service: ServiceUser,
+        service: UserType,
         team: Team?
     ) -> ZMConversation? {
         guard let team else { return nil }
@@ -61,4 +62,5 @@ public extension ZMConversation {
 
         return result.first as? ZMConversation
     }
+
 }

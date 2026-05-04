@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,27 +55,34 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
-    var mockDevice: MockDeviceAbstraction!
+    var mockDevice: DeviceAbstractionMock!
     var mockApplication: MockApplication!
     var mockConversationRoot: MockConversationRootViewController!
     var mockConversationList: MockConversationListViewController!
 
     @MainActor
     override func setUp() {
-        super.setUp()
 
         mockDevice = .init()
         mockDevice.userInterfaceIdiom = .pad
         mockApplication = MockApplication()
 
         mockConversationList = MockConversationListViewController()
-        sutList = NetworkStatusViewController(device: mockDevice, application: mockApplication)
+        sutList = NetworkStatusViewController(
+            device: mockDevice,
+            application: mockApplication,
+            userSession: UserSessionMock()
+        )
         mockConversationList.networkStatusViewController = sutList
         mockConversationList.addToSelf(sutList)
         sutList.delegate = mockConversationList
 
         mockConversationRoot = MockConversationRootViewController()
-        sutRoot = NetworkStatusViewController(device: mockDevice, application: mockApplication)
+        sutRoot = NetworkStatusViewController(
+            device: mockDevice,
+            application: mockApplication,
+            userSession: UserSessionMock()
+        )
         mockConversationRoot.networkStatusViewController = sutRoot
         mockConversationRoot.addToSelf(sutRoot)
         sutRoot.delegate = mockConversationRoot
@@ -88,8 +95,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         mockApplication = nil
         mockConversationRoot = nil
         mockConversationList = nil
-
-        super.tearDown()
     }
 
     @MainActor
@@ -235,7 +240,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 
 final class NetworkStatusViewControllerRetainTests: XCTestCase {
 
-    weak var sut: NetworkStatusViewController! = nil
+    weak var sut: NetworkStatusViewController!
 
     override func tearDown() {
         sut = nil
@@ -245,7 +250,8 @@ final class NetworkStatusViewControllerRetainTests: XCTestCase {
     func testNetworkStatusViewControllerIsNotRetainedAfterPerformIsCalled() {
         autoreleasepool {
             // GIVEN
-            var networkStatusViewController: NetworkStatusViewController! = NetworkStatusViewController()
+            var networkStatusViewController: NetworkStatusViewController! =
+                NetworkStatusViewController(userSession: UserSessionMock())
             sut = networkStatusViewController
 
             // WHEN

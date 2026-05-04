@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,32 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
-final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCellDescription>, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
+
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
 
-    struct Configuration {
+    /// Override the base property to identify this as a ping cell.
+    override var shouldRemoveInnerPaddingForBubbles: Bool {
+        true
+    }
+
+    struct Configuration: Equatable {
         let pingColor: UIColor
         let pingText: NSAttributedString
         var message: ZMConversationMessage?
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.pingColor == rhs.pingColor &&
+                lhs.pingText == rhs.pingText
+        }
+
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -128,21 +142,23 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationPingCell
-    let configuration: ConversationPingCell.Configuration
 
-    weak var message: ZMConversationMessage?
+    var configuration: View.Configuration
+
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool {
-        get { false }
-        set { /* pings doesn't support the ephemeral timer */ }
-    }
-
-    var topMargin: Float = 0
-    let isFullWidth: Bool = true
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

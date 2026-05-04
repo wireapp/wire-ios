@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,47 +22,60 @@ import WireDesign
 
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
 
-    typealias View = ConversationStartedSystemMessageCell
+    typealias View = ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.selectedUsers = Self.makeModel(message: message).selectedUsers
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 16
+    var bottomMargin: CGFloat = -8
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     var conversationObserverToken: Any?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+    init(message: ZMConversationMessage) {
+        self.configuration = Self.makeConfiguration(message: message)
+        self.actionController = nil
+
+        super.init()
+
+        accessibilityLabel = configuration.message.string
+    }
+
+    private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {
         let color = LabelColors.textDefault
         let iconColor = IconColors.backgroundDefault
-        let model = ParticipantsCellViewModel(
+        return ParticipantsCellViewModel(
             font: .mediumFont,
             largeFont: .largeSemiboldFont,
             textColor: color,
             iconColor: iconColor,
             message: message
         )
+    }
 
-        self.actionController = nil
-        self.configuration = View.Configuration(
+    private static func makeConfiguration(message: ZMConversationMessage) -> View.Configuration {
+        let model = makeModel(message: message)
+        return View.Configuration(
             title: model.attributedHeading(),
             message: model.attributedTitle() ?? NSAttributedString(string: ""),
             selectedUsers: model.selectedUsers,
             icon: model.image()
         )
-        super.init()
-
-        accessibilityLabel = configuration.message.string
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     /// Types of flow provided by the view controller.
     enum FlowType {
         case login(AuthenticationPrefilledCredentials?)
-        case registration
+        case registration(AuthenticationPrefilledCredentials?)
         case reauthentication(AuthenticationPrefilledCredentials?)
     }
 
@@ -103,9 +103,10 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
-        case .registration:
+        case let .registration(credentials):
             let description = PersonalRegistrationStepDescription()
             self.init(description: description, contentCenterConstraintActivation: true)
+            self.prefilledCredentials = credentials
             self.shouldUseScrollView = false
         }
 
@@ -393,7 +394,11 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     private func updatePrefilledCredentials() {
         guard let prefilledCredentials else { return }
-        emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
+        if isRegistering, let email = prefilledCredentials.credentials.emailAddress, !email.isEmpty {
+            emailInputField.text = email
+        } else {
+            emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
+        }
     }
 
     override func clearInputFields() {
@@ -430,6 +435,20 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
         valueSubmitted(emailInputField.input)
         return true
+    }
+
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        guard
+            DeveloperFlag.useWireAuthentication.isOn,
+            textField == emailInputField,
+            isRegistering,
+            let prefilledCredentials,
+            prefilledCredentials.credentials.emailAddress != nil
+        else {
+            return true
+        }
+
+        return false
     }
 
     // MARK: - Email / Password Input

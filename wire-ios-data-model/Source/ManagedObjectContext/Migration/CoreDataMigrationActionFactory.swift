@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ enum CoreDataMigrationActionFactory {
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
         -> CoreDataMigrationAction? {
         switch destinationVersion {
+
         case .v111:
             RemoveDuplicatePreAction()
 
@@ -67,6 +68,10 @@ enum CoreDataMigrationActionFactory {
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
         -> CoreDataMigrationAction? {
         switch destinationVersion {
+
+        case .v131:
+            SetCorrectUserTypeAction()
+
         case .v120:
             ForceSyncResourcesPostAction()
 

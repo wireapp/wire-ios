@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireDataModel
 
 /// A feature fetched locally
-struct LocalFeature<T: Decodable> {
-    let status: Feature.Status
-    let config: T?
+public struct LocalFeature<T: Decodable> {
+    public let status: Feature.Status
+    public let config: T?
 }

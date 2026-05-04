@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ public extension ZMUser {
                 #keyPath(ZMUser.handle),
                 query.strippingLeadingAtSign()
             )
-            allPredicates.append([namePredicate, handlePredicate].compactMap { $0 })
+            allPredicates.append([namePredicate, handlePredicate].compactMap(\.self))
         }
 
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }

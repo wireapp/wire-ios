@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;
+@protocol ZMSGroupQueue;
 
 FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
@@ -69,7 +70,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
 
-@property (nonatomic, readonly) UserCredentials *loginCredentials;
+@property (nonatomic) UserCredentials *loginCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -77,7 +78,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
 @property (nonatomic, readonly) NSUUID *authenticatedUserIdentifier;
-@property (nonatomic) NSData *profileImageData;
 
 @property (nonatomic) NSData *authenticationCookieData;
 
@@ -103,6 +103,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 - (void)didFailLoginWithEmailBecausePendingValidation;
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials;
 - (void)didFailLoginBecauseAccountSuspended;
+- (void)didFailLoginBecauseTooManyRequests;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsRequired;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsInvalid;
 - (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials;

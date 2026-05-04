@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,11 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
             toggleCell.switchView.isOn = boolValue
             toggleCell.switchView.accessibilityLabel = identifier
             toggleCell.switchView.isEnabled = settingsProperty.enabled
+            if #available(iOS 17.0, *) {
+                toggleCell.accessibilityTraits = .toggleButton
+            } else {
+                toggleCell.accessibilityTraits = .button
+            }
         }
     }
 

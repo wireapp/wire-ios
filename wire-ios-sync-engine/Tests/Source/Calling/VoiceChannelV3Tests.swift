@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,10 @@ class VoiceChannelV3Tests: MessagingTest {
             clientId: selfClientId,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         uiMOC.zm_callCenter = wireCallCenterMock
@@ -72,7 +75,7 @@ class VoiceChannelV3Tests: MessagingTest {
     func testThatItAnswers_whenTheresAnIncomingCall() {
         // given
         wireCallCenterMock?.setMockCallState(
-            .incoming(video: false, shouldRing: false, degraded: false),
+            .incoming(isVideo: false, shouldRing: false, degraded: false),
             conversationId: conversation!.avsIdentifier!,
             callerId: AVSIdentifier.stub,
             isVideo: false
@@ -91,7 +94,7 @@ class VoiceChannelV3Tests: MessagingTest {
         wireCallCenterMock?.setMockCallState(
             .established,
             conversationId: conversation!.avsIdentifier!,
-            callerId: caller.avsIdentifier,
+            callerId: caller.avsIdentifier(isFederationEnabled: false),
             isVideo: false
         )
         let quality = NetworkQuality.poor
@@ -100,7 +103,7 @@ class VoiceChannelV3Tests: MessagingTest {
         // when
 
         wireCallCenterMock?.handleNetworkQualityChange(
-            conversationId: conversation!.avsIdentifier!,
+            conversationId: conversation!.avsIdentifier!.serialized,
             userId: caller.userId,
             clientId: caller.clientId,
             quality: quality
@@ -162,7 +165,11 @@ class VoiceChannelV3Tests: MessagingTest {
         caller.domain = "wire.com"
 
         wireCallCenterMock?.setMockCallInitiator(
-            callerId: AVSIdentifier(identifier: caller.remoteIdentifier, domain: caller.domain),
+            callerId: AVSIdentifier(
+                identifier: caller.remoteIdentifier,
+                domain: caller.domain,
+                isFederationEnabled: false
+            ),
             conversationId: conversation!.avsIdentifier!
         )
 

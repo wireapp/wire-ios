@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
 
         userSession.enqueue {
             conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeout), for: .selfUser)
-            self.updateRightAccessoryView()
+            self.updateButtonStates()
         }
     }
 
@@ -163,7 +163,7 @@ extension ConversationInputBarViewController {
     var ephemeralState: EphemeralState {
         var state = EphemeralState.none
 
-        if !sendButtonState.ephemeral {
+        if !inputBarButtonState.ephemeral {
             state = .none
         } else if conversation.hasSyncedMessageDestructionTimeout {
             state = .conversation

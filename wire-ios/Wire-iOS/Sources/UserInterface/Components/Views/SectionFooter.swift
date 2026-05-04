@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,14 @@ import WireDesign
 final class SectionFooter: UICollectionReusableView {
 
     private let footerView = SectionFooterView()
+    static let reuseIdentifier = "SectionFooter"
 
     var titleLabel: UILabel {
         footerView.titleLabel
+    }
+
+    var linkTextView: UITextView {
+        footerView.linkTextView
     }
 
     override init(frame: CGRect) {
@@ -43,7 +48,7 @@ final class SectionFooter: UICollectionReusableView {
         collectionView.register(
             SectionFooter.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: "SectionFooter"
+            withReuseIdentifier: reuseIdentifier
         )
     }
 }

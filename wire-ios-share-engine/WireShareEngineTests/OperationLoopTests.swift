@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ import XCTest
 
 final class OperationLoopTests: ZMTBaseTest {
 
-    var coreDataStack: CoreDataStack! = nil
-    var sut: OperationLoop! = nil
+    var coreDataStack: CoreDataStack!
+    var sut: OperationLoop!
 
     var uiMoc: NSManagedObjectContext {
         coreDataStack.viewContext
@@ -37,8 +37,12 @@ final class OperationLoopTests: ZMTBaseTest {
         coreDataStack.syncContext
     }
 
-    override func setUp() {
-        super.setUp()
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMoc.dispatchGroupContext?.groups ?? []) + (syncMoc.dispatchGroupContext?.groups ?? [])
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
         let accountId = UUID()
         let directoryURL = try! FileManager.default.url(
             for: .cachesDirectory,
@@ -52,11 +56,12 @@ final class OperationLoopTests: ZMTBaseTest {
             account: account,
             applicationContainer: directoryURL,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+
+        try await coreDataStack.load()
 
         self.coreDataStack = coreDataStack
         sut = OperationLoop(

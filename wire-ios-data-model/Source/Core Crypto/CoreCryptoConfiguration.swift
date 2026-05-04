@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,8 @@ import WireSystem
 public struct CoreCryptoConfiguration {
 
     public let path: String
-    public let key: String
-    public let clientID: String
-
-    public var clientIDBytes: ClientId? {
-        .init(from: clientID)
-    }
-
+    public let key: Data
+    public let clientID: WireCoreCryptoUniffi.ClientId
 }
 
 public class CoreCryptoConfigProvider {
@@ -38,41 +33,21 @@ public class CoreCryptoConfigProvider {
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
+    private let coreCryptoPathComponent = "corecrypto"
 
     // MARK: - Life cycle
 
-    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()) {
+    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider) {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 
     // MARK: - Configuration
 
-    public func createFullConfiguration(
-        sharedContainerURL: URL,
-        selfUser: ZMUser,
-        createKeyIfNeeded: Bool
-    ) throws -> CoreCryptoConfiguration {
-
-        let qualifiedClientID = try clientID(of: selfUser)
-
-        let initialConfig = try createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUser.remoteIdentifier,
-            createKeyIfNeeded: createKeyIfNeeded
-        )
-
-        return CoreCryptoConfiguration(
-            path: initialConfig.path,
-            key: initialConfig.key,
-            clientID: qualifiedClientID
-        )
-    }
-
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
-        createKeyIfNeeded: Bool
-    ) throws -> (path: String, key: String) {
+        allowKeyCreation: Bool
+    ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: userID,
@@ -80,45 +55,28 @@ public class CoreCryptoConfigProvider {
         )
 
         try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
+            let key = try await coreCryptoKeyProvider.coreCryptoKey(
+                allowCreation: allowKeyCreation,
+                path: coreCryptoDirectory.path
+            )
             return (
                 path: coreCryptoDirectory.path,
-                key: key.base64EncodedString()
+                key: key
             )
         } catch {
-            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
+            WireLogger.coreCrypto.error(
+                "Failed to get core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
-    }
-
-    public func clientID(of selfUser: ZMUser) throws -> String {
-        guard
-            let selfClient = selfUser.selfClient(),
-            let clientID = MLSClientID(userClient: selfClient)?.rawValue
-        else {
-            throw ConfigurationSetupFailure.failedToGetClientId
-        }
-
-        return clientID
     }
 
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
-}
-
-public extension ClientId {
-
-    init?(from string: String) {
-        guard let data = string.data(using: .utf8) else {
-            return nil
-        }
-
-        self = data
-    }
-
 }

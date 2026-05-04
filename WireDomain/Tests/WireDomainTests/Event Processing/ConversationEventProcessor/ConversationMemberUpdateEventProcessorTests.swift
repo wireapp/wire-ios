@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
@@ -103,11 +103,11 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let event = ConversationMemberUpdateEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             timestamp: .now,
             memberChange: .init(
-                id: UserID(uuid: UUID(), domain: "domain.com"),
+                id: UserID(id: UUID(), domain: "domain.com"),
                 newRoleName: "",
                 newMuteStatus: nil,
                 muteStatusReferenceDate: .now,

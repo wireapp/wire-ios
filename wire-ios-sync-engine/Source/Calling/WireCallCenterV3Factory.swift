@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,16 @@ import WireDataModel
 
 /// Creates call centers.
 
-@objcMembers
-public class WireCallCenterV3Factory: NSObject {
+public enum WireCallCenterV3Factory {
 
     /// The class to use when creating a call center,
     public static var wireCallCenterClass: WireCallCenterV3.Type = WireCallCenterV3.self
 
     /// The class to use when creating a voice channel.
     public static var voiceChannelClass: VoiceChannelV3.Type = VoiceChannelV3.self
+
+    /// The notification center used for posting notifications.
+    public static var notificationCenter: NotificationCenter = .default
 
     /// Creates a call center with the specified information.
     /// - parameter userId: The identifier of the current signed-in user.
@@ -38,14 +40,15 @@ public class WireCallCenterV3Factory: NSObject {
     /// - parameter transport: The object that performs network requests when the call center requests them.
     /// - returns: The call center to use for the given configuration.
 
-    public class func callCenter(
+    public static func callCenter(
         withUserId userId: AVSIdentifier,
         clientId: String,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) -> WireCallCenterV3 {
-
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
         } else {
@@ -54,7 +57,10 @@ public class WireCallCenterV3Factory: NSObject {
                 clientId: clientId,
                 uiMOC: uiMOC,
                 flowManager: flowManager,
-                transport: transport
+                transport: transport,
+                notificationCenter: notificationCenter,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

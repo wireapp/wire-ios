@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ enum MessageAction: CaseIterable, Equatable {
         .visitLink,
         .digitallySign,
         .copy,
+        .collapse,
         .reply,
         .openDetails,
         .edit,
@@ -39,7 +40,6 @@ enum MessageAction: CaseIterable, Equatable {
         .sketchEmoji,
         .present,
         .openQuote,
-        .resetSession,
         .delete,
         .react("❤️")
     ]
@@ -61,9 +61,9 @@ enum MessageAction: CaseIterable, Equatable {
         // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
         present,
         openQuote,
-        resetSession,
         react(Emoji.ID),
-        visitLink
+        visitLink,
+        collapse
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -96,9 +96,10 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.Image.addEmoji
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
+        case .collapse:
+            return MessageActionLocale.collapse
         case .present,
              .openQuote,
-             .resetSession,
              .react:
             return nil
         }
@@ -135,8 +136,18 @@ enum MessageAction: CaseIterable, Equatable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession,
-             .react:
+             .react,
+             .collapse:
+            nil
+        }
+    }
+
+    var image: UIImage? {
+        switch self {
+        case .collapse:
+            UIImage(resource: .collapse)
+                .resizeMaintainingAspectRatio(targetSize: StyleKitIcon.Size.small.cgSize)
+        default:
             nil
         }
     }
@@ -174,9 +185,9 @@ enum MessageAction: CaseIterable, Equatable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession,
              .react,
-             .visitLink:
+             .visitLink,
+             .collapse:
             nil
         }
     }
@@ -209,11 +220,12 @@ enum MessageAction: CaseIterable, Equatable {
             #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
             #selector(ConversationMessageActionController.visitLink)
+        case .collapse:
+            #selector(ConversationMessageActionController.collapse)
         case .present,
              .sketchDraw,
              .sketchEmoji,
-             .openQuote,
-             .resetSession:
+             .openQuote:
             // no message related actions are not handled in ConversationMessageActionController
             nil
         }
@@ -235,6 +247,8 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageAction.RevealButton.description
         case .delete:
             return MessageAction.DeleteButton.description
+        case .collapse:
+            return MessageAction.CollapseButton.description
         default:
             return nil
         }

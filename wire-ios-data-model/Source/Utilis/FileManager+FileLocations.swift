@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public extension FileManager {
 
     /// Returns the URL for caches appending the accountIdentifier if specified
     @objc
-    func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
+    func cachesURL(for appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
         guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
         else { return nil }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
@@ -66,6 +66,13 @@ public extension FileManager {
             )
         }
         return url
+    }
+
+    static let sharedLogsDirectoryName = "Logs"
+
+    func sharedLogsDirectoryURL(for appGroupIdentifier: String) -> URL? {
+        cachesURL(for: appGroupIdentifier, accountIdentifier: nil)?
+            .appending(path: Self.sharedLogsDirectoryName, directoryHint: .isDirectory)
     }
 
 }

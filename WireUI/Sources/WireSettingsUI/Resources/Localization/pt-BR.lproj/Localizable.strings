@@ -1,0 +1,69 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"backup.export.action" = "Fazer backup agora";
+"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
+
+"backup.import.action" = "Restaurar de um backup";
+"backup.import.description" = "O histórico existente neste dispositivo permanece e será concluído pelo novo backup. Você pode restaurar o histórico de todos os seus dispositivos e plataformas diferentes, mas não de outra conta.";
+
+"exportBackup.title" = "Definir senha";
+"exportBackup.description" = "O backup será compactado. Se você usar uma senha, o Wire também criptografa o arquivo de backup. Certifique-se de armazenar a senha em um lugar seguro.";
+"exportBackup.button" = "Fazer backup agora";
+"exportBackup.setBackupPassword.title" = "Senha (OPCIONAL)";
+"exportBackup.setBackupPassword.placeholder" = "Insira a senha";
+"exportBackup.setBackupPassword.rules" = "Use pelo menos 8 caracteres, com uma letra minúscula, uma letra maiúscula, um número e um caractere especial.";
+
+"exportBackup.cancel.title" = "Cancelar";
+"exportBackup.errorAlert.title" = "Algo deu errado";
+"exportBackup.errorAlert.message" = "O backup não pôde ser criado. Tente novamente ou entre em contato com o suporte do Wire.";
+"exportBackup.errorAlert.ok" = "OK";
+
+"exportBackup.creatingBackup.title" = "Criando backup";
+"exportBackup.creatingBackup.saving" = "Salvando histórico de conversas…";
+"exportBackup.creatingBackup.success" = "Backup criado com sucesso.";
+"exportBackup.creatingBackup.saveButton.title" = "Salvar arquivo";
+
+"importBackup.cancel.title" = "Cancelar";
+
+"importBackup.overwriteConfirmation.title" = "Arquivo sobrescreve seu histórico";
+"importBackup.overwriteConfirmation.message" = "O conteúdo do backup substituirá o histórico atual de conversas neste dispositivo.";
+"importBackup.overwriteConfirmation.cancel" = "Cancelar";
+"importBackup.overwriteConfirmation.proceed" = "Continuar";
+
+"importBackup.alert.ok" = "OK";
+"importBackup.alert.success.message" = "Seu histórico foi restaurado.";
+"importBackup.alert.genericError.title" = "Algo deu errado";
+"importBackup.alert.genericError.message" = "Seu histórico não pôde ser restaurado. Tente novamente ou entre em contato com o suporte ao cliente Wire.";
+"importBackup.alert.incompatibleBackupError.title" = "Backup Incompatível";
+"importBackup.alert.incompatibleBackupError.message" = "Este backup foi criado por uma versão mais recente ou desatualizada do Wire e não pode ser restaurado aqui.";
+"importBackup.alert.wrongFileError.title" = "Arquivo de backup errado";
+"importBackup.alert.wrongFileError.message" = "Você não pode restaurar o histórico de uma conta diferente.";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
+
+"importBackup.enterPassword.title" = "Insira a senha";
+"importBackup.enterPassword.description" = "Este backup está protegido por senha.";
+"importBackup.enterPassword.textField.title" = "Senha";
+"importBackup.enterPassword.textField.placeholder" = "Insira a senha";
+"importBackup.enterPassword.wrongPassword" = "Senha errada. Verifique o que digitou e tente novamente";
+"importBackup.enterPassword.button.title" = "Continuar";
+
+"importBackup.restoringHistory.title" = "Restaurando histórico…";
+"importBackup.loadingBackup.message" = "Loading backup…";
+"importBackup.restoringHistory.message" = "Carregando conversas…";

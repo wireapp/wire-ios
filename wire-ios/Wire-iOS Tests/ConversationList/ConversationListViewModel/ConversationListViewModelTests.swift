@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,8 +54,9 @@ final class ConversationListViewModelTests: XCTestCase {
     // Constants for section indices
     let sectionGroups = 0
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
 
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
@@ -63,7 +64,7 @@ final class ConversationListViewModelTests: XCTestCase {
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         mockConversation = ZMConversation.createOtherUserConversation(
             moc: coreDataFixture.uiMOC,
             otherUser: coreDataFixture.otherUser

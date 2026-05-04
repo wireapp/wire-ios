@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
@@ -36,6 +37,7 @@ final class ConversationListContentController: UICollectionViewController {
     private let conversationListCoordinator: ConversationListCoordinator
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -50,13 +52,15 @@ final class ConversationListContentController: UICollectionViewController {
     private var token: NSObjectProtocol?
 
     let userSession: UserSession
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     init<ConversationListCoordinator>(
         userSession: UserSession,
         conversationListCoordinator: ConversationListCoordinator,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        zClientViewController: ZClientViewController?
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        zClientViewController: ZClientViewController
     ) where
         ConversationListCoordinator: ConversationListCoordinatorProtocol,
         ConversationListCoordinator.ConversationModel == ZMConversation,
@@ -66,7 +70,9 @@ final class ConversationListContentController: UICollectionViewController {
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.zClientViewController = zClientViewController
+        self.wireMessagingFactory = zClientViewController.wireMessagingFactory
 
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
@@ -254,17 +260,6 @@ final class ConversationListContentController: UICollectionViewController {
             return nil
         }
 
-        let previewProvider: UIContextMenuContentPreviewProvider = {
-            ConversationPreviewViewController(
-                conversation: conversation,
-                presentingViewController: self,
-                sourceView: collectionView.cellForItem(at: indexPath)!,
-                userSession: self.userSession,
-                mainCoordinator: self.mainCoordinator,
-                selfProfileUIBuilder: self.selfProfileUIBuilder
-            )
-        }
-
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
                 UIAction(title: action.title, image: nil) { _ in
@@ -307,6 +302,7 @@ final class ConversationListContentController: UICollectionViewController {
                withReuseIdentifier: CellReuseIdConnectionRequests,
                for: indexPath
            ) as? ConnectRequestsCell {
+            labelCell.setupConnectRequestsCell(userSession: userSession)
             cell = labelCell
         } else if item is ZMConversation,
                   let listCell = collectionView.dequeueReusableCell(
@@ -321,12 +317,6 @@ final class ConversationListContentController: UICollectionViewController {
             cell = listCell
         } else {
             fatal("Unknown cell type")
-        }
-
-        if let cell = cell as? SectionListCellType {
-            cell.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-            cell.obfuscatedSectionName = listViewModel.obfuscatedSectionName(of: indexPath.section)
-            cell.cellIdentifier = "conversation_list_cell"
         }
 
         cell.autoresizingMask = .flexibleWidth
@@ -459,7 +449,9 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             sourceView: collectionView.cellForItem(at: indexPath)!,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
+            wireMessagingFactory: wireMessagingFactory
         )
     }
 }
@@ -480,7 +472,11 @@ extension ConversationListContentController: ConversationListCellDelegate {
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
         guard let conversation = cell.conversation as? ZMConversation else { return }
 
-        startCallController = ConversationCallController(conversation: conversation, target: self)
+        startCallController = ConversationCallController(
+            conversation: conversation,
+            target: self,
+            userSession: userSession
+        )
         startCallController?.joinCall()
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process feature config update events.
-
-protocol FeatureConfigUpdateEventProcessorProtocol {
-
-    /// Process a feature config update event.
-    ///
-    /// - Parameter event: A feature config update event.
-
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws
-
-}
+import WireNetwork
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
     let repository: any FeatureConfigRepositoryProtocol
 
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws {
-        try await repository.updateFeatureConfig(event.featureConfig)
+    func processEvent(_ event: FeatureConfigUpdateEvent) async {
+        await repository.updateFeatureConfig(event.featureConfig)
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import UIKit
 import WireDesign
+import WireSyncEngine
+import WireUtilities
 
 final class ReplyRoundCornersView: UIControl {
     // MARK: - Properties
@@ -45,7 +47,7 @@ final class ReplyRoundCornersView: UIControl {
     // MARK: Setup Subviews and Constraints
 
     private func setupSubviews() {
-        layer.cornerRadius = 8
+        layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         layer.borderWidth = 1
         layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
         layer.masksToBounds = true

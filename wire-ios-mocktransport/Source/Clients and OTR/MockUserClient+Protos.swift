@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 public protocol OtrMessage {
     var sender: Proteus_ClientId { get }
@@ -72,7 +72,7 @@ extension MockUserClient {
                 }
                 return Proteus_ClientEntry.with {
                     $0.client = clientId
-                    $0.text = MockUserClient.encrypted(data: plainText, from: self, to: client)
+                    $0.text = plainText
                 }
             }
 

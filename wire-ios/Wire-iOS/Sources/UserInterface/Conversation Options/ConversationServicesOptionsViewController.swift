@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,10 +36,17 @@ final class ConversationServicesOptionsViewController: UIViewController,
         wr_supportedInterfaceOrientations
     }
 
-    convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
+    convenience init(
+        conversation: ZMConversation,
+        userSession: ZMUserSession,
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
+    ) {
         let configuration = ZMConversation.OptionsConfigurationContainer(
             conversation: conversation,
-            userSession: userSession
+            userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         self.init(
             viewModel: .init(configuration: configuration)
@@ -57,7 +64,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        setupNavigationBarTitle(L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.AppsOptionsCell.title.capitalized)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description)

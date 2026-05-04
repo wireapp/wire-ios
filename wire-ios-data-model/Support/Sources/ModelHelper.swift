@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireDataModel
 
 /// A helper object to make it easy to create and relate model objects.
 
-public struct ModelHelper {
+public struct ModelHelper: Sendable {
 
     public init() {}
 
@@ -277,7 +277,6 @@ public struct ModelHelper {
     ) -> (ZMConnection, ZMConversation) {
         let connection = ZMConnection.insertNewObject(in: context)
         connection.to = user
-        connection.status = status
         connection.message = "Connect to me"
         connection.lastUpdateDate = .now
 
@@ -286,6 +285,13 @@ public struct ModelHelper {
         conversation.remoteIdentifier = UUID()
         conversation.domain = "local@domain.com"
         user.oneOnOneConversation = conversation
+
+        let selfUser = ZMUser.selfUser(in: context)
+        ParticipantRole.create(managedObjectContext: context, user: selfUser, conversation: conversation)
+        ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+
+        // Setting `status` late as it also updates `conversation.conversationType` to be correct.
+        connection.status = status
 
         return (connection, conversation)
     }
@@ -354,7 +360,7 @@ public struct ModelHelper {
     @discardableResult
     public func createMLSConversation(
         id: UUID = UUID(),
-        domain: String? = "domain.com",
+        domain: String = "domain.com",
         mlsGroupID: MLSGroupID? = nil,
         mlsStatus: MLSGroupStatus = .ready,
         conversationType: ZMConversationType = .group,

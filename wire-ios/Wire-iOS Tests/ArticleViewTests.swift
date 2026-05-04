@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,19 @@
 import WireDataModel
 import WireLinkPreview
 import XCTest
+
 @testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: Wire.MessageActionsViewController
-    ) {}
+    func conversationMessageCell(
+        _ contentView: UIView,
+        present viewController: UIViewController
+    ) {
+        // no-op
+    }
 
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,
@@ -71,6 +74,10 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
         for message: ZMConversationMessage,
         view: UIView
     ) {
+        // no-op
+    }
+
+    func conversationMessageContentDidChangeSize() {
         // no-op
     }
 }
@@ -327,14 +334,14 @@ final class ArticleViewTests: XCTestCase {
     ) {
 
         verifyInAllPhoneWidths(
-            createSut: {
+            createSut: { _ in
                 self.sut = ArticleView(withImagePlaceholder: true)
                 self.sut.translatesAutoresizingMaskIntoConstraints = false
                 self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
                 XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
                 return self.sut
-            } as () -> UIView,
+            } as (CGFloat) -> UIView,
             file: file,
             testName: testName,
             line: line

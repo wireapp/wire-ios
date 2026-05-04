@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,19 +21,31 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
+import WireMessagingDomain
+import WireSyncEngine
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
     let numberOfLinesLimit: Int = 4
 
-    struct Configuration {
+    struct Configuration: Equatable {
         enum Content {
             case text(NSAttributedString)
             case imagePreview(thumbnail: PreviewableImageResource, isVideo: Bool)
+            case multipart(text: NSAttributedString?, attachments: [MultipartMessageData.Attachment])
         }
 
         var quotedMessage: ZMConversationMessage?
+        let accentColor: AccentColor
+        let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
+        weak var delegate: ConversationMessageCellDelegate?
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.accentColor == rhs.accentColor &&
+                lhs.quotedMessage == rhs.quotedMessage
+        }
 
         var showDetails: Bool {
             guard let message = quotedMessage,
@@ -105,9 +117,30 @@ final class ConversationReplyContentView: UIView {
                 .foregroundColor: LabelColors.textDefault
             ]
             switch quotedMessage {
+            case let message? where message.isMultipart:
+                let data = message.textMessageData
+                var text: NSAttributedString?
+                if let data, message.text?.isEmpty == false {
+                    text = NSAttributedString
+                        .formatForPreview(
+                            message: data,
+                            inputMode: false,
+                            accentColor: accentColor
+                        )
+                }
+                let attachments = message.multipartMessageData?.attachments ?? []
+                return .multipart(text: text, attachments: attachments)
+
             case let message? where message.isText:
                 let data = message.textMessageData!
-                return .text(NSAttributedString.formatForPreview(message: data, inputMode: false))
+                return .text(
+                    NSAttributedString
+                        .formatForPreview(
+                            message: data,
+                            inputMode: false,
+                            accentColor: accentColor
+                        )
+                )
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
@@ -166,6 +199,8 @@ final class ConversationReplyContentView: UIView {
     let timestampLabel = UILabel()
     let restrictionLabel = UILabel()
     let assetThumbnail = ImageResourceThumbnailView()
+    let contentAttachmentsView = UIView()
+    var messageReplyAttachmentView: MessageReplyAttachmentsView?
 
     let stackView = UIStackView()
 
@@ -178,6 +213,11 @@ final class ConversationReplyContentView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    func onPrepareForReuse() {
+        messageReplyAttachmentView?.cancelPreviewDownload()
+        contentAttachmentsView.removeSubviews()
     }
 
     private func configureSubviews() {
@@ -222,6 +262,8 @@ final class ConversationReplyContentView: UIView {
         timestampLabel.textColor = SemanticColors.Label.textCollectionSecondary
         timestampLabel.numberOfLines = 1
         timestampLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+
+        stackView.addArrangedSubview(contentAttachmentsView)
         stackView.addArrangedSubview(timestampLabel)
     }
 
@@ -242,6 +284,7 @@ final class ConversationReplyContentView: UIView {
         senderComponent.isHidden = !object.showDetails
         timestampLabel.isHidden = !object.showDetails
         restrictionLabel.isHidden = !object.showRestriction
+        contentAttachmentsView.isHidden = true
 
         senderComponent.senderName = object.senderName
         senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
@@ -264,6 +307,7 @@ final class ConversationReplyContentView: UIView {
             contentTextView.isAccessibilityElement = true
             assetThumbnail.isHidden = true
             assetThumbnail.isAccessibilityElement = false
+            contentAttachmentsView.isHidden = true
         case let .imagePreview(resource, isVideo):
             assetThumbnail.setResource(resource, isVideoPreview: isVideo)
             assetThumbnail.isHidden = false
@@ -271,13 +315,47 @@ final class ConversationReplyContentView: UIView {
             assetThumbnail.isAccessibilityElement = true
             contentTextView.isHidden = true
             contentTextView.isAccessibilityElement = false
+            contentAttachmentsView.isHidden = true
+        case let .multipart(text, attachments):
+            contentAttachmentsView.isHidden = false
+            contentTextView.isHidden = text == nil
+            contentTextView.accessibilityIdentifier = object.contentType
+            contentTextView.isAccessibilityElement = true
+            assetThumbnail.isHidden = true
+            assetThumbnail.isAccessibilityElement = false
+
+            if let text {
+                let mutableAttributedContent = NSMutableAttributedString(attributedString: text)
+                // Trim the string to first four lines to prevent last line narrower spacing issue
+                mutableAttributedContent.paragraphTailTruncated()
+                contentTextView.attributedText = mutableAttributedContent
+                    .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
+            }
+
+            guard let viewModel = object.messageReplyAttachmentsViewModel else {
+                return
+            }
+
+            let delegate = object.delegate
+            messageReplyAttachmentView = MessageReplyAttachmentsView(
+                attachments: attachments,
+                viewModel: viewModel,
+                onSizeChange: { [weak delegate] in
+                    delegate?.conversationMessageContentDidChangeSize()
+                }
+            )
+
+            contentAttachmentsView.addSubview(messageReplyAttachmentView!)
+            messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
         }
     }
 
 }
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
@@ -285,6 +363,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
@@ -301,16 +380,20 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     private func configureSubviews() {
         container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
+        container.translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)
     }
 
     private func configureConstraints() {
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.fitIn(view: self)
+        container.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
         contentView.configure(with: object)
+    }
+
+    func prepareForReuse() {
+        contentView.onPrepareForReuse()
     }
 
     @objc
@@ -321,24 +404,48 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationReplyCell
-    let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-    let isFullWidth = false
+    typealias View = ConversationReplyCell
+
+    var configuration: View.Configuration
+
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
+
     let supportsActions = false
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
-    weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let quoteMessage = message?.textMessageData?.quoteMessage {
+                configuration.quotedMessage = quoteMessage
+            }
+        }
+    }
+
+    weak var delegate: ConversationMessageCellDelegate? {
+        didSet {
+            configuration.delegate = delegate
+        }
+    }
+
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?) {
-        self.configuration = View.Configuration(quotedMessage: quotedMessage)
+    init(
+        quotedMessage: ZMConversationMessage?,
+        accentColor: AccentColor,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) {
+        self.configuration = View
+            .Configuration(
+                quotedMessage: quotedMessage,
+                accentColor: accentColor,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            )
     }
 }
 

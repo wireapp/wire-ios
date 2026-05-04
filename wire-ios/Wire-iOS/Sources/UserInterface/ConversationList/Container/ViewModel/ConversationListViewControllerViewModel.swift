@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import UserNotifications
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
@@ -126,7 +127,7 @@ extension ConversationListViewController {
             if userSession.selfUser.isTeamMember {
                 return true
             }
-            guard let apiVersion = BackendInfo.apiVersion,
+            guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion,
                   apiVersion >= .v7 else {
                 return true
             }
@@ -136,6 +137,7 @@ extension ConversationListViewController {
 
         init(
             account: Account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitor,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
@@ -144,6 +146,7 @@ extension ConversationListViewController {
             getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
         ) {
             self.account = account
+            self.selfProfileViewsMonitor = selfProfileViewsMonitor
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
@@ -153,7 +156,6 @@ extension ConversationListViewController {
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
-            self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
             super.init()
 
             updateE2EICertifiedStatus()
@@ -183,7 +185,7 @@ extension ConversationListViewController.ViewModel {
 
     func setupObservers() {
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
@@ -216,7 +218,7 @@ extension ConversationListViewController.ViewModel {
             // Therefore only update the account if the accountManager's accounts still contains the instance we have.
             if let self,
                let accountManager = notification.object as? AccountManager,
-               accountManager.accounts.contains(account),
+               accountManager.account(with: account.userIdentifier) != nil,
                accountManager.selectedAccount == account,
                !account.userName.isEmpty {
                 updateAccountImage()
@@ -327,7 +329,6 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
             .imageSmallProfileDataChanged || changeInfo.teamsChanged {
             updateAccountImage()

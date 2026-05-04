@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,35 +27,28 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
 
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockCommitSender: MockCommitSending!
-    private var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var sut: E2EIKeyPackageRotator!
 
     override func setUp() {
         super.setUp()
 
         mockCoreCrypto = MockCoreCryptoProtocol()
-        mockCommitSender = MockCommitSending()
-        mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        mockFeatureRepository = .init()
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockLegacyFeatureRepository = .init()
 
         sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
-            conversationEventProcessor: mockConversationEventProcessor,
             context: syncMOC,
             onNewCRLsDistributionPointsSubject: .init(),
-            commitSender: mockCommitSender,
-            featureRepository: mockFeatureRepository
+            featureRepository: mockLegacyFeatureRepository
         )
     }
 
     override func tearDown() {
         mockCoreCrypto = nil
         mockCoreCryptoProvider = nil
-        mockConversationEventProcessor = nil
         sut = nil
 
         super.tearDown()

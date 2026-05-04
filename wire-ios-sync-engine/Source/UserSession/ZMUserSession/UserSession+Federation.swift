@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ public extension UserSession {
     }
 
     var isFederationUsageAllowed: Bool {
-        guard BackendInfo.isMLSEnabled else {
+        guard isBackendMLSEnabled else {
             // If there is no MLS removal key configured,federation search is allowed.
             return true
         }

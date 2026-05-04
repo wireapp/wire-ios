@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,40 +60,29 @@ extension CoreDataStack {
     /// - Parameters:
     ///   - accountIdentifier: identifier of account being backed up
     ///   - applicationContainer: shared application container
-    ///   - dispatchGroup: group for testing
     ///   - migration: block which performs the migration work
-    ///   - completion: called on main thread when done.
+    @MainActor
     public static func migrateLocalStorage(
         accountIdentifier: UUID,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup,
-        migration: @escaping (NSManagedObjectContext) throws -> Void,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-
-        func fail(_ error: MigrationError) {
-            Logging.localStorage.error("Migrating local store failed: \(error)")
-
-            // Clean up temporary migration store
-            removeDirectory(at: Self.migrationDirectory)
-
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(.failure(error))
-            }
-        }
-
+        migration: @escaping (NSManagedObjectContext) throws -> Void
+    ) async throws {
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.missingLocalStore) }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else {
+            // Clean up temporary migration store
+            removeDirectory(at: Self.migrationDirectory)
+            throw MigrationError.missingLocalStore
+        }
 
         let migrationDirectory = migrationDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = migrationDirectory.appendingPathComponent(databaseDirectoryName)
 
-        workQueue.async(group: dispatchGroup) {
+        let task = Task.detached {
             do {
                 let model = CoreDataStack.loadMessagingModel()
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -134,13 +123,19 @@ extension CoreDataStack {
 
                 // Clean up temporary migration store
                 removeDirectory(at: Self.migrationDirectory)
-
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    completion(.success(()))
-                }
             } catch {
-                fail(.migrationFailed(error))
+                throw MigrationError.migrationFailed(error)
             }
+        }
+
+        do {
+            try await task.value
+        } catch {
+            Logging.localStorage.error("Migrating local store failed: \(error)")
+
+            // Clean up temporary migration store
+            removeDirectory(at: Self.migrationDirectory)
+            throw error
         }
     }
 

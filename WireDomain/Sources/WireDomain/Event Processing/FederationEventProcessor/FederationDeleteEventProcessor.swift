@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,27 +17,15 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
-
-/// Process federation delete events.
-
-protocol FederationDeleteEventProcessorProtocol {
-
-    /// Process a federation delete event.
-    ///
-    /// - Parameter event: A federation delete event.
-
-    func processEvent(_ event: FederationDeleteEvent) async throws
-
-}
+import WireNetwork
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext
 
-    func processEvent(_ event: FederationDeleteEvent) async throws {
-        try await deleteFederationConnection(with: event.domain)
+    func processEvent(_ event: FederationDeleteEvent) async {
+        await deleteFederationConnection(with: event.domain)
     }
 
     // MARK: - Private
@@ -45,7 +33,7 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     /// Deletes a federation connection on a specific domain locally.
     /// - Parameter domain: The domain to delete the connection for.
 
-    private func deleteFederationConnection(with domain: String) async throws {
+    private func deleteFederationConnection(with domain: String) async {
         await context.perform { [self] in
             let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
 

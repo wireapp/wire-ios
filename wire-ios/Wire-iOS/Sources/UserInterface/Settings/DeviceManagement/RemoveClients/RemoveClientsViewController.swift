@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,8 +112,12 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func removeUserClient(_ userClient: UserClient) async {
-        if let password = await presentRequestPasswordController() {
-            await removeUserClient(userClient, password: password)
+        if let user = userClient.user, user.usesCompanyLogin {
+            await removeUserClient(userClient, password: nil)
+        } else {
+            if let password = await presentRequestPasswordController() {
+                await removeUserClient(userClient, password: password)
+            }
         }
     }
 
@@ -136,7 +140,7 @@ final class RemoveClientsViewController: UIViewController,
         }
     }
 
-    private func removeUserClient(_ userClient: UserClient, password: String) async {
+    private func removeUserClient(_ userClient: UserClient, password: String?) async {
         activityIndicator.start()
         do {
             try await viewModel.removeUserClient(userClient, password: password)
@@ -216,6 +220,11 @@ final class RemoveClientsViewController: UIViewController,
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {
-        L10n.Localizable.General.failure
+        switch self {
+        case .tooManyRequests:
+            L10n.Localizable.Error.User.tooManyRequests
+        default:
+            L10n.Localizable.General.failure
+        }
     }
 }

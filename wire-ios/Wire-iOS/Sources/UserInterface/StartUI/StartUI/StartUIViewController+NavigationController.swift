@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 //
 
 import UIKit
+import WireLocators
 
 extension StartUIViewController {
 
     func setupNavigationBarButtonItems() {
+        navigationItem.leftBarButtonItem = nil
 
         let cancelButton = UIBarButtonItem.createNavigationLeftBarButtonItem(
             title: L10n.Localizable.General.cancel,
@@ -30,26 +32,7 @@ extension StartUIViewController {
             }
         )
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
-        cancelButton.accessibilityIdentifier = "cancel"
-        navigationItem.leftBarButtonItem = cancelButton
-
-        let createGroupButton = UIBarButtonItem.createNavigationRightBarButtonItem(
-            title: L10n.Localizable.Peoplepicker.Button.createConversation,
-            action: UIAction { [weak self] _ in
-                guard let self else { return }
-                let conversationCreationController = createGroupConversationUIBuilder.build()
-                navigationController?.pushViewController(conversationCreationController, animated: true)
-            }
-        )
-
-        // We explicitly set the font here because the font provided inside createNavigationRightBarButtonItem
-        // might not reflect the required design specifications in this particular context.
-        // This ensures that the button uses a custom font as needed for consistency across the app.
-        // The only change between the two is the weight. In this case it's semibold.
-        let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        createGroupButton.setTitleTextAttributes([.font: font], for: .normal)
-        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
-        createGroupButton.accessibilityIdentifier = "create_group"
-        navigationItem.rightBarButtonItem = createGroupButton
+        cancelButton.accessibilityIdentifier = Locators.NewConversationPage.cancel.rawValue
+        navigationItem.rightBarButtonItem = cancelButton
     }
 }

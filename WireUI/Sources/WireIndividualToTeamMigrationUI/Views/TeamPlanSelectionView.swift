@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct TeamPlanSelectionView: View {
 
@@ -38,7 +39,7 @@ struct TeamPlanSelectionView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(String.localized(key: "individualToTeam.planSelection.body", bundle: .module))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
             Spacer()
                 .frame(height: 24)
             VStack(alignment: .leading) {
@@ -61,13 +62,14 @@ struct TeamPlanSelectionView: View {
                         .lineLimit(nil)
                 }
             )
-            .wireButtonStyle(.tertiary)
+            .wireButtonStyle(.link)
             .padding(.top, 4)
             Spacer()
             Button(
                 action: { actionCallback(.continue) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
             .wireButtonStyle(.primary)
         }
     }

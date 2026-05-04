@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
 enum DeveloperDebugActionsDisplayModel {
 
-    struct ButtonItem: Identifiable {
-        var id: String { title }
+    enum DebugItem: Identifiable {
+        case button(ButtonItem)
+        case toggle(ToggleItem)
 
+        var id: String {
+            switch self {
+            case let .button(buttonItem):
+                buttonItem.title
+            case let .toggle(toggleItem):
+                toggleItem.title
+            }
+        }
+    }
+
+    struct ButtonItem {
         let title: String
         let action: () -> Void
     }
+
+    struct ToggleItem {
+        let title: String
+        let isOn: Binding<Bool>
+        let enabled: Bool
+    }
+
 }

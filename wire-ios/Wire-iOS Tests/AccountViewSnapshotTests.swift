@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,11 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccount_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(
+            account: account,
+            userSession: UserSessionMock(),
+            displayContext: .accountSelector
+        )
 
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
@@ -51,7 +55,11 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(
+            account: account,
+            userSession: UserSessionMock(),
+            displayContext: .accountSelector
+        )
         sut.overrideUserInterfaceStyle = .light
         // WHEN
         sut.selected = true
@@ -63,7 +71,11 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountWithPicture_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(
+            account: account,
+            userSession: UserSessionMock(),
+            displayContext: .accountSelector
+        )
 
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
@@ -72,7 +84,11 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountWithPictureSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(
+            account: account,
+            userSession: UserSessionMock(),
+            displayContext: .accountSelector
+        )
         // WHEN
         sut.selected = true
         // THEN

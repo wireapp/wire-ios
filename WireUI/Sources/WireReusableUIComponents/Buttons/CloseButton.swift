@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,32 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 public struct CloseButton: View {
 
     private let action: () -> Void
     private let accessibilityLabel: String
+    private let foregroundColor: UIColor
 
-    public var body: some View {
-        Button(action: action) {
-            Image.close
-        }
-        .buttonStyle(.plain)
-        .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-        .accessibilityLabel(Text(accessibilityLabel))
-        .accessibilityIdentifier("close")
-    }
-
-    public init(action: @escaping @MainActor () -> Void, accessibilityLabel: String) {
+    public init(
+        action: @escaping @MainActor () -> Void,
+        foregroundColor: UIColor = SemanticColors.Icon.foregroundDefaultBlack,
+        accessibilityLabel: String
+    ) {
         self.action = action
+        self.foregroundColor = foregroundColor
         self.accessibilityLabel = accessibilityLabel
     }
 
+    public var body: some View {
+        Button(action: action) {
+            Image(.close)
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(Color(uiColor: foregroundColor))
+        .accessibilityLabel(Text(accessibilityLabel))
+    }
 }
 
 #Preview {

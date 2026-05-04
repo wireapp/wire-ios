@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,19 +40,9 @@ enum DebugAlert {
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
-        let action1 = Action(text: "Send to Devs", type: .destructive) {
+        let action = Action(text: "Send to Devs", type: .destructive) {
             DebugLogSender.sendLogsByEmail(
                 message: message,
-                shareWithAVS: false,
-                presentingViewController: presentingViewController,
-                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
-            )
-        }
-
-        let action2 = Action(text: "Send to Devs & AVS", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(
-                message: message,
-                shareWithAVS: true,
                 presentingViewController: presentingViewController,
                 fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
             )
@@ -60,7 +50,7 @@ enum DebugAlert {
 
         show(
             message: message,
-            actions: [action1, action2],
+            actions: [action],
             title: "Send debug logs"
         )
     }
@@ -139,7 +129,7 @@ enum DebugAlert {
             activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
-                    try logFilesProvider.clearLogsDirectory()
+                    try logFilesProvider.clearLogsDirectory(fileManager: .default)
                 } catch {
                     WireLogger.system.warn("Unable to clear temporary directory: \(error)")
                 }
@@ -159,7 +149,6 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     /// Sends recorded logs by email
     static func sendLogsByEmail(
         message: String,
-        shareWithAVS: Bool,
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
@@ -170,7 +159,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
-        let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
+        let mail = WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
             return DebugAlert.displayFallbackActivityController(

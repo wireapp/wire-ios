@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ protocol VoiceChannelProvider {
     var voiceChannel: VoiceChannel? { get }
 }
 
-protocol CanManageAccessProvider {
-    var canManageAccess: Bool { get }
+protocol CanManageGuestsAccessProvider {
+    var canManageGuestsAccess: Bool { get }
 }
 
 // MARK: - Input Bar View controller
@@ -71,14 +71,14 @@ extension ZMConversation: InputBarConversation {
 
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
-        return feature.status == .disabled
+        let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
+        return feature.status == .disabled || isWireDriveEnabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
-        return feature.config.enforcedTimeoutSeconds > 0
+        let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
+        return feature.config.enforcedTimeoutSeconds > 0 && !isWireDriveEnabled
     }
 
     var participants: [UserType] {
@@ -91,7 +91,7 @@ extension ZMConversation: InputBarConversation {
 protocol GroupDetailsConversation {
     var userDefinedName: String? { get set }
 
-    var sortedServiceUsers: [UserType] { get }
+    var sortedApps: [UserType] { get }
 
     var allowGuests: Bool { get }
     var hasReadReceiptsEnabled: Bool { get }
@@ -120,7 +120,7 @@ extension ZMConversation: ConversationStatusProvider {}
 
 extension ZMConversation: TypingStatusProvider {}
 extension ZMConversation: VoiceChannelProvider {}
-extension ZMConversation: CanManageAccessProvider {}
+extension ZMConversation: CanManageGuestsAccessProvider {}
 
 extension ZMConversation: GroupDetailsConversation {
 
@@ -130,7 +130,7 @@ extension ZMConversation: GroupDetailsConversation {
 
     var isE2EIEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchE2EI()
+        let feature = LegacyFeatureRepository(context: context).fetchE2EI()
         return feature.status == .enabled
     }
 

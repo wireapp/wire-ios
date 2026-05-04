@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,39 +17,28 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// Process team update events.
-
-protocol TeamEventProcessorProtocol {
-
-    /// Process a team update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
-
-    func processEvent(_ event: TeamEvent) async throws
-
-}
-
-struct TeamEventProcessor {
+struct TeamEventProcessor: TeamEventProcessorProtocol {
 
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
     let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
     let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol
+    let createEventProcessor: any TeamCreateEventProcessorProtocol
 
     func processEvent(_ event: TeamEvent) async throws {
         switch event {
         case .delete:
-            try await deleteEventProcessor.processEvent()
+            await deleteEventProcessor.processEvent()
 
         case let .memberLeave(event):
             try await memberLeaveEventProcessor.processEvent(event)
 
         case let .memberUpdate(event):
             try await memberUpdateEventProcessor.processEvent(event)
+
+        case let .create(event):
+            await createEventProcessor.processEvent(event)
         }
     }
 

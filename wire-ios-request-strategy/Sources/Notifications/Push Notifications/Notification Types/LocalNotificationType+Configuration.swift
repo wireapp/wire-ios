@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ extension LocalNotificationType {
             default:
                 .newMessage
             }
-        case .failedMessage, .availabilityBehaviourChangeAlert:
+        case .failedMessage:
             .newMessage
         case .bundledMessages:
             .newMessage
@@ -62,8 +62,6 @@ private extension PushNotificationCategory {
             self.init(contentType: contentType)
         case .failedMessage:
             self = .conversation
-        case .availabilityBehaviourChangeAlert:
-            self = .alert
         case .bundledMessages:
             self = .conversation
         }

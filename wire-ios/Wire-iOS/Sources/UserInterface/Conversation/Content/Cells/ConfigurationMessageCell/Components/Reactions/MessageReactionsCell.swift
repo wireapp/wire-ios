@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 // MARK: - Reaction
 
@@ -37,20 +38,26 @@ struct MessageReactionMetadata: Equatable {
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
 
+    struct Configuration {
+        let reactions: [MessageReactionMetadata]
+        let userSession: UserSession
+    }
+
     // MARK: - Properties
 
     var isSelected = false
     var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     private let reactionsView = GridLayoutView()
 
     private lazy var insets = UIEdgeInsets(
-        top: 8,
-        left: conversationHorizontalMargins.left,
+        top: 2,
+        left: 0,
         bottom: 0,
-        right: conversationHorizontalMargins.right
+        right: 0
     )
 
     // MARK: - Life cycle
@@ -74,15 +81,13 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - configure method
 
-    func configure(
-        with reactions: [MessageReactionMetadata],
-        animated: Bool
-    ) {
-        let reactionToggles = reactions.map { reaction in
+    func configure(with object: Configuration, animated: Bool) {
+        let reactionToggles = object.reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
+                isToggled: reaction.isSelfUserReacting,
+                userSession: object.userSession
             ) { [weak self] in
                 guard
                     let self,
@@ -111,7 +116,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
         verticalFittingPriority: UILayoutPriority
     ) -> CGSize {
-        let insetsWidth = insets.left + insets.right
+        let insetsWidth = conversationHorizontalMargins.left + conversationHorizontalMargins
+            .right + 48
         reactionsView.widthForCalculations = targetSize.width - insetsWidth
         reactionsView.setNeedsLayout()
         reactionsView.layoutIfNeeded()

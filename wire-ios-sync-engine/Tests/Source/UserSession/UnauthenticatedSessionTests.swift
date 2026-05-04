@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     var willAcceptUpdatedCredentials = false
     var isAllowedToCreatingNewAccounts = true
 
-    func session(session: UnauthenticatedSession, createdAccount account: Account) {
+    func session(session: UnauthenticatedSession, createdAccount account: Account, newEnvironment: NewEnvironment?) {
         createdAccounts.append(account)
     }
 

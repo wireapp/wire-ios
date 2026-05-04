@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 
 final class ConversationMessageActionController {
 
@@ -27,21 +28,40 @@ final class ConversationMessageActionController {
         case collection
     }
 
-    let message: ZMConversationMessage
+    var message: ZMConversationMessage
     let context: Context
+
+    /// whether message collapsed or normal | expanded
+    /// nil if not applicable
+    var isCollapsed: Bool? {
+        didSet {
+            isCollapsedWasUpdated = true
+        }
+    }
+
+    private var isCollapsedWasUpdated: Bool = false
+
     weak var responder: MessageActionResponder?
     weak var view: UIView!
+    private var privateDefaults: PrivateUserDefaults<CollapseKey>?
 
     init(
         responder: MessageActionResponder?,
         message: ZMConversationMessage,
         context: Context,
-        view: UIView
+        view: UIView,
+        isCollapsed: Bool? = nil,
+        selfUserId: UUID? = nil,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.responder = responder
         self.message = message
         self.context = context
         self.view = view
+        self.isCollapsed = isCollapsed
+        if let selfUserId {
+            self.privateDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+        }
     }
 
     // MARK: - List of Actions
@@ -88,39 +108,54 @@ final class ConversationMessageActionController {
     func canPerformAction(action: MessageAction) -> Bool {
         switch action {
         case .copy:
-            message.canBeCopied
+            return message.canBeCopied
         case .digitallySign:
-            message.canBeDigitallySigned
+            return message.canBeDigitallySigned
         case .reply:
-            message.canBeQuoted
+            return message.canBeQuoted
         case .openDetails:
-            message.areMessageDetailsAvailable
+            return message.areMessageDetailsAvailable
         case .edit:
-            message.canBeEdited
+            return message.canBeEdited
         case .delete:
-            message.canBeDeleted
+            return message.canBeDeleted
         case .save:
-            message.canBeSaved
+            return message.canBeSaved
         case .cancel:
-            message.canCancelDownload
+            return message.canCancelDownload
         case .download:
-            message.canBeDownloaded
+            return message.canBeDownloaded
         case .resend:
-            message.canBeResent
+            return message.canBeResent
         case .showInConversation:
-            context == .collection
+            return context == .collection
         case .sketchDraw,
              .sketchEmoji:
-            message.isImage
+            return message.isImage
         case .react:
-            message.canAddReaction
+            return message.canAddReaction
         case .visitLink:
-            message.canVisitLink
+            return message.canVisitLink
+        case .collapse:
+            guard let isCollapsed,
+                  !isCollapsed,
+                  isCollapsedWasUpdated || (
+                      message.isCollapsingSupported && wasUncollapsedBefore()
+                  )
+            else {
+                return false
+            }
+
+            return message.isSentBySelfUser && message.isCollapsingSupported
         case .present,
-             .openQuote,
-             .resetSession:
-            false
+             .openQuote:
+            return false
         }
+    }
+
+    private func wasUncollapsedBefore() -> Bool {
+        privateDefaults?
+            .wasMessagedUncollapsedBefore(message) ?? false
     }
 
     func canPerformAction(_ selector: Selector) -> Bool {
@@ -265,5 +300,10 @@ final class ConversationMessageActionController {
     @objc
     func visitLink() {
         perform(action: .visitLink)
+    }
+
+    @objc
+    func collapse() {
+        perform(action: .collapse)
     }
 }

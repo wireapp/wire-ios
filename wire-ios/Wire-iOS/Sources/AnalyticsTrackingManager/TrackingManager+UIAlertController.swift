@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ extension TrackingManager {
                 UIAlertAction(
                     title: AlertLocale.Button.privacyPolicy,
                     style: .default,
-                    handler: { [weak self] _ in
-                        self?.presentPrivacyPolicy()
+                    handler: { _ in
+                        presentPrivacyPolicy()
                         continuation.resume(returning: false)
                     }
                 )
@@ -87,7 +87,6 @@ extension TrackingManager {
             return
         }
 
-        let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
-        topViewController.present(browserViewController, animated: true)
+        WireURLs.shared.privacyPolicy.open(from: topViewController)
     }
 }

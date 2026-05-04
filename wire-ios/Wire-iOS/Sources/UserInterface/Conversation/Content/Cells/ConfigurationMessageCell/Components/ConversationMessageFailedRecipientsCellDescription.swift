@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDataModel
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
-    typealias View = FailedUsersSystemMessageCell
+    typealias View = FailedUsersSystemMessageCell<ConversationMessageFailedRecipientsCellDescription>
 
     let configuration: View.Configuration
 
@@ -31,10 +31,9 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 5
+    var topMargin: CGFloat = 5
+    var bottomMargin: CGFloat = 0
 
-    var isFullWidth: Bool = true
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 

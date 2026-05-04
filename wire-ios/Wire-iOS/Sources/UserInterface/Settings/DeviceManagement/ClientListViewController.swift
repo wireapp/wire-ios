@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
-    private let userSession: UserSession?
+    private let userSession: UserSession
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
@@ -88,10 +88,10 @@ final class ClientListViewController: UIViewController,
 
     required init(
         clientsList: [UserClient]?,
-        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-        userSession: UserSession? = ZMUserSession.shared(),
+        selfClient: UserClient?,
+        userSession: UserSession,
         credentials: UserEmailCredentials? = .none,
-        contextProvider: ContextProvider? = ZMUserSession.shared(),
+        contextProvider: ContextProvider?,
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
@@ -114,16 +114,14 @@ final class ClientListViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
 
         initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
-        self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.clientsObserverToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
-        if clientsList == nil {
-            if clients.isEmpty {
-                activityIndicator.start()
-            }
-            userSession?.fetchAllClients()
+        if clients.isEmpty {
+            activityIndicator.start()
+            userSession.fetchAllClients()
         }
     }
 
@@ -167,19 +165,23 @@ final class ClientListViewController: UIViewController,
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        dismissLoadingView()
 
         // Prevent more then one removalObserver in self and SettingsClientViewController
         removalObserver = nil
     }
 
-    private func dismissLoadingView() {
-        activityIndicator.stop()
+    private func dismissLoadingView() async {
+        let minimumDelay: TimeInterval = 0.2
+        let nanoseconds = UInt64(minimumDelay * 1_000_000_000)
+
+        try? await Task.sleep(nanoseconds: nanoseconds)
+        await MainActor.run {
+            activityIndicator.stop()
+        }
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession,
-              let contextProvider,
+        guard let contextProvider,
               let navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -288,10 +290,10 @@ final class ClientListViewController: UIViewController,
         _ userClient: UserClient,
         credentials: UserEmailCredentials?
     ) {
-
         removalObserver = ClientRemovalObserver(
             userClientToDelete: userClient,
             delegate: self,
+            userSession: userSession,
             credentials: credentials
         )
         removalObserver?.startRemoval()
@@ -304,14 +306,14 @@ final class ClientListViewController: UIViewController,
     func finishedFetching(_ userClients: [UserClient]) {
         Task {
             await updateCertificates(for: userClients)
-            await MainActor.run {
-                dismissLoadingView()
-            }
+            await dismissLoadingView()
         }
     }
 
     func failedToFetchClients(_ error: Error) {
-        dismissLoadingView()
+        Task {
+            await dismissLoadingView()
+        }
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
@@ -407,7 +409,7 @@ final class ClientListViewController: UIViewController,
             for: indexPath
         ) as? ClientTableViewCell {
             cell.selectionStyle = .none
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
 
             switch convertSection((indexPath as NSIndexPath).section) {
             case 0:
@@ -513,10 +515,11 @@ final class ClientListViewController: UIViewController,
 
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async {
+        activityIndicator.start()
         guard
-            let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID()
         else {
+            activityIndicator.stop()
             return
         }
 
@@ -525,7 +528,10 @@ final class ClientListViewController: UIViewController,
             userClients
                 .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
-                    if let mlsClientId = MLSClientID(userClient: $0) {
+                    if let mlsClientId = MLSClientID(
+                        userClient: $0,
+                        localDomain: userSession.resolvedBackendMetadata.domain
+                    ) {
                         ($0, mlsClientId)
                     } else {
                         nil
@@ -547,10 +553,10 @@ final class ClientListViewController: UIViewController,
                     client.mlsThumbPrint = e2eiCertificate.mlsThumbprint
                 }
             }
-
         } catch {
             WireLogger.e2ei.error(String(reflecting: error))
         }
+        await dismissLoadingView()
     }
 
     private func updateAllClients(completed: (() -> Void)? = nil) {

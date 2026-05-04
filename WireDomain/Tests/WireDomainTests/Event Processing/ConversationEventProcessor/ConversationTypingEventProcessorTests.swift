@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationTypingEventProcessorTests: XCTestCase {
 
@@ -32,6 +32,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
+    private var didProcessTypingUsers = false
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -48,7 +49,8 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         sut = ConversationTypingEventProcessor(
             conversationRepository: conversationRepository,
             conversationLocalStore: conversationLocalStore,
-            userRepository: userRepository
+            userRepository: userRepository,
+            onProcessedTypingUsers: { _ in self.didProcessTypingUsers = true }
         )
     }
 
@@ -61,6 +63,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        didProcessTypingUsers = false
     }
 
     // MARK: - Tests
@@ -78,7 +81,6 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
 
         userRepository.fetchOrCreateUserIdDomain_MockValue = user
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
-        conversationRepository.updateTypingUsers_MockMethod = { _ in }
         conversationLocalStore.obtainPermanentIDsUserConversation_MockMethod = { _, _ in }
 
         // When
@@ -90,15 +92,15 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.obtainPermanentIDsUserConversation_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.updateTypingUsers_Invocations.count, 1)
+        XCTAssertEqual(didProcessTypingUsers, true)
     }
 
     private enum Scaffolding {
         static let id = UUID()
         static let domain = "domain.com"
         static let event = ConversationTypingEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
+            conversationID: ConversationID(id: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             isTyping: true
         )
     }

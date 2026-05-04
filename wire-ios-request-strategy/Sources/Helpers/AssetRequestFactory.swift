@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,12 +38,39 @@ public final class AssetRequestFactory: NSObject {
         case eternalInfrequentAccess = "eternal-infrequent_access"
     }
 
+    public struct AssetAuditLogMetaData {
+
+        public let conversationID: QualifiedID
+        public let fileName: String
+        public let mimeType: String
+
+        public init(
+            conversationID: QualifiedID,
+            fileName: String,
+            mimeType: String?
+        ) {
+            self.conversationID = conversationID
+            self.fileName = fileName
+
+            if let mimeType, !mimeType.isEmpty {
+                self.mimeType = mimeType
+            } else {
+                // Fallback to "raw bytes".
+                self.mimeType = "application/octet-stream"
+            }
+        }
+    }
+
     private enum Constant {
         static let md5 = "Content-MD5"
         static let accessLevel = "public"
         static let retention = "retention"
         static let boundary = "frontier"
+        static let conversationID = "convId"
+        static let id = "id"
         static let domain = "domain"
+        static let fileName = "filename"
+        static let mimetype = "filetype"
 
         enum ContentType {
             static let json = "application/json"
@@ -57,6 +84,7 @@ public final class AssetRequestFactory: NSObject {
         withData data: Data,
         shareable: Bool = true,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         guard let uploadURL = uploadURL(
@@ -64,6 +92,7 @@ public final class AssetRequestFactory: NSObject {
             in: message.managedObjectContext!,
             shareable: shareable,
             retention: retention,
+            assetAuditLogMetaData: assetAuditLogMetaData,
             data: data
         ) else {
             return nil
@@ -73,7 +102,7 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/assets"
         }
 
@@ -97,19 +126,21 @@ public final class AssetRequestFactory: NSObject {
         withData data: Data,
         shareable: Bool = true,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(
             data,
             shareable: shareable,
-            retention: retention
+            retention: retention,
+            assetAuditLogMetaData: assetAuditLogMetaData
         ) else { return nil }
 
         let path = switch apiVersion {
         case .v0, .v1:
             "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/assets"
         }
 
@@ -123,12 +154,26 @@ public final class AssetRequestFactory: NSObject {
         )
     }
 
-    func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
+    func dataForMultipartAssetUploadRequest(
+        _ data: Data,
+        shareable: Bool,
+        retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?
+    ) throws -> Data {
         let fileDataHeader = [Constant.md5: data.zmMD5Digest().base64String()]
-        let jsonObject: [String: Any] = [
+        var jsonObject: [String: Any] = [
             Constant.accessLevel: shareable,
             Constant.retention: retention.rawValue
         ]
+
+        if let metaData = assetAuditLogMetaData {
+            jsonObject[Constant.conversationID] = [
+                Constant.id: metaData.conversationID.uuid.transportString(),
+                Constant.domain: metaData.conversationID.domain
+            ]
+            jsonObject[Constant.fileName] = metaData.fileName
+            jsonObject[Constant.mimetype] = metaData.mimeType
+        }
 
         let metaData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
 
@@ -143,12 +188,14 @@ public final class AssetRequestFactory: NSObject {
         in moc: NSManagedObjectContext,
         shareable: Bool,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         data: Data
     ) -> URL? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(
             data,
             shareable: shareable,
-            retention: retention
+            retention: retention,
+            assetAuditLogMetaData: assetAuditLogMetaData,
         ) else {
             return nil
         }

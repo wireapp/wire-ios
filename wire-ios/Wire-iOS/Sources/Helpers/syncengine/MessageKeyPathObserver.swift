@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,13 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
 
     var onChanged: ChangedBlock?
 
-    init?(message: ZMConversationMessage, keypath: KeyPath<MessageChangeInfo, Bool>, _ changed: ChangedBlock? = nil) {
-        guard let session = ZMUserSession.shared() else { return nil }
+    init?(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        keypath: KeyPath<MessageChangeInfo, Bool>,
+        _ changed: ChangedBlock? = nil
+    ) {
+        guard let session = userSession as? ZMUserSession else { return nil }
 
         self.keypath = keypath
 

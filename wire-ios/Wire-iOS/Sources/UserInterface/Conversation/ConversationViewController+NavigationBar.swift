@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
@@ -33,59 +34,28 @@ extension ConversationViewController {
         conversation.voiceChannel?.addCallStateObserver(self)
     }
 
-    private var audioCallButton: UIButton {
+    private var videoCallButton: UIButton {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .audioCall), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
+        button.setImage(UIImage(resource: .videoCall), for: .normal)
+        button.tintColor = IconColors.foregroundDefault.resolvedColor(with: traitCollection)
 
-        button.accessibilityIdentifier = "audioCallBarButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.videoCallBarButton.rawValue
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
-        let audioCallAction = UIAction { [weak self] _ in
-            self?.voiceCallItemTapped()
+        let videoCallAction = UIAction { [weak self] _ in
+            self?.callItemTapped()
         }
-        button.addAction(audioCallAction, for: .touchUpInside)
+        button.addAction(videoCallAction, for: .touchUpInside)
 
-        button.backgroundColor = ButtonColors.backgroundBarItem
+        button.backgroundColor = ButtonColors.backgroundBarItem.resolvedColor(with: traitCollection)
         button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
+        button.layer.borderColor = ButtonColors.borderBarItem.resolvedColor(with: traitCollection).cgColor
         button.layer.cornerRadius = 12
-        button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
         // Enable large content viewer
         button.showsLargeContentViewer = true
         button.largeContentTitle = CallActions.Label.makeAudioCall
-        button.largeContentImage = UIImage(resource: .audioCall)
-
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-
-        return button
-    }
-
-    private var videoCallButton: UIButton {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .videoCall), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
-
-        button.accessibilityIdentifier = "videoCallBarButton"
-        button.accessibilityTraits.insert(.startsMediaSession)
-        button.accessibilityLabel = CallActions.Label.makeVideoCall
-
-        let videoCallAction = UIAction { [weak self] _ in
-            self?.videoCallItemTapped()
-        }
-        button.addAction(videoCallAction, for: .touchUpInside)
-
-        button.backgroundColor = ButtonColors.backgroundBarItem
-        button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
-        button.layer.cornerRadius = 12
-        button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-
-        // Enable large content viewer
-        button.showsLargeContentViewer = true
-        button.largeContentTitle = CallActions.Label.makeVideoCall
         button.largeContentImage = UIImage(resource: .videoCall)
 
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
@@ -93,19 +63,10 @@ extension ConversationViewController {
         return button
     }
 
-    private var audioAndVideoCallButtons: UIView {
-        let buttonStack = UIStackView(frame: CGRect(x: 0, y: 0, width: 80, height: 32))
-        buttonStack.distribution = .fillEqually
-        buttonStack.spacing = 0
-        buttonStack.axis = .horizontal
-
-        buttonStack.addArrangedSubview(videoCallButton)
-        buttonStack.addArrangedSubview(audioCallButton)
-
-        let buttonsView = UIView(frame: CGRect(x: 0, y: 0, width: 80, height: 32))
-        buttonsView.addSubview(buttonStack)
-
-        return buttonsView
+    private var callButtonContainerView: UIView {
+        let view = videoCallButton.wrapInView()
+        view.constraintToSize(CGSize(width: 40, height: 32))
+        return view
     }
 
     var joinCallButton: UIBarButtonItem {
@@ -114,7 +75,7 @@ extension ConversationViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
         button.titleLabel?.font = .font(for: .body2)
-        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        button.setTitleColor(SemanticColors.Label.textDefaultWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.adjustsFontForContentSizeCategory = false
 
@@ -148,7 +109,7 @@ extension ConversationViewController {
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
-        button.accessibilityIdentifier = "ConversationBackButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
@@ -187,12 +148,10 @@ extension ConversationViewController {
         switch conversation.conversationType {
         case .group: return true
         case .oneOnOne:
-            if let connection = conversation.oneOnOneUser?.connection,
-               connection.status != .pending, connection.status != .sent {
+            guard let connection = conversation.oneOnOneUser?.connection else {
                 return true
-            } else {
-                return conversation.teamRemoteIdentifier != nil
             }
+            return connection.status != .pending && connection.status != .sent
         default: return false
         }
     }
@@ -204,11 +163,8 @@ extension ConversationViewController {
             return [joinCallButton]
         } else if conversation.isCallOngoing {
             return []
-        } else if conversation.canStartVideoCall {
-            let barButtonItems = UIBarButtonItem(customView: audioAndVideoCallButtons)
-            return [barButtonItems]
         } else {
-            let barButtonItem = UIBarButtonItem(customView: audioCallButton)
+            let barButtonItem = UIBarButtonItem(customView: callButtonContainerView)
             return [barButtonItem]
         }
     }
@@ -220,15 +176,13 @@ extension ConversationViewController {
             items.append(createBackButton(hasUnread: hasUnread))
         }
 
-        if shouldShowCollectionsButton {
-            items.append(searchBarButtonItem)
-        }
-
         return items
     }
 
     func updateRightNavigationItemsButtons() {
-        navigationItem.rightBarButtonItems = rightNavigationItems(forConversation: conversation)
+        let items = rightNavigationItems(forConversation: conversation)
+        navigationItem.rightBarButtonItems = items
+        parent?.navigationItem.rightBarButtonItems = items
     }
 
     /// Update left navigation bar items
@@ -246,19 +200,10 @@ extension ConversationViewController {
         }
     }
 
-    func voiceCallItemTapped() {
+    func callItemTapped() {
         view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
-        }
-
-        checker.performAction()
-    }
-
-    func videoCallItemTapped() {
-        let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
-            view.window?.endEditing(true)
-            startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
         }
 
         checker.performAction()
@@ -294,21 +239,27 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { _ in
-                    self.contentViewController.highlight(message)
+                self.contentViewController?.scroll(to: message) { _ in
+                    self.contentViewController?.highlight(message)
                 }
             }
 
         case .reply:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
-                    self.contentViewController.perform(action: .reply, for: message, view: cell)
+                self.contentViewController?.scroll(to: message) { cell in
+                    self.contentViewController?.perform(action: .reply, for: message, view: cell)
                 }
             }
 
         default:
-            contentViewController.perform(action: action, for: message, view: view)
+            contentViewController?.perform(action: action, for: message, view: view)
         }
+    }
+
+    func collectionsViewControllerDidRequestOpenSearchFiles(
+        _ viewController: CollectionsViewController
+    ) {
+        onFilesButtonPressed(nil)
     }
 }
 

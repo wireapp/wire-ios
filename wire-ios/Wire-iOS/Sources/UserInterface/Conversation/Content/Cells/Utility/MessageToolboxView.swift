@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ private extension UILabel {
     static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = SemanticColors.View.backgroundSeparatorCell
-        label.font = UIFont.smallSemiboldFont
+        label.textColor = SemanticColors.Label.baseSecondaryText
+        label.font = .preferredFont(forTextStyle: .body)
         label.text = String.MessageToolbox.middleDot
         label.isAccessibilityElement = false
         label.setContentHuggingPriority(.required, for: .horizontal)
@@ -60,15 +60,19 @@ final class MessageToolboxView: UIView {
     /// The timer for ephemeral messages.
     private var timestampTimer: Timer?
 
-    private let contentStack: UIStackView = {
+    private let contentStack = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 3
         stack.isAccessibilityElement = false
+        stack.alignment = .center
         return stack
     }()
 
-    private let detailsLabel: UILabel = {
+    lazy var font = FontSpec.smallRegularFont.font!
+    lazy var color = SemanticColors.Label.textMessageDetails
+
+    lazy var detailsLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -76,14 +80,40 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
         return label
     }()
 
-    private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
-    private let statusSeparatorLabel = UILabel.createSeparatorLabel()
-    private let messageFailureView = MessageSendFailureView()
+    private lazy var editedLabel: UILabel = {
+        let label = UILabel()
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "Edited"
+        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.isHidden = true
+        label.font = font
+        label.textColor = SemanticColors.Label.textMessageDetails
 
-    private let statusLabel: UILabel = {
+        return label
+    }()
+
+    private let timestampSeparatorContainer = UIView()
+    private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
+    private let statusSeparatorContainer = UIView()
+    private let statusSeparatorLabel = UILabel.createSeparatorLabel()
+
+    private lazy var messageFailureView: MessageSendFailureView = {
+        let view = MessageSendFailureView()
+        view.tapHandler = { [weak self] _ in
+            self?.resendMessage()
+        }
+        return view
+    }()
+
+    private lazy var statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -91,10 +121,35 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
         return label
     }()
 
-    private let countdownLabel: UILabel = {
+    lazy var statusImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.accessibilityIgnoresInvertColors = true
+        imageView.tintColor = color
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+
+    lazy var statusContainerView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [statusImageView, statusLabel])
+        stackView.spacing = 4
+        stackView.isAccessibilityElement = true
+        return stackView
+    }()
+
+    private lazy var countdownContainer = UIView()
+    private lazy var countdownView = {
+        let view = DestructionCountdownView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private lazy var countdownLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -102,13 +157,12 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
         return label
     }()
 
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
-
-    fileprivate let separatorView = UIView()
-    fileprivate var heightConstraint: NSLayoutConstraint!
     fileprivate var previousLayoutBounds: CGRect = .zero
 
     // MARK: - Initialization
@@ -136,53 +190,65 @@ final class MessageToolboxView: UIView {
 
     private func setupViews() {
 
-        messageFailureView.tapHandler = { [weak self] _ in
-            self?.resendMessage()
-        }
+        timestampSeparatorLabel.translatesAutoresizingMaskIntoConstraints = false
+        timestampSeparatorContainer.addSubview(timestampSeparatorLabel)
+
+        statusSeparatorLabel.translatesAutoresizingMaskIntoConstraints = false
+        statusSeparatorContainer.addSubview(statusSeparatorLabel)
+
+        countdownContainer = UIView()
+        countdownView.translatesAutoresizingMaskIntoConstraints = false
+        countdownContainer.addSubview(countdownView)
 
         [
             detailsLabel,
-            timestampSeparatorLabel,
-            statusLabel,
-            statusSeparatorLabel,
+            timestampSeparatorContainer,
+            editedLabel,
+            statusContainerView,
+            statusSeparatorContainer,
+            countdownContainer,
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        [separatorView, contentStack, messageFailureView].forEach(addSubview)
+        [
+            contentStack,
+            messageFailureView
+        ].forEach(addSubview)
+
+        statusImageView.constraintToSquare(sideLength: 13)
     }
 
     private func createConstraints() {
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
-        heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
-        heightConstraint.priority = UILayoutPriority(999)
-
         NSLayoutConstraint.activate([
-            heightConstraint,
+            timestampSeparatorLabel.leadingAnchor.constraint(equalTo: timestampSeparatorContainer.leadingAnchor),
+            timestampSeparatorLabel.centerYAnchor.constraint(equalTo: timestampSeparatorContainer.centerYAnchor),
+            timestampSeparatorContainer.trailingAnchor.constraint(equalTo: timestampSeparatorLabel.trailingAnchor),
 
-            separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
-            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            separatorView.topAnchor.constraint(equalTo: topAnchor),
-            separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            statusSeparatorLabel.leadingAnchor.constraint(equalTo: statusSeparatorContainer.leadingAnchor),
+            statusSeparatorLabel.centerYAnchor.constraint(equalTo: statusSeparatorContainer.centerYAnchor),
+            statusSeparatorContainer.trailingAnchor.constraint(equalTo: statusSeparatorLabel.trailingAnchor),
 
             // statusTextView align vertically center
-            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
-            contentStack.topAnchor.constraint(equalTo: topAnchor),
+            contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 2),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            messageFailureView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
-            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            countdownView.widthAnchor.constraint(equalToConstant: 10),
+            countdownView.heightAnchor.constraint(equalToConstant: 10),
+            countdownView.leadingAnchor.constraint(equalTo: countdownContainer.leadingAnchor),
+            countdownContainer.trailingAnchor.constraint(equalTo: countdownView.trailingAnchor, constant: 3),
+            countdownView.centerYAnchor.constraint(equalTo: countdownContainer.centerYAnchor),
+            countdownView.topAnchor.constraint(greaterThanOrEqualTo: countdownContainer.topAnchor),
+            countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
     }
 
@@ -225,6 +291,10 @@ final class MessageToolboxView: UIView {
         reloadContent(animated: animated)
     }
 
+    func setAllContentHidden() {
+        contentStack.arrangedSubviews.forEach { $0.isHidden = true }
+    }
+
     private func hideAndCleanStatusLabel() {
         statusLabel.isHidden = true
         statusLabel.accessibilityLabel = nil
@@ -244,41 +314,70 @@ final class MessageToolboxView: UIView {
         switch dataSource.content {
 
         case let .callList(callListString):
-            detailsLabel.attributedText = callListString
+            detailsLabel.text = callListString
             detailsLabel.isHidden = false
             detailsLabel.numberOfLines = 0
             hideAndCleanStatusLabel()
-            timestampSeparatorLabel.isHidden = true
-            statusSeparatorLabel.isHidden = true
+            timestampSeparatorContainer.isHidden = true
+            statusSeparatorContainer.isHidden = true
+            countdownContainer.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
+            editedLabel.isHidden = true
+            statusImageView.isHidden = true
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
-            statusSeparatorLabel.isHidden = true
-            countdownLabel.isHidden = true
-            timestampSeparatorLabel.isHidden = false
+            setAllContentHidden()
             messageFailureView.isHidden = false
-            messageFailureView.setTitle(detailsString.string)
+            messageFailureView.setTitle(detailsString)
 
-        case let .details(timestamp, status, countdown):
-            detailsLabel.attributedText = timestamp
-            detailsLabel.isHidden = timestamp == nil
+        case let .details(timestamp, state, countdown):
+            detailsLabel.text = timestamp
+            detailsLabel.isHidden = timestamp.isEmpty
             detailsLabel.numberOfLines = 1
-            statusLabel.attributedText = status
-            // override accessibilityLabel if the attributed string has customized accessibilityLabel
-            if let accessibilityLabel = status?.accessibilityLabel {
-                statusLabel.accessibilityLabel = accessibilityLabel
-            }
-            statusLabel.isHidden = status == nil
-            timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-            countdownLabel.attributedText = countdown
-            countdownLabel.isHidden = countdown == nil
+
+            updateState(state)
+
+            timestampSeparatorContainer.isHidden = timestamp.isEmpty || state == nil
+            statusSeparatorContainer.isHidden = (timestamp.isEmpty && state == nil) || countdown.isEmpty
+            countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
+            countdownContainer.isHidden = countdown.isEmpty
+            countdownLabel.text = countdown
+            countdownLabel.isHidden = countdown.isEmpty
+
+            let editedString = dataSource.editedString
+            editedLabel.isHidden = editedString == nil
+            editedLabel.text = editedString
+
             messageFailureView.isHidden = true
         }
+    }
 
-        layoutIfNeeded()
+    private func updateState(_ state: MessageToolboxState?) {
+        statusLabel.isHidden = true
+        statusContainerView.isHidden = false
+        switch state {
+        case .sending:
+            statusImageView.image = UIImage(resource: .sending)
+            statusContainerView.accessibilityLabel = "sending"
+        case .sent:
+            statusImageView.image = UIImage(resource: .sent)
+            statusContainerView.accessibilityLabel = "sent"
+        case .delivered:
+            statusImageView.image = UIImage(resource: .delivered)
+            statusContainerView.accessibilityLabel = "delivered"
+        case .seen:
+            statusImageView.image = UIImage(resource: .seen)
+            statusContainerView.accessibilityLabel = "seen"
+        case let .seenByMultiple(count):
+            statusImageView.image = UIImage(resource: .seen)
+            statusLabel.isHidden = false
+            statusLabel.text = "\(count)"
+            statusContainerView.accessibilityLabel = "seen \(count)"
+        case nil:
+            statusContainerView.isHidden = true
+        }
     }
 
     // MARK: - Timer

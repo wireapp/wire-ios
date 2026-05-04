@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,18 +30,6 @@ public extension ZMUserSession {
 
     func application(
         _ application: ZMApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        BackgroundActivityFactory.shared.resume()
-
-        syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.operationStatus
-                .startBackgroundFetch(withCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: ZMApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
@@ -50,6 +38,15 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
+
+            if !hasActiveCalls {
+                await syncAgent?.suspend()
+            }
+        }
+
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -63,17 +60,12 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-
+        if isLoggedIn {
+            syncAgent?.resume()
+        }
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
-        processPendingEvents()
-    }
-
-    internal func processPendingEvents() {
-        syncContext.performGroupedBlock {
-            self.processEvents()
-        }
     }
 
     internal func deleteOldEphemeralMessages() {

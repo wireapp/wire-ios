@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireLogging
 import WireSyncEngine
 
@@ -58,7 +59,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let nameLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(style: .h2, color: LabelColors.textDefault)
         label.accessibilityLabel = AccountPageStrings.Name.description
-        label.accessibilityIdentifier = "name"
+        label.accessibilityIdentifier = Locators.UserProfilePage.name.rawValue
 
         label.accessibilityTraits.insert(.header)
         label.lineBreakMode = .byTruncatingMiddle
@@ -78,7 +79,7 @@ final class ProfileHeaderViewController: UIViewController {
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
 
-        button.accessibilityIdentifier = "QR code button"
+        button.accessibilityIdentifier = Locators.UserProfilePage.qrCodeButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
@@ -144,7 +145,7 @@ final class ProfileHeaderViewController: UIViewController {
     override func viewDidLoad() {
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
-        imageView.accessibilityIdentifier = "user image"
+        imageView.accessibilityIdentifier = Locators.UserProfilePage.userProfilePicture.rawValue
         imageView.setImageConstraint(resistance: 249, hugging: 750)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -158,7 +159,7 @@ final class ProfileHeaderViewController: UIViewController {
         }
 
         handleLabel.accessibilityLabel = AccountPageStrings.Handle.description
-        handleLabel.accessibilityIdentifier = "username"
+        handleLabel.accessibilityIdentifier = Locators.UserProfilePage.username.rawValue
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
@@ -170,7 +171,7 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.accessibilityLabel = AccountPageStrings.TeamName.description
         teamNameLabel.numberOfLines = 0
         teamNameLabel.textAlignment = .center
-        teamNameLabel.accessibilityIdentifier = "team name"
+        teamNameLabel.accessibilityIdentifier = Locators.UserProfilePage.teamName.rawValue
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
@@ -386,21 +387,47 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateQRCodeButton() {
-        let qrCodeAction = UIAction { _ in
-            self.qrCodeButtonTapped()
+        let qrCodeAction = UIAction { [weak self] _ in
+            self?.qrCodeButtonTapped()
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
-        qrCodeButton.isHidden = !user.isSelfUser
+        updateQRCodeButtonIsHidden()
         updateColors()
     }
 
-    private func updateColors() {
-        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
-        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
-        qrCodeButton.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+    private func updateQRCodeButtonIsHidden() {
+        qrCodeButton.isHidden = !user.isSelfUser
+        guard user.isSelfUser else { return }
+        Task {
+            let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [hasToShow] in
+                qrCodeButton.isHidden = !hasToShow
+            }
+        }
+    }
 
-        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
-        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
+    private func updateColors() {
+        qrCodeButton.setBorderColor(
+            ColorTheme.Strokes.outline.resolvedColor(with: traitCollection),
+            for: .normal
+        )
+        qrCodeButton.setBackgroundImageColor(
+            ColorTheme.Backgrounds.surfaceVariant.resolvedColor(with: traitCollection),
+            for: .normal
+        )
+        qrCodeButton.setIconColor(
+            ColorTheme.Buttons.Secondary.onEnabled.resolvedColor(with: traitCollection),
+            for: .normal
+        )
+
+        qrCodeButton.setBorderColor(
+            ColorTheme.Strokes.outline.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
+        qrCodeButton.setBackgroundImageColor(
+            ColorTheme.Backgrounds.background.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
     }
 
     private func qrCodeButtonTapped() {

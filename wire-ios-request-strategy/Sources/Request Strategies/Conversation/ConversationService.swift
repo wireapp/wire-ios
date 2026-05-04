@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public protocol ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -77,11 +77,12 @@ public final class ConversationService: ConversationServiceInterface {
     public init(
         context: NSManagedObjectContext,
         participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? =
-            nil
+            nil,
+        localDomain: String?
     ) {
         self.context = context
         self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
-            ConversationParticipantsService(context: syncContext)
+            ConversationParticipantsService(context: syncContext, localDomain: localDomain)
         }
     }
 
@@ -91,7 +92,7 @@ public final class ConversationService: ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -113,7 +114,7 @@ public final class ConversationService: ConversationServiceInterface {
                 name: name,
                 users: users,
                 allowGuests: allowGuests,
-                allowServices: allowServices,
+                allowApps: allowApps,
                 enableReceipts: enableReceipts,
                 messageProtocol: messageProtocol,
                 completion: flowCompletion
@@ -140,7 +141,7 @@ public final class ConversationService: ConversationServiceInterface {
             accessMode: ConversationAccessMode.value(forAllowGuests: true),
             accessRoles: ConversationAccessRoleV2.from(
                 allowGuests: true,
-                allowServices: true
+                allowApps: true
             ),
             enableReceipts: false,
             messageProtocol: .proteus
@@ -161,7 +162,7 @@ public final class ConversationService: ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -178,7 +179,7 @@ public final class ConversationService: ConversationServiceInterface {
             accessMode: ConversationAccessMode.value(forAllowGuests: allowGuests),
             accessRoles: ConversationAccessRoleV2.from(
                 allowGuests: allowGuests,
-                allowServices: allowServices
+                allowApps: allowApps
             ),
             enableReceipts: enableReceipts,
             messageProtocol: messageProtocol,

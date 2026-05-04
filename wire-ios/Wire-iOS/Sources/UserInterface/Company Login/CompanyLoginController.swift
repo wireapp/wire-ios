@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireTransport
 
@@ -132,7 +133,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
             queue: .main,
-            using: { [internalDetectSSOCode] _ in internalDetectSSOCode(false) }
+            using: { [weak self] _ in self?.internalDetectSSOCode(onlyNew: false) }
         )
     }
 
@@ -330,12 +331,21 @@ extension CompanyLoginController {
             case let .success(backendEnvironment):
                 requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
-                    sessionManager.switchBackend(to: backendEnvironment)
-                    BackendEnvironment.shared = backendEnvironment
-                    self.startAutomaticSSOFlow(promptOnError: false)
+                    sessionManager.switchBackend(to: backendEnvironment) { error in
+                        if let error {
+                            WireLogger.authentication.error(
+                                "sso login flow failed due to backend switch error: \(String(describing: error))"
+                            )
+                            self.presentCompanyLoginAlert(error: .unknown)
+                        }
+
+                        BackendEnvironment.shared = backendEnvironment
+                        self.startAutomaticSSOFlow(promptOnError: false)
+                    }
                 }
             case let .failure(error):
-                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
+                // note this code should be removed (not used)
+                if case .maxNumberAccountsReached = error as? SessionManager.SwitchBackendError {
                     presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
                     presentCompanyLoginAlert(error: .domainNotRegistered)

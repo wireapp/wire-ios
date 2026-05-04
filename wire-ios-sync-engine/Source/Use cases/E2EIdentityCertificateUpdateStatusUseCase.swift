@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireLogging
 
 public enum E2EIdentityCertificateUpdateStatus {
@@ -51,7 +52,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         mlsClientID: MLSClientID,
         context: NSManagedObjectContext,
         lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
-        comparedDate: CurrentDateProviding = SystemDateProvider()
+        comparedDate: CurrentDateProviding = .system
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod

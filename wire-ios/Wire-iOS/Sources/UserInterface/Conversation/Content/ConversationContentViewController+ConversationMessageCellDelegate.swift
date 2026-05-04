@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,11 +47,15 @@ extension UIView {
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: MessageActionsViewController
+    func conversationMessageCell(
+        _ contentView: UIView,
+        present viewController: UIViewController
     ) {
-        present(actionsController, animated: true)
+        if let popoverPresentationController = viewController.popoverPresentationController {
+            popoverPresentationController.sourceView = contentView.superview
+            popoverPresentationController.sourceRect = contentView.frame
+        }
+        present(viewController, animated: true)
     }
 
     // MARK: - MessageActionResponder
@@ -96,7 +100,8 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
             preferredDisplayMode: preferredDisplayMode,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         let navigationController = UINavigationController(rootViewController: messageDetailsViewController)
         navigationController.modalPresentationStyle = .formSheet
@@ -122,6 +127,11 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageShouldUpdate() {
         dataSource.loadMessages(forceRecalculate: true)
+    }
+
+    func conversationMessageContentDidChangeSize() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
 
 }

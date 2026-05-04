@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLinkPreview
 import WireUtilities
 
@@ -93,8 +94,11 @@ extension NSAttributedString {
         return style
     }
 
-    @objc
-    static func formatForPreview(message: TextMessageData, inputMode: Bool) -> NSAttributedString {
+    static func formatForPreview(
+        message: TextMessageData,
+        inputMode: Bool,
+        accentColor: AccentColor
+    ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
@@ -104,7 +108,12 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects, paragraphStyle: nil)
+        markdownText
+            .highlight(
+                mentions: mentionTextObjects,
+                paragraphStyle: nil,
+                accentColor: accentColor
+            )
 
         // Remove trailing link if we show a link preview
         let links = markdownText.links()
@@ -128,15 +137,19 @@ extension NSAttributedString {
         return markdownText
     }
 
-    @objc
-    static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(
+        message: TextMessageData,
+        isObfuscated: Bool,
+        accentColor: AccentColor
+    ) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
+            let color: UIColor = accentColor.uiColor
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
-                .foregroundColor: UIColor.accent(),
+                .foregroundColor: color,
                 .paragraphStyle: paragraphStyle
             ]
             return NSAttributedString(string: plainText, attributes: attributes)
@@ -149,7 +162,7 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: style)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects)
+        markdownText.highlight(mentions: mentionTextObjects, accentColor: accentColor)
 
         // Remove trailing link if we show a link preview
         if let linkPreview = message.linkPreview {

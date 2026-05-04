@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,4 +31,12 @@ public enum MLSGroupStatus: Int16 {
     /// The group has become out-of-sync and needs to be rejoined.
 
     case outOfSync
+
+    /// The group is pending to be established or joined via external commit after MLS group was reset
+
+    case pendingJoinAfterReset
+
+    /// The group is not used anymore, can happen in case of deleted user in 1:1
+
+    case invalid
 }

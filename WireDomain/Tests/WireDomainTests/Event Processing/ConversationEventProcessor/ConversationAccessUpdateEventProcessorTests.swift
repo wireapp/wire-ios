@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
 @testable import WireDomain
 
@@ -90,8 +90,8 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let id = UUID()
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: id, domain: domain)
-        static let senderID = UserID(uuid: id, domain: domain)
+        static let conversationID = ConversationID(id: id, domain: domain)
+        static let senderID = UserID(id: id, domain: domain)
 
         static let event = ConversationAccessUpdateEvent(
             conversationID: Scaffolding.conversationID,

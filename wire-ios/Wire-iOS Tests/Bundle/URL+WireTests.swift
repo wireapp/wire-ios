@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class URL_WireTests: XCTestCase {
         super.setUp()
         let bundle = Bundle.backendBundle
         let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.production.save(in: defaults)
+        EnvironmentType.default.save(in: defaults)
         be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
     }
 

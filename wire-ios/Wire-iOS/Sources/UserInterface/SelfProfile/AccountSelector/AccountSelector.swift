@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireSyncEngine
 
 // sourcery: AutoMockable
-public protocol AccountSelector {
+protocol AccountSelector {
 
     var currentAccount: Account? { get }
 
@@ -28,7 +28,7 @@ public protocol AccountSelector {
 
 }
 
-public extension AccountSelector {
+extension AccountSelector {
 
     func switchTo(account: Account) {
         switchTo(account: account, completion: .none)

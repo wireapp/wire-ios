@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
@@ -34,6 +36,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
+
+    private var callEventInfo: CallEventInfo?
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -53,7 +57,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore,
-            protobufMessageProcessor: protobufMessageProcessor
+            protobufMessageProcessor: protobufMessageProcessor,
+            onProcessedCallEvent: { self.callEventInfo = $0 }
         )
     }
 
@@ -83,8 +88,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _, _ in }
+            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _ in }
 
         // When
 
@@ -96,7 +101,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
@@ -109,12 +114,32 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count,
             1
         )
+
+        XCTAssertNil(callEventInfo)
+    }
+
+    func testProcessEvent_Message_Has_Calling_It_Invokes_Handler_With_Call_Event_Info() async throws {
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        messageLocalStore.canAddMessageConversationSenderID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.callingMessageEvent)
+
+        // Then
+
+        XCTAssertNotNil(callEventInfo) // There's a call, we got the call info.
     }
 
     private enum Scaffolding {
         static let event = ConversationMLSMessageAddEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             subconversation: "",
             message: "",
             timestamp: .now,
@@ -123,6 +148,36 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
                 senderClientID: UUID.mockID1.uuidString
             )]
         )
+
+        static let callingMessageEvent = ConversationMLSMessageAddEvent(
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
+            subconversation: "",
+            message: "",
+            timestamp: .now,
+            decryptedMessages: [.init(
+                message: text!,
+                senderClientID: UUID.mockID1.uuidString
+            )]
+        )
+
+        private static let message = GenericMessage(
+            content: Calling(content: content, conversationId: .random())
+        )
+
+        private static let text = try? message.serializedData().base64String()
+
+        private static let content: String = {
+            let json = [
+                "src_userid": UUID.mockID1.uuidString,
+                "src_clientid": "clientID",
+                "resp": false,
+                "type": ""
+            ] as [String: Any]
+
+            let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+            return String(decoding: data, as: UTF8.self)
+        }()
 
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }

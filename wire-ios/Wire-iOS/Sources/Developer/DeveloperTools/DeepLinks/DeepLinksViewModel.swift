@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,21 @@ final class DeepLinksViewModel: ObservableObject {
                 "The deeplink you have entered is invalid."
             }
         }
+
+    }
+
+    enum Backend: String, CaseIterable {
+
+        case staging
+        case anta
+        case bella
+        case chala
+        case diya
+        case elna
+        case foma
+        case lich
+        case fulu
+        case imai
 
     }
 
@@ -67,4 +82,16 @@ final class DeepLinksViewModel: ObservableObject {
             _ = self.router?.openDeepLinkURL(url)
         }
     }
+
+    func openSwitchBackendLink(for backend: Backend) {
+        let config = switch backend {
+        case .staging:
+            "https://staging-nginz-https.zinfra.io/deeplink.json"
+        default:
+            "https://nginz-https.\(backend.rawValue).wire.link/deeplink.json"
+        }
+
+        openLink(urlString: "wire://access/?config=\(config)")
+    }
+
 }

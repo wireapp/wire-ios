@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireRequestStrategySupport
+import XCTest
+
 @testable import WireRequestStrategy
 
 final class MessageInfoExtractorTests: XCTestCase {
@@ -29,19 +30,18 @@ final class MessageInfoExtractorTests: XCTestCase {
     var modelHelper: ModelHelper!
     var mockProteusMessage: MockProteusMessage!
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+    override func setUp() async throws {
+        try await super.setUp()
 
         coreDataStack = CoreDataStack(
             account: .init(userName: "F", userIdentifier: .create()),
             applicationContainer: URL(fileURLWithPath: "/dev/null"),
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        coreDataStack.loadStores { _ in
-
-        }
+        try await coreDataStack.load()
         sut = MessageInfoExtractor(context: coreDataStack.syncContext)
         modelHelper = ModelHelper()
 

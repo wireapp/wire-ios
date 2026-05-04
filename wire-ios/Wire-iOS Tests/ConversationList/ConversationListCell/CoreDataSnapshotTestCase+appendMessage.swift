@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@ extension CoreDataSnapshotTestCase {
     }
 
     func appendImage(to conversation: ZMConversation) {
-        (
-            try! conversation
-                .appendImage(
-                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
-                        .jpegData(compressionQuality: 1.0)!
-                ) as! ZMMessage
-        ).sender = otherUser
+        let image = SendableImage(
+            name: "burger.jpg",
+            utType: .jpeg,
+            data: image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!
+        )
+        let message = try! conversation.appendImage(image, nonce: UUID()) as! ZMMessage
+        message.sender = otherUser
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
 

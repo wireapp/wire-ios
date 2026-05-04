@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     private let _applyConversationFilter: @MainActor (_ conversationFilter: ConversationFilter?) -> Void
     private let _showArchive: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
+    private let _showMeetings: @MainActor () async -> Void
+    private let _showFiles: @MainActor () async -> Void
     private let _showConversation: @MainActor (
         _ conversation: ConversationModel,
         _ message: ConversationMessageModel?
@@ -53,6 +55,12 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
         }
         self._showSettings = {
             await mainCoordinator.showSettings()
+        }
+        self._showMeetings = {
+            await mainCoordinator.showMeetings()
+        }
+        self._showFiles = {
+            await mainCoordinator.showFiles()
         }
         self._showConversation = { conversation, message in
             await mainCoordinator.showConversation(conversation: conversation, message: message)
@@ -92,6 +100,16 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     @MainActor
     public func showSettings() async {
         await _showSettings()
+    }
+
+    @MainActor
+    public func showMeetings() async {
+        await _showMeetings()
+    }
+
+    @MainActor
+    public func showFiles() async {
+        await _showFiles()
     }
 
     @MainActor
