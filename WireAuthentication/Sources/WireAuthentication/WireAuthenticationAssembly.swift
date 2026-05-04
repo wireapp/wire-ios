@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,22 +20,15 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
-public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
-public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
-public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
-public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
-public typealias TrustData = WireAuthenticationAPI.TrustData
-public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 
 public struct WireAuthenticationAssembly {
 
@@ -45,40 +38,34 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
-        let backendInfo = BackendInfo(
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
         let rootComponent = RootComponent(
-            backendInfo: backendInfo,
+            authenticationType: authenticationType,
+            environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount,
-            otherAccountsPublisher: otherAccountsPublisher,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
+            accountsPublisher: accountsPublisher,
+            registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

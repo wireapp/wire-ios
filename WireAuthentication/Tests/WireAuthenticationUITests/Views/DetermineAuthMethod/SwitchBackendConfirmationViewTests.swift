@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -27,19 +28,22 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
-    private let backendConfig = BackendConfig(
+    private let environment = BackendEnvironment2(
         title: "Staging",
-        endpoints: Endpoints(
-            backendURL: URL(string: "www.staging.com")!,
-            backendWSURL: URL(string: "www.staging.com")!,
-            blackListURL: URL(string: "www.staging.com")!,
-            teamsURL: URL(string: "www.staging.com")!,
-            accountsURL: URL(string: "www.staging.com")!,
-            websiteURL: URL(string: "www.staging.com")!,
-            countlyURL: URL(string: "www.staging.com")
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
+        environmentType: .staging,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "www.staging.com")!,
+                websocketURL: URL(string: "www.staging.com")!,
+                blacklistURL: URL(string: "www.staging.com")!,
+                teamsURL: URL(string: "www.staging.com")!,
+                accountsURL: URL(string: "www.staging.com")!,
+                websiteURL: URL(string: "www.staging.com")!,
+                countlyURL: URL(string: "www.staging.com")!
+            ),
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
     )
 
     override func setUp() {
@@ -56,7 +60,7 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = SwitchBackendConfirmation(
-            backendConfig: backendConfig,
+            environment: environment,
             onConfirm: { _ in }
         ).frame(
             width: screenBounds.width,
@@ -76,7 +80,7 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = SwitchBackendConfirmation(
-            backendConfig: backendConfig,
+            environment: environment,
             onConfirm: { _ in }
         ).frame(
             width: screenBounds.width,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
 
     case teamMember
     case nonTeamMember
     case guest
-    case service
+    case app = "service"
 
-    init(_ value: WireAPI.ConversationAccessRole) {
+    init(_ value: WireNetwork.ConversationAccessRole) {
         switch value {
         case .teamMember:
             self = .teamMember
@@ -33,12 +33,12 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             self = .nonTeamMember
         case .guest:
             self = .guest
-        case .service:
-            self = .service
+        case .app:
+            self = .app
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationAccessRole {
+    func toAPIModel() -> WireNetwork.ConversationAccessRole {
         switch self {
         case .teamMember:
             .teamMember
@@ -46,8 +46,8 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

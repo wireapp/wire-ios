@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,10 +70,10 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
             switch presentationStyle {
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
-                tableCell.hideDisclosureIndicator()
+                tableCell.hideAccessoryView()
             case .navigation:
                 tableCell.isAccessoryIconHidden = true
-                tableCell.showDisclosureIndicator()
+                tableCell.showDisclosureIndicatorAccessoryView()
             }
         }
     }

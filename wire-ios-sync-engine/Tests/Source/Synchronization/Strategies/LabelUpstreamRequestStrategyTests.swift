@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import XCTest
 class LabelUpstreamRequestStrategyTests: MessagingTest {
 
     var sut: LabelUpstreamRequestStrategy!
-    var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     var conversation1: ZMConversation!
@@ -46,9 +44,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         conversation1 = nil
         conversation2 = nil
         super.tearDown()

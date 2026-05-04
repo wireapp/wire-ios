@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,11 @@
 import Foundation
 import UserNotifications
 import WireCommonComponents
+import WireCoreCrypto
 import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireTransport
 import WireUtilities
 
@@ -32,7 +35,9 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        WireAnalytics.setup()
+        DeveloperOverrides.storage = .shared()
+        WireAnalytics.setup(for: .notificationServiceExtension)
+        CoreCrypto.registerLogger()
     }
 
     // MARK: - Methods
@@ -44,7 +49,7 @@ final class NotificationService: UNNotificationServiceExtension {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if notificationService == nil {
-            notificationService = loadNotificationService()
+            notificationService = loadNotificationService(for: request)
         }
 
         if let notificationService {
@@ -53,7 +58,8 @@ final class NotificationService: UNNotificationServiceExtension {
                 withContentHandler: contentHandler
             )
         } else {
-            contentHandler(.empty)
+            WireLogger.notifications.warn("no notification service loaded", attributes: .safePublic)
+            contentHandler(.emptyNotification)
         }
     }
 
@@ -61,26 +67,58 @@ final class NotificationService: UNNotificationServiceExtension {
         notificationService?.serviceExtensionTimeWillExpire()
     }
 
-    private func loadNotificationService() -> NotificationServiceProtocol? {
-        // API version decides which service to use, if we don't have it
-        // yet then we simply supress the notification request.
-        guard let apiVersion = BackendInfo.apiVersion else {
-            WireLogger.notifications.warn("no resolved api version, not loading service")
+    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceProtocol? {
+        let info = Bundle.appMainBundle.infoDictionary
+
+        guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
+            WireLogger.notifications.critical(
+                "no current app version, not loading service",
+                attributes: .safePublic
+            )
             return nil
         }
 
-        /// With v8, the new extension is available, but not necessarily
-        /// turned on yet. Regardless, we will use it and later check
-        /// if the new sync is enabled.
-        ///
-        /// WPB-18030 disable new sync for prod for now
-        if apiVersion >= .v8, Bundle.developerModeEnabled {
-            WireLogger.notifications.warn("loading new notification service")
-            return NotificationServiceExtension()
-        } else {
-            WireLogger.notifications.warn("loading legacy notification service")
-            return LegacyNotificationService()
+        guard let currentBuildNumber = info?[kCFBundleVersionKey as String] as? String  else {
+            WireLogger.notifications.critical(
+                "no current build number, not loading service",
+                attributes: .safePublic
+            )
+            return nil
         }
-    }
 
+        guard let appGroupID = info?["WireGroupId"] as? String else {
+            WireLogger.notifications.critical(
+                "no app group id, not loading service",
+                attributes: .safePublic
+            )
+            return nil
+        }
+
+        let appID = "group.\(appGroupID)"
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appID)
+
+        guard let sharedUserDefaults = UserDefaults(suiteName: appID) else {
+            WireLogger.notifications.critical(
+                "no shared user defaults, not loading service",
+                attributes: .safePublic
+            )
+            return nil
+        }
+
+        WireLogger.notifications.info(
+            "loading new notification service",
+            attributes: .safePublic
+        )
+        return NotificationServiceExtension(
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
+            appContainerURL: appContainerURL,
+            sharedUserDefaults: sharedUserDefaults,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                UInt($0.rawValue)
+            }
+        )
+    }
 }

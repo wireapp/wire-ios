@@ -6,7 +6,7 @@ Domain layer containing business logic.
 
 The WireDomain framework provides the business logic components of the app: Repositories, Use cases or specific components related to Event Processing.
 
-It depends on WireAPI and for the time being other older frameworks like WireDataModel and WireTransport.
+It depends on WireNetwork and for the time being other older frameworks like WireDataModel and WireTransport.
 
 > Note: In order to make it work with the old stack (WireSyncEngine...), it has been created as a Xcode project producing a framework. Once the old stack is replaced it could become a Swift Package.
 

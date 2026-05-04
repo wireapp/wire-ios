@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class CreateGroupConversationUseCaseTests: XCTestCase {
 
@@ -55,6 +55,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: context,
+            localDomain: "wire.com",
             isFederationEnabled: true,
             isMLSEnabled: true
         )
@@ -108,6 +109,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -161,7 +163,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 if apiRetryCount == 0 {
                     // First, we try to create conversation with all users
                     XCTAssertEqual(
-                        Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                        Set(parameters.qualifiedUserIDs.map(\.id)),
                         Set([UUID.mockID1, .mockID2, .mockID3])
                     )
 
@@ -169,7 +171,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 } else {
                     // On retry, we only try to create conversation with federated domains
                     XCTAssertEqual(
-                        Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                        Set(parameters.qualifiedUserIDs.map(\.id)),
                         Set([UUID.mockID1, .mockID2])
                     )
                     return Scaffolding.conversation
@@ -190,6 +192,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -247,6 +250,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -293,7 +297,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 if apiRetryCount == 0 {
                     // First, we try to create conversation with all users
                     XCTAssertEqual(
-                        Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                        Set(parameters.qualifiedUserIDs.map(\.id)),
                         Set([UUID.mockID1, .mockID2, .mockID3])
                     )
 
@@ -301,7 +305,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 } else {
                     // On retry, we only try to create conversation with federated domains
                     XCTAssertEqual(
-                        Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                        Set(parameters.qualifiedUserIDs.map(\.id)),
                         Set([UUID.mockID1, .mockID2])
                     )
                     return Scaffolding.conversation
@@ -324,6 +328,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -409,6 +414,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -480,7 +486,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.nonFederatingDomains(Set(["nonfederated2"]))
+                throw SendMLSMessageFailure.nonFederatingDomains(Set(["nonfederated2"]))
             } else {
                 // On retry, we only try to add MLS participants which are on a federated domain
                 XCTAssertEqual(
@@ -502,6 +508,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -564,7 +571,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.unreachableDomains(Set(["federated2"]))
+                throw SendMLSMessageFailure.unreachableDomains(Set(["federated2"]))
             } else {
                 // On retry, we try to add all MLS participants that are on a reachable domain
                 XCTAssertEqual(
@@ -586,6 +593,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -637,6 +645,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -669,6 +678,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -702,6 +712,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -740,6 +751,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -748,9 +760,9 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
 
     private enum Scaffolding {
         static let conversationID = UUID.mockID1
-        static let conversation = WireAPI.Conversation(
+        static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
+            qualifiedID: .init(id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             type: .group,
             messageProtocol: .proteus,

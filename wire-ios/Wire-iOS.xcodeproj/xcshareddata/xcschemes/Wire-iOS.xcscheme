@@ -93,6 +93,14 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-com.apple.SwiftUI.IgnoreSolarium YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-com.apple.SwiftUI.DisableSolarium YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-NSShowNonLocalizedStrings YES"
             isEnabled = "YES">
          </CommandLineArgument>

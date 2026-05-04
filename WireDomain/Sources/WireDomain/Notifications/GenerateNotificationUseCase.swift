@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import CallKit
 import UserNotifications
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol GenerateNotificationUseCaseProtocol {
@@ -51,39 +51,46 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
         updateEvents: AsyncStream<[UpdateEvent]>
     ) async throws -> [UserNotification] {
 
-        var notifications = [UserNotification]()
+        var allNotifications = [UserNotification]()
 
         for await events in updateEvents {
             logger.info(
                 "Processing \(events.count) pending events...",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
 
             for event in events {
-                if let notification = await generateNotification(for: event) {
+                // Abort if needed.
+                try Task.checkCancellation()
+
+                if let notifications = await generateNotification(for: event) {
                     logger.info(
-                        "Generated a notification from an event",
-                        attributes: .newNSE
+                        "Generated \(notifications.count) notifications from an event",
+                        attributes: .newNSE, .safePublic
                     )
-                    notifications.append(notification)
+                    allNotifications.append(contentsOf: notifications)
                 }
             }
         }
 
-        return notifications
+        return allNotifications
     }
 
     private func generateNotification(
         for event: UpdateEvent
-    ) async -> UserNotification? {
+    ) async -> [UserNotification]? {
         switch event {
         case let .conversation(conversationEvent):
             do {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
+            } catch ProtobufMessageDecoder.Failure.unknownMessageContent {
+                // Can't show notifications for unknown message types,
+                // so just ignore.
+                return nil
             } catch {
-                var attributes = LogAttributes.newNSE
+                var attributes = LogAttributes.newNSE + .safePublic
                 attributes[.eventId] = eventID.safeForLoggingDescription
 
                 logger.error(
@@ -95,9 +102,10 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             }
 
         case let .user(userEvent):
-            return await userEventBuilder.buildContent(
+            let notification = await userEventBuilder.buildContent(
                 event: userEvent
             )
+            return notification.flatMap { [$0] }
 
         default:
             var attributes = LogAttributes.newNSE

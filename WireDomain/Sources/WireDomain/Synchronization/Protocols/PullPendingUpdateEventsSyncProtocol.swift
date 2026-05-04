@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 //
 
 import Foundation
-import WireAPI
+import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// A sync to pull pending update events from the remote, decrypts,
@@ -26,8 +27,8 @@ public protocol PullPendingUpdateEventsSyncProtocol {
 
     /// Pull pending update events from the remote, decrypt (if needed),
     /// and store them locally.
-
+    /// - Returns: Stream of UpdateEvent's batch
     @discardableResult
-    func pull() async throws -> AsyncStream<[UpdateEvent]>
+    func pull(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>
 
 }

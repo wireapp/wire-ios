@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 "backup.export.action" = "Fazer backup agora";
-"backup.export.description" = "Crie um backup para preservar seu histórico de conversas. Você pode usar isso para restaurar o histórico se perder seu computador ou mudar para um novo. O arquivo de backup não é protegido pela criptografia de ponta a ponta do Wire, então armazene-o em um local seguro.";
+"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
 
 "backup.import.action" = "Restaurar de um backup";
 "backup.import.description" = "O histórico existente neste dispositivo permanece e será concluído pelo novo backup. Você pode restaurar o histórico de todos os seus dispositivos e plataformas diferentes, mas não de outra conta.";
@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "Continuar";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Sucesso";
 "importBackup.alert.success.message" = "Seu histórico foi restaurado.";
 "importBackup.alert.genericError.title" = "Algo deu errado";
 "importBackup.alert.genericError.message" = "Seu histórico não pôde ser restaurado. Tente novamente ou entre em contato com o suporte ao cliente Wire.";
@@ -55,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "Este backup foi criado por uma versão mais recente ou desatualizada do Wire e não pode ser restaurado aqui.";
 "importBackup.alert.wrongFileError.title" = "Arquivo de backup errado";
 "importBackup.alert.wrongFileError.message" = "Você não pode restaurar o histórico de uma conta diferente.";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "Insira a senha";
 "importBackup.enterPassword.description" = "Este backup está protegido por senha.";
@@ -64,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Continuar";
 
 "importBackup.restoringHistory.title" = "Restaurando histórico…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "Carregando conversas…";

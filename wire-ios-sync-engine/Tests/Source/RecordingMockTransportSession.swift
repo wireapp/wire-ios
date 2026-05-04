@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import WireTransport
 @objcMembers
 class RecordingMockTransportSession: NSObject, TransportSessionType {
 
-    var pushChannel: ZMPushChannel
     var cookieStorage: ZMPersistentCookieStorage
     var requestLoopDetectionCallback: ((String) -> Void)?
 
@@ -31,8 +30,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         mockReachability
     }
 
-    init(cookieStorage: ZMPersistentCookieStorage, pushChannel: ZMPushChannel) {
-        self.pushChannel = pushChannel
+    init(cookieStorage: ZMPersistentCookieStorage) {
         self.cookieStorage = cookieStorage
 
         super.init()
@@ -86,11 +84,6 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     }
 
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
-
-    var didCallConfigurePushChannel = false
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue) {
-        didCallConfigurePushChannel = true
-    }
 
     var renewAccessTokenCalls = [String]()
     func renewAccessToken(with clientID: String) {

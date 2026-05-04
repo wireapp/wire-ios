@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireUpdateEventCoding
 
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
@@ -33,6 +33,8 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     enum Error: Swift.Error {
         case failedToFetchStoredEvents(Swift.Error)
         case failedToDeleteStoredEvents(Swift.Error)
+        case missingPrivateKeys
+        case missingPrimaryPrivateKey
     }
 
     // MARK: - Properties
@@ -66,6 +68,14 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         )
     }
 
+    public func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async {
+        await syncContext.perform { [syncContext] in
+            syncContext.serverTimeDelta = serverTimeDelta
+        }
+    }
+
     public func storeLastEventID(id: UUID) {
         storage.setUUID(id, forKey: .lastEventID)
     }
@@ -85,43 +95,104 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
+
         try await eventContext.perform { [eventContext, updateEventCoder] in
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-            storedEventEnvelope.sortIndex = index
+            try Self.internalPersistEventEnvelope(
+                updateEventCoder: updateEventCoder,
+                eventContext: eventContext,
+                eventEnvelope: eventEnvelope,
+                index: index,
+                publicKeys: publicKeys
+            )
             try eventContext.save()
         }
     }
 
     public func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             var currentIndex = index
+
             for eventEnvelope in eventEnvelopes {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-                storedEventEnvelope.sortIndex = currentIndex
+                try Self.internalPersistEventEnvelope(
+                    updateEventCoder: updateEventCoder,
+                    eventContext: eventContext,
+                    eventEnvelope: eventEnvelope,
+                    index: currentIndex,
+                    publicKeys: publicKeys
+                )
                 currentIndex += 1
             }
+
             try eventContext.save()
         }
     }
 
     public func fetchStoredEventEnvelopes(
-        limit: UInt
-    ) async throws -> [UpdateEventEnvelope] {
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+
+                WireLogger.ear.info("fetching stored events. backgroundAccessibleOnly: \(backgroundAccessibleOnly)")
+
+                if backgroundAccessibleOnly {
+                    request.predicate = NSPredicate(
+                        format: "%K == true",
+                        #keyPath(StoredUpdateEventEnvelope.isBackgroundAccessible)
+                    )
+                }
+
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
                 let storedEventEnvelopes = try eventContext.fetch(request)
-                return try storedEventEnvelopes.map {
-                    try updateEventCoder.decode($0.data)
+                return try storedEventEnvelopes.compactMap { storedEnvelope in
+                    var data = storedEnvelope.data
+
+                    if storedEnvelope.isEncrypted {
+
+                        WireLogger.ear.info("decrypting stored event.")
+
+                        guard let privateKeys else {
+                            WireLogger.ear.critical(
+                                "Failed to decrypt stored event: no private keys. Private keys MUST be available to decrypt encrypted stored events.",
+                                attributes: .safePublic, .incrementalSync
+                            )
+                            throw Error.missingPrivateKeys
+                        }
+
+                        let key: SecKey!
+
+                        if storedEnvelope.isBackgroundAccessible {
+                            key = privateKeys.secondary
+                        } else {
+                            guard let primaryKey = privateKeys.primary else {
+                                WireLogger.ear.critical(
+                                    "Failed to decrypt stored event: no private primary key. Primary key MUST be available to decrypt non-background-accessible event",
+                                    attributes: .safePublic, .incrementalSync
+                                )
+                                throw Error.missingPrimaryPrivateKey
+                            }
+                            key = primaryKey
+                        }
+
+                        data = try EAREncryptionHelper.decrypt(
+                            data: data,
+                            privateKey: key
+                        )
+
+                    }
+
+                    return (try updateEventCoder.decode(data), storedEnvelope.objectID)
                 }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
@@ -130,19 +201,64 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     }
 
     public func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws {
         try await eventContext.perform { [eventContext] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
-                storedEventEnvelopes.forEach(eventContext.delete)
-                try eventContext.save()
-            } catch {
-                throw Error.failedToDeleteStoredEvents(error)
+            let deleteRequest = NSBatchDeleteRequest(objectIDs: objectIDs)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
             }
+
+            WireLogger.sync.debug(
+                "deleting \(objectIDs.count) stored envelopes",
+                attributes: .incrementalSync
+            )
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
+        }
+    }
+
+    public func deleteEventEnvelopes(
+        at indices: [Int64]
+    ) async throws {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndices: indices)
+            let untypedRequest: NSFetchRequest<NSFetchRequestResult> = request as! NSFetchRequest<NSFetchRequestResult>
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: untypedRequest)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
+            }
+
+            WireLogger.sync.debug(
+                "deleting \(indices.count) stored envelopes",
+                attributes: .incrementalSync
+            )
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
         }
     }
 
@@ -152,7 +268,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.fetchRequest(sortIndex: index)
             guard let envelope = try eventContext.fetch(request).first else { return }
-            WireLogger.sync.debug("deleting stored envelope at index \(index)")
+            WireLogger.sync.debug(
+                "deleting stored envelope at index \(index)",
+                attributes: .incrementalSync
+            )
             eventContext.delete(envelope)
             try eventContext.save()
         }
@@ -164,4 +283,38 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
+    // MARK: - Private Helpers
+
+    private static func internalPersistEventEnvelope(
+        updateEventCoder: StorableUpdateEventCoder,
+        eventContext: NSManagedObjectContext,
+        eventEnvelope: UpdateEventEnvelope,
+        index: Int64,
+        publicKeys: EARPublicKeys?
+    ) throws {
+        let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+
+        var data = try updateEventCoder.encode(eventEnvelope)
+
+        let isBackgroundAccessible = eventEnvelope.isBackgroundAccessible
+
+        if let publicKeys {
+            let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary
+
+            WireLogger.ear.debug("encrypting event. backgroundAccessible: \(isBackgroundAccessible)")
+
+            data = try EAREncryptionHelper.encrypt(
+                data: data,
+                publicKey: key
+            )
+
+            storedEventEnvelope.isEncrypted = true
+        } else {
+            storedEventEnvelope.isEncrypted = false
+        }
+
+        storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
+        storedEventEnvelope.data = data
+        storedEventEnvelope.sortIndex = index
+    }
 }

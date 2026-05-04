@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,4 +22,6 @@ public enum ImportBackupError: Error {
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
     case incorrectPassword
+    /// The use tried to import a backup from another user account.
+    case selfUserIDMismatch
 }

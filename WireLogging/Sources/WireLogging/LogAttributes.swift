@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,10 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case selfUserId = "self_user_id"
     case recipientID = "recipient_id"
     case eventId = "event_id"
+    case eventType = "event_type"
     case eventEnvelopeID = "event_envelope_id"
+    case ackMultipleEventsCount = "ack_events_count"
+    case multipleEvents = "ack_multiple_events"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
     case messageType = "message_type"
@@ -40,9 +43,14 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case nse = "NSE"
     case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
-    case duration
+    case pushChannelVersion = "push_channel"
+    case syncDuration = "duration" // This is remapped to "sync_duration" in Datadog
     case syncType = "sync_type"
     case syncVersion = "sync_version"
+    case workItemID = "work_item_id"
+    case isNewClient = "is_new_client"
+    case isSubconversation = "is_subconversation"
+    case timeInterval = "time_interval"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -51,4 +59,10 @@ public enum LogAttributesKey: String, Comparable, Sendable {
 
 public extension LogAttributes {
     static let safePublic = [LogAttributesKey.public: true]
+    /// PushChannelV2 (consumable notications sync)
+    static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
+    /// PushChannel V1 (regular sync)
+    static let pushChannelV1 = [LogAttributesKey.pushChannelVersion: "v1"]
+    /// legacy pushChannel (Starscream)
+    static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
 }

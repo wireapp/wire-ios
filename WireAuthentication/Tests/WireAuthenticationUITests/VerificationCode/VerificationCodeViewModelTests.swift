@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,9 +78,8 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         fatalError("not needed here")
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
-        .NoHistoryFactory {
-        fatalError("not needed here")
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
     }
 
     // MARK: - isConfirmButtonDisabled tests
@@ -117,7 +116,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                     password: "aaaaaa",
                     verificationCode: "123"
                 ),
-                backendEnvironment: Fixture.backendEnvironment
+                backendEnvironment: Fixture.backendEnvironment,
+                backendMetadata: Fixture.backendMetadata,
+                proxyCredentials: nil
             )
 
         // when
@@ -147,7 +148,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                     password: "aaaaaa",
                     verificationCode: "123"
                 ),
-                backendEnvironment: Fixture.backendEnvironment
+                backendEnvironment: Fixture.backendEnvironment,
+                backendMetadata: Fixture.backendMetadata,
+                proxyCredentials: nil
             )
 
         // when
@@ -169,7 +172,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                             password: "aaaaaa",
                             verificationCode: "123"
                         ),
-                        backendEnvironment: Fixture.backendEnvironment
+                        backendEnvironment: Fixture.backendEnvironment,
+                        backendMetadata: Fixture.backendMetadata,
+                        proxyCredentials: nil
                     )
                 )
         )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,12 +25,7 @@ public struct CoreCryptoConfiguration {
 
     public let path: String
     public let key: Data
-    public let clientID: String
-
-    public var clientIDBytes: ClientId? {
-        .init(from: clientID)
-    }
-
+    public let clientID: WireCoreCryptoUniffi.ClientId
 }
 
 public class CoreCryptoConfigProvider {
@@ -38,6 +33,7 @@ public class CoreCryptoConfigProvider {
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
+    private let coreCryptoPathComponent = "corecrypto"
 
     // MARK: - Life cycle
 
@@ -50,7 +46,7 @@ public class CoreCryptoConfigProvider {
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
-        createKeyIfNeeded: Bool
+        allowKeyCreation: Bool
     ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -59,11 +55,11 @@ public class CoreCryptoConfigProvider {
         )
 
         try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(
-                createIfNeeded: createKeyIfNeeded,
+                allowCreation: allowKeyCreation,
                 path: coreCryptoDirectory.path
             )
             return (
@@ -71,7 +67,10 @@ public class CoreCryptoConfigProvider {
                 key: key
             )
         } catch {
-            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
+            WireLogger.coreCrypto.error(
+                "Failed to get core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
@@ -80,16 +79,4 @@ public class CoreCryptoConfigProvider {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
-}
-
-public extension ClientId {
-
-    init?(from string: String) {
-        guard let data = string.data(using: .utf8) else {
-            return nil
-        }
-
-        self = data
-    }
-
 }

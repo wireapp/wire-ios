@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireNetwork
 import WireReusableUIComponents
 
 protocol PersonalAccountCreationComponentDependency: Dependency {
@@ -29,6 +30,7 @@ protocol PersonalAccountCreationComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     var passwordValidator: any PasswordValidator { get }
     var privacyPolicyURL: URL { get }
-    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    var termsOfUseURL: URL { get }
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
 
 }

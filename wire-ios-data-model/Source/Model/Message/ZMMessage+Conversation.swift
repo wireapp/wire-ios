@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMMessage {
 
@@ -44,12 +45,13 @@ extension ZMMessage {
              .conversationOtrMessageAdd,
              .conversationMLSMessageAdd:
             // if event is otr message then payload should be already decrypted and should contain generic message data
-            let base64Content = payload.string(forKey: "data")
-            let message = GenericMessage(withBase64String: base64Content)
-            guard let  messageID = message?.messageID else {
+            if
+                let base64Content = payload.string(forKey: "data"),
+                let message = GenericMessage(from: base64Content, validate: true) {
+                return UUID(uuidString: message.messageID)
+            } else {
                 return nil
             }
-            return UUID(uuidString: messageID)
         default:
             return nil
         }

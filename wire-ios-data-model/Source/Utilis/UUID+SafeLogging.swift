@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,9 @@ import Foundation
 import WireSystem
 import WireUtilities
 
-extension UUID: SafeForLoggingStringConvertible {
+extension UUID: @retroactive SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        transportString().redactedAndTruncated()
+        transportString()
     }
-
 }

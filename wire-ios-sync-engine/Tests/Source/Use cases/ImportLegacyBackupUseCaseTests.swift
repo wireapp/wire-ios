@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireDataModelSupport
 import WireDomainPackage
 import WireFoundation
-import WireFoundationSupport
+import WireUtilitiesPackageSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -54,23 +54,26 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         mockEntityStorage.importsDirectory = fileManager
             .temporaryDirectory
             .appending(path: UUID().uuidString)
-        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
-            // This closure is called after session tear down and the persistent store is replaced.
-            // It is called to create a temporary stack and restore the user client backup.
-            XCTAssertNil(self.coreDataStack)
-            let stack = try await CoreDataStackHelper()
-                .createStack(inMemoryStore: true)
-            try await stack.viewContext.perform {
-                let user = ZMUser.selfUser(in: stack.viewContext)
-                user.remoteIdentifier = selfUserQualifiedID.uuid
-                user.domain = selfUserQualifiedID.domain
-                try stack.viewContext.save()
-            }
-            self.coreDataStack = stack
-            return stack
-        }
+
         mockEntityStorage
-            .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod = { _, _, _, _ in
+            .createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod =
+            { _, _, _, _, _ in
+                // This closure is called after session tear down and the persistent store is replaced.
+                // It is called to create a temporary stack and restore the user client backup.
+                XCTAssertNil(self.coreDataStack)
+                let stack = try await CoreDataStackHelper()
+                    .createStack(inMemoryStore: true)
+                try await stack.viewContext.perform {
+                    let user = ZMUser.selfUser(in: stack.viewContext)
+                    user.remoteIdentifier = selfUserQualifiedID.uuid
+                    user.domain = selfUserQualifiedID.domain
+                    try stack.viewContext.save()
+                }
+                self.coreDataStack = stack
+                return stack
+            }
+        mockEntityStorage
+            .replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod = { _, _, _ in
                 URL(filePath: "/accountDataFolder/")
             }
 
@@ -111,7 +114,9 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
             try viewContext.save()
         }
 
+        let backupFile = URL(fileURLWithPath: "backup.ios_wbu")
         sut = ImportLegacyBackupUseCase(
+            url: backupFile,
             userSession: { [weak self] in self?.mockUserSession },
             dispatchGroup: dispatchGroup,
             streamDecryptor: mockStreamDecryptor,
@@ -135,31 +140,12 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         sharedContainerURL = nil
     }
 
-    func testFileExtensionsAreAccepted() async throws {
-        // Given
-        let extensions = ["ios_Wbu", "ioS-wbu"]
-        // produce another error which is thrown after the file extension check
-        mockUserSession = nil // expect `BackupRestoreError.noActiveAccount` (but not `.invalidFileExtension`)
-
-        for extensions in extensions {
-            do {
-                // When
-                let filePath = "/path/to/file.\(extensions)"
-                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-                XCTFail("Unexpected success")
-            } catch ImportLegacyBackupError.noActiveAccountForImport {
-                // Then
-            }
-        }
-    }
-
     func testMockInvocations() async throws {
         // Given
-        let url = URL(fileURLWithPath: "backup.ios_wbu")
         let accountID = coreDataStack.account.userIdentifier
 
         // When
-        let sequence = try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
+        let sequence = try await sut.invoke(password: "c<%I2f41\"6!'")
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
 
         // Then
@@ -175,7 +161,7 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
         XCTAssertFalse(
             mockEntityStorage
-                .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty
+                .replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.isEmpty
         )
         XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
         // ensure the user client was preserved

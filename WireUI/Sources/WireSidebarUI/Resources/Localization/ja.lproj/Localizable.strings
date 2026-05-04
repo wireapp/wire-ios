@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,8 +24,18 @@
 "sidebar.conversation_filter.groups.title" = "グループ";
 "sidebar.conversation_filter.channels.title" = "Channels";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.unread.title" = "Unread";
+"sidebar.conversation_filter.mentions.title" = "Mentions";
+"sidebar.conversation_filter.replies.title" = "Replies";
+"sidebar.conversation_filter.drafts.title" = "Drafts";
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "アーカイブ";
+
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
+"sidebar.files.title" = "ファイル";
+"sidebar.files.all_files.title" = "すべて";
 
 "sidebar.contacts.title" = "連絡先";
 "sidebar.contacts.connect.title" = "接続";

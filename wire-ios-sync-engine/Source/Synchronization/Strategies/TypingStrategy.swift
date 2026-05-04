@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 
 let IsTypingKey = "isTyping"
@@ -112,24 +113,33 @@ class TypingEventQueue {
     }
 }
 
-public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
+public class TypingStrategy: AbstractRequestStrategy, TearDownCapable {
 
     fileprivate var typing: Typing!
     fileprivate let typingEventQueue = TypingEventQueue()
     fileprivate var tornDown: Bool = false
     fileprivate var observers: [Any] = []
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    public convenience init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
+    public convenience init(
+        applicationStatus: ApplicationStatus,
+        managedObjectContext: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             applicationStatus: applicationStatus,
             syncContext: managedObjectContext,
             uiContext: managedObjectContext.zm_userInterface,
-            typing: nil
+            typing: nil,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -137,15 +147,17 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         applicationStatus: ApplicationStatus,
         syncContext: NSManagedObjectContext,
         uiContext: NSManagedObjectContext,
-        typing: Typing?
+        typing: Typing?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.typing = typing ?? Typing(uiContext: uiContext, syncContext: syncContext)
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
 
         observers.append(
@@ -223,8 +235,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6, .v7, .v8:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
@@ -248,60 +260,6 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         typing = nil
         tornDown = true
         observers = []
-    }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        guard liveEvents else { return }
-
-        events.forEach { event in
-            process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
-        }
-    }
-
-    func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
-        guard
-            event.type.isOne(of: [
-                .conversationTyping,
-                .conversationOtrMessageAdd,
-                .conversationMLSMessageAdd,
-                .conversationMemberLeave
-            ]),
-            let userID = event.senderUUID,
-            let conversationID = event.conversationUUID
-        else { return }
-
-        let user = ZMUser.fetchOrCreate(with: userID, domain: event.senderDomain, in: managedObjectContext)
-        let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: event.conversationDomain,
-            in: managedObjectContext
-        )
-
-        if event.type == .conversationTyping {
-            guard let payloadData = event.payload["data"] as? [String: String],
-                  let status = payloadData[StatusKey]
-            else { return }
-            processIsTypingUpdateEvent(for: user, in: conversation, with: status)
-        } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
-            if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        } else if event.type == .conversationMemberLeave {
-            let users = event.users(in: managedObjectContext, createIfNeeded: false)
-            users.forEach { user in
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        }
-    }
-
-    func processIsTypingUpdateEvent(for user: ZMUser, in conversation: ZMConversation, with status: String) {
-        let startedTyping = (status == StartedKey)
-        let stoppedTyping = (status == StoppedKey)
-        if startedTyping || stoppedTyping {
-            typing.setIsTyping(startedTyping, for: user, in: conversation)
-        }
     }
 }
 

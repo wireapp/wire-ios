@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 
 @protocol ZMImageMessageData <NSObject>
 
+@property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic, readonly, nullable) NSData *imageData; ///< This will either returns the mediumData or the original image data. Useful only for newly inserted messages.
 @property (nonatomic, readonly, nullable) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
 
@@ -109,7 +110,10 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMLSMigrationUpdateVersion,
     ZMSystemMessageTypeMLSMigrationPotentialGap,
     ZMSystemMessageTypeMLSNotSupportedSelfUser,
-    ZMSystemMessageTypeMLSNotSupportedOtherUser
+    ZMSystemMessageTypeMLSNotSupportedOtherUser,
+    ZMSystemMessageTypeChannelHistoryDepthModified,
+    ZMSystemMessageTypeUserRemovedFromTeam,
+    ZMSystemMessageTypeUnknownMessageContentTypeReceived
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {

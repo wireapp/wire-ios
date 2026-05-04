@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import GenericMessageProtocol
 import WireDataModel
+import WireNetwork
 
 struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMessageNotificationBuilderProtocol {
     let context: Context
@@ -70,7 +71,7 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
 
@@ -134,7 +135,7 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -155,7 +156,7 @@ extension ConversationEphemeralMessageNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -174,7 +175,7 @@ extension ConversationEphemeralMessageNotificationBuilder {
         ) async -> ZMOTRMessage? {
             await messageLocalStore.fetchMessage(
                 id: id,
-                conversationID: conversationID.uuid,
+                conversationID: conversationID.id,
                 conversationDomain: conversationID.domain
             )
         }

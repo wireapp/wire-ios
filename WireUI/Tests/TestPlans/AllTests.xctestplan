@@ -47,13 +47,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireSidebarUITests",
         "name" : "WireSidebarUITests"
       }
@@ -63,13 +56,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireAccountImageUITests",
         "name" : "WireAccountImageUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireCells",
-        "identifier" : "WireCellsUITests",
-        "name" : "WireCellsUITests"
       }
     },
     {
@@ -84,13 +70,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireMoveToFolderUITests",
         "name" : "WireMoveToFolderUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationUITests",
-        "name" : "WireConversationUITests"
       }
     },
     {
@@ -112,13 +91,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireMultiBackendUITests",
         "name" : "WireMultiBackendUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireConversations",
-        "identifier" : "WireConversationsUITests",
-        "name" : "WireConversationsUITests"
       }
     }
   ],

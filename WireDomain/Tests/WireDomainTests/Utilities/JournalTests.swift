@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,19 @@ class JournalStoreTests {
         // Then
         #expect(storage.object(forKey: sut.rawKey(for: .isSyncV2Enabled)) == nil)
         #expect(storage.object(forKey: "notAJournalKey") != nil)
+    }
+
+    @Test("Values contain all declared values")
+    func values() {
+        // Given
+        let exhaustiveKeysCount = 11
+        sut[.isSyncV2Enabled] = true
+
+        // When
+        let result = sut.values()
+
+        // Then
+        #expect(result.keys.count == exhaustiveKeysCount)
     }
 
 }

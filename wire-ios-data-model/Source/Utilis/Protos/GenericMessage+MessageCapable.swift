@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public protocol MessageCapable {
     func setContent(on message: inout GenericMessage)
@@ -68,7 +69,7 @@ extension Text: EphemeralMessageCapable {
     }
 }
 
-extension WireProtos.Asset: EphemeralMessageCapable {
+extension GenericMessageProtocol.Asset: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
     }
@@ -110,7 +111,7 @@ extension ButtonActionConfirmation: MessageCapable {
     }
 }
 
-extension WireProtos.Availability: MessageCapable {
+extension GenericMessageProtocol.Availability: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.availability = self
     }
@@ -122,7 +123,7 @@ extension ButtonAction: MessageCapable {
     }
 }
 
-extension WireProtos.Reaction: MessageCapable {
+extension GenericMessageProtocol.Reaction: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.reaction = self
     }
@@ -152,7 +153,7 @@ extension InCallHandRaise: MessageCapable {
     }
 }
 
-extension WireProtos.MessageEdit: MessageCapable {
+extension GenericMessageProtocol.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self
     }
@@ -177,7 +178,7 @@ extension MessageDelete: MessageCapable {
     }
 }
 
-extension WireProtos.Confirmation: MessageCapable {
+extension GenericMessageProtocol.Confirmation: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.confirmation = self
     }

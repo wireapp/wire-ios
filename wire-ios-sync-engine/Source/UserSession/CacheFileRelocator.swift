@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,15 @@ import Foundation
 
 struct CacheFileRelocator {
 
-    // whitelisted files, so the FileRelocator doesn't consider to check these system files.
-    // - com.apple.nsurlsessiond is used by the system as cache while sharing an item.
-    // - .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
-    private let whitelistedFiles = ["com.apple.nsurlsessiond", ".DS_Store"]
+    // Whitelisted files, so the FileRelocator doesn't consider to check these files.
+    private let whitelistedFiles = [
+        // com.apple.nsurlsessiond is used by the system as cache while sharing an item.
+        "com.apple.nsurlsessiond",
+        // .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
+        ".DS_Store",
+        // Global logs directory. Ideally logs would be grouped by account as well, but we're not there yet.
+        FileManager.sharedLogsDirectoryName
+    ]
     private let zmLog = ZMSLog(tag: "ZMUserSession")
 
     /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ public extension AnalyticsEvent {
             )
         }
 
-        /// An event tracking when the dismisses the self profile and the personal to team migration banner was visible.
+        /// An event tracking when the user dismisses the self profile and the personal to team migration banner was
+        /// visible.
 
         public static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
             personalMigrationCTA(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 
@@ -76,16 +77,13 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 
     private func configureConstraints() {
-
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
-        let margins = conversationHorizontalMargins
-
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
@@ -168,12 +166,19 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
-        self.configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
+    init(
+        attachment: LinkAttachment,
+        thumbnailResource: WireImageResource?
+    ) {
+        self.configuration = View.Configuration(
+            attachment: attachment,
+            thumbnailResource: thumbnailResource
+        )
         self.actionController = nil
     }
 }

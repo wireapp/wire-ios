@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,25 +49,6 @@ final class VoIPPushHelperTests: XCTestCase {
 
         // Then
         XCTAssertTrue(VoIPPushHelper.isCallKitAvailable)
-    }
-
-    func testLoadedUserSessions() {
-        // Given
-        let id1 = UUID.create()
-        let id2 = UUID.create()
-        let id3 = UUID.create()
-
-        XCTAssertFalse(VoIPPushHelper.isUserSessionLoaded(accountID: id1))
-        XCTAssertFalse(VoIPPushHelper.isUserSessionLoaded(accountID: id2))
-        XCTAssertFalse(VoIPPushHelper.isUserSessionLoaded(accountID: id3))
-
-        // When
-        VoIPPushHelper.setLoadedUserSessions(accountIDs: [id1, id2])
-
-        // Then
-        XCTAssertTrue(VoIPPushHelper.isUserSessionLoaded(accountID: id1))
-        XCTAssertTrue(VoIPPushHelper.isUserSessionLoaded(accountID: id2))
-        XCTAssertFalse(VoIPPushHelper.isUserSessionLoaded(accountID: id3))
     }
 
     func testIsAVSReady() {

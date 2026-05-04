@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,8 +24,18 @@
 "sidebar.conversation_filter.groups.title" = "Группы";
 "sidebar.conversation_filter.channels.title" = "Каналы";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "Беседы 1:1";
+"sidebar.conversation_filter.unread.title" = "Непрочитано";
+"sidebar.conversation_filter.mentions.title" = "Упоминания";
+"sidebar.conversation_filter.replies.title" = "Ответы";
+"sidebar.conversation_filter.drafts.title" = "Черновики";
 "sidebar.conversation_filter.folders.title" = "Папки";
 "sidebar.conversation_filter.archived.title" = "Архивировать";
+
+"sidebar.meetings.title" = "Встречи";
+"sidebar.meetings.all_meetings.title" = "Все встречи";
+
+"sidebar.files.title" = "Файлы";
+"sidebar.files.all_files.title" = "Все";
 
 "sidebar.contacts.title" = "Контакты";
 "sidebar.contacts.connect.title" = "Связаться";

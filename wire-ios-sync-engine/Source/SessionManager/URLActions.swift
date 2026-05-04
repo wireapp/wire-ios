@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@ import WireLogging
 public enum URLAction: Equatable {
 
     /// Connect to a service user (bot)
-    case connectBot(serviceUser: ServiceUserData)
+    case connectBot(providerID: UUID, serviceID: UUID)
 
-    /// The SSO login sucessfully completed
+    /// The SSO login successfully completed
     case companyLoginSuccess(userInfo: UserInfo)
 
     /// Start the SSO login flow
@@ -169,7 +169,7 @@ extension URLAction {
                   let providerUUID = UUID(uuidString: provider) else {
                 throw DeepLinkRequestError.malformedLink
             }
-            self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
+            self = .connectBot(providerID: providerUUID, serviceID: serviceUUID)
 
         case URL.Host.accessBackend:
             guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
