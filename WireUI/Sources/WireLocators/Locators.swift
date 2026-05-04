@@ -437,7 +437,9 @@ public enum Locators {
             case close
         }
 
+        /// UI elements for both file or folder creation.
         public enum CreateFilePage: String {
+            case createFolderPageHeader = "Create folder"
             case cancelButton
             case createButton
         }
@@ -483,6 +485,10 @@ public enum Locators {
         public enum FilesItemPage: String {
             case confirmDeleteButton
             case confirmRestoreButton
+        }
+
+        public enum RecycleBinPage: String {
+            case deletePermanently = "Delete Permanently"
         }
     }
 

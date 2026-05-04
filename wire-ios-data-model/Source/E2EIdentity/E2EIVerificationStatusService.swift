@@ -69,7 +69,7 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
 
     public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
         do {
-            return try await coreCrypto.extendedTransaction {
+            return try await coreCrypto.transaction {
                 try await $0.e2eiConversationState(conversationId: groupID.conversationId).toMLSVerificationStatus()
             }
         } catch {
