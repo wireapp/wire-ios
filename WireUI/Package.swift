@@ -5,18 +5,13 @@ import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
 
-let Foundation = Feature(name: "WireFoundation")
-let Design = Feature(name: "WireDesign", dependencies: [Foundation])
-let AccountImageUI = Feature(name: "WireAccountImageUI", dependencies: [Design, Foundation])
-
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        AccountImageUI.library,
+        .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
-        .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
@@ -37,14 +32,17 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
-        AccountImageUI.target,
-        AccountImageUI.testTarget,
+        .target(
+            name: "WireAccountImageUI",
+            dependencies: [
+                "WireDesign",
+                "WireFoundation"
+            ]
+        ),
+        .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),
-        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
-
-        .target(name: "WireConversationUI"),
-        .testTarget(name: "WireConversationUITests", dependencies: ["WireConversationUI"]),
+        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI", "WireSettingsUI"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
@@ -110,20 +108,6 @@ let package = Package(
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )
-
-struct Feature {
-    var name: String
-    var dependencies: [Feature] = []
-    var library: Product {
-        .library(name: name, targets: [name])
-    }
-    var target: Target {
-        .target(name: name, dependencies: dependencies.map { .init(stringLiteral: $0.name) })
-    }
-    var testTarget: Target {
-        .testTarget(name: name + "Tests", dependencies: [self].map { .init(stringLiteral: $0.name) })
-    }
-}
 
 for target in package.targets {
     if target.isTest {

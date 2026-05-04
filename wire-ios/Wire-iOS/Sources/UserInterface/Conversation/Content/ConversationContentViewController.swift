@@ -168,11 +168,11 @@ final class ConversationContentViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func loadView() {
-        view = .init()
+        super.loadView()
 
         view.addSubview(tableView)
 
