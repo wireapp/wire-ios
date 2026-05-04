@@ -23,6 +23,7 @@ class TestServicesClient {
     let testServiceURL = "http://localhost:8080"
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
+    private var instanceCache: [String: String] = [:]
 
     func sendHttpRequest(url: String, body: [String: Any], requestType: String) async throws -> (Data, URLResponse) {
         guard let requestUrl = URL(string: url) else { fatalError("Invalid URL") }
@@ -47,9 +48,12 @@ class TestServicesClient {
         email: String,
         password: String,
         name: String,
-        verificationCode: String?,
-        deviceName: String?
+        verificationCode: String?
     ) async throws -> String {
+
+        if let cachedInstanceId = instanceCache[email] {
+            return cachedInstanceId
+        }
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance")
         guard let requestUrl = url else { fatalError() }
@@ -59,7 +63,7 @@ class TestServicesClient {
             "password": password,
             "name": name,
             "developmentApiEnabled": true,
-            "deviceName": deviceName ?? "device1"
+            "deviceName": "device\(Int.random(in: 10_000 ... 99_999))"
         ]
 
         let (responseData, response) = try await sendHttpRequest(
@@ -77,6 +81,7 @@ class TestServicesClient {
             CreateInstanceResponse.self,
             from: responseData
         )
+        instanceCache[email] = instanceResponse.instanceId
         return instanceResponse.instanceId
     }
 
@@ -88,8 +93,7 @@ class TestServicesClient {
             email: owner.email,
             password: owner.password,
             name: owner.name,
-            verificationCode: nil,
-            deviceName: nil
+            verificationCode: nil
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/conversation")
@@ -134,8 +138,7 @@ class TestServicesClient {
             email: user.email,
             password: user.password,
             name: user.name,
-            verificationCode: nil,
-            deviceName: nil
+            verificationCode: nil
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendText")
@@ -144,7 +147,8 @@ class TestServicesClient {
         var body: [String: Any] = [
             "conversationId": conversationId.uuidString.lowercased(),
             "text": text,
-            "legalHoldStatus": 0
+            "legalHoldStatus": 0,
+            "expectsReadConfirmation": true
         ]
 
         if domain != BackendTarget.staging.domainInfo {
@@ -184,10 +188,11 @@ class TestServicesClient {
         type: String,
         user: UserInfo,
         fileName: String,
-        filepath: String,
+        filepath: String?,
         convoId: UUID,
         domain: String,
         timeoutMillis: Int = 0,
+        audio: [String: Any]? = nil
 
     ) async throws {
 
@@ -195,8 +200,7 @@ class TestServicesClient {
             email: user.email,
             password: user.password,
             name: user.name,
-            verificationCode: nil,
-            deviceName: nil
+            verificationCode: nil
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendFile")
@@ -204,10 +208,19 @@ class TestServicesClient {
 
         var body: [String: Any] = [
             "conversationId": convoId.uuidString.lowercased(),
-            "data": try fileToBase64String(fileURL: URL(fileURLWithPath: filepath)),
             "fileName": fileName,
-            "type": type
+            "type": type,
+            "legalHoldStatus": 0,
+            "expectsReadConfirmation": true
         ]
+
+        if let filepath, !filepath.isEmpty {
+            body["data"] = try fileToBase64String(fileURL: URL(fileURLWithPath: filepath))
+        }
+
+        if let audio {
+            body["audio"] = audio
+        }
 
         if domain != BackendTarget.staging.domainInfo {
             body["conversationDomain"] = domain
@@ -241,8 +254,7 @@ class TestServicesClient {
             email: user.email,
             password: user.password,
             name: user.name,
-            verificationCode: nil,
-            deviceName: nil
+            verificationCode: nil
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendImage")
@@ -277,8 +289,7 @@ class TestServicesClient {
             email: user.email,
             password: user.password,
             name: user.name,
-            verificationCode: nil,
-            deviceName: nil
+            verificationCode: nil
         )
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/getMessages")
