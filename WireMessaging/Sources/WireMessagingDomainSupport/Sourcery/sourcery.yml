@@ -1,0 +1,10 @@
+sources:
+- ${PACKAGE_ROOT_DIR}/Sources/WireMessagingDomain
+- ${PACKAGE_ROOT_DIR}/Sources/WireMessagingData
+templates:
+- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
+output:
+  ${DERIVED_SOURCES_DIR}
+args:
+  autoMockablePackageImports: ["WireMessagingData", "UniformTypeIdentifiers", "AWSS3", "Combine"]
+  autoMockablePublicImports: ["WireMessagingDomain", "Foundation"]

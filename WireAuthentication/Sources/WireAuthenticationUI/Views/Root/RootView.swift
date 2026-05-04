@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,21 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
+import WireReusableUIComponents
 
 package protocol RootFactory {
 
     @MainActor var viewModel: RootViewModel { get }
 
     @MainActor
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory
+
+    @MainActor
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory
+
+    @MainActor
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory
 
     @MainActor
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
@@ -48,71 +56,84 @@ package struct RootView: View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
+                    .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+                    // The alert should be shown on the navigation stack, otherwise
+                    // it will dismiss the sheet.
+                    .alert(
+                        item: $viewModel.alert,
+                        title: { alert in
+                            switch alert {
+                            case .obsoleteClient:
+                                Text(
+                                    L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                        .title
+                                )
+                            default:
+                                Text(alert.title)
+                            }
+                        },
+                        message: { alert in
+                            switch alert {
+                            case .obsoleteBackend:
+                                Text(L10n.Localizable.ObsoleteBackendMultibackend.Alert.message)
+                            case .obsoleteClient:
+                                Text(L10n.Localizable.ObsoleteClientMultibackend
+                                    .Alert.message)
+                            default:
+                                Text(alert.message)
+                            }
+                        },
+                        actions: { alert in
+                            switch alert {
+                            case .obsoleteClient:
+                                obsoleteClientAlertActions()
+                            case .obsoleteBackend:
+                                obsoleteBackendAlertActions()
+                            case .logoutConfirmation:
+                                logoutConfirmationButtons
+                            default:
+                                Button(Strings.Authentication.Error.confirm, action: {})
+                            }
+                        }
+                    )
             }
     }
 
     @ViewBuilder
     private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
-        case let .authFlow(backendInfo):
+        case let .authFlow(environment):
+            // The navigation stack needs to wrap the view otherwise we may
+            // run into issues finding the right navigation path.
+            // See [WPB-20414]
             NavigationStack(path: $viewModel.path) {
                 DetermineAuthMethodView(
                     factory: viewModel.factory.determineAuthMethodFactory(
-                        backendInfo: backendInfo
+                        environment: environment
                     )
                 )
-                .navigationDestination(for: RootDestination.self) { destination in
-                    switch destination {
-                    case .switchAccounts:
-                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
-                    }
-                }
+
             }
             // We must provide an explicit id so it knows to create a new
-            // view when the backend info changes.
-            .id(backendInfo)
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-            // The alert should be shown on the navigation stack, otherwise
-            // it will dismiss the sheet.
-            .alert(
-                item: $viewModel.alert,
-                title: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
-                                .title : L10n.Localizable.ObsoleteClient.Alert.title
-                        )
-                    default:
-                        Text(alert.title)
-                    }
-                },
-                message: { alert in
-                    switch alert {
-                    case .obsoleteBackend:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
-                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
-                        )
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
-                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
-                        )
-                    default:
-                        Text(alert.message)
-                    }
-                },
-                actions: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        obsoleteClientAlertActions()
-                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
-                        obsoleteBackendAlertActions()
-                    default:
-                        Button(Strings.Authentication.Error.confirm, action: {})
-                    }
-                }
+            // view when the backend environment changes.
+            .id(environment)
+        case let .reauthFlow(email):
+            NavigationStack(path: $viewModel.path) {
+                ReloginViaEmailView(
+                    factory: viewModel.factory.reloginViaEmailFactory(
+                        email: email
+                    )
+                )
+            }
+        case .reauthSSO:
+            NavigationStack(path: $viewModel.path) {
+                ReloginViaSSOView(
+                    factory: viewModel.factory.reloginViaSSOFactory()
+                )
+            }
+        case .accountSwitcher:
+            AccountSwitcherModalView(
+                factory: viewModel.factory.accountsSwitcherFactory()
             )
         }
     }
@@ -139,16 +160,24 @@ package struct RootView: View {
     @ViewBuilder
     private func obsoleteClientAlertActions() -> some View {
         Button(
-            viewModel.isMultibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert
-                .okButton,
+            Strings.Obsolete.Alert.updateButton,
             action: viewModel.goToAppStore
         )
         switchAccountsAlertButtonIfNeeded()
-        if viewModel.isMultibackendEnabled {
-            Button(
-                Strings.Obsolete.Alert.cancel,
-                action: viewModel.dismissAlert
-            )
+
+        Button(
+            Strings.Obsolete.Alert.cancel,
+            action: viewModel.dismissAlert
+        )
+    }
+
+    @ViewBuilder private var logoutConfirmationButtons: some View {
+        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
+        Button(Strings.Logout.Alert.keepDataButton) {
+            viewModel.logout(deleteData: false)
+        }
+        Button(Strings.Logout.Alert.deleteDataButton, role: .destructive) {
+            viewModel.logout(deleteData: true)
         }
     }
 

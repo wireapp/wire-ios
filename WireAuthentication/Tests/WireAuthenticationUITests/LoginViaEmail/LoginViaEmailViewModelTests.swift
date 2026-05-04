@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
 import WireFoundation
+import WireNetwork
 import WireReusableUIComponentsSupport
 import WireTestingPackage
 import XCTest
@@ -53,10 +54,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendInfo: MockDependencies().backendInfo,
+            environment: MockDependencies().backendEnvironment,
             canCreateAccount: true,
-            didDetectDomainConflict: false,
-            onCreateAccount: { [self] in onCreateAccountCalled = true }
+            didDetectDomainConflict: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -104,12 +104,15 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
         fatalError("not needed here")
     }
 
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any WireAuthenticationUI
-        .NoHistoryFactory {
-        fatalError("not needed here")
+    func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
+        fatalError()
     }
 
-    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
+    }
+
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
         fatalError("not needed here")
     }
 
@@ -130,7 +133,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock
@@ -166,7 +171,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock

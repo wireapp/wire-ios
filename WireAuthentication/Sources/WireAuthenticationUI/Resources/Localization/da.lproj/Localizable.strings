@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Næste";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-mail";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Adgangskode";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Næste";
 "cloud_user_login.forgot_password" = "Glemt adgangskode?";
+
+"login.sso.title" = "Log ind";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
+"login.sso.input_code.title" = "SSO access code";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "Log ud";
+"logout.alert.title" = "Log ud";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Annuller";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Det er første gang du bruger Wire på denne enhed.";
 "authentication.no_history.message" = "Af hensyn til fortrolighed, vil din samtalehistorik ikke vises her.";
+"authentication.missing_history.title" = "Du har brugt Wire på denne enhed før.";
+"authentication.missing_history.message" = "Beskeder sendt i mellemtiden vises ikke.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";
@@ -128,7 +146,7 @@
 
 "create_personal_account.title" = "Create personal account";
 "create_personal_account.continue" = "Fortsæt";
-"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
 "create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
 "create_personal_account.create_team" = "Opret team";
 "create_personal_account.input_name.title" = "Navn";

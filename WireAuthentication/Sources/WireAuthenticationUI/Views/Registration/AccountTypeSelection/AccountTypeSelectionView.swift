@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountView: some View {
         let background = RoundedRectangle(cornerRadius: 24, style: .circular)
-            .stroke(ColorTheme.Base.primary.color)
+            .stroke(ColorTheme.Base.primary(.default).color)
         VStack(spacing: 24) {
             teamAccountTitles
             teamAccountFeatures
@@ -172,7 +172,7 @@ private struct TitlesView: View {
         VStack(spacing: 8) {
             Text(title)
                 .font(.callout.bold())
-                .foregroundStyle(ColorTheme.Base.primary.color)
+                .foregroundStyle(ColorTheme.Base.primary(.default).color)
             Text(subtitle)
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        sut = AssetV3UploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = AssetV3UploadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com",
+            isCloudDomain: false
+        )
     }
 
     override func tearDown() {
@@ -86,7 +91,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         line: UInt = #line
     ) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
-        let message = try! targetConversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! targetConversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
 
         for asset in message.assets {

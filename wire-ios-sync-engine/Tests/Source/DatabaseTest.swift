@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@ class DatabaseTest: ZMTBaseTest {
         true
     }
 
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMOC.dispatchGroupContext?.groups ?? []) + (syncMOC.dispatchGroupContext?.groups ?? [])
+    }
+
     var uiMOC: NSManagedObjectContext {
         coreDataStack!.viewContext
     }
 
     var syncMOC: NSManagedObjectContext {
         coreDataStack!.syncContext
-    }
-
-    var searchMOC: NSManagedObjectContext {
-        coreDataStack!.searchContext
     }
 
     var sharedContainerURL: URL? {
@@ -61,41 +61,42 @@ class DatabaseTest: ZMTBaseTest {
         }
     }
 
-    private func createCoreDataStack() -> CoreDataStack {
+    private func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
         let stack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL!,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
-
+        try await stack.load()
         return stack
     }
 
-    private func configureCaches() {
+    private func configureCaches() async {
         let fileAssetCache = FileAssetCache(location: cacheURL)
         let userImageCache = UserImageLocalCache(location: nil)
 
-        uiMOC.zm_fileAssetCache = fileAssetCache
-        uiMOC.zm_userImageCache = userImageCache
-
-        syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_fileAssetCache = fileAssetCache
+        await uiMOC.perform {
+            self.uiMOC.zm_fileAssetCache = fileAssetCache
             self.uiMOC.zm_userImageCache = userImageCache
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.zm_fileAssetCache = fileAssetCache
+            self.syncMOC.zm_userImageCache = userImageCache
         }
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataStack = createCoreDataStack()
+        coreDataStack = try await createCoreDataStack()
 
-        configureCaches()
+        await configureCaches()
     }
 
     override func tearDown() {
@@ -112,7 +113,7 @@ class DatabaseTest: ZMTBaseTest {
 
     func performPretendingUIMocIsSyncMoc(_ block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()

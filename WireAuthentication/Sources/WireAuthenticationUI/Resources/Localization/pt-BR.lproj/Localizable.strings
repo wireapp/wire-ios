@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Próximo";
 
 "cloud_user_login.title" = "Digite sua senha para fazer login";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-mail";
 "cloud_user_login.input_email.placeholder" = "Digite o email";
 "cloud_user_login.input_password.title" = "Senha";
 "cloud_user_login.input_password.placeholder" = "Insira a senha";
 "cloud_user_login.submit" = "Próximo";
 "cloud_user_login.forgot_password" = "Esqueceu a senha?";
+
+"login.sso.title" = "Iniciar sessão";
+"login.sso.expiration_message" = "Sua sessão expirou. Faça login com a conta corporativa para continuar.";
+"login.sso.input_code.title" = "código de acesso SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Iniciar sessão empresarial";
+
+"logout.button.title" = "Sair";
+"logout.alert.title" = "Sair";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Cancelar";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "É a primeira vez que você está usando o Wire nesse dispositivo.";
 "authentication.no_history.message" = "Por questões de privacidade, o seu histórico de conversa não aparecerá aqui.";
+"authentication.missing_history.title" = "Você não usou o Wire nesse dispositivo antes.";
+"authentication.missing_history.message" = "Mensagens enviadas nesse meio tempo não irão aparecer.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "Sem conexão à Internet";
@@ -128,7 +146,7 @@
 
 "create_personal_account.title" = "Create personal account";
 "create_personal_account.continue" = "Continuar";
-"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
 "create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
 "create_personal_account.create_team" = "Criar uma equipe";
 "create_personal_account.input_name.title" = "Nome";

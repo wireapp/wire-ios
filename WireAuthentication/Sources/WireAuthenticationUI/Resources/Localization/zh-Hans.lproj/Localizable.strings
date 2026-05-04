@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "继续";
 
 "cloud_user_login.title" = "键入密码来登录";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "电邮箱地址";
 "cloud_user_login.input_email.placeholder" = "输入电子邮箱";
 "cloud_user_login.input_password.title" = "密码";
 "cloud_user_login.input_password.placeholder" = "键入密码";
 "cloud_user_login.submit" = "继续";
 "cloud_user_login.forgot_password" = "忘记密码？";
+
+"login.sso.title" = "登录";
+"login.sso.expiration_message" = "您的工作阶段已过期。请使用您的企业帐户登录以继续。";
+"login.sso.input_code.title" = "SSO 访问代码";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "企业登录";
+
+"logout.button.title" = "登出";
+"logout.alert.title" = "登出";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "取消";
+
 "create_account_or_team.title" = "还没有 Wire 账户？";
 "create_account_or_team.button" = "创建账户或团队";
+"create_account.button" = "创建账户";
 
 "account_type_selector.title" = "您将如何使用 Wire？";
 "account_type_selector.option_team.title" = "用于协作";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "这是您第一次在此设备使用Wire。";
 "authentication.no_history.message" = "基于隐私考虑，您的历史聊天记录将不会被显示。";
+"authentication.missing_history.title" = "您曾在此设备使用过Wire。";
+"authentication.missing_history.message" = "这段期间发送的信息将不会显示出来。";
 "authentication.no_history.confirm" = "好";
 
 "authentication.error.title.no_internet" = "无网络连接";
@@ -128,7 +146,7 @@
 
 "create_personal_account.title" = "创建个人账户";
 "create_personal_account.continue" = "继续";
-"create_personal_account.share_data_usage" = "我同意分享匿名使用数据。所有详情请参阅我们的[隐私政策](%@)";
+"create_personal_account.share_data_usage" = "我同意分享匿名使用数据。所有详情请参阅我们的[隐私政策](%@)（可选）";
 "create_personal_account.looking_for_collaboration" = "寻求团队协作？";
 "create_personal_account.create_team" = "创建团队";
 "create_personal_account.input_name.title" = "名称";

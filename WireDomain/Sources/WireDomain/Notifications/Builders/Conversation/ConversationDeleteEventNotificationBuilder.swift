@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilderProtocol {
 
@@ -56,7 +56,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
             conversationName: conversationName,
             senderName: senderName,
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
     }
@@ -98,7 +98,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
             senderID: senderID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.decreaseUnreadCount(
             conversation: conversation
@@ -158,7 +158,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -171,7 +171,7 @@ extension ConversationDeleteEventNotificationBuilder {
 
         func validate(conversationID: ConversationID) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -187,7 +187,7 @@ extension ConversationDeleteEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -200,7 +200,7 @@ extension ConversationDeleteEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

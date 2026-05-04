@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@ import Foundation
 public extension SessionManager {
 
     enum SwitchBackendError: Swift.Error {
-        case loggedInAccounts
+        case maxNumberAccountsReached
         case invalidBackend
     }
 
     typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
     func canSwitchBackend() -> SwitchBackendError? {
-        guard !accountManager.hasAccounts else {
-            return .loggedInAccounts
+        guard accountManager.numberOfAccounts < maxNumberAccounts else {
+            return .maxNumberAccountsReached
         }
 
         return nil
@@ -37,7 +37,7 @@ public extension SessionManager {
 
     func switchBackendWithoutResolving(to environment: BackendEnvironment) {
         self.environment = environment
-        unauthenticatedSession = nil
+        setUnauthenticatedSession(nil)
     }
 
     func switchBackend(
@@ -45,8 +45,8 @@ public extension SessionManager {
         completion: @escaping ((any Error)?) -> Void = { _ in }
     ) {
         self.environment = environment
-        unauthenticatedSession = nil
-        resolveAPIVersion(completion: completion)
+        setUnauthenticatedSession(nil)
+        completion(nil)
     }
 
     func fetchBackendEnvironment(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import Testing
 import WireDataModel
+@testable import WireNetwork
 
 @testable import WireDomain
 
@@ -45,7 +46,7 @@ final class AccountStoreTests {
     @Test("It creates an empty store")
     func itCreatesAnEmptyStore() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
 
         // Then
         #expect(sut.fetchAllAccounts().isEmpty)
@@ -54,7 +55,7 @@ final class AccountStoreTests {
     @Test("It can store and retrieve accounts")
     func itCanStoreAndRetrieveAnAccount() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let account = Account(userName: "Alice", userIdentifier: UUID())
 
         // When
@@ -67,7 +68,7 @@ final class AccountStoreTests {
     @Test("It can remove an account")
     func itCanRemoveAnAccount() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let account = Account(userName: "Alice", userIdentifier: UUID())
 
         #expect(sut.storeAccount(account) == true)
@@ -84,7 +85,7 @@ final class AccountStoreTests {
     func itCanDeleteAnAccountStore() throws {
         // Given
         do {
-            let sut = try AccountStore(root: url)
+            let sut = try AccountStore(directory: url)
             let account = Account(userName: "Alice", userIdentifier: UUID())
 
             #expect(sut.storeAccount(account) == true)
@@ -92,11 +93,11 @@ final class AccountStoreTests {
         }
 
         // When
-        #expect(AccountStore.delete(at: url) == true)
+        #expect(AccountStore.delete(directory: url) == true)
 
         // Then
         do {
-            let store = try AccountStore(root: url)
+            let store = try AccountStore(directory: url)
             #expect(store.fetchAllAccounts().isEmpty)
         }
     }
@@ -104,13 +105,13 @@ final class AccountStoreTests {
     @Test("It returns false when trying to delete a non existent account store")
     func itReturnsFalseWhenTryingToDeleteANonExistentAccountStore() throws {
         // Then
-        #expect(AccountStore.delete(at: url) == false)
+        #expect(AccountStore.delete(directory: url) == false)
     }
 
     @Test("It can store multiple accounts")
     func itCanStoreMultipleAccounts() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Bob", userIdentifier: UUID())
 
@@ -125,7 +126,7 @@ final class AccountStoreTests {
     @Test("It only removes specified accounts")
     func itOnlyRemovesSpecifiedAccounts() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Bob", userIdentifier: UUID())
 
@@ -151,7 +152,7 @@ final class AccountStoreTests {
     @Test("It returns false if the account to be removed is not contained in the store")
     func itReturnsFalseIfTheAccountToBeRemovedIsNotContainedInTheStore() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Bob", userIdentifier: UUID())
 
@@ -166,7 +167,7 @@ final class AccountStoreTests {
     @Test("It updates an existing account")
     func itUpdatesAnExistingAccount() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let uuid = UUID()
 
         do {
@@ -185,7 +186,7 @@ final class AccountStoreTests {
         }
 
         // Then
-        let account = try try #require(sut.fetchAccount(with: uuid))
+        let account = try #require(sut.fetchAccount(with: uuid))
         #expect(account.userName == name)
         #expect(account.teamName == team)
         #expect(account.imageData == nil)
@@ -195,7 +196,7 @@ final class AccountStoreTests {
     @Test("It updates an existing account with images")
     func itUpdatesAnExistingAccountWithImages() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let uuid = UUID()
 
         do {
@@ -231,7 +232,7 @@ final class AccountStoreTests {
     @Test("It can load an account by UUID")
     func itCanLoadAnAccountByUUID() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let uuid = UUID()
 
         // When
@@ -243,7 +244,7 @@ final class AccountStoreTests {
     @Test("It does not return an account for a UUID if there is none")
     func itDoesNotReturnAnAccountForAUUIDIfThereIsNone() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let uuid = UUID()
 
         // When
@@ -260,14 +261,14 @@ final class AccountStoreTests {
 
         // When
         do {
-            let sut = try AccountStore(root: url)
+            let sut = try AccountStore(directory: url)
             #expect(sut.storeAccount(account1) == true)
             #expect(sut.storeAccount(account2) == true)
         }
 
         // Then
         do {
-            let sut = try AccountStore(root: url)
+            let sut = try AccountStore(directory: url)
             #expect(sut.fetchAllAccounts() == [account1, account2])
         }
     }
@@ -275,7 +276,7 @@ final class AccountStoreTests {
     @Test("It only reads files named by UUIDs")
     func itOnlyReadsFilesNamedByUUIDs() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let validAccount = Account(userName: "Alice", userIdentifier: UUID())
 
         let accountJSON = Data("""
@@ -287,7 +288,7 @@ final class AccountStoreTests {
             "unreadConversationCount": 1
         }
         """.utf8)
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/invalid_account"))
+        try accountJSON.write(to: url.appendingPathComponent("invalid_account"))
 
         // Then
         #expect(sut.fetchAllAccounts().isEmpty)
@@ -302,7 +303,7 @@ final class AccountStoreTests {
     @Test("It decodes account on disk without login credentials")
     func itDecodesAccountOnDiskWithoutLoginCredentials() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
         let accountJSON = Data("""
@@ -315,7 +316,7 @@ final class AccountStoreTests {
         }
         """.utf8)
 
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+        try accountJSON.write(to: url.appendingPathComponent(accountID.uuidString))
 
         // When
         let account = sut.fetchAccount(with: accountID)
@@ -336,7 +337,7 @@ final class AccountStoreTests {
     @Test("It decodes account on disk with login credentials")
     func itDecodesAccountOnDiskWithLoginCredentials() throws {
         // Given
-        let sut = try AccountStore(root: url)
+        let sut = try AccountStore(directory: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
         let accountJSON = Data("""
@@ -354,7 +355,7 @@ final class AccountStoreTests {
         }
         """.utf8)
 
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+        try accountJSON.write(to: url.appendingPathComponent(accountID.uuidString))
 
         // When
         let account = sut.fetchAccount(with: accountID)
@@ -362,7 +363,6 @@ final class AccountStoreTests {
         // Then
         let expectedCredentials = LoginCredentials(
             emailAddress: "alice@example.com",
-            hasPassword: true,
             usesCompanyLogin: false
         )
         let expectedAccount = Account(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCoreCrypto
-import WireCryptobox
 import WireLogging
 
 @objc
@@ -259,7 +259,7 @@ public extension ZMConversation {
 
     // MARK: - Messages
 
-    /// Creates a system message that inform that there are pontential lost messages, and that some users were added to
+    /// Creates a system message that inform that there are potential lost messages, and that some users were added to
     /// the conversation
     @objc
     func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {

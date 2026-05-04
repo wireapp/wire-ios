@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -103,7 +103,7 @@ public extension ZMConversation {
 
     /// Checks if a guest link can be generated or not
     func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -141,7 +141,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -202,9 +202,10 @@ enum WirelessRequestFactory {
 
     static func setAccessRoles(
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         for conversation: ZMConversation,
-        apiVersion: APIVersion
+        apiVersion: APIVersion,
+        localDomain: String?
     ) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
@@ -212,10 +213,10 @@ enum WirelessRequestFactory {
 
         var accessRoles = conversation.accessRoles
 
-        if allowServices {
-            accessRoles.insert(.service)
+        if allowApps {
+            accessRoles.insert(.app)
         } else {
-            accessRoles.remove(.service)
+            accessRoles.remove(.app)
         }
 
         if allowGuests {
@@ -233,8 +234,8 @@ enum WirelessRequestFactory {
 
         switch apiVersion {
 
-        case .v3, .v4, .v5, .v6, .v7, .v8:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }

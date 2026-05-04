@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
 
     private let client: StorableSelfUserClient
 
-    init(_ value: WireAPI.UserClientAddEvent) {
+    init(_ value: WireNetwork.UserClientAddEvent) {
         self.client = StorableSelfUserClient(
             id: value.client.id,
             type: StorableUserClientType(value.client.type),
@@ -35,10 +35,10 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
             mlsPublicKeys: value.client.mlsPublicKeys.map {
                 StorableMLSPublicKeys(
                     ed25519: $0.ed25519,
-                    ed448: $0.ed448,
+                    ed448: nil,
                     p256: $0.p256,
                     p384: $0.p384,
-                    p512: $0.p512
+                    p521: $0.p521
                 )
             },
             cookie: value.client.cookie,
@@ -46,7 +46,7 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
         )
     }
 
-    func toAPIModel() -> WireAPI.UserClientAddEvent {
+    func toAPIModel() -> WireNetwork.UserClientAddEvent {
         .init(
             client: .init(
                 id: client.id,
@@ -57,12 +57,11 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
                 deviceClass: client.deviceClass?.toAPIModel(),
                 lastActiveDate: client.lastActiveDate,
                 mlsPublicKeys: client.mlsPublicKeys.map {
-                    WireAPI.MLSPublicKeys(
+                    WireNetwork.MLSPublicKeys(
                         ed25519: $0.ed25519,
-                        ed448: $0.ed448,
                         p256: $0.p256,
                         p384: $0.p384,
-                        p512: $0.p512
+                        p521: $0.p521
                     )
                 },
                 cookie: client.cookie,
@@ -97,7 +96,7 @@ private enum StorableDeviceClass: String, Codable, Sendable {
     case desktop
     case legalhold
 
-    init(_ value: WireAPI.DeviceClass) {
+    init(_ value: WireNetwork.DeviceClass) {
         switch value {
         case .phone:
             self = .phone
@@ -110,7 +109,7 @@ private enum StorableDeviceClass: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.DeviceClass {
+    func toAPIModel() -> WireNetwork.DeviceClass {
         switch self {
         case .phone:
             .phone
@@ -128,10 +127,11 @@ private enum StorableDeviceClass: String, Codable, Sendable {
 private struct StorableMLSPublicKeys: Equatable, Codable, Sendable {
 
     let ed25519: String?
+    /// deprecated this field is not used
     let ed448: String?
     let p256: String?
     let p384: String?
-    let p512: String?
+    let p521: String?
 
 }
 
@@ -140,7 +140,7 @@ private enum StorableUserClientCapability: String, Codable, Sendable {
     case legalholdConsent
     case consumableNotifications
 
-    init(_ value: WireAPI.UserClientCapability) {
+    init(_ value: WireNetwork.UserClientCapability) {
         switch value {
         case .legalholdConsent:
             self = .legalholdConsent
@@ -149,7 +149,7 @@ private enum StorableUserClientCapability: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.UserClientCapability {
+    func toAPIModel() -> WireNetwork.UserClientCapability {
         switch self {
         case .legalholdConsent:
             .legalholdConsent
@@ -166,7 +166,7 @@ private enum StorableUserClientType: String, Codable, Sendable {
     case temporary
     case legalhold
 
-    init(_ value: WireAPI.UserClientType) {
+    init(_ value: WireNetwork.UserClientType) {
         switch value {
         case .permanent:
             self = .permanent
@@ -177,7 +177,7 @@ private enum StorableUserClientType: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.UserClientType {
+    func toAPIModel() -> WireNetwork.UserClientType {
         switch self {
         case .permanent:
             .permanent

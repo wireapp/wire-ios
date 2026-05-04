@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Weiter";
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
+"cloud_user_login.expiration_message" = "Die Session ist abgelaufen. Zum Fortfahren bitte Passwort eingeben.";
 "cloud_user_login.input_email.title" = "E-Mail";
 "cloud_user_login.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "cloud_user_login.input_password.title" = "Passwort";
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
 "cloud_user_login.submit" = "Weiter";
 "cloud_user_login.forgot_password" = "Passwort vergessen?";
+
+"login.sso.title" = "Anmelden";
+"login.sso.expiration_message" = "Ihre Session ist abgelaufen. Melden Sie sich mit Ihrem Unternehmenskonto an, um fortzufahren.";
+"login.sso.input_code.title" = "SSO Zugangscode";
+"login.sso.input_code.placeholder" = "SSO-Code eingeben";
+"login.sso.submit" = "Anmeldung für Unternehmen";
+
+"logout.button.title" = "Abmelden";
+"logout.alert.title" = "Abmelden";
+"logout.alert.message" = "Entscheiden Sie, ob Sie Ihren Gesprächsverlauf behalten oder unwiderruflich von diesem Gerät löschen möchten.";
+"logout.alert.delete_data_button" = "Abmelden und Verlauf löschen";
+"logout.alert.keep_data_button" = "Abmelden und Verlauf behalten";
+"logout.alert.cancel" = "Abbrechen";
+
 "create_account_or_team.title" = "Sie haben kein Benutzerkonto? ";
 "create_account_or_team.button" = "Konto oder Team erstellen";
+"create_account.button" = "Konto erstellen";
 
 "account_type_selector.title" = "Wie werden Sie Wire verwenden?";
 "account_type_selector.option_team.title" = "Für die Zusammenarbeit";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
 "authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
+"authentication.missing_history.title" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
+"authentication.missing_history.message" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "Keine Internetverbindung";
@@ -128,7 +146,7 @@
 
 "create_personal_account.title" = "Privates Benutzerkonto erstellen";
 "create_personal_account.continue" = "Weiter";
-"create_personal_account.share_data_usage" = "Ich bin mit dem Teilen anonymer Nutzungsdaten einverstanden. Alle Details finden Sie in unserer [Datenschutzerklärung](%@)";
+"create_personal_account.share_data_usage" = "Ich bin mit dem Teilen anonymer Nutzungsdaten einverstanden. Alle Details finden Sie in unserer [Datenschutzerklärung](%@) (optional)";
 "create_personal_account.looking_for_collaboration" = "Wollen Sie eher im Team zusammenarbeiten?";
 "create_personal_account.create_team" = "Team erstellen";
 "create_personal_account.input_name.title" = "Name";
@@ -142,7 +160,7 @@
 "create_personal_account.confirmation_alert.title" = "Nutzungsbedingungen";
 "create_personal_account.confirmation_alert.message" = "Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren.";
 "create_personal_account.confirmation_alert.accept" = "Annehmen";
-"create_personal_account.confirmation_alert.view" = "Ansicht";
+"create_personal_account.confirmation_alert.view" = "Anzeigen";
 "create_personal_account.confirmation_alert.cancel" = "Abbrechen";
 "create_personal_account.verification_code.resend_code" = "Code erneut senden";
 "create_personal_account.verification_code.confirm" = "Bestätigen";
@@ -164,4 +182,4 @@
 "create_personal_account.error.message.user-creation-restricted" = "In dieser Version der App können Sie keine privaten Konten erstellen.";
 
 "switching_accounts.title" = "Konto wechseln";
-"switching_accounts.subtitle" = "Select another account on this device:";
+"switching_accounts.subtitle" = "Wählen Sie ein anderes Konto auf diesem Gerät:";

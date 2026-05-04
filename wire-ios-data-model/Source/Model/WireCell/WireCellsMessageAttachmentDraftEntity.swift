@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,35 +17,12 @@
 //
 
 import Foundation
-public import WireCellsAPI
 
 @objc
 public enum WireCellsMessageAttachmentDraftUploadStatus: Int16 {
     case uploading = 0
     case uploaded = 1
     case failed = 2
-
-    public init(_ value: WireCellsAttachmentUploadStatus) {
-        switch value {
-        case .uploading:
-            self = .uploading
-        case .uploaded:
-            self = .uploaded
-        case .failed:
-            self = .failed
-        }
-    }
-
-    public func toModel() -> WireCellsAttachmentUploadStatus {
-        switch self {
-        case .uploading:
-            .uploading
-        case .uploaded:
-            .uploaded
-        case .failed:
-            .failed
-        }
-    }
 }
 
 @objc
@@ -63,20 +40,4 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
     @NSManaged public var assetHeight: NSNumber?
     @NSManaged public var assetWidth: NSNumber?
     @NSManaged public var assetDuration: NSNumber?
-
-    public func toModel() -> WireCellsMessageAttachmentDraft {
-        WireCellsMessageAttachmentDraft(
-            uuid: uuid,
-            versionID: versionID,
-            fileName: fileName,
-            remoteFilePath: nodePath,
-            localFilePath: dataPath,
-            fileSize: UInt64(fileSize),
-            uploadStatus: uploadStatus.toModel(),
-            mimeType: mimeType,
-            assetWidth: assetWidth?.uint64Value,
-            assetHeight: assetHeight?.uint64Value,
-            assetDuration: assetDuration?.uint64Value
-        )
-    }
 }

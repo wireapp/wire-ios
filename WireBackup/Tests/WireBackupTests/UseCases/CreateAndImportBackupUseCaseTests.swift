@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import WireBackupSupport
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
+import WireUtilitiesPackage
 import XCTest
 
 @testable import WireBackup
@@ -86,6 +87,12 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
             .makeStream(of: [conversation])
         backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
             .makeStream(of: [message])
+        backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReturnValue =
+            BackupMessagesImportResult(
+                validationCount: .init(successCount: 1, failureCount: 0),
+                insertionCount: .init(successCount: 1, failureCount: 0),
+                rehydrationCount: .init(successCount: 1, failureCount: 0)
+            )
 
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
@@ -95,7 +102,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         // import
 
         backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
-        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsSetUUIDReturnValue = []
 
         let importBackupUseCase = importBackupUseCaseFactory(backupURL)
         let importEvents = try await importBackupUseCase.invoke(password: password)
@@ -104,7 +111,11 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
         XCTAssertEqual(importEvents.last, .done)
         XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
-        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelVoidReceivedInvocations, [message])
+        XCTAssertEqual(
+            backupLocalStoreMock
+                .addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReceivedInvocations,
+            [[message]]
+        )
 
     }
 

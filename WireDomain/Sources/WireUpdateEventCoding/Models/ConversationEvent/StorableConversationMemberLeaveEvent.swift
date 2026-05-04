@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMemberLeaveEvent: Equatable, Codable, Sendable {
 
@@ -27,7 +27,7 @@ struct StorableConversationMemberLeaveEvent: Equatable, Codable, Sendable {
     private let removedUserIDs: [StorableQualifiedID]
     private let reason: StorableConversationMemberLeaveReason
 
-    init(_ value: WireAPI.ConversationMemberLeaveEvent) {
+    init(_ value: WireNetwork.ConversationMemberLeaveEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
@@ -35,7 +35,7 @@ struct StorableConversationMemberLeaveEvent: Equatable, Codable, Sendable {
         self.reason = StorableConversationMemberLeaveReason(value.reason)
     }
 
-    func toAPIModel() -> WireAPI.ConversationMemberLeaveEvent {
+    func toAPIModel() -> WireNetwork.ConversationMemberLeaveEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
@@ -53,7 +53,7 @@ private enum StorableConversationMemberLeaveReason: String, Codable, Sendable {
     case userLeft
     case userRemoved
 
-    init(_ value: WireAPI.ConversationMemberLeaveReason) {
+    init(_ value: WireNetwork.ConversationMemberLeaveReason) {
         switch value {
         case .userDeleted:
             self = .userDeleted
@@ -64,7 +64,7 @@ private enum StorableConversationMemberLeaveReason: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationMemberLeaveReason {
+    func toAPIModel() -> WireNetwork.ConversationMemberLeaveReason {
         switch self {
         case .userDeleted:
             .userDeleted

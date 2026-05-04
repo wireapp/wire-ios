@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
+
 @testable import WireDomain
 
 final class UserConnectionEventProcessorTests: XCTestCase {
@@ -74,8 +75,10 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
+        connectionsRepository.scheduleToSyncConversationWith_MockMethod = { _ in }
         oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
             expectation.fulfill()
+            return .noAction
         }
 
         // When
@@ -86,6 +89,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
     }
 
@@ -100,7 +104,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in .noAction }
         _ = await context.perform { [self] in
             modelHelper.createUser(
                 qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),
@@ -116,21 +120,25 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations.count, 0)
     }
 
     private enum Scaffolding {
         static let username = "username"
-        static let receiverQualifiedID = WireAPI.QualifiedID(
-            uuid: UUID(),
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
+            id: UUID(),
             domain: "domain.com"
         )
         static let acceptedConnection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
-            receiverQualifiedID: receiverQualifiedID,
+            receiverQualifiedID: WireNetwork.QualifiedID(
+                id: UUID(),
+                domain: "domain.com"
+            ),
             conversationID: UUID(),
-            qualifiedConversationID: WireAPI.QualifiedID(
-                uuid: UUID(),
+            qualifiedConversationID: WireNetwork.QualifiedID(
+                id: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,
@@ -142,8 +150,8 @@ final class UserConnectionEventProcessorTests: XCTestCase {
             receiverID: UUID(),
             receiverQualifiedID: receiverQualifiedID,
             conversationID: UUID(),
-            qualifiedConversationID: WireAPI.QualifiedID(
-                uuid: UUID(),
+            qualifiedConversationID: WireNetwork.QualifiedID(
+                id: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,

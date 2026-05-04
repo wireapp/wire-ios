@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Combine
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -29,7 +29,7 @@ import WireFoundation
 
 final class RootComponent: BootstrapComponent {
 
-    public let backendInfo: BackendInfo
+    public let environment: BackendEnvironment2
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
@@ -41,9 +41,7 @@ final class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
-    public let isMultibackendEnabled: Bool
-    public let useLegacyRegistrationFlow: Bool
-    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -55,8 +53,11 @@ final class RootComponent: BootstrapComponent {
         viewModel
     }
 
+    private let authenticationType: AuthenticationType
+
     init(
-        backendInfo: BackendInfo,
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
@@ -67,11 +68,10 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        isMultibackendEnabled: Bool,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
-        self.backendInfo = backendInfo
+        self.authenticationType = authenticationType
+        self.environment = environment
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
@@ -83,18 +83,17 @@ final class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
-        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.isMultibackendEnabled = isMultibackendEnabled
-        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
+        self.registrationAnalyticsTracker = registrationAnalyticsTracker
     }
 
     // MARK: - Children
 
-    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
+    func determineAuthMethodComponent(environment: BackendEnvironment2) -> DetermineAuthMethodComponent {
         let networkStack = NetworkStack(
-            backendInfo: backendInfo,
+            backendEnvironment: environment,
             minTLSVersion: minTLSVersion,
-            preferredAPIVersion: preferredAPIVersion
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
         )
 
         return DetermineAuthMethodComponent(
@@ -115,8 +114,8 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo,
-                isMultibackendEnabled: isMultibackendEnabled,
+                environment: environment,
+                authenticationType: authenticationType,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
                 }
@@ -124,8 +123,39 @@ extension RootComponent: RootViewModel.Factory {
         }
     }
 
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
-        determineAuthMethodComponent(backendInfo: backendInfo)
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(environment: environment)
+    }
+
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaEmailComponent(
+            parent: self,
+            email: email,
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaSSOComponent(
+            parent: self,
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {

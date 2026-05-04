@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireDesign
 extension ShareViewController {
 
     func createShareablePreview() {
-        let shareablePreviewView = shareable.previewView()
+        let shareablePreviewView = shareable.previewView(userSession: userSession)
         shareablePreviewView?.layer.cornerRadius = 4
         shareablePreviewView?.clipsToBounds = true
         self.shareablePreviewView = shareablePreviewView

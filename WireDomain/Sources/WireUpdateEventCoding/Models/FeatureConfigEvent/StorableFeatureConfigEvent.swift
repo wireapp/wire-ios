@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,20 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableFeatureConfigEvent: Equatable, Codable, Sendable {
 
     case update(StorableFeatureConfigUpdateEvent)
 
-    init(_ value: WireAPI.FeatureConfigEvent) {
+    init(_ value: WireNetwork.FeatureConfigEvent) {
         switch value {
         case let .update(update):
             self = .update(StorableFeatureConfigUpdateEvent(update))
         }
     }
 
-    func toAPIModel() -> WireAPI.FeatureConfigEvent {
+    func toAPIModel() -> WireNetwork.FeatureConfigEvent {
         switch self {
         case let .update(update):
             .update(update.toAPIModel())

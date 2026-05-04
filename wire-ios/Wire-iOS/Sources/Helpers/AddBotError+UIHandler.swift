@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@ import WireSyncEngine
 
 extension AddBotError {
 
-    typealias PeoplePickerServicesLocale = L10n.Localizable.Peoplepicker.Services.AddService
+    typealias PeoplePickerAppsLocale = L10n.Localizable.Peoplepicker.Apps.AddApp
 
     var localizedTitle: String {
-        PeoplePickerServicesLocale.Error.title
+        PeoplePickerAppsLocale.Error.title
     }
 
     var localizedMessage: String {
         switch self {
         case .tooManyParticipants:
-            PeoplePickerServicesLocale.Error.title
+            PeoplePickerAppsLocale.Error.title
         default:
-            PeoplePickerServicesLocale.Error.default
+            PeoplePickerAppsLocale.Error.default
         }
     }
 

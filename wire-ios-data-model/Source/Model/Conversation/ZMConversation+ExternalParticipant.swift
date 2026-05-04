@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ public extension ZMConversation {
         /// The conversation contains guests that we should warn the self user about.
         public static let visibleGuests = ExternalParticipantsState(rawValue: 1 << 0)
 
-        /// The conversation contains services that we should warn the self user about.
-        public static let visibleServices = ExternalParticipantsState(rawValue: 1 << 1)
+        /// The conversation contains apps that we should warn the self user about.
+        public static let visibleApps = ExternalParticipantsState(rawValue: 1 << 1)
 
         /// The conversation contains external partners that we should warn the self user about.
         public static let visibleExternals = ExternalParticipantsState(rawValue: 1 << 2)
@@ -47,7 +47,8 @@ public extension ZMConversation {
     @objc
     internal class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         [
-            "participantRoles.user.isServiceUser",
+            "participantRoles.user.isApp",
+            "participantRoles.user.isBot",
             "participantRoles.user.hasTeam",
             "participantRoles.user.isExternalPartner"
         ]
@@ -55,17 +56,12 @@ public extension ZMConversation {
 
     /// The state of external participants in the conversation.
     var externalParticipantsState: ExternalParticipantsState {
-        // Exception 1) We don't consider guests/services as external participants in 1:1 conversations
+        // External-participant states are only reported for group conversations.
         guard conversationType == .group else { return [] }
 
-        // Exception 2) If there is only one user in the group and it's a service, we don't consider it as external
         let participants = Set(localParticipants)
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
-
-        if otherUsers.count == 1, otherUsers.first!.isServiceUser {
-            return []
-        }
 
         // Calculate the external participants state
         let canDisplayGuests = selfUser.isTeamMember
@@ -75,8 +71,8 @@ public extension ZMConversation {
         for user in otherUsers {
             if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
-            } else if user.isServiceUser {
-                state.insert(.visibleServices)
+            } else if user.isAppOrBot {
+                state.insert(.visibleApps)
             } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
             } else if canDisplayGuests, !user.isTeamMember {
@@ -84,7 +80,7 @@ public extension ZMConversation {
             }
 
             // Early exit to avoid going through all users if we can avoid it
-            if state.contains(.visibleServices),
+            if state.contains(.visibleApps),
                state.contains(.visibleGuests) || !canDisplayGuests,
                state.contains(.visibleExternals) || !canDisplayExternals,
                state.contains(.visibleRemotes) || !canDisplayGuests {
@@ -95,17 +91,20 @@ public extension ZMConversation {
         return state
     }
 
-    /// Returns whether an services are present, regardless of the display rules.
-    var areServicesPresent: Bool {
-        localParticipants.any(\.isServiceUser)
+    /// Returns whether apps are present, regardless of the display rules.
+
+    var areAppsPresent: Bool {
+        localParticipants.any(\.isAppOrBot)
     }
 
     /// Returns whether guests are present, regardless of the display rules.
+
     var areGuestsPresent: Bool {
         localParticipants.any { $0.isGuest(in: self) }
     }
 
     /// Returns whether federated remote users are present, regardless of the display rules.
+
     var areRemotesPresent: Bool {
         localParticipants.any(\.isFederated)
     }

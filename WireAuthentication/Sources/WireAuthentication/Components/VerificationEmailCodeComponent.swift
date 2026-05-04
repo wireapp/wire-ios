@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -29,6 +29,7 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
 
 }
 
@@ -37,16 +38,19 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
+    private let trackingConsent: RegistrationAnalyticsTrackingConsent
 
     init(
         parent: any Scope,
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) {
         self.email = email
         self.password = password
         self.name = name
+        self.trackingConsent = trackingConsent
         super.init(parent: parent)
     }
 
@@ -63,9 +67,11 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
-            onFlowCompletion: { [dependency] authenticationResult in
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
-            }
+            onFlowCompletion: { [dependency, trackingConsent] authenticationResult in
+                dependency?.registrationAnalyticsTracker?.deleteTemporaryTrackingID()
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingConsent))
+            },
+            analyticsEventTracker: dependency.registrationAnalyticsTracker
         )
     }
 

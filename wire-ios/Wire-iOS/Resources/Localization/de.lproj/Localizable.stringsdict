@@ -282,7 +282,7 @@
         <key>one</key>
         <string>Verpasster Anruf</string>
         <key>other</key>
-        <string>Verpasste Anrufe</string>
+        <string>Verpasste Anrufe (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -314,7 +314,7 @@
         <key>one</key>
         <string>Verpasster Anruf von %2$@</string>
         <key>other</key>
-        <string>Verpasste Anrufe von %2$@</string>
+        <string>Verpasste Anrufe von %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
@@ -395,6 +395,22 @@
         <string>ein Sonderzeichen</string>
         <key>other</key>
         <string>%d Sonderzeichen</string>
+      </dict>
+    </dict>
+    <key>conversation.message.multipart_attachments.link</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@attachment_count@</string>
+      <key>attachment_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 angehängte Datei</string>
+        <key>other</key>
+        <string>%d angehängte Dateien</string>
       </dict>
     </dict>
   </dict>

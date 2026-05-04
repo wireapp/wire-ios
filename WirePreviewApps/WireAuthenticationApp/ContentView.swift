@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 import Combine
 import SwiftUI
-import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 
 struct ContentView: View {
@@ -32,8 +32,9 @@ struct ContentView: View {
     var body: some View {
         WireAuthenticationAssembly()
             .assemble(
+                authenticationType: .new,
                 environmentType: configuration.defaultBackendEnvironment,
-                backendConfig: BackendConfig(
+                environment: BackendEnvironment2(
                     title: "Mock backend",
                     endpoints: Endpoints(
                         backendURL: URL(string: "https://prod-nginz-https.wire.com")!,
@@ -42,7 +43,7 @@ struct ContentView: View {
                         teamsURL: URL(string: "https://teams.wire.com")!,
                         accountsURL: URL(string: "https://account.wire.com")!,
                         websiteURL: URL(string: "https://wire.com")!,
-                        countlyURL: URL(string: "https://countly.wire.com")!
+                        countlyURL: URL(string: "https://wire.count.ly")!,
                     ),
                     proxySettings: nil,
                     pinnedKeys: nil
@@ -52,6 +53,8 @@ struct ContentView: View {
                 accountsURL: configuration.accountsURL,
                 howToChangeEmailURL: URL(string: "www.example.com")!,
                 howToDeleteAccountURL: URL(string: "www.example.com")!,
+                privacyPolicyURL: URL(string: "www.example.com")!,
+                termsOfUseURL: URL(string: "www.example.com")!,
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
@@ -77,8 +80,7 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                useLegacyRegistrationFlow: false,
-                isMultibackendEnabled: true
+                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }
 

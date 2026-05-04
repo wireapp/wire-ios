@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ public struct BackupImportExportBuilder {
     let exportBackupLogger: any LoggerProtocol
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
-    let wireAccentColorMapping: WireAccentColorMapping
+    let isContextMenuAllowed: Bool
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -40,8 +40,8 @@ public struct BackupImportExportBuilder {
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
-        wireAccentColorMapping: WireAccentColorMapping,
-        wireAccentColor: WireAccentColor
+        wireAccentColor: WireAccentColor,
+        isContextMenuAllowed: Bool
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
@@ -49,8 +49,8 @@ public struct BackupImportExportBuilder {
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
         self.exportBackupLogger = exportBackupLogger
         self.importBackupLogger = importBackupLogger
-        self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     @MainActor
@@ -64,7 +64,6 @@ public struct BackupImportExportBuilder {
             buildExportBackupView()
             buildImportBackupView()
         }
-        .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         .environment(\.wireAccentColor, wireAccentColor)
     }
 
@@ -107,7 +106,7 @@ public struct BackupImportExportBuilder {
             setPasswordAction: setPasswordAction
         )
 
-        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 
@@ -118,7 +117,7 @@ public struct BackupImportExportBuilder {
             importBackupUseCaseFactory: importBackupUseCaseFactory,
             logger: importBackupLogger
         )
-        ImportBackupView(viewModel: viewModel)
+        ImportBackupView(viewModel: viewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 }
@@ -135,8 +134,8 @@ extension BackupImportExportBuilder {
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
-            wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: .purple
+            wireAccentColor: .purple,
+            isContextMenuAllowed: true
         )
     }
 }

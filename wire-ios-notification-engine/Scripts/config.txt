@@ -1,3 +1,0 @@
-framework=WireNotificationEngine
-organization=wireapp
-repository=wire-ios-notification-engine

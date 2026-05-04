@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,45 @@
 // sourcery: AutoMockable
 public protocol CoreCryptoKeyMigrationManagerProtocol {
 
-    var isMigrationNeeded: Bool { get }
+    /// Wether there's any migration that is required
 
-    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws
+    var isAnyMigrationRequired: Bool { get }
 
-    func markMigrationAsSkipped()
+    /// Wether we need to update the database key from String to Data (bytes) format
 
+    var isMigrationToBytesNeeded: Bool { get }
+
+    /// Wether we need to migrate the stored database key from an unscoped keychain item to a keychain item
+    /// scoped by user
+
+    var isMigrationToScopedKeyNeeded: Bool { get }
+
+    /// Wether we need to re-encrypt the database with a new key and update it in keychain storage
+
+    var isKeyRotationNeeded: Bool { get }
+
+    /// Updates the database key from String to Data (bytes) format
+
+    func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws
+
+    /// Marks the migration of the database key to bytes as skipped (done)
+
+    func markMigrationToBytesAsSkipped()
+
+    /// Marks the migration of the database key to a scoped keychain item storage as done
+
+    func markMigrationToScopedKeyDone()
+
+    /// Marks the re-encryption of the database with a new key as done
+
+    func markKeyRotationAsDone()
+
+    /// Re-encrypts the core crypto database with a new key
+
+    func updateKey(path: String, oldKey: Data, newKey: Data) async throws
+
+}
+
+public enum CoreCryptoKeyMigrationManagerError: Swift.Error {
+    case failedToUpdateKey(underlyingError: Swift.Error)
 }

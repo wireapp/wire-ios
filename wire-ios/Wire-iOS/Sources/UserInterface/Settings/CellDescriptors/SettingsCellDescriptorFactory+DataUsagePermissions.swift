@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
 
         var items: [SettingsSectionDescriptor] = []
 
         // show analytics toggle for public domain
-        if isPublicDomain {
+        if isAnalyticsTrackingAvailable {
             let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
                 settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
                 inverse: true
@@ -42,7 +42,8 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,
             accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireTransport
 import XCTest
 
-import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
@@ -267,66 +268,26 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-}
 
-// MARK: - Processing events
-
-extension ClientMessageRequestStrategyTests {
-
-    func testThatANewOtrMessageIsCreatedFromAnEvent() {
+    func testThatItExpiresStaleMessage() {
         syncMOC.performGroupedAndWait {
-
             // GIVEN
-            let text = "Everything"
-            let base64Text = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
-            let payload = [
-                "recipient": self.selfClient.remoteIdentifier,
-                "sender": self.otherClient.remoteIdentifier,
-                "text": base64Text
-            ]
-            let eventPayload = [
-                "type": "conversation.otr-message-add",
-                "data": payload,
-                "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                "time": Date().transportString(),
-                "from": self.otherUser.remoteIdentifier.transportString()
-            ] as NSDictionary
-            guard let event = ZMUpdateEvent.decryptedUpdateEvent(
-                fromEventStreamPayload: eventPayload,
-                uuid: nil,
-                transient: false,
-                source: .webSocket
-            ) else {
-                XCTFail("Failed to create event")
-                return
-            }
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            XCTAssertFalse(message.isExpired)
 
             // WHEN
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+            let didComplete = XCTestExpectation(description: "didComplete")
+            self.sut.insert(object: message, isFresh: false, completion: {
+                didComplete.fulfill()
+            })
 
-            // THEN
-            XCTAssertEqual(self.groupConversation.lastMessage?.textMessageData?.messageText, text)
+            wait(for: [didComplete])
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
     }
-
-    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
-        // GIVEN
-        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let eventDecoder = EventDecoder(
-            eventMOC: eventMOC,
-            syncMOC: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
-        )
-        let text = "Everything"
-        let event = try await decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
-
-        await syncMOC.perform {
-            // WHEN
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual((self.groupConversation.lastMessage as? ZMClientMessage)?.textMessageData?.messageText, text)
-        }
-    }
-
 }

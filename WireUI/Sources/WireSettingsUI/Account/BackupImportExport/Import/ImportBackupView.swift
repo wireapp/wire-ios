@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,23 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct ImportBackupView: View {
 
     @StateObject var viewModel: ImportBackupViewModel
 
     @State private var isFileImporterPresented = false
+    private let isContextMenuAllowed: Bool
 
     private typealias BackupStrings = L10n.Localizable.Backup
     private typealias ImportBackupAlertStrings = L10n.Localizable.ImportBackup.Alert
     private typealias OverwriteConfirmationStrings = L10n.Localizable.ImportBackup.OverwriteConfirmation
+
+    init(viewModel: ImportBackupViewModel, isContextMenuAllowed: Bool) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.isContextMenuAllowed = isContextMenuAllowed
+    }
 
     var body: some View {
         Section(footer: Text(BackupStrings.Import.description)) {
@@ -38,13 +45,19 @@ struct ImportBackupView: View {
             .foregroundStyle(Color.primaryText)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
-                allowedContentTypes: WireBackupUTIs,
+                // Workaround: Google Drive doesn't recognize Wire backup
+                // UTIs so if we only allow them, the user won't be able
+                // to select Wire backups stored in Google Drive.
+                // Instead, we allow any file and then we'll validate the
+                // file type afterwards.
+                allowedContentTypes: [.data],
                 onCompletion: viewModel.pickedBackupFile
             )
 
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
 
                 ImportProgressView(
+                    isLoadingFile: viewModel.isLoadingFile,
                     progressValues: viewModel.importProgress,
                     cancelAction: viewModel.reset
                 )
@@ -55,11 +68,12 @@ struct ImportBackupView: View {
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
                         continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: viewModel.reset
+                        cancelAction: viewModel.reset,
+                        isContextMenuAllowed: isContextMenuAllowed
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])
-                    .onChange(of: viewModel.backupPassword) { _ in
+                    .onChange(of: viewModel.backupPassword) {
                         if viewModel.isBackupPasswordWrong {
                             viewModel.isBackupPasswordWrong = false
                         }
@@ -79,6 +93,7 @@ struct ImportBackupView: View {
             } message: {
                 Text(viewModel.alertContent.message)
             }
+            .accessibilityIdentifier(Locators.BackupOrRestorePage.restoreFromBackupButton.rawValue)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ public import WireFoundation
 import Foundation
 import LocalAuthentication
 import WireDataModel
+import WireDomain
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
@@ -29,6 +30,8 @@ public protocol UserSession: AnyObject {
     // MARK: - Mixed properties and methods
 
     var isTornDown: Bool { get }
+
+    var isBuildBlacklisted: Bool { get }
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
@@ -55,7 +58,7 @@ public protocol UserSession: AnyObject {
 
     var isAppLockActive: Bool { get set }
 
-    /// Whether the app lock feature is availble to the user.
+    /// Whether the app lock feature is available to the user.
 
     var isAppLockAvailable: Bool { get }
 
@@ -221,6 +224,12 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
+    var isWireDriveEnabled: Bool { get }
+
+    var wireDriveBackendURL: URL? { get }
+
+    var isEnterpriseUser: Bool { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(
@@ -261,9 +270,9 @@ public protocol UserSession: AnyObject {
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol?
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol?
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
@@ -273,7 +282,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 
@@ -285,9 +294,12 @@ public protocol UserSession: AnyObject {
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol?
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
+
+    func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 
@@ -295,4 +307,17 @@ public protocol UserSession: AnyObject {
 
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
+
+    /// Cache for file assets.
+    var fileAssetCache: FileAssetCache { get }
+
+    /// Dependencies owned by the user session that require a client
+    var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: BackendMetadataProvider { get }
+
+    var isBackendMLSEnabled: Bool { get }
+
 }

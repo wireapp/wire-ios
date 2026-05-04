@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,17 @@
 //
 
 import SwiftUI
-import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFolderPickerUI
+import WireLocators
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
@@ -44,7 +46,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) {
 
         accountImageView?.source = accountImage
-        accountImageView?.accessibilityIdentifier = "account_profile_image_view"
+        accountImageView?.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
 
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
@@ -77,6 +79,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
         accountImageView.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
             .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
@@ -158,6 +161,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Channels.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+        case (.expanded, .unread):
+            L10n.Localizable.ConversationList.Filter.Unread.title
+        case (.expanded, .mentions):
+            L10n.Localizable.ConversationList.Filter.Mentions.title
+        case (.expanded, .replies):
+            L10n.Localizable.ConversationList.Filter.Replies.title
+        case (.expanded, .drafts):
+            L10n.Localizable.ConversationList.Filter.Drafts.title
         case (.expanded, .folder):
             L10n.Localizable.ConversationList.Filter.Folders.title
         case (.collapsed, _):
@@ -177,7 +188,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in self?.presentConnectUI() }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
-        startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+        startConversationItem.accessibilityIdentifier = Locators.ConversationsPage.createGroupOrSearchButton.rawValue
         startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
             .description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
@@ -192,7 +203,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         )!
 
         let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .channels, .oneOnOne, .folder:
+        case .favorites, .groups, .channels, .oneOnOne, .unread, .mentions, .replies, .drafts, .folder:
             filledFilterImage
         case .none:
             defaultFilterImage
@@ -230,17 +241,52 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
         )
 
+        // Create menu children array
+        var menuChildren = [
+            allConversationsAction,
+            favoritesAction
+        ]
+
+        // Add unread, mentions and replies filters if developer flag is enabled
+        if DeveloperFlag.showUnreadConversationsFilter.isOn {
+            let unreadAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Unread.title,
+                filter: .unread,
+                isSelected: listContentController.listViewModel.selectedFilter == .unread
+            )
+            menuChildren.append(unreadAction)
+
+            let mentionsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Mentions.title,
+                filter: .mentions,
+                isSelected: listContentController.listViewModel.selectedFilter == .mentions
+            )
+            menuChildren.append(mentionsAction)
+
+            let repliesAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Replies.title,
+                filter: .replies,
+                isSelected: listContentController.listViewModel.selectedFilter == .replies
+            )
+            menuChildren.append(repliesAction)
+
+            let draftsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Drafts.title,
+                filter: .drafts,
+                isSelected: listContentController.listViewModel.selectedFilter == .drafts
+            )
+            menuChildren.append(draftsAction)
+        }
+
+        menuChildren.append(contentsOf: [
+            groupsAction,
+            channelsAction,
+            oneToOneConversationsAction,
+            foldersAction
+        ])
+
         // Create the menu
-        let filterMenu = UIMenu(
-            children: [
-                allConversationsAction,
-                favoritesAction,
-                groupsAction,
-                channelsAction,
-                oneToOneConversationsAction,
-                foldersAction
-            ]
-        )
+        let filterMenu = UIMenu(children: menuChildren)
 
         // Create the filter button and assign the menu
         let filterButton = UIButton(type: .system)
@@ -339,6 +385,22 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne
                 .description
 
+        case .unread:
+            return isSelected ? accessibilityLocale.Unread.Selected.description : accessibilityLocale.Unread
+                .description
+
+        case .mentions:
+            return isSelected ? accessibilityLocale.Mentions.Selected.description : accessibilityLocale.Mentions
+                .description
+
+        case .replies:
+            return isSelected ? accessibilityLocale.Replies.Selected.description : accessibilityLocale.Replies
+                .description
+
+        case .drafts:
+            return isSelected ? accessibilityLocale.Drafts.Selected.description : accessibilityLocale.Drafts
+                .description
+
         case .folder:
             return isSelected ? accessibilityLocale.Folders.Selected.description : accessibilityLocale.Folders
                 .description
@@ -352,7 +414,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentConnectUI() {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectViewControllerBuilder.build())
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, VC is nil", attributes: .safePublic)
+                return
+            }
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
@@ -380,7 +446,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     func presentCreateConversationUI() {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectViewControllerBuilder.build())
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present conversation creation ui, VC is nil", attributes: .safePublic)
+                return
+            }
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
@@ -450,7 +520,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             user: selfUser,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileViewControllerBuilder
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

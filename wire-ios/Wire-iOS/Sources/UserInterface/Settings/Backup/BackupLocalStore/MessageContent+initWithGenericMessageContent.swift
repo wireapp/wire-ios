@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireBackup
-import WireProtos
 
 extension MessageBackupModel.Content {
 
@@ -70,7 +70,11 @@ extension MessageBackupModel.Content {
         switch messageEdit.content {
         case let .text(text):
             self.init(text)
-        case .composite, .none:
+        case .composite:
+            fallthrough // composite messages are not supported in backups yet
+        case .multipart:
+            fallthrough // TODO: [WPB-17971] Support multipart messages in backup
+        case .none:
             return nil
         }
     }

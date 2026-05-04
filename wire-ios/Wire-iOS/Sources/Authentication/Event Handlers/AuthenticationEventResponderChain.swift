@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import WireAuthenticationAPI
 import WireDataModel
+import WireNetwork
 import WireSystem
 
 /// Provides information to the event responder chain and executes actions.
@@ -50,8 +51,9 @@ final class AuthenticationEventResponderChain {
 
     enum EventType: CustomStringConvertible {
 
-        case wireAuthenticationModuleComplete(AuthenticationResult)
-        case flowStart(NSError?, Int)
+        case wireAuthenticationModuleComplete((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
+        case logoutRequested(deleteData: Bool)
+        case flowStart(BackendEnvironment2?, NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
         case clientRegistrationSuccess
@@ -67,6 +69,8 @@ final class AuthenticationEventResponderChain {
             switch self {
             case .wireAuthenticationModuleComplete:
                 "wireAuthenticationModuleComplete"
+            case .logoutRequested:
+                "logoutRequested"
             case .flowStart:
                 "flowStart"
             case .backupReady:
@@ -112,8 +116,12 @@ final class AuthenticationEventResponderChain {
 
     // MARK: - Configuration
 
-    var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<AuthenticationResult>] = []
+    var flowStartHandlers: [AnyAuthenticationEventHandler<(BackendEnvironment2?, NSError?, Int)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(
+        AuthenticationResult,
+        RegistrationAnalyticsTrackingConsent
+    )>] = []
+    var logoutHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -149,6 +157,7 @@ final class AuthenticationEventResponderChain {
 
         // wire authentication module handlers
         registerHandler(WireAuthenticationModuleCompletionHandler(), to: &wireAuthenticationModuleHandlers)
+        registerHandler(LogoutRequestedHandler(), to: &logoutHandlers)
 
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
@@ -224,10 +233,12 @@ final class AuthenticationEventResponderChain {
         }
 
         switch eventType {
-        case let .wireAuthenticationModuleComplete(result):
-            handleEvent(with: wireAuthenticationModuleHandlers, context: result)
-        case let .flowStart(error, numberOfAccounts):
-            handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
+        case let .wireAuthenticationModuleComplete(context):
+            handleEvent(with: wireAuthenticationModuleHandlers, context: context)
+        case let .logoutRequested(deleteData):
+            handleEvent(with: logoutHandlers, context: deleteData)
+        case let .flowStart(environment, error, numberOfAccounts):
+            handleEvent(with: flowStartHandlers, context: (environment, error, numberOfAccounts))
         case let .backupReady(existingAccount):
             handleEvent(with: backupEventHandlers, context: existingAccount)
         case let .clientRegistrationError(error, accountID):
@@ -277,10 +288,9 @@ final class AuthenticationEventResponderChain {
         }
 
         guard let (name, actions) = lookupResult else {
-            log
-                .error(
-                    "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
-                )
+            log.error(
+                "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
+            )
             return
         }
 

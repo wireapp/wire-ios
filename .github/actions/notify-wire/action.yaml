@@ -1,0 +1,54 @@
+name: "Notify on Wire"
+description: "Send a Wire/Slack notification about a workflow result. Requires SLACK_WEBHOOK_URL in the calling job's environment."
+
+inputs:
+  notify:
+    description: "When to notify: 'always' | 'failure' | 'never'"
+    required: true
+  status:
+    description: "Status to report: 'success' | 'failure' | 'cancelled'"
+    required: true
+  branch:
+    description: "Sanitized branch name"
+    required: true
+  label:
+    description: "Short label shown in the notification title (e.g. 'Tests', 'Tests (parallel)')"
+    required: false
+    default: "Tests"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Read commit metadata
+      shell: bash
+      run: |
+        echo "WIRE_NOTIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+        echo "WIRE_NOTIFY_MSG=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
+
+    - name: Notify (always)
+      if: ${{ inputs.notify == 'always' }}
+      continue-on-error: true
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ inputs.status }}
+        text: |
+          **${{ inputs.label }} for ${{ inputs.branch }}**
+
+          **Title:** ${{ env.WIRE_NOTIFY_MSG }}
+          **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.WIRE_NOTIFY_SHA }})
+          **Triggered by:** ${{ github.triggering_actor }}
+          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    - name: Notify (failure only)
+      if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
+      continue-on-error: true
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: |
+          **🚨 ${{ inputs.label }} for ${{ inputs.branch }} failed 🆘**
+
+          **Title:** ${{ env.WIRE_NOTIFY_MSG }}
+          **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios/commit/${{ env.WIRE_NOTIFY_SHA }})
+          **Triggered by:** ${{ github.triggering_actor }}
+          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

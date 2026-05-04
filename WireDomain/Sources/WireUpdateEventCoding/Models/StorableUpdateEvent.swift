@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableUpdateEvent: Equatable, Codable, Sendable {
 
@@ -28,7 +28,7 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
     case team(StorableTeamEvent)
     case unknown(eventType: String)
 
-    init(_ value: WireAPI.UpdateEvent) {
+    init(_ value: WireNetwork.UpdateEvent) {
         switch value {
         case let .conversation(conversation):
             self = .conversation(StorableConversationEvent(conversation))
@@ -45,7 +45,7 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.UpdateEvent {
+    func toAPIModel() -> WireNetwork.UpdateEvent {
         switch self {
         case let .conversation(conversation):
             .conversation(conversation.toAPIModel())

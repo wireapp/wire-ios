@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ struct CreateMLSGroupUseCase {
     private let parentGroupID: MLSGroupID?
     private let removalKeys: BackendMLSPublicKeys?
     private let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite
-    private let coreCrypto: any SafeCoreCryptoProtocol
+    private let coreCrypto: any CoreCryptoProtocol
     private let staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol
     private let actionsProvider: any MLSActionsProviderProtocol
     private let notificationContext: NotificationContext
@@ -35,7 +35,7 @@ struct CreateMLSGroupUseCase {
         parentGroupID: MLSGroupID?,
         removalKeys: BackendMLSPublicKeys?,
         defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite,
-        coreCrypto: any SafeCoreCryptoProtocol,
+        coreCrypto: any CoreCryptoProtocol,
         staleKeyMaterialDetector: any StaleMLSKeyDetectorProtocol,
         actionsProvider: any MLSActionsProviderProtocol,
         notificationContext: NotificationContext
@@ -88,8 +88,8 @@ extension CreateMLSGroupUseCase {
         // the external senders is the same as the parent, otherwise we
         // won't be able to decrypt external remove proposals from the
         // owning domain.
-        let externalSenders = try await coreCrypto.perform {
-            [try await $0.getExternalSender(conversationId: parentGroupID.data)]
+        let externalSenders = try await coreCrypto.transaction {
+            [try await $0.getExternalSender(conversationId: parentGroupID.conversationId)]
         }
 
         return try await createGroup(
@@ -105,7 +105,7 @@ extension CreateMLSGroupUseCase {
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
 
-        let externalSenders: [Data]
+        let externalSenders: [ExternalSenderKey]
 
         do {
             if let removalKeys {
@@ -126,20 +126,20 @@ extension CreateMLSGroupUseCase {
 
     private func createGroup(
         for groupID: MLSGroupID,
-        externalSenders: [Data],
+        externalSenders: [ExternalSenderKey],
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
         do {
             let config = ConversationConfiguration(
-                ciphersuite: UInt16(ciphersuite.rawValue),
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: UInt16(ciphersuite.rawValue))
+            try await coreCrypto.transaction {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.coreCryptoCipherSuite)
                 try await $0.createConversation(
-                    conversationId: groupID.data,
+                    conversationId: groupID.conversationId,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
                     config: config
                 )

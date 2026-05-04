@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "Diese Backup-Datei wurde von einer anderen Version von Wire erstellt und kann deshalb nicht wiederhergestellt werden.";
 "importBackup.alert.wrongFileError.title" = "Falsche Backup-Datei";
 "importBackup.alert.wrongFileError.message" = "Der Gesprächsverlauf eines anderen Kontos kann nicht wiederhergestellt werden.";
+"importBackup.alert.invalidFileError.title" = "Unzulässiger Dateityp";
+"importBackup.alert.invalidFileError.message" = "Wählen Sie eine Wire Backup-Datei (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "Passwort eingeben";
 "importBackup.enterPassword.description" = "Dieses Backup ist passwortgeschützt.";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Weiter";
 
 "importBackup.restoringHistory.title" = "Verlauf wird wiederhergestellt…";
+"importBackup.loadingBackup.message" = "Backup wird geladen…";
 "importBackup.restoringHistory.message" = "Unterhaltungen werden geladen…";

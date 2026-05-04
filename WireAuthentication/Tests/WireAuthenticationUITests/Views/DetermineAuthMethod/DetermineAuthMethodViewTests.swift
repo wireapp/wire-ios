@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,10 +47,10 @@ final class DetermineAuthMethodViewTests: XCTestCase {
 
             let factory = FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode)
 
-            let view = DetermineAuthMethodView(factory: factory)
-                .inNavigationStack()
-                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-                .frame(width: screenBounds.width, height: screenBounds.height)
+            let view = NavigationStack {
+                DetermineAuthMethodView(factory: factory)
+            }
+            .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)
                 .verify(matching: view, named: "variant\(index)-light")
@@ -64,10 +64,10 @@ final class DetermineAuthMethodViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
-            .inNavigationStack()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        let view = NavigationStack {
+            DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -86,7 +86,6 @@ final class DetermineAuthMethodViewTests: XCTestCase {
             DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(existsAnotherAccount: true))
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .tint(.primary)
 
         snapshotHelper.verify(matching: view)

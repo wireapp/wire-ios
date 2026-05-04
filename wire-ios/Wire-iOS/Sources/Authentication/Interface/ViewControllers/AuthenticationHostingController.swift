@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,20 +44,16 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
         bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
-            case let .userAuthenticated(authenticationResult):
+            case let .userAuthenticated(context):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
-                    ofType: .wireAuthenticationModuleComplete(authenticationResult)
-                )
-            case let .accountRegistrationRequested(
-                email,
-                backendEnvironment
-            ):
-                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
-                    email: email,
-                    backendEnvironment: backendEnvironment
+                    ofType: .wireAuthenticationModuleComplete(context)
                 )
             case .exitFlowRequested:
                 self?.selectAccount()
+            case let .logoutRequested(deleteData):
+                authenticationCoordinator?.eventResponderChain.handleEvent(
+                    ofType: .logoutRequested(deleteData: deleteData)
+                )
             }
         }
         .store(in: &cancellables)
