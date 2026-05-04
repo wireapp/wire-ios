@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireDomain
 import WireRequestStrategy
 
 @objcMembers
@@ -27,9 +28,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public let userProfileUpdateStatus: UserProfileUpdateStatus
     public let clientRegistrationStatus: ZMClientRegistrationStatus
     public let clientUpdateStatus: ClientUpdateStatus
-    public let pushNotificationStatus: PushNotificationStatus
     public let proxiedRequestStatus: ProxiedRequestsStatus
-    public let syncStatus: SyncStatus
     public let operationStatus: OperationStatus
     public let requestCancellation: ZMRequestCancellation
     public let teamInvitationStatus: TeamInvitationStatus
@@ -42,27 +41,24 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         cookieStorage: ZMPersistentCookieStorage,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
-        lastEventIDRepository: LastEventIDRepositoryInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        isSyncV2Enabled: Bool,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
         self.teamInvitationStatus = TeamInvitationStatus()
         operationStatus.isInBackground = application.applicationState == .background
-        self.syncStatus = SyncStatus(
-            managedObjectContext: managedObjectContext,
-            lastEventIDRepository: lastEventIDRepository
-        )
+
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(
             context: managedObjectContext,
             cookieProvider: cookieStorage,
-            coreCryptoProvider: coreCryptoProvider
-        )
-        self.pushNotificationStatus = PushNotificationStatus(
-            managedObjectContext: managedObjectContext,
-            lastEventIDRepository: lastEventIDRepository
+            coreCryptoProvider: coreCryptoProvider,
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
         )
         self.proxiedRequestStatus = ProxiedRequestsStatus(requestCancellation: requestCancellation)
         self.userProfileImageUpdateStatus = UserProfileImageUpdateStatus(managedObjectContext: managedObjectContext)
@@ -89,7 +85,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         switch operationStatus.operationState {
         case .foreground:
             .foreground
-        case .background, .backgroundCall, .backgroundFetch, .backgroundTask:
+        case .background, .backgroundCall, .backgroundTask:
             .background
         }
     }
@@ -97,12 +93,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public var synchronizationState: SynchronizationState {
         if !clientRegistrationStatus.clientIsReadyForRequests {
             .unauthenticated
-        } else if syncStatus.isSlowSyncing {
-            .slowSyncing
-        } else if syncStatus.isFetchingNotificationStream {
-            .quickSyncing
-        } else if syncStatus.isSyncing {
-            .establishingWebsocket
         } else {
             .online
         }

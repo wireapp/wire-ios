@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,13 +36,11 @@ final class AnimatedPenView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let iconColor = SemanticColors.Icon.foregroundDefault
         let backgroundColor = SemanticColors.View.backgroundConversationView
-
-        dots.setIcon(.typingDots, size: 8, color: iconColor)
-        pen.setIcon(.pencil, size: 8, color: iconColor)
         pen.backgroundColor = backgroundColor
         pen.contentMode = .center
+
+        setIcons()
 
         addSubview(dots)
         addSubview(pen)
@@ -111,6 +109,20 @@ final class AnimatedPenView: UIView {
         startWritingAnimation()
     }
 
+    fileprivate func setIcons() {
+        let iconColor = SemanticColors.Icon.foregroundDefault.resolvedColor(with: traitCollection)
+
+        dots.setIcon(.typingDots, size: 8, color: iconColor)
+        pen.setIcon(.pencil, size: 8, color: iconColor)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            setIcons()
+        }
+    }
 }
 
 final class TypingIndicatorView: UIView {

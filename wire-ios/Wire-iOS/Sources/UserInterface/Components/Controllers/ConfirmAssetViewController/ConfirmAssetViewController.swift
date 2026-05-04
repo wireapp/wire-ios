@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import FLAnimatedImage
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 final class ConfirmAssetViewController: UIViewController {
     enum Asset {
@@ -47,6 +48,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     let context: Context
+    private let userSession: UserSession
 
     var previewTitle: String? {
         didSet {
@@ -85,8 +87,9 @@ final class ConfirmAssetViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(context: Context) {
+    init(context: Context, userSession: UserSession) {
         self.context = context
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -111,6 +114,8 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
+
+        presentationController?.delegate = self
     }
 
     override var prefersStatusBarHidden: Bool {
@@ -180,7 +185,7 @@ final class ConfirmAssetViewController: UIViewController {
             return
         }
 
-        let canvasViewController = CanvasViewController()
+        let canvasViewController = CanvasViewController(userSession: userSession)
         canvasViewController.sketchImage = image
         canvasViewController.delegate = self
         canvasViewController.title = previewTitle
@@ -414,5 +419,12 @@ final class ConfirmAssetViewController: UIViewController {
 extension ConfirmAssetViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         context.onConfirm?(image)
+    }
+}
+
+extension ConfirmAssetViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        // this is called (only) when the user swipes down the sheet.
+        context.onCancel?()
     }
 }

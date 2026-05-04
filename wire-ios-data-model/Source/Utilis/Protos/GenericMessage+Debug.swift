@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import SwiftProtobuf
-import WireProtos
 
 private let redactedValue = "<redacted>"
 
@@ -134,6 +134,9 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
 
         case .asset:
             "asset"
+
+        case .multipart:
+            "multipart"
 
         case .hidden:
             "hidden"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireFoundation
-import WireSyncEngine
 
-extension QualifiedID {
-    static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
-    static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
-    static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
+extension WireDataModel.QualifiedID {
+    static let mockID1 = WireDataModel.QualifiedID(uuid: .mockID1, domain: "example.com")
+    static let mockID2 = WireDataModel.QualifiedID(uuid: .mockID2, domain: "example.com")
+    static let mockID3 = WireDataModel.QualifiedID(uuid: .mockID3, domain: "example.com")
 }

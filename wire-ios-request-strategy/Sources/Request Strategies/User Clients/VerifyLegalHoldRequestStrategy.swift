@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,23 +25,23 @@ import Foundation
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate let requestFactory = ClientMessageRequestFactory()
+    fileprivate let requestFactory: ClientMessageRequestFactory
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         conversationSync.nextRequest(for: apiVersion)
     }
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [
             .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
         self.conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)

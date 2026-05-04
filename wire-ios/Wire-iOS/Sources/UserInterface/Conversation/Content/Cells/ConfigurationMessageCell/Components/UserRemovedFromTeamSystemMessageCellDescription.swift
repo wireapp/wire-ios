@@ -1,0 +1,61 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireDataModel
+import WireDesign
+import WireLocators
+
+final class UserRemovedFromTeamSystemMessageCellDescription: ConversationMessageCellDescription {
+
+    typealias View = ConversationSystemMessageCell<ConversationMissingMessagesSystemMessageCellDescription>
+    typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: CGFloat = 0
+
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String?
+    let accessibilityLabel: String?
+
+    init() {
+        let title = NSMutableAttributedString.markdown(
+            from: L10n.Localizable.Content.System.userRemovedFromTeam,
+            style: .systemMessage
+        )
+        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: true
+        )
+
+        self.accessibilityLabel = title.string
+        self.accessibilityIdentifier = Locators.ConversationsPage.userRemovedSystemMessage.rawValue
+        self.actionController = nil
+    }
+
+}

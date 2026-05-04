@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ struct FeatureConfigsPayload: Decodable {
     let fileSharing: FeatureStatus?
     let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+    let allowedGlobalOperations: FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
 
@@ -43,9 +44,12 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let fileSharing: FeatureStatus?
     let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+    let allowedGlobalOperations: FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
     let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
+    let consumableNotifications: FeatureStatus?
+    let chatBubbles: FeatureStatus?
 }
 
 struct FeatureStatus: Decodable {

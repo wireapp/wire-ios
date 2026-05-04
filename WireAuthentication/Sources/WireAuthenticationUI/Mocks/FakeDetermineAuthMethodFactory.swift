@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
@@ -36,23 +38,30 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
             factory: self,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo,
+            environment: mockDependencies.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )
         viewModel.emailOrSSOCode = emailOrSSOCode
         return viewModel
     }
 
-    func loginViaEmailFactory(
+    func loginView(
         email: String?,
-        canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: WireAuthenticationAPI.BackendInfo
-    ) -> any LoginViaEmailFactory {
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView {
         fatalError()
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView {
+        fatalError()
+    }
+
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
 
@@ -62,16 +71,18 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         try await mockDependencies.determineAuthMethodUseCase()
     }
 
+    @MainActor
     func fetchBackendConfigUseCase() -> any WireAuthenticationAPI.FetchBackendConfigUseCaseProtocol {
         mockDependencies.fetchBackendConfigUseCase()
     }
 
-    func loginViaSSOUseCase(backendInfo: WireAuthenticationAPI.BackendInfo?) async throws -> any WireAuthenticationAPI
+    func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any WireAuthenticationAPI
         .LoginViaSSOUseCaseProtocol {
-        try await mockDependencies.loginViaSSOUseCase(backendInfo: backendInfo)
+        try await mockDependencies.loginViaSSOUseCase(environment: environment)
     }
 
     func validateEmailOrSSOCodeUseCase() -> any WireAuthenticationAPI.ValidateEmailOrSSOCodeUseCaseProtocol {
         mockDependencies.validateEmailOrSSOCodeUseCase()
     }
+
 }

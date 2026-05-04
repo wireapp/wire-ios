@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,10 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case disableAnalyticsSharing
     case disableLinkPreviews
 
     private var defaultValue: Any? {
         switch self {
-        case .disableAnalyticsSharing:
-            // No default value because the user needs to decide.
-            nil
         case .disableLinkPreviews:
             false
         }
@@ -61,11 +57,6 @@ public final class ExtensionSettings: NSObject {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
         }
-    }
-
-    public var disableAnalyticsSharing: Bool? {
-        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
-import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+@testable import WireRequestStrategy
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -75,7 +76,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         let targetConversation = conversation ?? groupConversation!
         let message: ZMAssetClientMessage!
         if isImage {
-            message = try! targetConversation.appendImage(from: imageData) as? ZMAssetClientMessage
+            message = try! targetConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData),
+                nonce: UUID()
+            ) as? ZMAssetClientMessage
         } else {
             let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(
                 forResource: "Lorem Ipsum",
@@ -100,9 +104,14 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if preview {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
-            let remote = WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
-            let imageMetadata = WireProtos.Asset.ImageMetaData(width: 123, height: 420)
-            let previewAsset = WireProtos.Asset.Preview(
+            let remote = GenericMessageProtocol.Asset.RemoteData(
+                withOTRKey: otr,
+                sha256: sha,
+                assetId: previewId,
+                assetToken: nil
+            )
+            let imageMetadata = GenericMessageProtocol.Asset.ImageMetaData(width: 123, height: 420)
+            let previewAsset = GenericMessageProtocol.Asset.Preview(
                 size: 128,
                 mimeType: "image/jpg",
                 remoteData: remote,
@@ -110,7 +119,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             )
 
             let previewMessage = GenericMessage(
-                content: WireProtos.Asset(original: nil, preview: previewAsset),
+                content: GenericMessageProtocol.Asset(original: nil, preview: previewAsset),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
             )
@@ -129,7 +138,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if uploaded {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             var uploaded = GenericMessage(
-                content: WireProtos.Asset(withUploadedOTRKey: otr, sha256: sha),
+                content: GenericMessageProtocol.Asset(withUploadedOTRKey: otr, sha256: sha),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
             )
@@ -352,7 +361,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
+    func testThatItMarksAnImageMessageAsSentWhenItReceivesAsuccessfulResponse() {
         // GIVEN
         var message: ZMAssetClientMessage!
         mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -365,6 +374,26 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             XCTAssert(message.delivered)
             XCTAssertEqual(message.deliveryState, .sent)
+        }
+    }
+
+    func testThatItExpiresStaleMessage() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = createMessage(uploaded: false, expired: false)
+            XCTAssertFalse(message.isExpired)
+
+            // WHEN
+            let didComplete = XCTestExpectation(description: "didComplete")
+            self.sut.insert(object: message, isFresh: false, completion: {
+                didComplete.fulfill()
+            })
+
+            wait(for: [didComplete])
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
     }
 }

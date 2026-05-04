@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ extension SettingsCellDescriptorFactory {
 
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
-            clearHistorySection,
             notificationVisibleSection,
             chatHeadsSection,
             soundAlertSection,
@@ -42,9 +41,11 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
-            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
-            collapseSelfMessageSection
-        ].compactMap { $0 }
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
+            // temporarily hiding this section because it conflicts with chat bubbles.
+            // https://wearezeta.atlassian.net/browse/WPB-18939
+//            collapseSelfMessageSection
+        ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(
             items: descriptors,
@@ -52,28 +53,12 @@ extension SettingsCellDescriptorFactory {
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .options,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
     // MARK: - Sections
-
-    private var clearHistorySection: SettingsSectionDescriptorType {
-        let clearHistoryButton = SettingsButtonCellDescriptor(
-            title: L10n.Localizable.Self.Settings.Privacy.ClearHistory.title,
-            isDestructive: false,
-            selectAction: { _ in
-                // erase history is not supported yet
-            }
-        )
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [clearHistoryButton],
-            header: .none,
-            footer: L10n.Localizable.Self.Settings.Privacy.ClearHistory.subtitle,
-            visibilityAction: { _ in false }
-        )
-    }
 
     private var notificationVisibleSection: SettingsSectionDescriptorType {
         let notificationToggle = SettingsPropertyToggleCellDescriptor(
@@ -196,10 +181,6 @@ extension SettingsCellDescriptorFactory {
             descriptors.append(mapsOpeningGroup(for: settingsPropertyFactory.property(.mapsOpeningOption)))
         }
 
-        if TweetOpeningOption.optionsAvailable {
-            descriptors.append(twitterOpeningGroup(for: settingsPropertyFactory.property(.tweetOpeningOption)))
-        }
-
         guard !descriptors.isEmpty else {
             return nil
         }
@@ -226,7 +207,8 @@ extension SettingsCellDescriptorFactory {
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
         let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
@@ -278,7 +260,8 @@ extension SettingsCellDescriptorFactory {
 
     static func darkThemeGroup(
         for property: SettingsProperty,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
@@ -303,35 +286,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
-        )
-    }
-
-    func twitterOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
-        let cells = TweetOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
-
-            return SettingsPropertySelectValueCellDescriptor(
-                settingsProperty: property,
-                value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
-            )
-        }
-
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType })
-        let preview: PreviewGeneratorType = { _ in
-            let value = property.value().value() as? Int
-            guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) })
-            else { return .text(TweetOpeningOption.none.displayString) }
-            return .text(option.displayString)
-        }
-        return SettingsGroupCellDescriptor(
-            items: [section],
-            title: property.propertyName.settingsPropertyLabelText,
-            identifier: nil,
-            previewGenerator: preview,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -364,7 +320,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -392,7 +349,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

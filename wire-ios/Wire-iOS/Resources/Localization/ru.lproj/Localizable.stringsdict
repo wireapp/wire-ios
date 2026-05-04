@@ -390,11 +390,11 @@
         <key>one</key>
         <string>Пропущенный вызов от %2$@</string>
         <key>few</key>
-        <string>Пропущенные вызовы от %2$@</string>
+        <string>Пропущенных вызова от %2$@ (%d)</string>
         <key>many</key>
-        <string>Пропущенные вызовы от %2$@</string>
+        <string>Пропущенных вызовов от %2$@ (%d)</string>
         <key>other</key>
-        <string>Пропущенные вызовы от %2$@</string>
+        <string>Пропущенных вызова от %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
@@ -495,6 +495,26 @@
         <string>%d специальных символов</string>
         <key>other</key>
         <string>%d специальных символов</string>
+      </dict>
+    </dict>
+    <key>conversation.message.multipart_attachments.link</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@attachment_count@</string>
+      <key>attachment_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 прикрепленный файл</string>
+        <key>few</key>
+        <string>%d прикрепленных файла</string>
+        <key>many</key>
+        <string>%d прикрепленных файлов</string>
+        <key>other</key>
+        <string>%d прикрепленных файла</string>
       </dict>
     </dict>
   </dict>

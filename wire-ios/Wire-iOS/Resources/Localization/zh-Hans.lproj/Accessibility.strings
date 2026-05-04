@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "关闭团队创建选项";
 
 "conversation.backButton.description" = "返回到对话列表";
 "conversation.searchButton.description" = "打开搜索";
@@ -180,147 +182,162 @@
 "profile.closeButton.description" = "关闭个人资料";
 "profile.shareProfileButton.description" = "通过二维码或链接分享您的个人资料";
 
-"shareProfile.closeButton.description" = "Close share profile view";
-"shareProfile.backButton.description" = "Go back to your profile";
-"shareProfile.qrCode.description" = "QR code";
+"shareProfile.closeButton.description" = "关闭共享个人资料视图";
+"shareProfile.backButton.description" = "回到您的个人资料";
+"shareProfile.qrCode.description" = "二维码";
 
-"accountPage.availabilityStatus.description" = "Status";
-"accountPage.availabilityStatus.hint" = "Double tap to change status";
+"accountPage.availabilityStatus.description" = "状态";
+"accountPage.availabilityStatus.hint" = "双击修改状态";
 "accountPage.handle.description" = "用户名";
-"accountPage.name.description" = "Profile name";
-"accountPage.teamName.description" = "Team name";
+"accountPage.name.description" = "个人资料名称";
+"accountPage.teamName.description" = "团队名称";
 "accountPage.profilePicture.description" = "个人图像";
-"accountPage.profilePicture.hint" = "Double tap to change your picture";
-"accountPage.closeButton.description" = "Close account overview";
-"accountPage.backButton.description" = "Go back to account overview";
+"accountPage.profilePicture.hint" = "双击更换您的图片";
+"accountPage.closeButton.description" = "关闭账户概览";
+"accountPage.backButton.description" = "返回账户概览";
 
 "contactsList.guestIcon.description" = "游客";
-"contactsList.externalIcon.description" = "External";
+"contactsList.externalIcon.description" = "外部";
 "contactsList.federatedIcon.description" = "联邦";
-"contactsList.memberIcon.description" = "Member";
-"contactsList.userCell.hint" = "Double tap to open conversation";
+"contactsList.memberIcon.description" = "成员";
+"contactsList.userCell.hint" = "双击打开对话";
 "contactsList.pendingConnection.hint" = "双击打开个人资料";
 "contactsList.cancelButton.description" = "关闭新对话概览";
 
-"servicesList.serviceCell.hint" = "Double tap to open service details";
+"servicesList.serviceCell.hint" = "双击打开服务详情";
 
-"serviceDetails.closeButton.description" = "Close service details";
-"serviceDetails.backButton.description" = "Go back to services list";
+"serviceDetails.closeButton.description" = "关闭服务详情";
+"serviceDetails.backButton.description" = "返回到服务列表";
 
 "searchView.clearButton.description" = "清空";
 
-"conversationsListHeader.collapsedButton.description" = "Collapsed";
-"conversationsListHeader.expandedButton.description" = "Expanded";
+"conversationsListHeader.collapsedButton.description" = "折叠";
+"conversationsListHeader.expandedButton.description" = "展开";
 
-"conversationsList.accountButton.hint" = "Double tap to open profile and settings";
-"conversationsList.silencedStatus.value" = "Silenced";
-"conversationsList.mentionStatus.value" = "You are mentioned";
+"conversationsList.accountButton.hint" = "双击打开个人资料和设置";
+"conversationsList.silencedStatus.value" = "静音";
+"conversationsList.mentionStatus.value" = "您被提及";
 "conversationsList.replyStatus.value" = "回复";
-"conversationsList.badgeView.value" = "New messages: %d";
-"conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.badgeView.value" = "新消息：%d";
+"conversationsList.itemCell.hint" = "双击打开对话";
 "conversationsList.itemCell.avatar.group.label" = "群组";
 "conversationsList.itemCell.avatar.channel.label" = "频道";
 "conversationsList.joinButton.description" = "加入";
-"conversationsList.joinButton.hint" = "Double tap to join the call";
-"conversationsList.connectionRequest.description" = "Pending approval of connection request";
+"conversationsList.joinButton.hint" = "双击加入通话";
+"conversationsList.connectionRequest.description" = "等待批准连接请求";
 "conversationsList.connectionRequest.hint" = "双击打开个人资料";
 
 "conversationList.startConversationButton.description" = "创建一个群组或频道，或者搜索用户";
-"conversationsList.filterButton.description" = "Filter conversations";
+"conversationsList.filterButton.description" = "筛选对话";
 
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.allConversations.description" = "显示所有对话";
+"conversationsList.filter_menu_options.favorites.description" = "显示所有收藏的对话";
+"conversationsList.filter_menu_options.groups.description" = "显示所有群组对话";
 "conversationsList.filter_menu_options.channels.description" = "显示所有频道对话";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+"conversationsList.filter_menu_options.oneOnOne.description" = "显示所有一对一对话";
+"conversationsList.filter_menu_options.unread.description" = "显示所有未读对话";
+"conversationsList.filter_menu_options.mentions.description" = "显示所有提及的对话";
+"conversationsList.filter_menu_options.replies.description" = "显示所有带有回复的对话";
+"conversationsList.filter_menu_options.drafts.description" = "显示所有带有草稿的对话";
 "conversationsList.filter_menu_options.folders.description" = "文件夹";
 
-"conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
-"conversationsList.filter_menu_options.groups.selected.description" = "Groups, selected";
+"conversationsList.filter_menu_options.allConversations.selected.description" = "选中的所有对话";
+"conversationsList.filter_menu_options.favorites.selected.description" = "选中的收藏";
+"conversationsList.filter_menu_options.groups.selected.description" = "选中的群组";
 "conversationsList.filter_menu_options.channels.selected.description" = "所选的频道";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
-"conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "选中的一对一对话";
+"conversationsList.filter_menu_options.folders.selected.description" = "选中的文件夹";
+"conversationsList.filter_menu_options.unread.selected.description" = "选中的未读";
+"conversationsList.filter_menu_options.mentions.selected.description" = "选中的提及";
+"conversationsList.filter_menu_options.drafts.selected.description" = "选中的草稿";
+"conversationsList.filter_menu_options.replies.selected.description" = "选中的回复";
 
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
-"conversationAnnouncement.text.description" = "Text message received from %@";
-"conversationAnnouncement.picture.description" = "Picture received from %@";
-"conversationAnnouncement.audio.description" = "Audio message received from %@";
-"conversationAnnouncement.video.description" = "Video message received from %@";
-"conversationAnnouncement.location.description" = "%@ shared location";
+"conversationsList.filter_view.removeButton.descritpion" = "移除对话筛选器";
+
+"conversationAnnouncement.text.description" = "文字消息接收自 %@";
+"conversationAnnouncement.picture.description" = "图片接收自 %@";
+"conversationAnnouncement.audio.description" = "音频消息接受自 %@";
+"conversationAnnouncement.video.description" = "视频消息接受自 %@";
+"conversationAnnouncement.location.description" = "%@ 共享了位置";
 "conversationAnnouncement.ping.description" = "%@ping了一下";
-"conversationAnnouncement.file.description" = "File %@ received from %@";
-"conversationAnnouncement.deletedMessage.description" = "%@ deleted a message";
-"conversationAnnouncement.editedMessage.description" = "%@ edited a message";
+"conversationAnnouncement.file.description" = "文件 %@ 已从 %@ 接收";
+"conversationAnnouncement.deletedMessage.description" = "%@ 删除了一条消息";
+"conversationAnnouncement.editedMessage.description" = "%@ 编辑了一条消息";
 
-"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all your devices are verified (Proteus)";
-"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all your devices have a valid end-to-end identity certificate";
-"groupDetails.conversation.participants.allDevicesProteusVerified" = "all devices are verified (Proteus)";
-"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "all devices have a valid end-to-end identity certificate";
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "你所有的设备均已验证（Proteus）";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "你所有的设备都拥有有效的端到端身份证书";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "所有设备均经过验证（Proteus）";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "所有设备都具有有效的端到端身份证书";
 
-"calling.flipCameraBackButton.description" = "Flip to back camera";
-"calling.flipCameraFrontButton.description" = "Flip to front camera";
+"calling.flipCameraBackButton.description" = "翻转至后置摄像头";
+"calling.flipCameraFrontButton.description" = "翻转至前置摄像头";
 "calling.videoOnButton.description" = "打开摄像头";
 "calling.videoOffButton.description" = "关闭相机";
-"calling.microphoneOnButton.description" = "Turn on microphone";
-"calling.microphoneOffButton.description" = "Turn off microphone";
-"calling.speakerOnButton.description" = "Turn on speaker";
-"calling.speakerOffButton.description" = "Turn off speaker";
+"calling.microphoneOnButton.description" = "打开麦克风";
+"calling.microphoneOffButton.description" = "关闭麦克风";
+"calling.speakerOnButton.description" = "打开扬声器";
+"calling.speakerOffButton.description" = "关闭扬声器";
 "calling.hangUpButton.description" = "结束通话";
 "calling.acceptButton.description" = "接听";
-"calling.userCellFullscreen.hint" = "Quadruple tap for full screen";
-"calling.userCellMinimize.hint" = "Quadruple tap to minimize view";
-"calling.microphoneOn.description" = "Microphone on";
-"calling.microphoneOff.description" = "Microphone off";
-"calling.cameraOn.description" = "Camera on";
-"calling.cameraOff.description" = "Camera off";
-"calling.activeSpeaker.description" = "Active speaker";
-"calling.sharesScreen.description" = "Shares screen";
-"calling.swipeUpParticipants.hint" = "Double tap to swipe up and view all participant’s details";
-"calling.swipeDownParticipants.hint" = "Double tap to swipe down and hide participant’s details";
-"calling.headerBar.description" = "Minimize calling view";
+"calling.userCellFullscreen.hint" = "四次点击可全屏";
+"calling.userCellMinimize.hint" = "四次点击可最小化视图";
+"calling.microphoneOn.description" = "麦克风开启";
+"calling.microphoneOff.description" = "麦克风关闭";
+"calling.cameraOn.description" = "摄像头开启";
+"calling.cameraOff.description" = "摄像头关闭";
+"calling.activeSpeaker.description" = "活动扬声器";
+"calling.sharesScreen.description" = "分享屏幕";
+"calling.swipeUpParticipants.hint" = "双击向上滑动即可查看所有参与者的详细信息";
+"calling.swipeDownParticipants.hint" = "双击向下滑动即可隐藏参与者的详细信息";
+"calling.headerBar.description" = "最小化通话视图";
 "calling.status.connecting" = "正在连接";
 
 "tabBar.item.value" = "选定";
 
 "landing.loginEnterpriseButton.description" = "使用 SSO 登录";
-"tabBar.email.description" = "Log in via email";
-"tabBar.phone.description" = "Log in via phone number";
-"authentication.forgotPasswordButton.description" = "Change your password";
-"authentication.backButton.description" = "Go back to start screen";
+"tabBar.email.description" = "通过电子邮件登录";
+"tabBar.phone.description" = "通过电话号码登录";
+"authentication.forgotPasswordButton.description" = "更改密码";
+"authentication.backButton.description" = "返回到开始屏幕";
 
-"connection.archiveButton.description" = "Archive connection";
-"connection.cancelButton.description" = "Cancel connection";
+"connection.archiveButton.description" = "归档连接";
+"connection.cancelButton.description" = "取消连接";
 
 // MARK: - Reactions
-"reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
+"reactionPicker.dismissButton.description" = "忽略表情符号键盘";
 "reactionPicker.searchFieldPlaceholder.description" = "搜索表情符号";
 
 // MARK: - Create Secure Guest Link with Password
 
-"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+"createSecureGuestLink.closeButton.description" = "关闭安全访客链接";
 
 "createSecureGuestLink.GeneratePasswordButton.description" = "生成密码";
-"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "点击生成随机密码";
 
-"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
-"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Enter a new password for the secure guest link";
-"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Password validation error. Please make sure the password meets the requirements.";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "访客链接密码";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "输入安全访客链接的新密码";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "密码验证错误。请确保密码符合要求。";
 
-"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirm Guest Link Password";
-"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Re-enter the password for verification";
-"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "确认访客链接密码";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "重新输入密码进行验证";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "密码验证错误。请确保密码与上述密码一致";
 
-"createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
-"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+"createSecureGuestLink.CreateLinkButton.description" = "创建访客链接";
+"createSecureGuestLink.CreateLinkButton.hint" = "点击创建安全的访客链接";
 
 // MARK: - Search Gifs
 
-"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
-"searchGifs.norResultsLabel.description" = "No Gifs found";
-"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
-"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
+"searchGifs.searchBar.accessibilityLabel" = "输入文本搜索 GIF";
+"searchGifs.norResultsLabel.description" = "未找到 GIF";
+"searchGifs.gifItem.accessibilityHint" = "点按选择此 GIF";
+"searchGifs.gifItems_loaded.announcement" = "已加载 %@ 张新 GIF";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "返回新对话概览";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "身份提供商 URL";
+"webAuth.urlLabel.hint" = "选择以打开完整的 URL。";

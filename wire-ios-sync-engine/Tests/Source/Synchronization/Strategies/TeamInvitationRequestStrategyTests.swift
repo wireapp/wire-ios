@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -170,22 +170,18 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
 }
 
-extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {
+extension TeamInvitationRequestStrategyTests {
+
     func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {}
-
-    func cancelTask(with taskIdentifier: ZMTaskIdentifier) {}
-
-    func didStartSlowSync() {}
-
-    func didFinishSlowSync() {}
-
-    func didStartQuickSync() {}
-
-    func didFinishQuickSync(isRecovering: Bool) {}
 
     func didRegisterSelfUserClient(_ userClient: UserClient) {}
 
     func didFailToRegisterSelfUserClient(error: Error) {}
 
     func didDeleteSelfUserClient(error: Error) {}
+}
+
+extension TeamInvitationRequestStrategyTests: ZMRequestCancellation {
+
+    func cancelTask(with taskIdentifier: ZMTaskIdentifier) {}
 }

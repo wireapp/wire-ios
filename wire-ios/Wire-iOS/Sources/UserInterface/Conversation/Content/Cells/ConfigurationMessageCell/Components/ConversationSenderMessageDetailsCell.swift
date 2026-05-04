@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -32,7 +33,7 @@ enum TeamRoleIndicator {
     case guest
     case externalPartner
     case federated
-    case service
+    case appOrBot
 }
 
 // MARK: - ConversationSenderMessageDetailsCell
@@ -40,9 +41,10 @@ enum TeamRoleIndicator {
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let user: UserType
+        var sender: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
+        let userSession: UserSession
     }
 
     // MARK: - Properties
@@ -55,7 +57,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
-        view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
         view.size = .badge
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -87,11 +88,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private lazy var authorLabel: UILabel = {
         let label = UILabel()
-        label.accessibilityIdentifier = "author.name"
+        label.accessibilityIdentifier = Locators.ActiveConversationPage.authorName.rawValue
         label.numberOfLines = 0
 
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
 
@@ -116,12 +117,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
-        let user = object.user
+        let user = object.sender
+        avatar.userSession = object.userSession
         avatar.user = user
         availabilityIndicatorView.availability = user.availability.mapToAccountImageAvailability()
 
-        if let session = ZMUserSession.shared() {
-            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        if let userSession = object.userSession as? ZMUserSession {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
         configureAuthorLabel(object: object)
@@ -155,16 +157,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         )
 
         NSLayoutConstraint.activate([
-            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
-
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
+            authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
+            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
             avatar.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
+            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
 
             avatarEqualToTopAnchorConstraint,
             avatarGreaterThanOrEqualToTopAnchorConstraint,
@@ -174,12 +176,14 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             availabilityIndicatorView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 3),
             availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
+
     }
 
     private func configureAuthorLabel(object: Configuration) {
-        let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
+        let sender = object.sender
+        let textColor: UIColor = sender.isAppOrBot ? SemanticColors.Label.textDefault : sender.accentColor
         let attributedString = NSMutableAttributedString(
-            string: object.user.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
+            string: sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont
@@ -217,7 +221,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
                 attributedString.append(attachment)
             }
 
-        case .service:
+        case .appOrBot:
             accessibilityIdentifier = "img.serviceUser"
             if let attachment = attachment(from: .bot, size: 14) {
                 attributedString.append(attachment)
@@ -278,13 +282,22 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     typealias View = ConversationSenderMessageDetailsCell
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let sender = message?.senderUser {
+                configuration.sender = sender
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles: Bool = true
+    let isCellAlreadyAligned: Bool = true
 
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
@@ -296,29 +309,34 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - timestamp: The given timestamp of the message
     init(
         sender: UserType,
-        message: ZMConversationMessage
+        selfUser: any UserType,
+        message: ZMConversationMessage,
+        userSession: UserSession
     ) {
         self.message = message
-
-        let teamRoleIndicator = sender.teamRoleIndicator()
+        let teamRoleIndicator = sender.teamRoleIndicator(selfUser: selfUser)
         let indicator: Indicator? = if message.isDeletion {
             .deleted
         } else {
             .none
         }
         self.configuration = View.Configuration(
-            user: sender,
+            sender: sender,
             indicator: indicator,
-            teamRoleIndicator: teamRoleIndicator
+            teamRoleIndicator: teamRoleIndicator,
+            userSession: userSession
         )
 
-        setupAccessibility(sender)
+        setupAccessibility(sender, selfUser: selfUser)
         self.actionController = nil
     }
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(_ sender: UserType) {
+    private func setupAccessibility(
+        _ sender: UserType,
+        selfUser: (any UserType)?
+    ) {
         guard let message, let senderName = sender.name else {
             accessibilityLabel = nil
             return
@@ -329,7 +347,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             if message.isText, let textMessageData = message.textMessageData {
                 let messageText = NSAttributedString.format(
                     message: textMessageData,
-                    isObfuscated: message.isObfuscated
+                    isObfuscated: message.isObfuscated,
+                    accentColor: (selfUser?.zmAccentColor ?? .default).accentColor
                 )
                 accessibilityLabel = ConversationAnnouncement.EditedMessage.description(senderName) + messageText.string
             } else {
@@ -343,9 +362,10 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 }
 
 private extension UserType {
-    func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
-        if isServiceUser {
-            .service
+
+    func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
+        if isAppOrBot {
+            .appOrBot
 
         } else if isExternalPartner {
             .externalPartner
@@ -353,9 +373,7 @@ private extension UserType {
         } else if isFederated {
             .federated
 
-        } else if !isTeamMember,
-                  let selfUser = provider?.providedSelfUser,
-                  selfUser.isTeamMember {
+        } else if !isTeamMember, selfUser.isTeamMember {
             .guest
         } else {
             nil

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         mockSelfUser.zmAccentColor = .blue
+        mockSelfUser.canAddUserToConversation = true
+        mockSelfUser.teamIdentifier = UUID()
 
         mockOtherUser = MockUserType.createDefaultOtherUser()
     }
@@ -154,17 +156,19 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     // MARK: - Invite Guests
 
     func testThatItRendersNewConversationCellWithParticipantsAndName_AllowGuests() {
-
+        userSession.selfUser = mockSelfUser
         let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .many, allowGuests: true)
         verify(message: message)
     }
 
     func testThatItRendersNewConversationCellWithParticipantsAndWithoutName_AllowGuests() {
+        userSession.selfUser = mockSelfUser
         let message = cell(for: .newConversation, fillUsers: .many, allowGuests: true)
         verify(message: message)
     }
 
     func testThatItRendersNewConversationCellWithoutParticipants_AllowGuests() {
+        userSession.selfUser = mockSelfUser
         let message = cell(for: .newConversation, text: "Italy Trip", allowGuests: true)
         verify(message: message)
     }

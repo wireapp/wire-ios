@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 public class TeamRepository: TeamRepositoryProtocol {
 
@@ -159,6 +159,24 @@ public class TeamRepository: TeamRepositoryProtocol {
             userID: selfUserID
         )
     }
+
+    public func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async {
+        await teamLocalStore.createOrUpdateTeam(
+            identifier: identifier,
+            name: name,
+            creator: creator,
+            icon: icon,
+            iconKey: iconKey
+        )
+    }
+
+    // MARK: - Private
 
     private func getSelfTeamID() async throws -> UUID {
         guard let selfTeamID = await teamLocalStore.selfTeamID() else {

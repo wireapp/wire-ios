@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ final class OfflineBar: UIView {
         self.offlineLabel = UILabel()
 
         super.init(frame: frame)
-        backgroundColor = UIColor(rgb: 0xFEBF02, alpha: 1)
+        backgroundColor = ColorTheme.Base.warning
 
         layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
         layer.masksToBounds = true
 
         offlineLabel.font = FontSpec(FontSize.small, .medium).font
-        offlineLabel.textColor = UIColor.white
+        offlineLabel.textColor = ColorTheme.Base.onWarning
         offlineLabel.text = L10n.Localizable.SystemStatusBar.NoInternet.title.uppercased()
 
         addSubview(offlineLabel)

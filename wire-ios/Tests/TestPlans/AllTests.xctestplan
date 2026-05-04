@@ -63,6 +63,14 @@
       }
     },
     {
+      "skippedTests" : [
+        "DidPresentNotificationPermissionHintUseCaseTests\/testDateIsStored()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForAuthorized()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForDeniedAndRecentPastDate()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForNotDetermined()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningTrueForDeniedAndDistantPastDate()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningTrueForDeniedAndNoDate()"
+      ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "E6579E352AFF9B30004E7FD8",

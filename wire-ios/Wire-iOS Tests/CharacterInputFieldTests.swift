@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
 
 final class CharacterInputFieldTests: XCTestCase {
 
-    private var sut: CharacterInputField! = nil
-    private var delegate: TestCharacterInputFieldDelegate! = nil
+    private var sut: CharacterInputField!
+    private var delegate: TestCharacterInputFieldDelegate!
 
     private var rootViewController: UIViewController! {
         (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController

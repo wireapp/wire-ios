@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -43,7 +43,7 @@ final class PullUserConnectionsSyncTests: XCTestCase {
     func testPull() async throws {
         // Mock
         api.getConnections_MockValue = .init(fetchPage: { _ in
-            WireAPI.PayloadPager.Page(
+            WireNetwork.PayloadPager.Page(
                 element: [Scaffolding.remoteConnection],
                 hasMore: false,
                 nextStart: "first"
@@ -72,12 +72,12 @@ private enum Scaffolding {
     static let conversationID = UUID()
     static let domain = "wire.com"
 
-    static let remoteConnection = WireAPI.Connection(
+    static let remoteConnection = WireNetwork.Connection(
         senderID: senderID,
         receiverID: receiverID,
-        receiverQualifiedID: .init(uuid: senderID, domain: domain),
+        receiverQualifiedID: .init(id: senderID, domain: domain),
         conversationID: Scaffolding.conversationID,
-        qualifiedConversationID: .init(uuid: conversationID, domain: domain),
+        qualifiedConversationID: .init(id: conversationID, domain: domain),
         lastUpdate: Date(),
         status: .accepted
     )

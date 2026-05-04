@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         sut = ConversationEventPayloadProcessor(
             mlsEventProcessor: mockMLSEventProcessor,
-            removeLocalConversation: mockRemoveLocalConversation
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: false
         )
 
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
-        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -63,7 +63,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
         // Given
         let qualifiedID = QualifiedID.random()
-        let conversationPayload = Payload.Conversation.stub(
+        let conversationPayload = Payload.CreatedConversation.stub(
             qualifiedID: qualifiedID,
             type: .group
         )
@@ -87,9 +87,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() async throws {
         // Given
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = await syncMOC.perform {
-            BackendInfo.isFederationEnabled = true
-            return self.groupConversation.qualifiedID!
+            self.groupConversation.qualifiedID!
         }
         let payload = Payload.Conversation.stub(
             qualifiedID: qualifiedID,
@@ -706,7 +711,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
-        BackendInfo.isFederationEnabled = true
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
@@ -1062,7 +1072,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             messageProtocol: "mls"
         )
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         // when
@@ -1207,6 +1217,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: self.groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )
@@ -1233,7 +1244,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             wipeGroupExpectation.fulfill()
         }
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         let (payload, updateEvent) = await syncMOC.perform { [self] in
@@ -1471,7 +1482,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             let memberLeavePayload = Payload.UpdateConversationMemberLeave(
                 userIDs: .none,
-                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap(\.self),
                 reason: .userDeleted
             )
             let conversationEvent = Payload.ConversationEvent(
@@ -1480,6 +1491,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 
@@ -64,13 +65,15 @@ final class PasscodeTextField: AccessoryTextField {
     override init(
         leftInset: CGFloat,
         accessoryTrailingInset: CGFloat,
-        textFieldAttributes: Attributes
+        textFieldAttributes: Attributes,
+        isContextMenuAllowed: Bool
     ) {
 
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         setupView()
@@ -133,7 +136,8 @@ extension PasscodeTextField {
         let textField = PasscodeTextField(
             leftInset: 0,
             accessoryTrailingInset: 0,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal

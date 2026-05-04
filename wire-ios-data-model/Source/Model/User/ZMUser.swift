@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,37 @@
 //
 
 import Foundation
+import WireData
 import WireFoundation
+import WireLogging
 import WireSystem
+import WireTransport
 import WireUtilities
 
 extension ZMUser: UserType {
 
+    @NSManaged private var typeValue: Int16
+
+    private var typeKey: String { "typeValue" }
+
+    /// Whether the user is a regular user, an app or a bot.
+
+    public var type: TypeOfUser {
+        get {
+            willAccessValue(forKey: typeKey)
+            let rawValue = primitiveValue(forKey: typeKey) as? Int16 ?? 0
+            didAccessValue(forKey: typeKey)
+            return TypeOfUser(rawValue: rawValue) ?? .regular
+        }
+        set {
+            willChangeValue(forKey: typeKey)
+            setPrimitiveValue(newValue.rawValue, forKey: typeKey)
+            didChangeValue(forKey: typeKey)
+        }
+    }
+
     @objc public var hasTeam: Bool {
-        /// Other users won't have a team object, but a teamIdentifier.
+        // Other users won't have a team object, but a teamIdentifier.
         team != nil || teamIdentifier != nil
     }
 
@@ -42,19 +65,31 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
+    @objc public var isApp: Bool {
+        type == .app
+    }
+
+    @objc public var isBot: Bool {
+        type == .bot
+    }
+
+    @objc public var isAppOrBot: Bool {
+        isApp || isBot
+    }
+
     public var teamName: String? {
         team?.name
     }
 
     public var hasDigitalSignatureEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let featureRepository = FeatureRepository(context: context)
+        let featureRepository = LegacyFeatureRepository(context: context)
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
     private func isMLSEnabled() -> Bool {
         guard let context = managedObjectContext else { return false }
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
         return mlsFeature.isEnabled
     }
 
@@ -159,9 +194,20 @@ extension ZMUser: UserType {
             return false
         }
 
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
-        return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
+        return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
+
+    // MARK: - Bot specific properties
+
+    @NSManaged public var providerIdentifier: String?
+    @NSManaged public var serviceIdentifier: String?
+
+    // MARK: - App
+
+    /// The app info associated with this user, if the user is an app.
+
+    @NSManaged public var appInfo: AppInfo?
 
 }
 
@@ -229,11 +275,6 @@ extension ProfileImageSize: CustomDebugStringConvertible {
     }
 }
 
-extension ZMUser: ServiceUser {
-    @NSManaged public var providerIdentifier: String?
-    @NSManaged public var serviceIdentifier: String?
-}
-
 public extension Notification.Name {
     static let userDidRequestPreviewAsset = Notification.Name("UserDidRequestPreviewAsset")
     static let userDidRequestCompleteAsset = Notification.Name("UserDidRequestCompleteAsset")
@@ -267,11 +308,17 @@ public extension ZMUser {
     @NSManaged var usesCompanyLogin: Bool
 
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
+    @available(*, deprecated, message: "not used, can be cleaned up")
     @NSManaged var needsToRefetchLabels: Bool
 
     /// The analytics identifier used for tag analytic events.
     ///
     /// This identifier should only exist for the self user
+
+    @objc var trackingID: UUID? {
+        get { analyticsIdentifier.flatMap(UUID.init(transportString:)) }
+        set { analyticsIdentifier = newValue?.transportString() }
+    }
 
     @NSManaged var analyticsIdentifier: String?
 
@@ -310,6 +357,10 @@ public extension ZMUser {
             didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
+    }
+
+    var objectId: Any {
+        objectID
     }
 
     /// combination of domain and remoteIdentifier
@@ -445,15 +496,16 @@ public extension ZMUser {
     }
 
     /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she
-    /// is still a participant of.
+    /// is still a participant of and add a system message to 1:1 conversations.
     @objc
     func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
-        removeFromAllConversations(at: timestamp)
+        removeFromAllGroupConversations(at: timestamp)
+        addSystemMessageInOneOnOneConversation(at: timestamp)
     }
 
     /// Remove user from all group conversations he is a participant of
-    private func removeFromAllConversations(at timestamp: Date) {
+    private func removeFromAllGroupConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
             guard $0.conversation?.conversationType == .group else {
                 return nil
@@ -470,6 +522,27 @@ public extension ZMUser {
             conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
     }
+
+    private func addSystemMessageInOneOnOneConversation(at timestamp: Date) {
+        let conversations: [ZMConversation] = participantRoles.compactMap {
+            guard $0.conversation?.conversationType == .oneOnOne else {
+                return nil
+            }
+            return $0.conversation
+        }
+
+        conversations.forEach { conversation in
+            WireLogger.conversation.debug("inserting message for user removal")
+            conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+
+            if conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                conversation.mlsStatus = .invalid
+            }
+            conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
+        }
+
+    }
+
 }
 
 public extension ZMUser {
@@ -524,7 +597,7 @@ extension ZMUser: UserConnections {
 
         let mlsService = syncContext.performAndWait { syncContext.mlsService }
         let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
-        let resolver = OneOnOneResolver(migrator: migrator, isMLSEnabled: isMLSEnabled())
+        let resolver = LegacyOneOnOneResolver(migrator: migrator, isMLSEnabled: isMLSEnabled())
 
         accept(
             oneOnOneResolver: resolver,
@@ -541,7 +614,7 @@ extension ZMUser: UserConnections {
         guard
             let connection,
             let userID = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? managedObjectContext?.localDomain
         else {
             completion(AcceptConnectionError.invalidState)
             return

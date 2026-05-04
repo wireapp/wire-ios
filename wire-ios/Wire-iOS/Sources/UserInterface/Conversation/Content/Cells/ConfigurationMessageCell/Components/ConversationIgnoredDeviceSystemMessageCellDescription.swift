@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
     init(
         message: ZMConversationMessage,
         data: ZMSystemMessageData,
-        user: UserType
+        user: UserType,
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) {
 
         let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(
@@ -49,7 +50,7 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         self.configuration = View.Configuration(
             attributedText: title,
             icon: WireStyleKit.imageOfShieldnotverified,
-            linkTarget: .user(user)
+            linkTarget: .user(user.objectId, onUserTap)
         )
 
         self.accessibilityLabel = configuration.attributedText?.string

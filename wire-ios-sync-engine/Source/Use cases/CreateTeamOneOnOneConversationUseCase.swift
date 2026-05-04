@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,15 +50,18 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
     private let service: ConversationServiceInterface
+    private let localDomain: String?
 
     init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
-        service: ConversationServiceInterface
+        service: ConversationServiceInterface,
+        localDomain: String?
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
         self.service = service
+        self.localDomain = localDomain
     }
 
     func invoke(
@@ -72,7 +75,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
 
             guard
                 let userID = user.remoteIdentifier,
-                let domain = user.domain ?? BackendInfo.domain
+                let domain = user.domain ?? localDomain
             else {
                 throw Error.missingUserQualifiedID
             }

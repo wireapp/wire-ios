@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>
+    typealias View = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 
@@ -38,36 +38,55 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType) {
-        let senderText = message.senderName
-        let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
+    enum State {
+        case updated(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType)
+        case unavailable
+    }
 
+    init(state: State) {
         var updateText: NSAttributedString?
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,
             .foregroundColor: LabelColors.textDefault
         ]
 
-        if timeoutValue == .none {
-            updateText = NSAttributedString(
-                string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText),
-                attributes: baseAttributes
-            )
+        switch state {
+        case let .updated(message, _, timer, sender):
+            let senderText = message.senderName
+            let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
 
-        } else if let displayString = timeoutValue.displayString {
-            let timerString = displayString.replacingOccurrences(
-                of: String.breakingSpace,
-                with: String.nonBreakingSpace
-            )
+            if timeoutValue == .none {
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText),
+                    attributes: baseAttributes
+                )
+
+            } else if let displayString = timeoutValue.displayString {
+                let timerString = displayString.replacingOccurrences(
+                    of: String.breakingSpace,
+                    with: String.nonBreakingSpace
+                )
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_changes"
+                        .localized(pov: sender.pov, args: senderText, timerString),
+                    attributes: baseAttributes
+                )
+            }
+
+        case .unavailable:
             updateText = NSAttributedString(
-                string: "content.system.message_timer_changes"
-                    .localized(pov: sender.pov, args: senderText, timerString),
+                string: L10n.Localizable.Content.System.messageTimerUnavailable,
                 attributes: baseAttributes
-            )
+            ).adding(font: .mediumSemiboldFont, to: "off")
         }
 
+        typealias LabelColors = SemanticColors.Label
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
-        self.configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
+        self.configuration = View.Configuration(
+            icon: icon,
+            topText: NSAttributedString(string: ""),
+            bottomText: updateText ?? NSAttributedString(string: "")
+        )
         self.accessibilityLabel = updateText?.string
         self.actionController = nil
     }
