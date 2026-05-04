@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,31 +66,19 @@ final class FeatureConfigLocalStoreTests: XCTestCase {
         }
     }
 
-    func testFeatureNeedsNotifyUser_It_Returns_True() async throws {
-        // Given
-
-        let feature = try await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .conversationGuestLinks,
-                in: context
-            ) { $0.status = .enabled }
-
-            let feature = Feature.fetch(name: .conversationGuestLinks, context: context)
-
-            return try XCTUnwrap(feature)
+    func testFetchFeature_SimplifiedQRCode_IfMissingIsEnabled() async throws {
+        // GIVEN
+        // database is empty - no features
+        // WHEN
+        do {
+            _ = try await sut.fetchFeature(name: .simplifiedUserConnectionRequestQRCode)
+            // THEN
+            XCTFail("Not triggered error")
+        } catch let FeatureConfigLocalStore.Error.failedToFetchFeatureLocally(name) {
+            XCTAssertEqual(name, .simplifiedUserConnectionRequestQRCode)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
-
-        // When
-
-        await sut.storeFeature(
-            needsNotifyUser: true,
-            feature: feature
-        )
-
-        // Then
-
-        let result = await sut.featureNeedsNotifyUser(feature: feature)
-        XCTAssertEqual(result, true)
     }
 
     func testFetchFeature_It_Retrieves_Feature_With_Correct_Config() async throws {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,12 @@
 
 final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     var sut: ConversationRoleDownstreamRequestStrategy!
-    var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
-        )
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .slowSyncing
+        mockApplicationStatus.mockSynchronizationState = .unauthenticated
         sut = ConversationRoleDownstreamRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus
@@ -39,7 +34,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockSyncStatus = nil
         mockApplicationStatus = nil
         super.tearDown()
     }

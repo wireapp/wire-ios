@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,18 +23,13 @@ import WireDesign
 
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationIgnoredDeviceSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -43,7 +38,8 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
     init(
         message: ZMConversationMessage,
         data: ZMSystemMessageData,
-        user: UserType
+        user: UserType,
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) {
 
         let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(
@@ -54,7 +50,7 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         self.configuration = View.Configuration(
             attributedText: title,
             icon: WireStyleKit.imageOfShieldnotverified,
-            linkTarget: .user(user)
+            linkTarget: .user(user.objectId, onUserTap)
         )
 
         self.accessibilityLabel = configuration.attributedText?.string

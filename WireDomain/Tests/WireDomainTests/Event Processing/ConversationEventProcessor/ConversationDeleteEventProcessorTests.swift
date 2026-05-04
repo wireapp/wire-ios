@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
 @testable import WireDomain
 
@@ -61,9 +61,9 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_Conversation_Repo_Method() async throws {
         // Mock
 
-        let conversation = await context.perform { [self] in
+        _ = await context.perform { [self] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 in: context
             )
         }
@@ -115,7 +115,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
         static let domain = "domain.com"
 
-        static let conversationID = ConversationID(uuid: id, domain: domain)
+        static let conversationID = ConversationID(id: id, domain: domain)
 
         static let base64EncodedString =
             "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
@@ -124,7 +124,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
         static let event = ConversationDeleteEvent(
             conversationID: conversationID,
-            senderID: UserID(uuid: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             timestamp: .now
         )
 

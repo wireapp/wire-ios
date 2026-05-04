@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
@@ -80,21 +80,25 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         // Mock
 
-        let conversation = await context.perform { [self] in
+        let conversation = await context.perform { [modelHelper, context] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
         }
 
-        mlsDecryptionService.processWelcomeMessageWelcomeMessage_MockValue = Scaffolding.mlsGroupID
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
+        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_MockMethod = { _, _, _ in }
         conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
         mlsService.uploadKeyPackagesIfNeeded_MockMethod = {}
         conversationLocalStore.fetchOtherUserIDInOneOnOneConversationConversation_MockValue = Scaffolding.qualifiedID
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        oneOnOneResolver
+            .resolveOneOnOneConversationWith_MockMethod = { _ in
+                .migratedToMLSGroup(identifier: Scaffolding.mlsGroupID)
+            }
+        mlsService.epochFor_MockValue = 0
 
         // When
 
@@ -102,10 +106,10 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations.count,
             1
         )
         XCTAssertEqual(conversationLocalStore.updateOrCreateMLSGroupGroupID_Invocations.count, 1)
@@ -116,8 +120,8 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: .mockID1, domain: domain)
-        static let senderID = UserID(uuid: .mockID2, domain: domain)
+        static let conversationID = ConversationID(id: .mockID1, domain: domain)
+        static let senderID = UserID(id: .mockID2, domain: domain)
         static let mlsGroupID = MLSGroupID.random()
         static let qualifiedID = WireDataModel.QualifiedID(uuid: .mockID1, domain: domain)
 

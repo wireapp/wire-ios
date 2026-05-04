@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ConversationActionController {
     func openMoveToFolder(for conversation: ZMConversation) {
-        guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
+        guard let directory = (userSession as? ZMUserSession)?.conversationDirectory else { return }
         let useCase = userSession.makeConversationFolderSelectionUseCase()
 
         Task { @MainActor in

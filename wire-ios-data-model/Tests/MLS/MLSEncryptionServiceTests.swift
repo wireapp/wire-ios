@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,25 +25,26 @@ import XCTest
 final class MLSEncryptionServiceTests: XCTestCase {
 
     var sut: MLSEncryptionService!
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockCoreCrypto: MockCoreCryptoProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
         mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
         sut = nil
+        mockCoreCryptoContext = nil
         mockCoreCrypto = nil
-        mockSafeCoreCrypto = nil
         super.tearDown()
     }
 
@@ -60,9 +61,9 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
         // Mock
         var mockEncryptMessageCount = 0
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
+        mockCoreCryptoContext.encryptMessageConversationIdMessage_MockMethod = {
             mockEncryptMessageCount += 1
-            XCTAssertEqual($0, groupID.data)
+            XCTAssertEqual($0, groupID.conversationId)
             XCTAssertEqual($1, unencryptedMessage)
             return encryptedMessage
         }
@@ -84,8 +85,8 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.InvalidByteArrayError(message: "invalid byte array error")
+        mockCoreCryptoContext.encryptMessageConversationIdMessage_MockMethod = { _, _ in
+            throw CoreCryptoError.Other(msg: "invalid byte array error")
         }
 
         // Then

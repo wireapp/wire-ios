@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ struct ShareableDebugReport: Shareable {
 
     // MARK: - Interface
 
-    func share(to: [some Any]) {
+    func share(to: [some Any], userSession: UserSession) {
         guard let conversations = to as? [ZMConversation] else {
             return
         }
@@ -44,7 +44,7 @@ struct ShareableDebugReport: Shareable {
         )
     }
 
-    func previewView() -> UIView? {
+    func previewView(userSession: UserSession) -> UIView? {
         let view = ShareableDebugReportView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SemanticColors.View.backgroundUserCell

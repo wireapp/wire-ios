@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +30,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var sut: ToggleMessageReactionUseCase!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var coreDataStack: CoreDataStack!
@@ -41,17 +42,15 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
-        analyticsEventTracker = MockAnalyticsEventTracker()
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker = AnalyticsEventTrackerProtocolMock()
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
 
         (conversation, firstMessage) = try await setupConversationWithMessage()
-
     }
 
     // MARK: - tearDown
@@ -63,8 +62,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStackHelper = nil
         conversation = nil
         firstMessage = nil
-
-        super.tearDown()
     }
 
     // MARK: - Helper Methods
@@ -99,7 +96,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("❤️"), "Expected the first message to have a ❤️ reaction.")
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [
                 AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,
@@ -123,7 +120,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
             "Expected the ❤️ reaction to be removed from the first message."
         )
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations.count,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations.count,
             0,
             "Removing reactions should not trigger analytics events."
         )
@@ -141,7 +138,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertTrue(firstMessage.usersReaction.keys.contains("😮"), "Expected the message to have a 😮 reaction.")
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [
                 AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,

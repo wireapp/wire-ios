@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,24 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
 public struct SearchResult {
+
+    /// The managed object context the Core Data objects in the search result must be accessed on.
+
+    public let context: NSManagedObjectContext
+
     /// Users already connected to.
+
     public var contacts: [ZMSearchUser]
+
     /// Users from the team.
+
     public var teamMembers: [ZMSearchUser]
+
     /// Non-connected users.
+
     public var directory: [ZMSearchUser]
+
     /// Group conversations.
+
     public var conversations: [ZMConversation]
-    /// Bots.
-    public var services: [ServiceUser]
+
+    public var apps: [any UserType]
+
+    public var bots: [any UserType]
+
     /// Cache for search users.
+
     let searchUsersCache: SearchUsersCache?
+
 }
 
 extension SearchResult {
+
+    init() {
+        self.context = .init(concurrencyType: .privateQueueConcurrencyType)
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.apps = []
+        self.bots = []
+        self.searchUsersCache = nil
+    }
 
     public init?(
         payload: [AnyHashable: Any],
@@ -59,10 +87,12 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
+        self.context = contextProvider.viewContext
         self.contacts = []
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = searchUsersCache
 
         if searchOptions.contains(.teamMembers),
@@ -71,56 +101,6 @@ extension SearchResult {
         } else {
             self.teamMembers = []
         }
-    }
-
-    public init?(
-        servicesPayload servicesFullPayload: [AnyHashable: Any],
-        query: String,
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard let servicesPayload = servicesFullPayload["services"] as? [[String: Any]] else {
-            return nil
-        }
-
-        let searchUsersServices = ZMSearchUser.searchUsers(
-            from: servicesPayload,
-            contextProvider: contextProvider,
-            searchUsersCache: searchUsersCache
-        )
-
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = []
-        self.conversations = []
-        self.services = searchUsersServices
-        self.searchUsersCache = searchUsersCache
-    }
-
-    public init?(
-        userLookupPayload: [AnyHashable: Any],
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard
-            let userLookupPayload = userLookupPayload as? [String: Any],
-            let searchUser = ZMSearchUser.searchUser(
-                from: userLookupPayload,
-                contextProvider: contextProvider,
-                searchUsersCache: searchUsersCache
-            ),
-            searchUser.user == nil
-            || searchUser.user?.isTeamMember == false
-        else {
-            return nil
-        }
-
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = [searchUser]
-        self.conversations = []
-        self.services = []
-        self.searchUsersCache = searchUsersCache
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
@@ -157,44 +137,82 @@ extension SearchResult {
         }
 
         return SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: copiedConversations,
-            services: services,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: result.contacts,
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            services: services,
+            apps: result.apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
 
-    func union(withServiceResult result: SearchResult) -> SearchResult {
+    func union(withAppsResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            services: result.services,
+            apps: apps + result.apps.filter { newApp in
+                !apps.contains { existingApp in
+                    newApp.remoteIdentifier == existingApp.remoteIdentifier
+                }
+            },
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withBotsResult result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
     }
 
     func union(withDirectoryResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
             conversations: conversations,
-            services: services,
+            apps: apps,
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(prependingDirectory result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: result.directory + directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }

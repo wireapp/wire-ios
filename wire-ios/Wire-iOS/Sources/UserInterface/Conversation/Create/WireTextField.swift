@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
-class WireTextField: UITextField {
+class WireTextField: ContextMenuControllableUITextField {
 
     // MARK: - Properties
 
@@ -50,14 +51,14 @@ class WireTextField: UITextField {
 
     // MARK: - Initialization
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(frame: CGRect) {
+        super.init(frame: frame, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setup()
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
     // MARK: - Setup
@@ -87,7 +88,7 @@ class WireTextField: UITextField {
     private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
-        accessibilityIdentifier = "NameField"
+        accessibilityIdentifier = Locators.CreateGroupPage.groupNameField.rawValue
         autocorrectionType = .no
         contentVerticalAlignment = .center
         font = .font(for: .body1)

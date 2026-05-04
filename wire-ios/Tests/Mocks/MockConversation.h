@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 NS_CLASS_DEPRECATED_IOS(4_0, 13_0, "Use SwiftMockConversation instead")
 @interface MockConversation : NSObject<Mockable>    
 
+@property (nonatomic, copy) id objectId;
 @property (nonatomic, copy) NSString *displayName;
 @property (nonatomic) id<LabelType> folder;
 @property (nonatomic) ZMUser *creator;
@@ -39,6 +40,7 @@ NS_CLASS_DEPRECATED_IOS(4_0, 13_0, "Use SwiftMockConversation instead")
 @property (nonatomic) NSUUID *teamRemoteIdentifier;
 @property (nonatomic) ZMConversationLegalHoldStatus legalHoldStatus;
 @property (nonatomic, nullable) NSString *domain;
+@property (nonatomic) BOOL isChannel;
 
 - (ZMConversation *)convertToRegularConversation;
 - (void)verifyLegalHoldSubjects;

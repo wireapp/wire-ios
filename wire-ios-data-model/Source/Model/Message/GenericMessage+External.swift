@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 private let zmLog = ZMSLog(tag: "GenericMessage")
 
 extension GenericMessage {
+
     /// Helper to generate the payload for a generic message of type an external
     /// In case the payload of a regular (text) message is to large,
     /// we need to symmetrically encrypt the original generic message using a generated
@@ -52,12 +54,17 @@ extension GenericMessage {
     }
 
     /// Creates a genericMessage from a ZMUpdateEvent and  External
-    /// The symetrically encrypted data (representing the original GenericMessage)
+    /// The symmetrically encrypted data (representing the original GenericMessage)
     /// contained in the update event will be decrypted using the encryption keys in the External
     /// - Parameters:
     ///   - updateEvent: the decrypted  ZMUpdateEvent containing the external data
     ///   - external: the External containing the otrKey used for the symmetric encryption and the sha256 checksum
-    init?(from updateEvent: ZMUpdateEvent, withExternal external: External) {
+    ///   - validate: if `true`, `validateFields()` is performed and must return true.
+    init?(
+        from updateEvent: ZMUpdateEvent,
+        withExternal external: External,
+        validate: Bool
+    ) {
         guard let externalDataString = updateEvent.payload.optionalString(forKey: "external") else { return nil }
         let externalData = Data(base64Encoded: externalDataString)
         let externalSha256 = externalData?.zmSHA256Digest()
@@ -71,9 +78,12 @@ extension GenericMessage {
         }
 
         let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(key: external.otrKey)
-        guard let message = GenericMessage(withBase64String: decryptedData?.base64String()) else {
-            return nil
-        }
+        guard
+            let base64String = decryptedData?.base64String(),
+            let message = GenericMessage(from: base64String, validate: validate)
+        else { return nil }
+
         self = message
     }
+
 }

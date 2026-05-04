@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@
     NSString *email = @"gfdgfgdfg@fds.sgf";
     NSString *password = @"#$4tewt343$";
     
-    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookieData:NSData.data];
+    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookieData:NSData.data  cookies:@[]];
     self.userInfoParser.existingAccounts = [self.userInfoParser.existingAccounts arrayByAddingObject:info];
 
     // when

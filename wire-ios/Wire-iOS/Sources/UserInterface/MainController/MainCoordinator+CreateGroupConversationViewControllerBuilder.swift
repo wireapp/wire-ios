@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,17 @@ extension MainCoordinator: ConversationCreationControllerDelegate
     ) {
         Task {
             await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
+            showConversation(conversation: conversation, message: nil)
+        }
+    }
+
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        Task {
+            await showConversationList(conversationFilter: .none)
+            showConversation(conversation: conversation, message: nil)
         }
     }
 }

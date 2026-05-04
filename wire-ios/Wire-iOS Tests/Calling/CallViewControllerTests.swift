@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,6 @@
 
 import XCTest
 @testable import Wire
-
-extension XCTestCase {
-    func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
-        weak var weakInstance: T?
-        var instance: T?
-
-        autoreleasepool {
-            instance = instanceGenerator()
-            // then
-            weakInstance = instance
-            XCTAssertNotNil(weakInstance)
-            // when
-            instance = nil
-        }
-
-        XCTAssertNil(instance)
-        XCTAssertNil(weakInstance)
-    }
-}
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
 
@@ -87,7 +68,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         mediaManager: ZMMockAVSMediaManager
     ) -> CallViewController {
 
-        let proximityManager = ProximityMonitorManager()
+        let proximityManager = ProximityMonitorManager(userSession: userSession)
         return CallViewController(
             voiceChannel: mockVoiceChannel,
             selfUser: selfUser,
@@ -142,12 +123,14 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         let configuration = MockCallGridViewControllerInput()
         let viewController = CallGridViewController(
             voiceChannel: mockVoiceChannel,
-            configuration: configuration
+            configuration: configuration,
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
-        ]
+        ].map { AVSClientVideoStream(client: $0) }
 
         // When
         sut.callGridViewController(viewController, perform: .requestVideoStreamsForClients(clients))

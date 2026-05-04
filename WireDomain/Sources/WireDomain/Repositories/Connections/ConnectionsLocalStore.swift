@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,29 +18,21 @@
 
 import WireDataModel
 
-// sourcery: AutoMockable
-public protocol ConnectionsLocalStoreProtocol {
-
-    /// Save connection and related objects to local storage.
-    /// - Parameter connectionInfo: connection object
-
-    func storeConnection(
-        _ connectionInfo: ConnectionInfo
-    ) async throws
-}
-
 final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
     ) {
         self.context = context
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -52,7 +44,30 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
             let conversation = try storedConversation(from: connectionInfo, with: connection)
 
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.lastModifiedDate = connectionInfo.lastUpdate
+            conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
+
             connection.to.oneOnOneConversation = conversation
+            connection.status = connectionInfo.status
+            connection.lastUpdateDateInGMT = connectionInfo.lastUpdate
+
+            try context.save()
+        }
+    }
+
+    public func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws {
+        guard let conversationID = connectionInfo.qualifiedConversationID else {
+            throw ConnectionsRepositoryError.missingConversationId
+        }
+
+        try await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation?.needsToBeUpdatedFromBackend = true
 
             try context.save()
         }
@@ -60,7 +75,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
     /// Create or update conversation related to the connection's sender
     /// - Parameters:
-    ///   - connection: connection payload from WireAPI
+    ///   - connection: connection payload from WireNetwork
     ///   - storedConnection: ZMConnection object stored locally
     /// - Returns: conversation object stored locally
 
@@ -72,20 +87,15 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             throw ConnectionsRepositoryError.missingConversationId
         }
 
-        let conversation = ZMConversation.fetchOrCreate(
+        return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: connection.qualifiedConversationID?.domain,
             in: context
         )
-
-        conversation.needsToBeUpdatedFromBackend = true
-        conversation.lastModifiedDate = connection.lastUpdate
-        conversation.addParticipantAndUpdateConversationState(user: storedConnection.to, role: nil)
-        return conversation
     }
 
     /// Create or update  connection locally related to the connection's sender
-    /// - Parameter connection: connection payload from WireAPI
+    /// - Parameter connection: connection payload from WireNetwork
     /// - Returns: connection object stored locally
 
     private func storedConnection(
@@ -95,14 +105,10 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             throw ConnectionsRepositoryError.missingReceiverId
         }
 
-        let storedConnection = ZMConnection.fetchOrCreate(
+        return ZMConnection.fetchOrCreate(
             userID: userID,
             domain: connection.receiverQualifiedID?.domain,
             in: context
         )
-
-        storedConnection.status = connection.status
-        storedConnection.lastUpdateDateInGMT = connection.lastUpdate
-        return storedConnection
     }
 }

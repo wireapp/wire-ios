@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,9 +61,19 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         set { updateTitle(newValue) }
     }
 
+    var titleColor: UIColor {
+        get { titleLabel.textColor }
+        set { updateTitleColor(newValue) }
+    }
+
     var status: String? {
         get { statusLabel.text }
         set { updateStatus(newValue) }
+    }
+
+    var statusColor: UIColor {
+        get { statusLabel.textColor }
+        set { updateStatusColor(newValue) }
     }
 
     var allowMultilineStatus: Bool = false {
@@ -168,6 +178,10 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         }
     }
 
+    private func updateTitleColor(_ newValue: UIColor) {
+        titleLabel.textColor = newValue
+    }
+
     private func updateStatus(_ newValue: String?) {
         if let value = newValue {
             statusLabel.text = value
@@ -175,6 +189,10 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         } else {
             statusLabel.isHidden = true
         }
+    }
+
+    private func updateStatusColor(_ newValue: UIColor) {
+        statusLabel.textColor = newValue
     }
 
     private func setupAccessibility() {

@@ -1,6 +1,0 @@
-framework=WireUtilities
-repository=wire-ios-utilities
-organization=wireapp
-release-name-format=It smells like a {ADJECTIVE} {NOUN}
-platforms=ios,osx
-dont_test_platforms=osx

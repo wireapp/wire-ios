@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # Wire
-# Copyright (C) 2024 Wire Swiss GmbH
+# Copyright (C) 2026 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ set -Eeuo pipefail
 # Additionally, SPM binaries are not supported, so you need to download the LICENSE file manually and add it to the configuration.
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.25.1-macos/bin/license-plist"
+LICENSEPLIST="$REPO_ROOT/scripts/.build/artifacts/scripts/LicensePlist/LicensePlistBinary.artifactbundle/license-plist-3.27.1-macos/bin/license-plist"
 PACKAGES_DIR="$REPO_ROOT/DerivedData/CachedSwiftPackages"
 TMP_DIR="$REPO_ROOT/DerivedData/Generate-Licenses"
 
@@ -63,7 +63,13 @@ cp -R "$PACKAGES_DIR" "$TMP_DIR"
 cp -Rf "$REPO_ROOT"/Carthage/Checkouts/* "$TMP_DIR/checkouts"
 
 
+# Extract versions from Package.swift files (single source of truth)
+AVS_VERSION=$(grep -o 'wire-avs/releases/download/[^/]*' "$REPO_ROOT/WireAVS/Package.swift" | cut -d/ -f4)
+
 # Generate Licenses
 echo ""
 echo "ℹ️  Generate Licenses"
-"$LICENSEPLIST" --package-sources-path "$TMP_DIR" --config-path ".license_plist.yml"
+TMP_CONFIG="$REPO_ROOT/.license_plist_resolved.yml"
+AVS_VERSION="$AVS_VERSION" envsubst < ".license_plist.yml" > "$TMP_CONFIG"
+"$LICENSEPLIST" --package-sources-path "$TMP_DIR" --config-path "$TMP_CONFIG"
+rm -f "$TMP_CONFIG"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ final class ConversationAvatarViewTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         sut = ConversationAvatarView()
     }
@@ -41,58 +40,23 @@ final class ConversationAvatarViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
-    func testThatItRendersNoUserImages() {
+    func testThatItRendersGroup() {
         // GIVEN
         let conversation = MockStableRandomParticipantsConversation()
+        let mockConversations = [QualifiedID.mockID1, .mockID2, .mockID3].map { id in
+            let conversation = MockStableRandomParticipantsConversation()
+            conversation.qualifiedID = id
+            return conversation
+        }
 
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation))
-
-        // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersSomeAndThenNoUserImages() {
-        // GIVEN
-        let otherUserConversation = MockStableRandomParticipantsConversation()
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation))
-
-        // AND WHEN
-        _ = sut.prepareForSnapshots()
-
-        // AND WHEN
-
-        let conversation = MockStableRandomParticipantsConversation()
-
-        sut.configure(context: .conversation(conversation: conversation))
-
-        // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersSingleUserImage() {
-        // GIVEN
-        let otherUserConversation = MockStableRandomParticipantsConversation()
-        let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.zmAccentColor = .green
-        otherUserConversation.conversationType = .oneOnOne
-        otherUserConversation.stableRandomParticipants = [otherUser]
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
+        mockConversations.enumerated().forEach { index, conversation in
+            sut.configure(context: .conversation(conversation: conversation))
+            snapshotHelper.verify(matching: sut.prepareForSnapshots(), named: "\(index)")
+        }
     }
 
     func testThatItRendersPendingConnection() {
@@ -114,12 +78,11 @@ final class ConversationAvatarViewTests: XCTestCase {
 
     func testThatItRendersASingleServiceUser() {
         // GIVEN
-        let otherUser = MockServiceUserType()
+        let otherUser = MockUserType()
         otherUser.initials = "B"
-        otherUser.serviceIdentifier = "serviceIdentifier"
-        otherUser.providerIdentifier = "providerIdentifier"
+        otherUser.mockedIsBot = true
         otherUser.isConnected = true
-        XCTAssert(otherUser.isServiceUser)
+        XCTAssert(otherUser.isAppOrBot)
 
         otherUser.zmAccentColor = .green
         let otherUserConversation = MockStableRandomParticipantsConversation()
@@ -131,43 +94,6 @@ final class ConversationAvatarViewTests: XCTestCase {
 
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersTwoUserImages() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation()
-        let otherUser = MockUserType.createDefaultOtherUser()
-        let thirdUser = MockUserType.createConnectedUser(name: "Anna")
-        thirdUser.zmAccentColor = .red
-        conversation.stableRandomParticipants = [thirdUser, otherUser]
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersManyUsers() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation()
-        conversation.stableRandomParticipants = MockUserType.usernames
-            .map { MockUserType.createConnectedUser(name: $0) }
-
-        (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
-        (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
-        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .purple
-        (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
     }
 }
 

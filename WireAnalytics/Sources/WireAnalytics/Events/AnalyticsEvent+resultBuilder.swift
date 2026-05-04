@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,34 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+
 // Allows for writing the event initialization with segmentations more compact.
 
 extension AnalyticsEvent {
 
     @resultBuilder
-    struct SegmentationEntryBuilder {
+    struct SegmentationBuilder {
 
-        static func buildBlock(_ components: [SegmentationEntry]...) -> [SegmentationEntry] {
-            components.flatMap { $0 }
+        static func buildBlock(_ components: [Segmentation]...) -> [Segmentation] {
+            components.flatMap(\.self)
         }
 
-        static func buildExpression(_ expression: SegmentationEntry) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: Segmentation) -> [Segmentation] {
             [expression]
         }
 
-        static func buildExpression(_ expression: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: [Segmentation]) -> [Segmentation] {
             expression
         }
 
-        static func buildOptional(_ components: [SegmentationEntry]?) -> [SegmentationEntry] {
+        static func buildOptional(_ components: [Segmentation]?) -> [Segmentation] {
             components ?? []
         }
 
-        static func buildEither(first components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(first components: [Segmentation]) -> [Segmentation] {
             components
         }
 
-        static func buildEither(second components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(second components: [Segmentation]) -> [Segmentation] {
             components
         }
     }
@@ -56,7 +58,7 @@ extension AnalyticsEvent {
 
     init(
         name: String,
-        @SegmentationEntryBuilder segmentation: () -> [SegmentationEntry]
+        @SegmentationBuilder segmentation: () -> [Segmentation]
     ) {
         self.init(
             name: name,

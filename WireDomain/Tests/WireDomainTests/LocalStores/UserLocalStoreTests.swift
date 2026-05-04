@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class UserLocalStoreTests: XCTestCase {
@@ -30,6 +31,7 @@ final class UserLocalStoreTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private var mockUserDefaults: UserDefaults!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -44,8 +46,11 @@ final class UserLocalStoreTests: XCTestCase {
             suiteName: Scaffolding.defaultsTestSuiteName
         )
 
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+
         sut = UserLocalStore(
             context: context,
+            messageLocalStore: MockMessageLocalStoreProtocol(),
             userDefaults: mockUserDefaults
         )
     }
@@ -60,6 +65,7 @@ final class UserLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        conversationLocalStore = nil
     }
 
     // MARK: - Tests
@@ -95,8 +101,10 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.handle, Scaffolding.userInfo.handle)
             XCTAssertEqual(user.teamIdentifier, Scaffolding.userInfo.teamID)
             XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
-            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.deleted)
+            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.isDeleted)
             XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
+            XCTAssertEqual(user.appInfo?.appDescription, "desc")
+            XCTAssertEqual(user.appInfo?.category, "cat")
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
@@ -308,6 +316,24 @@ final class UserLocalStoreTests: XCTestCase {
         }
     }
 
+    func testUpdateUserAvailability() async throws {
+        // Mock
+        let selfUser = await context.perform { [self] in
+            return modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
+        }
+
+        // When
+        await sut.updateUser(
+            with: QualifiedID(uuid: Scaffolding.selfUserID, domain: Scaffolding.domain),
+            availability: .available
+        )
+
+        // Then
+        await context.perform {
+            XCTAssertEqual(selfUser.availability, .available)
+        }
+    }
+
     func testIsSelfUser_It_Returns_Correct_Flag() async throws {
         // Mock
 
@@ -366,12 +392,15 @@ final class UserLocalStoreTests: XCTestCase {
             name: "user1",
             handle: "handle1",
             teamID: nil,
+            type: .regular,
             accentID: 1,
             previewAssetKey: nil,
             completeAssetKey: nil,
-            deleted: false,
+            isDeleted: false,
             email: "john.doe@example.com",
             expiresAt: .now,
+            appDescription: "desc",
+            appCategory: "cat",
             serviceID: nil,
             serviceProvider: nil,
             supportedProtocols: [.mls]
@@ -394,8 +423,7 @@ final class UserLocalStoreTests: XCTestCase {
         nonisolated(unsafe) static let pushToken = PushToken(
             deviceToken: deviceToken,
             appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS_VOIP"
         )
 
         static let defaultsTestSuiteName = UUID.mockID1.uuidString

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,8 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             audioRecorder: AudioRecorder(
                 format: .wav,
                 maxRecordingDuration: userSession.maxAudioMessageLength,
-                maxFileSize: userSession.maxUploadFileSize
+                maxFileSize: userSession.maxUploadFileSize,
+                userSession: userSession
             ),
             userSession: userSession
         )
@@ -102,6 +103,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         if Bundle.developerModeEnabled, Settings.shared.maxRecordingDurationDebug != 0 {
             recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
+    }
+
+    deinit {
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
@@ -140,9 +145,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         audioPreviewView.gradientColor = backgroundColor
 
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 if let color {
-                    audioPreviewView.color = color
+                    audioPreviewView.color = color.accentColor.uiColor
                 }
             }
 

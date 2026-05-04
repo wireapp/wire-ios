@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+
+private let linkDetector = NSDataDetector.linkDetector
 
 extension ZMConversationMessage {
 
@@ -58,14 +60,9 @@ extension ZMConversationMessage {
     }
 
     var canVisitLink: Bool {
-        guard let url = URL(
-            string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
-                ?? ""
-        ),
-            UIApplication.shared.canOpenURL(url) else {
-            return false
-        }
-        return true
+        let content = textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+        guard let content, let url = linkDetector?.detectLinks(in: content).first else { return false }
+        return UIApplication.shared.canOpenURL(url)
     }
 
     func selfUserReactions() -> Set<Emoji.ID> {

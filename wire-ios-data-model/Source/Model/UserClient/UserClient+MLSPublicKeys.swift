@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ public extension UserClient {
         }
 
         public var allKeys: [String] {
-            [ed25519, ed448, p256, p384, p521].compactMap { $0 }
+            [ed25519, ed448, p256, p384, p521].compactMap(\.self)
         }
 
     }

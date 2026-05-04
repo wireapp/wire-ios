@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,55 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import avs
 import XCTest
 
 @testable import Wire
 @testable import WireCommonComponents
-
-final class MockZMEditableUser: MockUser, EditableUserType {
-
-    var needsRichProfileUpdate: Bool = false
-
-    var enableReadReceipts: Bool = false
-    var originalProfileImageData: Data!
-
-    func deleteProfileImage() {
-        // no-op
-    }
-
-    static func validate(name: inout String?) throws -> Bool {
-        false
-    }
-}
-
-final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var isMicrophoneMuted: Bool = false
-
-    var intensityLevel: AVSIntensityLevel = .none
-
-    func playMediaByName(_ name: String!) {}
-}
-
-final class ZMMockTracking: TrackingInterface {
-
-    var isAnalyticsDisabled: Bool = true
-    var disableCrashAndAnalyticsSharing: Bool = false
-
-    func requestAnalyticsConsent() async throws -> Bool {
-        // no op
-        false
-    }
-
-    func disableAnalytics() throws {
-        // no op
-    }
-
-    func enableAnalytics() async throws {
-        // no op
-    }
-
-}
 
 final class SettingsPropertyTests: XCTestCase {
 
@@ -139,7 +94,7 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         let factory = SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -157,7 +112,7 @@ final class SettingsPropertyTests: XCTestCase {
     private var settingsPropertyFactory: SettingsPropertyFactory {
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         return SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -190,7 +145,7 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         let factory = SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -212,10 +167,10 @@ final class SettingsPropertyTests: XCTestCase {
             mediaManager: ZMMockAVSMediaManager(),
             userSession: userSession,
             selfUser: MockZMEditableUser(),
-            trackingManager: ZMMockTracking()
+            trackingManager: MockTrackingInterface()
         )
 
-        let property = factory.property(.tweetOpeningOption)
+        let property = factory.property(.browserOpeningOption)
         // when & then
         try? saveAndCheck(property, value: 2)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -156,7 +156,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -178,7 +183,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -197,7 +207,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         let userInfo = userInfoWithConversation()
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
 
         // when
         handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
@@ -392,7 +407,7 @@ extension ZMUserSessionTests_PushNotifications {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }

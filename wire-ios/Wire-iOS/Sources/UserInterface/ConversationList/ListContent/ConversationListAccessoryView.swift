@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 final class ConversationListAccessoryView: UIView {
 
@@ -156,6 +157,7 @@ final class ConversationListAccessoryView: UIView {
 
         switch icon {
         case .pendingConnection:
+            // TODO: [WPB-17197] update format of icon
             iconView.setTemplateIcon(.clock, size: iconSize)
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationListVoiceOver.pendingConnection
@@ -196,6 +198,9 @@ final class ConversationListAccessoryView: UIView {
         case let .unreadMessages(count):
             textLabel.text = String(count)
             textLabel.textColor = textLabelColor
+            textLabel.isAccessibilityElement = true
+            textLabel.accessibilityIdentifier = Locators.ConversationsPage.unreadMessageCount.rawValue
+            textLabel.accessibilityValue = String(count)
             accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)
             return textLabel
         case .mention:

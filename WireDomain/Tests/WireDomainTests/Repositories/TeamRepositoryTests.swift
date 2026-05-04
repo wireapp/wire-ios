@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 @testable import WireDomain
@@ -48,11 +48,12 @@ final class TeamRepositoryTests: XCTestCase {
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
             userRepository: userRespository,
             teamLocalStore: teamLocalStore,
             teamsAPI: teamsAPI
         )
+
+        teamLocalStore.selfTeamID_MockValue = Scaffolding.selfTeamID
     }
 
     override func tearDown() async throws {
@@ -70,7 +71,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamFor_MockValue = WireAPI.Team(
+        teamsAPI.getTeamFor_MockValue = WireNetwork.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
             creatorID: Scaffolding.teamCreatorID,
@@ -272,6 +273,26 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
+    func testCreateOrUpdateTeam_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
+        // Mock
+
+        teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod = { _, _, _, _, _ in }
+
+        // When
+
+        await sut.createOrUpdateTeam(
+            identifier: Scaffolding.teamID,
+            name: Scaffolding.teamName,
+            creator: Scaffolding.teamCreatorID,
+            icon: Scaffolding.logoID,
+            iconKey: Scaffolding.logoKey
+        )
+
+        // Then
+
+        XCTAssertEqual(teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations.count, 1)
+    }
+
     private enum Scaffolding {
         static let userID = UUID.mockID1
         static let selfUserID = UUID.mockID2
@@ -300,6 +321,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         static let teamMemberLegalhold = TeamMemberLegalholdInfo(
             status: .pending,
+            clientID: "abc123",
             prekey: prekey
         )
 

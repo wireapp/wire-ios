@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,9 +104,9 @@ final class UserStatusView: TitleView {
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
         configure(
-            leadingIcons: leadingIcons.compactMap { $0 },
+            leadingIcons: leadingIcons.compactMap(\.self),
             title: title,
-            trailingIcons: trailingIcons.compactMap { $0 },
+            trailingIcons: trailingIcons.compactMap(\.self),
             subtitle: nil,
             interactive: isInteractive,
             showInteractiveIcon: showInteractiveIcon

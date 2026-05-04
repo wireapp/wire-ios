@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
+public class ConversationEventProcessor: NSObject, LegacyConversationEventProcessorProtocol {
 
     // MARK: - Properties
 
@@ -29,38 +30,67 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: mlsEventProcessor,
-        removeLocalConversation: RemoveLocalConversationUseCase()
+        removeLocalConversation: RemoveLocalConversationUseCase(),
+        isFederationEnabled: isFederationEnabled
     )
     private let eventPayloadDecoder = EventPayloadDecoder()
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             context: context,
-            conversationService: ConversationService(context: context),
-            mlsEventProcessor: MLSEventProcessor(context: context)
+            conversationService: ConversationService(context: context, localDomain: localDomain),
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
     public init(
         context: NSManagedObjectContext,
         conversationService: ConversationServiceInterface,
-        mlsEventProcessor: MLSEventProcessing
+        mlsEventProcessor: MLSEventProcessing,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.conversationService = conversationService
         self.mlsEventProcessor = mlsEventProcessor
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init()
     }
 
     // MARK: - Methods
 
-    func processPayload(_ payload: ZMTransportData) {
+    /// Process Conversation Rename event
+    /// - Parameter payload: payload containing the event
+    /// - Note: This method needs to be synchronous because it's used by a request Strategy
+    /// This can be removed once ConversationRequestStrategy is removed
+    func processConversationRenamePayload(_ payload: ZMTransportData) {
         // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            Task {
-                await processConversationEvents([event])
+            do {
+                let payload = try eventPayloadDecoder.decode(
+                    Payload.ConversationEvent<Payload.UpdateConversationName>.self,
+                    from: event.payload
+                )
+
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            } catch {
+                WireLogger.eventProcessing
+                    .error("error processing UpdateConversationName: \(error.localizedDescription)")
             }
         }
     }
@@ -78,8 +108,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
-        _ = await context.perform {
-            self.context.saveOrRollback()
+        _ = await context.perform { [weak self] in
+            self?.context.saveOrRollback()
         }
     }
 
@@ -121,14 +151,39 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         case .conversationProtocolUpdate:
             await processConversationProtocolChange(event)
 
+        case .conversationAddPermissionUpdate:
+
+            await processConversationAddPermissionUpdate(event: event)
+
+        // TODO: [WPB-18464] - process new event when backend ready, processor will properly map the duration to a localized string and create the ZMSystemMessage
+//        case let .channelHistoryDepthModified(event):
+//            await processConversationChannelHistoryDepthModified(event: event)
         default:
             break
         }
     }
 
+//    private func processConversationChannelHistoryDepthModified(event: ZMUpdateEvent) {
+//        guard let payload = try? eventPayloadDecoder.decode(
+//            Payload.ConversationEvent<Payload.ChannelHistoryDepthModified>.self,
+//            from: event.payload
+//        ) else { return }
+//
+//        await processor.processPayload(payload, in: context)
+//    }
+
+    private func processConversationAddPermissionUpdate(event: ZMUpdateEvent) async {
+        guard let payload = try? eventPayloadDecoder.decode(
+            Payload.ConversationEvent<Payload.UpdateConversationPermission>.self,
+            from: event.payload
+        ) else { return }
+
+        await processor.processPayload(payload, in: context)
+    }
+
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.Conversation>.self,
+            Payload.ConversationEvent<Payload.CreatedConversation>.self,
             from: event.payload
         ) else { return }
 
@@ -146,7 +201,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberLeave(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
             from: event.payload
         ) else { return }
 
@@ -155,7 +210,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>.self,
             from: event.payload
         ) else { return }
 
@@ -263,7 +318,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 Payload.UpdateConversationMLSWelcome.self,
                 from: event.payload
             ),
-            let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+            let qualifiedID = payload.qualifiedID ?? localDomain.map({
                 QualifiedID(uuid: payload.id, domain: $0)
             })
         else { return }
@@ -290,7 +345,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Member Join
 
-    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
+    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>
 
     func fetchOrCreateConversation(
         id: UUID?,
@@ -298,6 +353,10 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
-        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
+        return ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context
+        )
     }
 }

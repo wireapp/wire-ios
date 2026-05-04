@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
     var sut: GroupDetailsFooterView!
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
-        coreDataFixture = CoreDataFixture()
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
     }
 
@@ -50,7 +50,7 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             selfUser.membership?.setTeamRole(.partner)
             sut = GroupDetailsFooterView()
-            sut.update(for: groupConversation)
+            sut.update(for: groupConversation, user: selfUser)
 
             verifyInAllPhoneWidths(matching: sut)
         }

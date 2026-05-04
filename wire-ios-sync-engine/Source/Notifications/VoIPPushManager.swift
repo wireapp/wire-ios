@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,11 @@ import avs
 import CallKit
 import Foundation
 import PushKit
+import WireLogging
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
-    func processIncomingRealVoIPPush(payload: [AnyHashable: Any], completion: @escaping () -> Void)
-    func processPendingCallEvents(accountID: UUID)
-
-}
-
-extension Logging {
-
-    static let push = ZMSLog(tag: "Push")
+    func processPendingCallEvents(accountID: UUID) async
 
 }
 
@@ -38,30 +32,31 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     // MARK: - Properties
 
-    let registry = PKPushRegistry(queue: nil)
+    static let pushRegistryQueue = DispatchQueue(
+        label: "com.wire.pushRegistryQueue"
+    )
+
     public let callKitManager: CallKitManager
 
-    private let requiredPushTokenType: PushToken.TokenType
     private let pushTokenService: PushTokenServiceInterface
+    private let registry: PKPushRegistry
 
     public weak var delegate: VoIPPushManagerDelegate?
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "VoipPushManager")
+    private static let logger = WireLogger.calling
 
     // MARK: - Life cycle
 
     public init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface
     ) {
-        Self.logger.trace("init")
-        self.requiredPushTokenType = requiredPushTokenType
+        Self.logger.debug("init VoIPPushManager")
         self.pushTokenService = pushTokenService
 
+        self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)
         self.callKitManager = CallKitManager(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             mediaManager: AVSMediaManager.sharedInstance()
         )
 
@@ -73,7 +68,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     // MARK: - Methods
 
     public func registerForVoIPPushes() {
-        Self.logger.trace("register for voIP pushes")
+        Self.logger.debug("register for voIP pushes")
         registry.desiredPushTypes = [.voIP]
     }
 
@@ -82,64 +77,40 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         didUpdate pushCredentials: PKPushCredentials,
         for type: PKPushType
     ) {
-        Self.logger.trace("did update push credentials")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We only want to store the voip token if required.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.createVOIPToken(from: pushCredentials.token))
+        // do nothing
     }
 
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didInvalidatePushTokenFor type: PKPushType
     ) {
-        Self.logger.trace("did invalidate push token")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We don't want to delete a standard push token by accident.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.none)
+        // do nothing
     }
 
+    // Don't use the async version, it's broken
+    // It doesn't properly get called when waking up the app from the background and ends up crashing
+    // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didReceiveIncomingPushWith payload: PKPushPayload,
         for type: PKPushType,
         completion: @escaping () -> Void
     ) {
-        Self.logger.trace("did receive incoming push")
+        Self.logger.debug("did receive incoming push: \(payload.safeForLoggingDescription)")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return completion() }
 
-        switch requiredPushTokenType {
-        case .standard:
-            processNSEPush(
-                payload: payload.dictionaryPayload,
-                completion: completion
-            )
-
-        case .voip:
-            processVoIPPush(
-                payload: payload.dictionaryPayload,
-                completion: completion
-            )
-        }
+        processNSEPush(
+            payload: payload.dictionaryPayload,
+            completion: completion
+        )
     }
 
     private func processNSEPush(
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Self.logger.trace("process NSE push, payload: \(payload)")
-
         guard
             let accountIDString = payload["accountID"] as? String,
             let accountID = UUID(uuidString: accountIDString),
@@ -149,7 +120,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload")
+            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
+            completion()
             return
         }
 
@@ -175,24 +147,11 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
 
-        delegate?.processPendingCallEvents(accountID: accountID)
-    }
-
-    private func processVoIPPush(
-        payload: [AnyHashable: Any],
-        completion: @escaping () -> Void
-    ) {
-        Self.logger.trace("process voIP push, payload: \(payload)")
-
-        guard let delegate else {
-            Self.logger.info("no delegate, ignoring...")
-            return
+        Task {
+            Self.logger.debug("processPendingCallEvents")
+            await delegate?.processPendingCallEvents(accountID: accountID)
+            // Note that here we don't guarantee the sync was finished, only that it was triggered
+            completion()
         }
-
-        Self.logger.info("fowarding to delegate")
-        delegate.processIncomingRealVoIPPush(
-            payload: payload,
-            completion: completion
-        )
     }
 }

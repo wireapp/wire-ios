@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,18 @@
 
 import Foundation
 import WireDataModel
+import WireMessagingDomain
 
 extension ConversationContentViewController {
-    func createReplyComposingView(for message: ZMConversationMessage) -> ReplyComposingView {
-        let replyComposingView = ReplyComposingView(message: message)
+    func createReplyComposingView(
+        for message: ZMConversationMessage,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) -> ReplyComposingView {
+        let replyComposingView = ReplyComposingView(
+            message: message,
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         replyComposingView.translatesAutoresizingMaskIntoConstraints = false
 
         bottomContainer.addSubview(replyComposingView)

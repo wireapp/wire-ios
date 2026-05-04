@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,10 +95,13 @@ private extension BackendEnvironment {
     }
 
     static var selfUserProfileLink: URL? {
-        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
+        guard let selfUser = SelfUser.provider?.providedSelfUser,
+              let userID = selfUser.remoteIdentifier?.uuidString,
+              let domain = selfUser.domain
+        else {
             return nil
         }
-        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
+        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID.lowercased())@\(domain)")
     }
 
 }

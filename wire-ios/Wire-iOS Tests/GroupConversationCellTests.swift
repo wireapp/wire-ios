@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -107,6 +107,43 @@ final class GroupConversationCellTests: XCTestCase {
 
         // WHEN
         groupConversation.displayName = "Anna, Bruno, Claire, Dean"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
+    private func createServiceUser() -> MockUserType {
+        let otherUser = MockUserType()
+        otherUser.initials = "B"
+        otherUser.serviceIdentifier = "serviceIdentifier"
+        otherUser.providerIdentifier = "providerIdentifier"
+        otherUser.isConnected = true
+        return otherUser
+    }
+
+    func testGroupConversationWithService() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+        let bot = createServiceUser()
+        // note previously if service was first we had legacy icon
+        groupConversation.stableRandomParticipants.insert(bot, at: 0)
+        groupConversation.areAppsPresent = true
+
+        // WHEN
+        groupConversation.displayName = "Group with service"
+
+        // THEN
+        verify(conversation: groupConversation)
+    }
+
+    func testChannelConversation() {
+        // GIVEN
+        let groupConversation = createGroupConversation()
+        groupConversation.groupType = .channel
+        groupConversation.isChannel = true
+
+        // WHEN
+        groupConversation.displayName = "iOS Playtest Channel"
 
         // THEN
         verify(conversation: groupConversation)

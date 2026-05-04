@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,18 @@ extension NSTextAttachment {
             icon.makeImage(size: iconSize, color: color)
         }
 
+        return makeAttachment(
+            image: image,
+            iconSize: iconSize,
+            verticalCorrection: verticalCorrection
+        )
+    }
+
+    private static func makeAttachment(
+        image: UIImage,
+        iconSize: StyleKitIcon.Size,
+        verticalCorrection: CGFloat
+    ) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = image
         let ratio = image.size.width / image.size.height
@@ -51,4 +63,5 @@ extension NSTextAttachment {
         )
         return attachment
     }
+
 }

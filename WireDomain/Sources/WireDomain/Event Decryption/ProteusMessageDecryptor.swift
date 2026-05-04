@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,15 @@
 //
 
 import Foundation
-import WireAPI
+import WireCoreCrypto
 import WireDataModel
-
-// sourcery: AutoMockable
-/// Decrypt proteus messages.
-protocol ProteusMessageDecryptorProtocol {
-
-    /// Decrypt a proteus message.
-    ///
-    /// - Parameter eventData: A payload containing the encrypted message.
-    /// - Returns: The payload containing the decrypted message.
-
-    func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent
-    ) async throws -> ConversationProteusMessageAddEvent
-
-}
+import WireNetwork
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface
     let userClientsLocalStore: any UserClientsLocalStoreProtocol
-    let userRepository: any UserRepositoryProtocol
+    let userLocalStore: any UserLocalStoreProtocol
 
     typealias Context = (
         selfClient: WireDataModel.UserClient,
@@ -53,31 +39,33 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     init(
         proteusService: any ProteusServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
-        userRepository: any UserRepositoryProtocol
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.proteusService = proteusService
         self.userClientsLocalStore = userClientsLocalStore
-        self.userRepository = userRepository
+        self.userLocalStore = userLocalStore
     }
 
     func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent
+        from eventData: ConversationProteusMessageAddEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
 
         let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
-        let context = try await extractContext(from: eventData)
+        let eventContext = try await extractContext(from: eventData)
 
         let (didCreateSession, plaintextData) = try await proteusService.decrypt(
             data: ciphertextData,
-            forSession: context.proteusSessionID
+            forSession: eventContext.proteusSessionID,
+            context: context
         )
 
         if didCreateSession {
             await userClientsLocalStore.clientSessionCreated(
-                selfClient: context.selfClient,
-                newClient: context.senderClient
+                selfClient: eventContext.selfClient,
+                newClient: eventContext.senderClient
             )
         }
 
@@ -106,8 +94,8 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
 
-        let senderUser = await userRepository.fetchOrCreateUser(
-            id: eventData.senderID.uuid,
+        let senderUser = await userLocalStore.fetchOrCreateUser(
+            id: eventData.senderID.id,
             domain: eventData.senderID.domain
         )
 

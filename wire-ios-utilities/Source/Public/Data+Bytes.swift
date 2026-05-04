@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@ public typealias Byte = UInt8
 
 public extension Data {
 
-    var bytes: [Byte] {
-        [Byte](self)
-    }
-
     static func random(byteCount: UInt = 8) -> Data {
         Data([Byte].random(length: byteCount))
     }
@@ -33,10 +29,6 @@ public extension Data {
 }
 
 public extension [Byte] {
-
-    var data: Data {
-        Data(self)
-    }
 
     static func random(length: UInt = 8) -> [Byte] {
         (0 ..< length).map { _ in

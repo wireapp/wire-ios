@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,11 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
         // NOTE: the sut is not really a mock it's just the real implementation
         // but with canPresentCallQualitySurvey set to true for testing the callQualitySurvey
-        sut = MockCallQualityController(mainWindow: .init(), submitCallQualitySurvey: callQualitySurvey)
+        sut = MockCallQualityController(
+            mainWindow: .init(),
+            userSession: UserSessionMock(),
+            submitCallQualitySurvey: callQualitySurvey
+        )
         sut.router = router
         sut.usesCallSurveyBudget = false
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ class ProteusServiceTests: XCTestCase {
 
     struct MockError: Error, Equatable {}
 
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockCoreCrypto: MockCoreCryptoProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: ProteusService!
 
@@ -36,17 +36,18 @@ class ProteusServiceTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockCoreCryptoContext.proteusInit_MockMethod = {}
         mockCoreCrypto = MockCoreCryptoProtocol()
-        mockCoreCrypto.proteusInit_MockMethod = {}
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
+        mockCoreCryptoContext = nil
         mockCoreCrypto = nil
-        mockSafeCoreCrypto = nil
         sut = nil
         super.tearDown()
     }
@@ -59,12 +60,12 @@ class ProteusServiceTests: XCTestCase {
         let encryptedData = Data.secureRandomData(length: 8)
 
         // Mock
-        mockCoreCrypto.proteusSessionExistsSessionId_MockMethod = { id in
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
             XCTAssertEqual(id, sessionID.rawValue)
             return true
         }
 
-        mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
+        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
             XCTAssertEqual(id, sessionID.rawValue)
             XCTAssertEqual(ciphertext, encryptedData)
             return Data([0, 1, 2, 3, 4, 5])
@@ -73,12 +74,14 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID
+            forSession: sessionID,
+            context: nil
         )
 
         // Then
         XCTAssertFalse(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
     }
 
     func test_DecryptDataForSession_SessionExists_Failure() async throws {
@@ -87,17 +90,13 @@ class ProteusServiceTests: XCTestCase {
         let encryptedData = Data.secureRandomData(length: 8)
 
         // Mock
-        mockCoreCrypto.proteusSessionExistsSessionId_MockMethod = { id in
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
             XCTAssertEqual(id, sessionID.rawValue)
             return true
         }
 
-        mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            209
-        }
-
-        mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
-            throw CoreCryptoError.Proteus(.DuplicateMessage)
+        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
+            throw CoreCryptoError.Proteus(exception: .DuplicateMessage)
         }
 
         // Then
@@ -105,7 +104,8 @@ class ProteusServiceTests: XCTestCase {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID
+                forSession: sessionID,
+                context: nil
             )
         } errorHandler: { error in
             // Then
@@ -122,12 +122,12 @@ class ProteusServiceTests: XCTestCase {
         let encryptedData = Data.secureRandomData(length: 8)
 
         // Mock
-        mockCoreCrypto.proteusSessionExistsSessionId_MockMethod = { id in
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
             XCTAssertEqual(id, sessionID.rawValue)
             return false
         }
 
-        mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { id, ciphertext in
+        mockCoreCryptoContext.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { id, ciphertext in
             XCTAssertEqual(id, sessionID.rawValue)
             XCTAssertEqual(ciphertext, encryptedData)
             return Data([0, 1, 2, 3, 4, 5])
@@ -136,7 +136,8 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID
+            forSession: sessionID,
+            context: nil
         )
 
         // Then
@@ -150,24 +151,21 @@ class ProteusServiceTests: XCTestCase {
         let encryptedData = Data.secureRandomData(length: 8)
 
         // Mock
-        mockCoreCrypto.proteusSessionExistsSessionId_MockMethod = { id in
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
             XCTAssertEqual(id, sessionID.rawValue)
             return false
         }
 
-        mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            209
-        }
-
-        mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
-            throw CoreCryptoError.Proteus(.DuplicateMessage)
+        mockCoreCryptoContext.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
+            throw CoreCryptoError.Proteus(exception: .DuplicateMessage)
         }
 
         await assertItThrows {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID
+                forSession: sessionID,
+                context: nil
             )
         } errorHandler: { error in
             // Then
@@ -179,6 +177,81 @@ class ProteusServiceTests: XCTestCase {
         }
     }
 
+    func test_DecryptDataForSession_TransactionIsNotCreatedWhenProvided() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return true
+        }
+
+        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
+            XCTAssertEqual(id, sessionID.rawValue)
+            XCTAssertEqual(ciphertext, encryptedData)
+            return Data([0, 1, 2, 3, 4, 5])
+        }
+
+        // When
+        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
+            data: encryptedData,
+            forSession: sessionID,
+            context: mockCoreCryptoContext
+        )
+
+        // Then
+        XCTAssertFalse(didCreateNewSession)
+        XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
+    }
+
+    func test_DecryptDataForSession_CancellationStopsDecryption() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return true
+        }
+
+        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
+            XCTAssertEqual(id, sessionID.rawValue)
+            XCTAssertEqual(ciphertext, encryptedData)
+            return Data([0, 1, 2, 3, 4, 5])
+        }
+
+        // When
+        let task = Task {
+            try await sut.decrypt(
+                data: encryptedData,
+                forSession: sessionID,
+                context: mockCoreCryptoContext
+            )
+        }
+
+        // Cancel the task before decryption happens
+        task.cancel()
+
+        let result = await task.result
+
+        // Then
+        do {
+            _ = try result.get()
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected error
+        } catch {
+            XCTFail("Expected CancellationError but got \(error)")
+        }
+
+        // Verify that decryption was NOT called because we cancelled before it
+        XCTAssertEqual(mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_Invocations.count, 0)
+    }
+
     // MARK: - Encrypting messages
 
     func test_EncryptDataForSession_Success() async throws {
@@ -188,7 +261,7 @@ class ProteusServiceTests: XCTestCase {
 
         // Mock
         var encryptCalls = 0
-        mockCoreCrypto.proteusEncryptSessionIdPlaintext_MockMethod = { sessionIDString, plaintextData in
+        mockCoreCryptoContext.proteusEncryptSessionIdPlaintext_MockMethod = { sessionIDString, plaintextData in
             encryptCalls += 1
             XCTAssertEqual(sessionIDString, sessionID.rawValue)
             XCTAssertEqual(plaintextData, plaintext)
@@ -214,7 +287,7 @@ class ProteusServiceTests: XCTestCase {
         let error = MockError()
         // Mock
         var encryptCalls = 0
-        mockCoreCrypto.proteusEncryptSessionIdPlaintext_MockMethod = { sessionIDString, plaintextData in
+        mockCoreCryptoContext.proteusEncryptSessionIdPlaintext_MockMethod = { sessionIDString, plaintextData in
             encryptCalls += 1
             XCTAssertEqual(sessionIDString, sessionID.rawValue)
             XCTAssertEqual(plaintextData, plaintext)
@@ -241,7 +314,7 @@ class ProteusServiceTests: XCTestCase {
 
         // Mock
         var sessionDeleteCalls = [String]()
-        mockCoreCrypto.proteusSessionDeleteSessionId_MockMethod = {
+        mockCoreCryptoContext.proteusSessionDeleteSessionId_MockMethod = {
             sessionDeleteCalls.append($0)
         }
 
@@ -257,7 +330,7 @@ class ProteusServiceTests: XCTestCase {
         let sessionID = ProteusSessionID.random()
 
         // Mock
-        mockCoreCrypto.proteusSessionDeleteSessionId_MockMethod = { _ in
+        mockCoreCryptoContext.proteusSessionDeleteSessionId_MockMethod = { _ in
             throw MockError()
         }
 

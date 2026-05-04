@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ public final class AutomationHelper: NSObject {
         automationEmailCredentials != nil
     }
 
+    var backendType: String?
+
     /// The login credentials provides by command line
     public let automationEmailCredentials: AutomationEmailCredentials?
     /// Whether we push notification permissions alert is disabled
@@ -70,6 +72,8 @@ public final class AutomationHelper: NSObject {
 
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
+
+    public let developerFlagArguments: [String]
 
     public private(set) var preferredAPIVersion: APIVersion?
     public private(set) var allowMLSGroupCreation: Bool?
@@ -105,9 +109,20 @@ public final class AutomationHelper: NSObject {
             self.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
+        if let backendType = arguments.flagValueIfPresent(AutomationKey.backendType.rawValue) {
+            self.backendType = backendType
+        }
+
+        if let flags = arguments.flagValueIfPresent(AutomationKey.developerFlag.rawValue) {
+            self.developerFlagArguments = flags.split(separator: " ").map { "\($0)" }
+        } else {
+            self.developerFlagArguments = []
+        }
+
         self.allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
 
         super.init()
+        persistBackendTypeOverrideIfNeeded(with: backendType)
     }
 
     private enum AutomationKey: String {
@@ -121,11 +136,13 @@ public final class AutomationHelper: NSObject {
         case debugDataToInstall = "debug-data-to-install"
         case disableCallQualitySurvey = "disable-call-quality-survey"
         case persistBackendType = "persist-backend-type"
+        case backendType = "BackendEnvironmentTypeOverrideKey"
         case disableInteractiveKeyboardDismissal = "disable-interactive-keyboard-dismissal"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
         case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
+        case developerFlag = "developer-flag"
     }
 
     /// Returns the login email and password credentials if set in the given arguments

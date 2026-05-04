@@ -20,4 +20,4 @@ jobs:
           jira-token: ${{ secrets.JIRA_TOKEN }}
           jira-base-url: https://wearezeta.atlassian.net
           skip-branches: '^(production-release|main|master|release\/v\d+)$' #optional
-          fail-when-jira-issue-not-found: false
+          fail-when-jira-issue-not-found: true

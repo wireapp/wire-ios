@@ -9,11 +9,29 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireFoundation",
+      "identifier" : "WireFoundationTests",
+      "name" : "WireFoundationTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireFoundation",
+        "identifier" : "WireFoundationTests",
+        "name" : "WireFoundationTests"
+      }
+    },
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
@@ -24,8 +42,8 @@
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
-        "identifier" : "WireFoundationTests",
-        "name" : "WireFoundationTests"
+        "identifier" : "WireUtilitiesPackageTests",
+        "name" : "WireUtilitiesPackageTests"
       }
     }
   ],

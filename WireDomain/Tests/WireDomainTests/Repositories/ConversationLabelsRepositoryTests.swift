@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDataModel
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
@@ -57,8 +57,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             Scaffolding.conversationLabel1
         ]
 
-        conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }
-        conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_MockMethod = { _ in }
+        conversationLabelsLocalStore.setLabels_MockMethod = { _ in }
 
         // When
 
@@ -67,15 +66,13 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userPropertiesAPI.getLabels_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
+        XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 
     func testUpdateConversationLabels_It_Invokes_Local_Store_And_User_Properties_API_Methods() async throws {
         // Mock
 
-        conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }
-        conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_MockMethod = { _ in }
+        conversationLabelsLocalStore.setLabels_MockMethod = { _ in }
 
         // When
 
@@ -85,8 +82,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
+        XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 
     private enum Scaffolding {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -112,7 +112,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
@@ -169,7 +169,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -195,7 +195,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .disabled)
             XCTAssertEqual(mls.config, .init())
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
 
@@ -206,6 +206,11 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .disabled)
             XCTAssertEqual(mlsMigration.config, .init())
+
+            let channels = featureRepository.fetchChannels()
+            XCTAssertEqual(channels.status, .disabled)
+            XCTAssertEqual(channels.config, .init())
+
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -370,7 +375,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
@@ -453,6 +458,9 @@ private enum JSONPayload {
                 "config": {
                     "enforcedTimeoutSeconds": 22
                 }
+            },
+            "assetAuditLog": {
+                "status": "enabled"
             }
         }
         """

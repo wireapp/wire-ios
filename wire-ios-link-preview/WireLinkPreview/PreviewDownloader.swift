@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import os
+import WireFoundation
 
 private let userAgent = "Wire LinkPreview Bot"
 
@@ -34,10 +36,10 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
     typealias DownloadCompletion = (OpenGraphData?) -> Void
 
-    var containerByTaskID = [Int: MetaStreamContainer]()
-    var completionByURL = [URL: DownloadCompletion]()
-    var cancelledTaskIDs = Set<Int>()
-    var session: URLSessionType! = nil
+    var containerByTaskID = ThreadSafeDictionary<Int, MetaStreamContainer>()
+    var completionByURL = ThreadSafeDictionary<URL, DownloadCompletion>()
+    var cancelledTaskIDs = OSAllocatedUnfairLock(initialState: Set<Int>())
+    var session: URLSessionType!
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
 
@@ -59,7 +61,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
-        completionByURL[url] = completion
+        completionByURL.set(value: completion, for: url)
         var request = URLRequest(url: url)
         // Override the user agent to not get served mobile pages
         request.allHTTPHeaderFields = [HeaderKey.userAgent.rawValue: userAgent]
@@ -79,19 +81,22 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
-        guard let url = task.originalRequest?.url, let completion = completionByURL[url] else { return }
+        guard let url = task.originalRequest?.url, let completion = completionByURL.get(for: url) else { return }
 
         // We do not want to call the completion handler when we cancelled the task,
         // as we cancel it when we received enough data to generate the link preview and will call the completion
         // handler
         // once we parsde the data.
-        if !cancelledTaskIDs.contains(task.taskIdentifier), error != nil {
+        let containsTask = cancelledTaskIDs.withLock { set in
+            set.contains(task.taskIdentifier)
+        }
+        if !containsTask, error != nil {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
 
         // In case the `MetaStreamContainer` fails to produce a string to parse, we need to ensure that we still
         // call the completion handler.
-        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead, error == nil {
+        if let container = containerByTaskID.get(for: task.taskIdentifier), !container.reachedEndOfHead, error == nil {
             return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
     }
@@ -112,12 +117,12 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func processReceivedData(_ data: Data, forTask task: URLSessionDataTaskType, withIdentifier identifier: Int) {
-        let container = containerByTaskID[identifier] ?? MetaStreamContainer()
+        let container = containerByTaskID.get(for: identifier) ?? MetaStreamContainer()
         container.addData(data)
-        containerByTaskID[identifier] = container
+        containerByTaskID.set(value: container, for: identifier)
 
         guard let url = task.originalRequest?.url,
-              let completion = completionByURL[url] else { return }
+              let completion = completionByURL.get(for: url) else { return }
 
         switch task.state {
         case .running:
@@ -136,15 +141,19 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     func cancel(task: URLSessionDataTaskType) {
         // When we manually cancel the task, `urlSession(session:task:didCompleteWithError:) will be called,
         // but we do not want to call the completion handler in that case.
-        cancelledTaskIDs.insert(task.taskIdentifier)
+        _ = cancelledTaskIDs.withLock { set in
+            set.insert(task.taskIdentifier)
+        }
         task.cancel()
     }
 
     func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
-        containerByTaskID[taskIdentifier] = nil
-        completionByURL[url] = nil
-        cancelledTaskIDs.remove(taskIdentifier)
+        containerByTaskID.set(value: nil, for: taskIdentifier)
+        completionByURL.set(value: nil, for: url)
+        _ = cancelledTaskIDs.withLock { set in
+            set.insert(taskIdentifier)
+        }
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
@@ -175,7 +184,7 @@ extension PreviewDownloader {
         didReceiveHTTPResponse response: HTTPURLResponse,
         completionHandler: (URLSession.ResponseDisposition) -> Void
     ) {
-        guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
+        guard let url = dataTask.originalRequest?.url, let completion = completionByURL.get(for: url) else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
         if let contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {

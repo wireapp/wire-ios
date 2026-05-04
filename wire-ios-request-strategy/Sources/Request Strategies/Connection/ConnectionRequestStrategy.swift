@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,35 +27,26 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     ]
 
     var isFetchingAllConnections: Bool = false
-    let syncProgress: SyncProgress
     let connectionByIDSync: IdentifierObjectSync<ConnectionByIDTranscoder>
     let connectionByIDTranscoder: ConnectionByIDTranscoder
     let connectionByQualifiedIDSync: IdentifierObjectSync<ConnectionByQualifiedIDTranscoder>
     let connectionByQualifiedIDTranscoder: ConnectionByQualifiedIDTranscoder
-    let localConnectionListSync: PaginatedSync<Payload.PaginatedLocalConnectionList>
     let connectionListSync: PaginatedSync<Payload.PaginatedConnectionList>
     let updateSync: KeyPathObjectSync<ConnectionRequestStrategy>
     let connectToUserActionHandler: ConnectToUserActionHandler
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
-    let oneOnOneResolver: OneOnOneResolverInterface
 
-    var oneOnOneResolutionDelay: TimeInterval = 3
+    private let apiVersion: WireTransport.APIVersion?
+    private let isFederationEnabled: Bool
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress,
-        oneOneOneResolver: OneOnOneResolverInterface
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
-
-        self.syncProgress = syncProgress
-        self.localConnectionListSync =
-            PaginatedSync<Payload.PaginatedLocalConnectionList>(
-                basePath: "/connections",
-                pageSize: 200,
-                context: managedObjectContext
-            )
 
         self.connectionListSync =
             PaginatedSync<Payload.PaginatedConnectionList>(
@@ -65,12 +56,18 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 context: managedObjectContext
             )
 
-        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
+        self.connectionByIDTranscoder = ConnectionByIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.connectionByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByIDTranscoder
         )
-        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
+        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.connectionByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByQualifiedIDTranscoder
@@ -78,100 +75,42 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConnection.entityName(), \.needsToBeUpdatedFromBackend)
 
-        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext)
-        self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext)
+        self.connectToUserActionHandler = ConnectToUserActionHandler(
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.updateConnectionActionHandler = UpdateConnectionActionHandler(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.actionSync = EntityActionSync(actionHandlers: [
             connectToUserActionHandler,
             updateConnectionActionHandler
         ])
 
-        self.oneOnOneResolver = oneOneOneResolver
-
+        self.apiVersion = apiVersion
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync
+            .allowsRequestsWhileOnline
         ]
 
         updateSync.transcoder = self
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if syncProgress.currentSyncPhase == .fetchingConnections {
-            fetchAllConnections(for: apiVersion)
-        }
 
-        return requestGenerators.nextRequest(for: apiVersion)
-    }
-
-    func fetchAllConnections(for apiVersion: APIVersion) {
-        guard !isFetchingAllConnections else { return }
-
-        isFetchingAllConnections = true
-
-        switch apiVersion {
-        case .v0:
-            localConnectionListSync.fetch { [weak self] result in
-                switch result {
-                case let .success(connectionList):
-                    self?.createConnectionsAndFinishSyncPhase(
-                        connectionList.connections,
-                        hasMore: connectionList.hasMore
-                    )
-                case .failure:
-                    self?.failSyncPhase()
-                }
-            }
-
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
-            connectionListSync.fetch { [weak self] result in
-                switch result {
-                case let .success(connectionList):
-                    self?.createConnectionsAndFinishSyncPhase(
-                        connectionList.connections,
-                        hasMore: connectionList.hasMore
-                    )
-                case .failure:
-                    self?.failSyncPhase()
-                }
-            }
-        }
-    }
-
-    private func createConnectionsAndFinishSyncPhase(_ connections: [Payload.Connection], hasMore: Bool) {
-        let processor = ConnectionPayloadProcessor()
-
-        for connection in connections {
-            processor.updateOrCreateConnection(
-                from: connection,
-                in: managedObjectContext
-            )
-        }
-
-        if !hasMore {
-            syncProgress.finishCurrentSyncPhase(phase: .fetchingConnections)
-            isFetchingAllConnections = false
-        }
-    }
-
-    private func failSyncPhase() {
-        syncProgress.failCurrentSyncPhase(phase: .fetchingConnections)
+        requestGenerators.nextRequest(for: apiVersion)
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-        if syncProgress.currentSyncPhase == .fetchingConnections {
-            [
-                connectionListSync,
-                localConnectionListSync
-            ]
-        } else {
-            [
-                connectionByIDSync,
-                connectionByQualifiedIDSync,
-                actionSync
-            ]
-        }
+        [
+            connectionByIDSync,
+            connectionByQualifiedIDSync,
+            actionSync
+        ]
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
@@ -186,7 +125,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         switch apiVersion {
         case .v0:
@@ -195,7 +134,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
@@ -209,65 +148,6 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
 }
 
-extension ConnectionRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard
-                eventsToProcess.contains(event.type),
-                let payloadAsDictionary = event.payload as? [String: Any],
-                let payloadData = try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
-            else {
-                continue
-            }
-
-            switch event.type {
-            case .userConnection:
-                guard let payload = Payload.UserConnectionEvent(payloadData) else {
-                    return
-                }
-                processUserConnectionEvent(payload)
-
-            default:
-                break
-            }
-        }
-    }
-
-    private func processUserConnectionEvent(_ payload: Payload.UserConnectionEvent) {
-        let context = managedObjectContext
-
-        let processor = ConnectionPayloadProcessor()
-        processor.processPayload(
-            payload,
-            in: context
-        )
-
-        guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
-            return
-        }
-
-        WaitingGroupTask(context: context) { [self] in
-            do {
-                // The client who accepts the connection resolves the conversation immediately.
-                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
-                // but also to re-attempt resolution in case of failure.
-                try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
-
-                let resolver = oneOnOneResolver
-                try await resolver.resolveOneOnOneConversation(with: userID, in: context)
-
-                await context.perform {
-                    _ = context.saveOrRollback()
-                }
-            } catch {
-                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
-                assertionFailure("Error resolving one-on-one conversation: \(error)")
-            }
-        }
-    }
-}
-
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
@@ -277,10 +157,14 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -335,10 +219,14 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

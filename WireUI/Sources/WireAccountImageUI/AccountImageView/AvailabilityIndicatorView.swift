@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 
 // MARK: -
 
-final class AvailabilityIndicatorView: UIView {
+public final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Constants
 
@@ -43,23 +43,23 @@ final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Properties
 
-    var availability: Availability? {
+    public var availability: Availability? {
         didSet { setNeedsLayout() }
     }
 
-    var availableColor: UIColor = Defaults.availableColor {
+    public var availableColor: UIColor = Defaults.availableColor {
         didSet { setNeedsLayout() }
     }
 
-    var awayColor: UIColor = Defaults.awayColor {
+    public var awayColor: UIColor = Defaults.awayColor {
         didSet { setNeedsLayout() }
     }
 
-    var busyColor: UIColor = Defaults.busyColor {
+    public var busyColor: UIColor = Defaults.busyColor {
         didSet { setNeedsLayout() }
     }
 
-    var backgroundViewColor: UIColor = Defaults.backgroundViewColor {
+    public var backgroundViewColor: UIColor = Defaults.backgroundViewColor {
         didSet { backgroundView.backgroundColor = backgroundViewColor }
     }
 
@@ -75,13 +75,13 @@ final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Life Cycle
 
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubviews()
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
@@ -99,7 +99,7 @@ final class AvailabilityIndicatorView: UIView {
         setNeedsLayout()
     }
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         guard let availability else {
@@ -169,9 +169,9 @@ final class AvailabilityIndicatorView: UIView {
 
 // MARK: AvailabilityIndicatorView + init(availability:)
 
-extension AvailabilityIndicatorView {
+public extension AvailabilityIndicatorView {
 
-    public convenience init(availability: Availability) {
+    convenience init(availability: Availability) {
         self.init()
         self.availability = availability
         setNeedsLayout()

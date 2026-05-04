@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,16 +29,20 @@ public final class FolderPickerViewModel: ObservableObject {
     private let directory: any FolderDirectoryTypeProtocol
     private let updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
 
+    public let createFolderViewModel: CreateFolderViewModel
+
     // MARK: - Initialization
 
     public init(
         conversation: Conversation,
         directory: any FolderDirectoryTypeProtocol,
-        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
+        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol,
+        createFolderUseCase: any CreateConversationFolderUseCaseProtocol
     ) {
         self.conversation = conversation
         self.directory = directory
         self.updateConversationFolderUseCase = updateConversationFolderUseCase
+        self.createFolderViewModel = CreateFolderViewModel(useCase: createFolderUseCase)
         loadFolders()
     }
 

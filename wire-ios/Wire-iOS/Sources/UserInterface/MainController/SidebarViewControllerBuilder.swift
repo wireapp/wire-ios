@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 import WireSidebarUI
+import WireUtilities
 
 struct SidebarViewControllerBuilder {
 
     @MainActor
-    func build() -> SidebarViewController {
+    func build(isWireDriveEnabled: Bool = false) -> SidebarViewController {
 
         let accountImageViewDesign = AccountImageViewDesign()
         let availabilityIndicatorDesign = accountImageViewDesign.availabilityIndicator
@@ -52,8 +53,6 @@ struct SidebarViewControllerBuilder {
                     .legalHoldIndicatorColor(Color(uiColor: legalHoldIndicatorViewDesign.foregroundColor))
             }
         )
-        sidebarViewController.wireTextStyleMapping = .init()
-        sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
 
         let sidebarDesign = SidebarViewDesign()
         sidebarViewController.sidebarBackgroundColor = sidebarDesign.backgroundColor
@@ -63,6 +62,11 @@ struct SidebarViewControllerBuilder {
         sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
         sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign
             .menuItemIsSelectedTitleForegroundColor
+
+        // Configure unread filters visibility based on feature flag
+        sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
+        sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
+        sidebarViewController.showFiles = isWireDriveEnabled
 
         return sidebarViewController
     }

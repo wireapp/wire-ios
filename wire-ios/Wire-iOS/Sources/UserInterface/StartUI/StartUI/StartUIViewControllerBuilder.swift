@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 //
 
 import UIKit
+import WireDomain
 import WireMainNavigationUI
+import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
@@ -25,29 +28,48 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
+    let featureConfigRepository: FeatureConfigRepositoryProtocol
+
     weak var delegate: StartUIDelegate?
 
     init(
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        featureConfigRepository: FeatureConfigRepositoryProtocol,
+        conversationCreationRepository: ConversationCreationRepositoryProtocol
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.featureConfigRepository = featureConfigRepository
+        self.conversationCreationRepository = conversationCreationRepository
     }
 
-    func build() -> UIViewController {
+    @MainActor
+    func build() async -> UIViewController? {
+        let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
+        let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         let rootViewController = StartUIViewController(
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            channelConversationFormFactory: channelConversationFormFactory,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
-        rootViewController.delegate = delegate
+        rootViewController?.delegate = delegate
         return rootViewController
     }
 }

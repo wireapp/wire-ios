@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,11 @@
 //
 
 import Foundation
-import WireCryptobox
-import WireDataModel
+@preconcurrency import WireDataModel
 import WireLogging
 import WireSystem
 import WireTransport
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "userClientRS")
 
 /// Performs actions on the self clients
 ///
@@ -41,11 +38,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     weak var clientRegistrationStatus: ZMClientRegistrationStatus?
     weak var clientUpdateStatus: ClientUpdateStatus?
 
-    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
-    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
-    fileprivate var didRetryRegisteringSignalingKeys: Bool = false
+    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync!
+    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync!
+    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync!
+    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync!
     fileprivate var didRetryUpdatingCapabilities: Bool = false
     let prekeyGenerator: PrekeyGenerator
 
@@ -63,18 +59,17 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
         context: NSManagedObjectContext,
-        proteusProvider: ProteusProviding
+        proteusService: ProteusServiceInterface
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
         self.requestsFactory = UserClientRequestFactory()
-        self.prekeyGenerator = PrekeyGenerator(proteusProvider: proteusProvider)
+        self.prekeyGenerator = PrekeyGenerator(proteusService: proteusService)
 
         super.init(managedObjectContext: context)
 
         let modifiedKeysToSync = [
             ZMUserClientNumberOfKeysRemainingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ]
@@ -116,10 +111,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)"
         )
 
-        let needsToUploadSignalingKeysPredicate = NSPredicate(
-            format: "\(ZMUserClientNeedsToUpdateSignalingKeysKey) == YES"
-        )
-
         let needsToUpdateCapabilitiesPredicate = NSPredicate(
             format: "\(ZMUserClientNeedsToUpdateCapabilitiesKey) == YES"
         )
@@ -132,7 +123,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             baseModifiedPredicate,
             NSCompoundPredicate(orPredicateWithSubpredicates: [
                 needToUploadKeysPredicate,
-                needsToUploadSignalingKeysPredicate,
                 needsToUpdateCapabilitiesPredicate,
                 needsToUploadMLSPublicKeysPredicate
             ])
@@ -257,17 +247,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             )
         }
 
-        if keys.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            do {
-                return try requestsFactory.updateClientSignalingKeysRequest(
-                    userClient,
-                    apiVersion: apiVersion
-                )
-            } catch {
-                fatal("Couldn't create request for new signaling keys: \(error)")
-            }
-        }
-
         if keys.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             do {
                 return try requestsFactory.updateClientCapabilitiesRequest(
@@ -363,23 +342,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             return false
         }
-        if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            if response.httpStatus == 400, let label = response.payloadLabel(), label == "bad-request" {
-                // Malformed prekeys uploaded - recreate and retry once per launch
 
-                if didRetryRegisteringSignalingKeys {
-                    (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
-                    managedObjectContext?.saveOrRollback()
-                    fatal(
-                        "UserClientTranscoder sigKey request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)"
-                    )
-                }
-                didRetryRegisteringSignalingKeys = true
-                return true
-            }
-            (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
-            return false
-        }
         if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             if response.httpStatus == 400, let label = response.payloadLabel(), label == "bad-request" {
 
@@ -429,7 +392,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 let payload = response.payload as? [String: AnyObject],
                 let remoteIdentifier = payload["id"] as? String
             else {
-                zmLog.warn("Unexpected backend response for inserted client")
+                WireLogger.userClient.warn("Unexpected backend response for inserted client")
                 return
             }
 
@@ -554,11 +517,20 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
             clientUpdateStatus?.didUploadPrekeys()
-        } else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            didRetryRegisteringSignalingKeys = false
         } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
+            guard let context = managedObjectContext else { return false }
+            let selfUserClientID = context.performAndWait {
+                ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
+            }
+
+            let isSelfClient = selfUserClientID == userClient.remoteIdentifier
+
+            guard isSelfClient else {
+                return false
+            }
+
             userClient.needsToUploadMLSPublicKeys = false
             clientRegistrationStatus?.didRegisterMLSClient(userClient)
         }
@@ -585,9 +557,4 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         nil
     }
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        // Events are processed by the UserClientEventConsumer
-    }
-
 }

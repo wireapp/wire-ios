@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,10 +37,12 @@ final class PersonalAccountView: BaseAccountView {
 
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
+    private let userSession: UserSession
 
     // MARK: - Init
 
-    override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    init(account: Account, user: ZMUser? = nil, userSession: UserSession, displayContext: DisplayContext) {
+        self.userSession = userSession
         super.init(account: account, user: user, displayContext: displayContext)
 
         self.isAccessibilityElement = true
@@ -50,7 +52,7 @@ final class PersonalAccountView: BaseAccountView {
 
         selectionView.layer.masksToBounds = true
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             self.conversationListObserver = ConversationListChangeInfo.add(
                 observer: self,
                 for: ConversationList.conversations(inUserSession: userSession),

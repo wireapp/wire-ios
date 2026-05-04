@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2024 Wire Swiss GmbH
+# Copyright (C) 2026 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery/bin/sourcery"
+SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery-2.3.0.artifactbundle/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping Sourcery in CI environment"

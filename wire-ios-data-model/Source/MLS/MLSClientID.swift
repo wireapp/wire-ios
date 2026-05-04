@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 
 /// An ID representing a identifying a single user client.
-public struct MLSClientID: Equatable, Hashable {
+public struct MLSClientID: Equatable, Hashable, Sendable {
 
     // MARK: - Properties
 
@@ -32,22 +32,31 @@ public struct MLSClientID: Equatable, Hashable {
         "\(userID):\(clientID)@\(domain)"
     }
 
-    public var data: Data? {
-        rawValue.data(using: .utf8)
+    public var data: Data {
+        Data(rawValue.utf8)
     }
 
     // MARK: - Life cycle
 
-    public init?(user: ZMUser) {
+    public init?(
+        user: ZMUser,
+        localDomain: String?
+    ) {
         guard let selfClient = user.selfClient() else { return nil }
-        self.init(userClient: selfClient)
+        self.init(
+            userClient: selfClient,
+            localDomain: localDomain
+        )
     }
 
-    public init?(userClient: UserClientType) {
+    public init?(
+        userClient: UserClientType,
+        localDomain: String?
+    ) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
-            let domain = userClient.user?.domain ?? BackendInfo.domain
+            let domain = userClient.user?.domain ?? localDomain
         else {
             return nil
         }

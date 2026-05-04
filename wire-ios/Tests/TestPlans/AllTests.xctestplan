@@ -24,6 +24,10 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
+        "key" : "CI",
+        "value" : "${CI}"
+      },
+      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
@@ -59,6 +63,14 @@
       }
     },
     {
+      "skippedTests" : [
+        "DidPresentNotificationPermissionHintUseCaseTests\/testDateIsStored()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForAuthorized()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForDeniedAndRecentPastDate()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningFalseForNotDetermined()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningTrueForDeniedAndDistantPastDate()",
+        "ShouldPresentNotificationPermissionHintUseCaseTests\/testReturningTrueForDeniedAndNoDate()"
+      ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "E6579E352AFF9B30004E7FD8",

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -28,7 +29,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let featureRepositoryContext: NSManagedObjectContext
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
@@ -36,7 +37,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Life cycle
 
     init(
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
         accountId: UUID
@@ -74,7 +75,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
+                let notificationObject = LegacyFeatureRepository.FeatureChange.e2eIEnabled
                 NotificationCenter.default.post(
                     name: .featureDidChangeNotification,
                     object: notificationObject

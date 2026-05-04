@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 @MainActor
@@ -29,7 +31,9 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    var conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
+    var wireMessagingFactory: any WireMessagingFactoryProtocol
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,
@@ -43,7 +47,9 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileUIBuilder,
-            mediaPlaybackManager: mediaPlaybackManager
+            conversationCreationRepository: conversationCreationRepository,
+            mediaPlaybackManager: mediaPlaybackManager,
+            wireMessagingFactory: wireMessagingFactory
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

@@ -1,0 +1,5 @@
+{
+  "code": 403,
+  "label": "code-authentication-required",
+  "message": "Code authentication is required"
+}

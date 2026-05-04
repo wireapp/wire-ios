@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 public extension AnalyticsEvent {
 
     enum UI {
@@ -25,7 +27,7 @@ public extension AnalyticsEvent {
         public static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
             AnalyticsEvent(name: "ui.clicked-profile") {
                 if isMigrationDotActive {
-                    SegmentationEntry(key: "migration_dot_active", value: true)
+                    Segmentation(key: "migration_dot_active", value: true)
                 }
             }
         }
@@ -38,7 +40,8 @@ public extension AnalyticsEvent {
             )
         }
 
-        /// An event tracking when the dismisses the self profile and the personal to team migration banner was visible.
+        /// An event tracking when the user dismisses the self profile and the personal to team migration banner was
+        /// visible.
 
         public static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
             personalMigrationCTA(
@@ -51,9 +54,9 @@ public extension AnalyticsEvent {
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "ui.clicked-personal-migration-cta") {
                 if isCreateTeamButtonUsed {
-                    SegmentationEntry(key: "clicked_create_team", value: true)
+                    Segmentation(key: "clicked_create_team", value: true)
                 } else {
-                    SegmentationEntry(key: "clicked_dismiss_cta", value: true)
+                    Segmentation(key: "clicked_dismiss_cta", value: true)
                 }
             }
         }

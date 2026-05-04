@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDesign
 
 final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
 
-    typealias ServicesOptionCell = L10n.Localizable.GroupDetails.ServicesOptionsCell
+    typealias ServicesOptionCell = L10n.Localizable.GroupDetails.AppsOptionsCell
 
     var isOn = false {
         didSet {
@@ -33,8 +33,8 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "cell.groupdetails.servicesoptions"
-        title = L10n.Localizable.GroupDetails.ServicesOptionsCell.title
+        accessibilityIdentifier = "cell.groupdetails.appsoptions"
+        title = L10n.Localizable.GroupDetails.AppsOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
         icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)
@@ -42,7 +42,7 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        isOn = conversation.allowServices
+        isOn = conversation.allowApps
     }
 
     override var isHighlighted: Bool {

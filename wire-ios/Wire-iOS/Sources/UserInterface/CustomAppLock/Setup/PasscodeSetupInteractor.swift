@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,11 @@ protocol PasscodeSetupInteractorOutput: AnyObject {
 
 final class PasscodeSetupInteractor {
     weak var interactorOutput: PasscodeSetupInteractorOutput?
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+    }
 }
 
 // MARK: - Interface
@@ -42,7 +47,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
     func storePasscode(passcode: String) throws {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] Inject the app lock controller.
-        guard let appLock = ZMUserSession.shared()?.appLockController else { return }
+        guard let appLock = (userSession as? ZMUserSession)?.appLockController else { return }
 
         try appLock.updatePasscode(passcode)
         _ = appLock.evaluateAuthentication(customPasscode: passcode)

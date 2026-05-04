@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,16 @@
 
 import UIKit
 
-final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationCannotDecryptSystemMessageCell:
+    ConversationIconBasedCell<
+        ConversationCannotDecryptSystemMessageCellDescription
+    >, ConversationMessageCell {
 
     struct Configuration {
         let icon: UIImage?
         let attributedText: NSAttributedString?
         let showLine: Bool
+        let accentColor: UIColor
     }
 
     var lastConfiguration: Configuration?
@@ -36,22 +40,6 @@ final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCel
         imageView.image = object.icon
         attributedText = object.attributedText
         textLabel.linkTextAttributes = [:]
-    }
-}
-
-// MARK: - UITextViewDelegate
-
-extension ConversationCannotDecryptSystemMessageCell {
-
-    override func textView(
-        _ textView: UITextView,
-        shouldInteractWith url: URL,
-        in characterRange: NSRange,
-        interaction: UITextItemInteraction
-    ) -> Bool {
-        delegate?.perform(action: .resetSession, for: message!, view: self)
-
-        return false
     }
 
 }

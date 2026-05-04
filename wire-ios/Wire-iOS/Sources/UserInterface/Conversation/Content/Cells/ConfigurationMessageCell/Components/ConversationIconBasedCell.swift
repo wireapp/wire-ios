@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
-class ConversationIconBasedCell: UIView {
+class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
 
     let imageContainer = UIView()
     let imageView = UIImageView()
@@ -31,13 +32,21 @@ class ConversationIconBasedCell: UIView {
     let bottomContentView = UIView()
     let labelFont: UIFont = .mediumFont
 
+    /// A computed property that subclasses can override to identify themselves.
+    var shouldRemoveInnerPaddingForBubbles: Bool {
+        false
+    }
+
     private var containerWidthConstraint: NSLayoutConstraint!
+    private var imageContainerLeadingConstraint: NSLayoutConstraint!
     private var textLabelTrailingConstraint: NSLayoutConstraint!
+    private var textLabelLeadingConstraint: NSLayoutConstraint!
     private var textLabelTopConstraint: NSLayoutConstraint!
     private var topContentViewTrailingConstraint: NSLayoutConstraint!
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -109,33 +118,52 @@ class ConversationIconBasedCell: UIView {
         bottomContentView.translatesAutoresizingMaskIntoConstraints = false
         lineView.translatesAutoresizingMaskIntoConstraints = false
 
-        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: trailingTextMargin
-        )
-        containerWidthConstraint = imageContainer.widthAnchor
-            .constraint(equalToConstant: conversationHorizontalMargins.left)
-        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: trailingTextMargin
-        )
+        let topContentViewWidthConstraint = topContentView.widthAnchor.constraint(equalToConstant: 0)
+        topContentViewWidthConstraint.priority = .defaultLow
         textLabelTopConstraint = textLabel.topAnchor.constraint(equalTo: topContentView.bottomAnchor)
 
         // We want the content view to at least be below the image container
         let contentViewTopConstraint = bottomContentView.topAnchor.constraint(equalTo: imageContainer.bottomAnchor)
         contentViewTopConstraint.priority = .defaultLow
+        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
+            equalTo: trailingAnchor
+        )
 
+        if shouldRemoveInnerPaddingForBubbles {
+            containerWidthConstraint = imageContainer.widthAnchor
+                .constraint(equalToConstant: 32.0)
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: -38.0
+            )
+            textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(
+                equalTo: imageContainer.trailingAnchor,
+                constant: 6.0
+            )
+            textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        } else {
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
+            containerWidthConstraint = imageContainer.widthAnchor
+                .constraint(equalToConstant: conversationHorizontalMargins.left)
+            textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
+            textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: trailingTextMargin
+            )
+        }
         NSLayoutConstraint.activate([
             // imageContainer
             containerWidthConstraint,
-            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageContainerLeadingConstraint,
             imageContainer.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0),
             imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
             imageContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: 0),
 
             // imageView
             imageView.widthAnchor.constraint(equalToConstant: 32),
-            imageView.heightAnchor.constraint(equalToConstant: 32),
+            imageView.heightAnchor.constraint(equalToConstant: 34),
             imageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor),
 
@@ -143,10 +171,11 @@ class ConversationIconBasedCell: UIView {
             topContentView.topAnchor.constraint(equalTo: topAnchor),
             topContentView.leadingAnchor.constraint(equalTo: textLabel.leadingAnchor),
             topContentViewTrailingConstraint,
+            topContentViewWidthConstraint,
 
             // textLabel
-            textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             textLabelTopConstraint,
+            textLabelLeadingConstraint,
             textLabelTrailingConstraint,
 
             // lineView
@@ -166,14 +195,18 @@ class ConversationIconBasedCell: UIView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        containerWidthConstraint.constant = conversationHorizontalMargins.left
-        textLabelTrailingConstraint.constant = trailingTextMargin
         topContentViewTrailingConstraint.constant = trailingTextMargin
+        if shouldRemoveInnerPaddingForBubbles {
+            containerWidthConstraint.constant = 32.0
+            textLabelTrailingConstraint.constant = 0
+        } else {
+            containerWidthConstraint.constant = conversationHorizontalMargins.left
+            textLabelTrailingConstraint.constant = trailingTextMargin
+        }
     }
 
-}
+    // MARK: - UITextViewDelegate
 
-extension ConversationIconBasedCell: UITextViewDelegate {
     func textView(
         _ textView: UITextView,
         shouldInteractWith url: URL,
@@ -181,7 +214,6 @@ extension ConversationIconBasedCell: UITextViewDelegate {
         interaction: UITextItemInteraction
     ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import PushKit
+import WireLogging
 
 extension SessionManager {
 
@@ -38,16 +39,7 @@ extension SessionManager {
 
     public func configurePushToken(session: ZMUserSession) {
         guard let localToken = pushTokenService.localToken else {
-            Logging.push.safePublic("no local token, will generate one")
-            generateLocalToken(session: session)
-            return
-        }
-
-        guard localToken.tokenType == requiredPushTokenType else {
-            Logging.push
-                .safePublic(
-                    "local token is of type \(localToken.tokenType) but should be \(requiredPushTokenType), will generate a new token"
-                )
+            WireLogger.push.info("no local token, will generate one")
             generateLocalToken(session: session)
             return
         }
@@ -56,27 +48,18 @@ extension SessionManager {
     }
 
     private func generateLocalToken(session: ZMUserSession) {
-        Logging.push.safePublic("generateLocalToken")
+        WireLogger.push.info("generateLocalToken")
         session.managedObjectContext.performGroupedBlock {
-            switch self.requiredPushTokenType {
-            case .voip:
-                Logging.push.safePublic("generateLocalToken: voip")
-                if let token = self.pushRegistry.pushToken(for: .voIP) {
-                    Logging.push.safePublic("generateLocalToken: voip: token already generated, storing...")
-                    self.pushTokenService.storeLocalToken(.createVOIPToken(from: token))
-                }
-            case .standard:
-                Logging.push.safePublic("generateLocalToken: standard")
-                self.application.registerForRemoteNotifications()
-            }
+            WireLogger.push.info("generateLocalToken: standard")
+            self.application.registerForRemoteNotifications()
         }
     }
 
     func syncLocalTokenWithRemote(session: ZMUserSession) {
-        Logging.push.safePublic("syncLocalTokenWithRemote")
+        WireLogger.push.info("syncLocalTokenWithRemote")
 
         guard let clientID = session.selfUserClient?.remoteIdentifier else {
-            Logging.push.safePublic("syncLocalTokenWithRemote: failed: no self client id")
+            WireLogger.push.info("syncLocalTokenWithRemote: failed: no self client id", attributes: .safePublic)
             return
         }
 
@@ -89,10 +72,14 @@ extension SessionManager {
                     in: notificationContext
                 )
 
-                Logging.push.safePublic("syncLocalTokenWithRemote: success")
+                WireLogger.push.info("syncLocalTokenWithRemote: success", attributes: .safePublic)
 
             } catch {
-                Logging.push.safePublic("syncLocalTokenWithRemote: failed: pushTokenService failed")
+                WireLogger.push
+                    .error(
+                        "syncLocalTokenWithRemote: failed: pushTokenService failed: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
             }
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }

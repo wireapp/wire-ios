@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process user legalhold disable events.
-
-protocol UserLegalholdDisableEventProcessorProtocol {
-
-    /// Process a user legalhold disable event.
-    ///
-    /// - Parameter event: A user legalhold disable event.
-
-    func processEvent(_ event: UserLegalholdDisableEvent) async throws
-
-}
+import WireNetwork
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_: UserLegalholdDisableEvent) async throws {
-        try await repository.disableUserLegalHold()
+    func processEvent(_: UserLegalholdDisableEvent) async {
+        await repository.disableUserLegalHold()
     }
 
 }

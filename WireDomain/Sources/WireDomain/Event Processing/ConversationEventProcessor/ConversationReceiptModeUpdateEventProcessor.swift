@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireLogging
+import WireNetwork
 import WireSystem
-
-/// Process conversation receipt mode update events.
-
-protocol ConversationReceiptModeUpdateEventProcessorProtocol {
-
-    /// Process a conversation receipt mode update event.
-    ///
-    /// - Parameter event: A conversation receipt mode update event.
-
-    func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
-
-}
 
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
 
@@ -45,12 +33,12 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         let isEnabled = event.newReceiptMode == 1
 
         let sender = try await userRepository.fetchUser(
-            id: senderID.uuid,
+            id: senderID.id,
             domain: senderID.domain
         )
 
         let conversation = await conversationRepository.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
@@ -65,7 +53,7 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             for: conversation
         )
 
-        let systemMessage = SystemMessage(
+        _ = SystemMessage(
             type: isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: sender,
             timestamp: .now
@@ -73,13 +61,13 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
 
         let systemMessageType: SystemMessageType = .readReceiptsStatus(
             isEnabled: isEnabled,
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: .now
         )
 
         await messageRepository.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,12 +24,13 @@ public enum SecurityFlags {
     case forceConstantBitRateCalls
     case customBackend
     case cameraRoll
-    case backup
     case maxNumberAccounts
     case fileSharing
     case locationSharing
     case forceCallKitDisabled
     case clipboard
+    case collapseOwnMessages
+    case openLinksExternally
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -38,6 +39,10 @@ public enum SecurityFlags {
     /// The minimum TLS version supported by the app.
 
     case minTLSVersion
+
+    /// Whether an embedded user agent should be used for IDP authentication.
+
+    case useEmbeddedIDPUserAgent
 
     var bundleKey: String {
         switch self {
@@ -51,8 +56,6 @@ public enum SecurityFlags {
             "CustomBackendEnabled"
         case .cameraRoll:
             "CameraRollEnabled"
-        case .backup:
-            "BackupEnabled"
         case .forceEncryptionAtRest:
             "ForceEncryptionAtRestEnabled"
         case .fileSharing:
@@ -65,6 +68,12 @@ public enum SecurityFlags {
             "MinTLSVersion"
         case .clipboard:
             "ClipboardEnabled"
+        case .collapseOwnMessages:
+            "CollapseOwnMessages"
+        case .useEmbeddedIDPUserAgent:
+            "UseEmbeddedIDPUserAgent"
+        case .openLinksExternally:
+            "OpenLinksExternally"
         }
     }
 

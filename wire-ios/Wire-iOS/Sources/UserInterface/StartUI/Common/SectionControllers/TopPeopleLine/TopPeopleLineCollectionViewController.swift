@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 final class TopPeopleLineCollectionViewController: NSObject {
 
     var topPeople = [ZMConversation]()
+    var userSession: UserSession?
 
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
 
@@ -44,6 +46,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: TopPeopleCell.self, for: indexPath)
         cell.conversation = conversation(at: indexPath)
+        cell.userSession = userSession
         return cell
     }
 }

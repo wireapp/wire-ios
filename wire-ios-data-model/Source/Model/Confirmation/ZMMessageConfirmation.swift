@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import GenericMessageProtocol
 
 @objc
 public enum MessageConfirmationType: Int16 {
@@ -68,17 +69,40 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
         updateEvent: ZMUpdateEvent
     ) -> [ZMMessageConfirmation] {
 
-        let type = MessageConfirmationType.convert(confirmation.type)
-
         guard
-            let managedObjectContext = conversation.managedObjectContext,
             let senderUUID = updateEvent.senderUUID,
-            let serverTimestamp = updateEvent.timestamp
+            let timestamp = updateEvent.timestamp
         else {
             return []
         }
 
-        let sender = ZMUser.fetchOrCreate(with: senderUUID, domain: updateEvent.senderDomain, in: managedObjectContext)
+        return createMessageConfirmations(
+            confirmation,
+            conversation: conversation,
+            senderUUID: senderUUID,
+            senderDomain: updateEvent.senderDomain,
+            timestamp: timestamp
+        )
+    }
+
+    @discardableResult
+    public static func createMessageConfirmations(
+        _ confirmation: Confirmation,
+        conversation: ZMConversation,
+        senderUUID: UUID,
+        senderDomain: String?,
+        timestamp: Date
+    ) -> [ZMMessageConfirmation] {
+
+        let type = MessageConfirmationType.convert(confirmation.type)
+
+        guard
+            let managedObjectContext = conversation.managedObjectContext
+        else {
+            return []
+        }
+
+        let sender = ZMUser.fetchOrCreate(with: senderUUID, domain: senderDomain, in: managedObjectContext)
         let moreMessageIds = confirmation.moreMessageIds
         let confirmedMesssageIds = ([confirmation.firstMessageID] + moreMessageIds).compactMap { UUID(uuidString: $0) }
 
@@ -94,7 +118,7 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
                 type: type,
                 message: message,
                 sender: sender,
-                serverTimestamp: serverTimestamp,
+                serverTimestamp: timestamp,
                 managedObjectContext: managedObjectContext
             )
         }

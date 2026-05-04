@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
@@ -32,7 +33,9 @@ final class ConversationPreviewViewController: UIViewController {
         sourceView: UIView,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.actionController = ConversationActionController(
@@ -47,7 +50,9 @@ final class ConversationPreviewViewController: UIViewController {
             mediaPlaybackManager: nil,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
+            wireMessagingFactory: wireMessagingFactory
         )
         DeveloperToolsViewModel.context.currentConversation = conversation
 

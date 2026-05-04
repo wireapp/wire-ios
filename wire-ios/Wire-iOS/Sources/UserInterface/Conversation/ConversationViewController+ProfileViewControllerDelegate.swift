@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ extension ConversationViewController {
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 }
@@ -39,7 +40,6 @@ extension ConversationViewController {
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
-            // TODO: [WPB-11956] what if the conversation exists but is archived? will it work?
             await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }

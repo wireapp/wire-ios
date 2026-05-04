@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,16 @@
 //
 
 import Foundation
+import WireCoreCrypto
 
 extension NSManagedObjectContext {
 
     private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
-    public var coreCrypto: SafeCoreCryptoProtocol? {
+    public var coreCrypto: CoreCryptoProtocol? {
         get {
             precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
-            return userInfo[Self.coreCryptoUserInfoKey] as? SafeCoreCryptoProtocol
+            return userInfo[Self.coreCryptoUserInfoKey] as? CoreCryptoProtocol
         }
 
         set {

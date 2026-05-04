@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GenerateGetAssetRequest() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -47,7 +47,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithDomain() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -65,8 +65,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsNil() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = "localDomain"
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -84,8 +83,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsEmpty() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = "localDomain"
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -103,8 +101,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_DoesNotGenerateGetAssetRequestIfNoDomainExists() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = nil
+        let sut = AssetDownloadRequestFactory(localDomain: nil)
 
         // When
         let request = sut.requestToGetAsset(
@@ -122,7 +119,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithDomainForV2() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -140,8 +137,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsNilForV2() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = "localDomain"
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -159,8 +155,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsEmptyForV2() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = "localDomain"
+        let sut = AssetDownloadRequestFactory(localDomain: "localDomain")
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -178,8 +173,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     func test_DoesNotGenerateGetAssetRequestIfNoDomainExistsForV2() throws {
         // Given
-        let sut = AssetDownloadRequestFactory()
-        BackendInfo.domain = nil
+        let sut = AssetDownloadRequestFactory(localDomain: nil)
 
         // When
         let request = sut.requestToGetAsset(

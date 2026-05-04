@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,21 +23,8 @@ public typealias Reachability = ReachabilityProvider & TearDownCapable
 
 extension BackendEnvironmentProvider {
 
-    public var reachability: ZMReachability {
-
-        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
-
-        let serverNames: [String] = if let proxy {
-            [proxy.host]
-        } else {
-            [backendURL, backendWSURL].compactMap(\.host)
-        }
-
-        return ZMReachability(serverNames: serverNames, group: group)
-    }
-
-    func reachabilityWrapper() -> ReachabilityWrapper {
-        ReachabilityWrapper(enabled: false, reachabilityClosure: {
+    func reachabilityWrapper(enabled: Bool = false) -> ReachabilityWrapper {
+        ReachabilityWrapper(enabled: enabled, reachabilityClosure: {
             self.reachability
         })
     }
@@ -52,16 +39,8 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
         safeReachability?.mayBeReachable == true
     }
 
-    var isMobileConnection: Bool {
-        safeReachability?.isMobileConnection == true
-    }
-
     var oldMayBeReachable: Bool {
         safeReachability?.oldMayBeReachable == true
-    }
-
-    var oldIsMobileConnection: Bool {
-        safeReachability?.oldIsMobileConnection == true
     }
 
     func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
@@ -99,9 +78,9 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
     private var safeReachability: Reachability? {
         didSet {
             if safeReachability == nil {
-                WireLogger.backend.debug("did clear reachbility provider")
+                WireLogger.backend.debug("did clear reachability provider")
             } else {
-                WireLogger.backend.debug("did set reachbility provider")
+                WireLogger.backend.debug("did set reachability provider")
             }
         }
     }

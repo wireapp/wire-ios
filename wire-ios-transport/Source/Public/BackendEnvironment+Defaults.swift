@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ public extension BackendEnvironment {
     ) {
         let environmentType = type ?? EnvironmentType(userDefaults: userDefaults)
         switch environmentType {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
+        case .default, .staging, .anta, .bella, .chala, .diya, .elna, .foma:
             guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
                 Logging.backendEnvironment.error("Could not find configuration for \(environmentType.stringValue)")
                 return nil

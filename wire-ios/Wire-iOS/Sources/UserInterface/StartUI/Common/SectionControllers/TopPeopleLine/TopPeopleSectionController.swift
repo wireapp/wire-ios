@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,10 +27,12 @@ final class TopPeopleSectionController: SearchSectionController {
     var token: Any?
     weak var delegate: SearchSectionControllerDelegate?
 
-    init(topConversationsDirectory: TopConversationsDirectory!) {
+    init(topConversationsDirectory: TopConversationsDirectory!, userSession: UserSession) {
         self.topConversationsDirectory = topConversationsDirectory
 
         super.init()
+
+        innerCollectionViewController.userSession = userSession
 
         createInnerCollectionView()
 

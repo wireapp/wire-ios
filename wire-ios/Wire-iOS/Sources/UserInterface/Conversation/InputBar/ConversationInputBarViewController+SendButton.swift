@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,21 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
+import WireSyncEngine
 
 extension ConversationInputBarViewController {
     func sendText() {
 
         let checker = PrivacyWarningChecker(conversation: conversation) {
-            self._sendText()
+            Task { await self._sendText() }
         }
 
         checker.performAction()
     }
 
-    private func _sendText() {
+    @MainActor
+    private func _sendText() async {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
 
@@ -42,9 +45,38 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
+            if !attachments.isEmpty {
+                do {
+                    try await publishDraftsUseCase.invoke(containsText: !text.isEmpty)
+                    await clearPublishedDraftsUseCase.invoke()
+                } catch {
+                    WireLogger.conversation.error("Failed to publish drafts: \(error)")
+                    return
+                }
+            }
+
             clearInputBar()
             delegate?.conversationInputBarViewControllerDidComposeText(
                 text: text,
+                attachments: attachments.map { draft in
+                    MultipartAttachment(
+                        uuid: draft.nodeID,
+                        contentType: draft.mimeType,
+                        initialName: draft.name,
+                        initialSize: draft.bytes,
+                        initialMetadata: draft.metadata.map { metadata in
+                            switch metadata {
+                            case let .image(width, height):
+                                .image(width: width, height: height)
+                            case let .video(width, height, duration):
+                                .video(width: width, height: height, duration: duration)
+                            case let .audio(duration):
+                                // Currently normalized loudness is not supported
+                                .audio(duration: duration, normalizedLoudness: nil)
+                            }
+                        }
+                    )
+                },
                 mentions: mentions,
                 replyingTo: quote
             )

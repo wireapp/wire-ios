@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
@@ -49,7 +50,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
         // Fetch MLS 1:1 conversation and store it locally.
-        let (mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
+        let (conversationID, mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
@@ -57,6 +58,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         // Create or join the MLS conversation if needed.
         if try await !mlsService.conversationExists(groupID: mlsGroupID) {
             try await createOrJoinMLSConversationIfNeeded(
+                conversationID: conversationID,
                 userID: userID,
                 mlsGroupID: mlsGroupID,
                 removalKeys: removalKeys,
@@ -76,6 +78,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         await context.perform {
+
             _ = context.saveOrRollback()
         }
 
@@ -87,7 +90,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> (MLSGroupID, BackendMLSPublicKeys?) {
+    ) async throws -> (QualifiedID, MLSGroupID, BackendMLSPublicKeys?) {
         var action = SyncMLSOneToOneConversationAction(
             userID: userID.uuid,
             domain: userID.domain
@@ -151,23 +154,25 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // move local messages from proteus conversation if it exists
-            if let existingConversation = otherUser.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
-                // Since ZMMessages only have a single conversation connected,
-                // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(existingConversation.allMessages)
-
-                // update just to be sure
-                mlsConversation.needsToBeUpdatedFromBackend = true
+            guard !(mlsConversation.migratedToMLS && otherUser.oneOnOneConversation == mlsConversation) else {
+                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
             }
 
-            // switch active conversation
-            otherUser.oneOnOneConversation = mlsConversation
+            WireLogger.conversation
+                .info(
+                    "Migrating messages and link the MLS conversation if needed. Conversation is migrated to MLS: \(mlsConversation.migratedToMLS), is oneOnOneConversation MLS: \(otherUser.oneOnOneConversation == mlsConversation)"
+                )
+
+            try OneOnOneSource.migrate(
+                toMLSConversation: mlsConversation,
+                for: otherUser,
+                in: context
+            )
         }
     }
 
     private func createOrJoinMLSConversationIfNeeded(
+        conversationID: QualifiedID,
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         removalKeys: BackendMLSPublicKeys?,
@@ -177,6 +182,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
         }
 
+        // we only establish oneOnOnes
         if epoch == 0 {
             try await establishMLSGroupIfNeeded(
                 userID: userID,

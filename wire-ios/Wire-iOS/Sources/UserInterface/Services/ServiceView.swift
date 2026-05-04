@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 final class ServiceDetailView: UIView {
     private let serviceView: ServiceView
+    private let titleLabel = UILabel()
     private let descriptionTextView = UITextView()
 
     var service: Service {
@@ -31,20 +33,32 @@ final class ServiceDetailView: UIView {
         }
     }
 
-    init(service: Service) {
+    init(
+        service: Service,
+        userSession: any UserSession
+    ) {
         self.service = service
-        self.serviceView = ServiceView(service: service)
+        self.serviceView = ServiceView(
+            service: service,
+            userSession: userSession
+        )
         super.init(frame: .zero)
 
-        [serviceView, descriptionTextView].forEach(addSubview)
+        [serviceView, titleLabel, descriptionTextView].forEach(addSubview)
 
         createConstraints()
+
+        titleLabel.numberOfLines = 0
+        titleLabel.text = L10n.Localizable.Peoplepicker.AppDetails.description
+        titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
 
         descriptionTextView.backgroundColor = .clear
         descriptionTextView.textContainerInset = .zero
         descriptionTextView.textColor = SemanticColors.Label.textDefault
         descriptionTextView.font = FontSpec(.normal, .light).font
         descriptionTextView.isEditable = false
+
         updateForService()
     }
 
@@ -54,18 +68,25 @@ final class ServiceDetailView: UIView {
     }
 
     private func createConstraints() {
-        [self, serviceView, descriptionTextView].forEach {
+        [serviceView, titleLabel, descriptionTextView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
+
             serviceView.leadingAnchor.constraint(equalTo: leadingAnchor),
             serviceView.trailingAnchor.constraint(equalTo: trailingAnchor),
             serviceView.topAnchor.constraint(equalTo: topAnchor),
+
+            titleLabel.leadingAnchor.constraint(equalTo: serviceView.leadingAnchor, constant: 4),
+            titleLabel.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 24),
+            serviceView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 4),
+
             descriptionTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
             descriptionTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
             descriptionTextView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16)
+            descriptionTextView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16)
+
         ])
     }
 
@@ -75,9 +96,11 @@ final class ServiceDetailView: UIView {
 }
 
 final class ServiceView: UIView {
-    private let logoView = UserImageView(size: .normal)
+
+    private let logoView: UserImageView
     private let nameLabel = UILabel()
     private let providerLabel = UILabel()
+    private let categoryLabel = UILabel()
 
     var service: Service {
         didSet {
@@ -85,22 +108,30 @@ final class ServiceView: UIView {
         }
     }
 
-    init(service: Service) {
+    init(
+        service: Service,
+        userSession: any UserSession
+    ) {
         self.service = service
+        let logoView = UserImageView(size: .normal)
+        logoView.userSession = userSession
+        self.logoView = logoView
+
         super.init(frame: .zero)
-        [logoView, nameLabel, providerLabel].forEach(addSubview)
+
+        [logoView, nameLabel, providerLabel, categoryLabel].forEach(addSubview)
 
         createConstraints()
 
-        backgroundColor = .clear
-
         nameLabel.font = FontSpec(.large, .regular).font
         nameLabel.textColor = SemanticColors.Label.textDefault
-        nameLabel.backgroundColor = .clear
 
         providerLabel.font = FontSpec(.medium, .regular).font
         providerLabel.textColor = SemanticColors.Label.textDefault
-        providerLabel.backgroundColor = .clear
+
+        categoryLabel.font = FontSpec(.medium, .regular).font
+        categoryLabel.textColor = SemanticColors.Label.textDefault
+
         updateForService()
     }
 
@@ -114,29 +145,35 @@ final class ServiceView: UIView {
         logoView.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         providerLabel.translatesAutoresizingMaskIntoConstraints = false
+        categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            // logoView
             logoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             logoView.topAnchor.constraint(equalTo: topAnchor),
             logoView.bottomAnchor.constraint(equalTo: bottomAnchor),
             logoView.heightAnchor.constraint(equalToConstant: 80),
 
-            // nameLabel
             nameLabel.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: 16),
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            // providerLabel
             providerLabel.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: 16),
-            providerLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+            providerLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
+            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            categoryLabel.leadingAnchor.constraint(equalTo: providerLabel.leadingAnchor),
+            categoryLabel.topAnchor.constraint(equalTo: providerLabel.bottomAnchor, constant: 4),
+            categoryLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 
     private func updateForService() {
-        logoView.user = service.serviceUser
-        nameLabel.text = service.serviceUser.name
-        providerLabel.text = service.provider?.name
+        logoView.user = service.user
+        nameLabel.text = service.user.name
+        providerLabel.text = if let createdBy = service.provider?.name,
+                                !createdBy.isEmpty { L10n.Localizable.Peoplepicker.AppDetails.createdBy(createdBy)
+        } else { nil }
+        categoryLabel.text = service.serviceUserDetails?.category
     }
+
 }

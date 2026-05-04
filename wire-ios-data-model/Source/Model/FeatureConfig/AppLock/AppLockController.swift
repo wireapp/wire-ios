@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,14 @@ public final class AppLockController: AppLockType {
     }
 
     public var timeout: UInt {
-        legacyConfig?.timeout ?? config.timeout
+        #if DEBUG
+            // Override timeout for UI tests when explicitly provided via env var.
+            if let applockTimeInSeconds = ProcessInfo.processInfo.environment["UITEST_APPLOCK_TIMEOUT"],
+               let timeout = UInt(applockTimeInSeconds) {
+                return timeout
+            }
+        #endif
+        return legacyConfig?.timeout ?? config.timeout
     }
 
     public var isLocked: Bool {
@@ -87,7 +94,7 @@ public final class AppLockController: AppLockType {
     // MARK: - Private properties
 
     private let selfUser: ZMUser
-    private let featureRepository: FeatureRepository
+    private let featureRepository: LegacyFeatureRepository
     private let authenticationContext: any AuthenticationContextProtocol
 
     private(set) var state = State.locked
@@ -132,7 +139,7 @@ public final class AppLockController: AppLockType {
         self.legacyConfig = legacyConfig
         self.authenticationContext = authenticationContext
 
-        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
+        self.featureRepository = LegacyFeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods

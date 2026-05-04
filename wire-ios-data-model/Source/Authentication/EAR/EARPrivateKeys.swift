@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,17 @@
 
 import class Security.SecKey
 
-public struct EARPrivateKeys {
+/// `EARPrivateKeys` is marked as `@unchecked Sendable` even though `SecKey` is not
+/// formally `Sendable`. This is considered safe because:
+/// - `SecKey` instances from the Security framework are immutable handles to key
+///   material and are documented as thread-safe.
+/// - `EARPrivateKeys` only stores references to these keys and does not mutate
+///   any shared or global state.
+/// Therefore, passing `EARPrivateKeys` across concurrency domains does not
+/// introduce data races, but we use `@unchecked` to acknowledge that Swift
+/// cannot verify this automatically.
+
+public struct EARPrivateKeys: @unchecked Sendable {
 
     public let primary: SecKey?
     public let secondary: SecKey
