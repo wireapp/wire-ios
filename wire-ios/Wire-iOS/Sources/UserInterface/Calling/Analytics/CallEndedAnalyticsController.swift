@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private let contextProvider: ContextProvider
     private let notificationCenter: NotificationCenter
-    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
     private var eventInfos = [UUID: EventInfo]()
     private var callStateObservationToken: AnyObject?
     private var toggleVideoObservationToken: AnyObject?
-    private var callParticipantObsererToken: AnyObject?
+    private var callParticipantObserverToken: AnyObject?
 
     private let logger: LoggerProtocol
     private let currentDateProvider: CurrentDateProviding
@@ -38,7 +38,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     init(
         contextProvider: ContextProvider,
         notificationCenter: NotificationCenter,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?,
         logger: LoggerProtocol,
         currentDateProvider: CurrentDateProviding
     ) {
@@ -111,7 +111,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfos[conversation.remoteIdentifier]?.callStart = currentDateProvider.now
 
-        callParticipantObsererToken = CallCenter.addCallParticipantObserver(
+        callParticipantObserverToken = CallCenter.addCallParticipantObserver(
             observer: self,
             for: conversation,
             contextProvider: contextProvider
@@ -140,7 +140,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             return
         }
 
-        callParticipantObsererToken = nil
+        callParticipantObserverToken = nil
 
         guard
             let eventInfo = eventInfos[conversation.remoteIdentifier],
@@ -164,7 +164,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
                 .map(\.hasTeam)
             let conversationGuestsTeam = guestsHasTeam.count { $0 }
             let conversationGuestsNonTeam = guestsHasTeam.count { !$0 }
-            let conversationServices = conversation.sortedServiceUsers.count
+            let conversationServices = conversation.sortedApps.count
 
             return (
                 isTeamMember,

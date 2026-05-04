@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
@@ -83,6 +84,11 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
     }
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
+        WireLogger.userClient.error(
+            "error removing self client: \(failure.localizedDescription)",
+            attributes: [.selfClientId: userClient.safeForLoggingDescription]
+        )
+
         switch failure {
         case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {

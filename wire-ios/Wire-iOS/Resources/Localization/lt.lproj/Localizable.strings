@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "Ne, dėkui";
 "general.failure" = "Kažkas nutiko";
 "general.failure.try_again" = "Bandykite dar kartą.";
-"general.service" = "Paslauga";
 "general.off" = "Išjungta";
 "general.on" = "Įjungta";
 "general.loading" = "Kraunama…";
@@ -61,6 +60,10 @@
 "peoplepicker.header.directory" = "Užmegzti kontaktą";
 "peoplepicker.header.federation" = "Connect with other domain";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Select Participants";
 "peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Praleisti";
@@ -68,12 +71,12 @@
 "peoplepicker.group.create" = "Kurti";
 
 "peoplepicker.header.people" = "Žmonės";
-"peoplepicker.header.services" = "Paslaugos";
-"peoplepicker.services.open_conversation.item" = "Atverti pokalbį";
-"peoplepicker.services.add_service.button" = "Pridėti paslaugą";
-"peoplepicker.services.add_service.error.title" = "Paslauga negali būti pridėta";
-"peoplepicker.services.add_service.error.default" = "Paslauga šiuo metu negalima";
-"peoplepicker.services.add_service.error.full" = "Susirašinėjimas pilnas";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Atverti pokalbį";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Nėra kontaktų.";
 
@@ -82,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Siųsti pakvietimą";
 "peoplepicker.no_matching_results.action.share_contacts" = "Dalintis kontaktais";
 "peoplepicker.no_matching_results.action.learn_more" = "Sužinoti daugiau";
-"peoplepicker.no_matching_results.action.manage_services" = "Valdyti tarnybas";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Visi jau čia.";
-"peoplepicker.no_matching_results.message.services" = "Rezultatų nėra.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Tarnybos yra pagalbininkai, kurie padeda pagerinti darbo eigą.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Tarnybos yra pagalbininkai, kurie padeda pagerinti darbo eigą. Norėdami jomis naudotis, prašykite savo administratoriaus.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "Pakvietimas išsiųstas";
 "peoplepicker.send_invitation.dialog.message" = "Pakvietimą galima naudoti 2 savaites. Išsiųskite naują jei galiojimas baigėsi.";
@@ -97,13 +105,13 @@
 
 "peoplepicker.invite_team_members" = "Kvieskite žmonių prisijungti prie komandos";
 "peoplepicker.quick-action.open-conversation" = "Atverti";
-"peoplepicker.quick-action.admin-services" = "Valdyti paslaugas";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Susirašinėjimas pilnas";
-"add_participants.alert.message.new_conversation" = "Susirašinėjime gali būti iki %d pašnekovų.";
-"add_participants.alert.message.existing_conversation" = "Susirašinėjime gali būti iki %1$d pašnekovų. Šiuo metu dar gali prisijungti %2$d.";
+"add_participants.alert.title" = "The conversation is full";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -132,6 +140,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
+"conversation_list.search_bar.mentionsPlaceholder" = "Search conversations with mentions";
+"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
+"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -144,6 +156,10 @@
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Šalinti";
+"conversation_list.filter.unread.title" = "Unread";
+"conversation_list.filter.mentions.title" = "Mentions";
+"conversation_list.filter.replies.title" = "Replies";
+"conversation_list.filter.drafts.title" = "Drafts";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Prisijungti";
@@ -169,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.mentions.title" = "No mentions";
+"conversation_list.empty_state.replies.title" = "No replies";
+"conversation_list.empty_state.drafts.title" = "No drafts";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "konktaktuose";
@@ -316,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "konktaktuose";
 "conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Sužinoti daugiau";
 
 "conversation.input_bar.shortcut.send" = "Siųsti žinutę";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -335,8 +364,10 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Leisti svečius";
 "conversation.create.guests.subtitle" = "Leiskite matyti šį susirašinėjimą žmonėms nesantiems komandoje.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Perskaitymo patvirtinimai";
 "conversation.create.receipts.subtitle" = "Įjungus, žmonės gali matyti ar jų žinutės buvo perskaitytos.";
 "conversation.create.mls.title" = "Protocol";
@@ -352,6 +383,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Sužinoti daugiau";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Vykstantis skambutis";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Kol kalbate, garso pranešimo įrašyti negalite.";
@@ -361,16 +395,25 @@
 "conversation.alert.message_deleted" = "Žinutė ištrinta.";
 
 // Conversation banner
-"conversation.banner.guests" = "Svečių";
-"conversation.banner.services" = "Paslaugos";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " and ";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Ieškoti";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Paveikslėlis";
@@ -455,9 +498,12 @@
 "content.system.other_removed_you" = "%@ jus pašalino";
 "content.system.you_removed_other" = "Jūs pašalinote pašnekovą %@";
 
-"content.system.services.warning" = "Paslaugos turi galimybę matyti šio susirašinėjimo turinį";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -574,6 +620,8 @@
 "content.system.message_timer_off" = "%@ išjungė žinutės laikmatį";
 "content.system.message_timer_off-you" = "%@ išjungė žinutės laikmatį";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
+
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
@@ -586,6 +634,8 @@
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
 
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ visiems įjungė perskaitymo patvirtinimus";
@@ -595,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@ visiems išjungė perskaitymo patvirtinimus";
 
 "content.system.message_read_receipt_on_add_to_group" = "Perskaitymo patvirtinimai įjungti";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
+"content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
 
@@ -616,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
-"content.system.cannot_decrypt.reset_session" = "Fix future messages";
 "content.system.cannot_decrypt.error_details" = "(Fixed error: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.";
@@ -629,6 +685,10 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Žinutės negalima parodyti. Gali būti, kad naudojate senesnę „Wire“ versiją.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Įkeliama…";
 "content.file.downloading" = "Atsiunčiama…";
@@ -654,6 +714,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Patinka";
 "content.message.unlike" = "Nebepatinka";
@@ -684,6 +745,15 @@
 "content.reactions_list.likers" = "Patinka";
 
 "content.file.too_big" = "Siunčiamų failų dydis negali viršyti %@";
+
+"content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Atsisakyti";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -856,10 +926,10 @@
 "participants.title" = "Išsamiau";
 "participants.all.title" = "Žmonės";
 "participants.section.participants" = "Žmonės (%d)";
-"participants.section.services" = "Paslaugos (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Parinktys";
 "participants.footer.add_title" = "Pridėti dalyvių";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Administratorių nėra.";
 "participants.section.members.footer" = "Narių nėra.";
 
@@ -982,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "JŪS IŠUNGĖTE PERSKAITYMO PATVIRTINIMUS";
 "profile.read_receipts_memo.body" = "Jei abi pusės įjungia perskaitymo patvirtinimus, jūs galite matyti kai žinutė buvo perskaityta. \n\nGalite tai pakeisti paskyros nustatymuose.";
 
-"profile.group_admin_status_memo.body" = "Kai aktyvuota, administratorius gali pridėti arba pašalinti pašnekovus ir paslaugas, keisti grupės nustatymus, ir keisti pašnekovų roles.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Informacija";
 
@@ -1024,21 +1094,26 @@
 "device.type.unknown" = "Nežinoma";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Svečių";
 "group_details.guest_options_cell.enabled" = "Įjungta";
 "group_details.guest_options_cell.disabled" = "Išjungta";
-"group_details.services_options_cell.title" = "Paslaugos";
-"group_details.services_options_cell.enabled" = "Įjungta";
-"group_details.services_options_cell.disabled" = "Išjungta";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Įjungta";
+"group_details.apps_options_cell.disabled" = "Išjungta";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
 "group_details.notification_options_cell.title" = "Pranešimai";
 "group_details.notification_options_cell.description" = "Jūms bus pranešta apie viską (įskaitant garso ir vaizdo skambučius) arba tik kai kažkas jus pamini arba atsako į jūsų žinutę.";
 "group_details.receipt_options_cell.title" = "Perskaitymo patvirtinimai";
 "group_details.receipt_options_cell.description" = "Įjungus, žmonės gali matyti ar jų žinutės buvo perskaitytos.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.subtitle" = "Įjungta";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1122,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Sukurti komandą";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Valdyti komandą";
-"self.settings.add_team_or_account.title" = "Pridėti paskyrą";
 "self.settings.add_account.title" = "Pridėti paskyrą";
 
 "self.settings.add_account.error.title" = "Aktyvios trys paskyros";
@@ -1158,6 +1233,7 @@
 "self.settings.account_details.remove_device.password.error" = "Neteisingas slaptažodis";
 
 "self.settings.account_appearance_group.title" = "Išvaizda";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privatumas";
 "self.settings.enable_read_receipts.title" = "Siųsti perskaitymo patvirtinimus";
@@ -1176,6 +1252,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Asmeninė informacija";
 
@@ -1196,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "Atsijungti";
 "self.settings.account_details.log_out.alert.message" = "Susirašinėjimų praeitis šiame įrenginyje bus ištrinta.";
 "self.settings.account_details.log_out.alert.password" = "Slaptažodis";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Atsijungti";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Naudojimo ir gedimo ataskaitos";
@@ -1280,13 +1361,8 @@
 // Open in
 "self.settings.external_apps.header" = "Atverti naudojant";
 
-"self.settings.link_options.twitter.title" = "„Tweets“";
 "self.settings.link_options.maps.title" = "Vieta";
 "self.settings.link_options.browser.title" = "Naršyklė";
-
-"open_link.twitter.option.default" = "Naršyklė / „Twitter“";
-"open_link.twitter.option.tweetbot" = "„Tweetbot“";
-"open_link.twitter.option.twitterrific" = "„Twitterrific“";
 
 "open_link.maps.option.apple" = "Žemėlapiai";
 "open_link.maps.option.google" = "„Google Maps“";
@@ -1308,7 +1384,6 @@
 "self.settings.developer_options.title" = "Kūrėjo nustatymai";
 "self.settings.developer_options.loggin.title" = "Parinktys";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "„APNS“ registravimas";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Parinktys";
@@ -1333,7 +1408,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Kitų žmonių siunčiamų nuorodų peržiūros vis dar gali būti rodomos.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Įrenginiai";
 
@@ -1380,7 +1455,6 @@
 
 "self.settings.conversations.title" = "Praeitis";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Klaida";
 "self.settings.history_backup.set_email.title" = "Nustatykite el. pašto adresą ir slaptažodį.";
 "self.settings.history_backup.set_email.message" = "Norėdami sukurti susirašinėjimo praeitis atsarginę kopiją, jums būtina naudoti el. pašto adresą ir slaptažodį. Sukurti galite paskyros puslapyje nustatymuose.";
 
@@ -1489,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "Šalinti";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Šalinti";
 
 
 // Registration
@@ -1597,6 +1671,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "GERAI";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";
@@ -1786,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Tęsti";
 "databaseloadingfailure.alert.retry" = "Retry";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Server version not supported";
-"backend_not_supported.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · iš giphy.com";
 "giphy.conversation.random_message" = "iš giphy.com";
@@ -1815,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "Ieškoti tekstinėse žinutėse";
 "collections.search.no_items" = "Rezultatų nėra";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
@@ -1872,6 +1947,7 @@
 "url_action.confirm" = "Patvirtinti";
 "url_action.title" = "Patvirtinti URL adresą";
 "url_action.connect_to_bot.message" = "Ar norite prisijungti prie roboto?";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -2105,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
+"account_blocked.generic_error.alert.title" = "Kažkas atsitiko";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
+"account_blocked.generic_error.alert.retry" = "Retry";

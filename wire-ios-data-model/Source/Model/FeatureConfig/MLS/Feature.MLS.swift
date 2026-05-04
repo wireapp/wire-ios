@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public extension Feature {
 
@@ -138,4 +139,25 @@ public extension Feature.MLS {
         status == .enabled
     }
 
+}
+
+public extension  Feature.MLS.Config.MLSCipherSuite {
+    var coreCryptoCipherSuite: WireCoreCryptoUniffi.Ciphersuite {
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+            .mls128Dhkemx25519Aes128gcmSha256Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            .mls128Dhkemp256Aes128gcmSha256P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+            .mls256Dhkemx448Aes256gcmSha512Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            .mls256Dhkemp521Aes256gcmSha512P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            .mls256Dhkemx448Chacha20poly1305Sha512Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            .mls256Dhkemp384Aes256gcmSha384P384
+        }
+    }
 }

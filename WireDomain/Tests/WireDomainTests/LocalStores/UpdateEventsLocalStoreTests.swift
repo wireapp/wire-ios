@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
+import WireUpdateEventCoding
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class UpdateEventsLocalStoreTests: XCTestCase {
 
@@ -43,14 +45,17 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     override func setUp() async throws {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
+        stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
+        /// Batch requests don't work with in-memory store
+        /// so we need to use a persistent store.
+        try await cleanUpEntity()
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
         sut = UpdateEventsLocalStore(
             eventContext: eventContext,
             syncContext: syncContext,
-            userID: Scaffolding.selfUserID.uuid,
+            userID: Scaffolding.selfUserID.id,
             sharedUserDefaults: mockUserDefaults
         )
     }
@@ -74,7 +79,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         try await sut.persistEventEnvelope(
             Scaffolding.envelope1,
-            index: 1
+            index: 1,
+            publicKeys: nil
         )
 
         // Then
@@ -82,7 +88,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
             let storedEventEnvelope = try XCTUnwrap(eventContext.fetch(request).first)
-            let decodedEnvelope = try JSONDecoder().decode(UpdateEventEnvelope.self, from: storedEventEnvelope.data)
+            let coder = StorableUpdateEventCoder()
+            let decodedEnvelope = try coder.decode(storedEventEnvelope.data)
 
             XCTAssertEqual(decodedEnvelope.id, Scaffolding.envelope1.id)
             XCTAssertEqual(decodedEnvelope.events, Scaffolding.envelope1.events)
@@ -94,7 +101,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then it returns no envelopes.
 
@@ -109,11 +120,15 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then it returns the one and only envelope.
         try XCTAssertCount(fetchedEnvelopes, count: 1)
-        let fetchedEnvelope1 = fetchedEnvelopes[0]
+        let fetchedEnvelope1 = fetchedEnvelopes[0].0
 
         XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
     }
@@ -131,28 +146,32 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then the first 3 envelopes were returned.
         try XCTAssertCount(fetchedEnvelopes, count: 3)
 
-        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
-        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
-        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
+        XCTAssertEqual(fetchedEnvelopes[0].0, Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1].0, Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2].0, Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes() async throws {
         // Given there are stored envelopes.
 
-        try await insertStoredEventEnvelopes([
+        let objectIDs = try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
             Scaffolding.envelope3
         ])
 
-        // When it deletes more than 3.
+        // When it deletes all stored envelopes.
 
-        try await sut.deleteNextPendingEvents(limit: 10)
+        try await sut.deleteNextPendingEvents(with: objectIDs)
 
         // Then all stored events were deleted.
 
@@ -163,33 +182,28 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_Stored_Envelopes_Only_Up_To_The_Limit() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_Only_Selected_Envelopes() async throws {
         // Given there are stored envelopes.
 
-        try await insertStoredEventEnvelopes([
+        var objectIDs = try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
             Scaffolding.envelope3
         ])
 
-        // When it deletes 2 envelopes.
+        let nonDeletedEnvelopeObjectID = objectIDs.removeLast()
 
-        try await sut.deleteNextPendingEvents(limit: 2)
+        // When it deletes selected envelopes.
 
-        // Then the first 2 envelopes were deleted.
+        try await sut.deleteNextPendingEvents(with: objectIDs)
+
+        // Then selected envelopes were deleted, remains only one.
 
         try await eventContext.perform { [eventContext] in
-            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-            let result = try eventContext.fetch(request)
-
+            let request = StoredUpdateEventEnvelope.fetchRequest()
+            let result = try eventContext.fetch(request) as! [StoredUpdateEventEnvelope]
             XCTAssertEqual(result.count, 1)
-
-            let envelope = try XCTUnwrap(result.first)
-            XCTAssertEqual(envelope.sortIndex, 2)
-
-            let decoder = JSONDecoder()
-            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
-            XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+            XCTAssertEqual(result.first!.objectID, nonDeletedEnvelopeObjectID)
         }
     }
 
@@ -256,29 +270,349 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         }
     }
 
-    private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
+    // MARK: - EAR Encryption Tests
+
+    func testPersistEventEnvelope_WithPublicKeys_EncryptsData() async throws {
+        // Given: Generate key pair
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(
+            primary: publicKey,
+            secondary: secondaryPublicKey
+        )
+
+        // Create non-calling event (should use primary key)
+        let event = createNonCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // Then: Verify envelope is stored and encrypted
         try await eventContext.perform { [eventContext] in
-            let encoder = JSONEncoder()
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let stored = try XCTUnwrap(eventContext.fetch(request).first)
+
+            XCTAssertTrue(stored.isEncrypted, "Should be marked as encrypted")
+            XCTAssertFalse(stored.isBackgroundAccessible, "Non-calling event not background accessible")
+
+            // Verify data is actually encrypted (not plaintext)
+            let coder = StorableUpdateEventCoder()
+            XCTAssertThrowsError(try coder.decode(stored.data))
+        }
+    }
+
+    func testPersistEventEnvelope_CallingEvent_UsesSecondaryKey() async throws {
+        // Given: Generate key pairs
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(
+            primary: publicKey,
+            secondary: secondaryPublicKey
+        )
+
+        // Create calling-related event (should use secondary key)
+        let event = createCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // Then: Verify envelope is encrypted and background accessible
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let stored = try XCTUnwrap(eventContext.fetch(request).first)
+
+            XCTAssertTrue(stored.isEncrypted)
+            XCTAssertTrue(stored.isBackgroundAccessible, "Calling event should be background accessible")
+        }
+    }
+
+    func testFetchStoredEventEnvelopes_Encrypted_DecryptsWithPrimaryKey() async throws {
+        // Given: Generate key pair and encrypt an envelope
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        let eventID = UUID()
+        let event = createNonCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: eventID,
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // Persist encrypted
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // When: Fetch with private keys
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: false
+        )
+
+        // Then: Should decrypt and return envelope
+        XCTAssertEqual(fetched.count, 1)
+        XCTAssertEqual(fetched.first?.envelope.id, eventID)
+        XCTAssertEqual(fetched.first?.envelope.events.count, 1)
+    }
+
+    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_Throws() async throws {
+        // Given: Encrypted envelope stored
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // When / Then: Fetching encrypted events without private keys is a developer error
+        await XCTAssertThrowsErrorAsync {
+            _ = try await self.sut.fetchStoredEventEnvelopes(
+                limit: 10,
+                privateKeys: nil,
+                backgroundAccessibleOnly: false
+            )
+        } errorHandler: { error in
+            guard
+                case let UpdateEventsLocalStore.Error.failedToFetchStoredEvents(inner) = error,
+                let storeError = inner as? UpdateEventsLocalStore.Error,
+                case .missingPrivateKeys = storeError
+            else {
+                XCTFail("Expected failedToFetchStoredEvents(missingPrivateKeys), got: \(error)")
+                return
+            }
+        }
+    }
+
+    func testFetchStoredEventEnvelopes_BackgroundAccessibleOnly_FiltersCorrectly() async throws {
+        // Given: Mix of encrypted and unencrypted envelopes
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        // 1. Unencrypted, non-background-accessible envelope (should be excluded)
+        let unencryptedEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(
+            unencryptedEnvelope,
+            index: 0,
+            publicKeys: nil
+        )
+
+        // 2. Unencrypted + background accessible (calling event, should be included)
+        let unencryptedBackgroundAccessibleEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(
+            unencryptedBackgroundAccessibleEnvelope,
+            index: 1,
+            publicKeys: nil
+        )
+
+        // 3. Encrypted + background accessible (calling event, should be included)
+        let encryptedBackgroundAccessibleEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(
+            encryptedBackgroundAccessibleEnvelope,
+            index: 2,
+            publicKeys: publicKeys
+        )
+
+        // 4. Encrypted + non-background-accessible (should be excluded)
+        let encryptedEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(
+            encryptedEnvelope,
+            index: 3,
+            publicKeys: publicKeys
+        )
+
+        // When: Fetch with backgroundAccessibleOnly: true
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: true
+        )
+
+        // Then: Should return only background-accessible envelopes regardless of encryption
+        XCTAssertEqual(fetched.count, 2)
+
+        let fetchedIDs = fetched.map(\.envelope.id)
+
+        XCTAssertFalse(fetchedIDs.contains(unencryptedEnvelope.id))
+        XCTAssertFalse(fetchedIDs.contains(encryptedEnvelope.id))
+
+        XCTAssertTrue(fetchedIDs.contains(unencryptedBackgroundAccessibleEnvelope.id))
+        XCTAssertTrue(fetchedIDs.contains(encryptedBackgroundAccessibleEnvelope.id))
+    }
+
+    func testEncryptionDecryption_RoundTrip_BothKeyTypes() async throws {
+        // Given: Both key pairs
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        // Create one envelope for each key type
+        let primaryEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        let secondaryEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When: Persist both
+        try await sut.persistEventEnvelope(primaryEnvelope, index: 0, publicKeys: publicKeys)
+        try await sut.persistEventEnvelope(secondaryEnvelope, index: 1, publicKeys: publicKeys)
+
+        // Fetch both
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: false
+        )
+
+        // Then: Both should be decrypted successfully
+        XCTAssertEqual(fetched.count, 2)
+
+        let fetchedIDs = fetched.map(\.envelope.id)
+        XCTAssertTrue(fetchedIDs.contains(primaryEnvelope.id))
+        XCTAssertTrue(fetchedIDs.contains(secondaryEnvelope.id))
+    }
+
+    // MARK: - Helper Methods
+
+    private func generateKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "test-primary-\(UUID().uuidString)")
+    }
+
+    private func generateSecondaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "test-secondary-\(UUID().uuidString)")
+    }
+
+    private func createNonCallingEvent() -> UpdateEvent {
+        .user(.pushRemove)
+    }
+
+    private func createCallingEvent() -> UpdateEvent {
+        // Create a GenericMessage with Calling content
+        let callingMessage = GenericMessage(
+            content: Calling(content: "calling", conversationId: .init(uuid: UUID(), domain: "")),
+            nonce: UUID()
+        )
+
+        // Serialize to data
+        let callingData = try! callingMessage.serializedData().base64String()
+
+        // Create a ProteusMessageAddEvent with the calling message as decrypted content
+        let event = ConversationProteusMessageAddEvent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.aliceID,
+            timestamp: Date(),
+            message: MessageContent(
+                encryptedMessage: "encrypted",
+                decryptedMessage: callingData
+            ),
+            externalData: nil,
+            messageSenderClientID: Scaffolding.aliceClientID,
+            messageRecipientClientID: Scaffolding.selfClientID
+        )
+
+        return .conversation(.proteusMessageAdd(event))
+    }
+
+    @discardableResult
+    private func insertStoredEventEnvelopes(
+        _ envelopes: [UpdateEventEnvelope]
+    ) async throws -> [NSManagedObjectID] {
+        try await eventContext.perform { [eventContext] in
+            let coder = StorableUpdateEventCoder()
 
             for (index, envelope) in envelopes.enumerated() {
                 let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try encoder.encode(envelope)
+                storedEventEnvelope.data = try coder.encode(envelope)
                 storedEventEnvelope.sortIndex = Int64(index)
             }
 
             try eventContext.save()
+
+            let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()
+            let results = try eventContext.fetch(fetchRequest) as! [StoredUpdateEventEnvelope]
+
+            XCTAssertEqual(results.count, envelopes.count)
+
+            return results.map(\.objectID)
+        }
+    }
+
+    func cleanUpEntity() async throws {
+        try await eventContext.perform { [self] in
+            let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            _ = try eventContext.execute(batchDeleteRequest)
         }
     }
 
     private enum Scaffolding {
 
         static let localDomain = "local.com"
-        static let selfUserID = UserID(uuid: .mockID1, domain: localDomain)
+        static let selfUserID = UserID(id: .mockID1, domain: localDomain)
         static let selfClientID = "abcd1234"
-        static let conversationID = ConversationID(uuid: .mockID2, domain: localDomain)
+        static let conversationID = ConversationID(id: .mockID2, domain: localDomain)
         static let lastEventID = UUID.mockID3
         static let otherDomain = "other.com"
-        static let aliceID = UserID(uuid: .mockID4, domain: otherDomain)
+        static let aliceID = UserID(id: .mockID4, domain: otherDomain)
         static let aliceClientID = "efgh5678"
         static let defaultsTestSuiteName = UUID().uuidString
 
@@ -291,7 +625,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
         static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
 
-        static let lastEventIDUserDefaultsKey = "\(selfUserID.uuid.uuidString)_lastEventID"
+        static let lastEventIDUserDefaultsKey = "\(selfUserID.id.uuidString)_lastEventID"
 
         static let envelope1 = UpdateEventEnvelope(
             id: id1,

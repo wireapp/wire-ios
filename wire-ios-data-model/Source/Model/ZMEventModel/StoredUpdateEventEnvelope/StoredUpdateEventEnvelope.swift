@@ -1,0 +1,55 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import CoreData
+import Foundation
+
+/// A persisted update event envelope for later processing.
+///
+/// Event envelopes contain one or more update events, which may or may not
+/// be encrypted. Encrypted events can only be decrypted once, so to avoid
+/// data loss in the case of a crash or other interruption, decrypted events
+/// that aren't immediately processed should be persisted as soon as possible.
+/// This ensures that they can be retrieved later for processing.
+
+public final class StoredUpdateEventEnvelope: NSManagedObject {
+
+    /// The name of the associated Core Data entity.
+
+    public static let entityName = "StoredUpdateEventEnvelope"
+
+    /// The encoded data of the event envelope.
+
+    @NSManaged public var data: Data
+
+    /// The sort index of the event.
+    ///
+    /// Events should be processed in the order they are received.
+
+    @NSManaged public var sortIndex: Int64
+
+    /// Whether the event envelope is encrypted at rest
+
+    @NSManaged public var isEncrypted: Bool
+
+    /// Whether the event envelope should be accessible in the background, with secondary encryption keys.
+    /// Only applies to envelopes encrypted at rest.
+
+    @NSManaged public var isBackgroundAccessible: Bool
+
+}

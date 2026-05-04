@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSettingsUI
@@ -52,8 +53,11 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         return label
     }()
 
-    let handleTextField: UITextField = {
-        let textField = UITextField()
+    let handleTextField: ContextMenuControllableUITextField = {
+        let textField = ContextMenuControllableUITextField(
+            frame: .zero,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
         textField.font = .normalFont
         textField.textColor = SemanticColors.Label.textDefault
 
@@ -217,7 +221,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var footerFont: UIFont = .smallFont
     var state: HandleChangeState
     private var footerLabel = UILabel()
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
+    fileprivate weak var userProfile: UserProfile?
     private var observerToken: Any?
     var popOnSuccess = true
     private var federationEnabled: Bool
@@ -226,25 +230,33 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     convenience init(
         useTypeIntrinsicSizeTableView: Bool,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         let user = SelfUser.provider?.providedSelfUser
         self.init(
             state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: isFederationEnabled,
+            userSession: userSession
         )
     }
 
     convenience init(
         suggestedHandle handle: String,
         useTypeIntrinsicSizeTableView: Bool,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         self.init(
             state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: isFederationEnabled,
+            userSession: userSession
         )
         setupViews()
         checkAvailability(of: handle)
@@ -254,17 +266,19 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     init(
         state: HandleChangeState,
         useTypeIntrinsicSizeTableView: Bool,
-        federationEnabled: Bool = BackendInfo.isFederationEnabled,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         self.state = state
-        self.federationEnabled = federationEnabled
+        self.federationEnabled = isFederationEnabled
         super.init(
             style: .grouped,
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
             settingsCoordinator: settingsCoordinator
         )
 
+        self.userProfile = userSession.userProfile
         setupViews()
     }
 

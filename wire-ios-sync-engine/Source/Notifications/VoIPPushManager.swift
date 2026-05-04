@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import WireLogging
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
-    func processPendingCallEvents(accountID: UUID)
+    func processPendingCallEvents(accountID: UUID) async
 
 }
 
@@ -38,7 +38,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public let callKitManager: CallKitManager
 
-    private let requiredPushTokenType: PushToken.TokenType
     private let pushTokenService: PushTokenServiceInterface
     private let registry: PKPushRegistry
 
@@ -50,17 +49,14 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface
     ) {
         Self.logger.debug("init VoIPPushManager")
-        self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
 
         self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)
         self.callKitManager = CallKitManager(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             mediaManager: AVSMediaManager.sharedInstance()
         )
 
@@ -81,39 +77,26 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         didUpdate pushCredentials: PKPushCredentials,
         for type: PKPushType
     ) {
-        Self.logger.debug("did update push credentials")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We only want to store the voip token if required.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.createVOIPToken(from: pushCredentials.token))
+        // do nothing
     }
 
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didInvalidatePushTokenFor type: PKPushType
     ) {
-        Self.logger.debug("did invalidate push token")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We don't want to delete a standard push token by accident.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.none)
+        // do nothing
     }
 
+    // Don't use the async version, it's broken
+    // It doesn't properly get called when waking up the app from the background and ends up crashing
+    // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didReceiveIncomingPushWith payload: PKPushPayload,
         for type: PKPushType,
         completion: @escaping () -> Void
     ) {
-        Self.logger.debug("did receive incoming push")
+        Self.logger.debug("did receive incoming push: \(payload.safeForLoggingDescription)")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return completion() }
@@ -128,8 +111,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Self.logger.debug("process NSE push, payload: \(payload)")
-
         guard
             let accountIDString = payload["accountID"] as? String,
             let accountID = UUID(uuidString: accountIDString),
@@ -139,7 +120,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload")
+            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
+            completion()
             return
         }
 
@@ -165,6 +147,11 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
 
-        delegate?.processPendingCallEvents(accountID: accountID)
+        Task {
+            Self.logger.debug("processPendingCallEvents")
+            await delegate?.processPendingCallEvents(accountID: accountID)
+            // Note that here we don't guarantee the sync was finished, only that it was triggered
+            completion()
+        }
     }
 }

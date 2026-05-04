@@ -1,0 +1,279 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SwiftUI
+import WireDesign
+import WireLocators
+import WireMessagingDomain
+import WireMessagingDomainSupport
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
+
+struct FilesFilteringView: View {
+    @StateObject private var viewModel: FilesFilteringViewModel
+
+    @Environment(\.wireAccentColor) private var accentColor
+    @Environment(\.isSearching) private var isSearching
+    @Environment(\.dismissSearch) private var dismissSearch
+
+    @ScaledMetric var dropDownIconWidth: CGFloat = 8
+    @ScaledMetric var dropDownIconHeight: CGFloat = 4
+    @ScaledMetric var xmarkIconSize: CGFloat = 11
+
+    private let conversations: Set<WireDriveConversation>
+
+    package init(
+        useCases: FilesFilteringViewModel.UseCases,
+        filtersSelection: FilesFilteringViewModel.FiltersSelection,
+        isBrowsing: Bool,
+        conversations: Set<WireDriveConversation>,
+        onUpdate: @escaping (FilesFilteringViewModel.FiltersSelection) -> Void,
+        onSearchFocused: @escaping (Bool) -> Void
+    ) {
+        self.conversations = conversations
+        self._viewModel = .init(
+            wrappedValue: .init(
+                useCases: useCases,
+                filtersSelection: filtersSelection,
+                isBrowsing: isBrowsing,
+                onUpdate: onUpdate,
+                onSearchFocused: onSearchFocused
+            )
+        )
+    }
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(viewModel.availableFilters, id: \.self) { filter in
+                    let isEnabled = isFilterCategoryButtonEnabled(for: filter)
+
+                    Button {
+                        viewModel.select(filter: filter)
+                    } label: {
+                        capsule(for: filter)
+                            .opacity(isEnabled ? 1 : 0.5)
+                    }
+                    .disabled(!isEnabled)
+                    .accessibilityIdentifier(Locators.WireDrive.FilesFilteringPage.filter(filter.rawValue))
+                }
+
+                if shouldShowRemoveFilters {
+                    Button {
+                        viewModel.removeAllFilters()
+                    } label: {
+                        Text(Strings.removeAllFilters)
+                            .font(for: .h5)
+                            .foregroundStyle(ColorTheme.Base.primary(accentColor).color)
+                            .fontWeight(.semibold)
+                    }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesFilteringPage.removeAllFiltersButton)
+                }
+            }
+            .padding(.horizontal)
+        }
+        .animation(.easeInOut, value: viewModel.filtersSelection)
+        .sheet(
+            item: $viewModel.sheetNavigation,
+            onDismiss: {},
+            content: { navigationItem in
+                sheet(for: navigationItem)
+            }
+        )
+        .onChange(of: isSearching) { newValue in
+            viewModel.onSearchFocused(newValue)
+        }
+        .onDisappear {
+            viewModel.filtersSelection = .empty
+            dismissSearch()
+        }
+
+    }
+
+    @ViewBuilder
+    private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case .tags:
+            FilesFilterBy.TagsView(
+                fetchTagsUseCase: viewModel.useCases.fetchTagsUseCase,
+                selectedItems: viewModel.filtersSelection.tags,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.tags = selectedItems
+                }
+            )
+        case .types:
+            FilesFilterBy.TypeView(
+                includeFolders: !viewModel.isBrowsing,
+                selectedItems: viewModel.filtersSelection.types,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.types = selectedItems
+                }
+            )
+        case .conversations:
+            FilesFilterBy.ConversationView(
+                availableItems: conversations,
+                selectedItems: viewModel.filtersSelection.conversations,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.conversations = selectedItems
+                }
+            )
+        case .owners:
+            FilesFilterBy.OwnerView(
+                availableItems: conversationsParticipants,
+                selectedItems: viewModel.filtersSelection.owners,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.owners = selectedItems
+                }
+            )
+        case .sharedLink: // currently not used, but probably will be later when the backend capability is expanded
+            FilesFilterBy.SharedLinkView(
+                selected: viewModel.filtersSelection.sharedLink,
+                onApply: { selected in
+                    viewModel.filtersSelection.sharedLink = selected
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+
+        HStack(alignment: .center, spacing: 5) {
+            Text(filter.title)
+                .font(for: .h5)
+                .foregroundStyle(textColor(for: filter))
+
+            if let badge = viewModel.badge(for: filter) {
+                Text(badge)
+                    .font(.caption2.bold())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(
+                        ColorTheme.Base.primary(accentColor).color,
+                        in: RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    )
+            }
+
+            capsuleTrailingIcon(for: filter)
+        }
+        .fontWeight(.semibold)
+        .padding(8)
+        .background {
+            shape.fill(capsuleFillColor(for: filter))
+        }
+        .overlay {
+            shape.strokeBorder(
+                capsuleStrokeColor(for: filter),
+                lineWidth: 1
+            )
+        }
+        .padding(.vertical, 1)
+    }
+
+    @ViewBuilder
+    private func capsuleTrailingIcon(for filter: FilesFilteringViewModel.Filtering) -> some View {
+        if filter == .sharedLink {
+            if viewModel.isFilterSelected(filter) {
+                Image(systemName: "xmark")
+                    .resizable()
+                    .frame(width: xmarkIconSize, height: xmarkIconSize)
+                    .foregroundStyle(imageColor(for: filter))
+            }
+        } else {
+            Image(systemName: "arrowtriangle.down.fill")
+                .resizable()
+                .frame(width: dropDownIconWidth, height: dropDownIconHeight)
+                .foregroundStyle(imageColor(for: filter))
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func imageColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.primary(accentColor).color
+        } else {
+            .primary
+        }
+    }
+
+    private func textColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        viewModel.isFilterSelected(filter) ? ColorTheme.Base.primary(accentColor).color : .primary
+    }
+
+    private func capsuleFillColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.primary(accentColor).color.opacity(0.1)
+        } else {
+            ColorTheme.Backgrounds.surface.color
+        }
+    }
+
+    private func capsuleStrokeColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.primary(accentColor).color
+        } else {
+            ColorTheme.Strokes.disabledOutline.color
+        }
+    }
+
+    private var shouldShowRemoveFilters: Bool {
+        viewModel.filtersSelection.hasFilterSelected
+    }
+
+    private var conversationsParticipants: Set<WireDriveConversation.Participant> {
+        Set(conversations.flatMap(\.participants))
+    }
+
+    private func isFilterCategoryButtonEnabled(for filter: FilesFilteringViewModel.Filtering) -> Bool {
+        !viewModel.hasFiltersSelected || viewModel.isFilterSelected(filter)
+    }
+}
+
+#Preview {
+    VStack {
+        FilesFilteringView(
+            useCases: .init(
+                fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
+                    nodesAPI: {
+                        let mock = MockNodesAPIProtocol()
+                        mock.getAllTags_MockMethod = {
+                            mockTags
+                        }
+                        mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+                        return mock
+                    }()
+                )
+            ),
+            filtersSelection: .init(
+                tags: [],
+                types: [.audio],
+                conversations: [],
+                owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
+                sharedLink: true
+            ),
+            isBrowsing: true,
+            conversations: Set([WireDriveConversation].mocked()),
+            onUpdate: { _ in }, onSearchFocused: { _ in }
+        )
+
+        Spacer()
+    }
+}

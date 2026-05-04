@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -142,9 +142,14 @@ final class ConversationListViewModel: NSObject {
 
         init(
             kind: Kind,
-            conversationDirectory: ConversationDirectoryType
+            conversationDirectory: ConversationDirectoryType,
+            selectedFilter: ConversationFilter? = nil
         ) {
-            self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.items = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
             self.kind = kind
         }
     }
@@ -192,7 +197,7 @@ final class ConversationListViewModel: NSObject {
     private var conversationDirectoryToken: Any?
     private var tokens = Set<AnyCancellable>()
 
-    let userSession: UserSession?
+    let userSession: UserSession
 
     init(userSession: UserSession) {
         self.userSession = userSession
@@ -204,10 +209,10 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func setupObservers() {
-        conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
+        conversationDirectoryToken = userSession.conversationDirectory.addObserver(self)
 
         // TODO: [WPB-15469] Remove casting and see if there is a better way to call `refreshAllLists`.
-        guard let user = userSession?.selfUser as? ZMUser else { return }
+        guard let user = userSession.selfUser as? ZMUser else { return }
 
         user.publisher(for: \.teamIdentifier)
             .removeDuplicates()
@@ -266,7 +271,8 @@ final class ConversationListViewModel: NSObject {
 
     private static func newList(
         for kind: Section.Kind,
-        conversationDirectory: ConversationDirectoryType
+        conversationDirectory: ConversationDirectoryType,
+        selectedFilter: ConversationFilter? = nil
     ) -> [SectionItem] {
         let conversationListType: ConversationListType
         switch kind {
@@ -277,7 +283,19 @@ final class ConversationListViewModel: NSObject {
                 kind: kind
             )]
         case .conversations:
-            conversationListType = .unarchived
+            // Check if we have a special filter active
+            switch selectedFilter {
+            case .unread:
+                conversationListType = .unread
+            case .mentions:
+                conversationListType = .mentions
+            case .replies:
+                conversationListType = .replies
+            case .drafts:
+                conversationListType = .drafts
+            case .none, .favorites, .groups, .channels, .oneOnOne, .folder:
+                conversationListType = .unarchived
+            }
         case .contacts:
             conversationListType = .contacts
         case .groups:
@@ -308,8 +326,8 @@ final class ConversationListViewModel: NSObject {
     }
 
     /// Create the section structure
-    private func createSections() -> [Section] {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
+    func createSections() -> [Section] {
+        let conversationDirectory = userSession.conversationDirectory
 
         // Filter sections based on the selected filter
         let kinds: [Section.Kind] = switch selectedFilter {
@@ -327,6 +345,9 @@ final class ConversationListViewModel: NSObject {
             } else {
                 []
             }
+        case .unread, .mentions, .replies, .drafts:
+            // These filters have their own conversation lists in the data layer
+            [.conversations]
         case .none:
             [.contactRequests, .conversations]
         }
@@ -334,9 +355,11 @@ final class ConversationListViewModel: NSObject {
         let sections = kinds.map { kind in
             Section(
                 kind: kind,
-                conversationDirectory: conversationDirectory
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
             )
         }
+
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
         return filterUseCase.invoke(query: appliedSearchText)
     }
@@ -350,13 +373,17 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func update(for kind: Section.Kind? = nil) {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return }
+        let conversationDirectory = userSession.conversationDirectory
 
         var newValue: [Section]
         if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             newValue = sections
-            let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            let newList = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
 
             newValue[sectionNumber].items = newList
 
@@ -395,11 +422,11 @@ final class ConversationListViewModel: NSObject {
         if indexPath(for: itemToSelect) == nil {
             guard let conversation = itemToSelect as? ZMConversation else { return false }
 
-            ZMUserSession.shared()?.enqueue({
+            userSession.enqueue {
                 conversation.isArchived = false
-            }, completionHandler: {
+            } completionHandler: {
                 self.internalSelect(itemToSelect: itemToSelect)
-            })
+            }
         } else {
             internalSelect(itemToSelect: itemToSelect)
         }
@@ -462,6 +489,14 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .channels
         case .favorites:
             .favorites
+        case .unread:
+            .conversations
+        case .mentions:
+            .conversations
+        case .replies:
+            .conversations
+        case .drafts:
+            .conversations
         case let .folder(label):
             .folder(label: label)
         case .archived:

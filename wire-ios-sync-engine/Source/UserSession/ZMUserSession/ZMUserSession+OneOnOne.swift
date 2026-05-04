@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,8 +47,15 @@ public extension ZMUserSession {
                     }
 
                     let migrator = syncContext.mlsService.map(OneOnOneMigrator.init(mlsService:))
-                    let service = ConversationService(context: syncContext)
-                    let useCase = CreateTeamOneOnOneConversationUseCase(migrator: migrator, service: service)
+                    let service = ConversationService(
+                        context: syncContext,
+                        localDomain: self.resolvedBackendMetadata.domain
+                    )
+                    let useCase = CreateTeamOneOnOneConversationUseCase(
+                        migrator: migrator,
+                        service: service,
+                        localDomain: self.resolvedBackendMetadata.domain
+                    )
 
                     return (useCase, syncUser)
                 }

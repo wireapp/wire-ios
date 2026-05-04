@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -247,29 +247,6 @@ extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [modifiedSync]
-    }
-}
-
-extension UserPropertyRequestStrategy: ZMEventConsumer {
-    static let UpdateEventKey = "key"
-    static let UpdateEventValue = "value"
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard event.type.isOne(of: [ZMUpdateEventType.userPropertiesSet, ZMUpdateEventType.userPropertiesDelete]),
-                  let keyChanged = event.payload[UserPropertyRequestStrategy.UpdateEventKey] as? String,
-                  let property = UserProperty(serverName: keyChanged) else {
-                continue
-            }
-
-            let value = event.payload[UserPropertyRequestStrategy.UpdateEventValue]
-
-            property.parseUpdate(
-                for: ZMUser.selfUser(in: managedObjectContext),
-                updateType: (.notificationStream, .init(eventType: event.type)),
-                payload: value
-            )
-        }
     }
 }
 

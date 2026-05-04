@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -31,8 +32,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
 
-    override func setupCoreDataStack() {
-        coreDataFixture = CoreDataFixture()
+    override func setupCoreDataStack() async throws {
+        coreDataFixture = try await CoreDataFixture()
         coreDataStack = coreDataFixture.coreDataStack
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
@@ -47,7 +48,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         super.setUp()
 
         snapshotHelper = SnapshotHelper()
-        serviceUser = coreDataFixture.createServiceUser()
+        serviceUser = coreDataFixture.createBot()
     }
 
     override func tearDown() {
@@ -196,6 +197,9 @@ extension ConversationViewControllerSnapshotTests {
             managedObjectContext: uiMOC,
             description: "all conversations"
         )
+        userSession.coreDataStack?.newBackgroundContextProvider = { [uiMOC] in
+            uiMOC!
+        }
 
         sut = ConversationViewController(
             conversation: conversation,
@@ -203,10 +207,12 @@ extension ConversationViewControllerSnapshotTests {
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
-            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
 

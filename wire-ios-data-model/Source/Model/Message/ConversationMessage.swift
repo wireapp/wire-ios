@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,6 +99,10 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: LocationMessageData? { get }
 
+    /// The multipart message data associated with the message. If the message is not a multipart message, it will be
+    /// nil
+    var multipartMessageData: MultipartMessageData? { get }
+
     var usersReaction: [String: [UserType]] { get }
     var reactionData: Set<ReactionData> { get }
     func reactionsSortedByCreationDate() -> [ReactionData]
@@ -151,9 +155,6 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 
     /// The replies quoting this message.
     var replies: Set<ZMMessage> { get }
-
-    /// An in-memory identifier for tracking the message during its life cycle.
-    var objectIdentifier: String { get }
 
     /// The links attached to the message.
     var linkAttachments: [LinkAttachment]? { get set }
@@ -245,10 +246,6 @@ extension ZMMessage: ZMConversationMessage {
             .sortedAscendingPrependingNil(by: \.serverTimestamp)
     }
 
-    public var objectIdentifier: String {
-        nonpersistedObjectIdentifer
-    }
-
     public var causedSecurityLevelDegradation: Bool {
         false
     }
@@ -305,7 +302,7 @@ extension ZMMessage: ZMConversationMessage {
             let managedObjectContext
         else { return false }
 
-        let featureRepository = FeatureRepository(context: managedObjectContext)
+        let featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         let fileSharingFeature = featureRepository.fetchFileSharing()
 
         return fileSharingFeature.status == .disabled
@@ -339,6 +336,10 @@ public extension ZMMessage {
     }
 
     @objc var locationMessageData: LocationMessageData? {
+        nil
+    }
+
+    @objc var multipartMessageData: MultipartMessageData? {
         nil
     }
 

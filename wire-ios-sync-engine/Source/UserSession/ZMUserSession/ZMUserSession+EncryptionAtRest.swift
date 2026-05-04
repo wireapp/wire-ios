@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -132,7 +132,11 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
 extension ZMUserSession: EARServiceDelegate {
 
     public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
-        delegate?.prepareForMigration(
+        guard let delegate else {
+            assertionFailure("delegate is nil")
+            return
+        }
+        delegate.prepareForMigration(
             for: coreDataStack.account,
             onReady: onReady
         )

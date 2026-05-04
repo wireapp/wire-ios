@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,12 +70,12 @@ final class BackendTrustProviderTests: XCTestCase {
     var pinnedHosts: [String]!
     var certificates: CertificateData!
     var pinnedKeys: PinnedKeysData!
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     var sut: ServerCertificateTrust!
 
     override func setUpWithError() throws {
 
-        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
 
         // Do not run tests if setup fails
@@ -92,7 +92,7 @@ final class BackendTrustProviderTests: XCTestCase {
 
         guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json")
         else { XCTFail("Could find certificates.json"); return }
-        guard let trustDataURL = backendBundle.url(forResource: "production", withExtension: "json")
+        guard let trustDataURL = backendBundle.url(forResource: "default", withExtension: "json")
         else { XCTFail("Could find trust_data.json"); return }
 
         do {
@@ -127,7 +127,8 @@ final class BackendTrustProviderTests: XCTestCase {
     func testThatItVerifiesWithNoPinnedKeys() {
         // given
         let trustExpectation = expectation(description: "It should verify server trust")
-        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: mockDateProvider)
+        // We use a real date provider as this tests downloads a real live certificate
+        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         let trustVerificator = TestTrustVerificator(trustProvider: trustProvider) { trusted in
             if trusted {
                 trustExpectation.fulfill()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 struct CreatingBackupProgressView: View {
 
@@ -40,6 +41,7 @@ struct CreatingBackupProgressView: View {
                             .accessibilityIdentifier("cancel")
                     }
                 }
+                .accessibilityIdentifier(Locators.CreatingBackupPage.creatingBackupPageLabel.rawValue)
         }
     }
 
@@ -51,10 +53,10 @@ struct CreatingBackupProgressView: View {
 
         switch progress {
 
-        case let .ongoing(progress):
+        case let .ongoing(current, total):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
-                progressValue: progress,
+                progressValues: (current, total),
                 backupURL: nil,
                 completedAction: completedAction
             )
@@ -62,7 +64,7 @@ struct CreatingBackupProgressView: View {
         case let .finished(url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
-                progressValue: 1,
+                progressValues: (1, 1),
                 backupURL: url,
                 completedAction: completedAction
             )
@@ -72,7 +74,7 @@ struct CreatingBackupProgressView: View {
 }
 
 #Preview("in progress") {
-    CreatingBackupProgressPreview(.ongoing(0.25))
+    CreatingBackupProgressPreview(.ongoing(current: 1, total: 4))
         .tint(Color.purple)
 }
 

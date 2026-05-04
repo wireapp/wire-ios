@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 import WireSyncEngine
-import ZipArchive
+import ZIPFoundation
 
 final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate {
 
@@ -33,41 +33,22 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
 
     let documentDelegate: DocumentDelegate
 
-    init() {
+    init(userSession: UserSession) {
         let documentDelegate = DocumentDelegate()
         self.documentDelegate = documentDelegate
 
-        super.init(title: "Share Database", isDestructive: false) { _ in
-            guard let userSession = ZMUserSession.shared() else { return }
+        super.init(title: "Share Database", isDestructive: false) { [weak userSession] _ in
+            guard let userSession = userSession as? ZMUserSession else { return }
             let fileURL = userSession.managedObjectContext.zm_storeURL!
             let archiveURL = fileURL.appendingPathExtension("zip")
 
-            SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: [fileURL.path])
-
-            let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
-            shareDatabaseDocumentController.delegate = documentDelegate
-            shareDatabaseDocumentController.presentPreview(animated: true)
-        }
-
-    }
-
-}
-
-final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
-
-    let documentDelegate: DocumentDelegate
-
-    init() {
-        let documentDelegate = DocumentDelegate()
-        self.documentDelegate = documentDelegate
-
-        super.init(title: "Share Cryptobox", isDestructive: false) { _ in
-            guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent()
-                .deletingLastPathComponent().appendingPathComponent("otr")
-            let archiveURL = fileURL.appendingPathExtension("zip")
-
-            SSZipArchive.createZipFile(atPath: archiveURL.path, withContentsOfDirectory: fileURL.path)
+            try? FileManager.default.removeItem(at: archiveURL)
+            try? FileManager.default.zipItem(
+                at: fileURL,
+                to: archiveURL,
+                shouldKeepParent: false,
+                compressionMethod: .deflate
+            )
 
             let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
             shareDatabaseDocumentController.delegate = documentDelegate

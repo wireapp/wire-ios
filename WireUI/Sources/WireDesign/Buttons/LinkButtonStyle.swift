@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import SwiftUI
 struct LinkButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.isFocused) private var isFocused
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     typealias Theme = ColorTheme.Buttons.Link
 
@@ -30,17 +31,17 @@ struct LinkButtonStyle: SwiftUI.ButtonStyle {
             .underline()
             .padding(8)
             .foregroundStyle(foregroundColor(for: isEnabled, and: isFocused))
-            .wireTextStyle(.body1)
+            .font(for: .body1)
     }
-}
 
-private func foregroundColor(for isEnabled: Bool, and isFocused: Bool) -> Color {
-    switch (isEnabled, isFocused) {
-    case (false, _):
-        ColorTheme.Buttons.Link.onDisabled.color
-    case (true, true):
-        ColorTheme.Buttons.Link.onFocus.color
-    case (true, false):
-        ColorTheme.Buttons.Link.onEnabled.color
+    private func foregroundColor(for isEnabled: Bool, and isFocused: Bool) -> Color {
+        switch (isEnabled, isFocused) {
+        case (false, _):
+            ColorTheme.Buttons.Link.onDisabled.color
+        case (true, true):
+            ColorTheme.Buttons.Link.onFocus(wireAccentColor).color
+        case (true, false):
+            ColorTheme.Buttons.Link.onEnabled.color
+        }
     }
 }

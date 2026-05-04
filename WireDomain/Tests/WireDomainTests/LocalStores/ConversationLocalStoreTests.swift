@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
 //
 
 import Combine
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLocalStoreTests: XCTestCase {
 
@@ -52,7 +52,9 @@ final class ConversationLocalStoreTests: XCTestCase {
         sut = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: messageLocalStore,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 
@@ -74,7 +76,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         // When
@@ -104,7 +106,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         // When
@@ -132,7 +134,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         await context.perform { [self] in
@@ -381,7 +383,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     func testAddParticipants_It_Adds_Participants_To_Conversation() async throws {
         // Mock
 
-        let (conversation, sender, addedUser) = await context.perform { [self] in
+        let (conversation, _, addedUser) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 domain: Scaffolding.domain,
@@ -430,45 +432,11 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
-    func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
-
-        let (userObjectID, conversationObjectID) = try await context.perform { [self] in
-            let user = modelHelper.createUser(in: context)
-            let conversation = modelHelper.createGroupConversation(in: context)
-
-            try context.obtainPermanentIDs(for: [user, conversation])
-
-            return (user.objectID, conversation.objectID)
-
-        }
-
-        let expectation = XCTestExpectation()
-
-        subscription = NotificationCenter.default.publisher(for: .typingNotification)
-            .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
-            .sink { typingUsers in
-                // Then
-                XCTAssertEqual(typingUsers.first?.objectID, userObjectID)
-                expectation.fulfill()
-            }
-
-        // When
-
-        await sut.updateTypingUsers(
-            conversationID: conversationObjectID,
-            usersID: Set([userObjectID])
-        )
-
-        // Then
-
-        await fulfillment(of: [expectation], timeout: 5.0)
-    }
-
     func testStoreMLSConversationEstablished_It_Sets_MLS_Status_Ready_And_Updates_MLS_Group_ID() async throws {
 
         // Mock
 
-        let conversation = await context.perform { [self] in
+        let conversation = await context.perform { [modelHelper, context] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 domain: Scaffolding.domain,
@@ -477,19 +445,21 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
 
         let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
-
+        let newEpoch = UInt64(100)
         // When
 
         await sut.storeMLSConversationEstablished(
             mlsGroupID: mlsGroupID,
+            epoch: newEpoch,
             conversation: conversation
         )
 
         // Then
 
-        await context.perform {
+        try await context.unpack(conversation) { conversation in
             XCTAssertEqual(conversation.mlsStatus, .ready)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
+            XCTAssertEqual(conversation.epoch, newEpoch)
         }
     }
 
@@ -603,7 +573,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         static let groupConversation = Conversation(
             id: .mockID1,
-            qualifiedID: .init(uuid: .mockID1, domain: domain),
+            qualifiedID: .init(id: .mockID1, domain: domain),
             teamID: .mockID2,
             type: .group,
             messageProtocol: .proteus,

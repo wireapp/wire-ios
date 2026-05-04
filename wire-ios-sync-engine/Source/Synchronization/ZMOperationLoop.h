@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 @import Foundation;
+@import WireUtilities;
 
 @protocol ZMApplication;
 @protocol FlowManagerType;
@@ -26,30 +27,29 @@
 
 @class ZMPersistentCookieStorage;
 @class OperationStatus;
-@class SyncStatus;
-@class PushNotificationStatus;
 @class ZMSyncStrategy;
-
-extern NSString * const ZMPushChannelIsOpenKey;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>
 
 @property (nonatomic, readonly) id<ZMApplication> application;
 @property (nonatomic, readonly) id<TransportSessionType> transportSession;
 @property (nonatomic) BOOL isDeveloperModeEnabled;
+@property (nonatomic) BOOL isSyncV2Enabled;
+// Only used for multibackend support.
+@property (nonatomic, strong, nullable) NSNumber *apiVersion;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
-                    updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
                          operationStatus:(OperationStatus *)operationStatus
-                              syncStatus:(SyncStatus *)syncStatus
-                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
-                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled;
+                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
+                         isSyncV2Enabled:(BOOL)isSyncV2Enabled
+                              apiVersion:(nullable NSNumber *)apiVersion;
 
 - (void)tearDown;
+- (void)resumeEnqueuing;
 
 @end
 

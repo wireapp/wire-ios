@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,11 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
+        conversation.delete(
+            in: coreDataStack!,
+            transportSession: mockTransportSession,
+            metadata: .mock()
+        ) { result in
             if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
@@ -97,7 +101,11 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
+        conversation.delete(
+            in: coreDataStack!,
+            transportSession: mockTransportSession,
+            metadata: .mock()
+        ) { result in
             if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
@@ -119,8 +127,12 @@ class Conversation_DeletionTests: DatabaseTest {
         conversation.teamRemoteIdentifier = UUID()
 
         // WHEN
-        guard let request = WireSyncEngine.ConversationDeletionRequestFactory
-            .requestForDeletingTeamConversation(conversation) else { return XCTFail() }
+        guard let request = WireSyncEngine.ConversationDeletionRequestFactory.requestForDeletingTeamConversation(
+            conversation,
+            metadata: .mock()
+        ) else {
+            return XCTFail()
+        }
 
         // THEN
         XCTAssertEqual(

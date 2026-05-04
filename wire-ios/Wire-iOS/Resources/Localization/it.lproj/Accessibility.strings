@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 ///  "<screen>.<component>.<usage>"
 
 
+"peoplepicker.upgrade_banner.close_button.label" = "Close team creation option";
+
 "conversation.backButton.description" = "Go back to conversation list";
 "conversation.searchButton.description" = "Open search";
 "conversation.profileImage.description" = "Immagine del profilo";
@@ -38,11 +40,11 @@
 "conversation.mentionButton.description" = "Mention someone";
 "conversation.cameraButton.description" = "Take or select a photo";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
-"conversation.gifButton.description" = "Select a GIF";
+"conversation.gifButton.description" = "Scegli una GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "Send a ping";
-"conversation.uploadFileButton.description" = "Share a file";
-"conversation.locationButton.description" = "Share your location";
+"conversation.uploadFileButton.description" = "Condividi un file";
+"conversation.locationButton.description" = "Condividi la tua location";
 "conversation.videoButton.description" = "Registra un video";
 "conversation.moreButton.description" = "Open more messaging options";
 "conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
@@ -95,13 +97,13 @@
 "audioRecord.sendButton.description" = "Invia";
 "audioRecord.cancelButton.description" = "Delete audio recording";
 "audioRecord.redoButton.description" = "Redo audio recording";
-"audioRecord.normalEffectButton.description" = "Normal";
-"audioRecord.heliumEffectButton.description" = "Helium";
-"audioRecord.deepVoiceEffectButton.description" = "Deep voice";
-"audioRecord.quickEffectButton.description" = "Quick";
+"audioRecord.normalEffectButton.description" = "Normale";
+"audioRecord.heliumEffectButton.description" = "Elio";
+"audioRecord.deepVoiceEffectButton.description" = "Voce profonda";
+"audioRecord.quickEffectButton.description" = "Veloce";
 "audioRecord.hallEffectButton.description" = "Hall effect";
-"audioRecord.alienEffectButton.description" = "Alien";
-"audioRecord.roboticEffectButton.description" = "Robotic";
+"audioRecord.alienEffectButton.description" = "Alieno";
+"audioRecord.roboticEffectButton.description" = "Robot";
 "audioRecord.highToDeepEffectButton.description" = "High to deep";
 
 "createConversation.backButton.description" = "Go back to contact list";
@@ -110,17 +112,17 @@
 
 "messageAction.unlikeButton.description" = "Unlike the picture";
 "messageAction.likeButton.description" = "Like the picture";
-"messageAction.shareButton.description" = "Share picture";
+"messageAction.shareButton.description" = "Condividi foto";
 "messageAction.sketchButton.description" = "Sketch over picture";
 "messageAction.emojiButton.description" = "Sketch emoji over picture";
 "messageAction.copyButton.description" = "Copy picture";
 "messageAction.moreButton.description" = "Open more messaging options";
-"messageAction.saveButton.description" = "Save picture";
+"messageAction.saveButton.description" = "Salva foto";
 "messageAction.revealButton.description" = "Reveal in conversation";
 "messageAction.deleteButton.description" = "Delete picture";
 "messageAction.collapseButton.description" = "Collapse";
 
-"audioMessage.pause.value" = "Pause";
+"audioMessage.pause.value" = "Pausa";
 "audioMessage.play.value" = "Play";
 
 "sketch.selectPictureButton.description" = "Select picture";
@@ -178,11 +180,11 @@
 
 "profile.backButton.description" = "Go back to conversation details";
 "profile.closeButton.description" = "Close profile";
-"profile.shareProfileButton.description" = "Share your profile via QR code or link";
+"profile.shareProfileButton.description" = "Condividi il tuo profilo con codice QR o link";
 
 "shareProfile.closeButton.description" = "Close share profile view";
-"shareProfile.backButton.description" = "Go back to your profile";
-"shareProfile.qrCode.description" = "QR code";
+"shareProfile.backButton.description" = "Torna al tuo profilo";
+"shareProfile.qrCode.description" = "Codice QR";
 
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Double tap to change status";
@@ -218,8 +220,8 @@
 "conversationsList.replyStatus.value" = "Rispondi";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
-"conversationsList.itemCell.avatar.group.label" = "Group";
-"conversationsList.itemCell.avatar.channel.label" = "Channel";
+"conversationsList.itemCell.avatar.group.label" = "Gruppo";
+"conversationsList.itemCell.avatar.channel.label" = "Canale";
 "conversationsList.joinButton.description" = "Entra";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
@@ -233,7 +235,11 @@
 "conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
 "conversationsList.filter_menu_options.channels.description" = "Show all channel conversations";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-"conversationsList.filter_menu_options.folders.description" = "Folders";
+"conversationsList.filter_menu_options.unread.description" = "Show all unread conversations";
+"conversationsList.filter_menu_options.mentions.description" = "Show all conversations with mentions";
+"conversationsList.filter_menu_options.replies.description" = "Show all conversations with replies";
+"conversationsList.filter_menu_options.drafts.description" = "Show all conversations with drafted messages";
+"conversationsList.filter_menu_options.folders.description" = "Cartelle";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
@@ -241,6 +247,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Channels, selected";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
 "conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
+"conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Drafts, selected";
+"conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
@@ -280,7 +291,7 @@
 "calling.swipeUpParticipants.hint" = "Double tap to swipe up and view all participant’s details";
 "calling.swipeDownParticipants.hint" = "Double tap to swipe down and hide participant’s details";
 "calling.headerBar.description" = "Minimize calling view";
-"calling.status.connecting" = "Connecting";
+"calling.status.connecting" = "Connessione in corso";
 
 "tabBar.item.value" = "Selected";
 
@@ -295,13 +306,13 @@
 
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
-"reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";
+"reactionPicker.searchFieldPlaceholder.description" = "Cerca emoji";
 
 // MARK: - Create Secure Guest Link with Password
 
 "createSecureGuestLink.closeButton.description" = "Close Secure guest link";
 
-"createSecureGuestLink.GeneratePasswordButton.description" = "Generate password";
+"createSecureGuestLink.GeneratePasswordButton.description" = "Genera password";
 "createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
 
 "createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
@@ -318,9 +329,15 @@
 // MARK: - Search Gifs
 
 "searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
-"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.norResultsLabel.description" = "Nessuna GIF trovata";
 "searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
 "searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Go back to new conversation overview";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity Provider URL";
+"webAuth.urlLabel.hint" = "Select to open the complete URL.";

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 @testable import WireDomain
 
@@ -75,7 +75,6 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
 
         let commonProtocol = WireDataModel.MessageProtocol.mls
-        let mlsEpoch: UInt64 = 0
 
         let (selfUser, user, mlsOneOnOneConversation) = try await context.perform { [self] in
             try setupManagedObjects(
@@ -278,6 +277,44 @@ final class OneOnOneResolverTests: XCTestCase {
         }
     }
 
+    func testResolveOneOnOneConversations_Resolves_Conversation_With_No_Common_Protocol_ForDeletedUser() async throws {
+        // Given
+
+        let forcedReadOnly = false
+
+        let (selfUser, user, mlsOneOnOneConversation) = try await context.perform { [self] in
+            try setupManagedObjects(
+                selfUserProtocol: .mls,
+                userProtocol: .mls,
+                forcedReadOnly: forcedReadOnly
+            )
+        }
+
+        await context.perform {
+            user.oneOnOneConversation = mlsOneOnOneConversation
+            user.isAccountDeleted = true
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        }
+
+        // Mock
+
+        setupMock(
+            selfUser: selfUser,
+            user: user,
+            mlsOneOnOneConversation: mlsOneOnOneConversation
+        )
+
+        // When
+
+        try await sut.resolveAllOneOnOneConversations()
+
+        // Then
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.mlsStatus, .invalid)
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        }
+    }
+
     // MARK: - Setup
 
     typealias ManagedObjects = (selfUser: ZMUser, user: ZMUser, mlsConversation: ZMConversation)
@@ -289,7 +326,7 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsEpoch: UInt64 = 0
     ) throws -> ManagedObjects {
         let user = modelHelper.createUser(
-            id: Scaffolding.receiverQualifiedID.uuid,
+            id: Scaffolding.receiverQualifiedID.id,
             domain: Scaffolding.receiverQualifiedID.domain,
             in: context
         )
@@ -308,9 +345,10 @@ final class OneOnOneResolverTests: XCTestCase {
             with: selfUser,
             in: context
         )
-
+        proteusConversation.messageProtocol = .proteus
         proteusConversation.isForcedReadOnly = forcedReadOnly
         user.oneOnOneConversation = proteusConversation
+        proteusConversation.addParticipantAndUpdateConversationState(user: user)
 
         try proteusConversation.appendText(content: "Hello")
         try proteusConversation.appendText(content: "World!")
@@ -337,12 +375,13 @@ final class OneOnOneResolverTests: XCTestCase {
         userLocalStore
             .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
-        pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = Scaffolding.mlsGroupID
+        pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = (Scaffolding.mlsGroupID, Scaffolding.mlsPublicKeys)
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
         mlsService.conversationExistsGroupID_MockValue = mlsConversationExists
         mlsService.joinGroupWith_MockMethod = { _ in }
+        mlsService.wipeGroup_MockMethod = { _ in }
     }
 
     private func setupConnection(status: ConnectionStatus) -> Connection {
@@ -361,13 +400,13 @@ final class OneOnOneResolverTests: XCTestCase {
         static let username = "username"
         static let senderID = UUID()
         static let receiverID = UUID()
-        static let receiverQualifiedID = WireAPI.QualifiedID(
-            uuid: receiverID,
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
+            id: receiverID,
             domain: "domain.com"
         )
         static let conversationID = UUID()
-        static let qualifiedConversationID = WireAPI.QualifiedID(
-            uuid: conversationID,
+        static let qualifiedConversationID = WireNetwork.QualifiedID(
+            id: conversationID,
             domain: "domain.com"
         )
 
@@ -379,6 +418,13 @@ final class OneOnOneResolverTests: XCTestCase {
         static let mlsGroupID = WireDataModel.MLSGroupID(
             base64Encoded: base64EncodedString
         )!
+
+        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+            ed25519: .randomAlphanumerical(length: 5),
+            p256: .randomAlphanumerical(length: 5),
+            p384: .randomAlphanumerical(length: 5),
+            p521: .randomAlphanumerical(length: 5)
+        )
 
         static let defaultsSuiteName = UUID().uuidString
     }

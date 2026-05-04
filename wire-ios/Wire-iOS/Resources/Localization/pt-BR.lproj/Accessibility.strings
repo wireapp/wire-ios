@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "Close team creation option";
 
 "conversation.backButton.description" = "Voltar para a lista de conversas";
 "conversation.searchButton.description" = "Abrir pesquisa";
@@ -233,6 +235,10 @@
 "conversationsList.filter_menu_options.groups.description" = "Mostrar todas conversas do grupo";
 "conversationsList.filter_menu_options.channels.description" = "Mostrar todas conversas de canal";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Mostrar todas as conversas individuais";
+"conversationsList.filter_menu_options.unread.description" = "Show all unread conversations";
+"conversationsList.filter_menu_options.mentions.description" = "Show all conversations with mentions";
+"conversationsList.filter_menu_options.replies.description" = "Show all conversations with replies";
+"conversationsList.filter_menu_options.drafts.description" = "Show all conversations with drafted messages";
 "conversationsList.filter_menu_options.folders.description" = "Pastas";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "Todas as conversas, selecionadas";
@@ -241,6 +247,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Canais, selecionados";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Conversas individuais, selecionadas";
 "conversationsList.filter_menu_options.folders.selected.description" = "Pasta, selecionada";
+"conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Drafts, selected";
+"conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Remover filtro de conversa";
 
@@ -323,4 +334,10 @@
 "searchGifs.gifItems_loaded.announcement" = "%@ novos GIFs carregados";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Voltar a visão geral da nova conversa";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity Provider URL";
+"webAuth.urlLabel.hint" = "Select to open the complete URL.";

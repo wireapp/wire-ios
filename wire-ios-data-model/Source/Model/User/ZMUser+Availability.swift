@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,7 @@
 //
 
 import Foundation
-
-/// Describes how the user should be notified about a change.
-public struct NotificationMethod: OptionSet {
-
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    /// Alert user by local notification
-    public static let notification = NotificationMethod(rawValue: 1 << 0)
-    /// Alert user by alert dialogue
-    public static let alert = NotificationMethod(rawValue: 1 << 1)
-
-    public static let all: NotificationMethod = [.notification, .alert]
-
-}
+import GenericMessageProtocol
 
 public extension ZMUser {
 
@@ -137,22 +120,4 @@ public extension ZMUser {
         updateAvailability(.init(proto: genericMessage.availability))
     }
 
-    private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
-
-    /// Returns an option set describing how we should notify the user about the change in behaviour for the
-    /// availability feature
-    var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
-        get {
-            guard let rawValue = managedObjectContext?
-                .persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int
-            else { return [] }
-            return NotificationMethod(rawValue: rawValue)
-        }
-        set {
-            managedObjectContext?.setPersistentStoreMetadata(
-                newValue.rawValue,
-                key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey
-            )
-        }
-    }
 }

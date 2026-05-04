@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)
@@ -57,7 +58,7 @@ final class CallHeaderBar: UIView {
         verticalStackView.addArrangedSubview(bitrateLabel)
 
         bitrateLabel.accessibilityIdentifier = "bitrate-indicator"
-        timeLabel.accessibilityIdentifier = "time label"
+        timeLabel.accessibilityIdentifier = Locators.OngoingCallPage.timeLabel.rawValue
     }
 
     private func setupConstraints() {

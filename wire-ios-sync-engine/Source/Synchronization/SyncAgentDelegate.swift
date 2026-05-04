@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,6 @@ protocol SyncAgentDelegate: AnyObject {
     func syncAgentDidStartInitialSync(_ syncAgent: SyncAgent)
     func syncAgentDidFinishInitialSync(_ syncAgent: SyncAgent)
     func syncAgentDidStartIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: Error)
-
-    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
-
+    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
+    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error)
 }

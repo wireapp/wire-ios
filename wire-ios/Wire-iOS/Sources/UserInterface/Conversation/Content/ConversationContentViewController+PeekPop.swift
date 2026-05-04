@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             return .none
         }
 
-        let message = dataSource.messages[cellIndexPath.section]
+        let message = dataSource.allMessages[cellIndexPath.section]
         guard !message.isObfuscated else {
             return nil
         }
@@ -49,7 +49,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         if message.isText, cell.selectionView is ArticleView,
            let url = message.textMessageData?.linkPreview?.openableURL as URL? {
             lastPreviewURL = url
-            controller = BrowserViewController(url: url)
+            controller = url.browserControllerOrOpenExternally()
         } else if message.isImage {
             // Preview an image
             controller = messagePresenter.viewController(
@@ -57,7 +57,8 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
                 actionResponder: self,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
         } else if message.isLocation {
             // Preview a location

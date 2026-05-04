@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNotificationBuilderProtocol {
     let context: Context
@@ -39,10 +39,10 @@ struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNo
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.increaseReadCount(conversation: conversation)
 
@@ -66,7 +66,7 @@ struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNo
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -86,7 +86,7 @@ extension ConversationHiddenMessageNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }

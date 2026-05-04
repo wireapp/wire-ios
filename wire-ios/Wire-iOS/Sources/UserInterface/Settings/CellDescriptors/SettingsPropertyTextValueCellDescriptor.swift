@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         }
 
         textCell.textInput.isEnabled = settingsProperty.enabled
-        textCell.textInput.isAccessibilityElement = true
+
+        textCell.setupAccessibility()
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import UIKit
-import WireConversationUI
 import WireDataModel
+import WireMessagingUI
 import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     )
 
@@ -53,6 +53,9 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
 
     func conversationMessageShouldUpdate()
+
+    /// Notify the delegate that the content size of the message changed.
+    func conversationMessageContentDidChangeSize()
 
 }
 
@@ -158,6 +161,15 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
 
+    /// Boolean to check for aligning message content for Bubbles
+    var shouldAlignMessageContentForBubbles: Bool { get }
+
+    /// Boolean to check if isCellAlreadyAligned
+    var isCellAlreadyAligned: Bool { get }
+
+    /// Boolean to check if isBubbleHasMaximumWidth
+    var isBubbleHasMaximumWidth: Bool { get }
+
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -198,6 +210,18 @@ extension ConversationMessageCellDescription {
         false
     }
 
+    var shouldAlignMessageContentForBubbles: Bool {
+        false
+    }
+
+    var isCellAlreadyAligned: Bool {
+        false
+    }
+
+    var isBubbleHasMaximumWidth: Bool {
+        false
+    }
+
     var isAccessibilityElement: Bool {
         false
     }
@@ -227,6 +251,13 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+
+        if let message {
+            // sometimes action controller still has background context message
+            // so re-set message from main context to avoid crash
+            actionController?.message = message
+        }
+        cell.accessibilityIdentifier = accessibilityIdentifier
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }

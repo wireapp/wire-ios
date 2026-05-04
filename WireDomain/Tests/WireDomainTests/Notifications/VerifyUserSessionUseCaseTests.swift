@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,32 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class VerifyUserSessionUseCaseTests: XCTestCase {
     private var sut: VerifyUserSessionUseCase!
+    private var journal: Journal!
     private var cookieStorage: MockCookieStorageProtocol!
     private var stack: MockCoreDataStackProtocol!
 
     override func setUp() async throws {
+        journal = Journal(
+            userID: UUID(),
+            storage: UserDefaults.temporary()
+        )
         stack = MockCoreDataStackProtocol()
         cookieStorage = MockCookieStorageProtocol()
 
         sut = VerifyUserSessionUseCase(
+            journal: journal,
             cookieStorage: cookieStorage,
             coreData: stack
         )
+
+        journal[.isSyncV2Enabled] = true
     }
 
     override func tearDown() async throws {
         sut = nil
+        journal = nil
         cookieStorage = nil
         stack = nil
     }
@@ -52,7 +62,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
 
         stack.storesExists = true
         stack.needsMigration = false
-        stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
+        stack.load_MockMethod = {}
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
         cookieStorage.fetchCookies_MockValue = [validCookie]
 
@@ -61,6 +71,19 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(cookieStorage.fetchCookies_Invocations.count, 1)
+
+    }
+
+    func testVerify_It_Throws_User_SyncV2IsNotEnabled_Error() async throws {
+
+        // Given
+        journal[.isSyncV2Enabled] = false
+
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.syncV2IsNotEnabled) { [self] in
+            // When
+            try await sut.invoke()
+        }
 
     }
 
@@ -165,6 +188,8 @@ extension VerifyUserSessionUseCase.Failure: Equatable {
         case (.userUnauthenticated, .userUnauthenticated):
             true
         case (.unableToLoadStores, .unableToLoadStores):
+            true
+        case (.syncV2IsNotEnabled, .syncV2IsNotEnabled):
             true
         default:
             false

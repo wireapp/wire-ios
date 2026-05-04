@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,12 +54,6 @@ final class ConversationAvatarView: UIView {
         case let .connect(users: users):
             configureForOneOnOne(users)
         case let .conversation(conversation: conversation) where conversation.conversationType == .group:
-            let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
-            if let user = users.first, user.isServiceUser {
-                configureForOneOnOne(users)
-                break
-            }
-
             configureForGroup(conversation)
         case let .conversation(conversation: conversation) where conversation.conversationType == .oneOnOne:
             let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
