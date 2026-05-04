@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ extension ZMUserSession {
 
     public var isLoggedIn: Bool {
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
-        let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
+        let needsToRegisterMLSClient = applicationStatusDirectory.clientRegistrationStatus
+            .needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync
 
         return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient
@@ -77,17 +78,29 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.dispatchGroup?.notify(on: .main) {
+        syncManagedObjectContext.perform {
             self.tearDown()
-            completion()
+        }
+
+        completion()
+    }
+
+    func close(deleteCookie: Bool) async {
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            close(deleteCookie: deleteCookie) {
+                guard !resumed else { return }
+                resumed = true
+                continuation.resume()
+            }
         }
     }
 
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
-            let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
-            let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
-            let apiVersion = BackendInfo.apiVersion
+            let accountID = ZMUser.selfUser(in: viewContext).remoteIdentifier,
+            let selfClientIdentifier = ZMUser.selfUser(in: viewContext).selfClient()?.remoteIdentifier,
+            let apiVersion = resolvedBackendMetadata.apiVersion
         else {
             return
         }

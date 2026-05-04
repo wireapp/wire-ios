@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import SwiftUI
 import UIKit
-import WireAPI
 import WireAuthentication
+import WireAuthenticationAPI
 import WireCommonComponents
+import WireCountly
 import WireDataModel
+import WireDesign
+import WireFoundation
+import WireNetwork
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -39,9 +46,9 @@ final class AuthenticationInterfaceBuilder {
         backendEnvironmentProvider()
     }
 
-    private var environment: WireTransport.BackendEnvironment {
-        BackendEnvironment.shared
-    }
+    let defaultEnvironment: BackendEnvironment2
+
+    private var accountSelector: AccountSelector?
 
     // MARK: - Initialization
 
@@ -50,10 +57,14 @@ final class AuthenticationInterfaceBuilder {
 
     init(
         featureProvider: AuthenticationFeatureProvider,
-        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+        accountSelector: AccountSelector?,
+        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared },
+        defaultEnvironment: BackendEnvironment2
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+        self.accountSelector = accountSelector
+        self.defaultEnvironment = defaultEnvironment
     }
 
     // MARK: - Interface Building
@@ -74,72 +85,85 @@ final class AuthenticationInterfaceBuilder {
     ) -> AuthenticationStepViewController? {
         switch step {
         case .wireAuthenticationModule:
-            let assembly = WireAuthenticationAssembly()
-            let rootView = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
-                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                defaultAPIVersion: .v8,
-                accountsURL: environment.accountsURL,
-                passwordValidator: AuthenticationPasswordValidator()
-            ) {
-                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+            let environment: BackendEnvironment2 = defaultEnvironment
+
+            let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+            let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
+                RegistrationAnalyticsTracker(
+                    analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .standard
+                )
             }
 
-            return AuthenticationHostingController(rootView: rootView)
+            let (rootView, bridge) = wireAuthenticationAssembly(
+                authenticationType: .new,
+                environment: environment,
+                registrationAnalyticsTracker: registrationAnalyticsTracker
+            )
+
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
             return landingViewController
 
-        case let .reauthenticate(credentials, _, isSignedOut):
-            let viewController: AuthenticationStepController
-
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
-                // Is the user has SSO enabled, show the screen to log in with SSO
-                let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
-                viewController = makeViewController(for: companyLoginStep)
-
-            } else {
-                let prefill: AuthenticationPrefilledCredentials? = if let credentials, credentials.emailAddress != nil {
-                    AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
-                } else {
-                    nil
-                }
-
-                viewController = makeCredentialsViewController(for: .reauthentication(prefill))
+        case let .reauthenticate(credentials, environment, _, _):
+            let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+            let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
+                RegistrationAnalyticsTracker(
+                    analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .standard
+                )
             }
 
-            // Add the bar button item to sign out
-            viewController.setRightItem(
-                L10n.Localizable.Registration.Signin.TooManyDevices.SignOutButton.title,
-                withAction: .signOut(warn: true),
-                accessibilityID: "signOutButton"
+            let authenticationType: WireAuthenticationAPI.AuthenticationType
+            if credentials?.usesCompanyLogin == true {
+                authenticationType = .reauthSSO
+            } else if let email = credentials?.emailAddress {
+                authenticationType = .reauthEmail(email)
+            } else {
+                assertionFailure("invalid state: reauthentication without email credentials")
+                authenticationType = .new
+            }
+
+            // If there's no environment, then it probably means that the user
+            // hasn't yet migrated to multibackend support yet. Fallback to the
+            // legacy environment to allow them to reauthenticate.
+            let (rootView, bridge) = wireAuthenticationAssembly(
+                authenticationType: authenticationType,
+                environment: environment ?? BackendEnvironment2(BackendEnvironment.shared),
+                registrationAnalyticsTracker: registrationAnalyticsTracker
             )
-            return viewController
+
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()
@@ -271,5 +295,44 @@ final class AuthenticationInterfaceBuilder {
             .FlowType
     ) -> AuthenticationCredentialsViewController {
         .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
+    }
+
+    @MainActor
+    private func wireAuthenticationAssembly(
+        authenticationType: WireAuthenticationAPI.AuthenticationType,
+        environment: BackendEnvironment2,
+        registrationAnalyticsTracker: RegistrationAnalyticsTracker?
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
+        let assembly = WireAuthenticationAssembly()
+        let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+            .map { account in
+                account.toUIModel { [weak self] in
+                    self?.accountSelector?.switchTo(account: account)
+                }
+            }
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+        }
+
+        let (view, bridge) = assembly.assemble(
+            authenticationType: authenticationType,
+            environment: environment,
+            minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+            preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
+            howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+            howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+            privacyPolicyURL: WireURLs.shared.privacyPolicy,
+            termsOfUseURL: WireURLs.shared.legal,
+            passwordValidator: AuthenticationPasswordValidator(),
+            ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+            appStoreURL: WireURLs.shared.appOnItunes,
+            accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
+            registrationAnalyticsTracker: registrationAnalyticsTracker
+        )
+
+        return (
+            view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
+            bridge: bridge
+        )
     }
 }

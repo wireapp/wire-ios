@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -167,6 +167,11 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 - (NSString *)payloadLabel
 {
     return [[self.payload asDictionary] optionalStringForKey:@"label"];
+}
+
+- (NSString *)payloadMessage
+{
+    return [[self.payload asDictionary] optionalStringForKey:@"message"];
 }
 
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext
 
-    func processEvent() async throws {
+    func processEvent() async {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: revisit this implementation
         let notification = AccountDeletedNotification(context: context)

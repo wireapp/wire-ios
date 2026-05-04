@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ private typealias Username = L10n.Localizable.Registration.Signin.Username
 final class AddUsernameStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
-    var mainView: ViewDescriptor & ValueSubmission
+    let mainView: ViewDescriptor & ValueSubmission
     let headline: String
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription? = nil

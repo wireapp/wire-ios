@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -186,15 +186,15 @@ final class SettingsClientViewController: UIViewController,
     func onVerifiedChanged(_ sender: UISwitch!) {
         let selfClient = userSession.selfUserClient
 
-        userSession.enqueue({
+        userSession.enqueue {
             if sender.isOn {
                 selfClient?.trustClient(self.userClient)
             } else {
                 selfClient?.ignoreClient(self.userClient)
             }
-        }, completionHandler: {
+        } completionHandler: {
             sender.isOn = self.userClient.verified
-        })
+        }
     }
 
     // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -322,6 +322,7 @@ final class SettingsClientViewController: UIViewController,
             removalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
+                userSession: userSession,
                 credentials: credentials,
                 completion: completion
             )

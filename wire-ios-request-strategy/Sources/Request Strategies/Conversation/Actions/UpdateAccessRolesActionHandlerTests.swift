@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             self.accessRoles = [.teamMember, .nonTeamMember, .guest]
         }
 
-        sut = UpdateAccessRolesActionHandler(context: syncMOC)
+        sut = UpdateAccessRolesActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {
@@ -188,7 +192,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                 ConversationAccessRoleV2.teamMember,
                 ConversationAccessRoleV2.nonTeamMember,
                 ConversationAccessRoleV2.guest,
-                ConversationAccessRoleV2.service
+                ConversationAccessRoleV2.app
             ])
 
             sut.handleResponse(response, action: action)

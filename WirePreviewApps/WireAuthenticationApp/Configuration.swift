@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,23 +17,24 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
+import WireAuthentication
+import WireNetwork
+import WireNetworkSupport
 import WireReusableUIComponents
 
 struct Configuration {
 
-    let defaultBackendEnvironment: BackendEnvironment
+    let defaultBackendEnvironment: BackendEnvironmentType
     let minTLSVersion: TLSVersion
     let defaultAPIVersion: APIVersion
     let accountsURL: URL
     let passwordValidator: any PasswordValidator
 
     static let live = Configuration(
-        defaultBackendEnvironment: .anta,
+        defaultBackendEnvironment: .bella,
         minTLSVersion: .v1_3,
         defaultAPIVersion: .v8,
-        accountsURL: .antaAccountsURL,
+        accountsURL: .bellaAccountsURL,
         passwordValidator: LoginPasswordValidator()
     )
 
@@ -60,10 +61,18 @@ private extension BackendEnvironment {
         proxySettings: nil
     )
 
+    static let bella = BackendEnvironment(
+        url: URL(string: "https://nginz-https.bella.wire.link")!,
+        webSocketURL: URL(string: "https://nginz-ssl.bella.wire.link")!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+
 }
 
 private extension URL {
 
     static let antaAccountsURL = URL(string: "https://account.anta.wire.link")!
+    static let bellaAccountsURL = URL(string: "https://account.bella.wire.link")!
 
 }

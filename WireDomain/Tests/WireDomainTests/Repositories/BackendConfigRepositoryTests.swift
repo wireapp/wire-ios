@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,28 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class BackendConfigRepositoryTests: XCTestCase {
     private var sut: BackendConfigRepository!
-    private var backendInfoAPI: MockBackendInfoAPI!
+    private var mlsAPI: MockMLSAPI!
     private var backendConfigLocalStore: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        backendInfoAPI = MockBackendInfoAPI()
+        mlsAPI = MockMLSAPI()
         backendConfigLocalStore = MockBackendConfigLocalStoreProtocol()
         sut = BackendConfigRepository(
-            backendInfoAPI: backendInfoAPI,
+            mlsAPI: mlsAPI,
             backendConfigLocalStore: backendConfigLocalStore
         )
     }
 
     override func tearDown() async throws {
-        backendInfoAPI = nil
+        mlsAPI = nil
         backendConfigLocalStore = nil
         sut = nil
     }
@@ -46,13 +46,12 @@ final class BackendConfigRepositoryTests: XCTestCase {
 
     func testPullMLSBackendStatus_MLSPublicKeysAreValid_It_Invokes_And_isMLSEnabledIsTrue() async {
         // Mock
-        backendInfoAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
+        mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-                ed448: nil,
                 p256: "BM036midcNiOMgny9m7N",
                 p384: "BPSlomkR8K4BcFLGTDOJx",
-                p512: "BAC3OmJi7rAPFAIXjU"
+                p521: "BAC3OmJi7rAPFAIXjU"
             )
         )
         backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in
@@ -63,20 +62,19 @@ final class BackendConfigRepositoryTests: XCTestCase {
         await sut.pullMLSBackendStatus()
 
         // Then
-        XCTAssertEqual(backendInfoAPI.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeys_Invocations.count, 1)
         XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
         XCTAssertTrue(backendConfigLocalStore.isMLSEnabled)
     }
 
     func testPullMLSBackendStatus_MLSPublicKeysAreInvalid_It_Invokes_And_isMLSEnabledIsFalse() async {
         // Mock
-        backendInfoAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
+        mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: nil,
-                ed448: nil,
                 p256: nil,
                 p384: nil,
-                p512: nil
+                p521: nil
             )
         )
         backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in
@@ -87,7 +85,7 @@ final class BackendConfigRepositoryTests: XCTestCase {
         await sut.pullMLSBackendStatus()
 
         // Then
-        XCTAssertEqual(backendInfoAPI.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeys_Invocations.count, 1)
         XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
         XCTAssertFalse(backendConfigLocalStore.isMLSEnabled)
     }

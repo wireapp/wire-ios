@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 extension ZMConversation {
     enum Action: Equatable {
 
-        case deleteGroup
+        case delete
         case moveToFolder
         case removeFromFolder(folder: String)
         case clearContent
@@ -39,7 +40,7 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter { $0 != .deleteGroup }
+        actions.filter { $0 != .delete }
     }
 
     var detailActions: [Action] {
@@ -64,7 +65,8 @@ extension ZMConversation {
         var actions = [Action]()
         actions.append(contentsOf: availableStandardActions())
         actions.append(.clearContent)
-        if teamRemoteIdentifier == nil, let connectedUser {
+        if let connectedUser,
+           connectedUser.teamIdentifier == nil || connectedUser.teamIdentifier != ZMUser.selfUser()?.teamIdentifier {
             actions.append(.block(isBlocked: connectedUser.isBlocked))
         }
         return actions
@@ -88,7 +90,7 @@ extension ZMConversation {
         }
 
         if selfUser.canDeleteConversation(self) {
-            actions.append(.deleteGroup)
+            actions.append(.delete)
         }
 
         return actions
@@ -141,7 +143,7 @@ extension ZMConversation.Action {
     fileprivate var isDestructive: Bool {
         switch self {
         case .remove,
-             .deleteGroup:
+             .delete:
             true
         default: false
         }
@@ -152,7 +154,7 @@ extension ZMConversation.Action {
         typealias ProfileLocale = L10n.Localizable.Profile
 
         switch self {
-        case .deleteGroup:
+        case .delete:
             return MetaMenuLocale.delete
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
@@ -183,8 +185,21 @@ extension ZMConversation.Action {
         }
     }
 
+    var accessibilityIdentifier: String? {
+        switch self {
+        case .archive: Locators.ConversationDetailsActions.archive.rawValue
+        case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
+        case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
+        default: nil
+        }
+    }
+
     func alertAction(handler: @escaping () -> Void) -> UIAlertAction {
-        .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
+        .init(
+            title: title,
+            style: isDestructive ? .destructive : .default,
+            accessibilityIdentifier: accessibilityIdentifier
+        ) { _ in handler() }
     }
 
     @available(

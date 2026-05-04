@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationCreateEventProcessorTests: XCTestCase {
 
@@ -59,13 +59,13 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static let conversationID = ConversationID(uuid: UUID(), domain: "domain.com")
+        static let conversationID = ConversationID(id: UUID(), domain: "domain.com")
 
-        static let senderID = UserID(uuid: UUID(), domain: "domain.com")
+        static let senderID = UserID(id: UUID(), domain: "domain.com")
 
-        static let conversation = WireAPI.Conversation(
+        static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
+            qualifiedID: .init(id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             type: .group,
             messageProtocol: .proteus,

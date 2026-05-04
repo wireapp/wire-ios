@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
@@ -62,6 +63,11 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
 
     func test_mlsMigrationPotentialGap() {
         let message = makeMessage(messageType: .mlsMigrationPotentialGap)
+        verify(message: message)
+    }
+
+    func test_userRemovedFromTeam() {
+        let message = makeMessage(messageType: .userRemovedFromTeam)
         verify(message: message)
     }
 

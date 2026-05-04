@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         message.conversation = otherUserConversation
 
         // WHEN
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
 
         // THEN
         XCTAssertEqual(cellDescription.configuration.senderName, otherUser.name)
@@ -41,7 +41,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         message.conversation = otherUserConversation
 
         // WHEN
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
 
         // THEN
         XCTAssertEqual(cellDescription.configuration.senderName, "You")
@@ -55,7 +55,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         message.serverTimestamp = Date(timeIntervalSince1970: 1_497_798_000)
 
         // WHEN
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
 
         // THEN
         XCTAssertEqual(cellDescription.configuration.timestamp, "Original message from 6/18/17")
@@ -69,7 +69,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         message.serverTimestamp = .today(at: 9, 41)
 
         // WHEN
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
 
         // THEN
         XCTAssertEqual(cellDescription.configuration.timestamp, "Original message from 9:41 AM")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public final class PushTokenService: PushTokenServiceInterface {
 
@@ -38,7 +39,9 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Methods
 
     public func storeLocalToken(_ token: PushToken?) {
-        Logging.push.safePublic("setting local push token: \(token?.tokenType)")
+        if PushTokenStorage.pushToken != nil, token != PushTokenStorage.pushToken {
+            WireLogger.push.info("updating token \(token == nil ? "to nil" : "")", attributes: .safePublic)
+        }
         PushTokenStorage.pushToken = token
         onTokenChange?(token)
     }
@@ -48,8 +51,6 @@ public final class PushTokenService: PushTokenServiceInterface {
         clientID: String,
         in context: NotificationContext
     ) async throws {
-        Logging.push.safePublic("registering push token: \(token.tokenType)")
-
         var action = RegisterPushTokenAction(
             token: token,
             clientID: clientID
@@ -58,7 +59,7 @@ public final class PushTokenService: PushTokenServiceInterface {
         do {
             try await action.perform(in: context)
         } catch let error as RegisterPushTokenAction.Failure {
-            Logging.push.safePublic("registering push token: \(token.tokenType), failed: \(error)")
+            WireLogger.push.error("registering push token failed: \(error)")
             throw error
         }
 
@@ -70,7 +71,7 @@ public final class PushTokenService: PushTokenServiceInterface {
         excluding excludedToken: PushToken? = nil,
         in context: NotificationContext
     ) async throws {
-        Logging.push.safePublic("unregister remote tokens...")
+        WireLogger.push.info("unregister remote tokens...")
 
         var getTokensAction = GetPushTokensAction(clientID: clientID)
         var remoteTokens = [PushToken]()
@@ -78,19 +79,22 @@ public final class PushTokenService: PushTokenServiceInterface {
         do {
             remoteTokens = try await getTokensAction.perform(in: context)
         } catch let error as GetPushTokensAction.Failure {
-            Logging.push.safePublic("unregister remote tokens, failed: \(error)")
+            WireLogger.push.error("unregister remote tokens, getTokensAction failed: \(error)")
             throw error
         }
 
         do {
             for remoteToken in remoteTokens where remoteToken != excludedToken {
-                Logging.push.safePublic("unregister invalid token of type: \(remoteToken.tokenType)...")
+                WireLogger.push.debug("unregister invalid token: <\(remoteToken.deviceToken.readableHash)>")
                 var removeAction = RemovePushTokenAction(deviceToken: remoteToken.deviceTokenString)
                 try await removeAction.perform(in: context)
-                Logging.push.safePublic("unregister invalid token of type: \(remoteToken.tokenType), success")
+                WireLogger.push
+                    .debug(
+                        "unregister invalid token of type: <\(remoteToken.deviceToken.readableHash)>, success"
+                    )
             }
         } catch let error as RemovePushTokenAction.Failure {
-            Logging.push.safePublic("unregister remote tokens, failed: \(error)")
+            WireLogger.push.error("unregister remote tokens, failed: \(error)")
             throw error
         }
 
@@ -139,27 +143,12 @@ public extension PushTokenServiceInterface {
             in: context
         )
 
+        // note [F] not sure why we do this, could this be done by backend? [WPB-17477]
         try await unregisterRemoteTokens(
             clientID: clientID,
             excluding: localToken,
             in: context
         )
-    }
-
-}
-
-// MARK: - Helpers
-
-extension PushToken.TokenType: SafeForLoggingStringConvertible {
-
-    public var safeForLoggingDescription: String {
-        switch self {
-        case .standard:
-            "standard"
-
-        case .voip:
-            "voip"
-        }
     }
 
 }

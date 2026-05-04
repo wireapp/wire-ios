@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,12 +34,7 @@ struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     let provider: (any AnalyticsEventTrackerProvider)?
 
     func invoke() throws {
-        do {
-            try service.disableTracking()
-        } catch AnalyticsServiceError.serviceIsNotConfigured {
-            // Already disabled, don't consider it an error
-        }
-
+        try service.disableTracking()
         provider?.setAnalyticsEventTracker(nil)
     }
 

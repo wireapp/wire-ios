@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,15 @@ import Foundation
 public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let requestFactory: ClientMessageRequestFactory = .init()
+    fileprivate let requestFactory: ClientMessageRequestFactory
     private var token: Any?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let downloadPredicate = NSPredicate { object, _ -> Bool in
@@ -117,7 +119,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     )
                 }
 
-            case .v2, .v3, .v4, .v5, .v6, .v7, .v8:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }

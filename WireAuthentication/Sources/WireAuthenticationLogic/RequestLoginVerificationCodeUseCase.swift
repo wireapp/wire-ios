@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 
 package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
 
@@ -29,13 +29,11 @@ package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCode
 
     package func invoke(
         email: String
-    ) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+    ) async throws {
         do {
             try await authenticationAPI.requestVerificationCode(for: email)
         } catch AuthenticationAPIError.invalidEmail {
-            throw .invalidEmail
-        } catch {
-            throw .unexpected(error)
+            throw RequestLoginVerificationCodeUseCaseFailure.invalidEmail
         }
     }
 

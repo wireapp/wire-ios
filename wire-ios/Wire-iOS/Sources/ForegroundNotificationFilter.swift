@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ final class ForegroundNotificationFilter {
     }
 }
 
-// TO DO: Ask for the logic, not clear when a notification shuld be presented
+// TO DO: Ask for the logic, not clear when a notification should be presented
 extension ForegroundNotificationFilter: ForegroundNotificationResponder {
 
     @MainActor

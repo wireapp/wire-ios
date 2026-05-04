@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,17 +97,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 - (void)markAsUnread;
 
 /// If that conversation exists, it is returned, @c nil otherwise.
-+ (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ContextProvider> )session;
-
-@end
-
-@interface ZMConversation (History)
-
-/// This will reset the message history to the last message in the conversation.
-- (void)clearMessageHistory;
-
-/// UI should call this method on opening cleared conversation.
-- (void)revealClearedConversation;
++ (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMContextProvider> )session;
 
 @end
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireTesting
 
-extension MockServiceUserType {
+extension MockUserType {
 
     /// Creates a service user with the specified name.
     ///
@@ -28,8 +28,8 @@ extension MockServiceUserType {
     ///
     /// - Returns: A standard mock service user object with default values.
 
-    class func createServiceUser(name: String) -> MockServiceUserType {
-        let serviceUser = MockServiceUserType()
+    class func createBot(name: String) -> MockUserType {
+        let serviceUser = MockUserType()
         serviceUser.name = name
         serviceUser.displayName = name
         serviceUser.initials = PersonName.person(withName: name, schemeTagger: nil).initials
@@ -37,6 +37,8 @@ extension MockServiceUserType {
         serviceUser.zmAccentColor = .amber
         serviceUser.providerIdentifier = UUID.create().transportString()
         serviceUser.serviceIdentifier = UUID.create().transportString()
+        serviceUser.mockedIsBot = true
         return serviceUser
     }
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,9 +34,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     }
 
     public var mayBeReachable: Bool = true
-    public var isMobileConnection: Bool = true
     public var oldMayBeReachable: Bool = true
-    public var oldIsMobileConnection: Bool = true
 
     public func tearDown() {}
 }
@@ -50,7 +48,7 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
     public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession ?? foregroundSession
-        self.allSessions = [foregroundSession, backgroundSession].compactMap { $0 }
+        self.allSessions = [foregroundSession, backgroundSession].compactMap(\.self)
     }
 
     var tearDownCalled = false
@@ -94,7 +92,9 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
             initialAccessToken: nil,
             applicationGroupIdentifier: containerIdentifier,
             applicationVersion: "1.0",
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            selfClientID: nil,
+            isSyncV2Enabled: false
         )
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ public protocol PresentationDelegate: AnyObject {
     func showUserProfile(user: UserType)
 
     /// Called when the connection screen for a centain user shold be presented
-    /// - parameter userId: The userId which will be connected to.
-    func showConnectionRequest(userId: UUID)
+    /// - parameter qualifiedID: The qualified user ID which will be connected to.
+    func showConnectionRequest(qualifiedID: QualifiedID)
 
     /// Called when an attempt was made to process a URLAction but failed
     ///

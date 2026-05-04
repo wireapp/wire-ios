@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,21 +17,22 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
 final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
-
-    typealias Context = Any
 
     var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: Context
+        context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
     ) -> [AuthenticationCoordinatorAction]? {
         switch currentStep {
         case .wireAuthenticationModule:
-            // TODO: [WPB-16044] Return the appropriate step action here.
-            return nil
+            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
+
+        case .reauthenticate:
+            return [.completeWireAuthenticationLogin(context)]
 
         default:
             assertionFailure("Got auth flow success but on wrong step: \(currentStep)")

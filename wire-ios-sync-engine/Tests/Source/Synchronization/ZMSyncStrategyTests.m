@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,13 +77,10 @@
         [self.syncMOC saveOrRollback];
     }];
 
-    self.syncStateDelegate = [[MockSyncStateDelegate alloc] init];
-    self.mockEventConsumer = [[MockEventConsumer alloc]  init];
     self.mockContextChangeTracker = [[MockContextChangeTracker alloc] init];
     
     MockStrategyDirectory *mockStrategyDirectory =
     [[MockStrategyDirectory alloc] init];
-    mockStrategyDirectory.eventConsumers = @[self.mockEventConsumer];
     mockStrategyDirectory.contextChangeTrackers = @[self.mockContextChangeTracker];
     
     self.fetchRequestForTrackedObjects1 = [NSFetchRequest fetchRequestWithEntityName:@"User"];
@@ -96,14 +93,12 @@
     NotificationDispatcher *notificationDispatcher =
     [[NotificationDispatcher alloc] initWithManagedObjectContext:self.coreDataStack.viewContext];
     
-    EventProcessingTracker *eventProcessingTracker = [[EventProcessingTracker alloc] init];
         
     self.sut = [[ZMSyncStrategy alloc] initWithContextProvider:self.coreDataStack
                                        notificationsDispatcher:notificationDispatcher
                                                operationStatus:self.operationStatus
                                                    application:self.application
-                                             strategyDirectory:mockStrategyDirectory
-                                        eventProcessingTracker:eventProcessingTracker];
+                                             strategyDirectory:mockStrategyDirectory];
     
     self.application.applicationState = UIApplicationStateBackground;
     
@@ -115,7 +110,6 @@
     self.operationStatus = nil;
     self.fetchRequestForTrackedObjects1 = nil;
     self.fetchRequestForTrackedObjects2 = nil;
-    self.syncStateDelegate = nil;
     [self.sut tearDown];
     self.sut = nil;
     [super tearDown];

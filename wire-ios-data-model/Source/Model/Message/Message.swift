@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ public extension ZMConversationMessage {
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
     var isText: Bool {
         textMessageData != nil
+    }
+
+    var isTextWithNoLinks: Bool {
+        isText && !hasLinks
     }
 
     var isImage: Bool {
@@ -62,6 +66,16 @@ public extension ZMConversationMessage {
 
     var isSystem: Bool {
         systemMessageData != nil
+    }
+
+    var isMultipart: Bool {
+        multipartMessageData != nil
+    }
+
+    // Checks if message has link preview or link attachment
+    // Does not check if there is Markdown links
+    var hasLinks: Bool {
+        textMessageData?.linkPreview != nil || linkAttachments?.first != nil
     }
 
     var isNormal: Bool {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSettingsUI
+import WireSyncEngine
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -38,6 +39,8 @@ import WireSettingsUI
 protocol SettingsCellDescriptorType: AnyObject {
 
     static var cellType: SettingsTableCellProtocol.Type { get }
+    typealias PresentationStyle = SettingsCellDescriptorPresentationStyle
+    typealias AccessoryView = SettingsCellDescriptorAccessoryView
 
     var visible: Bool { get }
     var title: String { get }
@@ -197,6 +200,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     let settingsCoordinator: AnySettingsCoordinator
+    let userSession: UserSession
 
     weak var viewController: UIViewController?
 
@@ -209,7 +213,8 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         icon: StyleKitIcon? = nil,
         accessibilityBackButtonText: String,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) {
         self.items = items
         self.title = title
@@ -220,6 +225,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.accessibilityBackButtonText = accessibilityBackButtonText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
         self.settingsCoordinator = settingsCoordinator
+        self.userSession = userSession
     }
 
     func featureCell(_ cell: SettingsCellType) {
@@ -230,7 +236,9 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
         cell.icon = icon
         if let cell = cell as? SettingsTableCell {
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
+            cell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
+            cell.accessibilityTraits = .button
         }
     }
 
@@ -243,7 +251,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator)
+        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator, userSession: userSession)
     }
 }
 
@@ -289,20 +297,18 @@ extension SettingsPropertyName {
             return SoundMenu.Ping.title
         case .accentColor:
             return Settings.AccountPictureGroup.color
+        case .conversationBackground:
+            return Settings.AccountPictureGroup.Background.title
         case .disableSendButton:
             return Settings.PopularDemand.SendButton.title
         case .disableCallKit:
             return Settings.Callkit.caption
         case .muteIncomingCallsWhileInACall:
             return Settings.MuteOtherCall.caption
-        case .tweetOpeningOption:
-            return LinkOptions.Twitter.title
         case .mapsOpeningOption:
             return LinkOptions.Maps.title
         case .browserOpeningOption:
             return LinkOptions.Browser.title
-        case .callingProtocolStrategy:
-            return "Calling protocol"
         case .enableBatchCollections:
             return "Use AssetCollectionBatched"
         case .lockApp:
@@ -311,6 +317,8 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
+        case .collapseOwnMessages:
+            return Settings.PrivacySecurity.CollapseOwnMessages.title
         // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title

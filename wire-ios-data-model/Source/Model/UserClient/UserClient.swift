@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import CoreLocation
 import Foundation
-import WireCryptobox
 import WireLogging
 import WireUtilities
 
@@ -64,6 +63,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
+
+    /// Client has the capability to use new `consumable-notifications` synchronization system (v8+)
+    @NSManaged public var isConsumableNotificationsCapable: Bool
 
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
@@ -277,28 +279,13 @@ public class UserClient: ZMManagedObject, UserClientType {
         get async {
             guard
                 let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
-                let proteusProvider = await managedObjectContext?
-                .perform({ self.managedObjectContext?.proteusProvider })
+                let proteusService = await managedObjectContext?
+                .perform({ [managedObjectContext] in managedObjectContext?.proteusService })
             else {
                 return false
             }
 
-            var hasSession = false
-
-            await proteusProvider.performAsync(
-                withProteusService: { proteusService in
-                    hasSession = await proteusService.sessionExists(id: sessionID)
-                },
-                withKeyStore: { keyStore in
-                    managedObjectContext?.performAndWait {
-                        keyStore.encryptionContext.perform { sessionsDirectory in
-                            hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
-                        }
-                    }
-                }
-            )
-
-            return hasSession
+            return await proteusService.sessionExists(id: sessionID)
         }
     }
 
@@ -323,7 +310,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             // Delete session and fingerprint
             try? await syncClient.deleteSession()
 
-            // Delete should happen on sync context since the cryptobox could be accessed only from there
             await syncMOC.perform {
                 // Mark that we need notify the other party about the session reset
                 syncClient.needsToNotifyOtherUserAboutSessionReset = true
@@ -421,6 +407,9 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
+        if let capabilities = payloadAsDictionary.optionalArray(forKey: "capabilities") as? [String] {
+            client.isConsumableNotificationsCapable = capabilities.contains("consumable-notifications")
+        }
 
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
@@ -566,21 +555,12 @@ public extension UserClient {
         guard
             let context = managedObjectContext,
             await context.perform({ !self.isSelfClient() }),
-            let sessionID = await context.perform({ self.proteusSessionID })
+            let sessionID = await context.perform({ self.proteusSessionID }),
+            let proteusService = await context.perform({ context.proteusService })
         else {
             return
         }
-        let proteusProvider = await context.perform { context.proteusProvider }
-        try await proteusProvider.performAsync(
-            withProteusService: { proteusService in
-                try await proteusService.deleteSession(id: sessionID)
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    sessionsDirectory.delete(sessionID.mapToEncryptionSessionID())
-                }
-            }
-        )
+        try await proteusService.deleteSession(id: sessionID)
     }
 
     func establishSessionWithClient(
@@ -588,95 +568,23 @@ public extension UserClient {
         usingPreKey preKey: String
     ) async -> Bool {
         guard
-            let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider }),
-            let sessionId = await managedObjectContext?.perform({ client.sessionIdentifier })
+            let context = managedObjectContext,
+            let proteusService = await context.perform({ context.proteusService }),
+            let sessionId = await context.perform({ client.proteusSessionID })
         else {
             return false
         }
 
-        return await establishSessionWithClient(
-            sessionId: sessionId,
-            usingPreKey: preKey,
-            proteusProviding: proteusProvider
-        )
-    }
-
-    /// Creates a session between the selfClient and the given userClient
-    /// Returns false if the session could not be established
-    /// Use this method only for the selfClient
-    func establishSessionWithClient(
-        sessionId: EncryptionSessionIdentifier,
-        usingPreKey preKey: String,
-        proteusProviding: ProteusProviding
-    ) async -> Bool {
-        await proteusProviding.performAsync { proteusService in
-            await establishSession(
-                through: proteusService,
-                sessionId: sessionId,
-                preKey: preKey
-            )
-        } withKeyStore: { keystore in
-            establishSession(
-                through: keystore,
-                sessionId: sessionId,
-                preKey: preKey
-            )
-        }
-    }
-
-    private func establishSession(
-        through proteusService: ProteusServiceInterface,
-        sessionId: EncryptionSessionIdentifier,
-        preKey: String
-    ) async -> Bool {
         do {
             // swiftlint:disable:next todo_requires_jira_link
             // TODO: check if we should delete session if it exists before creating new one
-            let proteusSessionId = ProteusSessionID(
-                domain: sessionId.domain,
-                userID: sessionId.userId,
-                clientID: sessionId.clientId
-            )
-            try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
+
+            try await proteusService.establishSession(id: sessionId, fromPrekey: preKey)
             return true
         } catch {
             zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")
             return false
         }
-    }
-
-    func establishSession(
-        through keystore: UserClientKeysStore,
-        sessionId: EncryptionSessionIdentifier,
-        preKey: String
-    ) -> Bool {
-        var didEstablishSession = false
-        managedObjectContext?.performAndWait {
-
-            keystore.encryptionContext.perform { sessionsDirectory in
-
-                // Session is already established?
-                if sessionsDirectory.hasSession(for: sessionId) {
-                    zmLog.debug("Session with \(sessionId) was already established, re-creating")
-                    sessionsDirectory.delete(sessionId)
-                }
-            }
-
-            // Because of caching within the `perform` block, it commits to disk only at the end of a block.
-            // I don't think the cache is smart enough to perform the sum of operations (delete + recreate)
-            // if at the end of the block the session is still there. Just to be safe, I split the operations
-            // in two separate `perform` blocks.
-
-            keystore.encryptionContext.perform { sessionsDirectory in
-                do {
-                    try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
-                    didEstablishSession = true
-                } catch {
-                    zmLog.error("Cannot create session for prekey \(preKey)")
-                }
-            }
-        }
-        return didEstablishSession
     }
 
     /// Use this method only for the selfClient
@@ -798,7 +706,7 @@ public extension UserClient {
             }
 
             if user.isSelfUser {
-                let predicateFactory = ConversationPredicateFactory(selfTeam: user.team)
+                let predicateFactory = ConversationPredicateFactory(selfUser: user, selfTeam: user.team)
                 let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = predicateFactory.predicateForConversationsIncludingArchived()
                 let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []
@@ -846,88 +754,6 @@ public extension UserClient {
 
 }
 
-// MARK: - Session identifier
-
-extension UserClient {
-
-    /// Session identifier of the local cryptobox session with this client.
-
-    public var sessionIdentifier: EncryptionSessionIdentifier? {
-        if needsSessionMigration {
-            sessionIdentifier_V2
-        } else {
-            sessionIdentifier_V3
-        }
-    }
-
-    /// Previous session identifiers.
-
-    private var sessionIdentifier_V1: String? {
-        remoteIdentifier
-    }
-
-    private var sessionIdentifier_V2: EncryptionSessionIdentifier? {
-        guard
-            let userIdentifier = user?.remoteIdentifier,
-            let clientIdentifier = remoteIdentifier
-        else {
-            return nil
-        }
-
-        return EncryptionSessionIdentifier(
-            userId: userIdentifier.uuidString,
-            clientId: clientIdentifier
-        )
-    }
-
-    private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
-        guard
-            let user,
-            let domain = user.domain ?? BackendInfo.domain,
-            let userIdentifier = user.remoteIdentifier,
-            let clientIdentifier = remoteIdentifier
-        else {
-            return nil
-        }
-
-        return EncryptionSessionIdentifier(
-            domain: domain,
-            userId: userIdentifier.uuidString,
-            clientId: clientIdentifier
-        )
-    }
-
-    /// Migrates from old session identifier to new session identifier if needed.
-
-    public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
-        guard
-            let sessionIdentifier_V1,
-            let sessionIdentifier = sessionIdentifier_V2
-        else {
-            return
-        }
-
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V1,
-            to: sessionIdentifier
-        )
-    }
-
-    public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
-        guard
-            let sessionIdentifier_V2,
-            let sessionIdentifier = sessionIdentifier_V3
-        else {
-            return
-        }
-
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V2.rawValue,
-            to: sessionIdentifier
-        )
-    }
-}
-
 // MARK: - Proteus Session ID
 
 extension UserClient {
@@ -938,11 +764,6 @@ extension UserClient {
         } else {
             proteusSessionID_V3
         }
-    }
-
-    private var proteusSessionID_V1: ProteusSessionID? {
-        guard let clientID = remoteIdentifier else { return nil }
-        return ProteusSessionID(fromLegacyV1Identifier: clientID)
     }
 
     private var proteusSessionID_V2: ProteusSessionID? {
@@ -962,7 +783,7 @@ extension UserClient {
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
             let user,
-            let domain = user.domain ?? BackendInfo.domain,
+            let domain = user.domain ?? managedObjectContext?.localDomain,
             let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier
         else {

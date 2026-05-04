@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,13 @@ struct EnterPasswordView: View {
 
     @Binding var password: String
     @Binding var passwordIsWrong: Bool
+    var focusPasswordFieldOnAppear = true
 
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
+    let isContextMenuAllowed: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable.ImportBackup
     private typealias Labels = L10n.Accessibility.ImportBackup
@@ -52,12 +53,8 @@ struct EnterPasswordView: View {
     @ViewBuilder private var enterPasswordView: some View {
         VStack {
 
-            if #available(iOS 16.4, *) {
-                ScrollView(content: scrollViewContent)
-                    .scrollBounceBehavior(.basedOnSize)
-            } else {
-                ScrollView(content: scrollViewContent)
-            }
+            ScrollView(content: scrollViewContent)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer()
 
@@ -89,7 +86,8 @@ struct EnterPasswordView: View {
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                focusOnAppear: true
+                focusOnAppear: focusPasswordFieldOnAppear,
+                isContextMenuAllowed: isContextMenuAllowed
             )
             .tint(passwordFieldBorderColor)
             .padding(.bottom, 8)
@@ -114,7 +112,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -127,7 +125,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -140,7 +138,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 

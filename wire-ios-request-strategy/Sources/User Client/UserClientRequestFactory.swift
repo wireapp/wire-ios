@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,12 +24,14 @@ public class UserClientRequestFactory {
 
     func deleteClientRequest(
         clientId: String,
-        password: String,
+        password: String?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest {
-        let payload: [AnyHashable: Any] = [
-            "password": password
-        ]
+        let payload: [String: Any] = if let password, !password.isEmpty {
+            ["password": password]
+        } else {
+            [:]
+        }
 
         return ZMTransportRequest(
             path: "/clients/\(clientId)",

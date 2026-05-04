@@ -1,9 +1,8 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.3.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +26,12 @@
 
 import WireCoreCrypto
 import Combine
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
+
+
+
 
 
 
@@ -391,17 +394,17 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
 
     // MARK: - createGroupConversation
 
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+    public var createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowApps: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
 
-    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
+    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowApps: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowApps: allowApps, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
 
-        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
-            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
+        guard let mock = createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_MockMethod else {
+            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion`")
         }
 
-        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
+        mock(name, users, allowGuests, allowApps, enableReceipts, messageProtocol, completion)
     }
 
     // MARK: - createTeamOneOnOneProteusConversation
@@ -582,49 +585,50 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
 
 }
 
-public class MockEventDecoderProtocol: EventDecoderProtocol {
+public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - decryptAndStoreEvents
+    // MARK: - waitUntilCanSendMessage
 
-    public var decryptAndStoreEventsPublicKeys_Invocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
-    public var decryptAndStoreEventsPublicKeys_MockError: Error?
-    public var decryptAndStoreEventsPublicKeys_MockMethod: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
-    public var decryptAndStoreEventsPublicKeys_MockValue: [ZMUpdateEvent]?
+    public var waitUntilCanSendMessage_Invocations: [Void] = []
+    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
 
-    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], publicKeys: EARPublicKeys?) async throws -> [ZMUpdateEvent] {
-        decryptAndStoreEventsPublicKeys_Invocations.append((events: events, publicKeys: publicKeys))
+    public func waitUntilCanSendMessage() async {
+        waitUntilCanSendMessage_Invocations.append(())
 
-        if let error = decryptAndStoreEventsPublicKeys_MockError {
-            throw error
+        guard let mock = waitUntilCanSendMessage_MockMethod else {
+            fatalError("no mock for `waitUntilCanSendMessage`")
         }
 
-        if let mock = decryptAndStoreEventsPublicKeys_MockMethod {
-            return try await mock(events, publicKeys)
-        } else if let mock = decryptAndStoreEventsPublicKeys_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `decryptAndStoreEventsPublicKeys`")
-        }
+        await mock()
     }
 
-    // MARK: - processStoredEvents
+}
 
-    public var processStoredEventsWithCallEventsOnly_Invocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
-    public var processStoredEventsWithCallEventsOnly_MockMethod: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
+public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
 
-    public func processStoredEvents(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool, _ block: @escaping ([ZMUpdateEvent]) async -> Void) async {
-        processStoredEventsWithCallEventsOnly_Invocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
+    // MARK: - Life cycle
 
-        guard let mock = processStoredEventsWithCallEventsOnly_MockMethod else {
-            fatalError("no mock for `processStoredEventsWithCallEventsOnly`")
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: UInt64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, UInt64) async -> Void)?
+
+    public func invoke(groupID: MLSGroupID, epoch: UInt64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
         }
 
-        await mock(privateKeys, callEventsOnly, block)
+        await mock(groupID, epoch)
     }
 
 }
@@ -1226,30 +1230,6 @@ public class MockProteusMessage: ProteusMessage {
 
 }
 
-public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - waitForQuickSyncToFinish
-
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
-
-    public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
-
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
-        }
-
-        await mock()
-    }
-
-}
-
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - Life cycle
@@ -1279,54 +1259,6 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
 }
 
-public class MockSyncProgress: SyncProgress {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - currentSyncPhase
-
-    public var currentSyncPhase: SyncPhase {
-        get { return underlyingCurrentSyncPhase }
-        set(value) { underlyingCurrentSyncPhase = value }
-    }
-
-    public var underlyingCurrentSyncPhase: SyncPhase!
-
-
-    // MARK: - finishCurrentSyncPhase
-
-    public var finishCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var finishCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
-
-    public func finishCurrentSyncPhase(phase: SyncPhase) {
-        finishCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = finishCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `finishCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
-    }
-
-    // MARK: - failCurrentSyncPhase
-
-    public var failCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var failCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
-
-    public func failCurrentSyncPhase(phase: SyncPhase) {
-        failCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = failCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `failCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
-    }
-
-}
-
 public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - Life cycle
@@ -1336,11 +1268,11 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, password: String) async throws {
+    public func deleteUserClient(clientId: String, password: String?) async throws {
         deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = deleteUserClientClientIdPassword_MockError {
