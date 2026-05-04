@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "Эта резервная копия была создана в более новой или устаревшей версии Wire и не может быть восстановлена.";
 "importBackup.alert.wrongFileError.title" = "Несовместимый файл резервной копии";
 "importBackup.alert.wrongFileError.message" = "Вы не можете восстановить историю из другой учетной записи.";
+"importBackup.alert.invalidFileError.title" = "Неверный тип файла";
+"importBackup.alert.invalidFileError.message" = "Выберите файл резервной копии Wire (.wbu, .ios_wbu или .ios-wbu).";
 
 "importBackup.enterPassword.title" = "Введите пароль";
 "importBackup.enterPassword.description" = "Эта резервная копия защищена паролем.";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Продолжить";
 
 "importBackup.restoringHistory.title" = "Восстановление истории…";
+"importBackup.loadingBackup.message" = "Загрузка резервной копии…";
 "importBackup.restoringHistory.message" = "Загрузка бесед…";

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request
 
@@ -92,7 +102,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     payload: payload
                 )
 
-            case .v6, .v7, .v8, .v9:
+            case .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation
@@ -137,13 +147,14 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     from: payload,
                     in: context
                 ),
-                let groupID = await context.perform({ conversation.mlsGroupID })
+                let groupID = await context.perform({ conversation.mlsGroupID }),
+                let conversationID = await context.perform({ conversation.qualifiedID })
             else {
                 action.fail(with: .failedToProcessResponse)
                 return
             }
 
-            action.succeed(with: (groupID: groupID, publicKeys: publicKeys))
+            action.succeed(with: (conversationID: conversationID, groupID: groupID, publicKeys: publicKeys))
         }
 
     }
@@ -196,34 +207,13 @@ extension Payload {
 private extension Payload.ExternalSenderKeys {
 
     func toBackendMLSPublicKeys() -> BackendMLSPublicKeys? {
-        let ed25519RemovalKey = removal.ed25519
-            .flatMap(\.base64DecodedBytes)
-            .map(\.data)
-
-        let ed448RemovalKey = removal.ed448
-            .flatMap(\.base64DecodedBytes)
-            .map(\.data)
-
-        let p256RemovalKey = removal.p256
-            .flatMap(\.base64DecodedBytes)
-            .map(\.data)
-
-        let p384RemovalKey = removal.p384
-            .flatMap(\.base64DecodedBytes)
-            .map(\.data)
-
-        let p521RemovalKey = removal.p521
-            .flatMap(\.base64DecodedBytes)
-            .map(\.data)
-
-        return BackendMLSPublicKeys(
-            removal:
-            .init(
-                ed25519: ed25519RemovalKey,
-                ed448: ed448RemovalKey,
-                p256: p256RemovalKey,
-                p384: p384RemovalKey,
-                p521: p521RemovalKey
+        BackendMLSPublicKeys(
+            removal: .init(
+                ed25519: removal.ed25519?.base64DecodedData,
+                ed448: removal.ed448?.base64DecodedData,
+                p256: removal.p256?.base64DecodedData,
+                p384: removal.p384?.base64DecodedData,
+                p521: removal.p521?.base64DecodedData
             )
         )
     }

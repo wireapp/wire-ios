@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,13 @@ public struct User: Equatable, Sendable {
 
     public let teamID: UUID?
 
+    /// The type of a user: regular, app or bot.
+    ///
+    /// - returns: One of the three values `regular`, `app` or `bot` if talking to an API of version 12 or later, `nil`
+    /// otherwise.
+
+    public let type: UserType?
+
     /// Color accent of the user
 
     public let accentID: Int
@@ -60,6 +67,10 @@ public struct User: Equatable, Sendable {
 
     public let expiresAt: Date?
 
+    /// App related info.
+
+    public let app: AppInfo?
+
     /// Service information associated with this user
 
     public let service: Service?
@@ -71,4 +82,39 @@ public struct User: Equatable, Sendable {
     /// The user's legalhold status
 
     public let legalholdStatus: LegalholdStatus
+
+    // MARK: -
+
+    public init(
+        id: UserID,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        type: UserType?,
+        accentID: Int,
+        assets: [UserAsset],
+        deleted: Bool?,
+        email: String?,
+        expiresAt: Date?,
+        app: AppInfo?,
+        service: Service?,
+        supportedProtocols: Set<MessageProtocol>?,
+        legalholdStatus: LegalholdStatus
+    ) {
+        self.id = id
+        self.name = name
+        self.handle = handle
+        self.teamID = teamID
+        self.type = type
+        self.accentID = accentID
+        self.assets = assets
+        self.deleted = deleted
+        self.email = email
+        self.expiresAt = expiresAt
+        self.app = app
+        self.service = service
+        self.supportedProtocols = supportedProtocols
+        self.legalholdStatus = legalholdStatus
+    }
+
 }

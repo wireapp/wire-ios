@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         // gone to the background)
         try Task.checkCancellation()
 
-        let webSocket = try networkService.executeWebSocketRequest(request)
+        let webSocket = try await networkService.executeWebSocketRequest(request)
         return PushChannel(
             webSocket: webSocket,
             keepAliveInterval: keepAliveInterval
@@ -71,7 +71,12 @@ public final class PushChannelService: PushChannelServiceProtocol {
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
-        let webSocket = try networkService.executeWebSocketRequest(request)
+
+        // We don't want to proceed if not necessary (in case we've
+        // gone to the background)
+        try Task.checkCancellation()
+
+        let webSocket = try await networkService.executeWebSocketRequest(request)
 
         return PushChannelV2(
             webSocket: webSocket,

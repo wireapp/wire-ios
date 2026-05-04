@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import WireDomainPackage
 import WireFoundation
 import WireLogging
 import WireSystem
+import WireUtilitiesPackage
 
 struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
@@ -92,10 +93,11 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                         accountIdentifier: account.userIdentifier,
                         from: unzippedURL,
                         applicationContainer: sharedContainerURL,
-                        dispatchGroup: dispatchGroup
                     )
 
                     logger.debug("opening a temporary context")
+
+                    let metadata = userSession()?.resolvedBackendMetadata
 
                     // import the self client from the backup and set the correct self user relation
                     // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
@@ -103,7 +105,9 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                         .createContextProvider(
                             account: account,
                             applicationContainer: sharedContainerURL,
-                            dispatchGroup: dispatchGroup
+                            dispatchGroup: dispatchGroup,
+                            localDomain: metadata?.domain,
+                            isFederationEnabled: metadata?.isFederationEnabled ?? false
                         )
 
                     logger.debug("restoring backup of userclient")

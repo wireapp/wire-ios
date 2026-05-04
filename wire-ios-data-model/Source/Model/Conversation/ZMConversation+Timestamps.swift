@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ extension ZMConversation {
     public func savePendingLastRead() {
         guard let upperBound = pendingLastReadServerTimestamp else { return }
         let lowerBound = previousLastReadServerTimestamp ?? lastReadServerTimeStamp ?? .distantPast
-        guard lowerBound <= upperBound else { return }
+        guard lowerBound < upperBound else { return }
 
         performMarkAsReadUpdate(in: lowerBound ... upperBound)
         pendingLastReadServerTimestamp = nil
@@ -364,7 +364,7 @@ extension ZMConversation {
         needsToCalculateUnreadMessages = false
     }
 
-    /// Returns the first unread message in a converation. If the first unread message is child message
+    /// Returns the first unread message in a conversation. If the first unread message is child message
     /// of system message the parent message will be returned.
 
     @objc public var firstUnreadMessage: ZMConversationMessage? {
@@ -432,4 +432,9 @@ extension ZMConversation {
 
         return managedObjectContext.fetchOrAssert(request: fetchRequest).filter { $0.shouldGenerateUnreadCount() }
     }
+
+}
+
+public extension Notification.Name {
+    static let clearContentNotification = Notification.Name("clearContentNotification")
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,18 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.localDomain = localDomain
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        super.init(context: context)
+    }
 
     override func request(
         for action: ActionHandler<ConnectToUserAction>.Action,
@@ -32,7 +43,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         switch apiVersion {
         case .v0:
             nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -65,8 +76,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         for action: ActionHandler<ConnectToUserAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
-        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { localDomain }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
             return nil

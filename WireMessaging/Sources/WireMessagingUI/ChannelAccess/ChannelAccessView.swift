@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 package import SwiftUI
 import WireDesign
-import WireMessagingAPI
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 package struct ChannelAccessView: View {
 
@@ -149,7 +148,7 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     accentColor: .green,
                     useCase: ChannelAccessUseCase(
                         permission: nil,
-                        repository: MockChannelAccessRepositoryProtocol()
+                        repository: MockChannelRepositoryProtocol()
                     )
                 ))
 
@@ -162,7 +161,7 @@ struct ChannelAccessView_Previews: PreviewProvider {
                         accentColor: .blue,
                         useCase: ChannelAccessUseCase(
                             permission: .everyone,
-                            repository: MockChannelAccessRepositoryProtocol()
+                            repository: MockChannelRepositoryProtocol()
                         )
                     )
                 )

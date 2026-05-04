@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class CreatePersonalAccountFormPage: PageModel {
@@ -25,47 +26,53 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .any)["Enter your name"].firstMatch
-    }
-
-    var showPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["eye.slash"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterNameField.rawValue].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .any)["Enter a password"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .any)["Confirm password"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
+    }
+
+    var showPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
+    }
+
+    var showConfirmPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
     }
 
     var continueButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.continueButton.rawValue].firstMatch
     }
 
     var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+        return elementsQuery.buttons[Locators.CreatePersonalAccountFormPage.acceptTermsOfUse.rawValue]
     }
 
     func enterName(_ name: String) throws -> CreatePersonalAccountFormPage {
-        nameTextField.tap()
-        nameTextField.typeText(name)
+        try nameTextField.tapIfKeyboardNotFocused().typeText(name)
         return self
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        passwordField.tap()
+        showPasswordIcon.tap()
+        try passwordField.tapIfKeyboardNotFocused()
         passwordField.typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        confirmPasswordField.tap()
+        showConfirmPasswordIcon.tap()
+        try confirmPasswordField.tapIfKeyboardNotFocused()
         confirmPasswordField.typeText(confirmPassword)
         return self
     }
@@ -80,5 +87,4 @@ class CreatePersonalAccountFormPage: PageModel {
         acceptButton.tap()
         return try VerificationCodePage()
     }
-
 }

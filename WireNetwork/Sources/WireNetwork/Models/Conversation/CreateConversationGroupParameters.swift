@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ public struct CreateGroupConversationParameters: Sendable {
     let legacyAccessRole: ConversationAccessRole?
     let teamID: UUID?
     let isReadReceiptsEnabled: Bool
+    let skipCreator: Bool?
+    let cells: Bool?
 
     public init(
         groupType: ConversationGroupType,
@@ -42,7 +44,9 @@ public struct CreateGroupConversationParameters: Sendable {
         accessRoles: Set<ConversationAccessRole>,
         legacyAccessRole: ConversationAccessRole?,
         teamID: UUID?,
-        isReadReceiptsEnabled: Bool
+        isReadReceiptsEnabled: Bool,
+        cells: Bool? = nil, // parameter used from api v8
+        skipCreator: Bool? = nil // until really used
     ) {
         self.groupType = groupType
         self.messageProtocol = messageProtocol
@@ -55,5 +59,7 @@ public struct CreateGroupConversationParameters: Sendable {
         self.legacyAccessRole = legacyAccessRole
         self.teamID = teamID
         self.isReadReceiptsEnabled = isReadReceiptsEnabled
+        self.skipCreator = skipCreator
+        self.cells = cells
     }
 }

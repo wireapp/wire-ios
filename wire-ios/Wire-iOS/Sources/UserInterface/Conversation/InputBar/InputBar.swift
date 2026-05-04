@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 extension Settings {
     var returnKeyType: UIReturnKeyType {
@@ -108,6 +109,7 @@ final class InputBar: UIView {
     typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
 
     private let inputBarVerticalInset: CGFloat = 34
+    private let isWireDriveEnabled: Bool
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
 
@@ -225,12 +227,13 @@ final class InputBar: UIView {
         textView.isScrollEnabled = true
     }
 
-    required init(buttons: [UIButton]) {
+    required init(buttons: [UIButton], isWireDriveEnabled: Bool) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
         self.secondaryButtonsView = InputBarSecondaryButtonsView(
             editBarView: editingView,
             markdownBarView: markdownView
         )
+        self.isWireDriveEnabled = isWireDriveEnabled
 
         super.init(frame: CGRect.zero)
 
@@ -244,7 +247,7 @@ final class InputBar: UIView {
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
-        if DeveloperFlag.wireCells.isOn {
+        if isWireDriveEnabled {
             inputContainer.addArrangedSubview(attachmentsContainer)
         }
 
@@ -318,7 +321,7 @@ final class InputBar: UIView {
     }
 
     fileprivate func setupViews() {
-        textView.accessibilityIdentifier = "inputField"
+        textView.accessibilityIdentifier = Locators.ActiveConversationPage.inputField.rawValue
 
         updatePlaceholder()
         textView.lineFragmentPadding = 0
@@ -360,10 +363,10 @@ final class InputBar: UIView {
             buttonInnerContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        if DeveloperFlag.wireCells.isOn {
+        if isWireDriveEnabled {
             NSLayoutConstraint.activate([
                 attachmentsContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
-                attachmentsContainer.heightAnchor.constraint(equalToConstant: 74)
+                attachmentsContainer.heightAnchor.constraint(equalToConstant: 82)
             ])
         }
 
@@ -629,6 +632,10 @@ final class InputBar: UIView {
             )
 
         }
+    }
+
+    func updateTextViewTintColor() {
+        textView.tintColor = .accent()
     }
 
     // MARK: – Editing View State

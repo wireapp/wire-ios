@@ -1,12 +1,11 @@
-// swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "WireDomainPackage",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireDomainPackage", targets: ["WireDomainPackage"]),
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"]),
@@ -49,8 +48,10 @@ let package = Package(
 )
 
 for target in package.targets {
-    target.swiftSettings = [
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("ExistentialAny")
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("StrictMemorySafety"),
     ]
 }

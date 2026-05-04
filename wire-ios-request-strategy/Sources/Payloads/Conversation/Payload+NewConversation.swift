@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ extension Payload {
             case conversationRole = "conversation_role"
             case creatorClient = "creator_client"
             case messageProtocol = "protocol"
+            case skipCreator = "skip_creator"
         }
 
         let users: [UUID]?
@@ -50,6 +51,9 @@ extension Payload {
         let creatorClient: String?
         let messageProtocol: String?
 
+        // API v10 optional
+        let skipCreator: Bool?
+
         init(
             users: [UUID]? = nil,
             qualifiedUsers: [QualifiedID]? = nil,
@@ -62,7 +66,8 @@ extension Payload {
             readReceiptMode: Int? = nil,
             conversationRole: String? = nil,
             creatorClient: String? = nil,
-            messageProtocol: String? = nil
+            messageProtocol: String? = nil,
+            skipCreator: Bool? = nil
         ) {
             self.users = users
             self.qualifiedUsers = qualifiedUsers
@@ -76,6 +81,7 @@ extension Payload {
             self.conversationRole = conversationRole
             self.creatorClient = creatorClient
             self.messageProtocol = messageProtocol
+            self.skipCreator = skipCreator
         }
 
         init(_ action: CreateGroupConversationAction) {
@@ -101,6 +107,7 @@ extension Payload {
             self.team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
             self.readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
             self.messageTimer = nil
+            self.skipCreator = nil // until really used
         }
 
         init(from decoder: Decoder, apiVersion: WireTransport.APIVersion) throws {
@@ -121,9 +128,16 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 self.legacyAccessRole = nil
+            }
+
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+                self.skipCreator = nil
+            case .v10, .v11, .v12, .v13, .v14, .v15:
+                self.skipCreator = try container.decodeIfPresent(Bool.self, forKey: .skipCreator)
             }
         }
 
@@ -145,8 +159,15 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
+            }
+
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+                break
+            case .v10, .v11, .v12, .v13, .v14, .v15:
+                try container.encodeIfPresent(skipCreator, forKey: .skipCreator)
             }
         }
     }

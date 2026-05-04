@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,24 @@
 
 /// Proxy credentials for a user.
 
-struct ProxyCredentials: Sendable, Equatable, Hashable {
+public struct ProxyCredentials: Sendable, Equatable, Hashable {
 
     /// The proxy username.
 
-    let username: String
+    public let username: String
 
     /// The proxy password.
 
-    let password: String
+    public let password: String
+
+    /// Create new `ProxyCredentials`.
+
+    public init(
+        username: String,
+        password: String
+    ) {
+        self.username = username
+        self.password = password
+    }
 
 }

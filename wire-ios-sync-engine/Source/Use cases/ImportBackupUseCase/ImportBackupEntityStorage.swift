@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,50 +28,33 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
     func replacePersistentStore(
         accountIdentifier: UUID,
         from backupDirectory: URL,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup
+        applicationContainer: URL
     ) async throws -> URL {
-
-        try await withCheckedThrowingContinuation { continuation in
-
-            CoreDataStack.importLocalStorage(
-                accountIdentifier: accountIdentifier,
-                from: backupDirectory,
-                applicationContainer: applicationContainer,
-                dispatchGroup: dispatchGroup
-            ) { result in
-                continuation.resume(with: result)
-            }
-
-        }
-
+        try await CoreDataStack.importLocalStorage(
+            accountIdentifier: accountIdentifier,
+            from: backupDirectory,
+            applicationContainer: applicationContainer
+        )
     }
 
     @MainActor
     func createContextProvider(
         account: Account,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?
+        dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws -> any ContextProvider {
 
         let stack = CoreDataStack(
             account: account,
             applicationContainer: applicationContainer,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-
-            stack.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-
-        }
-
+        try await stack.load()
         return stack
 
     }

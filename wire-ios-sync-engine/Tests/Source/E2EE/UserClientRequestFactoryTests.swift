@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
@@ -68,6 +67,11 @@ final class UserClientRequestFactoryTests: MessagingTest {
     func testThatItCreatesRegistrationRequestWithConsumableNotificationsCapabitilityCorrectly() throws {
         // GIVEN
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+        syncMOC.performAndWait {
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
+        }
         DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
 
         try testThatItCreatesRegistrationRequestCorrectly(
@@ -142,6 +146,9 @@ final class UserClientRequestFactoryTests: MessagingTest {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
             let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
 
             // when
             return try sut.registerClientRequest(
@@ -175,7 +182,11 @@ final class UserClientRequestFactoryTests: MessagingTest {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
 
-        if apiVersion >= .v9, DeveloperFlag.consumableNotifications.isOn {
+        let isConsumableNotificationsEnabled = syncMOC.performAndWait {
+            Feature.fetch(name: .consumableNotifications, context: syncMOC)?.status == .enabled
+        } && DeveloperFlag.consumableNotifications.isOn
+
+        if apiVersion >= .v9, isConsumableNotificationsEnabled {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
         } else {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])

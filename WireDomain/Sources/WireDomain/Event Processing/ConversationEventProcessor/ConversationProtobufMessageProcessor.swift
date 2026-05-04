@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 import WireNetwork
-import WireProtos
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
@@ -39,7 +39,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
     public func processProtobufMessage(
         _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,
@@ -48,12 +47,15 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         eventMessage: String
     ) async throws {
 
+        guard message.validateFields(), let content = message.content else {
+            throw ProcessProtobufMessageError.invalidMessage
+        }
+
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
             .conversationId: conversationID.id.safeForLoggingDescription,
             .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
         ]
-        WireLogger.eventProcessing.debug("Processing:\n\(message)")
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
@@ -80,12 +82,12 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             )
 
         case let .dataTransfer(dataTransfer):
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:)) else {
                 break
             }
 
-            await userLocalStore.updateSelfUserAnalyticsID(
-                analyticsID: trackingIdentifier,
+            await userLocalStore.updateSelfUserTrackingID(
+                trackingID: trackingID,
                 conversation: conversation
             )
 
@@ -116,11 +118,24 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 date: date
             )
 
+        case let .buttonAction(buttonAction):
+
+            await messageLocalStore.updateButtonStates(
+                buttonID: buttonAction.buttonID,
+                referenceMessageID: buttonAction.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id,
+                ensureSenderIsSelfUser: true
+            )
+
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
             await messageLocalStore.updateButtonStates(
-                buttonActionConfirmation,
-                in: conversation
+                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
+                referenceMessageID: buttonActionConfirmation.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id,
+                ensureSenderIsSelfUser: false // the assumption is that no real users, only apps send this event
             )
 
         case let .edited(edited):
@@ -204,7 +219,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction, .multipart:
+        case .text, .knock, .location, .composite, .multipart:
 
             try await processMessageContent(
                 message: message,
@@ -288,6 +303,12 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             senderID: sender.id,
             senderDomain: sender.domain
         )
+
+    }
+
+    private enum ProcessProtobufMessageError: Error {
+        /// The `GenericMessage` instance's `validateFields()` method either returned `false` or its `content` is `nil`.
+        case invalidMessage
     }
 
 }

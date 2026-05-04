@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@ import Combine
 import WireDataModel
 import WireNetwork
 
+// sourcery: AutoMockable
 /// Facilitates access to feature configs related domain objects.
-protocol FeatureConfigRepositoryProtocol {
+public protocol FeatureConfigRepositoryProtocol {
 
     /// Pulls feature configs from the server and stores them locally.
     ///
@@ -40,17 +41,6 @@ protocol FeatureConfigRepositoryProtocol {
 
     func observeFeatureStates() -> AnyPublisher<FeatureState, Never>
 
-    /// Fetches a feature config locally.
-    ///
-    /// - Parameter name: The feature name to fetch the config for.
-    /// - Parameter type: The type of config to retrieve.
-    /// - Returns: A `LocalFeature` object with a status and a config (if any).
-
-    func fetchFeatureConfig<T: Decodable>(
-        name: Feature.Name,
-        type: T.Type
-    ) async throws -> LocalFeature<T>
-
     /// Updates a feature config locally.
     ///
     /// - Parameter featureConfig: The feature config to update.
@@ -59,21 +49,13 @@ protocol FeatureConfigRepositoryProtocol {
         _ featureConfig: FeatureConfig
     ) async
 
-    /// Fetches a flag indicating whether the user should be notified of a given feature.
-    /// - Parameter name: The feature name.
-    /// - Returns: `true` if user should be notified.
+    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>
+    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config>
+    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
+    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
+    func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config>
 
-    func needsToNotifyUser(
-        name: Feature.Name
-    ) async throws -> Bool
-
-    /// Stores a flag indicating whether the user should be notified of a given feature.
-    /// - Parameter notifyUser: Whether the user should be notified for a given feature.
-    /// - Parameter name: The name of the feature to set the flag for.
-
-    func storeFeatureNeedsToNotifyUser(
-        _ notifyUser: Bool,
-        name: Feature.Name
-    ) async throws
-
+    func isFeatureEnabled(
+        _ feature: Feature.Name
+    ) async -> Bool
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
             return newToken
         } catch {
             WireLogger.authentication.error(
-                "Failed to renew access token with error: \(error.localizedDescription)"
+                "Failed to renew access token with error: \(String(describing: error))", attributes: .safePublic
             )
 
             currentToken = nil
@@ -124,6 +124,10 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
                     try await cookieStorage.removeCookies()
+                    WireLogger.authentication.info(
+                        "Removed cookies (invalidCredentials)", attributes: .safePublic
+                    )
+
                     onAuthenticationFailure()
                 }
 

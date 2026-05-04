@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Далі";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "Email";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Пароль";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Далі";
 "cloud_user_login.forgot_password" = "Забули пароль?";
+
+"login.sso.title" = "Увійти";
+"login.sso.expiration_message" = "Термін дійсності вашого сеансу завершився. Увійдіть у ваш корпоративний акаунт для продовження.";
+"login.sso.input_code.title" = "Код доступу SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Корпоративна аутентифікація";
+
+"logout.button.title" = "Вийти";
+"logout.alert.title" = "Вийти";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Скасувати";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Це перший раз, коли ви використовуєте Wire на цьому пристрої.";
 "authentication.no_history.message" = "З міркувань конфіденційності, історія ваших розмов тут не показується.";
+"authentication.missing_history.title" = "Ви уже використовували Wire на цьому пристрої раніше.";
+"authentication.missing_history.message" = "Повідомлення, надіслані в той час, коли ви вийшли з Wire, не відображатимуться.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";

@@ -15,23 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMessagingAPI"
-               BuildableName = "WireMessagingAPI"
-               BlueprintName = "WireMessagingAPI"
-               ReferencedContainer = "container:WireMessaging">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMessagingBindings"
-               BuildableName = "WireMessagingBindings"
-               BlueprintName = "WireMessagingBindings"
+               BlueprintIdentifier = "WireMessagingAssembly"
+               BuildableName = "WireMessagingAssembly"
+               BlueprintName = "WireMessagingAssembly"
                ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,6 +32,20 @@
                BlueprintIdentifier = "WireMessagingUI"
                BuildableName = "WireMessagingUI"
                BlueprintName = "WireMessagingUI"
+               ReferencedContainer = "container:WireMessaging">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireMessagingDomain"
+               BuildableName = "WireMessagingDomain"
+               BlueprintName = "WireMessagingDomain"
                ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>
@@ -95,9 +95,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireMessagingAPI"
-            BuildableName = "WireMessagingAPI"
-            BlueprintName = "WireMessagingAPI"
+            BlueprintIdentifier = "WireMessagingAssembly"
+            BuildableName = "WireMessagingAssembly"
+            BlueprintName = "WireMessagingAssembly"
             ReferencedContainer = "container:WireMessaging">
          </BuildableReference>
       </MacroExpansion>

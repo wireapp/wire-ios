@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 enum AssetTransportError: Error {
@@ -47,26 +48,47 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     fileprivate var observers: [Any] = []
 
+    private let localDomain: String?
+    private let isCloudDomain: Bool
+
+    private let featureRepository: LegacyFeatureRepository
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return managedObjectContext.performAndWait {
+            featureRepository.fetchAssetAuditLog().status == .enabled
+        }
+    }
+
     @objc
     public convenience init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        userProfileImageUpdateStatus: UserProfileImageUpdateStatus
+        userProfileImageUpdateStatus: UserProfileImageUpdateStatus,
+        localDomain: String?,
+        isCloudDomain: Bool
     ) {
         self.init(
             managedObjectContext: managedObjectContext,
             applicationStatus: applicationStatusDirectory,
-            imageUploadStatus: userProfileImageUpdateStatus
+            imageUploadStatus: userProfileImageUpdateStatus,
+            localDomain: localDomain,
+            isCloudDomain: isCloudDomain
         )
     }
 
     init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        imageUploadStatus: UserProfileImageUploadStatusProtocol
+        imageUploadStatus: UserProfileImageUploadStatusProtocol,
+        localDomain: String?,
+        isCloudDomain: Bool
     ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
+        self.localDomain = localDomain
+        self.isCloudDomain = isCloudDomain
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
@@ -198,13 +220,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v3/\(assetId)"
 
         case .v1:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"
@@ -236,10 +258,38 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
+            var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+            if shouldUploadExtraMetaData {
+                guard
+                    // As per the spec: there's no conversation so we use a null id instead.
+                    let nullID = UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
+                    let localDomain
+                else {
+                    WireLogger.assets.warn(
+                        "should include extra metadata for profile image but not able to",
+                        attributes: .safePublic
+                    )
+                    return nil
+                }
+
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: image
+                )
+
+                extraMetaData = .init(
+                    conversationID: QualifiedID(uuid: nullID, domain: localDomain),
+                    fileName: image.name,
+                    mimeType: image.utType?.preferredMIMEType
+                )
+            }
+
             let request = requestFactory.upstreamRequestForAsset(
                 withData: image,
                 shareable: true,
                 retention: .eternal,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
 

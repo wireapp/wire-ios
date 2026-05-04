@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import SwiftUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireTestingPackage
 import XCTest
 @testable import WireAuthenticationUI
@@ -59,10 +60,15 @@ final class AccountSwitcherViewTests: XCTestCase {
     func testAccountSwitcher() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
-            .inNavigationStack()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        let view = NavigationStack {
+            AccountSwitcherModalView(
+                factory: FakeAccountSwitcherFactory(
+                    accounts: accounts,
+                    defaultEnvironment: .fixture()
+                )
+            )
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

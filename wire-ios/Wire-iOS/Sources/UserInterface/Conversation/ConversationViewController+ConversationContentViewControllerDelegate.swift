@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -63,7 +65,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
@@ -107,7 +110,14 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerReplyingTo message: ZMConversationMessage
     ) {
-        let replyComposingView = contentViewController.createReplyComposingView(for: message)
+        let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+            fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
+            fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+        )
+        let replyComposingView = contentViewController.createReplyComposingView(
+            for: message,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         inputBarController.reply(to: message, composingView: replyComposingView)
     }
 
@@ -143,16 +153,25 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
-        groupDetailsViewController.presentGuestOptions(animated: false)
-        presentParticipantsViewController(navigationController, from: sourceView)
+        Task { @MainActor in
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
+
+            let groupDetailsViewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
+            groupDetailsViewController.presentGuestOptions(animated: false)
+            presentParticipantsViewController(navigationController, from: sourceView)
+        }
     }
 
     func conversationContentViewController(
@@ -160,19 +179,52 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        if let groupDetailsViewController = (participantsController as? UINavigationController)?
-            .topViewController as? GroupDetailsViewController {
-            groupDetailsViewController.presentParticipantsDetails(
-                with: conversation.sortedOtherParticipants,
-                selectedUsers: selectedUsers,
-                animated: false
-            )
-        }
+        Task { @MainActor in
+            if let groupDetailsViewController = (await participantsController as? UINavigationController)?
+                .topViewController as? GroupDetailsViewController {
+                groupDetailsViewController.presentParticipantsDetails(
+                    with: conversation.sortedOtherParticipants,
+                    selectedUsers: selectedUsers,
+                    animated: false
+                )
+            }
 
-        if let participantsController {
-            presentParticipantsViewController(participantsController, from: sourceView)
+            if let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: sourceView)
+            }
         }
     }
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: any ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    ) {
+        switch deletionType {
+        case .everywhere:
+            Task {
+                let deleteNodesUseCase = wireMessagingFactory.makeDeleteNodesUseCase()
+                do {
+                    try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID), deletePermanently: false)
+                    WireLogger.conversation.info(
+                        "Deleted files for message",
+                        attributes: [.nonce: message.nonce?.uuidString]
+                    )
+                } catch {
+                    WireLogger.conversation
+                        .error(
+                            "Unable to delete files: \(String(describing: error))",
+                            attributes: [.nonce: message.nonce?.uuidString], .safePublic
+                        )
+                }
+            }
+        case .local:
+            // no op, related files will still show up for self user (as aligned other clients)
+            break
+        }
+    }
+
 }
 
 extension ConversationViewController {

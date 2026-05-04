@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -150,13 +151,17 @@ final class AddParticipantsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(
+    convenience init?(
         conversation: GroupDetailsConversationType,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.init(
             context: .add(conversation),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
     }
 
@@ -168,6 +173,7 @@ final class AddParticipantsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
@@ -181,14 +187,18 @@ final class AddParticipantsViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
+    init?(
         context: Context,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.userSession = userSession
-
-        self.viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(
+            context: context,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
+        )
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -209,23 +219,26 @@ final class AddParticipantsViewController: UIViewController {
         confirmButton.setTitleImageSpacing(16, horizontalMargin: 24)
         confirmButton.layer.cornerRadius = 16
         confirmButton.layer.masksToBounds = true
+        confirmButton.accessibilityIdentifier = Locators.ConversationDetailsPage.addParticipantsButton.rawValue
 
         self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
-        self.searchGroupSelector = SearchGroupSelector()
+        let messageProtocol = viewModel.filterConversation?.messageProtocol ?? userSession.defaultProtocol
+        self.searchGroupSelector = SearchGroupSelector(for: messageProtocol)
 
-        self.searchResultsViewController = SearchResultsViewController(
+        guard let searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
             userSession: userSession,
             isAddingParticipants: true,
             shouldIncludeGuests: viewModel.context.includeGuests,
-            isFederationEnabled: isFederationEnabled
-        )
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+        ) else { return nil }
+        self.searchResultsViewController = searchResultsViewController
 
         let user = SelfUser.provider?.providedSelfUser
         self.emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: user?.canManageTeam == true,
-            isFederationEnabled: isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
         super.init(nibName: nil, bundle: nil)
 
@@ -256,7 +269,7 @@ final class AddParticipantsViewController: UIViewController {
             }
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
-            if group == .services {
+            if group == .apps {
                 searchHeaderViewController.clearInput()
                 confirmButton.isHidden = true
             } else {
@@ -289,6 +302,7 @@ final class AddParticipantsViewController: UIViewController {
         searchResultsViewController.didMove(toParent: self)
         searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.backgroundColor = SemanticColors.View.backgroundDefault
+        collectionView.isAccessibilityElement = true
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "add_participants.list"
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -298,7 +312,7 @@ final class AddParticipantsViewController: UIViewController {
         updateSelectionValues()
 
         if searchResultsViewController.isResultEmpty {
-            emptyResultView.updateStatus(searchingForServices: false, hasFilter: false)
+            emptyResultView.updateStatus(searchingForBots: false, hasFilter: false)
         }
     }
 
@@ -366,13 +380,19 @@ final class AddParticipantsViewController: UIViewController {
         if case let .create(values) = viewModel.context {
             let updated = ConversationCreationValues(
                 isChannel: values.isChannel,
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable,
                 name: values.name,
                 participants: userSelection.users,
-                allowGuests: true,
+                allowGuests: values.allowGuests,
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(with: .create(updated))
+            viewModel = AddParticipantsViewModel(
+                context: .create(updated),
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable
+            )
         }
 
         // Enable button & collection view content inset
@@ -446,21 +466,29 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForServices = searchResultsViewController.searchGroup == .services
+        let searchingForBots = [.apps, .bots].contains(searchResultsViewController.searchGroup)
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
-        emptyResultView.updateStatus(searchingForServices: searchingForServices, hasFilter: hasFilter)
+        emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
-        case (.services, _):
+        case (.apps, _):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForApps(withQuery: searchHeaderViewController.tokenField.filterText)
+        case (.bots, _):
+            searchResultsViewController.mode = .search
+            searchResultsViewController.searchForBots(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
         case (.people, true):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
+        }
+        if searchResultsViewController.searchGroup == .apps, !hasFilter {
+            showEmptyAppsSearchResultView()
+        } else {
+            hideEmptyAppsSearchResultView()
         }
     }
 
@@ -469,6 +497,16 @@ final class AddParticipantsViewController: UIViewController {
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
     }
+
+    private func showEmptyAppsSearchResultView() {
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView(canManageTeam: userSession.selfUser.canManageTeam)
+        searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
+    }
+
+    private func hideEmptyAppsSearchResultView() {
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+    }
+
 }
 
 extension AddParticipantsViewController: UserSelectionObserver {
@@ -526,48 +564,68 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnUser user: UserType,
-        indexPath: IndexPath,
-        section: SearchResultsViewControllerSection
+        _: SearchResultsViewController,
+        didTapOnUser _: UserType,
+        indexPath _: IndexPath,
+        section _: SearchResultsViewControllerSection
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didDoubleTapOnUser user: UserType,
-        indexPath: IndexPath
+        _: SearchResultsViewController,
+        didDoubleTapOnUser _: UserType,
+        indexPath _: IndexPath
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnConversation conversation: ZMConversation
+        _: SearchResultsViewController,
+        didTapOnConversation _: ZMConversation
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        _: SearchResultsViewController,
+        didTapOnApp app: any UserType
     ) {
+        didTapOnAppOrBot(user: app, isApp: true)
+    }
 
-        guard case let .add(conversation) = viewModel.context else { return }
+    func searchResultsViewController(
+        _: SearchResultsViewController,
+        didTapOnBot bot: any UserType
+    ) {
+        didTapOnAppOrBot(user: bot, isApp: false)
+    }
+
+    private func didTapOnAppOrBot(
+        user: any UserType,
+        isApp: Bool
+    ) {
+        guard
+            case let .add(conversation) = viewModel.context,
+            let conversation = conversation as? ZMConversation
+        else { return }
 
         let detail = ServiceDetailViewController(
-            serviceUser: user,
-            actionType: .addService(conversation as! ZMConversation),
-            userSession: userSession
+            user: user,
+            actionType: isApp ? .addApp(conversation) : .addBot(conversation),
+            userSession: userSession,
+            usersAPI: userSession.clientSessionComponent?.usersAPI
         ) { [weak self] result in
-            guard let self, let result else { return }
+            guard let self else { return }
+
             switch result {
             case .success:
                 dismiss(animated: true)
             case let .failure(error):
                 guard let controller = navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
+            case .cancelled:
+                break
             }
         }
 

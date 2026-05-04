@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,19 @@ public struct URLSessionConfigurationFactory {
 
         if let proxySettings {
             configuration.connectionProxyDictionary = proxySettings.proxyDictionary()
+        }
+
+        return configuration
+    }
+
+    public func makeBlacklistSessionConfiguration() -> URLSessionConfiguration {
+        let configuration = URLSessionConfiguration.default
+        configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+
+        if let proxySettings {
+            configuration.connectionProxyDictionary = proxySettings.proxyDictionary()
+            configuration.httpShouldUsePipelining = true
         }
 
         return configuration

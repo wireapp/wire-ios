@@ -1,0 +1,15 @@
+{
+  "capabilities": [
+    "legalhold-implicit-consent"
+  ],
+  "class": "phone",
+  "cookie": "zbRsaJkNdE6OwZRvqPrhTKod5rIimeYRRWKHSMCvsGU=",
+  "id": "60f85e4b15ad3786",
+  "label": "iPhone 12",
+  "mls_public_keys": {
+    "ed25519": "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E="
+  },
+  "model": "iPhone 12",
+  "time": "2021-05-12T10:52:02.671Z",
+  "type": "permanent"
+}

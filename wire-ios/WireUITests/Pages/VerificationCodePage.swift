@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class VerificationCodePage: PageModel {
@@ -25,19 +26,20 @@ class VerificationCodePage: PageModel {
     }
 
     var verificationCodeInput: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "VerificationCode")
+        let elementsQuery = app.descendants(matching: .any)
+            .matching(identifier: Locators.VerificationCodePage.verificationCodeTextField.rawValue)
         return elementsQuery.firstMatch
     }
 
     var verificationCodeConfirmButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["Confirm"]
+        let elementsQuery = app.descendants(matching: .any)[Locators.VerificationCodePage.confirmButton.rawValue]
         return elementsQuery.firstMatch
     }
 
     func enterVerificationCodeAndConfirm(_ verificationCode: String) throws -> SetUsernamePage {
         let element = app.textFields
         for (index, digit) in verificationCode.enumerated() {
-            element.element(boundBy: index).typeText(String(digit))
+            try element.element(boundBy: index).tapIfKeyboardNotFocused().typeText(String(digit))
         }
         verificationCodeConfirmButton.tap()
         return try SetUsernamePage()

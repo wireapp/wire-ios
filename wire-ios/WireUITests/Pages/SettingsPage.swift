@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SettingsPage: PageModel {
@@ -25,12 +26,30 @@ class SettingsPage: PageModel {
     }
 
     var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+        app.cells[Locators.SettingsPage.accountCell.rawValue].firstMatch
+    }
+
+    var optionsMenu: XCUIElement {
+        app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
+    }
+
+    var conversationsTab: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {
+        XCTAssertTrue(accountSettingsMenu.waitForExistence(timeout: 3))
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
+    }
+
+    func openOptionsMenu() throws -> OptionsOnSettingsPage {
+        optionsMenu.tap()
+        return try OptionsOnSettingsPage()
+    }
+
+    func switchToConversationsTab() throws -> ConversationsPage {
+        conversationsTab.tap()
+        return try ConversationsPage()
     }
 }

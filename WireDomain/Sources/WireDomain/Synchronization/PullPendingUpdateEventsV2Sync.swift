@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     }
 
     private var logAttributes: WireLogging.LogAttributes {
-        .syncAttributes(initialSync: true) + .newNSE
+        .incrementalSyncV3 + .newNSE
     }
 
     public func pull() async throws {
@@ -90,7 +90,14 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                         break streamLoop
                     }
                 case .missedEvents:
-                    logger.debug("missedEvents event", attributes: logAttributes)
+                    logger.warn(
+                        "missedEvents event, full sync required, open main app",
+                        attributes: logAttributes,
+                        .safePublic
+                    )
+                    // end the stream gracefully so notifications can be shown
+                    continuation.finish()
+                    break streamLoop
                 case let .events(envelopes):
                     do {
                         try await processBatch(
@@ -127,7 +134,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
@@ -139,9 +146,12 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             }
         }
 
-        // ack
+        // ack the decrypted events
+        //
+        // NOTE: it's important that we ack after the CC transaction has successfully completed,
+        // otherwise we risk data loss in case of a crash.
         if let lastEnvelope = storedEnvelopes.last?.0 {
-            try await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
+            try await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel, batchSize: storedEnvelopes.count)
         }
     }
 
@@ -150,8 +160,8 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         in context: CoreCryptoContextProtocol
     ) async -> [UpdateEvent] {
         logger.debug(
-            "decrypting live event envelope  v3",
-            attributes: [.eventEnvelopeID: envelope.id]
+            "decrypting live event envelope v3",
+            attributes: [.eventEnvelopeID: envelope.id] + logAttributes
         )
         let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
 
@@ -168,14 +178,15 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             // Store.
             logger.debug(
                 "storing live event envelope",
-                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+                attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+                attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             throw error
         }
@@ -185,13 +196,14 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
     private func acknowledgeUntilEnvelope(
         _ envelope: UpdateEventEnvelope,
-        through pushChannel: PushChannelV2Protocol
+        through pushChannel: PushChannelV2Protocol,
+        batchSize: Int
     ) async throws {
         do {
             if let deliveryTag = envelope.deliveryTag {
                 logger.debug(
                     "ack event envelope",
-                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+                    attributes: [.eventEnvelopeID: envelope.id, .ackMultipleEventsCount: batchSize] + logAttributes
                 )
                 try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: true)
             }

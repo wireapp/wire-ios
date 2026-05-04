@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject
 
-+ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ContextProvider>)userSession
++ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ZMContextProvider>)userSession
 {
     VerifyReturnNil(url != nil);
     VerifyReturnNil(userSession != nil);
@@ -56,7 +56,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     return [psc managedObjectIDForURIRepresentation:url];
 }
 
-+ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ContextProvider>)userSession;
++ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ZMContextProvider>)userSession;
 {
     VerifyReturnNil(identifier);
     VerifyReturnNil(userSession);
@@ -441,7 +441,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject (PersistentChangeTracking)
 
-+ (NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;
++ (NSPredicate * _Nonnull)predicateForNeedingToBeUpdatedFromBackend;
 {
     return [NSPredicate predicateWithFormat:@"%K != 0", NeedsToBeUpdatedFromBackendKey];
 }

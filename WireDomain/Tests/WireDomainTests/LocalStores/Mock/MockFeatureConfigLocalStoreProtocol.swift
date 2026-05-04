@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,34 +51,6 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
     var storeFeatureNeedsNotifyUserFeature_Invocations: [(needsNotifyUser: Bool, feature: Feature)] = []
     var storeFeatureNeedsNotifyUserFeature_MockMethod: ((Bool, Feature) async -> Void)?
 
-    func storeFeature(needsNotifyUser: Bool, feature: Feature) async {
-        storeFeatureNeedsNotifyUserFeature_Invocations.append((needsNotifyUser: needsNotifyUser, feature: feature))
-
-        guard let mock = storeFeatureNeedsNotifyUserFeature_MockMethod else {
-            fatalError("no mock for `storeFeatureNeedsNotifyUserFeature`")
-        }
-
-        await mock(needsNotifyUser, feature)
-    }
-
-    // MARK: - featureNeedsNotifyUser
-
-    var featureNeedsNotifyUserFeature_Invocations: [Feature] = []
-    var featureNeedsNotifyUserFeature_MockMethod: ((Feature) async -> Bool)?
-    var featureNeedsNotifyUserFeature_MockValue: Bool?
-
-    func featureNeedsNotifyUser(feature: Feature) async -> Bool {
-        featureNeedsNotifyUserFeature_Invocations.append(feature)
-
-        if let mock = featureNeedsNotifyUserFeature_MockMethod {
-            return await mock(feature)
-        } else if let mock = featureNeedsNotifyUserFeature_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `featureNeedsNotifyUserFeature`")
-        }
-    }
-
     // MARK: - storeFeature
 
     var storeFeatureNameIsEnabledConfig_Invocations: [(name: Feature.Name, isEnabled: Bool, config: (any Codable)?)] =
@@ -108,6 +80,21 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
         }
 
         return await mock(feature)
+    }
+
+    // MARK: - isFeatureEnabled
+
+    var isFeatureEnabled_Invocations: [WireDataModel.Feature] = []
+    var isFeatureEnabled_ReturnValue: Bool?
+
+    func isFeatureEnabled(feature: WireDataModel.Feature) async -> Bool {
+        isFeatureEnabled_Invocations.append(feature)
+
+        guard let mock = isFeatureEnabled_ReturnValue else {
+            fatal("no mock for `isFeatureEnabled`")
+        }
+
+        return mock
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
 /// Handles reauthentication errors sent at the start of the flow.
@@ -27,9 +28,9 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let (optionalError, numberOfAccounts) = context
+        let (environment, optionalError, numberOfAccounts) = context
 
         // Only handle errors on launch
         guard case .start = currentStep else {
@@ -64,6 +65,7 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         // Prepare the next step
         let nextStep = AuthenticationFlowStep.reauthenticate(
             credentials: loginCredentials,
+            environment: environment,
             numberOfAccounts: numberOfAccounts,
             isSignedOut: true
         )

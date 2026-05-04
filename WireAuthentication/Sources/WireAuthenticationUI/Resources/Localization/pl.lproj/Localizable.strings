@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Dalej";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "Adres e-mail";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Hasło";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Dalej";
 "cloud_user_login.forgot_password" = "Nie pamiętasz hasła?";
+
+"login.sso.title" = "Logowanie";
+"login.sso.expiration_message" = "Twoja sesja wygasła. Zaloguj się za pomocą konta przedsiębiorstwa aby kontynuować.";
+"login.sso.input_code.title" = "Kod dostępu SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Logowanie dla firm";
+
+"logout.button.title" = "Wyloguj";
+"logout.alert.title" = "Wyloguj";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Anuluj";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Uruchomiłeś Wire na tym urządzeniu po raz pierwszy.";
 "authentication.no_history.message" = "Ze względu na prywatność, poprzednie konwersacje nie będą tutaj widoczne.";
+"authentication.missing_history.title" = "Używałeś wcześniej Wire na tym urządzeniu.";
+"authentication.missing_history.message" = "Wiadomości wysłane w międzyczasie nie pojawią się.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";

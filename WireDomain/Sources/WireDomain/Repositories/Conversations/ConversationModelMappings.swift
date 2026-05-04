@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ extension WireNetwork.Conversation.Members {
     func toDomainModel() -> WireDomain.Conversation.Members {
         .init(
             others: others.map { $0.toDomainModel() },
-            selfMember: selfMember.toDomainModel()
+            selfMember: selfMember?.toDomainModel()
         )
     }
 
@@ -177,7 +177,8 @@ extension WireNetwork.Conversation {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
             groupType: groupType?.toDomainModel(),
-            addPermission: addPermission?.toDomainModel()
+            addPermission: addPermission?.toDomainModel(),
+            cellsState: cellsState?.toDomainModel()
         )
     }
 }
@@ -191,7 +192,7 @@ extension WireNetwork.ConversationAccessRole {
             "non_team_member"
         case .guest:
             "guest"
-        case .service:
+        case .app:
             "service"
         }
     }
@@ -238,4 +239,17 @@ extension WireNetwork.ChannelPermission {
         }
     }
 
+}
+
+extension WireNetwork.Conversation.CellsState {
+    func toDomainModel() -> WireDomain.Conversation.CellsState {
+        switch self {
+        case .ready:
+            .ready
+        case .pending:
+            .pending
+        case .disabled:
+            .disabled
+        }
+    }
 }

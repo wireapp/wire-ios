@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,17 @@ import WireCoreCrypto
 public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
 
     /// See [core_crypto::mls::conversation::ConversationGuard::add_members]
-    func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCryptoUniffi
-        .NewCrlDistributionPoints
+    func addClientsToConversation(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        keyPackages: [WireCoreCryptoUniffi.KeyPackage]
+    ) async throws -> [String]?
 
     /// See [core_crypto::transaction_context::TransactionContext::get_or_create_client_keypackages]
     func clientKeypackages(
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite,
         credentialType: WireCoreCryptoUniffi.CredentialType,
         amountRequested: UInt32
-    ) async throws -> [Data]
+    ) async throws -> [WireCoreCryptoUniffi.KeyPackage]
 
     /// See [core_crypto::transaction_context::TransactionContext::client_public_key]
     func clientPublicKey(
@@ -45,38 +47,38 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws -> UInt64
 
     /// See [core_crypto::mls::conversation::ConversationGuard::commit_pending_proposals]
-    func commitPendingProposals(conversationId: Data) async throws
+    func commitPendingProposals(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
     /// See [core_crypto::mls::conversation::Conversation::ciphersuite]
-    func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCryptoUniffi.Ciphersuite
+    func conversationCiphersuite(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
+        -> WireCoreCryptoUniffi.Ciphersuite
 
     /// See [core_crypto::mls::conversation::Conversation::epoch]
-    func conversationEpoch(conversationId: Data) async throws -> UInt64
+    func conversationEpoch(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> UInt64
 
     /// See [core_crypto::prelude::Session::conversation_exists]
-    func conversationExists(conversationId: Data) async throws -> Bool
+    func conversationExists(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> Bool
 
     /// See [core_crypto::transaction_context::TransactionContext::new_conversation]
     func createConversation(
-        conversationId: Data,
+        conversationId: WireCoreCryptoUniffi.ConversationId,
         creatorCredentialType: WireCoreCryptoUniffi.CredentialType,
         config: WireCoreCryptoUniffi.ConversationConfiguration
     ) async throws
 
     /// See [core_crypto::mls::conversation::ConversationGuard::decrypt_message]
-    func decryptMessage(conversationId: Data, payload: Data) async throws -> WireCoreCryptoUniffi.DecryptedMessage
-
-    /// See [core_crypto::transaction_context::TransactionContext::delete_keypackages]
-    func deleteKeypackages(refs: [Data]) async throws
+    func decryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, payload: Data) async throws
+        -> WireCoreCryptoUniffi.DecryptedMessage
 
     /// See [core_crypto::transaction_context::TransactionContext::delete_stale_key_packages]
     func deleteStaleKeyPackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite) async throws
 
-    /// See [core_crypto::mls::conversation::Conversation::e2ei_conversation_state]
-    func e2eiConversationState(conversationId: Data) async throws -> WireCoreCryptoUniffi.E2eiConversationState
+    /// See [core_crypto::mls::conversation::ConversationGuard::disable_history_sharing]
+    func disableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
-    /// See [core_crypto::prelude::Session::e2ei_dump_pki_env]
-    func e2eiDumpPkiEnv() async throws -> WireCoreCryptoUniffi.E2eiDumpedPkiEnv?
+    /// See [core_crypto::mls::conversation::Conversation::e2ei_conversation_state]
+    func e2eiConversationState(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi
+        .E2eiConversationState
 
     /// See [core_crypto::transaction_context::TransactionContext::e2ei_enrollment_stash]
     ///
@@ -97,7 +99,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
         enrollment: WireCoreCryptoUniffi.E2eiEnrollment,
         certificateChain: String,
         nbKeyPackage: UInt32?
-    ) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints
+    ) async throws -> [String]?
 
     /// See [core_crypto::transaction_context::TransactionContext::e2ei_new_activation_enrollment]
     func e2eiNewActivationEnrollment(
@@ -134,77 +136,78 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCryptoUniffi.CrlRegistration
 
     /// See [core_crypto::transaction_context::TransactionContext::e2ei_register_intermediate_ca_pem]
-    func e2eiRegisterIntermediateCa(certPem: String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints
+    func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]?
 
     /// See [core_crypto::mls::conversation::ConversationGuard::e2ei_rotate]
-    func e2eiRotate(conversationId: Data) async throws
+    func e2eiRotate(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
+
+    /// See [core_crypto::mls::conversation::ConversationGuard::enable_history_sharing]
+    func enableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
     /// See [core_crypto::mls::conversation::ConversationGuard::encrypt_message]
-    func encryptMessage(conversationId: Data, message: Data) async throws -> Data
+    func encryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data
 
     /// See [core_crypto::mls::conversation::Conversation::export_secret_key]
-    func exportSecretKey(conversationId: Data, keyLength: UInt32) async throws -> Data
+    func exportSecretKey(conversationId: WireCoreCryptoUniffi.ConversationId, keyLength: UInt32) async throws
+        -> WireCoreCryptoUniffi.SecretKey
 
     /// See [core_crypto::mls::conversation::Conversation::get_client_ids]
-    func getClientIds(conversationId: Data) async throws -> [WireCoreCryptoUniffi.ClientId]
-
-    /// See [core_crypto::prelude::Session::get_credential_in_use]
-    func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType) async throws
-        -> WireCoreCryptoUniffi.E2eiConversationState
+    func getClientIds(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
+        -> [WireCoreCryptoUniffi.ClientId]
 
     /// See [core_crypto::transaction_context::TransactionContext::get_data]
     func getData() async throws -> Data?
 
     /// See [core_crypto::mls::conversation::Conversation::get_device_identities]
-    func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCryptoUniffi.ClientId]) async throws
-        -> [WireCoreCryptoUniffi.WireIdentity]
+    func getDeviceIdentities(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        deviceIds: [WireCoreCryptoUniffi.ClientId]
+    ) async throws -> [WireCoreCryptoUniffi.WireIdentity]
 
     /// See [core_crypto::mls::conversation::Conversation::get_external_sender]
-    func getExternalSender(conversationId: Data) async throws -> Data
+    func getExternalSender(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi
+        .ExternalSenderKey
 
     /// See [core_crypto::mls::conversation::Conversation::get_user_identities]
-    func getUserIdentities(conversationId: Data, userIds: [String]) async throws
+    func getUserIdentities(conversationId: WireCoreCryptoUniffi.ConversationId, userIds: [String]) async throws
         -> [String: [WireCoreCryptoUniffi.WireIdentity]]
 
     /// See [core_crypto::transaction_context::TransactionContext::join_by_external_commit]
     func joinByExternalCommit(
-        groupInfo: Data,
+        groupInfo: WireCoreCryptoUniffi.GroupInfo,
         customConfiguration: WireCoreCryptoUniffi.CustomConfiguration,
         credentialType: WireCoreCryptoUniffi.CredentialType
     ) async throws -> WireCoreCryptoUniffi.WelcomeBundle
 
     /// See [core_crypto::mls::conversation::ConversationGuard::mark_as_child_of]
-    func markConversationAsChildOf(childId: Data, parentId: Data) async throws
-
-    /// See [core_crypto::transaction_context::TransactionContext::mls_generate_keypairs]
-    func mlsGenerateKeypairs(ciphersuites: WireCoreCryptoUniffi.Ciphersuites) async throws
-        -> [WireCoreCryptoUniffi.ClientId]
+    func markConversationAsChildOf(
+        childId: WireCoreCryptoUniffi.ConversationId,
+        parentId: WireCoreCryptoUniffi.ConversationId
+    ) async throws
 
     /// See [core_crypto::transaction_context::TransactionContext::mls_init]
     func mlsInit(
         clientId: WireCoreCryptoUniffi.ClientId,
-        ciphersuites: WireCoreCryptoUniffi.Ciphersuites,
+        ciphersuites: [WireCoreCryptoUniffi.Ciphersuite],
         nbKeyPackage: UInt32?
-    ) async throws
-
-    /// See [core_crypto::transaction_context::TransactionContext::mls_init_with_client_id]
-    func mlsInitWithClientId(
-        clientId: WireCoreCryptoUniffi.ClientId,
-        tmpClientIds: [WireCoreCryptoUniffi.ClientId],
-        ciphersuites: WireCoreCryptoUniffi.Ciphersuites
     ) async throws
 
     /// See [core_crypto::transaction_context::TransactionContext::process_raw_welcome_message]
     func processWelcomeMessage(
-        welcomeMessage: Data,
+        welcomeMessage: WireCoreCryptoUniffi.Welcome,
         customConfiguration: WireCoreCryptoUniffi.CustomConfiguration
     ) async throws -> WireCoreCryptoUniffi.WelcomeBundle
 
-    /// See [core_crypto::transaction_context::TransactionContext::proteus_cryptobox_migrate]
-    func proteusCryptoboxMigrate(path: String) async throws
-
     /// See [core_crypto::transaction_context::TransactionContext::proteus_decrypt]
     func proteusDecrypt(sessionId: String, ciphertext: Data) async throws -> Data
+
+    /// Decrypt a message whether or not the proteus session already exists, and saves the session.
+    ///
+    /// This is intended to replace simple usages of `proteusDecrypt`.
+    ///
+    /// However, when decrypting large numbers of messages in a single session, the existing methods
+    /// may be more efficient.
+    func proteusDecryptSafe(sessionId: String, ciphertext: Data) async throws -> Data
 
     /// See [core_crypto::transaction_context::TransactionContext::proteus_encrypt]
     func proteusEncrypt(sessionId: String, plaintext: Data) async throws -> Data
@@ -233,9 +236,18 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     /// See [core_crypto::proteus::ProteusCentral::last_resort_prekey_id]
     func proteusLastResortPrekeyId() throws -> UInt16
 
+    /// Creates a new Proteus prekey with the given id and returns the CBOR-serialized version of the prekey bundle
+    ///
+    /// Warning: The Proteus client **MUST** be initialized with `proteus_init` first or an error will be returned
+    ///
     /// See [core_crypto::transaction_context::TransactionContext::proteus_new_prekey]
     func proteusNewPrekey(prekeyId: UInt16) async throws -> Data
 
+    /// Creates a new Proteus prekey with an automatically incremented ID and returns the CBOR-serialized version of the
+    /// prekey bundle
+    ///
+    /// Warning: The Proteus client **MUST** be initialized with `proteus_init` first or an error will be returned
+    ///
     /// See [core_crypto::transaction_context::TransactionContext::proteus_new_prekey_auto]
     func proteusNewPrekeyAuto() async throws -> WireCoreCryptoUniffi.ProteusAutoPrekeyBundle
 
@@ -264,18 +276,21 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func randomBytes(len: UInt32) async throws -> Data
 
     /// See [core_crypto::mls::conversation::ConversationGuard::remove_members]
-    func removeClientsFromConversation(conversationId: Data, clients: [WireCoreCryptoUniffi.ClientId]) async throws
+    func removeClientsFromConversation(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        clients: [WireCoreCryptoUniffi.ClientId]
+    ) async throws
 
     /// See [core_crypto::transaction_context::TransactionContext::save_x509_credential]
     func saveX509Credential(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String) async throws
-        -> WireCoreCryptoUniffi.NewCrlDistributionPoints
+        -> [String]?
 
     /// See [core_crypto::transaction_context::TransactionContext::set_data]
     func setData(data: Data) async throws
 
     /// See [core_crypto::mls::conversation::ConversationGuard::update_key_material]
-    func updateKeyingMaterial(conversationId: Data) async throws
+    func updateKeyingMaterial(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
     /// See [core_crypto::mls::conversation::ConversationGuard::wipe]
-    func wipeConversation(conversationId: Data) async throws
+    func wipeConversation(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 }

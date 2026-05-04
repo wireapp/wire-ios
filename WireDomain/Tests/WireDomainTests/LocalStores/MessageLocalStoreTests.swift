@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
@@ -79,7 +80,7 @@ final class MessageLocalStoreTests: XCTestCase {
         }
 
         // Given a regular message to add to a conversation
-        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
+        let genericMessage = try XCTUnwrap(GenericMessage(from: Scaffolding.base64EncodedString, validate: true))
 
         // When
 
@@ -220,12 +221,18 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.conversationNameChanged])
         case let .readReceiptsStatus(isEnabled, _, _):
             (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
+        case .unknownMessageContentTypeReceived:
+            (messagesCount: 1, [.unknownMessageContentTypeReceived])
         case .invalid:
             (messagesCount: 1, [.invalid])
         case .decryptionFailed:
             (messagesCount: 1, [.decryptionFailed_RemoteIdentityChanged])
         case .sessionReset:
             (messagesCount: 1, [.sessionReset])
+        case .channelHistoryDepthModified:
+            (messagesCount: 1, [.channelHistoryDepthModified])
+        case let .userDeleted(sender: sender):
+            (messagesCount: 1, [.userRemovedFromTeam])
         }
     }
 
@@ -270,7 +277,8 @@ final class MessageLocalStoreTests: XCTestCase {
                 date: date
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
-            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
+            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date),
+            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1))
         ]
     }
 

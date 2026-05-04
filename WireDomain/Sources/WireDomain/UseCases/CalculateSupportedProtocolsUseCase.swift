@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         let currentSelfUserSupportedProtocols = await userLocalStore.fetchSelfUserSupportedProtocols()
 
         logger.debug(
-            "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
+            "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady), currentSelfUserSupportedProtocols: \(currentSelfUserSupportedProtocols)"
         )
 
         var result = Set<WireNetwork.MessageProtocol>()
@@ -63,11 +63,6 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         /// All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
             result.insert(.proteus)
-        }
-
-        // SelfUser supports mls (other client) at the moment, so we should not remove it
-        if currentSelfUserSupportedProtocols.contains(.mls) {
-            result.insert(.mls)
         }
 
         /// We support mls if the backend does and all MLS clients are ready.
@@ -95,16 +90,18 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
             result = [.proteus]
         }
 
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
+        }
+
         logger.debug("calculated supported protocols: \(result)")
 
         return result
     }
 
     private func remotelySupportedProtocols() async -> Set<WireNetwork.MessageProtocol> {
-        let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            name: .mls,
-            type: Feature.MLS.Config.self
-        )
+        let mlsFeature = try? await featureConfigRepository.fetchMLSConfig()
 
         let mls = (
             status: mlsFeature?.status ?? .disabled,
@@ -130,10 +127,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
     }
 
     private func currentMigrationState() async -> ProteusToMLSMigrationState {
-        let mlsMigrationFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            name: .mlsMigration,
-            type: Feature.MLSMigration.Config.self
-        )
+        let mlsMigrationFeature = try? await featureConfigRepository.fetchMLSMigrationConfig()
 
         let mlsMigration = (
             status: mlsMigrationFeature?.status ?? .disabled,

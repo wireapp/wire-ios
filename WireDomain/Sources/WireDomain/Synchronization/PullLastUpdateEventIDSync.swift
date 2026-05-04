@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,18 +37,23 @@ struct PullLastUpdateEventIDSync: PullLastUpdateEventIDSyncProtocol {
     }
 
     func pull() async throws {
-        let lastEvent = try await api.getLastUpdateEvent(
-            selfClientID: selfClientID
-        )
+        do {
+            let lastEvent = try await api.getLastUpdateEvent(
+                selfClientID: selfClientID
+            )
 
-        let id = lastEvent.id
+            let id = lastEvent.id
 
-        WireLogger.sync.debug(
-            "storing last event id",
-            attributes: [.eventEnvelopeID: id]
-        )
+            WireLogger.sync.debug(
+                "storing last event id",
+                attributes: [.eventEnvelopeID: id]
+            )
 
-        store.storeLastEventID(id: id)
+            store.storeLastEventID(id: id)
+
+        } catch UpdateEventsAPIError.notFound {
+            WireLogger.sync.warn("no last event found", attributes: .safePublic)
+        }
     }
 
 }

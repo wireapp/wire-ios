@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws -> ([HTTPCookie], WireAuthenticationAPI.AccessToken) {
+    ) async throws -> ([HTTPCookie], AccessToken) {
         do {
             let (cookies, token) = try await authenticationAPI.login(
                 email: email,

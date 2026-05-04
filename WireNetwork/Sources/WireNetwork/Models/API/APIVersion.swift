@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,6 +34,12 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v7
     case v8
     case v9
+    case v10
+    case v11
+    case v12
+    case v13
+    case v14
+    case v15
 
     /// API versions considered production ready by the client.
     ///
@@ -45,7 +51,9 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8]
+    public static let productionVersions: Set<Self> = [
+        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15
+    ]
 
     /// API versions currently under development and not suitable for production
     /// environments.

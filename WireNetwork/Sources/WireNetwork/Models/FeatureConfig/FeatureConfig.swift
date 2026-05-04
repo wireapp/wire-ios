@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Configurations for various app features.
 
-public enum FeatureConfig: Equatable, Sendable {
+public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     /// Config for the *App Lock* feature.
     ///
@@ -30,9 +28,13 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case appLock(AppLockFeatureConfig)
 
-    /// Config for the *Classfied Domains* feature.`
+    /// Config for the *Apps* feature.
+
+    case apps(AppsFeatureConfig)
+
+    /// Config for the *Classified Domains* feature.`
     ///
-    /// *Classfied Domains* are a list of backend domains
+    /// *Classified Domains* are a list of backend domains
     /// considered to be safe for classified communication.
     /// Conversations containing users from only classified
     /// domains will show a "Classified" banner. Conversations
@@ -46,6 +48,15 @@ public enum FeatureConfig: Equatable, Sendable {
     /// *Conference Calling* is group audio and video calling.
 
     case conferenceCalling(ConferenceCallingFeatureConfig)
+
+    /// Config for the *Consumable Notifications* feature.`
+    ///
+    /// *Consumable Notifications* is the `new` synchronization mechanism (often referred to as `quick sync`) to ensure
+    /// the app is up to date.
+
+    case consumableNotifications(ConsumableNotificationsFeatureConfig)
+
+    case simplifiedUserConnectionRequestQRCode(SimplifiedUserConnectionRequestQRCodeConfig)
 
     /// Config for the *Conversation Guest Links* feature.`
     ///
@@ -104,6 +115,27 @@ public enum FeatureConfig: Equatable, Sendable {
     /// **Channels** are discoverable groups
     /// with history sharing capabilities
     case channels(ChannelsFeatureConfig)
+
+    /// Config for **Cells** feature
+    /// **Cells** allow users to send and receive messages with multiple attachments (video, image, files..)
+    case cells(CellsFeatureConfig)
+
+    /// Config for **Cells** (internal) feature
+    /// Provides the proper cells backend URL.
+    case cellsInternal(CellsInternalFeatureConfig)
+
+    /// Global config, that contains other config inside, e.g. 'reset broken mls'
+
+    case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
+
+    /// Config for "Asset Audit Log" feature.
+    ///
+    /// When this feature is enabled, additional metadata is provided
+    /// to the backend when uploading an asset so that an audit log
+    /// can be constructed for future referece, such as for security
+    /// review.
+
+    case assetAuditLog(AssetAuditLogFeatureConfig)
 
     /// An unknown feature.
 

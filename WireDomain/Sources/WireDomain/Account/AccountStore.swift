@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,13 +34,10 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
 
-struct AccountStore {
+struct AccountStore: Sendable {
 
-    private let accountsDirectory: URL
-    private let accountDataDirectory: URL
-    private static let accountsDirectoryName = "Accounts"
-    private static let accountDataDirectoryName = "AccountData"
-    private let fileManager = FileManager.default
+    private let directory: URL
+    private let fileManager = { @Sendable in FileManager.default }
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -50,12 +47,9 @@ struct AccountStore {
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
 
-    init(root: URL) throws {
-        self.accountsDirectory = root.appendingPathComponent(AccountStore.accountsDirectoryName)
-        self.accountDataDirectory = root
-            .appendingPathComponent(AccountStore.accountDataDirectoryName)
-        try fileManager.createAndProtectDirectory(at: accountsDirectory)
-        try fileManager.createAndProtectDirectory(at: accountDataDirectory)
+    init(directory: URL) throws {
+        self.directory = directory
+        try fileManager().createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Fetch
@@ -114,70 +108,6 @@ struct AccountStore {
         }
     }
 
-    // MARK: Backend Environment
-
-    // MARK: - Store
-
-    /// Store a `BackendEnvironment`.
-    ///
-    /// If the BackendEnvironment for an account already exists, it will be overwritten.
-    ///
-    /// - parameter backendEnvironment: Object to store.
-    /// - parameter metadata: Resolved metadata about the backend.
-    /// - parameter accountID: The `UUID` of the user the account belongs to.
-    /// - returns: Whether the operation was successful.
-
-    @discardableResult
-    func storeBackendEnvironment(
-        _ backendEnvironment: BackendEnvironment2,
-        metadata: ResolvedBackendMetadata,
-        for accountID: UUID
-    ) -> Bool {
-        do {
-            let accountDataURL = accountDataURL(accountID: accountID)
-            if !FileManager.default
-                .fileExists(atPath: accountDataURL.absoluteString) {
-                try FileManager.default.createAndProtectDirectory(at: accountDataURL)
-            }
-            let storedBackendEnvironment = backendEnvironment.toStored(with: metadata)
-            let url = backendEnvironmentURL(for: accountID)
-            let data = try encoder.encode(storedBackendEnvironment)
-            try data.write(to: url, options: .atomic)
-            return true
-        } catch {
-            let errorDescription = error.safeForLoggingDescription
-            log
-                .error(
-                    "Unable to store backend environment \(backendEnvironment) for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
-                )
-            return false
-        }
-    }
-
-    /// Fetch a backend environment for account.
-    ///
-    /// - parameter accountID: The `UUID` of the user the account belongs to.
-    /// - returns: The `BackendEnvironment` and `ResolvedBackendMetadata` if it exists.
-
-    func fetchBackendEnvironment(accountID: UUID) throws -> (BackendEnvironment2, ResolvedBackendMetadata)? {
-        let url = backendEnvironmentURL(for: accountID)
-
-        do {
-            let data = try Data(contentsOf: url)
-            let stored = try decoder.decode(
-                StoredBackendEnvironment.self,
-                from: data
-            )
-            return try stored.toDomain()
-        } catch {
-            let errorDescription = error.safeForLoggingDescription
-            log.error(
-                "Unable to fetch backend environment for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
-            )
-            return nil
-        }
-    }
-
     // MARK: - Delete
 
     /// Delete an `Account`.
@@ -188,8 +118,7 @@ struct AccountStore {
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
         do {
-            try fileManager.removeItem(at: url(for: account.userIdentifier))
-            deleteBackendEnvironment(account: account)
+            try fileManager().removeItem(at: url(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -201,37 +130,16 @@ struct AccountStore {
 
     // MARK: - Delete
 
-    /// Delete an `BackendEnvironment`.
-    ///
-    /// - parameter account: The account for which backend environment should be deleted.
-    /// - returns: `false` if the BackendEnvironment cannot be found or cannot be deleted otherwise `true`.
-
-    @discardableResult
-    func deleteBackendEnvironment(account: Account) -> Bool {
-        do {
-            try fileManager.removeItem(at: backendEnvironmentURL(for: account.userIdentifier))
-            return true
-        } catch {
-            let accountDescription = account.safeForLoggingDescription
-            let errorDescription = error.safeForLoggingDescription
-            log
-                .error(
-                    "Unable to delete BackendEnvironment for account \(accountDescription), error: \(errorDescription)"
-                )
-            return false
-        }
-    }
-
     /// Delete the persistence layer of an `AccountStore` from the file system.
     ///
     /// Mostly useful for cleaning up after tests or for complete account resets.
     ///
-    /// - parameter root: The root url of the store that should be deleted.
+    /// - parameter directory: The url of the store that should be deleted.
 
     @discardableResult
-    static func delete(at root: URL) -> Bool {
+    static func delete(directory: URL) -> Bool {
         do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(accountsDirectoryName))
+            try FileManager.default.removeItem(at: directory)
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -243,7 +151,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: accountsDirectory.path)
+            let paths = try fileManager().contentsOfDirectory(atPath: directory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -253,18 +161,9 @@ struct AccountStore {
     }
 
     private func url(for id: UUID) -> URL {
-        accountsDirectory.appendingPathComponent(id.uuidString)
+        directory.appendingPathComponent(id.uuidString)
     }
 
-    private func accountDataURL(accountID: UUID) -> URL {
-        accountDataDirectory
-            .appendingPathComponent(accountID.uuidString, isDirectory: true)
-    }
-
-    private func backendEnvironmentURL(for id: UUID) -> URL {
-        accountDataURL(accountID: id)
-            .appendingPathComponent("backend-environment.json")
-    }
 }
 
 private extension Error {

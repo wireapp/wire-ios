@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@ import Combine
 package import SwiftUI
 import UIKit
 import WireDesign
-import WireMessagingAPI
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 import WireReusableUIComponents
 
 package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
@@ -89,7 +88,7 @@ struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
 
         let useCase = ChannelAccessUseCase(
             permission: .everyone,
-            repository: MockChannelAccessRepositoryProtocol()
+            repository: MockChannelRepositoryProtocol()
         )
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 public protocol JournalProtocol {
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
-    subscript(_ key: JournalKey<String?>) -> String? { get set }
-    func erase()
+    subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
+    subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
+    subscript(_ key: JournalKey<Set<String>>) -> Set<String> { get nonmutating set }
+    nonmutating func erase()
 
 }

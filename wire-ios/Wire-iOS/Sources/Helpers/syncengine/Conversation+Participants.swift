@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,10 @@ extension ZMConversation {
 
         let users = participants.materialize(in: session.viewContext)
         let syncContext = session.syncContext
-        let service = ConversationParticipantsService(context: syncContext)
+        let service = ConversationParticipantsService(
+            context: syncContext,
+            localDomain: session.resolvedBackendMetadata.domain
+        )
 
         Task {
             do {
@@ -75,6 +78,9 @@ extension ZMConversation {
                 }
 
                 try await service.addParticipants(users, to: conversation)
+                try await syncContext.perform {
+                    try syncContext.save()
+                }
             } catch {
                 Flow.addParticipants.fail(error)
                 await MainActor.run {
@@ -105,7 +111,10 @@ extension ZMConversation {
         }
 
         let syncContext = session.syncContext
-        let service = ConversationParticipantsService(context: syncContext)
+        let service = ConversationParticipantsService(
+            context: syncContext,
+            localDomain: session.resolvedBackendMetadata.domain
+        )
 
         Task {
             do {

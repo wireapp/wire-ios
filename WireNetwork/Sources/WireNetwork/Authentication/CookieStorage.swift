@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -163,8 +163,8 @@ public actor CookieStorage: CookieStorageProtocol {
     }
 
     private func updateCookieInKeychain(_ cookieData: Data) async throws {
-        let updateQuery = updateQuery(cookieData: cookieData)
-        try await keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
+        let updateQuery: Set<KeychainQueryItem> = [.data(cookieData.base64EncodedData())]
+        try await keychain.updateItem(query: baseQuery, attributesToUpdate: updateQuery)
     }
 
     private func fetchCookieDataFromKeychain() async throws -> Data? {

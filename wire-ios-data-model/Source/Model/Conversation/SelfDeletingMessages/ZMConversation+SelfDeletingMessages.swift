@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ public extension ZMConversation {
     // MARK: - Helpers
 
     private var hasForcedMessageDestructionTimeout: Bool {
-        guard let feature = selfDeletingMessagesFeature else { return false }
+        guard let feature = selfDeletingMessagesFeature, !isDriveEnabled else { return false }
         return feature.isForcedOff || feature.isForcedOn
     }
 
@@ -125,7 +125,13 @@ public extension ZMConversation {
 
     private var selfDeletingMessagesFeature: Feature.SelfDeletingMessages? {
         guard let context = managedObjectContext else { return nil }
-        return FeatureRepository(context: context).fetchSelfDeletingMesssages()
+        return LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
+    }
+
+    private var isDriveEnabled: Bool {
+        guard let context = managedObjectContext else { return false }
+        let wireDriveFeature = LegacyFeatureRepository(context: context).fetchCells()
+        return wireDriveFeature.status == .enabled
     }
 
 }

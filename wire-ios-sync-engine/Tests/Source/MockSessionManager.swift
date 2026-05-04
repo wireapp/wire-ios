@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var callNotificationStyle: CallNotificationStyle = .pushNotifications
     var accountManager: AccountManager = try! .init(
         currentAppVersion: "1.0.0",
-        sharedDirectory: accountManagerURL,
+        directory: accountManagerURL,
         defaults: .temporary()
     )
     var backgroundUserSessions: [UUID: ZMUserSession] = [:]
@@ -81,10 +81,6 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     }
 
     func update(credentials: UserCredentials) -> Bool {
-        false
-    }
-
-    func checkJailbreakIfNeeded() -> Bool {
         false
     }
 

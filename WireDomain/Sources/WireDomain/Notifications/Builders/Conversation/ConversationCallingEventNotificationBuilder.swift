@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
@@ -36,8 +38,21 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return nil
         }
 
+        let resolvedConversationID: ConversationID = {
+            let callingConversationID = calling.qualifiedConversationID
+            guard !callingConversationID.id.isEmpty,
+                  let conversationUUID = UUID(uuidString: callingConversationID.id)
+            else {
+                WireLogger.calling.warn(
+                    "Falling back to original conversationID. Calling conversationID is empty or invalid",
+                    attributes: .newNSE
+                )
+                return conversationID
+            }
+            return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
+        }()
         let displayCallKitNotification = await validator.validateCallKitNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             accountID: accountID,
             eventTimestamp: time,
@@ -45,7 +60,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         )
 
         let displayCallNotification = await validator.validateCallNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             eventTimestamp: time,
             callContent: callContent
@@ -56,7 +71,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
-                conversationID: conversationID,
+                conversationID: resolvedConversationID,
                 senderID: senderID
             )
 
@@ -65,7 +80,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallNotification(
                 callContent: callContent,
                 senderID: senderID,
-                conversationID: conversationID
+                conversationID: resolvedConversationID
             )
         } else {
             // Else, this is not a call, return nil.
@@ -360,7 +375,6 @@ extension ConversationCallingEventNotificationBuilder {
         private enum Constants {
             static let isAvsReady = "isAVSReady"
             static let isCallKitAvailable = "isCallKitAvailable"
-            static let loadedUserSessions = "loadedUserSessions"
             static let knownCalls = "knownCalls"
         }
 
@@ -369,6 +383,9 @@ extension ConversationCallingEventNotificationBuilder {
         let userDefaults: UserDefaults
 
         /// In priority, we'll try to validate a CallKit notification to show to the user
+        ///
+        /// Note: Account authentication is validated earlier in the notification flow by `VerifyUserSessionUseCase`.
+        /// We don't check if the user session is loaded because sessions are loaded on-demand when needed.
         func validateCallKitNotification(
             conversationID: ConversationID,
             senderID: UserID,
@@ -388,9 +405,6 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
             let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
             let isCallKitReady = userDefaults.bool(forKey: Constants.isCallKitAvailable)
-            let loadedUserSessions = userDefaults.object(forKey: Constants.loadedUserSessions) as? [String] ?? []
-            let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
-            let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 
             let handle = "\(accountID.transportString())+\(conversationID.id.transportString())"
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
@@ -414,7 +428,6 @@ extension ConversationCallingEventNotificationBuilder {
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
-                && isUserSessionLoaded
                 && !isCallTimeOut
                 && isValidState
         }

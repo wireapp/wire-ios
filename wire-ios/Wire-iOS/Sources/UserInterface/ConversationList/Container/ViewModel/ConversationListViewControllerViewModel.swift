@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ extension ConversationListViewController {
             if userSession.selfUser.isTeamMember {
                 return true
             }
-            guard let apiVersion = BackendInfo.apiVersion,
+            guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion,
                   apiVersion >= .v7 else {
                 return true
             }
@@ -185,7 +185,7 @@ extension ConversationListViewController.ViewModel {
 
     func setupObservers() {
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
@@ -329,7 +329,6 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
             .imageSmallProfileDataChanged || changeInfo.teamsChanged {
             updateAccountImage()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class LoginPage: PageModel {
@@ -26,33 +27,29 @@ class LoginPage: PageModel {
 
     var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
-
-    var createPersonalAccountButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
+        return elementsQuery.buttons[Locators.LoginPage.createAccountLink.rawValue]
     }
 
     var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
+        app.descendants(matching: .any)[Locators.LoginPage.nextButton.rawValue].firstMatch
+    }
+
+    var emailField: XCUIElement {
+        app.textFields[Locators.LoginPage.emailTextField.rawValue]
     }
 
     var passwordField: XCUIElement {
-        app.secureTextFields["Enter password"]
+        app.secureTextFields[Locators.LoginPage.passwordSecureTextField.rawValue]
     }
 
     func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
         createPersonalAccountLink.tap()
-        createPersonalAccountButton.tap()
         return try CreatePersonalAccountFormPage()
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
-        passwordField.tap()
-        passwordField.typeText(password)
-        nextButton.tap()
+        try passwordField.tapIfKeyboardNotFocused().typeText(password)
+        nextButton.waitAndTap()
         return try FirstTimePage()
     }
 }

@@ -7,85 +7,85 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireMessaging",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
-        .library(name: "WireMessagingAPI", targets: ["WireMessagingAPI"]),
-        .library(name: "WireMessagingBindings", targets: ["WireMessagingBindings"]),
-        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"]),
-        .library(name: "WireMessagingUIBindings", targets: ["WireMessagingUIBindings"])
+        .library(name: "WireMessagingDomain", targets: ["WireMessagingDomain"]),
+        .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
+        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
+        .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha17"),
+        .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(path: "../WireLogging"),
+        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireData"),
+        .package(path: "../WireAnalytics")
     ],
     targets: [
         .target(
-            name: "WireMessagingAPI"
-        ),
-        .target(
-            name: "WireMessagingBindings",
+            name: "WireMessagingDomain",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation"
+                .product(name: "CellsSDK", package: "cells-sdk-swift"),
+                "WireFoundation",
+                "WireLogging",
+                "WireAnalytics"
             ]
         ),
         .target(
-            name: "WireMessagingUIBindings",
+            name: "WireMessagingData",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation",
-                "WireMessagingUI"
+                "WireData",
+                "WireMessagingDomain",
+                "WireLogging",
+                .product(name: "AWSS3", package: "aws-sdk-swift"),
+                .product(name: "CellsSDK", package: "cells-sdk-swift"),
+                .product(name: "Collections", package: "swift-collections")
             ]
         ),
         .target(
-            name: "WireMessagingImplementation",
+            name: "WireMessagingAssembly",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingResources",
-                "WireFoundation"
+                "WireMessagingDomain",
+                "WireMessagingUI",
+                "WireMessagingData"
             ]
-        ),
-        .target(
-            name: "WireMessagingResources"
         ),
         .target(
             name: "WireMessagingUI",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation",
-                "WireMessagingImplementationSupport",
-                "WireMessagingResources",
+                "WireMessagingDomain",
+                "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireAccountImageUI", package: "WireUI"),
+                .product(name: "WireUtilitiesPackage", package: "WireFoundation"),
                 "WireFoundation"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(
-            name: "WireMessagingImplementationSupport",
+            name: "WireMessagingDomainSupport",
             dependencies: [
-                "WireMessagingImplementation",
-                "WireMessagingAPI"
+                "WireMessagingDomain",
+                "WireMessagingData"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireMessagingTests",
             dependencies: [
+                "WireMessagingData",
                 "WireMessagingUI",
-                "WireFoundation"
-            ]
-        ),
-        .testTarget(
-            name: "WireMessagingUITests",
-            dependencies: [
-                "WireMessagingUIBindings",
-                "WireMessagingUI",
-                "WireMessagingImplementationSupport",
+                "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 "WireFoundation"
+            ],
+            resources: [
+                .process("Resources/TestFiles/")
             ]
         ),
     ]

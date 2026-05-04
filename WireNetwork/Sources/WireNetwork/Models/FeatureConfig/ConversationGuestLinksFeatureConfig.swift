@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Conversation Guest Links* feature.
 
-public struct ConversationGuestLinksFeatureConfig: Equatable, Sendable {
+public struct ConversationGuestLinksFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

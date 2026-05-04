@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request generation
 
@@ -52,7 +62,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             return ZMTransportRequest(
                 path: "/conversations/list",
                 method: .post,
@@ -80,7 +90,8 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case 200:
             guard
                 let data = response.rawData,
-                let payload = ResponsePayload(data)
+                let apiVersion = WireTransport.APIVersion(rawValue: response.apiVersion),
+                let payload = ResponsePayload(data, apiVersion: apiVersion)
             else {
                 action.fail(with: .invalidResponsePayload)
                 return

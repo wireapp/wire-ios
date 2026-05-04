@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class UserLocalStoreTests: XCTestCase {
@@ -102,6 +103,8 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
             XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.isDeleted)
             XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
+            XCTAssertEqual(user.appInfo?.appDescription, "desc")
+            XCTAssertEqual(user.appInfo?.category, "cat")
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
@@ -389,12 +392,15 @@ final class UserLocalStoreTests: XCTestCase {
             name: "user1",
             handle: "handle1",
             teamID: nil,
+            type: .regular,
             accentID: 1,
             previewAssetKey: nil,
             completeAssetKey: nil,
             isDeleted: false,
             email: "john.doe@example.com",
             expiresAt: .now,
+            appDescription: "desc",
+            appCategory: "cat",
             serviceID: nil,
             serviceProvider: nil,
             supportedProtocols: [.mls]

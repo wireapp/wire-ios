@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var syncMOC: NSManagedObjectContext!
     private var user: ZMUser!
     private var userID: QualifiedID!
@@ -39,8 +40,10 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         syncMOC = coreDataStack.syncContext
 
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,
@@ -55,6 +58,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         coreDataStack = nil
         mockCoreCryptoProvider = nil
         mockCoreCryptoContext = nil
+        mockCoreCrypto = nil
         syncMOC = nil
         user = nil
         super.tearDown()
@@ -134,7 +138,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         }
     }
 
-    private func setupOneOnOne(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) async {
+    private func setupOneOnOne(messageProtocol: WireDataModel.MessageProtocol, groupID: MLSGroupID? = nil) async {
         await syncMOC.perform { [self] in
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.messageProtocol = messageProtocol

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,22 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
+import WireNetwork
 
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let environment: BackendEnvironment2
     private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
         email: String,
+        environment: BackendEnvironment2,
         teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.environment = environment
         self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
@@ -42,13 +46,15 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
     func verificationEmailCodeComponent(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
-            name: name
+            name: name,
+            trackingConsent: trackingConsent
         )
     }
 
@@ -63,22 +69,26 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
+            environment: environment,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: dependency.passwordValidator
+            passwordValidator: dependency.passwordValidator,
+            analyticsEventTracker: dependency.registrationAnalyticsTracker
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
-            name: name
+            name: name,
+            trackingConsent: trackingConsent
         )
     }
 

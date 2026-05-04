@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,10 @@ public struct BackendEnvironment {
 
     public let webSocketURL: URL
 
+    /// THe `URL` of the build number blacklist.
+
+    public let blacklistURL: URL
+
     /// The pinned keys for the backend for use with certificate pinning.
 
     public let pinnedKeys: [PinnedKey]
@@ -42,18 +46,21 @@ public struct BackendEnvironment {
     ///
     /// - Parameter url: The `URL` of the backend.
     /// - Parameter webSocketURL: The `URL` of the WebSocket endpoint.
+    /// - Parameter blacklistURL: The `URL` of the build number blacklist.
     /// - Parameter pinnedKeys: The pinned keys for the backend for use with certificate pinning.
     /// - Parameter proxySettings: The proxy settings for the backend if any.
 
     public init(
         url: URL,
         webSocketURL: URL,
+        blacklistURL: URL,
         pinnedKeys: [PinnedKey],
         proxySettings: ProxySettings?
     ) {
         self.url = url
         self.webSocketURL = webSocketURL
         self.pinnedKeys = pinnedKeys
+        self.blacklistURL = blacklistURL
         self.proxySettings = proxySettings
     }
 

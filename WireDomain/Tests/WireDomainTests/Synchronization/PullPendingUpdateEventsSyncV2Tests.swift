@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
 //
 
 import Combine
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
 import WireNetworkSupport
-import WireProtos
 import XCTest
+
 @testable import WireDomain
 
 class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
@@ -35,8 +36,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var journal: Journal!
+    var coreCryptoContext: MockCoreCryptoContextProtocol!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var coreCrypto: MockSafeCoreCrypto!
+    var coreCrypto: MockCoreCryptoProtocol!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -45,7 +47,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         messageLocalStore = MockMessageLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
 
         journal = Journal(
             userID: UUID(),
@@ -69,7 +73,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
 
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
     }
 
     override func tearDown() {
@@ -81,6 +85,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         databaseSaver = nil
         coreCryptoProvider = nil
         coreCrypto = nil
+        coreCryptoContext = nil
         journal = nil
     }
 
@@ -180,6 +185,29 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
     }
 
+    func testPull_missedEvents() async throws {
+
+        let upstream = AsyncThrowingStream { continuation in
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event2]))
+            continuation.yield(PushChannelV2.Element.missedEvents)
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event3]))
+        }
+
+        let pushChannel = try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: 1,
+            decryptionCount: 1,
+            storedEventsCount: 1,
+            acknowledgementCount: 1
+        )
+
+        // the missedEvents should break the stream and not process the last event
+        // in reality the event3 will never come before you ack the fullsync
+        // ack the fullsync will be done in main app
+
+        XCTAssertEqual(pushChannel.acknowledgeFullSync_Invocations.count, 0)
+    }
+
     @discardableResult
     func internalTestPull(
         stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
@@ -204,6 +232,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         try XCTAssertCount(
             decryptor.decryptEventsInContext_Invocations,
             count: decryptionCount,
+            "decryptionCount mismatch",
             file: file,
             line: line
         )
@@ -211,12 +240,14 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         try XCTAssertCount(
             updateEventsStore.indexOfLastEventEnvelope_Invocations,
             count: storedEventsCount,
+            "lastEventEnvelopeCount mismatch",
             file: file,
             line: line
         )
         try XCTAssertCount(
-            updateEventsStore.persistEventEnvelopeIndex_Invocations,
+            updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations,
             count: storedEventsCount,
+            "storedEventsCount mismatch",
             file: file,
             line: line
         )
@@ -225,6 +256,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         try XCTAssertCount(
             pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations,
             count: acknowledgementCount,
+            "acknowledgementCount mismatch",
             file: file,
             line: line
         )

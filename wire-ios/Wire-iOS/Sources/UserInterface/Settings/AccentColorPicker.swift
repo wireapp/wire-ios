@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ struct AccentColorPicker: View {
                 .frame(width: colorViewSize, height: colorViewSize)
                 .padding(.trailing, 10)
             Text(color.name)
-                .font(.textStyle(selectedColor == color ? .h3 : .body1))
+                .font(for: selectedColor == color ? .h3 : .body1)
 
             Spacer()
 

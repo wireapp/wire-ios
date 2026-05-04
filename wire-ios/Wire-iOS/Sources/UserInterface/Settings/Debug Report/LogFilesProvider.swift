@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireSyncEngine
 import WireSystem
-import ZipArchive
+import ZIPFoundation
 
 /// Generates log files archives.
 ///
@@ -46,31 +47,32 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Properties
 
-    private var logsDirectory: URL = {
-        let baseURL = URL(
-            fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true
-        )
-        return baseURL
-            .appendingPathComponent("logs", isDirectory: true)
-    }()
+    private let logsDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent("logs", isDirectory: true)
 
     private var logFilesURLs: [URL] {
-        var urls = WireLogger.logFiles
-        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
+        let fileManager = FileManager.default
+        var urls = ZMSLog.pathsForExistingLogs
+
+        // add the root directory of the app, NSE and SE logs
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+           let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+            let targetLogDirectories = try? fileManager.contentsOfDirectory(
+                at: sharedLogsDirectoryURL,
+                includingPropertiesForKeys: .none
+            )
+            urls.append(contentsOf: targetLogDirectories ?? [])
+        }
+
         return urls
     }
 
     // MARK: - Interface
 
     func generateLogFilesData() throws -> Data {
+        let fileManager = FileManager.default
         defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
-            }
-            try? clearLogsDirectory()
+            try? clearLogsDirectory(fileManager: fileManager)
         }
 
         let logFilesURL = try generateLogFilesZip()
@@ -78,57 +80,56 @@ struct LogFilesProvider: LogFilesProviding {
     }
 
     func generateLogFilesZip() throws -> URL {
-        try? clearLogsDirectory()
+        let fileManager = FileManager.default
+        try? clearLogsDirectory(fileManager: fileManager)
+
+        // Determine files to export
+        let logFilesURLs = logFilesURLs
+        guard !logFilesURLs.isEmpty else {
+            throw Error.noLogs(description: logFilesURLs.description)
+        }
 
         // Re-create the base directory
-        try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+        try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
 
         // Create a subfolder for the current session
         let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
+        try fileManager.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
 
         // Create the info file
-        let infoFileURL = try createInfoFile(at: archiveFolder)
+        _ = try createInfoFile(at: archiveFolder)
 
-        // Set the list of files to be zipped
-        let filesToZip = try filesToZipURLs(
-            logFilesURLs: logFilesURLs,
-            infoFileURL: infoFileURL
-        )
+        // Copy files to be zipped
+        for logFilesURL in logFilesURLs {
+            let copy = archiveFolder.appending(path: logFilesURL.lastPathComponent, directoryHint: .notDirectory)
+            try fileManager.copyItem(at: logFilesURL, to: copy)
+        }
 
         // Create the zip file
-        let zipURL = archiveFolder.appendingPathComponent("logs.zip")
-        SSZipArchive.createZipFile(
-            atPath: zipURL.path,
-            withFilesAtPaths: filesToZip.map(\.path)
-        )
+        let zipURL = logsDirectory.appendingPathComponent("logs.zip")
+        try fileManager.zipItem(at: archiveFolder, to: zipURL, shouldKeepParent: false, compressionMethod: .deflate)
+
+        // Clean up
+        try fileManager.removeItem(at: archiveFolder)
 
         return zipURL
     }
 
-    func clearLogsDirectory() throws {
-        if FileManager.default.fileExists(atPath: logsDirectory.path) {
-            try FileManager.default.removeItem(at: logsDirectory)
+    func clearLogsDirectory(fileManager: FileManager) throws {
+        if fileManager.fileExists(atPath: logsDirectory.path) {
+            try fileManager.removeItem(at: logsDirectory)
         }
     }
 
-    func removeLogFiles() throws {
+    func removeLogFiles(fileManager: FileManager) throws {
         for fileURL in logFilesURLs {
-            try FileManager.default.removeItem(at: fileURL)
+            try fileManager.removeItem(at: fileURL)
         }
     }
 
     // MARK: - Helpers
 
-    private func filesToZipURLs(logFilesURLs: [URL], infoFileURL: URL) throws -> [URL] {
-        guard !logFilesURLs.isEmpty else {
-            throw Error.noLogs(description: logFilesURLs.description)
-        }
-
-        return logFilesURLs + [infoFileURL]
-    }
-
-    var info: String {
+    func info(includingJournal: Bool = false) -> String {
         let date = Date()
 
         var body = """
@@ -139,6 +140,10 @@ struct LogFilesProvider: LogFilesProviding {
         Date: \(date.transportString())
         """
 
+        if includingJournal {
+            body += "\n\nJournal:\n\(journalInfos())"
+        }
+
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
@@ -146,9 +151,23 @@ struct LogFilesProvider: LogFilesProviding {
         return body
     }
 
+    private func journalInfos() -> String {
+        guard let selfUserID = ZMUserSession.shared()?.selfUser.remoteIdentifier else {
+            return "Not Available"
+        }
+
+        let journal = Journal(
+            userID: selfUserID,
+            storage: UserDefaults.shared()
+        )
+
+        return journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
+    }
+
     private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
+        let info = self.info(includingJournal: true)
         try info.write(
             to: infoFileURL,
             atomically: true,

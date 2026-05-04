@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -178,6 +178,26 @@ public struct BackendEnvironment2: Sendable, Equatable, Hashable {
 
         }
 
+    }
+
+}
+
+public extension BackendEnvironment2 {
+
+    var isCloudEnvironment: Bool {
+        config.endpoints.restAPIURL.host() == "prod-nginz-https.wire.com"
+    }
+
+    static func isCloudDomain(_ domain: String) -> Bool {
+        domain == "wire.com"
+    }
+
+    var isStagingEnvironment: Bool {
+        config.endpoints.restAPIURL.host() == "staging-nginz-https.zinfra.io"
+    }
+
+    static func isStagingDomain(_ domain: String) -> Bool {
+        domain == "staging.zinfra.io"
     }
 
 }

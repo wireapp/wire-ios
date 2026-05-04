@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,15 @@ import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
-import WireCellsAPI
-import WireCellsBindings
-import WireCellsUI
 import WireCommonComponents
 import WireDesign
+import WireFoundation
+import WireLocators
 import WireLogging
+import WireMessagingAssembly
+import WireMessagingDomain
+import WireMessagingUI
+import WireNetwork
 import WireSyncEngine
 
 enum ConversationInputBarViewControllerMode {
@@ -40,8 +43,7 @@ enum ConversationInputBarViewControllerMode {
 final class ConversationInputBarViewController: UIViewController,
     UIPopoverPresentationControllerDelegate {
 
-    let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-
+    let mediaShareRestrictionManager: MediaShareRestrictionManager
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
@@ -87,7 +89,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     var textfieldObserverToken: Any?
     lazy var audioSession: AVAudioSessionType = AVAudioSession.sharedInstance()
-    private(set) var attachments: [WireCellsDraft] = []
+    private(set) var attachments: [WireDriveDraft] = []
 
     // MARK: buttons
 
@@ -118,6 +120,10 @@ final class ConversationInputBarViewController: UIViewController,
 
         button.setIcon(.hourglass, size: .tiny, for: UIControl.State.normal)
         button.accessibilityIdentifier = "ephemeralTimeSelectionButton"
+
+        if conversation.isSelfDeletingMessageSendingDisabled {
+            button.isEnabled = false
+        }
 
         configureEphemeralKeyboardButton(button)
 
@@ -170,7 +176,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons)
+        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -206,6 +212,7 @@ final class ConversationInputBarViewController: UIViewController,
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?
     var replyComposingView: ReplyComposingView?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     // MARK: feedback
 
@@ -226,13 +233,13 @@ final class ConversationInputBarViewController: UIViewController,
     private var typingObserverToken: Any?
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
-    let uploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
-    let publishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
-    let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
-    private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
-    private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
-    private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
-    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
+    let uploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol
+    let publishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol
+    let clearPublishedDraftsUseCase: WireDriveClearPublishedDraftsUseCaseProtocol
+    private let observeDraftsUseCase: WireDriveObserveDraftsUseCaseProtocol
+    private let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
+    private let retryUploadDraftUseCase: WireDriveRetryUploadDraftUseCaseProtocol
+    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -266,9 +273,8 @@ final class ConversationInputBarViewController: UIViewController,
                 locationButton
             ]
         }
-        if !conversation.isSelfDeletingMessageSendingDisabled {
-            buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
-        }
+
+        buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
 
         if shouldExcludeLocationButton {
             if let index = buttonsArray.firstIndex(of: locationButton) {
@@ -358,37 +364,38 @@ final class ConversationInputBarViewController: UIViewController,
         userSession: UserSession,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
-        wireCellsAssembly: WireCellsAssembly = WireCellsAssembly()
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.uploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
-            cellName: conversation.wireCellName
+        self.uploadDraftUseCase = wireMessagingFactory.makeUploadDraftUseCase(
+            cellName: conversation.wireDriveCellName
         )
-        self.observeDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
-            cellName: conversation.wireCellName
+        self.observeDraftsUseCase = wireMessagingFactory.makeObserveDraftsUseCase(
+            cellName: conversation.wireDriveCellName
         )
-        self.clearPublishedDraftsUseCase = wireCellsAssembly.makeClearPublishedDraftsUseCase(
-            cellName: conversation.wireCellName
+        self.clearPublishedDraftsUseCase = wireMessagingFactory.makeClearPublishedDraftsUseCase(
+            cellName: conversation.wireDriveCellName
         )
-        self.publishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
-            cellName: conversation.wireCellName
+        self.publishDraftsUseCase = wireMessagingFactory.makePublishDraftsUseCase(
+            cellName: conversation.wireDriveCellName
         )
-        self.deleteDraftUseCase = wireCellsAssembly.makeDeleteDraftUseCase(
-            cellName: conversation.wireCellName
+        self.deleteDraftUseCase = wireMessagingFactory.makeDeleteDraftUseCase(
+            cellName: conversation.wireDriveCellName
         )
-        self.retryUploadDraftUseCase = wireCellsAssembly.makeRetryUploadDraftUseCase(
-            cellName: conversation.wireCellName
+        self.retryUploadDraftUseCase = wireMessagingFactory.makeRetryUploadDraftUseCase(
+            cellName: conversation.wireDriveCellName
+        )
+        self.mediaShareRestrictionManager = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
         )
 
         super.init(nibName: nil, bundle: nil)
 
-        if !ProcessInfo.processInfo.isRunningTests,
-           let conversation = conversation as? ZMConversation {
-            conversation.qualifiedID
+        if !ProcessInfo.processInfo.isRunningTests, let conversation = conversation as? ZMConversation {
             self.conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
@@ -461,7 +468,7 @@ final class ConversationInputBarViewController: UIViewController,
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -656,8 +663,20 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func postImage(_ image: MediaAsset) {
-        guard let data = image.imageData else { return }
-        sendController.sendMessage(withImageData: data, userSession: userSession)
+        guard let data = image.imageData else {
+            return
+        }
+        // The image is a `UIImage` instances that came from
+        // the clipboard, so we don't have a name or UTType.
+        let image = SendableImage(
+            name: nil,
+            utType: nil,
+            data: data
+        )
+        sendController.sendMessage(
+            image: image,
+            userSession: userSession
+        )
     }
 
     func deallocateUnusedInputControllers() {
@@ -754,8 +773,8 @@ final class ConversationInputBarViewController: UIViewController,
             let conversation = conversation as? ZMConversation
         else { return }
 
-        presentMLSPrivacyWarningIfNeeded {
-            self.showGiphy(for: conversation)
+        presentMLSPrivacyWarningIfNeeded { [weak self] in
+            self?.showGiphy(for: conversation)
         }
     }
 
@@ -768,7 +787,6 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func showGiphy(for conversation: ZMConversation) {
-        inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(
             searchTerm: "",
             conversation: conversation,
@@ -861,6 +879,16 @@ final class ConversationInputBarViewController: UIViewController,
 
             self?.updateViewsForSelfDeletingMessageChanges()
         }
+        guard accentColorChangeHandler == nil else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        sendButton.updateSendButtonColor()
+        inputBar.updateTextViewTintColor()
     }
 
     // MARK: - Keyboard Shortcuts
@@ -892,7 +920,7 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
                 messageText,
                 mentions: [],
                 userSession: self.userSession,
-                withImageData: imageData
+                withGIFImageData: imageData
             )
         }
     }
@@ -934,8 +962,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ??
                 info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image,
-               let jpegData = image.jpegData(compressionQuality: 0.9) {
+            if let image, let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
                         UIImageWriteToSavedPhotosAlbum(
@@ -947,15 +974,28 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
                         self.sendController.sendMessage(
-                            withImageData: jpegData,
+                            image: image,
                             userSession: self.userSession,
                             completion: nil
                         )
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: mediaType)
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
+                        self.showConfirmationForImage(
+                            image,
+                            isFromCamera: false
+                        )
                     }
                 }
 
@@ -990,8 +1030,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 
     private func sketch() {
-        inputBar.textView.resignFirstResponder()
-        let viewController = CanvasViewController()
+        let viewController = CanvasViewController(userSession: userSession)
         viewController.delegate = self
         viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
@@ -1015,8 +1054,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
-
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)
@@ -1090,7 +1128,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func addAttachmentsCarousel() {
-        guard useWireCells() else { return }
+        guard conversation.isWireDriveEnabled else { return }
 
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
@@ -1132,7 +1170,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         videoButton.accessibilityIdentifier = "videoButton"
         photoButton.accessibilityIdentifier = "photoButton"
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
-        sketchButton.accessibilityIdentifier = "sketchButton"
+        sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
         pingButton.accessibilityIdentifier = "pingButton"
         locationButton.accessibilityIdentifier = "locationButton"
         gifButton.accessibilityIdentifier = "gifButton"
@@ -1211,12 +1249,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    private func useWireCells() -> Bool {
-        DeveloperFlag.wireCells.isOn
+    private func useWireDrive() -> Bool {
+        userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
     private func observeDraftAttachments() {
-        guard useWireCells() else { return }
+        guard useWireDrive() else { return }
 
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
@@ -1228,11 +1266,11 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         }
     }
 
-    private func syncCarouselVisible(drafts: [WireCellsDraft]) {
+    private func syncCarouselVisible(drafts: [WireDriveDraft]) {
         inputBar.attachmentsContainer.isHidden = drafts.filter { $0.status != .cancelled }.isEmpty
     }
 
-    private func setAttachments(drafts: [WireCellsDraft]) {
+    private func setAttachments(drafts: [WireDriveDraft]) {
         attachments = drafts
         let attachmentState = AttachmentState(drafts)
         if inputBarButtonState.attachmentState != attachmentState {
@@ -1243,7 +1281,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 }
 
 private extension AttachmentState {
-    init(_ drafts: [WireCellsDraft]) {
+    init(_ drafts: [WireDriveDraft]) {
         if drafts.isEmpty {
             self = .none
         } else if drafts.allSatisfy(\.status.isUploaded) {

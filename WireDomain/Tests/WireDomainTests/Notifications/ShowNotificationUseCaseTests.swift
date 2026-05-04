@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
             accountManager: try AccountManager(
                 currentAppVersion: "1.0.0",
-                sharedDirectory: url,
+                directory: url,
                 defaults: .temporary()
             ),
             databaseSaver: databaseSaver

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -29,8 +30,8 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
     var coreDataFixture: CoreDataFixture!
 
     @MainActor
-    override func setUp() {
-        coreDataFixture = CoreDataFixture()
+    override func setUp() async throws {
+        coreDataFixture = try await CoreDataFixture()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
         let conversation = createTeamGroupConversation()
@@ -40,10 +41,12 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             mediaPlaybackManager: nil,
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
-            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
 
@@ -75,8 +78,8 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
         )
 
         assertLabel(
-            for: [.visibleServices],
-            expected: BannerStrings.servicesActive
+            for: [.visibleApps],
+            expected: BannerStrings.appsActive
         )
 
         assertLabel(
@@ -90,8 +93,8 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
         )
 
         assertLabel(
-            for: [.visibleRemotes, .visibleServices],
-            expected: BannerStrings.remotesServicesPresent
+            for: [.visibleRemotes, .visibleApps],
+            expected: BannerStrings.remotesAppsPresent
         )
 
         assertLabel(
@@ -100,13 +103,13 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
         )
 
         assertLabel(
-            for: [.visibleExternals, .visibleServices],
-            expected: BannerStrings.externalsServicesPresent
+            for: [.visibleExternals, .visibleApps],
+            expected: BannerStrings.externalsAppsPresent
         )
 
         assertLabel(
-            for: [.visibleGuests, .visibleServices],
-            expected: BannerStrings.guestsServicesPresent
+            for: [.visibleGuests, .visibleApps],
+            expected: BannerStrings.guestsAppsPresent
         )
 
         assertLabel(
@@ -115,23 +118,23 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
         )
 
         assertLabel(
-            for: [.visibleRemotes, .visibleExternals, .visibleServices],
-            expected: BannerStrings.remotesExternalsServicesPresent
+            for: [.visibleRemotes, .visibleExternals, .visibleApps],
+            expected: BannerStrings.remotesExternalsAppsPresent
         )
 
         assertLabel(
-            for: [.visibleRemotes, .visibleGuests, .visibleServices],
-            expected: BannerStrings.remotesGuestsServicesPresent
+            for: [.visibleRemotes, .visibleGuests, .visibleApps],
+            expected: BannerStrings.remotesGuestsAppsPresent
         )
 
         assertLabel(
-            for: [.visibleExternals, .visibleGuests, .visibleServices],
-            expected: BannerStrings.externalsGuestsServicesPresent
+            for: [.visibleExternals, .visibleGuests, .visibleApps],
+            expected: BannerStrings.externalsGuestsAppsPresent
         )
 
         assertLabel(
-            for: [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices],
-            expected: BannerStrings.remotesExternalsGuestsServicesPresent
+            for: [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleApps],
+            expected: BannerStrings.remotesExternalsGuestsAppsPresent
         )
     }
 

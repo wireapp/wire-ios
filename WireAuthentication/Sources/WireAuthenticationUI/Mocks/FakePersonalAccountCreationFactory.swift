@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, RegisterPersonalAccountUseCaseFactory,
@@ -26,6 +27,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
     var mockDependencies = MockDependencies()
 
     var email: String
+    var environment: BackendEnvironment2
     var privacyPolicyURL: URL
     var termsOfUseURL: URL
     var teamAccountCreationLink: URL?
@@ -36,17 +38,20 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
+            environment: environment,
             privacyPolicyURL: privacyPolicyURL,
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            analyticsEventTracker: mockDependencies.analyticsEventTracker
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "İleri";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-posta";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Parola";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "İleri";
 "cloud_user_login.forgot_password" = "Şifrenizi mi unuttunuz?";
+
+"login.sso.title" = "Giriş yap";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
+"login.sso.input_code.title" = "SSO erişim kodu";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "Çıkış yap";
+"logout.alert.title" = "Çıkış yap";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "İptal";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Wire'ı bu aygıtta ilk defa kullanıyorsunuz.";
 "authentication.no_history.message" = "Gizlilik nedenleriyle, konuşma geçmişiniz burada görünmeyecek.";
+"authentication.missing_history.title" = "Bu cihazdan daha önce Wire kullanmışsınız.";
+"authentication.missing_history.message" = "Bu sürede gönderilen mesajlar gözükmeyecektir.";
 "authentication.no_history.confirm" = "TAMAM";
 
 "authentication.error.title.no_internet" = "No internet connection";

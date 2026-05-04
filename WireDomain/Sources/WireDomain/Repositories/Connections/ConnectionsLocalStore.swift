@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,13 +23,16 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
     ) {
         self.context = context
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -41,13 +44,30 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
             let conversation = try storedConversation(from: connectionInfo, with: connection)
 
-            conversation.needsToBeUpdatedFromBackend = true
+            conversation.needsToBeUpdatedFromBackend = false
             conversation.lastModifiedDate = connectionInfo.lastUpdate
             conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
             connection.to.oneOnOneConversation = conversation
             connection.status = connectionInfo.status
             connection.lastUpdateDateInGMT = connectionInfo.lastUpdate
+
+            try context.save()
+        }
+    }
+
+    public func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws {
+        guard let conversationID = connectionInfo.qualifiedConversationID else {
+            throw ConnectionsRepositoryError.missingConversationId
+        }
+
+        try await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation?.needsToBeUpdatedFromBackend = true
 
             try context.save()
         }

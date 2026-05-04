@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,68 +16,89 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 public import Foundation
 
+import WireLogging
+
 // sourcery: AutoMockable
-public protocol NetworkServiceProtocol {
+public protocol NetworkServiceProtocol: Sendable {
 
     func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 
 }
 
-public final class NetworkService: NSObject, NetworkServiceProtocol {
+public final class NetworkService: NetworkServiceProtocol {
 
-    private let baseURL: URL
-    private let serverTrustValidator: ServerTrustValidator
-    private var urlSession: URLSession?
-    private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
+    let baseURL: URL
+
+    private let urlSession: URLSession
+    private let webSocketStore: WebSocketStore
 
     public init(
         baseURL: URL,
+        urlSessionConfiguration configuration: URLSessionConfiguration,
         serverTrustValidator: ServerTrustValidator
     ) {
-        self.baseURL = baseURL
-        self.serverTrustValidator = serverTrustValidator
+        // Make sure the base url is a directory path,
+        // i.e www.wire.com -> www.wire.com/ and
+        // www.wire.com/staging -> www.wire.com/staging/
+        // This is important when we resolve relative paths on top
+        // of this base url because if the base is not considered a
+        // directory then the path will be replaced by the relative path
+        // (e.g www.wire.com/staging + foo -> www.wire.com/foo) rather than
+        // concatenated (e.g www.wire.com/staging/foo).
+        if !baseURL.path().isEmpty, !baseURL.hasDirectoryPath {
+            let lastComponent = baseURL.lastPathComponent
+            self.baseURL = baseURL.deletingLastPathComponent().appending(
+                path: lastComponent,
+                directoryHint: .isDirectory
+            )
+        } else {
+            self.baseURL = baseURL
+        }
+
+        let webSocketStore = WebSocketStore()
+        self.webSocketStore = webSocketStore
+
+        let delegate = NetworkServiceSessionDelegate(
+            serverTrustValidator: serverTrustValidator,
+            webSocketStore: webSocketStore
+        )
+        self.urlSession = URLSession(configuration: configuration, delegate: delegate, delegateQueue: .none)
     }
 
     deinit {
-        urlSession?.invalidateAndCancel()
-    }
-
-    public func configure(with urlSession: URLSession) {
-        self.urlSession = urlSession
+        urlSession.invalidateAndCancel()
     }
 
     public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        guard let urlSession else {
-            throw NetworkServiceError.serviceNotConfigured
-        }
-
         guard let url = request.url else {
             throw NetworkServiceError.invalidRequest
         }
 
+        // To properly concatenate this URL to the base (which should be
+        // a directory), we must remove the leading slash.
+        var urlString = url.absoluteString
+        urlString = String(urlString.drop(while: { $0 == "/" }))
+
         var request = request
         request.url = URL(
-            string: url.absoluteString,
+            string: urlString,
             relativeTo: baseURL
         )
 
+        WireLogger.network.log(request)
         let (data, response) = try await urlSession.data(for: request)
 
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw NetworkServiceError.notAHTTPURLResponse
         }
+        WireLogger.network.log(response: httpURLResponse, body: data)
 
         return (data, httpURLResponse)
     }
 
-    func executeWebSocketRequest(_ request: URLRequest) throws -> WebSocket {
-        guard let urlSession else {
-            throw NetworkServiceError.serviceNotConfigured
-        }
-
+    func executeWebSocketRequest(_ request: URLRequest) async throws -> WebSocket {
         guard let url = request.url else {
             throw NetworkServiceError.invalidRequest
         }
@@ -90,78 +111,8 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
 
         let task = urlSession.webSocketTask(with: request)
         let webSocket = WebSocket(connection: task)
-        webSocketsByTask[task] = webSocket
+        await webSocketStore.store(webSocket, for: task)
         return webSocket
-    }
-
-}
-
-extension NetworkService: URLSessionWebSocketDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didOpenWithProtocol protocol: String?
-    ) {
-        WireLogger.network.debug("web socket task did open")
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    ) {
-        WireLogger.network
-            .debug(
-                "web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")"
-            )
-        Task {
-            await webSocketsByTask[webSocketTask]?.close()
-            webSocketsByTask[webSocketTask] = nil
-        }
-    }
-
-}
-
-extension NetworkService: URLSessionTaskDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didCompleteWithError error: (any Error)?
-    ) {
-        // NOTE: This method is not called when when using async/await APIs.
-        if let error {
-            WireLogger.network.error("task did complete with error: \(error)")
-        } else {
-            WireLogger.network.debug("task did complete")
-        }
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge:
-        URLAuthenticationChallenge
-    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
-        let protectionSpace = challenge.protectionSpace
-
-        if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            guard let trust = challenge.protectionSpace.serverTrust else {
-                // If this is missing it is Apple breaking its API contract so crash.
-                fatalError("Missing server trust")
-            }
-
-            do {
-                try await serverTrustValidator.validate(trust: trust, host: protectionSpace.host)
-                return (.performDefaultHandling, challenge.proposedCredential)
-            } catch {
-                return (.cancelAuthenticationChallenge, nil)
-            }
-        } else {
-            return (.performDefaultHandling, challenge.proposedCredential)
-        }
     }
 
 }

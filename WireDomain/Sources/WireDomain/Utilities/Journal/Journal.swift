@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+public import WireFoundation
 
 /// A storage mechanism scoped to a single user for keeping
 /// track of various bits of information.
@@ -27,8 +28,6 @@ import Foundation
 ///
 /// The Journal users a scoped `UserDefaults` suite that is accessible
 /// within the app group.
-
-import WireFoundation
 
 public struct Journal: JournalProtocol {
 
@@ -56,17 +55,6 @@ public struct Journal: JournalProtocol {
     /// Get or set a boolean value.
 
     public subscript(_ key: JournalKey<Bool>) -> Bool {
-        get {
-            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
-        }
-        nonmutating set {
-            storage.set(newValue, forKey: rawKey(for: key))
-        }
-    }
-
-    /// Get or set an optional boolean value.
-
-    public subscript(_ key: JournalKey<Bool?>) -> Bool? {
         get {
             (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
         }
@@ -136,4 +124,28 @@ public extension Journal {
         self[key] = currentSet
     }
 
+    /// - Note: This method is used to export values of journal to written logs
+    func values() -> [String: String] {
+        var result = [String: String]()
+
+        [
+            JournalKey.isConsumableNotificationsEnabled,
+            JournalKey.isConversationSyncRequired,
+            JournalKey.isCoreCryptoKeyMigrationToBytesRequired,
+            JournalKey.isCoreCryptoKeyMigrationToScopedKeyRequired,
+            JournalKey.isCoreCryptoKeyRotationRequired,
+            JournalKey.isInitialSyncRequired,
+            JournalKey.isSyncV2Enabled,
+            JournalKey.isBackendMLSEnabled,
+            JournalKey.isFederationMigrationRequired,
+            JournalKey.isRepairFaultyMLSRemovalKeysRequired
+
+        ].forEach {
+            result[$0.name] = "\(self[$0] == true ? "Yes" : "No")"
+        }
+        let groups = Array(self[JournalKey.brokenMLSGroupIDs])
+        result[JournalKey.brokenMLSGroupIDs.name] = groups.isEmpty ? "None" : groups.joined(separator: "\n")
+
+        return result
+    }
 }

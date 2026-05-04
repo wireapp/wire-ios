@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,6 +100,14 @@ public struct Conversation: Equatable, Sendable {
 
     public var addPermission: ChannelPermission?
 
+    public enum CellsState: Equatable, Sendable {
+        case ready
+        case pending
+        case disabled
+    }
+
+    public var cellsState: CellsState?
+
     enum CodingKeys: String, CodingKey {
 
         case id
@@ -123,6 +131,7 @@ public struct Conversation: Equatable, Sendable {
         case lastEventTime = "last_event_time"
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
+        case cellsState = "cells_state"
 
     }
 
@@ -147,7 +156,8 @@ public struct Conversation: Equatable, Sendable {
         lastEvent: String? = nil,
         lastEventTime: Date? = nil,
         groupType: ConversationGroupType? = nil,
-        addPermission: ChannelPermission? = nil
+        addPermission: ChannelPermission? = nil,
+        cellsState: CellsState? = nil
     ) {
         self.id = id
         self.qualifiedID = qualifiedID
@@ -170,6 +180,7 @@ public struct Conversation: Equatable, Sendable {
         self.lastEventTime = lastEventTime
         self.groupType = groupType
         self.addPermission = addPermission
+        self.cellsState = cellsState
     }
 
 }

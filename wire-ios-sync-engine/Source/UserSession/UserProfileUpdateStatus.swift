@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ extension UserProfileUpdateStatus {
             .post(in: managedObjectContext.notificationContext)
     }
 
-    /// Invoked when the handle was succesfully set
+    /// Invoked when the handle was successfully set
     func didSetHandle() {
         if let handle = handleToSet {
             ZMUser.selfUser(in: managedObjectContext).handle = handle

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,26 +28,33 @@ final class PullAllConversationsSyncTests: XCTestCase {
     private var sut: PullAllConversationsSync!
     private var api: MockConversationsAPI!
     private var store: MockConversationLocalStoreProtocol!
+    private var journal: Journal!
 
     override func setUp() async throws {
         api = MockConversationsAPI()
         store = MockConversationLocalStoreProtocol()
+        journal = Journal(userID: UUID(), storage: UserDefaults.temporary())
         sut = PullAllConversationsSync(
             localDomain: Scaffolding.localDomain,
             isFederationEnabled: Scaffolding.isFederationEnabled,
             isMLSEnabled: Scaffolding.isMLSEnabled,
             api: api,
-            store: store
+            store: store,
+            journal: journal
         )
     }
 
     override func tearDown() async throws {
         api = nil
         store = nil
+        journal = nil
         sut = nil
     }
 
     func testPull() async throws {
+        // Given
+        journal[.isConversationSyncRequired] = true
+
         // Mock
         api.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
@@ -58,7 +65,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         })
 
         api.getConversationsFor_MockValue = .init(
-            found: [Scaffolding.remoteConversation1],
+            found: [Scaffolding.remoteConversation1, Scaffolding.remoteConversation4],
             notFound: [Scaffolding.conversationID2],
             failed: [Scaffolding.conversationID3]
         )
@@ -77,10 +84,15 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
 
         let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
-        try XCTAssertCount(storeFoundInvocations, count: 1)
+        try XCTAssertCount(storeFoundInvocations, count: 2)
         XCTAssertEqual(storeFoundInvocations[0].conversation, Scaffolding.localConversation1)
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeFoundInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
+        XCTAssertEqual(storeFoundInvocations[0].timestamp, Date.distantPast)
+        XCTAssertEqual(storeFoundInvocations[1].conversation, Scaffolding.localConversation4)
+        XCTAssertEqual(storeFoundInvocations[1].isFederationEnabled, Scaffolding.isFederationEnabled)
+        XCTAssertEqual(storeFoundInvocations[1].isMLSEnabled, Scaffolding.isMLSEnabled)
+        XCTAssertEqual(storeFoundInvocations[1].timestamp, Scaffolding.aGivenDate)
 
         let storeNotFoundInvocations = store
             .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
@@ -93,6 +105,51 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try XCTAssertCount(storeFailedInvocations, count: 1)
         XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.id)
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
+
+        XCTAssertEqual(journal[.isConversationSyncRequired], false)
+    }
+
+    func testPullConversationsInBatchesOf1000() async throws {
+        // Given
+        journal[.isConversationSyncRequired] = true
+
+        // Mock
+        api.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: Scaffolding.tooManyConverationIDs,
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        // The mock's Invocations array is not thread-safe: concurrent tasks race to append
+        // to it, causing lost writes. Use an actor-based collector instead.
+        actor InvocationCollector {
+            var invocations: [[WireNetwork.QualifiedID]] = []
+            func record(_ ids: [WireNetwork.QualifiedID]) { invocations.append(ids) }
+        }
+        let collector = InvocationCollector()
+
+        api.getConversationsFor_MockMethod = { ids in
+            await collector.record(ids)
+            return .init(found: [], notFound: [], failed: [])
+        }
+
+        // When
+        try await sut.pull()
+
+        // Then
+        XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
+
+        let invocations = await collector.invocations
+        try XCTAssertCount(invocations, count: 3)
+
+        // The invocations are not always in the same order, so assert with contains.
+        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[0 ..< 1000])))
+        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[1000 ..< 2000])))
+        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[2000 ..< 2500])))
+
+        XCTAssertEqual(journal[.isConversationSyncRequired], false)
     }
 
     // TODO: [WPB-15185] Re-enable
@@ -163,13 +220,19 @@ private enum Scaffolding {
     static let conversationID1 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
     static let conversationID2 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
     static let conversationID3 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
+    static let conversationID4 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
 
     static var conversationIDs: [WireNetwork.QualifiedID] {
         [
             conversationID1,
             conversationID2,
-            conversationID3
+            conversationID3,
+            conversationID4
         ]
+    }
+
+    static var tooManyConverationIDs = (1 ... 2500).map { _ in
+        QualifiedID(id: UUID(), domain: "example.com")
     }
 
     static let remoteConversation1 = WireNetwork.Conversation(
@@ -194,8 +257,37 @@ private enum Scaffolding {
         lastEventTime: nil
     )
 
+    static let remoteConversation4 = WireNetwork.Conversation(
+        id: conversationID4.id,
+        qualifiedID: conversationID4,
+        teamID: UUID(),
+        type: .group,
+        messageProtocol: .proteus,
+        mlsGroupID: nil,
+        cipherSuite: nil,
+        epoch: nil,
+        epochTimestamp: nil,
+        creator: UUID(),
+        members: nil,
+        name: "conversation 1",
+        messageTimer: nil,
+        readReceiptMode: nil,
+        access: nil,
+        accessRoles: nil,
+        legacyAccessRole: nil,
+        lastEvent: nil,
+        lastEventTime: aGivenDate
+    )
+
     static var localConversation1: WireDomain.Conversation {
         remoteConversation1.toDomainModel()
     }
 
+    static var localConversation4: WireDomain.Conversation {
+        remoteConversation4.toDomainModel()
+    }
+
+    static var aGivenDate: Date {
+        ISO8601DateFormatter().date(from: "2025-10-31T10:00:00Z") ?? Date.now
+    }
 }

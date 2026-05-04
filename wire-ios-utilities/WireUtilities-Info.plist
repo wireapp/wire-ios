@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NewRegistrationEnabled</key>
-	<string>$(NEW_REGISTRATION_ENABLED)</string>
-	<key>ProteusByCoreCryptoEnabled</key>
-	<string>$(PROTEUS_BY_CORECRYPTO_ENABLED)</string>
 	<key>WireAuthenticationEnabled</key>
 	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
 	<key>CreateLegacyBackupsEnabled</key>

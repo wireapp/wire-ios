@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import WireSyncEngine
 @MainActor
 final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
-    let isPublicDomain: Bool
     let userSession: UserSession
     let trackingManager: (any TrackingInterface)?
     weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
@@ -43,16 +42,24 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
     }
 
+    private var isAnalyticsTrackingAvailable: Bool {
+        guard let domain = userSession.selfUser.domain,
+              let isAnalyticsTrackingAvailable = trackingManager?.isAnalyticsTrackingAvailable(for: domain)
+        else { return false }
+        return isAnalyticsTrackingAvailable
+    }
+
     init(
-        isPublicDomain: Bool,
         userSession: UserSession,
         trackingManager: (any TrackingInterface)?
     ) {
-        self.isPublicDomain = isPublicDomain
         self.userSession = userSession
         self.trackingManager = trackingManager
     }
@@ -62,12 +69,16 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.settingsGroup(
-            isPublicDomain: isPublicDomain,
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
         )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        return .init(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
+        )
     }
 
     func build(
@@ -99,18 +110,25 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.accountGroup(
-            isPublicDomain: isPublicDomain,
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
     private func buildDevices() -> UIViewController {
-        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+        ClientListViewController(
+            clientsList: .none,
+            selfClient: userSession.selfUserClient,
+            userSession: userSession,
+            contextProvider: userSession.contextProvider,
+            detailedView: true
+        )
     }
 
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
@@ -120,7 +138,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.optionsGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -134,7 +153,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -145,7 +165,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.helpSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -156,7 +177,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.aboutSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -167,7 +189,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.developerGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 }

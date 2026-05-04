@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ public struct PullMLSOneOnOneSync: PullMLSOneOnOneSyncProtocol {
     public func pull(
         userID: UUID,
         userDomain: String
-    ) async throws -> MLSGroupID {
-        let conversation = try await api.getMLSOneToOneConversation(
+    ) async throws -> (MLSGroupID, MLSPublicKeys?) {
+        let (conversation, publicKeys) = try await api.getMLSOneToOneConversation(
             userID: userID.transportString(),
             in: userDomain
         )
@@ -62,7 +62,7 @@ public struct PullMLSOneOnOneSync: PullMLSOneOnOneSyncProtocol {
             isMLSEnabled: isMLSEnabled
         )
 
-        return mlsGroupID
+        return (mlsGroupID, publicKeys)
     }
 
 }

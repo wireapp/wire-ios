@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,4 +27,14 @@ public struct ConversationList: Sendable {
 
     /// Identifies conversations that failed to resolve and thus miss the representing objects.
     public let failed: [QualifiedID]
+
+    public init(
+        found: [Conversation],
+        notFound: [QualifiedID],
+        failed: [QualifiedID]
+    ) {
+        self.found = found
+        self.notFound = notFound
+        self.failed = failed
+    }
 }

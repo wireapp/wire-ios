@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class UserInfo {
 
     var name: String
@@ -25,8 +27,11 @@ class UserInfo {
     var password: String
     var id: String
     var backendDomain: String
+    var teamName: String
+    var teamID: UUID?
+    var isSSOUser: Bool
 
-    init(name: String, username: String, password: String, domain: String) {
+    init(name: String, username: String, password: String, domain: String, teamName: String, teamID: UUID?) {
         self.name = name
         self.username = username
         self.password = password
@@ -34,6 +39,9 @@ class UserInfo {
         self.email = username + "@" + domain
         self.id = ""
         self.backendDomain = ""
+        self.teamName = teamName
+        self.teamID = teamID
+        self.isSSOUser = false
     }
 
     init(email: String, password: String) {
@@ -44,6 +52,9 @@ class UserInfo {
         self.email = email
         self.id = ""
         self.backendDomain = ""
+        self.teamName = ""
+        self.teamID = nil
+        self.isSSOUser = false
     }
 
     init() {
@@ -54,6 +65,9 @@ class UserInfo {
         self.email = ""
         self.id = ""
         self.backendDomain = ""
+        self.teamName = ""
+        self.teamID = nil
+        self.isSSOUser = false
     }
 
     func updateUserInfo(newInfo: UserInfo) {
@@ -74,6 +88,9 @@ class UserInfo {
         }
         if !newInfo.backendDomain.isEmpty {
             backendDomain = newInfo.backendDomain
+        }
+        if newInfo.isSSOUser {
+            isSSOUser = true
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireNetwork
 import WireReusableUIComponents
 
 package protocol LoginViaEmailFactory {
@@ -26,17 +28,17 @@ package protocol LoginViaEmailFactory {
     @MainActor var viewModel: LoginViaEmailViewModel { get }
 
     @MainActor
-    func verificationCodeFactory(
+    func verifyLoginView(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory
+    ) -> VerificationCodeView
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 
     @MainActor
-    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView
 
 }
 
@@ -92,12 +94,8 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .fullScreenCover(item: $viewModel.modalDestination) { item in
-            sheetView(for: item)
-        }
-        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
-            destinationView(destination)
-        }
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -106,46 +104,36 @@ package struct LoginViaEmailView: View {
     @ViewBuilder
     func destinationView(_ destination: LoginViaEmailDestination) -> some View {
         switch destination {
-        case let .verifyLogin(
-            email,
-            password,
-            proxyCredentials
-        ):
-            VerificationCodeView(
-                factory: viewModel.factory.verificationCodeFactory(
+        case let .verifyLogin(email, password, proxyCredentials):
+            viewModel.factory
+                .verifyLoginView(
                     email: email,
                     password: password,
                     proxyCredentials: proxyCredentials
                 )
-            )
         case let .noHistory(authenticationResult):
-            NoHistoryView(
-                factory: viewModel.factory.noHistoryFactory(
-                    authenticationResult: authenticationResult
-                )
-            )
+            viewModel.factory.noHistoryView(result: authenticationResult)
         case .createPersonalAccount:
-            PersonalAccountCreationView(
-                factory: viewModel.factory
-                    .personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
-            )
+            viewModel.factory
+                .personalAccountCreationView(
+                    teamAccountCreationLink: viewModel.teamAccountCreationLink
+                )
         }
     }
 
     @ViewBuilder private var welcomeMessage: some View {
-        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
+        OnPremHeaderView(environment: viewModel.environment)
     }
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
     }
 
@@ -157,6 +145,7 @@ package struct LoginViaEmailView: View {
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
+        .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
     }
 
     @ViewBuilder private var submitButton: some View {
@@ -171,6 +160,7 @@ package struct LoginViaEmailView: View {
         .wireButtonStyle(.primary)
         .bold()
         .disabled(!viewModel.canSubmitCredentials)
+        .accessibilityIdentifier(Locators.LoginPage.nextButton.rawValue)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -189,14 +179,14 @@ package struct LoginViaEmailView: View {
         VStack(spacing: 4) {
             Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(Strings.CreateAccountOrTeam.button)
+                Text(Strings.CreateAccount.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
@@ -207,17 +197,11 @@ package struct LoginViaEmailView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .cornerRadius(12)
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
         }
+        .accessibilityIdentifier(Locators.LoginPage.createAccountLink.rawValue)
     }
 
     @ViewBuilder private var proxyCredentials: some View {
@@ -225,25 +209,26 @@ package struct LoginViaEmailView: View {
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(Strings.ProxyCredentials.message(viewModel.proxyServer))
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+            if let proxyServer = viewModel.proxyServer {
+                Text(Strings.ProxyCredentials.message(proxyServer))
+                    .multilineTextAlignment(.center)
+                    .font(for: .body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,
@@ -260,13 +245,20 @@ package struct LoginViaEmailView: View {
     private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
         switch sheet {
         case let .teamAccountCreation(teamAccountCreationLink):
-            SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            SafariBrowserView(url: teamAccountCreationLink)
+                .ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
-                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
-                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+                onTeamAccountCreation: viewModel.handleTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
+            // TODO: [WPB-18672] The account type selection is presented full-screen, not like the rest of the auth UI
+            // try to use .universalSheet(...) if possible
         }
+    }
+
+    private func onSheetDismiss() {
+        viewModel.onSheetDismissAction?()
     }
 
 }

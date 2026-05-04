@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,10 +69,6 @@ final class ConversationMessageActionController {
     private var allPerformableMessageAction: [MessageAction] {
         MessageAction.allCases
             .filter(canPerformAction)
-    }
-
-    private var collapseOwnMessagesEnabled: Bool {
-        privateDefaults?.bool(forKey: .collapseOwnMessages) ?? false
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -152,8 +148,7 @@ final class ConversationMessageActionController {
 
             return message.isSentBySelfUser && message.isCollapsingSupported
         case .present,
-             .openQuote,
-             .resetSession:
+             .openQuote:
             return false
         }
     }

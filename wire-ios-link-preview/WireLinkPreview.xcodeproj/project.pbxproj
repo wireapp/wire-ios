@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011E83AD2E36C361004CC768 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 011E83AC2E36C361004CC768 /* WireFoundation */; };
 		591B6E6F2C8B0A06009F8A7B /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
 		CB4B2BB42C7F2D5B00128EFB /* HTMLString in Frameworks */ = {isa = PBXBuildFile; productRef = CB4B2BB32C7F2D5B00128EFB /* HTMLString */; };
 		EE9AEC8C2BD158EC00F7853F /* WireLinkPreview.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */; };
@@ -83,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				011E83AD2E36C361004CC768 /* WireFoundation in Frameworks */,
 				CB4B2BB42C7F2D5B00128EFB /* HTMLString in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,6 +186,7 @@
 			name = WireLinkPreview;
 			packageProductDependencies = (
 				CB4B2BB32C7F2D5B00128EFB /* HTMLString */,
+				011E83AC2E36C361004CC768 /* WireFoundation */,
 			);
 			productName = WireLinkPreview;
 			productReference = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */;
@@ -588,6 +591,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		011E83AC2E36C361004CC768 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
 		CB4B2BB32C7F2D5B00128EFB /* HTMLString */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CB4B2BB22C7F2D5B00128EFB /* XCRemoteSwiftPackageReference "HTMLString" */;

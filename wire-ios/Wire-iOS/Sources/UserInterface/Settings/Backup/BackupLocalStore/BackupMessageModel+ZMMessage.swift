@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireBackup
 import WireDataModel
 import WireFoundation
@@ -43,7 +44,7 @@ extension MessageBackupModel {
         guard
             !message.isEphemeral,
             let id = message.nonce,
-            let senderUserID = message.senderUser?.qualifiedID,
+            let senderUserID = message.senderUser?.qualifiedID(localDomain: message.managedObjectContext?.localDomain),
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
             let content = genericMessage.content.flatMap(MessageBackupModel.Content.init)

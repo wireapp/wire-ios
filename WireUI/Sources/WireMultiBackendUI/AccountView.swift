@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ struct AccountView: View {
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
-                        .font(Font.textStyle(.body2))
+                        .font(for: .body2)
                         .bold()
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
@@ -83,9 +83,10 @@ private struct DotSeparatedTextView: View {
             .lineLimit(nil)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
-            .font(Font.textStyle(.subline1))
+            .font(for: .subline1)
             .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
     }
+
 }
 
 #Preview {
@@ -110,6 +111,5 @@ private struct DotSeparatedTextView: View {
                 action: {}
             )
         )
-
     }
 }

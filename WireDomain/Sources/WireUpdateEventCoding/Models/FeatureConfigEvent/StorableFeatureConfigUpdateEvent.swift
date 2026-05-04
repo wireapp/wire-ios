@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,20 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: StorableFeatureConfigStatus(config.status),
                     isMandatory: config.isMandatory,
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
+                )
+            )
+        case let .apps(config):
+            .apps(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .assetAuditLog(config):
+            .assetAuditLog(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status)
                 )
             )
         case let .classifiedDomains(config):
@@ -110,6 +124,44 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: StorableChannelsFeatureConfig.Permission(config.allowedToOpenChannels)
                 )
             )
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                StorableAllowedGlobalOperationsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
+        case let .consumableNotifications(config):
+            .consumableNotifications(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            .simplifiedUserConnectionRequestQRCode(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .cells(config):
+            .cells(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                StorableCellsInternalFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    backendURL: config.backendURL
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -123,6 +175,16 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel(),
                     isMandatory: config.isMandatory,
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
+                )
+            )
+        case let .apps(config):
+            .apps(
+                .init(status: config.status.toAPIModel())
+            )
+        case let .assetAuditLog(config):
+            .assetAuditLog(
+                .init(
+                    status: config.status.toAPIModel()
                 )
             )
         case let .classifiedDomains(config):
@@ -201,6 +263,36 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: config.allowedToOpenChannels.toAPIModel()
                 )
             )
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
+        case let .consumableNotifications(config):
+            .consumableNotifications(
+                ConsumableNotificationsFeatureConfig(
+                    status: config.status.toAPIModel()
+                )
+            )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            .simplifiedUserConnectionRequestQRCode(
+                SimplifiedUserConnectionRequestQRCodeConfig(
+                    status: config.status.toAPIModel()
+                )
+            )
+        case let .cells(config):
+            .cells(
+                .init(status: config.status.toAPIModel())
+            )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                .init(
+                    status: config.status.toAPIModel(),
+                    backendURL: config.backendURL
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -218,6 +310,8 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
     case appLock(StorableAppLockFeatureConfig)
+    case apps(StorableBasicFeatureConfig)
+    case assetAuditLog(StorableBasicFeatureConfig)
     case classifiedDomains(StorableClassifiedDomainsFeatureConfig)
     case conferenceCalling(StorableConferenceCallingFeatureConfig)
     case conversationGuestLinks(StorableBasicFeatureConfig)
@@ -228,6 +322,11 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case mlsMigration(StorableMLSMigrationFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
+    case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
+    case consumableNotifications(StorableBasicFeatureConfig)
+    case simplifiedUserConnectionRequestQRCode(StorableBasicFeatureConfig)
+    case cells(StorableBasicFeatureConfig)
+    case cellsInternal(StorableCellsInternalFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -325,6 +424,12 @@ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
 
 }
 
+struct StorableAllowedGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
+
+    let status: StorableFeatureConfigStatus
+    let resetMLSConversations: Bool
+}
+
 struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
 
     enum Permission: String, Codable, Sendable {
@@ -333,7 +438,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
         case everyone
         case admins
 
-        init(_ value: WireNetwork.ChannelsPermision) {
+        init(_ value: WireNetwork.ChannelsPermission) {
             switch value {
             case .teamMembers:
                 self = .teamMembers
@@ -344,7 +449,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
             }
         }
 
-        func toAPIModel() -> WireNetwork.ChannelsPermision {
+        func toAPIModel() -> WireNetwork.ChannelsPermission {
             switch self {
             case .teamMembers:
                 .teamMembers
@@ -361,4 +466,9 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
     let allowedToCreateChannels: Permission
     let allowedToOpenChannels: Permission
 
+}
+
+struct StorableCellsInternalFeatureConfig: Codable, Equatable, Sendable {
+    let status: StorableFeatureConfigStatus
+    let backendURL: URL
 }

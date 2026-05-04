@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,11 @@ public extension LogAttributes {
     private enum Constants {
         static let initial = "initial"
         static let incremental = "incremental"
+        /// legacy sync
         static let v1 = "v1"
+        /// new sync
         static let v2 = "v2"
+        /// consumable-notifications sync
         static let v3 = "v3"
     }
 
@@ -60,7 +63,7 @@ public extension LogAttributes {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
-            .duration: duration,
+            .syncDuration: duration,
             .public: true
         ]
     }
@@ -86,45 +89,52 @@ public extension LogAttributes {
             .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .syncPhase: phase,
-            .duration: duration,
+            .syncDuration: duration,
             .public: true
+        ]
+    }
+
+    static var incrementalSync: Self {
+        [
+            .syncType: Constants.incremental,
+            .public: true
+        ]
+    }
+
+    static var initialSync: Self {
+        [
+            .syncType: Constants.initial
         ]
     }
 
     // MARK: - New sync (V2, V3)
 
-    static func syncAttributes(
-        initialSync: Bool
-    ) -> Self {
+    static var incrementalSyncV3: Self {
         [
-            .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncType: Constants.incremental,
+            .syncVersion: Constants.v3,
             .public: true
         ]
     }
 
-    static var syncAttributes: Self {
+    static var incrementalSyncV2: Self {
         [
-            .syncVersion: syncVersion,
+            .syncType: Constants.incremental,
+            .syncVersion: Constants.v2,
             .public: true
         ]
     }
 
-    static func syncPhaseAttributes(
-        _ phase: String,
-        initialSync: Bool
+    static func initialSyncAttributes(
+        _ phase: String
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncType: Constants.initial,
             .syncPhase: phase,
             .public: true
         ]
     }
 
-    static var syncVersion: String {
-        DeveloperFlag.consumableNotifications.isOn ? Constants.v3 : Constants.v2
-    }
 }
 
 extension LogAttributes {

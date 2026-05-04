@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,20 +20,23 @@ import Foundation
 import WireFoundation
 import WireNetwork
 
-public final class NetworkStack {
+final class NetworkStack {
 
     let backendEnvironment: BackendEnvironment
     let minTLSVersion: TLSVersion
     let cookieEncryptionKey: Data
+    let authenticationManager: MockAuthManager
 
-    public init(
+    init(
         backendEnvironment: BackendEnvironment,
         minTLSVersion: TLSVersion,
-        cookieEncryptionKey: Data
+        cookieEncryptionKey: Data,
+        authenticationManager: MockAuthManager
     ) {
         self.backendEnvironment = backendEnvironment
         self.minTLSVersion = minTLSVersion
         self.cookieEncryptionKey = cookieEncryptionKey
+        self.authenticationManager = authenticationManager
     }
 
     private lazy var keychain: some KeychainProtocol = Keychain()
@@ -42,38 +45,22 @@ public final class NetworkStack {
         proxySettings: backendEnvironment.proxySettings
     )
 
-    private lazy var apiService: some APIServiceProtocol = APIService(
+    lazy var apiService: some APIServiceProtocol = APIService(
         networkService: apiNetworkService,
-        authenticationManager: MockAuthManager()
+        authenticationManager: authenticationManager
     )
 
-    public lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
+    lazy var apiNetworkService: NetworkService = {
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
+        return NetworkService(
+            baseURL: backendEnvironment.url,
+            urlSessionConfiguration: config,
+            serverTrustValidator: serverTrustValidator
+        )
     }()
 
     private lazy var serverTrustValidator = ServerTrustValidator(
         pinnedKeys: backendEnvironment.pinnedKeys,
         currentDateProvider: .system
     )
-
-}
-
-private struct MockAuthManager: AuthenticationManagerProtocol {
-
-    enum AccessTokenError: Error {
-        case notImplemented
-    }
-
-    func getValidAccessToken() async throws -> WireNetwork.AccessToken {
-        throw AccessTokenError.notImplemented
-    }
-
-    func refreshAccessToken() async throws -> WireNetwork.AccessToken {
-        throw AccessTokenError.notImplemented
-    }
-
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,18 +23,22 @@ struct StoredAccount: Codable {
 
     var identifier: UUID
     var name: String
+    var handle: String?
     var image: Data?
     var team: String?
     var teamImage: Data?
+    var backendName: String?
     var loginCredentials: StoredLoginCredentials?
     var unreadConversationCount: Int
 
     init(_ account: Account) {
         self.identifier = account.userIdentifier
         self.name = account.userName
+        self.handle = account.handle
         self.image = account.imageData
         self.team = account.teamName
         self.teamImage = account.teamImageData
+        self.backendName = account.backendName
         self.loginCredentials = account.loginCredentials.map {
             StoredLoginCredentials($0)
         }
@@ -46,12 +50,10 @@ struct StoredAccount: Codable {
 struct StoredLoginCredentials: Codable {
 
     var emailAddress: String?
-    var hasPassword: Bool
     var usesCompanyLogin: Bool
 
     init(_ loginCredentials: LoginCredentials) {
         self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
         self.usesCompanyLogin = loginCredentials.usesCompanyLogin
     }
 
@@ -64,6 +66,8 @@ extension Account {
             userName: storedAccount.name,
             userIdentifier: storedAccount.identifier,
             teamName: storedAccount.team,
+            handle: storedAccount.handle,
+            backendName: storedAccount.backendName,
             imageData: storedAccount.image,
             teamImageData: storedAccount.teamImage,
             unreadConversationCount: storedAccount.unreadConversationCount,
@@ -80,7 +84,6 @@ extension LoginCredentials {
     convenience init(_ loginCredentials: StoredLoginCredentials) {
         self.init(
             emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
             usesCompanyLogin: loginCredentials.usesCompanyLogin
         )
     }

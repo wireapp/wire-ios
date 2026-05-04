@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 @testable import WireNetwork
 
@@ -84,14 +86,12 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             { _, _, _, _, _, _ in
             }
 
-        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
-        let content = try XCTUnwrap(genericMessage.content) // .text
+        let genericMessage = try XCTUnwrap(GenericMessage(from: Scaffolding.base64EncodedString, validate: true))
 
         // When
 
         try await sut.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -128,7 +128,6 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         // When
         try await sut.processProtobufMessage(
             genericMessage,
-            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -158,13 +157,12 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
         let genericMessage = GenericMessage.with {
             $0.messageID = UUID().uuidString
-            $0.availability = WireProtos.Availability(.available)
+            $0.availability = GenericMessageProtocol.Availability(.available)
         }
 
         // When
         try await sut.processProtobufMessage(
             genericMessage,
-            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -180,10 +178,79 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
     }
 
+    func testProcessingButtonActionMessageEnsuresSenderMatchesSelfUser() async throws {
+        // Given
+        let conversationID = QualifiedID(id: UUID(), domain: "wire.com")
+        let conversation = await context.perform { [modelHelper, context] in
+            modelHelper.createGroupConversation(id: conversationID.id, domain: conversationID.domain, in: context)
+        }
+        let senderID = UserID(id: UUID(), domain: "wire.com")
+        let genericMessage = GenericMessage.with { message in
+            message.messageID = UUID().uuidString.lowercased()
+            message.content = .buttonAction(.with { _ in })
+        }
+        messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod =
+            { _, _, _, _, _ in
+            }
+
+        // When
+        try await sut.processProtobufMessage(
+            genericMessage,
+            conversation: conversation,
+            conversationID: conversationID,
+            senderID: senderID,
+            senderClientID: .none,
+            date: .now,
+            eventMessage: "test"
+        )
+
+        // Then
+        let invocation = try XCTUnwrap(messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
+        XCTAssertTrue(invocation.ensureSenderIsSelfUser)
+    }
+
+    func testProcessingButtonActionConfirmationMessageDoesntEnsureSenderMatchesSelfUser() async throws {
+        // Given
+        let conversationID = QualifiedID(id: UUID(), domain: "wire.com")
+        let conversation = await context.perform { [modelHelper, context] in
+            modelHelper.createGroupConversation(id: conversationID.id, domain: conversationID.domain, in: context)
+        }
+        let senderID = UserID(id: UUID(), domain: "wire.com")
+        let genericMessage = GenericMessage.with { message in
+            message.messageID = UUID().uuidString.lowercased()
+            message.content = .buttonActionConfirmation(.with { _ in })
+        }
+        messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod =
+            { _, _, _, _, _ in
+            }
+
+        // When
+        try await sut.processProtobufMessage(
+            genericMessage,
+            conversation: conversation,
+            conversationID: conversationID,
+            senderID: senderID,
+            senderClientID: .none,
+            date: .now,
+            eventMessage: "test"
+        )
+
+        // Then
+        let invocation = try XCTUnwrap(messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
+        XCTAssertFalse(invocation.ensureSenderIsSelfUser)
+    }
+
+    // MARK: -
+
     private enum Scaffolding {
         static let eventDate = Date()
         static let conversationID = ConversationID(id: .mockID1, domain: "domain.com")
         static let userID = ConversationID(id: .mockID1, domain: "domain.com")
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
+
 }

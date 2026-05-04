@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,12 +98,24 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .channels)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
+            case .unread:
+                await mainCoordinator.showConversationList(conversationFilter: .unread)
+            case .mentions:
+                await mainCoordinator.showConversationList(conversationFilter: .mentions)
+            case .replies:
+                await mainCoordinator.showConversationList(conversationFilter: .replies)
+            case .drafts:
+                await mainCoordinator.showConversationList(conversationFilter: .drafts)
             case .folders:
                 break // handled by `sidebarViewController(_:didTapFoldersAt:)`
             case .archive:
                 await mainCoordinator.showArchive()
             case .settings:
                 await mainCoordinator.showSettings()
+            case .meetings:
+                await mainCoordinator.showMeetings()
+            case .files:
+                await mainCoordinator.showFiles()
             }
         }
     }

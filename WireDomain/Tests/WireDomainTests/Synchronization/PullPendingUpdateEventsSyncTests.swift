@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
-    private var coreCrypto: MockSafeCoreCrypto!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var envelope: CoreCryptoMocksEnvelope!
 
     override func setUp() async throws {
         journal = Journal(
@@ -41,9 +40,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
-        coreCrypto = MockSafeCoreCrypto()
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        envelope = CoreCryptoMocksEnvelope()
 
         sut = PullPendingUpdateEventsSync(
             selfClientID: Scaffolding.selfClientID,
@@ -51,11 +48,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             store: store,
             journal: journal,
             decryptor: decryptor,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: envelope.coreCryptoProvider
         )
     }
 
     override func tearDown() async throws {
+        envelope = nil
         api = nil
         store = nil
         decryptor = nil
@@ -85,12 +83,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
         // When
-        try await sut.pull()
+        try await sut.pull(publicKeys: nil)
 
         // Then we used the api to fetch pending events.
         let apiInvocations = api.getUpdateEventsSelfClientIDSinceEventID_Invocations
@@ -107,7 +105,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(decryptorInvocations[3].eventEnvelope.id, Scaffolding.envelope4.id)
 
         // Then the events were stored at correct indices.
-        let persistInvocactions = store.persistEventEnvelopesIndex_Invocations
+        let persistInvocactions = store.persistEventEnvelopesIndexPublicKeys_Invocations
         try XCTAssertCount(persistInvocactions, count: 2)
         XCTAssertEqual(persistInvocactions[0].index, Scaffolding.indexOfLastEventEnvelope + 1)
         XCTAssertEqual(persistInvocactions[1].index, Scaffolding.indexOfLastEventEnvelope + 1)
@@ -120,6 +118,119 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
     }
 
+    func testPull_cancelledDuringDecryption_throwsCancellationError() async throws {
+        // Mock
+        store.lastEventID_MockValue = Scaffolding.lastEventID
+        store.indexOfLastEventEnvelope_MockValue = Scaffolding.indexOfLastEventEnvelope
+
+        // page2 contains 2 envelopes, so cancellation mid-loop can be observed
+        api.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page2") { start in
+            switch start {
+            case "page2":
+                return Scaffolding.page2 // 2 events
+            default:
+                throw "unknown page: \(start ?? "nil")"
+            }
+        }
+
+        let box = ContinuationBox()
+
+        decryptor.decryptEventsInContext_MockMethod = { [box] envelope, _ in
+            // Suspend so the outer task can be cancelled before the next iteration
+            await withCheckedContinuation { continuation in
+                box.continuation = continuation
+            }
+            return EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
+        }
+
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
+        store.storeLastEventIDId_MockMethod = { _ in }
+        store.storeServerTimeDelta_MockMethod = { _ in }
+
+        // When: start pull in a task
+        let pullingEventsTask = Task { [sut] in
+            try await sut.pull(publicKeys: nil)
+        }
+
+        // Wait until the first decryption suspends
+        while box.continuation == nil {
+            try await Task.sleep(nanoseconds: 1_000_000)
+        }
+
+        // Cancel the task, then let the first decryption finish —
+        // the second iteration will hit Task.checkCancellation() and throw.
+        pullingEventsTask.cancel()
+        box.continuation?.resume()
+
+        // Then: pull throws CancellationError
+        let result = await pullingEventsTask.result
+        switch result {
+        case let .failure(error):
+            XCTAssertTrue(error is CancellationError, "Expected CancellationError, got: \(error)")
+        case .success:
+            XCTFail("Expected the task to be cancelled")
+        }
+
+        // Then: only the first envelope was decrypted (loop was interrupted)
+        XCTAssertEqual(decryptor.decryptEventsInContext_Invocations.count, 1)
+
+        // Then: no events were persisted and no last event ID was stored
+        XCTAssertTrue(store.persistEventEnvelopesIndexPublicKeys_Invocations.isEmpty)
+        XCTAssertTrue(store.storeLastEventIDId_Invocations.isEmpty)
+    }
+
+    func testLastEventIDIsNotPersisted_untilTransactionIsCompleted() async throws {
+        // Mock
+        store.lastEventID_MockValue = Scaffolding.lastEventID
+        store.indexOfLastEventEnvelope_MockValue = Scaffolding.indexOfLastEventEnvelope
+
+        api.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page2") { start in
+            switch start {
+            case "page2":
+                return Scaffolding.page2
+
+            default:
+                throw "unknown page: \(start ?? "nil")"
+            }
+        }
+
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
+
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
+        store.storeLastEventIDId_MockMethod = { _ in }
+        store.storeServerTimeDelta_MockMethod = { _ in }
+
+        envelope.setCompleteTransactionByDefault(false)
+
+        // When
+        let pullingEventsTask = Task { [sut] in
+            try await sut.pull(publicKeys: nil)
+        }
+
+        // we wait until the sync tries to commit the batch of decrypted events
+        try await envelope.waitUntilTransactionIsPending()
+
+        // Then
+        try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 0)
+
+        // complete all transaction
+        envelope.completeAllTransactions()
+
+        _ = await pullingEventsTask.result
+
+        // after allowing the transaction to complete we should we see
+        // that the last event ID got persisted
+        let storeLastEventIDInvocations = store.storeLastEventIDId_Invocations
+        try XCTAssertCount(storeLastEventIDInvocations, count: 1)
+        XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope4.id)
+    }
+
+}
+
+private final class ContinuationBox: @unchecked Sendable {
+    var continuation: CheckedContinuation<Void, Never>?
 }
 
 private enum Scaffolding {

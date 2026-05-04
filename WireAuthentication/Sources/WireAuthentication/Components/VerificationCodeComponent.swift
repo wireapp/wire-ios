@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ protocol VerificationCodeComponentDependency: Dependency {
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+final class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
     private let email: String
     private let password: String
@@ -48,16 +48,6 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         self.password = password
         self.proxyCredentials = proxyCredentials
         super.init(parent: parent)
-    }
-
-    // MARK: - Children
-
-    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: dependency.didDetectDomainConflict
-        )
     }
 
 }
@@ -76,8 +66,9 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
         )
     }
 
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        noHistoryComponent(authenticationResult: authenticationResult)
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
     }
 
     // MARK: - Use cases
@@ -100,4 +91,13 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
     }
 
+    // MARK: - Private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: dependency.didDetectDomainConflict
+        )
+    }
 }

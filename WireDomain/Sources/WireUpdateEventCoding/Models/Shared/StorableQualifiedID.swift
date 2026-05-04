@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireNetwork
+import WireFoundation
 
 struct StorableQualifiedID: Codable, Hashable, Equatable, Sendable {
 
     let id: UUID
     let domain: String
 
-    init(_ value: WireNetwork.QualifiedID) {
+    init(_ value: QualifiedID) {
         self.id = value.id
         self.domain = value.domain
     }
 
-    func toAPIModel() -> WireNetwork.QualifiedID {
+    func toAPIModel() -> QualifiedID {
         .init(id: id, domain: domain)
     }
 

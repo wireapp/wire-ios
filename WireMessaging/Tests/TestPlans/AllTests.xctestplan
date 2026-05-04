@@ -20,13 +20,6 @@
         "identifier" : "WireMessagingTests",
         "name" : "WireMessagingTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireMessaging",
-        "identifier" : "WireMessagingUITests",
-        "name" : "WireMessagingUITests"
-      }
     }
   ],
   "version" : 1

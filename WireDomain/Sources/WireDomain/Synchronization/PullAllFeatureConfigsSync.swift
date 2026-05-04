@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
 }
 
-private extension FeatureConfigLocalStoreProtocol {
+extension FeatureConfigLocalStoreProtocol {
 
     func storeFeatureConfig(_ featureConfig: WireNetwork.FeatureConfig) async {
         switch featureConfig {
@@ -52,6 +52,18 @@ private extension FeatureConfigLocalStoreProtocol {
                 name: .appLock,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
+            )
+        case let .apps(config):
+            await storeFeature(
+                name: .apps,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
+        case let .assetAuditLog(config):
+            await storeFeature(
+                name: .assetAuditLog,
+                isEnabled: config.status == .enabled,
+                config: nil
             )
         case let .classifiedDomains(config):
             await storeFeature(
@@ -113,10 +125,39 @@ private extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+        case let .allowedGlobalOperations(config):
+            await storeFeature(
+                name: .allowedGlobalOperations,
+                isEnabled: config.status == .enabled,
+                config: config.toDomainModel()
+            )
+        case let .consumableNotifications(config):
+            await storeFeature(
+                name: .consumableNotifications,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            await storeFeature(
+                name: .simplifiedUserConnectionRequestQRCode,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
+        case let .cells(config):
+            await storeFeature(
+                name: .cells,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
+        case let .cellsInternal(config):
+            await storeFeature(
+                name: .cellsInternal,
+                isEnabled: config.status == .enabled,
+                config: config.toDomainModel()
+            )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")
             return
         }
     }
-
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,10 @@ enum HTTPStatusCode: Int {
 
     case created = 201
 
+    /// accepted - 202
+
+    case accepted = 202
+
     /// no content - 204
 
     case noContent = 204
@@ -57,6 +61,10 @@ enum HTTPStatusCode: Int {
     /// conflict - 409
 
     case conflict = 409
+
+    // too many requests - 429
+
+    case tooManyRequests = 429
 
     /// domain blocked - 451
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireNetwork
 
@@ -86,8 +88,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _, _ in }
+            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _ in }
 
         // When
 
@@ -99,7 +101,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )

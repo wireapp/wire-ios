@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ public protocol LogFilesProviding {
     /// Clears the logs directory.
     /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
 
-    func clearLogsDirectory() throws
+    func clearLogsDirectory(fileManager: FileManager) throws
 
     /// Clears individual log files from their source locations.
 
-    func removeLogFiles() throws
+    func removeLogFiles(fileManager: FileManager) throws
 
     /// Deletes all log-related legacy archives
 

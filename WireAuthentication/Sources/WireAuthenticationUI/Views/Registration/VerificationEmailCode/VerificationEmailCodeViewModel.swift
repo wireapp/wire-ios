@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
+    private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     // MARK: - Life cycle
 
@@ -63,7 +64,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         password: String,
         name: String,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits
+        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         precondition(numberOfDigits > 0)
 
@@ -75,6 +77,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     // MARK: - Actions
@@ -118,8 +121,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         isLoading = true
         let verificationCode = code.joined()
         do {
-            let (cookies, uuid) = try await register(verificationCode: verificationCode)
-            guard let uuid else {
+            let (cookies, userID) = try await register(verificationCode: verificationCode)
+            guard let userID else {
                 return
             }
             let emailCredentials = EmailCredentials(
@@ -130,11 +133,12 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
                 emailCredentials: emailCredentials,
-                userID: uuid
+                userID: userID
             )
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
+            analyticsEventTracker?.trackPersonalAccountCreationFailedCodeVerification()
 
             switch error {
             case RegisterPersonalAccountUseCaseError.invalidEmail:
@@ -163,9 +167,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
         do {
             try await resendVerificationCode(email: email)
-            WireLogger.authentication.info("Resend email erification code succeeded")
+            WireLogger.authentication.info("Resend email verification code succeeded")
         } catch {
-            WireLogger.authentication.error("Resend email erification code login failed: \(error)")
+            WireLogger.authentication.error("Resend email verification code login failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:
@@ -182,6 +186,10 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         }
 
         isResending = false
+    }
+
+    func trackReachedVerificationCodeIfNeeded() {
+        analyticsEventTracker?.trackPersonalAccountCreationReachedVerificationCode()
     }
 
     // MARK: - Private

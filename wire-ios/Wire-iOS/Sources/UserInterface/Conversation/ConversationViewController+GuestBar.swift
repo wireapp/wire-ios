@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ extension ConversationViewController {
         else {
             return .hidden
         }
-        return .visible(labelKey: labelKey, identifier: identifier(for: state))
+        return .visible(labelKey: labelKey)
 
     }
 
@@ -42,20 +42,20 @@ extension ConversationViewController {
         typealias BannerStrings = L10n.Localizable.Conversation.Banner
 
         switch state {
-        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices]:
-            return BannerStrings.remotesExternalsGuestsServicesPresent
+        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleApps]:
+            return BannerStrings.remotesExternalsGuestsAppsPresent
 
         case [.visibleRemotes, .visibleExternals, .visibleGuests]:
             return BannerStrings.remotesExternalsGuestsPresent
 
-        case [.visibleRemotes, .visibleExternals, .visibleServices]:
-            return BannerStrings.remotesExternalsServicesPresent
+        case [.visibleRemotes, .visibleExternals, .visibleApps]:
+            return BannerStrings.remotesExternalsAppsPresent
 
-        case [.visibleRemotes, .visibleGuests, .visibleServices]:
-            return BannerStrings.remotesGuestsServicesPresent
+        case [.visibleRemotes, .visibleGuests, .visibleApps]:
+            return BannerStrings.remotesGuestsAppsPresent
 
-        case [.visibleExternals, .visibleGuests, .visibleServices]:
-            return BannerStrings.externalsGuestsServicesPresent
+        case [.visibleExternals, .visibleGuests, .visibleApps]:
+            return BannerStrings.externalsGuestsAppsPresent
 
         case [.visibleRemotes, .visibleExternals]:
             return BannerStrings.remotesExternalsPresent
@@ -63,17 +63,17 @@ extension ConversationViewController {
         case [.visibleRemotes, .visibleGuests]:
             return BannerStrings.remotesGuestsPresent
 
-        case [.visibleRemotes, .visibleServices]:
-            return BannerStrings.remotesServicesPresent
+        case [.visibleRemotes, .visibleApps]:
+            return BannerStrings.remotesAppsPresent
 
         case [.visibleExternals, .visibleGuests]:
             return BannerStrings.externalsGuestsPresent
 
-        case [.visibleExternals, .visibleServices]:
-            return BannerStrings.externalsServicesPresent
+        case [.visibleExternals, .visibleApps]:
+            return BannerStrings.externalsAppsPresent
 
-        case [.visibleGuests, .visibleServices]:
-            return BannerStrings.guestsServicesPresent
+        case [.visibleGuests, .visibleApps]:
+            return BannerStrings.guestsAppsPresent
 
         case [.visibleRemotes]:
             return BannerStrings.remotesPresent
@@ -84,34 +84,12 @@ extension ConversationViewController {
         case [.visibleGuests]:
             return BannerStrings.guestsPresent
 
-        case [.visibleServices]:
-            return BannerStrings.servicesActive
+        case [.visibleApps]:
+            return BannerStrings.appsActive
 
         default:
             return nil
         }
-    }
-
-    func identifier(for state: ZMConversation.ExternalParticipantsState) -> String {
-        var identifiers: [String] = []
-
-        if conversation.externalParticipantsState.contains(.visibleRemotes) {
-            identifiers.append("remotes")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleExternals) {
-            identifiers.append("externals")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleGuests) {
-            identifiers.append("guests")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleServices) {
-            identifiers.append("services")
-        }
-
-        return "has\(identifiers.joined(separator: "and"))"
     }
 
     /// Updates the visibility of the guest bar.

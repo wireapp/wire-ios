@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ public import Foundation
 /// A token used to make authenticated requests to
 /// the backend.
 
-public struct AccessToken: Equatable, Sendable {
+public struct AccessToken: Equatable, Hashable, Sendable {
 
     /// The user id of whom the token belongs.
 

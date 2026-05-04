@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,17 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
 
     nonisolated
     func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
         MockRegisterPersonalAccountUseCase()
+    }
+
+    var analyticsEventTracker: RegistrationAnalyticsTrackerProtocol {
+        MockRegistrationAnalyticsTracker()
     }
 
 }
@@ -38,5 +43,22 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
     ) async throws -> ([HTTPCookie], UUID?) {
         ([], UUID())
     }
+
+}
+
+private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+
+    var trackingID: String?
+
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool { false }
+    func setUp() {}
+    func tearDown() {}
+    func trackPersonalAccountCreationStart() {}
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
+    func trackPersonalAccountCreationReachedVerificationCode() {}
+    func trackPersonalAccountCreationFailedCodeVerification() {}
+    func trackPersonalAccountCreationReachedUsernameForm() {}
+    func trackPersonalAccountCreationCompletion() {}
+    func deleteTemporaryTrackingID() {}
 
 }

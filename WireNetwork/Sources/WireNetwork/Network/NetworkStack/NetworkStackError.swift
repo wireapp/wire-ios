@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /// Errors originating from `NetworkStack`.
 
-enum NetworkStackError: Error {
+public enum NetworkStackError: Error {
 
     /// Proxy credentials are required but none are
     /// available
@@ -37,6 +37,6 @@ enum NetworkStackError: Error {
     /// that this client supports is lower than the min
     /// available API version on the backend.
 
-    case clientVersionObsolete
+    case clientAPIVersionObsolete
 
 }

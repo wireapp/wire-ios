@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ extension ConversationInputBarViewController {
         } else {
             if !attachments.isEmpty {
                 do {
-                    try await publishDraftsUseCase.invoke()
+                    try await publishDraftsUseCase.invoke(containsText: !text.isEmpty)
                     await clearPublishedDraftsUseCase.invoke()
                 } catch {
                     WireLogger.conversation.error("Failed to publish drafts: \(error)")
@@ -64,7 +64,17 @@ extension ConversationInputBarViewController {
                         contentType: draft.mimeType,
                         initialName: draft.name,
                         initialSize: draft.bytes,
-                        initialMetadata: nil // FIXME: [WPB-18130] Send metadata
+                        initialMetadata: draft.metadata.map { metadata in
+                            switch metadata {
+                            case let .image(width, height):
+                                .image(width: width, height: height)
+                            case let .video(width, height, duration):
+                                .video(width: width, height: height, duration: duration)
+                            case let .audio(duration):
+                                // Currently normalized loudness is not supported
+                                .audio(duration: duration, normalizedLoudness: nil)
+                            }
+                        }
                     )
                 },
                 mentions: mentions,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
     private var mockMigrator: MockActorOneOnOneMigrator!
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
-    private var mockRepository: MockFeatureRepositoryInterface!
+    private var mockRepository: MockLegacyFeatureRepositoryInterface!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     override func setUp() async throws {
         try await super.setUp()
 
-        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository = MockLegacyFeatureRepositoryInterface()
         mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
 
         coreDataStackHelper = CoreDataStackHelper()
@@ -195,7 +195,7 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
         XCTAssertFalse(isReadOnly)
     }
 
-    func test_ResolveOneOnOneConversation_GivenMLS_SetsReadOnlyToTrue_WhenItFailsToEstablishGroup() async throws {
+    func test_ResolveOneOnOneConversation_GivenMLS_DoesNotSetReadOnlyToTrue_WhenItFailsToEstablishGroup() async throws {
         // Given
         let userID: QualifiedID = .random()
         let resolver = makeResolver()
@@ -216,7 +216,7 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
         } catch MigrateMLSOneOnOneConversationError.failedToEstablishGroup {
             // Then
             let isReadOnly = await syncContext.perform { conversation.isReadOnly }
-            XCTAssertTrue(isReadOnly)
+            XCTAssertFalse(isReadOnly)
         } catch {
             XCTFail("unexpected error")
         }
@@ -299,6 +299,43 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
 
         await syncContext.perform {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
+        }
+    }
+
+    func test_ResolveOneOnOneConversation_DeletedUser_SetsReadOnly() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        let conversation = await syncContext.perform { [self] in
+            let user = modelHelper.createUser(qualifiedID: userID, in: syncContext)
+            let conversation = modelHelper.createOneOnOne(with: user, in: syncContext)
+            conversation.localParticipantsExcludingSelf.first?.isAccountDeleted = true
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.mlsGroupID = .random()
+            XCTAssertFalse(conversation.isForcedReadOnly)
+
+            return conversation
+        }
+
+        // Mock
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(.none))
+
+        // When
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
+        guard case .archivedAsReadOnly = result else {
+            XCTFail("expected result '.archive'")
+            return
+        }
+
+        await syncContext.perform {
+            XCTAssertEqual(conversation.messageProtocol, .mls)
             XCTAssertTrue(conversation.isForcedReadOnly)
             XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
         }

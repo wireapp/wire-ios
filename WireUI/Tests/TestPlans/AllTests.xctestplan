@@ -47,13 +47,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireSidebarUITests",
         "name" : "WireSidebarUITests"
       }
@@ -63,13 +56,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireAccountImageUITests",
         "name" : "WireAccountImageUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireCells",
-        "identifier" : "WireCellsUITests",
-        "name" : "WireCellsUITests"
       }
     },
     {

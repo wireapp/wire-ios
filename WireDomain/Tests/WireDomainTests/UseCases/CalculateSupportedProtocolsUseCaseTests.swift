@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -209,6 +209,29 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
                 (migrationState: .notStarted, supportedProtocols: [.proteus]),
                 (migrationState: .ongoing, supportedProtocols: [.proteus]),
                 (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
+            ]
+
+        for testCase in testCases {
+            await setup(migrationState: testCase.migrationState)
+            // When
+            let supportedProtocols = await sut.invoke()
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, supportedProtocols)
+        }
+    }
+
+    func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
+        // Given
+        await setup(remoteSupportedProtocols: [.mls])
+
+        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
+        let selfProtocols = [WireDataModel.MessageProtocol.proteus, WireDataModel.MessageProtocol.mls]
+        userLocalStore.fetchSelfUserSupportedProtocols_MockValue = Set(selfProtocols)
+        let testCases: [
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
+        ] =
+            [
+                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls])
             ]
 
         for testCase in testCases {

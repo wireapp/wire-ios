@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,15 +97,10 @@ struct VerifyUserSessionUseCase {
             throw Failure.coreDataMigrationRequired
         }
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            coreData.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: Failure.unableToLoadStores(error))
-                } else {
-                    continuation.resume()
-                }
-            }
-
+        do {
+            try await coreData.load()
+        } catch {
+            throw Failure.unableToLoadStores(error)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
@@ -34,11 +35,10 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
-    let isMultibackendEnabled: Bool
     let hasOtherAccountsProvider: () -> Bool
 
     var shouldShowSwitchAccountsAlertButton: Bool {
-        isMultibackendEnabled && hasOtherAccountsProvider()
+        hasOtherAccountsProvider()
     }
 
     // MARK: - Dependencies
@@ -53,13 +53,11 @@ package final class RootViewModel: ObservableObject, Router {
     package init(
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo,
-        isMultibackendEnabled: Bool,
+        environment: BackendEnvironment2,
+        authenticationType: AuthenticationType,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
-        self.modalDestination = .authFlow(backendInfo: backendInfo)
-        self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
 
@@ -70,6 +68,15 @@ package final class RootViewModel: ObservableObject, Router {
             default:
                 break
             }
+        }
+
+        switch authenticationType {
+        case .new:
+            self.modalDestination = .authFlow(environment: environment)
+        case let .reauthEmail(email):
+            self.modalDestination = .reauthFlow(email: email)
+        case .reauthSSO:
+            self.modalDestination = .reauthSSO
         }
     }
 
@@ -109,7 +116,11 @@ package final class RootViewModel: ObservableObject, Router {
     }
 
     func switchAccounts() {
-        navigate(to: RootDestination.switchAccounts)
+        modalDestination = .accountSwitcher
+    }
+
+    func logout(deleteData: Bool) {
+        bridge.sendOutboundEvent(.logoutRequested(deleteData: deleteData))
     }
 
     // MARK: - Private

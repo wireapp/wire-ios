@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireUtilitiesPackage
 
 public enum MessageSendError: Error {
     case missingMessageProtocol
@@ -41,6 +43,11 @@ public protocol MessageSenderInterface {
 
 }
 
+// sourcery: AutoMockable
+public protocol InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: MLSGroupID, epoch: UInt64) async
+}
+
 public final class MessageSender: MessageSenderInterface {
 
     public init(
@@ -48,7 +55,10 @@ public final class MessageSender: MessageSenderInterface {
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
+        featureRepository: LegacyFeatureRepositoryInterface,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -56,8 +66,13 @@ public final class MessageSender: MessageSenderInterface {
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         self.incrementalSyncObserver = incrementalSyncObserver
+        self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
+        self.featureRepository = featureRepository
+        self.apiVersion = apiVersion
     }
 
+    private let featureRepository: LegacyFeatureRepositoryInterface
+    private let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
@@ -68,72 +83,81 @@ public final class MessageSender: MessageSenderInterface {
     private let logAttributesBuilder: MessageLogAttributesBuilder
     private let maxRetryAttempts = 3
     private var retryCount = 0
+    private let apiVersion: WireTransport.APIVersion?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
-
-        await incrementalSyncObserver.waitUntilCanSendMessage()
-
-        do {
-            guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
-            try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
-        } catch {
+        try await withExpiringActivity(reason: "broadcast Message") { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
-            throw error
+            WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
+
+            await incrementalSyncObserver.waitUntilCanSendMessage()
+
+            do {
+                guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
+                try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
+            } catch {
+                let logAttributes = await logAttributesBuilder.logAttributes(message)
+                WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
+                throw error
+            }
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        let logAttributes = await logAttributesBuilder.logAttributes(message)
-        WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
-
-        await incrementalSyncObserver.waitUntilCanSendMessage()
-
-        WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
-
-        do {
-            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            WireLogger.messaging.debug(
-                "send message - resolve dependencies finished",
-                attributes: logAttributes
-            )
-            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
-
-            try await attemptToSend(message: message)
-
-            WireLogger.messaging.debug(
-                "send message - attemptToSend duration: \(timePoint.elapsedTime)",
-                attributes: logAttributes
-            )
-
-        } catch {
+        try await withExpiringActivity(reason: "send Message") { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
-            throw error
-        }
+            WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        // Triggering request polling to re-evalute dependencies, other messages
-        // might have been waiting for this message to be sent.
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            await incrementalSyncObserver.waitUntilCanSendMessage()
+
+            WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
+
+            do {
+                try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+                WireLogger.messaging.debug(
+                    "send message - resolve dependencies finished",
+                    attributes: logAttributes
+                )
+                let timePoint = TimePoint(interval: 30, label: "attempt to send message")
+
+                try await attemptToSend(message: message)
+
+                WireLogger.messaging.debug(
+                    "send message - attemptToSend duration: \(timePoint.elapsedTime)",
+                    attributes: logAttributes
+                )
+
+            } catch {
+                let logAttributes = await logAttributesBuilder.logAttributes(message)
+                WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
+                throw error
+            }
+
+            // Triggering request polling to re-evalute dependencies, other messages
+            // might have been waiting for this message to be sent.
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
-        guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+        guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
             throw MessageSendError.missingMessageProtocol
         }
 
         do {
-            return switch messageProtocol {
+            switch messageProtocol {
             case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
             }
+
+            // Success! Reset count
+            retryCount = 0
+
         } catch let networkError as NetworkError {
             try await context.perform { [self] in
                 try handleFederationFailure(networkError: networkError, message: message)
@@ -358,10 +382,11 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let (conversationID, groupID, mlsService) = await context.perform { (
+        let (conversationID, groupID, mlsService, mlsStatus) = await context.perform { (
             message.conversation?.qualifiedID,
             message.conversation?.mlsGroupID,
-            self.context.mlsService
+            self.context.mlsService,
+            message.conversation?.mlsStatus
         ) }
 
         guard let conversationID else {
@@ -375,7 +400,12 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            try await mlsService.commitPendingProposals(in: groupID)
+            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
+               conversationID.domain == mlsService.localDomain {
+                try await mlsService.reEstablishPendingGroup(groupID: groupID)
+            }
+
+            try await mlsService.commitPendingProposals(in: groupID, skipRetry: true)
             let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 
             // set expiration so request can be expired later
@@ -400,22 +430,84 @@ public final class MessageSender: MessageSenderInterface {
                 message.delivered(with: response)
             }
         } catch let error as SendMLSMessageFailure {
-            switch error {
-            case .mlsStaleMessage:
-                // We should try to repair the conversation for the `mlsStaleMessage` error.
-                // This error indicates that the message was not encrypted in the latest epoch.
-                let operation: () async throws -> Void = { [weak self] in
-                    try await self?.sendMessage(message: message)
-                }
 
-                try await handleMLSStaleMessageError(
+            try await handleSendMLSMessageFailure(error, message: message, groupID: groupID, mlsService: mlsService)
+        } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
+
+            if let supportedError = SendMLSMessageFailure(from: reason) {
+                try await handleSendMLSMessageFailure(
+                    supportedError,
+                    message: message,
                     groupID: groupID,
-                    mlsService: mlsService,
-                    operation: operation
+                    mlsService: mlsService
                 )
-            default:
+            } else {
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: reason))
+            }
+
+        }
+    }
+
+    private func handleSendMLSMessageFailure(
+        _ error: SendMLSMessageFailure,
+        message: any SendableMessage,
+        groupID: MLSGroupID,
+        mlsService: MLSServiceInterface
+    ) async throws {
+        switch error {
+        case .mlsStaleMessage:
+            // We should try to repair the conversation for the `mlsStaleMessage` error.
+            // This error indicates that the message was not encrypted in the latest epoch.
+            let operation: () async throws -> Void = { [weak self] in
+                try await self?.sendMessage(message: message)
+            }
+
+            try await handleMLSStaleMessageError(
+                groupID: groupID,
+                mlsService: mlsService,
+                operation: operation
+            )
+        case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+            let feature = await featureRepository.fetchAllowedGlobalOperations()
+            guard feature.status == .enabled,
+                  feature.config.mlsConversationReset == true
+            else {
+                WireLogger.messaging.debug(
+                    "No need to initiate reset broken MLS conversation, FF is OFF"
+                )
                 throw error
             }
+
+            let epoch = await context.perform { message.conversation?.epoch }
+
+            await initiateResetMLSConversationUseCase
+                .invoke(
+                    groupID: groupID,
+                    epoch: epoch ?? 0
+                )
+        case let .groupOutOfSync(missingUsers):
+            guard retryCount < maxRetryAttempts else {
+                retryCount = 0
+                throw error
+            }
+
+            retryCount += 1
+
+            let users = missingUsers.map { MLSUser($0) }
+            try await mlsService.addMembersToConversation(with: users, for: groupID)
+            try await sendMessage(message: message)
+        case .mlsCommitMissingReferences, .mlsClientMismatch:
+            // here a simple retry is used but as an optim we could use a backoff
+            guard retryCount < maxRetryAttempts else {
+                retryCount = 0
+                throw error
+            }
+
+            retryCount += 1
+
+            try await sendMessage(message: message)
+        default:
+            throw error
         }
     }
 
@@ -425,11 +517,7 @@ public final class MessageSender: MessageSenderInterface {
         operation: () async throws -> Void
     ) async throws {
         do {
-            await mlsService.fetchAndRepairGroup(
-                with: groupID,
-                shouldPerformIncrementalSync: true
-            )
-
+            await mlsService.fetchAndRepairGroup(with: groupID)
             try await operation()
         } catch let error as MessageSendError {
             guard retryCount < maxRetryAttempts else {
@@ -479,4 +567,33 @@ private extension Payload.ClientListByQualifiedUserID {
         return qualifiedClientIDs
     }
 
+}
+
+private extension SendMLSMessageFailure {
+
+    init?(from reason: String) {
+        guard let error = try? JSONDecoder().decode(
+            MLSTransportError.self,
+            from: Data(reason.utf8)
+        ) else {
+            return nil
+        }
+
+        switch error {
+        case .mlsClientMismatch:
+            self = .mlsClientMismatch
+        case .mlsCommitMissingReferences:
+            self = .mlsCommitMissingReferences(message: "")
+        case .mlsStaleMessage:
+            self = .mlsStaleMessage
+        case .mlsInvalidLeafNodeIndex:
+            self = .mlsInvalidLeafNodeIndex(message: "")
+        case .mlsInvalidLeafNodeSignature:
+            self = .mlsInvalidLeafNodeSignature(message: "")
+        case let .groupOutOfSync(missingUsers):
+            self = .groupOutOfSync(missingUsers: missingUsers)
+        default:
+            return nil
+        }
+    }
 }

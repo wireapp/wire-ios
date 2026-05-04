@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,13 +29,6 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
-public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
-public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
-public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
-public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
-public typealias TrustData = WireAuthenticationAPI.TrustData
-public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 
 public struct WireAuthenticationAssembly {
 
@@ -45,11 +38,10 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
@@ -58,16 +50,11 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
-        let backendInfo = BackendInfo(
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
         let rootComponent = RootComponent(
-            backendInfo: backendInfo,
+            authenticationType: authenticationType,
+            environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
@@ -78,8 +65,6 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            isMultibackendEnabled: isMultibackendEnabled,
             registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 

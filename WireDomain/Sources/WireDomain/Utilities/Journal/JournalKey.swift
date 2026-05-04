@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ import WireFoundation
 
 public struct JournalKey<Value>: Sendable where Value: Sendable {
 
-    let name: String
-    let defaultValue: Value
+    public let name: String
+    public let defaultValue: Value
 
     init(
         _ name: String,
@@ -60,10 +60,68 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
-    /// Whether a core crypto key migration needs to be performed.
+    /// Whether a resources sync needs to be performed
 
-    static let isCoreCryptoKeyMigrationRequired = Self(
-        "isCoreCryptoKeyMigrationRequired",
+    static let isResourcesSyncRequired = Self(
+        "isResourcesSyncRequired",
+        defaultValue: false
+    )
+
+    /// Whether all conversations should be pulled from the backend.
+
+    static let isConversationSyncRequired = Self(
+        "isConversationSyncRequired",
+        defaultValue: false
+    )
+
+    /// Whether the core crypto key needs to be migrated from string to bytes.
+
+    static let isCoreCryptoKeyMigrationToBytesRequired = Self(
+        "isCoreCryptoKeyMigrationRequired", // keeping old name for backwards compatibility
+        defaultValue: true
+    )
+
+    /// Whether the core crypto key needs to be migrated from unscoped storage to a storage scoped by user.
+
+    static let isCoreCryptoKeyMigrationToScopedKeyRequired = Self(
+        "isCoreCryptoKeyMigrationToScopedKeyRequired",
+        defaultValue: true
+    )
+
+    /// Whether the core crypto key needs to be rotated from an old key to a new key.
+
+    static let isCoreCryptoKeyRotationRequired = Self(
+        "isCoreCryptoKeyRotationRequired",
+        defaultValue: true
+    )
+
+    /// Whether MLS is enabled on the backend.
+
+    static let isBackendMLSEnabled = Self(
+        "isBackendMLSEnabled",
+        defaultValue: false
+    )
+
+    /// Whether the local domain needs to be added to entities
+    /// in the database.
+
+    static let isFederationMigrationRequired = Self(
+        "isFederationMigrationRequired",
+        defaultValue: false
+    )
+
+    /// Whether faulty MLS removal keys need to be repaired.
+
+    static let isRepairFaultyMLSRemovalKeysRequired = Self(
+        "isRepairFaultyMLSRemovalKeysRequired",
+        defaultValue: false
+    )
+
+    /// Whether the default backend environment (if used by
+    /// the self user) needs to be refreshed and persisted.
+
+    static let isDefaultEnvironmentRefreshRequired = Self(
+        "isDefaultEnvironmentRefreshRequired",
         defaultValue: true
     )
 

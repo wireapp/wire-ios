@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ public protocol CreateGroupConversationUseCaseProtocol {
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation
 }
@@ -55,6 +56,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
     private let store: any ConversationLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
+    private let localDomain: String?
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
     private let logger: WireLogger = .conversation
@@ -66,6 +68,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         store: ConversationLocalStoreProtocol,
         mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
+        localDomain: String?,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool
     ) {
@@ -73,6 +76,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         self.store = store
         self.mlsService = mlsService
         self.context = context
+        self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
     }
@@ -85,6 +89,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         do {
@@ -96,6 +101,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 accessMode: accessMode,
                 accessRoles: accessRoles,
                 enableReceipts: enableReceipts,
+                cells: cells,
                 isMLSEnabled: isMLSEnabled
             )
         } catch let error as ConversationsAPIError {
@@ -119,6 +125,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                         accessMode: accessMode,
                         accessRoles: accessRoles,
                         enableReceipts: enableReceipts,
+                        cells: cells,
                         users: users
                     )
                 } catch {
@@ -141,6 +148,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         let (
@@ -184,7 +192,8 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             accessRoles: teamID == nil ? [] : accessRoles,
             legacyAccessRole: nil,
             teamID: teamID,
-            isReadReceiptsEnabled: teamID == nil ? false : enableReceipts
+            isReadReceiptsEnabled: teamID == nil ? false : enableReceipts,
+            cells: cells
         )
 
         let remoteConversation = try await api.createGroupConversation(
@@ -220,6 +229,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
         let (unreachableUsers, reachableUsers) = await context.perform {
@@ -238,6 +248,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             accessMode: accessMode,
             accessRoles: accessRoles,
             enableReceipts: enableReceipts,
+            cells: cells,
             isMLSEnabled: isMLSEnabled
         )
 
@@ -323,7 +334,11 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             throw Failure.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
 
         do {
 
@@ -332,9 +347,15 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 for: groupID
             )
 
+            try await context.perform {
+                try context.save()
+            }
+
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
 
             try await handleNotClaimedKeyPackages(
@@ -343,7 +364,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
 
             try await handleNonFederatingDomains(
                 domains,
@@ -351,7 +372,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
 
             try await handleUnreachableDomains(
                 domains,

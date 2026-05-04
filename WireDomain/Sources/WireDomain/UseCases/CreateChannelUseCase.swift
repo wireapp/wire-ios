@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ public protocol CreateChannelUseCaseProtocol {
     func invoke(
         teamID: UUID,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -54,6 +56,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private let store: any ConversationLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
+    private let localDomain: String?
     private let isFederationEnabled: Bool
     private let logger: WireLogger = .conversation
 
@@ -64,18 +67,22 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         store: any ConversationLocalStoreProtocol,
         mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
+        localDomain: String?,
         isFederationEnabled: Bool
     ) {
         self.api = api
         self.store = store
         self.mlsService = mlsService
         self.context = context
+        self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
     }
 
     public func invoke(
         teamID: UUID,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -85,6 +92,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             return try await createChannel(
                 teamID: teamID,
                 name: name,
+                historyDepth: historyDepth,
+                cells: cells,
                 users: users,
                 accessMode: accessMode,
                 accessRoles: accessRoles,
@@ -110,6 +119,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                         name: name,
                         accessMode: accessMode,
                         accessRoles: accessRoles,
+                        historyDepth: historyDepth,
+                        cells: cells,
                         enableReceipts: enableReceipts,
                         users: users
                     )
@@ -128,6 +139,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private func createChannel(
         teamID: UUID,
         name: String?,
+        historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -162,6 +175,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
+        // TODO: [WPB-18347] - add history length parameter to body when API is ready
 
         let apiParameters = CreateGroupConversationParameters(
             groupType: .channel,
@@ -174,7 +188,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             teamID: teamID,
-            isReadReceiptsEnabled: enableReceipts
+            isReadReceiptsEnabled: enableReceipts,
+            cells: cells
         )
 
         let remoteConversation = try await api.createGroupConversation(
@@ -201,6 +216,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         name: String?,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
+        historyDepth: String?,
+        cells: Bool?,
         enableReceipts: Bool,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
@@ -215,6 +232,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         let conversation = try await createChannel(
             teamID: teamID,
             name: name,
+            historyDepth: historyDepth,
+            cells: cells,
             users: reachableUsers,
             accessMode: accessMode,
             accessRoles: accessRoles,
@@ -303,7 +322,11 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             throw Failure.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
 
         do {
 
@@ -312,9 +335,15 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 for: groupID
             )
 
+            try await context.perform {
+                try context.save()
+            }
+
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
 
             try await handleNotClaimedKeyPackages(
@@ -323,7 +352,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
 
             try await handleNonFederatingDomains(
                 domains,
@@ -331,7 +360,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
 
             try await handleUnreachableDomains(
                 domains,

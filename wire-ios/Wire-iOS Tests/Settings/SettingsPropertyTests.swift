@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         let factory = SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -112,7 +112,7 @@ final class SettingsPropertyTests: XCTestCase {
     private var settingsPropertyFactory: SettingsPropertyFactory {
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         return SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -145,7 +145,7 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let trackingManager = ZMMockTracking()
+        let trackingManager = MockTrackingInterface()
 
         let factory = SettingsPropertyFactory(
             userDefaults: userDefaults,
@@ -167,7 +167,7 @@ final class SettingsPropertyTests: XCTestCase {
             mediaManager: ZMMockAVSMediaManager(),
             userSession: userSession,
             selfUser: MockZMEditableUser(),
-            trackingManager: ZMMockTracking()
+            trackingManager: MockTrackingInterface()
         )
 
         let property = factory.property(.browserOpeningOption)
@@ -221,24 +221,4 @@ final class SettingsPropertyTests: XCTestCase {
         XCTAssertNil(settingVal)
         XCTAssertEqual(result, value)
     }
-}
-
-private final class ZMMockTracking: TrackingInterface {
-
-    var isAnalyticsDisabled: Bool = true
-    var disableCrashAndAnalyticsSharing: Bool = false
-
-    func requestAnalyticsConsent() async throws -> Bool {
-        // no op
-        false
-    }
-
-    func disableAnalytics() throws {
-        // no op
-    }
-
-    func enableAnalytics() async throws {
-        // no op
-    }
-
 }

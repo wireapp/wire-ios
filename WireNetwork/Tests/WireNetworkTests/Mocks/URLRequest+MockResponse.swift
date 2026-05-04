@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,22 @@ extension URLRequest {
 
     func mockErrorResponse(
         statusCode: HTTPStatusCode,
-        label: String = ""
+        label: String = "",
+        message: String = ""
+    ) throws -> (Data, HTTPURLResponse) {
+        try mockErrorResponse(
+            statusCode: statusCode,
+            payload: FailureResponseV0(
+                code: statusCode.rawValue,
+                label: label,
+                message: message
+            )
+        )
+    }
+
+    func mockErrorResponse(
+        statusCode: HTTPStatusCode,
+        payload: some Encodable
     ) throws -> (Data, HTTPURLResponse) {
         guard let url else {
             throw "Unable to create mock response, request is missing url"
@@ -64,10 +79,8 @@ extension URLRequest {
             throw "Unable to create mock response"
         }
 
-        let jsonPayload = FailureResponseV0(code: statusCode.rawValue, label: label, message: "")
-        let jsonData = try JSONEncoder().encode(jsonPayload)
-
-        return (jsonData, response)
+        let data = try JSONEncoder().encode(payload)
+        return (data, response)
     }
 
 }

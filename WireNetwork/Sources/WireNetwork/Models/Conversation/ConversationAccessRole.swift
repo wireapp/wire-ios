@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import Foundation
 
 /// Which users are allowed to be participants in a conversation.
 
@@ -34,17 +32,17 @@ public enum ConversationAccessRole: Sendable {
 
     case guest
 
-    /// Service users (aka bots).
+    /// App/service users (aka bots).
 
-    case service
+    case app
 
 }
 
-enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertible {
+enum ConversationAccessRoleV0: String, Sendable, Codable, ToAPIModelConvertible {
     case teamMember = "team_member"
     case nonTeamMember = "non_team_member"
     case guest
-    case service
+    case app = "service"
 
     func toAPIModel() -> ConversationAccessRole {
         switch self {
@@ -54,8 +52,8 @@ enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertibl
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }
@@ -70,8 +68,8 @@ extension ConversationAccessRole: ToNetworkConvertible {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

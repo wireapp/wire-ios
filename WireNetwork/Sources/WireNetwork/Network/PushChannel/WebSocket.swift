@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ public actor WebSocket: WebSocketProtocol {
                             let message = try await connection.receive()
                             WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
+                            try Task.checkCancellation()
                         } catch {
                             continuation.finish(throwing: error)
                             isAlive = false

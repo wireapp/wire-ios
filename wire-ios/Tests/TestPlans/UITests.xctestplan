@@ -10,6 +10,50 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "OKTA_API_KEY_IOS",
+            "value" : "$(OKTA_API_KEY_IOS)"
+          },
+          {
+            "key" : "BELLA_INBUCKET_URL",
+            "value" : "$(BELLA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BELLA_DEEPLINK_URL",
+            "value" : "$(BELLA_DEEPLINK_URL)"
+          },
+          {
+            "key" : "ANTA_INBUCKET_URL",
+            "value" : "$(ANTA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BACKEND_URL_ANTA",
+            "value" : "$(BACKEND_URL_ANTA)"
+          },
+          {
+            "key" : "PREDEFINED_BACKEND",
+            "value" : "$(PREDEFINED_BACKEND)"
+          },
+          {
+            "key" : "CALLING_INSTANCE_TYPE_NAME",
+            "value" : "$(CALLING_INSTANCE_TYPE_NAME)"
+          },
+          {
+            "key" : "CALLING_INSTANCE_TYPE_VERSION",
+            "value" : "$(CALLING_INSTANCE_TYPE_VERSION)"
+          },
+          {
+            "key" : "CALLINGSERVICE_URL",
+            "value" : "$(CALLINGSERVICE_URL)"
+          },
+          {
+            "key" : "CALLINGSERVICE_USERNAME",
+            "value" : "$(CALLINGSERVICE_USERNAME)"
+          },
+          {
+            "key" : "CALLINGSERVICE_PASSWORD",
+            "value" : "$(CALLINGSERVICE_PASSWORD)"
+          },
+          {
             "key" : "BASIC_AUTH",
             "value" : "$(BASIC_AUTH)"
           },
@@ -24,6 +68,22 @@
           {
             "key" : "INBUCKET_PASSWORD",
             "value" : "$(INBUCKET_PASSWORD)"
+          },
+          {
+            "key" : "ANTA_DEEPLINK_URL",
+            "value" : "$(ANTA_DEEPLINK_URL)"
+          },
+          {
+            "key" : "BASIC_AUTH_ANTA",
+            "value" : "$(BASIC_AUTH_ANTA)"
+          },
+          {
+            "key" : "BACKEND_URL_BELLA",
+            "value" : "$(BACKEND_URL_BELLA)"
+          },
+          {
+            "key" : "BASIC_AUTH_BELLA",
+            "value" : "$(BASIC_AUTH_BELLA)"
           }
         ],
         "targetForVariableExpansion" : {
@@ -44,6 +104,9 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "WireUITestCase"
+      ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "01DFC4302D7B4C6F00D1962A",

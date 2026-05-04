@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,10 @@ public final class AppVersionMigrationService {
     let currentVersion: SemanticVersion
     let allMigrations: [any AppVersionMigration]
 
+    public var isMigrationNeeded: Bool {
+        !eligibleMigrations.isEmpty
+    }
+
     public init(
         journal: any JournalProtocol,
         currentVersion: SemanticVersion,
@@ -54,25 +58,33 @@ public final class AppVersionMigrationService {
     }
 
     public func performAppMigrations() async throws {
-        // Get the last completed migration version.
-        let lastVersion = journal.lastCompletedAppVersionMigration ?? currentVersion
-
         // Find eligible migrations.
-        var eligibleMigrations = allMigrations
-            .filter { $0.version > lastVersion }
-            .sorted { $0.version > $1.version }
+        var eligibleMigrations = eligibleMigrations.sorted {
+            $0.version > $1.version
+        }
 
         // Perform each migration.
         while let nextMigration = eligibleMigrations.popLast() {
             do {
                 try await nextMigration.perform()
                 journal.lastCompletedAppVersionMigration = nextMigration.version
-                WireLogger.session.info("Completed migration to version \(nextMigration.version)")
+                WireLogger.session.info(
+                    "Completed migration to version \(nextMigration.version)",
+                    attributes: .safePublic
+                )
             } catch {
-                WireLogger.session.error("Failed migration to version \(nextMigration.version): \(error)")
+                WireLogger.session.error(
+                    "Failed migration to version \(nextMigration.version): \(error)",
+                    attributes: .safePublic
+                )
                 throw error
             }
         }
+    }
+
+    private var eligibleMigrations: [any AppVersionMigration] {
+        let lastVersion = journal.lastCompletedAppVersionMigration ?? currentVersion
+        return allMigrations.filter { $0.version > lastVersion }
     }
 
 }
@@ -107,7 +119,7 @@ extension JournalProtocol {
 
 public extension JournalProtocol {
 
-    internal(set) var lastCompletedAppVersionMigration: SemanticVersion? {
+    var lastCompletedAppVersionMigration: SemanticVersion? {
         get {
             self[.lastCompletedAppVersionMigration].map(SemanticVersion.init)
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,11 +66,13 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession? {
+        logFilesProvider: LogFilesProviding,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
+    ) async -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -88,24 +90,6 @@ open class AuthenticatedSessionFactory {
             proxySettings: proxySettings
         )
 
-        let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
-            let wireAssembly = WireNetwork.Assembly(
-                userID: userID,
-                clientID: clientID,
-                backendEnvironment: wireAPIBackendEnvironment,
-                minTLSVersion: WireNetwork.TLSVersion.minVersionFrom(minTLSVersion),
-                cookieEncryptionKey: UserDefaults.cookiesKey()
-            )
-
-            let authenticationManager = wireAssembly.authenticationManager
-            let networkService = wireAssembly.apiNetworkService
-
-            return APIService(
-                networkService: networkService,
-                authenticationManager: authenticationManager
-            )
-        }
-
         let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
 
         let transportSession = ZMTransportSession(
@@ -122,48 +106,60 @@ open class AuthenticatedSessionFactory {
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
+            sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: BackendInfo.domain
+        )
+        let contextStorage = LAContextStorage()
+        let earService = await EARServiceFactory.createEARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
-        userSessionBuilder.withAllDependencies(
-            apiServiceFactory: apiServiceFactory,
+        await userSessionBuilder.withAllDependencies(
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
             application: application,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
-            contextStorage: LAContextStorage(),
-            earService: nil,
+            contextStorage: contextStorage,
+            earService: earService,
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: coreDataStack.applicationContainer,
             transportSession: transportSession,
             userId: account.userIdentifier,
             minTLSVersion: minTLSVersion,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         let userSession = userSessionBuilder.build()
         userSession.setup(
-            eventProcessor: nil,
+            apiVersion: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,

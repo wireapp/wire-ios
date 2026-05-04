@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,25 +53,31 @@ public actor PushChannel: PushChannelProtocol {
         // gone to the background)
         try Task.checkCancellation()
 
-        WireLogger.pushChannel.debug("opening new push channel")
+        WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV1)
         let stream = try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
-                    WireLogger.pushChannel.debug("received web socket data, decoding...")
+                    WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV1)
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()
 
                 case .string:
-                    WireLogger.pushChannel.debug("received web socket string, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV1)
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    WireLogger.pushChannel.debug("received unknown web socket message, ignoring...")
+                    WireLogger.pushChannel.debug(
+                        "received unknown web socket message, ignoring...",
+                        attributes: .pushChannelV1
+                    )
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
-                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)")
+                WireLogger.pushChannel.debug(
+                    "failed to get next web socket message: \(error)",
+                    attributes: .pushChannelV1
+                )
                 await self?.close()
                 throw error
             }
@@ -98,11 +104,11 @@ public actor PushChannel: PushChannelProtocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping")
+                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV1)
                     await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled")
+                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV1)
                 tearDownKeepAliveTask()
             }
         }
@@ -110,7 +116,7 @@ public actor PushChannel: PushChannelProtocol {
 
     private func tearDownKeepAliveTask() {
         guard let keepAliveTask else { return }
-        WireLogger.pushChannel.debug("tearing down keep alive task")
+        WireLogger.pushChannel.debug("tearing down keep alive task", attributes: .pushChannelV1)
         keepAliveTask.cancel()
         self.keepAliveTask = nil
     }

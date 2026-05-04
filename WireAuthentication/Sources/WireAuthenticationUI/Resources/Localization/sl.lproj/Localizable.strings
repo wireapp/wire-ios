@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Next";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-pošta";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Geslo";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Pozabljeno geslo?";
+
+"login.sso.title" = "Prijava";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
+"login.sso.input_code.title" = "SSO access code";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "Odjava";
+"logout.alert.title" = "Odjava";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Prekliči";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Prvič uporabljate Wire na tej napravi.";
 "authentication.no_history.message" = "Zaradi zasebnosti se vaša zgodovina pogovorov ne bo pojavila tukaj.";
+"authentication.missing_history.title" = "Na tej napravi si že uporabljal(-a) Wire.";
+"authentication.missing_history.message" = "Sporočila poslana medtem ne bodo prikazana.";
 "authentication.no_history.confirm" = "V redu";
 
 "authentication.error.title.no_internet" = "No internet connection";

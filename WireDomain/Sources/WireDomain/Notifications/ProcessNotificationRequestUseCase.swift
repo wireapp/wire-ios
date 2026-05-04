@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,18 +20,21 @@ import UserNotifications
 import WireLogging
 
 // sourcery: AutoMockable
-protocol ProcessNotificationUseCaseProtocol {
+public protocol ProcessNotificationUseCaseProtocol {
     func invoke(
         request: UNNotificationRequest
-    ) async throws -> NotificationPayload
+    ) throws -> NotificationPayload
 }
 
-struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+public struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+
     private let logger = WireLogger.notifications
 
-    func invoke(
+    public init() {}
+
+    public func invoke(
         request: UNNotificationRequest
-    ) async throws -> NotificationPayload {
+    ) throws -> NotificationPayload {
         let userInfo = request.content.userInfo
 
         logger.info(

@@ -11,11 +11,58 @@
       location = "group:Cartfile">
    </FileRef>
    <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
       location = "group:Cartfile.resolved">
    </FileRef>
+   <Group
+      location = "container:.github/actions"
+      name = "actions">
+      <Group
+         location = "group:notify-wire"
+         name = "notify-wire">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:setup-test-environment"
+         name = "setup-test-environment">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:upload-datadog-junit"
+         name = "upload-datadog-junit">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:kalium-testservice"
+         name = "kalium-testservice">
+         <Group
+            location = "group:setup"
+            name = "setup">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:stop"
+            name = "stop">
+            <FileRef
+               location = "group:action.yaml">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:allure-reporting"
+         name = "allure-reporting">
+         <FileRef
+            location = "group:action.yaml">
+         </FileRef>
+      </Group>
+   </Group>
    <Group
       location = "group:.github/workflows"
       name = "workflows">
@@ -23,16 +70,16 @@
          location = "group:_reusable_app_release.yml">
       </FileRef>
       <FileRef
-         location = "group:_reusable_app_release_without_changelog.yml">
-      </FileRef>
-      <FileRef
          location = "group:_reusable_run_tests.yml">
       </FileRef>
       <FileRef
-         location = "group:beta_app_release.yml">
+         location = "group:_reusable_run_tests_parallel.yml">
       </FileRef>
       <FileRef
-         location = "group:build_pr.yml">
+         location = "group:auto_approve_cherry_pick.yml">
+      </FileRef>
+      <FileRef
+         location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
          location = "group:c1_c2_c3_app_release_production.yml">
@@ -41,16 +88,16 @@
          location = "group:c1_c2_c3_app_release_restricted.yml">
       </FileRef>
       <FileRef
-         location = "group:c1_c3_app_release_production.yml">
-      </FileRef>
-      <FileRef
-         location = "group:c1_c3_app_release_restricted.yml">
+         location = "group:pr-review-summary.yml">
       </FileRef>
       <FileRef
          location = "group:changelog.yml">
       </FileRef>
       <FileRef
          location = "group:cherry-pick-from-release-to-develop.yml">
+      </FileRef>
+      <FileRef
+         location = "group:critical_flows.yaml">
       </FileRef>
       <FileRef
          location = "group:crowdin.yml">
@@ -69,6 +116,9 @@
       </FileRef>
       <FileRef
          location = "group:public_app_release.yml">
+      </FileRef>
+      <FileRef
+         location = "group:run_all_tests.yml">
       </FileRef>
       <FileRef
          location = "group:semantic_commit_lint.yml">
@@ -156,9 +206,6 @@
       location = "group:wire-ios-ziphy/Ziphy.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-notification-engine/WireNotificationEngine.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:wire-ios-share-engine/WireShareEngine.xcodeproj">
    </FileRef>
    <FileRef
@@ -178,12 +225,6 @@
    </FileRef>
    <FileRef
       location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-protos/WireProtos.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-transport/WireTransport.xcodeproj">
@@ -213,10 +254,7 @@
       location = "group:WireBackup">
    </FileRef>
    <FileRef
-      location = "group:WireCells">
-   </FileRef>
-   <FileRef
-      location = "group:WireMessaging">
+      location = "group:WireData">
    </FileRef>
    <FileRef
       location = "container:WireDebug">
@@ -231,9 +269,15 @@
       location = "group:WireLogging">
    </FileRef>
    <FileRef
+      location = "group:WireMessaging">
+   </FileRef>
+   <FileRef
       location = "group:WireNetwork">
    </FileRef>
    <FileRef
       location = "group:WirePlugins">
+   </FileRef>
+   <FileRef
+      location = "group:WireCalling">
    </FileRef>
 </Workspace>

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,6 +103,12 @@ extension WireNetwork.SelfDeletingMessagesFeatureConfig {
 
 }
 
+extension WireNetwork.AllowedGlobalOperationsFeatureConfig {
+    func toDomainModel() -> Feature.AllowedGlobalOperations.Config {
+        .init(mlsConversationReset: resetMLSConversations)
+    }
+}
+
 extension WireNetwork.ChannelsFeatureConfig {
 
     func toDomainModel() -> Feature.Channels.Config {
@@ -114,8 +120,8 @@ extension WireNetwork.ChannelsFeatureConfig {
 
 }
 
-extension WireNetwork.ChannelsPermision {
-    func toDomainModel() -> Feature.Channels.Config.ChannelsPermision {
+extension WireNetwork.ChannelsPermission {
+    func toDomainModel() -> Feature.Channels.Config.ChannelsPermission {
         switch self {
         case .admins:
             .admins
@@ -124,5 +130,13 @@ extension WireNetwork.ChannelsPermision {
         case .teamMembers:
             .teamMembers
         }
+    }
+}
+
+extension WireNetwork.CellsInternalFeatureConfig {
+    func toDomainModel() -> Feature.CellsInternal.Config {
+        Feature.CellsInternal.Config(
+            backend: .init(url: backendURL)
+        )
     }
 }

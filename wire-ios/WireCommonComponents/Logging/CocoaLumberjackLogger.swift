@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,21 +28,21 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
-    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the provided URL.
+    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
+    /// provided URL.
     init(logsDirectory: URL?) {
-        let logFileManager = DDLogFileManagerDefault(
-            logsDirectory: logsDirectory?.path(),
-            defaultFileProtectionLevel: .none
-        )
-        fileLogger = DDFileLogger(logFileManager: logFileManager)
+        let logFileManager = DDLogFileManagerDefault(logsDirectory: logsDirectory?.path())
+        self.fileLogger = DDFileLogger(logFileManager: logFileManager)
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
+
+        setupObservers()
     }
 
-    var logFiles: [URL] {
-        fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -76,12 +76,11 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             mergedAttributes.merge($0) { _, new in new }
         }
 
-        // TODO: [WPB-6432] enable when ZMSLog is cleaned up
-        // let isSafe = mergedAttributes[.public] as? Bool == true
-        // guard isDebug || isSafe else {
-        //    // skips logs in production builds with non redacted info
-        //    return
-        // }
+        let isSafe = mergedAttributes[.public] as? Bool == true
+        guard isDebug || isSafe else {
+            // skips logs in production builds with non redacted info
+            return
+        }
 
         // Filter logs by level:
         // Only continue if we're running a DEBUG build or
@@ -127,6 +126,45 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             } else {
                 self?.tags.removeValue(forKey: key)
             }
+        }
+    }
+
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillTerminate),
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
+    }
+
+    @objc
+    private func appDidEnterBackground() {
+        flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+    }
+
+    @objc
+    private func appWillTerminate() {
+        flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+    }
+
+    private func flushWithExpiringWindow(reason: String) {
+        ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
+            guard let self else { return }
+
+            if expired {
+                warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
+                return
+            }
+            self.info("Flushing logs early due to \(reason)", attributes: .safePublic)
+            fileLogger.flush()
         }
     }
 

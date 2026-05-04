@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireNetwork
 
 // sourcery: AutoMockable
@@ -45,7 +46,21 @@ public struct PushSupportedProtocolsSync: PushSupportedProtocolsSyncProtocol {
     /// Update the supported protocols remotely then update locally.
 
     public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
-        try await api.pushSupportedProtocols(supportedProtocols)
+        var supportedProtocols = supportedProtocols
+
+        do {
+            try await api.pushSupportedProtocols(supportedProtocols)
+        } catch let SelfUserAPIError.mlsProtocolError(errorMessage) {
+            WireLogger.supportedProtocols
+                .warn(
+                    "Failed to push supported protocols: \(errorMessage), fallback to adding mls",
+                    attributes: .safePublic
+                )
+
+            supportedProtocols.insert(.mls)
+            try await api.pushSupportedProtocols(supportedProtocols)
+        }
+
         await store.updateSelfUserSupportedProtocols(supportedProtocols: supportedProtocols.toDomainModel())
     }
 

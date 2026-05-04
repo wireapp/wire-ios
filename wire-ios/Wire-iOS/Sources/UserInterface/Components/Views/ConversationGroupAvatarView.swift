@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireMessagingUIBindings
+import WireMessagingAssembly
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation
@@ -39,9 +39,9 @@ final class ConversationGroupAvatarView: UIView {
 
         let iconView = if conversation.isChannel {
             // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
-            WireConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
+            ConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
         } else {
-            WireConversationGroupIconFactory().createUIKit(conversationID: id)
+            ConversationGroupIconFactory().createUIKit(conversationID: id)
         }
 
         iconContainer.removeSubviews()

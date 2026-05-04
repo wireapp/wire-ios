@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@
 #import "MockModelObjectContextFactory.h"
 
 #import "ZMSelfStrategy.h"
-#import "ZMMissingUpdateEventsTranscoder.h"
-#import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
@@ -133,9 +131,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
     self.mockCallNotificationStyle = CallNotificationStylePushNotifications;
     
-    NSURL *otrFolder = [NSFileManager keyStoreURLForAccountInDirectory:self.accountDirectory createParentIfNeeded:NO];
-    [fm removeItemAtURL:otrFolder error: nil];
-    
     _application = [[ApplicationMock alloc] init];
     
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
@@ -148,11 +143,15 @@ static ZMReachability *sharedReachabilityMock = nil;
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    self.coreDataStack = [self createCoreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithCompletionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
-    [self setupKeyStore];
     [self setupCaches];
-
 
     if (self.shouldUseRealKeychain) {
         [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
@@ -176,16 +175,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 
     self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
                                                             sharedUserDefaults:self.sharedUserDefaults];
-}
-
-- (void)setupKeyStore
-{
-    [self performPretendingUiMocIsSyncMoc:^{
-        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
-                                                  applicationContainer:self.sharedContainerURL];
-        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
-                                   applicationContainer:self.sharedContainerURL];
-    }];
 }
 
 - (void)setupCaches
@@ -220,11 +209,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (NSManagedObjectContext *)syncMOC
 {
     return self.coreDataStack.syncContext;
-}
-
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
 }
 
 - (NSManagedObjectContext *)eventMOC
@@ -285,9 +269,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     }
     if (self.syncMOC != nil) {
         [result addObject:self.syncMOC];
-    }
-    if (self.searchMOC != nil) {
-        [result addObject:self.searchMOC];
     }
     if (self.mockTransportSession.managedObjectContext != nil) {
         [result addObject:self.mockTransportSession.managedObjectContext];

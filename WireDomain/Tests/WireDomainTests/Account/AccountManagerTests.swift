@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,15 +25,17 @@ import WireDataModel
 @Suite(.serialized)
 final class AccountManagerTests {
 
+    let root: URL
     let url: URL
 
     init() {
-        self.url = FileManager.default.urls(
+        self.root = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         )
         .first!
         .appendingPathComponent("AccountManagerTests")
+        self.url = root.appendingPathComponent("Accounts")
     }
 
     deinit {
@@ -45,7 +47,7 @@ final class AccountManagerTests {
     func makeSUT() throws -> AccountManager {
         try AccountManager(
             currentAppVersion: "1.0.0",
-            sharedDirectory: url,
+            directory: url,
             defaults: .temporary()
         )
     }
@@ -137,7 +139,7 @@ final class AccountManagerTests {
         }
 
         // When
-        AccountManager.delete(at: url)
+        AccountManager.delete(at: root)
 
         // Then
         do {

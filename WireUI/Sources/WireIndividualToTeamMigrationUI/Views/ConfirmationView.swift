@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct ConfirmationView: View {
@@ -49,7 +50,7 @@ struct ConfirmationView: View {
                     Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
                 }
             }
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             VStack(alignment: .leading, spacing: 16) {
                 Checkbox(
                     isChecked: $migrationConfirmed,
@@ -71,6 +72,7 @@ struct ConfirmationView: View {
                     action: { actionCallback(.continue) },
                     label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
                 )
+                .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
                 .wireButtonStyle(.primary)
                 .disabled(!(migrationConfirmed && termsAccepted))
             }

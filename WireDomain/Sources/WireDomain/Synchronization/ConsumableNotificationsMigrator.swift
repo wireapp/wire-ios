@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,9 +28,11 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
     let userClientsLocalStore: UserClientsLocalStoreProtocol
     let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
+    let featureConfigRepository: FeatureConfigRepositoryProtocol
 
     init(
         sync: SyncMigratorProtocol,
+        featureConfigRepository: FeatureConfigRepositoryProtocol,
         userClientsAPI: UserClientsAPI,
         userClientsLocalStore: UserClientsLocalStoreProtocol,
         apiVersion: WireNetwork.APIVersion,
@@ -41,15 +43,23 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
         self.userClientsLocalStore = userClientsLocalStore
         self.journal = journal
         self.userClientsAPI = userClientsAPI
+        self.featureConfigRepository = featureConfigRepository
     }
 
     public enum Failure: Error {
         case apiVersionTooLow
         case missingClient
         case missingClientID
+        case featureConfigNotEnabled
     }
 
     public func migrate() async throws {
+        // 0) check feature config
+        guard await featureConfigRepository.isFeatureEnabled(.consumableNotifications),
+              DeveloperFlag.consumableNotifications.isOn else {
+            throw Failure.featureConfigNotEnabled
+        }
+
         // 1) register consumable notifications capabilities
         guard apiVersion >= .v9 else {
             throw Failure.apiVersionTooLow
