@@ -25,7 +25,7 @@ on:
         type: string
         required: true
 
-        
+
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
