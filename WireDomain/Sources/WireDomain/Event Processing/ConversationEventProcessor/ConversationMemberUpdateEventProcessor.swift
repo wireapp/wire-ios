@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireSystem
 
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
@@ -35,12 +35,12 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         let archivedStatusDate = memberChange.archivedStatusReferenceDate
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
         let isSelfUser = try await userRepository.isSelfUser(
-            id: memberChangeID.uuid,
+            id: memberChangeID.id,
             domain: memberChangeID.domain
         )
 
@@ -57,10 +57,10 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         }
 
         await conversationRepository.addOrUpdateParticipant(
-            participantID: memberChangeID.uuid,
+            participantID: memberChangeID.id,
             participantDomain: memberChangeID.domain,
             participantRole: role,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }

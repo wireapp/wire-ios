@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ public struct Conversation: Equatable {
 
     struct Members: Equatable {
         let others: [Member]
-        let selfMember: Member
+        let selfMember: Member?
 
         struct Member: Equatable {
             let qualifiedID: QualifiedID?
@@ -55,6 +55,12 @@ public struct Conversation: Equatable {
         case everyone
     }
 
+    public enum CellsState: Equatable, Sendable {
+        case ready
+        case pending
+        case disabled
+    }
+
     let id: UUID?
     let qualifiedID: QualifiedID?
     let teamID: UUID?
@@ -76,5 +82,6 @@ public struct Conversation: Equatable {
     let lastEventTime: Date?
     let groupType: GroupType?
     let addPermission: ChannelPermission?
+    let cellsState: CellsState?
 
 }

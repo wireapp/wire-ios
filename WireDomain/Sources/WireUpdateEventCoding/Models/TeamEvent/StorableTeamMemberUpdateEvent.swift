@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableTeamMemberUpdateEvent: Equatable, Codable, Sendable {
 
     private let teamID: UUID
     private let membershipID: UUID
 
-    init(_ value: WireAPI.TeamMemberUpdateEvent) {
+    init(_ value: WireNetwork.TeamMemberUpdateEvent) {
         self.teamID = value.teamID
         self.membershipID = value.membershipID
     }
 
-    func toAPIModel() -> WireAPI.TeamMemberUpdateEvent {
+    func toAPIModel() -> WireNetwork.TeamMemberUpdateEvent {
         .init(
             teamID: teamID,
             membershipID: membershipID

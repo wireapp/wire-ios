@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
-struct PersonalAccountCreationView: View {
+package struct PersonalAccountCreationView: View {
 
     @StateObject private var viewModel: PersonalAccountCreationViewModel
 
@@ -45,11 +46,14 @@ struct PersonalAccountCreationView: View {
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {
             case let .verifyEmail(email, password, name):
-                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory(
-                    email: email,
-                    password: password,
-                    name: name
-                ))
+                VerificationEmailCodeView(
+                    factory: viewModel.factory.verificationEmailCodeFactory(
+                        email: email,
+                        password: password,
+                        name: name,
+                        trackingConsent: viewModel.trackingConsent
+                    )
+                )
             }
         }
         .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, content: {
@@ -81,14 +85,15 @@ struct PersonalAccountCreationView: View {
     }
 
     @ViewBuilder private var scrollViewContent: some View {
-        VStack(spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
             nameField
             emailField
             passwordField
             confirmPasswordField
-            dataUsageAgreementView
+            if viewModel.isAnalyticsTrackingAvailable {
+                dataUsageAgreementView
+            }
             continueButton
-            teamAccountCreationView
 
         }
         .padding(.horizontal, 24)
@@ -99,23 +104,23 @@ struct PersonalAccountCreationView: View {
         LabeledTextField(
             placeholder: Strings.InputName.placeholder,
             title: Strings.InputName.title,
-            string: $viewModel.name
+            string: $viewModel.name,
+            textContentType: .name,
+            autocapitalizationType: .words
         )
-        .autocapitalization(.words)
         .autocorrectionDisabled()
-        .textContentType(.name)
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterNameField.rawValue)
     }
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
             placeholder: Strings.InputEmail.placeholder,
             title: Strings.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -126,6 +131,7 @@ struct PersonalAccountCreationView: View {
             passwordRules: viewModel.localizedPasswordRules,
             isValidPassword: { _ in viewModel.isPasswordValid }
         )
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue)
     }
 
     @ViewBuilder private var confirmPasswordField: some View {
@@ -136,11 +142,12 @@ struct PersonalAccountCreationView: View {
             passwordRules: Strings.InputConfirmPassword.error,
             isValidPassword: { _ in viewModel.isPasswordMatchConfirmedPassword }
         )
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue)
     }
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: $viewModel.dataUsageAgreementAccepted,
+            isChecked: $viewModel.isDataUsageAgreementAccepted,
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,
@@ -157,6 +164,7 @@ struct PersonalAccountCreationView: View {
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.continueButton.rawValue)
         .bold()
         .disabled(!viewModel.canRequestVerificationCode)
     }
@@ -178,6 +186,34 @@ struct PersonalAccountCreationView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
+    }
+
+}
+
+private extension AttributedString {
+
+    static func formattedMarkdown(
+        key: String.LocalizationValue,
+        bundle: Bundle? = nil,
+        _ arguments: any CVarArg...
+    ) -> AttributedString {
+        let string: String = .formated(key: key, bundle: bundle, arguments)
+        return .markdown(from: string)
+    }
+
+    static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil) -> AttributedString {
+        let string: String = .localized(key: key, bundle: bundle)
+        return .markdown(from: string)
+    }
+
+    static func markdown(from string: String) -> AttributedString {
+        var attributed = (try? AttributedString(markdown: string)) ?? AttributedString(string)
+
+        for run in attributed.runs where run.link != nil {
+            attributed[run.range].underlineStyle = .single
+        }
+
+        return attributed
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,20 +22,60 @@ public extension WireLogger {
 
     func measureTime<T>(
         label: String,
+        durationKey: LogAttributesKey = .syncDuration,
         attributes: LogAttributes = [:],
         block: () async throws -> T
     ) async throws -> T {
+        let context = measureTimeStart(label: label, durationKey: durationKey, attributes: attributes)
+        let result = try await block()
+        measureTimeEnd(context: context)
+        return result
+    }
+
+    func measureTime<T, E: Error>(
+        label: String,
+        durationKey: LogAttributesKey = .syncDuration,
+        attributes: LogAttributes = [:],
+        block: () throws(E) -> T
+    ) throws(E) -> T {
+        let context = measureTimeStart(label: label, durationKey: durationKey, attributes: attributes)
+        let result = try block()
+        measureTimeEnd(context: context)
+        return result
+    }
+
+    // MARK: - Helpers
+
+    private struct Context {
+        let start: Date
+        let label: String
+        let durationKey: LogAttributesKey
+        let attributes: LogAttributes
+    }
+
+    private func measureTimeStart(
+        label: String,
+        durationKey: LogAttributesKey,
+        attributes: LogAttributes
+    ) -> Context {
         let startMessage = "starting \(label)"
         info(startMessage, attributes: attributes)
-        let start = Date.now
-        let result = try await block()
-        let durationInSeconds = start.timeIntervalSinceNow.magnitude
-        var updatedAttributes = attributes
+
+        return Context(
+            start: Date.now,
+            label: label,
+            durationKey: durationKey,
+            attributes: attributes
+        )
+    }
+
+    private func measureTimeEnd(context: Context) {
+        let durationInSeconds = context.start.timeIntervalSinceNow.magnitude
+        var updatedAttributes = context.attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
-        updatedAttributes[.duration] = formattedDuration
-        let completedMessage = "completed \(label)"
+        updatedAttributes[context.durationKey] = formattedDuration
+        let completedMessage = "completed \(context.label)"
         info(completedMessage, attributes: updatedAttributes)
-        return result
     }
 
 }

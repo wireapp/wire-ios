@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,4 +22,5 @@ public protocol LiveSyncDelegate: AnyObject {
     func isUpToDate(sync: IncrementalSyncV2)
     func didMissedEvents(sync: IncrementalSyncV2) async
     func didFail(sync: IncrementalSyncV2, error: any Error)
+    func didStart(sync: IncrementalSyncV2)
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
@@ -33,11 +34,10 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
 
-struct AccountStore {
+struct AccountStore: Sendable {
 
     private let directory: URL
-    private static let directoryName = "Accounts"
-    private let fileManager = FileManager.default
+    private let fileManager = { @Sendable in FileManager.default }
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -47,9 +47,9 @@ struct AccountStore {
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
 
-    init(root: URL) throws {
-        self.directory = root.appendingPathComponent(AccountStore.directoryName)
-        try fileManager.createAndProtectDirectory(at: directory)
+    init(directory: URL) throws {
+        self.directory = directory
+        try fileManager().createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Fetch
@@ -118,7 +118,7 @@ struct AccountStore {
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
         do {
-            try fileManager.removeItem(at: url(for: account.userIdentifier))
+            try fileManager().removeItem(at: url(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -128,16 +128,18 @@ struct AccountStore {
         }
     }
 
+    // MARK: - Delete
+
     /// Delete the persistence layer of an `AccountStore` from the file system.
     ///
     /// Mostly useful for cleaning up after tests or for complete account resets.
     ///
-    /// - parameter root: The root url of the store that should be deleted.
+    /// - parameter directory: The url of the store that should be deleted.
 
     @discardableResult
-    static func delete(at root: URL) -> Bool {
+    static func delete(directory: URL) -> Bool {
         do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+            try FileManager.default.removeItem(at: directory)
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -149,7 +151,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
+            let paths = try fileManager().contentsOfDirectory(atPath: directory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -168,74 +170,6 @@ private extension Error {
 
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
-    }
-
-}
-
-private struct StoredAccount: Codable {
-
-    var identifier: UUID
-    var name: String
-    var image: Data?
-    var team: String?
-    var teamImage: Data?
-    var loginCredentials: StoredLoginCredentials?
-    var unreadConversationCount: Int
-
-    init(_ account: Account) {
-        self.identifier = account.userIdentifier
-        self.name = account.userName
-        self.image = account.imageData
-        self.team = account.teamName
-        self.teamImage = account.teamImageData
-        self.loginCredentials = account.loginCredentials.map {
-            StoredLoginCredentials($0)
-        }
-        self.unreadConversationCount = account.unreadConversationCount
-    }
-
-}
-
-private struct StoredLoginCredentials: Codable {
-
-    var emailAddress: String?
-    var hasPassword: Bool
-    var usesCompanyLogin: Bool
-
-    init(_ loginCredentials: LoginCredentials) {
-        self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
-        self.usesCompanyLogin = loginCredentials.usesCompanyLogin
-    }
-
-}
-
-private extension Account {
-
-    convenience init(_ storedAccount: StoredAccount) {
-        self.init(
-            userName: storedAccount.name,
-            userIdentifier: storedAccount.identifier,
-            teamName: storedAccount.team,
-            imageData: storedAccount.image,
-            teamImageData: storedAccount.teamImage,
-            unreadConversationCount: storedAccount.unreadConversationCount,
-            loginCredentials: storedAccount.loginCredentials.map {
-                LoginCredentials($0)
-            }
-        )
-    }
-
-}
-
-private extension LoginCredentials {
-
-    convenience init(_ loginCredentials: StoredLoginCredentials) {
-        self.init(
-            emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
-            usesCompanyLogin: loginCredentials.usesCompanyLogin
-        )
     }
 
 }

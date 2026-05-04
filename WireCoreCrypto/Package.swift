@@ -6,7 +6,7 @@ import PackageDescription
 // Temporary local package replacing integration of CoreCrypto via Carthage
 let package = Package(
     name: "WireCoreCrypto",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(
             name: "WireCoreCrypto",
@@ -21,15 +21,15 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireCoreCrypto",
-            url: "https://github.com/wireapp/core-crypto/releases/download/v6.0.1/WireCoreCrypto.xcframework.zip",
-            checksum: "a75e11dd3ff4ec4ec6f455d8512a9f0b0d8b98dba12f62672ed97aa4c2072e81"
+            url: "https://github.com/wireapp/core-crypto/releases/download/v9.2.1/WireCoreCrypto.xcframework.zip",
+            checksum: "a87a1b88626174918d107af911d54518d313ec182ca4d314b4a5271dacc46139"
         ),
-        // this is an internal dependency to WireCoreCrypto but currently needs to explictly
+        // this is an internal dependency to WireCoreCrypto but currently needs to explicitly
         // added as a dependency due to limitations of Swift packages.
         .binaryTarget(
             name: "WireCoreCryptoUniffi",
-            url: "https://github.com/wireapp/core-crypto/releases/download/v6.0.1/WireCoreCryptoUniffi.xcframework.zip",
-            checksum: "93113420d7194ea38e5b7a6a4ab4827e7e6793f01d3e6b6df103db9e56732a03"
+            url: "https://github.com/wireapp/core-crypto/releases/download/v9.2.1/WireCoreCryptoUniffi.xcframework.zip",
+            checksum: "db991bfd31595bc02efa7521561ec7c6c581ca072db2b71a820ff7b7a8fd0a6d"
         )
     ]
 )

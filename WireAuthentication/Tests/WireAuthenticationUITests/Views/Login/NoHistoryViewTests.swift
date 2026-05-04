@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,11 +37,13 @@ class NoHistoryViewTests: XCTestCase {
         snapshotHelper = nil
     }
 
+    // MARK: - First time login
+
     @MainActor
-    func testColorSchemeVariantsEmptyState() {
+    func testColorSchemeVariantsEmptyState_FirstTimeLogin() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = NoHistoryView(factory: FakeNoHistoryFactory())
+        let view = NoHistoryView(factory: FakeNoHistoryFactory(didReauthenticate: false))
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -53,10 +55,10 @@ class NoHistoryViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariantsEmptyState() {
+    func testDynamicTypeVariantsEmptyState_FirstTimeLogin() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = NoHistoryView(factory: FakeNoHistoryFactory())
+        let view = NoHistoryView(factory: FakeNoHistoryFactory(didReauthenticate: false))
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -66,6 +68,23 @@ class NoHistoryViewTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
+    }
+
+    // MARK: - Reauth
+
+    @MainActor
+    func testColorSchemeVariantsEmptyState_DidReauthenticate() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = NoHistoryView(factory: FakeNoHistoryFactory(didReauthenticate: true))
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
     }
 
 }

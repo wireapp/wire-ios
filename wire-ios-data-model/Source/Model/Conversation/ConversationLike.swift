@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public protocol ConversationLike: AnyObject {
     var displayName: String? { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
-    var allowServices: Bool { get }
+    var allowApps: Bool { get }
 
     var isUnderLegalHold: Bool { get }
 
@@ -53,13 +53,18 @@ public protocol ConversationLike: AnyObject {
     var lastMessage: ZMConversationMessage? { get }
     var firstUnreadMessage: ZMConversationMessage? { get }
 
-    var areServicesPresent: Bool { get }
+    var areAppsPresent: Bool { get }
     var domain: String? { get }
     var isChannel: Bool { get }
     var privateChannelPermission: PrivateChannelPermission { get }
+    var channelHistoryDepth: String? { get }
+    var hasMoreHistory: Bool { get }
 
-    /// The name of the `cell` used for Wire Cells file management.
-    var wireCellName: String { get }
+    /// The name of the `cell` used for Wire Drive file management.
+    var wireDriveCellName: String { get }
+
+    /// Whether Wire Drive is enabled for this conversation.
+    var isWireDriveEnabled: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -72,7 +77,7 @@ public protocol SwiftConversationLike {
 
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
-    var sortedServiceUsers: [UserType] { get }
+    var sortedApps: [UserType] { get }
     var ciphersuite: MLSCipherSuite? { get }
 }
 
@@ -97,13 +102,13 @@ extension ZMConversation: ConversationLike {
 
     public var sortedOtherParticipants: [UserType] {
         localParticipants
-            .filter { !$0.isServiceUser }
+            .filter { !$0.isAppOrBot }
             .sortedAscendingPrependingNil(by: \.name)
     }
 
-    public var sortedServiceUsers: [UserType] {
+    public var sortedApps: [UserType] {
         localParticipants
-            .filter(\.isServiceUser)
+            .filter(\.isAppOrBot)
             .sortedAscendingPrependingNil(by: \.name)
     }
 
@@ -115,7 +120,7 @@ extension ZMConversation: ConversationLike {
         securityLevel == .secureWithIgnored
     }
 
-    public var wireCellName: String {
+    public var wireDriveCellName: String {
         guard let qualifiedID else { return "unknown" }
 
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"

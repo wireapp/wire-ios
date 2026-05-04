@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
-extension WireAPI.MLSFeatureConfig {
+extension WireNetwork.MLSFeatureConfig {
 
     func toDomainModel() -> WireDataModel.Feature.MLS.Config {
         .init(
             protocolToggleUsers: Array(protocolToggleUsers),
             defaultProtocol: defaultProtocol == .mls ? .mls : .proteus,
             allowedCipherSuites: allowedCipherSuites.map {
-                .init(rawValue: $0.rawValue)!
+                $0.toConfigModel()
             },
-            defaultCipherSuite: .init(rawValue: defaultCipherSuite.rawValue)!,
+            defaultCipherSuite: defaultCipherSuite.toConfigModel(),
             supportedProtocols: Set(supportedProtocols.map {
                 switch $0 {
                 case .proteus:
@@ -43,7 +43,7 @@ extension WireAPI.MLSFeatureConfig {
 
 }
 
-extension WireAPI.EndToEndIdentityFeatureConfig {
+extension WireNetwork.EndToEndIdentityFeatureConfig {
 
     func toDomainModel() -> WireDataModel.Feature.E2EI.Config {
         .init(
@@ -56,7 +56,7 @@ extension WireAPI.EndToEndIdentityFeatureConfig {
 
 }
 
-extension WireAPI.AppLockFeatureConfig {
+extension WireNetwork.AppLockFeatureConfig {
 
     func toDomainModel() -> Feature.AppLock.Config {
         .init(
@@ -66,7 +66,7 @@ extension WireAPI.AppLockFeatureConfig {
     }
 }
 
-extension WireAPI.ClassifiedDomainsFeatureConfig {
+extension WireNetwork.ClassifiedDomainsFeatureConfig {
 
     func toDomainModel() -> Feature.ClassifiedDomains.Config {
         .init(
@@ -76,7 +76,7 @@ extension WireAPI.ClassifiedDomainsFeatureConfig {
 
 }
 
-extension WireAPI.ConferenceCallingFeatureConfig {
+extension WireNetwork.ConferenceCallingFeatureConfig {
 
     func toDomainModel() -> Feature.ConferenceCalling.Config {
         .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
@@ -84,7 +84,7 @@ extension WireAPI.ConferenceCallingFeatureConfig {
 
 }
 
-extension WireAPI.MLSMigrationFeatureConfig {
+extension WireNetwork.MLSMigrationFeatureConfig {
 
     func toDomainModel() -> Feature.MLSMigration.Config {
         .init(
@@ -95,7 +95,7 @@ extension WireAPI.MLSMigrationFeatureConfig {
 
 }
 
-extension WireAPI.SelfDeletingMessagesFeatureConfig {
+extension WireNetwork.SelfDeletingMessagesFeatureConfig {
 
     func toDomainModel() -> Feature.SelfDeletingMessages.Config {
         .init(enforcedTimeoutSeconds: enforcedTimeoutSeconds)
@@ -103,13 +103,40 @@ extension WireAPI.SelfDeletingMessagesFeatureConfig {
 
 }
 
-extension WireAPI.ChannelsFeatureConfig {
+extension WireNetwork.AllowedGlobalOperationsFeatureConfig {
+    func toDomainModel() -> Feature.AllowedGlobalOperations.Config {
+        .init(mlsConversationReset: resetMLSConversations)
+    }
+}
+
+extension WireNetwork.ChannelsFeatureConfig {
 
     func toDomainModel() -> Feature.Channels.Config {
         .init(
-            allowedToCreateChannels: .init(rawValue: allowedToCreateChannels.rawValue)!,
-            allowedToOpenChannels: .init(rawValue: allowedToOpenChannels.rawValue)!
+            allowedToCreateChannels: allowedToCreateChannels.toDomainModel(),
+            allowedToOpenChannels: allowedToOpenChannels.toDomainModel()
         )
     }
 
+}
+
+extension WireNetwork.ChannelsPermission {
+    func toDomainModel() -> Feature.Channels.Config.ChannelsPermission {
+        switch self {
+        case .admins:
+            .admins
+        case .everyone:
+            .everyone
+        case .teamMembers:
+            .teamMembers
+        }
+    }
+}
+
+extension WireNetwork.CellsInternalFeatureConfig {
+    func toDomainModel() -> Feature.CellsInternal.Config {
+        Feature.CellsInternal.Config(
+            backend: .init(url: backendURL)
+        )
+    }
 }

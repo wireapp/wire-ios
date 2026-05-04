@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,30 +42,18 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         self.bridge = bridge
         super.init(rootView: rootView)
 
-        bridge.outboundEvents.sink { [weak authenticationCoordinator] event in
+        bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
-            case let .userAuthenticated(authenticationResult):
+            case let .userAuthenticated(context):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
-                    ofType: .wireAuthenticationModuleComplete(authenticationResult)
-                )
-            case let .accountRegistrationRequested(
-                email,
-                backendEnvironment
-            ):
-                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
-                    email: email,
-                    backendEnvironment: backendEnvironment
+                    ofType: .wireAuthenticationModuleComplete(context)
                 )
             case .exitFlowRequested:
-                guard
-                    let sessionManager = SessionManager.shared,
-                    let account = sessionManager.firstAuthenticatedAccount
-                else {
-                    WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
-                    return
-                }
-
-                sessionManager.select(account)
+                self?.selectAccount()
+            case let .logoutRequested(deleteData):
+                authenticationCoordinator?.eventResponderChain.handleEvent(
+                    ofType: .logoutRequested(deleteData: deleteData)
+                )
             }
         }
         .store(in: &cancellables)
@@ -85,6 +73,20 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
             }
             .store(in: &cancellables)
+    }
+
+    private func selectAccount(completion: (() -> Void)? = nil) {
+        guard
+            let sessionManager = SessionManager.shared,
+            let account = sessionManager.firstAuthenticatedAccount
+        else {
+            WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
+            return
+        }
+
+        sessionManager.select(account, completion: { _ in
+            completion?()
+        })
     }
 
     @available(*, unavailable)

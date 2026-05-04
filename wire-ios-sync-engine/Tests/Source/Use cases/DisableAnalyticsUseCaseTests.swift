@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        AnalyticsUser(analyticsIdentifier: UUID().uuidString)
+        AnalyticsUser(trackingID: UUID())
     }
 
     func testInvoke_disables_via_service() throws {

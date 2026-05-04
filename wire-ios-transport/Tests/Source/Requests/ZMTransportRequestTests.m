@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1148,23 +1148,9 @@
     NSString *privateDescription = [request safeForLoggingDescription];
     
     // then
-    XCTAssertTrue([privateDescription containsString:@"HEAD do/som******/9e8*********************************/use***?client=608*****"]);
+    XCTAssertTrue([privateDescription containsString:@"HEAD do/something/9e86b08a-8de7-11e9-810f-22000a62954d/useful?client=608b4f25ba2b193"]);
 }
 
-- (void)testPrivateDescriptionWithEmoji
-{
-    // given
-    NSString *clientID = @"608b4f25ba2b193";
-    NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
-    NSString *path = [NSString stringWithFormat:@"with/%@/🤨/%@/emoji", clientID, uuid];
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMTransportRequestMethodHead payload:nil apiVersion:0];
-
-    // when
-    NSString *privateDescription = [request safeForLoggingDescription];
-    NSLog(@"%@", privateDescription);
-    // then
-    XCTAssertTrue([privateDescription containsString:@"HEAD wit*/608************/🤨/9e8*********************************/emo**"]);
-}
 
 - (void)testPrivateDescriptionWithOverlappedIDs
 {
@@ -1178,7 +1164,7 @@
     NSString *privateDescription = [request safeForLoggingDescription];
 
     // then
-    XCTAssertTrue([privateDescription containsString:@"HEAD ids/608************************************************/ove*******"]);
+    XCTAssertTrue([privateDescription containsString:@"HEAD ids/608b4f25ba2b1939e86b08a-8de7-11e9-810f-22000a62954d/overlapped"]);
 }
 
 @end

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,63 +28,68 @@ extension ConversationViewController {
 
         let state = conversation.externalParticipantsState
 
-        if state.isEmpty {
+        guard
+            !state.isEmpty,
+            let labelKey = label(for: state)
+        else {
             return .hidden
-        } else {
-            return .visible(labelKey: label(for: state), identifier: identifier(for: state))
         }
+        return .visible(labelKey: labelKey)
+
     }
 
-    func label(for state: ZMConversation.ExternalParticipantsState) -> String {
-        var states: [String] = []
+    func label(for state: ZMConversation.ExternalParticipantsState) -> String? {
+        typealias BannerStrings = L10n.Localizable.Conversation.Banner
 
-        if conversation.externalParticipantsState.contains(.visibleRemotes) {
-            states.append(ConversationBanner.remotes)
+        switch state {
+        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleApps]:
+            return BannerStrings.remotesExternalsGuestsAppsPresent
+
+        case [.visibleRemotes, .visibleExternals, .visibleGuests]:
+            return BannerStrings.remotesExternalsGuestsPresent
+
+        case [.visibleRemotes, .visibleExternals, .visibleApps]:
+            return BannerStrings.remotesExternalsAppsPresent
+
+        case [.visibleRemotes, .visibleGuests, .visibleApps]:
+            return BannerStrings.remotesGuestsAppsPresent
+
+        case [.visibleExternals, .visibleGuests, .visibleApps]:
+            return BannerStrings.externalsGuestsAppsPresent
+
+        case [.visibleRemotes, .visibleExternals]:
+            return BannerStrings.remotesExternalsPresent
+
+        case [.visibleRemotes, .visibleGuests]:
+            return BannerStrings.remotesGuestsPresent
+
+        case [.visibleRemotes, .visibleApps]:
+            return BannerStrings.remotesAppsPresent
+
+        case [.visibleExternals, .visibleGuests]:
+            return BannerStrings.externalsGuestsPresent
+
+        case [.visibleExternals, .visibleApps]:
+            return BannerStrings.externalsAppsPresent
+
+        case [.visibleGuests, .visibleApps]:
+            return BannerStrings.guestsAppsPresent
+
+        case [.visibleRemotes]:
+            return BannerStrings.remotesPresent
+
+        case [.visibleExternals]:
+            return BannerStrings.externalsPresent
+
+        case [.visibleGuests]:
+            return BannerStrings.guestsPresent
+
+        case [.visibleApps]:
+            return BannerStrings.appsActive
+
+        default:
+            return nil
         }
-
-        if conversation.externalParticipantsState.contains(.visibleExternals) {
-            states.append(ConversationBanner.externals)
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleGuests) {
-            states.append(ConversationBanner.guests)
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleServices) {
-            states.append(ConversationBanner.services)
-        }
-
-        let head = states[0]
-        let tail = states.dropFirst().map(\.localizedLowercase)
-        let list = ([head] + tail).joined(separator: ConversationBanner.separator)
-
-        if state == .visibleServices {
-            return ConversationBanner.areActive(list)
-        } else {
-            return ConversationBanner.arePresent(list)
-        }
-    }
-
-    func identifier(for state: ZMConversation.ExternalParticipantsState) -> String {
-        var identifiers: [String] = []
-
-        if conversation.externalParticipantsState.contains(.visibleRemotes) {
-            identifiers.append("remotes")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleExternals) {
-            identifiers.append("externals")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleGuests) {
-            identifiers.append("guests")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleServices) {
-            identifiers.append("services")
-        }
-
-        return "has\(identifiers.joined(separator: "and"))"
     }
 
     /// Updates the visibility of the guest bar.
@@ -96,16 +101,6 @@ extension ConversationViewController {
             conversationBarController.dismiss(bar: guestsBarController)
         } else {
             conversationBarController.present(bar: guestsBarController)
-        }
-    }
-
-    func setGuestBarForceHidden(_ isGuestBarForceHidden: Bool) {
-        if isGuestBarForceHidden {
-            guestsBarController.setState(.hidden, animated: true)
-            guestsBarController.shouldIgnoreUpdates = true
-        } else {
-            guestsBarController.shouldIgnoreUpdates = false
-            updateGuestsBarVisibility()
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,18 +55,25 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> Void
+    private var mockAddMembersCount_ = 0
+    var mockAddMembersCount: Int {
+        get { serialQueue.sync { mockAddMembersCount_ } }
+        set { serialQueue.sync { mockAddMembersCount_ = newValue } }
+    }
+
+    typealias AddMembersMock = ([WireDataModel.KeyPackage], MLSGroupID) async throws -> Void
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws {
+    func addMembers(_ keyPackages: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
 
+        mockAddMembersCount_ += 1
         return try await mock(keyPackages, groupID)
     }
 

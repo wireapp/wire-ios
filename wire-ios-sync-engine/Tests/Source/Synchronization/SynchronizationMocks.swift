@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import avs
 import Foundation
-import WireCryptobox
 import WireDataModel
 @testable import WireSyncEngine
 
@@ -100,15 +99,29 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
+        self.init(
+            context: managedObjectContext,
+            cookieProvider: nil,
+            coreCryptoProvider: nil,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: false
+        )
     }
 
     override init(
         context moc: NSManagedObjectContext!,
         cookieProvider: CookieProvider!,
-        coreCryptoProvider: CoreCryptoProviderProtocol!
+        coreCryptoProvider: CoreCryptoProviderProtocol!,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
-        super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
+        super.init(
+            context: moc,
+            cookieProvider: cookieProvider,
+            coreCryptoProvider: coreCryptoProvider,
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
+        )
         self.emailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
@@ -187,75 +200,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 
 class FakeCookieStorage: ZMPersistentCookieStorage {}
 
-public class MockSyncStatus: SyncStatus {
-
-    var didCallFailCurrentSyncPhase = false
-    var didCallFinishCurrentSyncPhase = false
-
-    public var mockPhase: SyncPhase = .done {
-        didSet {
-            currentSyncPhase = mockPhase
-        }
-    }
-
-    public override func failCurrentSyncPhase(phase: SyncPhase) {
-        didCallFailCurrentSyncPhase = true
-
-        super.failCurrentSyncPhase(phase: phase)
-    }
-
-    public override func finishCurrentSyncPhase(phase: SyncPhase) {
-        didCallFinishCurrentSyncPhase = true
-
-        super.finishCurrentSyncPhase(phase: phase)
-    }
-}
-
-@objc
-public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
-
-    var registeredUserClient: UserClient?
-    var registeredMLSClient: UserClient?
-    @objc public var didCallStartSlowSync = false
-    @objc public var didCallFinishSlowSync = false
-    @objc public var didCallStartQuickSync = false
-    @objc public var didCallFinishQuickSync = false
-    @objc public var didCallFailRegisterUserClient = false
-    @objc public var didCallDeleteUserClient = false
-
-    public func didStartSlowSync() {
-        didCallStartSlowSync = true
-    }
-
-    public func didFinishSlowSync() {
-        didCallFinishSlowSync = true
-    }
-
-    public func didStartQuickSync() {
-        didCallStartQuickSync = true
-    }
-
-    public func didFinishQuickSync(isRecovering: Bool) {
-        didCallFinishQuickSync = true
-    }
-
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        registeredMLSClient = userClient
-    }
-
-    public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        registeredUserClient = userClient
-    }
-
-    public func didFailToRegisterSelfUserClient(error: Error) {
-        didCallFailRegisterUserClient = true
-    }
-
-    public func didDeleteSelfUserClient(error: Error) {
-        didCallDeleteUserClient = true
-    }
-}
-
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
 
@@ -264,39 +208,6 @@ public class MockPushMessageHandler: NSObject, PushMessageHandler {
     }
 
     fileprivate(set) var failedToSend: [ZMMessage] = []
-}
-
-@objcMembers
-public class MockEventConsumer: NSObject, ZMEventConsumer {
-
-    public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        processEventsCalled = true
-        eventsProcessed.append(contentsOf: events)
-    }
-
-    public var eventsProcessedWhileInBackground: [ZMUpdateEvent] = []
-    public var processEventsWhileInBackgroundCalled: Bool = false
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        processEventsWhileInBackgroundCalled = true
-        eventsProcessedWhileInBackground.append(contentsOf: events)
-    }
-
-    public var messageNoncesToPrefetchCalled: Bool = false
-    public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        messageNoncesToPrefetchCalled = true
-
-        return Set(events.compactMap(\.messageNonce))
-    }
-
-    public var conversationRemoteIdentifiersToPrefetchCalled: Bool = false
-    public func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        conversationRemoteIdentifiersToPrefetchCalled = true
-
-        return Set(events.compactMap(\.conversationUUID))
-    }
-
 }
 
 @objcMembers
@@ -319,17 +230,6 @@ public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
         addTrackedObjectsCalled = true
     }
 
-}
-
-@objcMembers
-public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
-
-    public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
-        processEventsCalled = true
-        eventsProcessed.append(contentsOf: events)
-    }
 }
 
 @objcMembers

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 extension ConversationEvent {
     var senderID: UserID {
@@ -54,10 +54,12 @@ extension ConversationEvent {
             event.senderID
         case let .permissionUpdate(event):
             event.senderID
+        case let .mlsReset(event):
+            event.senderID
         }
     }
 
-    var conversationID: WireAPI.QualifiedID {
+    var conversationID: WireNetwork.QualifiedID {
         switch self {
         case let .accessUpdate(event):
             event.conversationID
@@ -90,6 +92,8 @@ extension ConversationEvent {
         case let .typing(event):
             event.conversationID
         case let .permissionUpdate(event):
+            event.conversationID
+        case let .mlsReset(event):
             event.conversationID
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,33 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
+
     var mockDependencies = MockDependencies()
 
     var viewModel: RootViewModel {
         RootViewModel(
             factory: self,
             bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo
-
+            environment: mockDependencies.backendEnvironment,
+            authenticationType: .new,
+            hasOtherAccountsProvider: { true },
         )
     }
 
-    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
         FakeDetermineAuthMethodFactory()
+    }
+
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        fatalError()
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        fatalError()
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {

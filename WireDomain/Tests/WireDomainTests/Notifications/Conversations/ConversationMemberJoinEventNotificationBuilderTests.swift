@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
     private var sut: ConversationMemberJoinEventNotificationBuilder!
@@ -63,14 +63,17 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         let isGroup = true
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
+        await setupMock(isGroup: isGroup, isTeam: isTeam, participants: [])
 
         sut = ConversationMemberJoinEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore
             ),
-            validator: .init(userLocalStore: userLocalStore)
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
+            )
         )
 
         // When
@@ -91,14 +94,17 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         let isGroup = true
         let isTeam = false
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
+        await setupMock(isGroup: isGroup, isTeam: isTeam, participants: [])
 
         sut = ConversationMemberJoinEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore
             ),
-            validator: .init(userLocalStore: userLocalStore)
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
+            )
         )
 
         // When
@@ -119,14 +125,17 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         let isGroup = false
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
+        await setupMock(isGroup: isGroup, isTeam: isTeam, participants: [])
 
         sut = ConversationMemberJoinEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore
             ),
-            validator: .init(userLocalStore: userLocalStore)
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
+            )
         )
 
         // When
@@ -142,20 +151,22 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
     }
 
     func testGenerateConversationMemberJoinEventNotification_It_Should_Not_Build_Notification() async throws {
-
         // Mock
 
         let isGroup = false
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
+        await setupMock(isGroup: isGroup, isTeam: isTeam, participants: [])
 
         sut = ConversationMemberJoinEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore
             ),
-            validator: .init(userLocalStore: userLocalStore)
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
+            )
         )
 
         // When
@@ -163,6 +174,33 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         // Then
         XCTAssertNil(userNotification)
+    }
+
+    func test_ItDoesNotCreateNotification_WhenSelfUserIsAlreadyParticipant() async throws {
+        // Given
+        let selfUser = await context.perform { [modelHelper, context] in
+            modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
+        }
+
+        // Mock
+        await setupMock(isGroup: true, isTeam: false, participants: [selfUser])
+
+        sut = ConversationMemberJoinEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
+            )
+        )
+
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserAddedEvent)
+
+        // Then: should NOT create notification
+        XCTAssertNil(userNotification, "Should not create notification when self user is already a participant")
     }
 
     private func internalTest_assertNotificationContent(
@@ -210,7 +248,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
-            Scaffolding.conversationID.uuid.uuidString.lowercased()
+            Scaffolding.conversationID.id.uuidString.lowercased()
         )
 
         // User info
@@ -219,20 +257,22 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
     }
 
-    private func setupMock(isGroup: Bool, isTeam: Bool) async {
-        let conversation = await context.perform { [self] in
+    private func setupMock(isGroup: Bool, isTeam: Bool, participants: Set<ZMUser>) async {
+        let conversation = await context.perform { [modelHelper, context] in
             modelHelper.createGroupConversation(in: context)
         }
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        conversationLocalStore.localParticipantsIn_MockValue = participants
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
         conversationLocalStore.lastReadServerTimestamp_MockValue = .now
-        userLocalStore.fetchOrCreateUserIdDomain_MockValue = await context.perform { [self] in
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = await context.perform { [modelHelper, context] in
             modelHelper.createUser(in: context)
         }
         userLocalStore.nameFor_MockValue = Scaffolding.senderName
         conversationLocalStore.nameFor_MockValue = Scaffolding.conversationName
         conversationLocalStore.isGroupConversation_MockValue = isGroup
-        userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
+        userLocalStore.fetchSelfUser_MockValue = await context.perform { [modelHelper, context] in
             modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
         }
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
@@ -247,8 +287,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
 
         static let selfUserAddedEvent = ConversationMemberJoinEvent(
@@ -295,5 +335,4 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             mutedReference: nil
         )
     }
-
 }

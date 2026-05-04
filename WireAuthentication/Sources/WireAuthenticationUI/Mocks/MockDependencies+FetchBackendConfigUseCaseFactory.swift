@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,33 +18,23 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: FetchBackendConfigUseCaseFactory {
 
-    nonisolated
+    @MainActor
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        MockFetchBackendConfigUseCase()
+        MockFetchBackendConfigUseCase(environment: backendEnvironment)
     }
 
 }
 
 struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig {
-        BackendConfig(
-            title: "backend name",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: URL(string: "example")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+    let environment: BackendEnvironment2
+
+    func invoke(at configURL: URL) async throws -> BackendEnvironment2 {
+        environment
     }
 
 }

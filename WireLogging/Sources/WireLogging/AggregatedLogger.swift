@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 
 final class AggregatedLogger: LoggerProtocol {
+
     private var loggers: [any LoggerProtocol]
 
     init(loggers: [any LoggerProtocol]) {
@@ -30,10 +31,6 @@ final class AggregatedLogger: LoggerProtocol {
     }
 
     // MARK: - LoggerProtocol
-
-    var logFiles: [URL] {
-        loggers.reduce(into: []) { $0 += $1.logFiles }
-    }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)

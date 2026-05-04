@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,57 @@
 
 import WireCoreCrypto
 
-public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
+public extension MockCoreCryptoProtocol {
+
+    func mockTransaction(context: CoreCryptoContextProtocol) {
+        transaction_MockMethod = { block in
+            try await block(context)
+        }
+    }
+}
+
+public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
+    // MARK: - historyClient
+
+    public static var historyClient_Invocations: [WireCoreCryptoUniffi.HistorySecret] = []
+    public static var historyClient_MockError: Error?
+    public static var historyClient_MockMethod: (
+        (WireCoreCryptoUniffi.HistorySecret) async throws
+            -> MockCoreCryptoProtocol
+    )?
+    public static var historyClient_MockValue: MockCoreCryptoProtocol?
+
+    public static func historyClient(_ historySecret: WireCoreCryptoUniffi.HistorySecret) async throws -> Self {
+        historyClient_Invocations.append(historySecret)
+
+        if let error = historyClient_MockError {
+            throw error
+        }
+        if let mockMethod = historyClient_MockMethod {
+            guard let result = try await mockMethod(historySecret) as? Self else {
+                fatalError("Mock method did not return correct type")
+            }
+            return result
+        }
+
+        if let mockValue = historyClient_MockValue {
+            guard let result = mockValue as? Self else {
+                fatalError("Mock value is not of expected type")
+            }
+            return result
+        }
+        fatalError("no mock for `historyClient`")
+    }
+
     // MARK: - transaction<Result>
 
     public typealias transaction_MethodType<Result> =
-        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Void
+        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Result
 
     public var transaction_Invocations: [
         (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws
@@ -56,6 +97,26 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
         }
     }
 
+    // MARK: - provideTransport
+
+    public var provideTransportTransport_Invocations: [any WireCoreCryptoUniffi.MlsTransport] = []
+    public var provideTransportTransport_MockError: Error?
+    public var provideTransportTransport_MockMethod: ((any WireCoreCryptoUniffi.MlsTransport) async throws -> Void)?
+
+    public func provideTransport(transport: any WireCoreCryptoUniffi.MlsTransport) async throws {
+        provideTransportTransport_Invocations.append(transport)
+
+        if let error = provideTransportTransport_MockError {
+            throw error
+        }
+
+        guard let mock = provideTransportTransport_MockMethod else {
+            fatalError("no mock for `provideTransportTransport`")
+        }
+
+        try await mock(transport)
+    }
+
     // MARK: - registerEpochObserver
 
     public var registerEpochObserver_Invocations: [any WireCoreCryptoUniffi.EpochObserver] = []
@@ -76,24 +137,50 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
         try await mock(epochObserver)
     }
 
-    // MARK: - provideTransport
+    // MARK: - registerHistoryObserver
 
-    public var provideTransportTransport_Invocations: [any WireCoreCryptoUniffi.MlsTransport] = []
-    public var provideTransportTransport_MockError: Error?
-    public var provideTransportTransport_MockMethod: ((any WireCoreCryptoUniffi.MlsTransport) async throws -> Void)?
+    public var registerHistoryObserver_Invocations: [any WireCoreCryptoUniffi.HistoryObserver] = []
+    public var registerHistoryObserver_MockError: Error?
+    public var registerHistoryObserver_MockMethod: ((any WireCoreCryptoUniffi.HistoryObserver) async throws -> Void)?
 
-    public func provideTransport(transport: any WireCoreCryptoUniffi.MlsTransport) async throws {
-        provideTransportTransport_Invocations.append(transport)
+    public func registerHistoryObserver(_ historyObserver: any WireCoreCryptoUniffi.HistoryObserver) async throws {
+        registerHistoryObserver_Invocations.append(historyObserver)
 
-        if let error = provideTransportTransport_MockError {
+        if let error = registerHistoryObserver_MockError {
             throw error
         }
 
-        guard let mock = provideTransportTransport_MockMethod else {
-            fatalError("no mock for `provideTransportTransport`")
+        guard let mock = registerHistoryObserver_MockMethod else {
+            fatalError("no mock for `registerHistoryObserver`")
         }
 
-        try await mock(transport)
+        try await mock(historyObserver)
+    }
+
+    // MARK: - isHistorySharingEnabled
+
+    public var isHistorySharingEnabledConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
+    public var isHistorySharingEnabledConversationId_MockError: Error?
+    public var isHistorySharingEnabledConversationId_MockMethod: (
+        (WireCoreCryptoUniffi.ConversationId) async throws
+            -> Bool
+    )?
+    public var isHistorySharingEnabledConversationId_MockValue: Bool?
+
+    public func isHistorySharingEnabled(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> Bool {
+        isHistorySharingEnabledConversationId_Invocations.append(conversationId)
+
+        if let error = isHistorySharingEnabledConversationId_MockError {
+            throw error
+        }
+
+        if let mock = isHistorySharingEnabledConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = isHistorySharingEnabledConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isHistorySharingEnabledConversationId`")
+        }
     }
 
     // MARK: - setLogger

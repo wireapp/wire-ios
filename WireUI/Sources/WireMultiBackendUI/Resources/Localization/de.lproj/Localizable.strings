@@ -1,0 +1,32 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"manageTeam.title" = "Team und Abrechnung verwalten";
+"addAccount.title" = "Konto oder Team hinzufügen";
+"accounts.header" = "Andere Konten";
+
+"obsolete_client_alert.title" = "Aktualisierung erforderlich";
+"obsolete_client_alert.message" = "Sie verpassen neue Funktionen.\nLaden Sie die neueste Version von Wire herunter, um die App weiterhin mit diesem Benutzerkonto zu verwenden.";
+
+"obsolete_server_alert.title" = "Serverversion wird nicht unterstützt";
+"obsolete_server_alert.message" = "Ihr Wire-Server muss aktualisiert werden.\nBitte informieren Sie Ihren Systemadministrator.";
+
+"obsolete_alert.button.ok" = "OK";
+"obsolete_alert.button.update" = "Aktualisieren";
+"obsolete_alert.button.switch_accounts" = "Konto wechseln";
+"obsolete_alert.button.logout" = "Abmelden";

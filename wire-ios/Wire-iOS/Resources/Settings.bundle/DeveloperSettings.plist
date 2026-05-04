@@ -30,40 +30,6 @@
 			<key>DefaultValue</key>
 			<string>21600</string>
 		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Wire Cells</string>
-		</dict>
-        <dict>
-            <key>Type</key>
-            <string>PSTextFieldSpecifier</string>
-            <key>Title</key>
-            <string>Access Token</string>
-            <key>Key</key>
-            <string>ZMWireCellsAccessToken</string>
-            <key>DefaultValue</key>
-            <string></string>
-            <key>AutocapitalizationType</key>
-            <string>None</string>
-            <key>AutocorrectionType</key>
-            <string>No</string>
-        </dict>
-		<dict>
-            <key>Type</key>
-            <string>PSTextFieldSpecifier</string>
-            <key>Title</key>
-            <string>Gateway Secret</string>
-            <key>Key</key>
-            <string>ZMWireCellsGatewaySecret</string>
-            <key>DefaultValue</key>
-            <string></string>
-            <key>AutocapitalizationType</key>
-            <string>None</string>
-            <key>AutocorrectionType</key>
-            <string>No</string>
-        </dict>
 	</array>
 	<key>StringsTable</key>
 	<string>DeveloperSettings</string>

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,25 +28,70 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         self.journal = journal
     }
 
-    public var isMigrationNeeded: Bool {
-        journal[.isCoreCryptoKeyMigrationRequired]
+    // MARK: Journal updates
+
+    public var isAnyMigrationRequired: Bool {
+        isKeyRotationNeeded || isMigrationToBytesNeeded || isMigrationToScopedKeyNeeded
     }
 
-    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
-        if isMigrationNeeded {
-            WireLogger.coreCrypto.info("Core crypto key migration is required")
+    public var isMigrationToBytesNeeded: Bool {
+        journal[.isCoreCryptoKeyMigrationToBytesRequired]
+    }
 
-            try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
-            journal[.isCoreCryptoKeyMigrationRequired] = false
+    public var isMigrationToScopedKeyNeeded: Bool {
+        journal[.isCoreCryptoKeyMigrationToScopedKeyRequired]
+    }
 
-            WireLogger.coreCrypto.info("Core crypto key is migrated successfully")
+    public var isKeyRotationNeeded: Bool {
+        journal[.isCoreCryptoKeyRotationRequired]
+    }
+
+    public func markMigrationToBytesAsSkipped() {
+        WireLogger.coreCrypto.info("Skip core crypto key migration", attributes: .safePublic)
+
+        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
+    }
+
+    public func markMigrationToScopedKeyDone() {
+        WireLogger.coreCrypto.info("Marking migration to scoped key as done")
+
+        journal[.isCoreCryptoKeyMigrationToScopedKeyRequired] = false
+    }
+
+    public func markKeyRotationAsDone() {
+        WireLogger.coreCrypto.info("Marking key rotation as done")
+
+        journal[.isCoreCryptoKeyRotationRequired] = false
+    }
+
+    // MARK: Migrations
+
+    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
+        WireLogger.coreCrypto.info(
+            "Core crypto key migration from string to bytes is required",
+            attributes: .safePublic
+        )
+
+        try await migrateDatabaseKeyTypeToBytes(
+            path: path,
+            oldKey: oldKey,
+            newKey: DatabaseKey(key: newKey)
+        )
+        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
+
+        WireLogger.coreCrypto.info("Core crypto key is migrated to bytes successfully", attributes: .safePublic)
+    }
+
+    public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
+        do {
+            try await updateDatabaseKey(
+                name: path,
+                oldKey: DatabaseKey(key: oldKey),
+                newKey: DatabaseKey(key: newKey)
+            )
+        } catch {
+            throw CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError: error)
         }
-    }
-
-    public func markMigrationAsSkipped() {
-        WireLogger.coreCrypto.info("Skip core crypto key migration")
-
-        journal[.isCoreCryptoKeyMigrationRequired] = false
     }
 
 }

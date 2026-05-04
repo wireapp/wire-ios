@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationRepositoryTests: XCTestCase {
 
@@ -30,12 +30,6 @@ final class ConversationRepositoryTests: XCTestCase {
     private var conversationsAPI: MockConversationsAPI!
     private var conversationsLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
-    private let backendInfo: ConversationRepository.BackendInfo = .init(
-        domain: "example.com",
-        isFederationEnabled: false,
-        isMLSEnabled: true
-    )
-
     private var teamRepository: MockTeamRepositoryProtocol!
     private var messageRepository: MockMessageRepositoryProtocol!
     private var mlsService: MockMLSServiceInterface!
@@ -68,7 +62,9 @@ final class ConversationRepositoryTests: XCTestCase {
             userLocalStore: userLocalStore,
             teamRepository: teamRepository,
             messageRepository: messageRepository,
-            backendInfo: backendInfo,
+            localDomain: "example.com",
+            isFederationEnabled: false,
+            isMLSEnabled: true,
             mlsProvider: mlsProvider
         )
     }
@@ -90,114 +86,18 @@ final class ConversationRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        // Mock
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: [Scaffolding.conversation],
-            notFound: [],
-            failed: []
-        )
-
-        conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-
-        // When
-
-        try await sut.pullConversations()
-
-        // Then
-
-        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
-        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(
-            conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
-            1
-        )
-    }
-
-    func testPullNotFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        // Mock
-
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: [],
-            notFound: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
-            failed: []
-        )
-
-        conversationsLocalStore
-            .storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
-
-        // When
-
-        try await sut.pullConversations()
-
-        // Then
-
-        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
-        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(
-            conversationsLocalStore.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
-                .count,
-            1
-        )
-    }
-
-    func testPullFailedConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        // Mock
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: [],
-            notFound: [],
-            failed: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)]
-        )
-
-        conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.pullConversations()
-
-        // Then
-
-        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
-        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(
-            conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_Invocations.count,
-            1
-        )
-    }
-
     func testPullMLSOneToOneConversation_It_Invokes_Local_Store_And_API_Methods() async throws {
         // Mock
 
-        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversation
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = (
+            Scaffolding.conversation,
+            Scaffolding.mlsPublicKeys
+        )
         conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
 
-        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+        let (mlsGroupID, pubKeys) = try await sut.pullMLSOneToOneConversation(
             userID: Scaffolding.id.uuidString,
             userDomain: Scaffolding.domain
         )
@@ -205,6 +105,7 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(mlsGroupID, Scaffolding.conversation.mlsGroupID)
+        XCTAssertEqual(pubKeys, Scaffolding.mlsPublicKeys)
         XCTAssertEqual(conversationsAPI.getMLSOneToOneConversationUserIDIn_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
@@ -331,7 +232,7 @@ final class ConversationRepositoryTests: XCTestCase {
             true
         )
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
+        mlsService.wipeGroup_MockMethod = { _ in }
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
 
         // When
@@ -345,7 +246,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
     }
 
@@ -365,7 +266,7 @@ final class ConversationRepositoryTests: XCTestCase {
             false
         )
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
-        conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
+        mlsService.wipeGroup_MockMethod = { _ in }
 
         // When
 
@@ -379,7 +280,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
     }
 
     func testStoreConversation_It_Invokes_Local_Store_Method() async {
@@ -443,9 +344,9 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         try await sut.removeMembers(
-            Set([.init(uuid: Scaffolding.id, domain: Scaffolding.domain)]),
-            from: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
-            initiatedBy: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
+            Set([.init(id: Scaffolding.id, domain: Scaffolding.domain)]),
+            from: .init(id: Scaffolding.id, domain: Scaffolding.domain),
+            initiatedBy: .init(id: Scaffolding.id, domain: Scaffolding.domain),
             at: .now,
             reason: .userDeleted
         )
@@ -589,7 +490,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         static let conversation = Conversation(
             id: id,
-            qualifiedID: .init(uuid: id, domain: domain),
+            qualifiedID: .init(id: id, domain: domain),
             teamID: id,
             type: .group,
             messageProtocol: .proteus,
@@ -611,6 +512,13 @@ final class ConversationRepositoryTests: XCTestCase {
 
         static let base64EncodedString =
             "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+
+        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+            ed25519: .randomAlphanumerical(length: 5),
+            p256: .randomAlphanumerical(length: 5),
+            p384: .randomAlphanumerical(length: 5),
+            p521: .randomAlphanumerical(length: 5)
+        )
     }
 
 }

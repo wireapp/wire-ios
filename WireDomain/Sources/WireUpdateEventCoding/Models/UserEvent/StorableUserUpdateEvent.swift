@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserUpdateEvent: Equatable, Codable, Sendable {
 
@@ -30,7 +30,7 @@ struct StorableUserUpdateEvent: Equatable, Codable, Sendable {
     private let assets: [StorableUserAsset]?
     private let supportedProtocols: [StorableMessageProtocol]?
 
-    init(_ value: WireAPI.UserUpdateEvent) {
+    init(_ value: WireNetwork.UserUpdateEvent) {
         self.userID = value.userID
         self.accentColorID = value.accentColorID
         self.name = value.name
@@ -43,7 +43,7 @@ struct StorableUserUpdateEvent: Equatable, Codable, Sendable {
         self.supportedProtocols = value.supportedProtocols?.map { StorableMessageProtocol($0) }
     }
 
-    func toAPIModel() -> WireAPI.UserUpdateEvent {
+    func toAPIModel() -> WireNetwork.UserUpdateEvent {
         .init(
             userID: userID,
             accentColorID: accentColorID,
@@ -52,7 +52,7 @@ struct StorableUserUpdateEvent: Equatable, Codable, Sendable {
             email: email,
             isSSOIDDeleted: isSSOIDDeleted,
             assets: assets?.map {
-                WireAPI.UserAsset(key: $0.key, size: $0.size.toAPIModel(), type: $0.type.toAPIModel())
+                WireNetwork.UserAsset(key: $0.key, size: $0.size.toAPIModel(), type: $0.type.toAPIModel())
             },
             supportedProtocols: supportedProtocols?.map { $0.toAPIModel() }.toSet()
         )
@@ -65,7 +65,7 @@ private enum StorableUserAssetSize: String, Codable, Equatable, Sendable {
     case preview
     case complete
 
-    init(_ value: WireAPI.UserAssetSize) {
+    init(_ value: WireNetwork.UserAssetSize) {
         switch value {
         case .preview:
             self = .preview
@@ -74,7 +74,7 @@ private enum StorableUserAssetSize: String, Codable, Equatable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.UserAssetSize {
+    func toAPIModel() -> WireNetwork.UserAssetSize {
         switch self {
         case .preview:
             .preview
@@ -89,14 +89,14 @@ private enum StorableUserAssetType: String, Codable, Equatable, Sendable {
 
     case image
 
-    init(_ value: WireAPI.UserAssetType) {
+    init(_ value: WireNetwork.UserAssetType) {
         switch value {
         case .image:
             self = .image
         }
     }
 
-    func toAPIModel() -> WireAPI.UserAssetType {
+    func toAPIModel() -> WireNetwork.UserAssetType {
         switch self {
         case .image:
             .image

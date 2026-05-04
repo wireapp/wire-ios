@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import MobileCoreServices
 import UniformTypeIdentifiers
+import WireDataModel
 import WireShareEngine
 
 /// `UnsentSendable` implementation to send GIF image messages
@@ -26,7 +27,7 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
     private var gifImageData: Data?
     private let attachment: NSItemProvider
 
-    init?(conversation: Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
+    init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
         guard attachment.hasItemConformingToTypeIdentifier(UTType.gif.identifier) else { return nil }
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
@@ -56,8 +57,23 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
-            completion(gifImageData.flatMap(conversation.appendImage))
+            guard let self else {
+                return
+            }
+
+            guard let gifImageData else {
+                return completion(nil)
+            }
+
+            let message = conversation.appendImage(
+                SendableImage(
+                    name: nil,
+                    utType: .gif,
+                    data: gifImageData
+                )
+            )
+
+            completion(message)
         }
     }
 }

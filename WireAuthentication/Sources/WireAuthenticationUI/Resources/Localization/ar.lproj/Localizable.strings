@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "التالي";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "البريد الإلكتروني";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "كلمة المرور";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "التالي";
 "cloud_user_login.forgot_password" = "نسيتَ كلمة المرور؟";
+
+"login.sso.title" = "تسجيل الدخول";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
+"login.sso.input_code.title" = "رمز SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "تسجيل الخروج";
+"logout.alert.title" = "تسجيل الخروج";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "إلغاء";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "أنها المرة الأولى التي تستخدم فيها واير على هذا الجهاز.";
 "authentication.no_history.message" = "لأسباب تتعلق بالخصوصية، لن يظهر تاريخ المحادثات الخاصة بك هنا.";
+"authentication.missing_history.title" = "قمت بإستخدام Wire على هذا الجهاز من قبل.";
+"authentication.missing_history.message" = "الرسائل المُرسلة خلال ذلك الحين لن تظهر هنا.";
 "authentication.no_history.confirm" = "موافق";
 
 "authentication.error.title.no_internet" = "No internet connection";
@@ -111,8 +129,57 @@
 "obsolete_client.alert.ok_button" = "اذهب لـApp Store";
 "obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
+"obsolete.alert.update_button" = "Update";
+"obsolete.alert.switch_accounts" = "Switch Accounts";
+"obsolete.alert.logout" = "تسجيل الخروج";
+"obsolete.alert.cancel" = "إلغاء";
+"obsolete.alert.ok" = "موافق";
+
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+"obsolete_backend_multibackend.alert.message" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+// Registration
+
+"create_personal_account.title" = "Create personal account";
+"create_personal_account.continue" = "متابعة";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
+"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.create_team" = "إنشاء فريق";
+"create_personal_account.input_name.title" = "الاسم";
+"create_personal_account.input_name.placeholder" = "Enter your name";
+"create_personal_account.input_email.title" = "البريد الإلكتروني";
+"create_personal_account.input_email.placeholder" = "Enter your email";
+"create_personal_account.input_password.title" = "كلمة المرور";
+"create_personal_account.input_password.placeholder" = "Enter a password";
+"create_personal_account.input_confirm_password.placeholder" = "Confirm password";
+"create_personal_account.input_confirm_password.error" = "Passwords don’t match";
+"create_personal_account.confirmation_alert.title" = "Terms of use";
+"create_personal_account.confirmation_alert.message" = "فضلًا اقبل شروط الاستخدام للمتابعة.";
+"create_personal_account.confirmation_alert.accept" = "قبول";
+"create_personal_account.confirmation_alert.view" = "عرض";
+"create_personal_account.confirmation_alert.cancel" = "إلغاء";
+"create_personal_account.verification_code.resend_code" = "Resend Code";
+"create_personal_account.verification_code.confirm" = "تأكيد";
+"create_personal_account.verification_code.message" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";
+
+"create_personal_account.error.title.email-exists" = "Account Exists";
+"create_personal_account.error.message.email-exists" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
+"create_personal_account.error.title.invalid-email" = "Invalid information";
+"create_personal_account.error.message.invalid-email" = "Please enter a valid format for your email.";
+"create_personal_account.error.title.blacklisted-email" = "Invalid information";
+"create_personal_account.error.message.blacklisted-email" = "Your email has been identified as not trusted, for example, due to a rejection by a spam filter.";
+"create_personal_account.error.title.domain-blocked" = "Invalid information";
+"create_personal_account.error.message.domain-blocked" = "You can't create this account as your email domain is intentionally blocked.";
+"create_personal_account.error.title.invalid-code" = "Invalid information";
+"create_personal_account.error.message.invalid-code" = "Invalid code, or maximum attempts exceeded. Please retry, or request another code";
+"create_personal_account.error.title.too-many-team-members" = "Invalid information";
+"create_personal_account.error.message.too-many-team-members" = "This team has reached its membership limit.";
+"create_personal_account.error.title.user-creation-restricted" = "Invalid information";
+"create_personal_account.error.message.user-creation-restricted" = "This application version does not allow creation of personal accounts.";
 
 "switching_accounts.title" = "Switch account";
 "switching_accounts.subtitle" = "Select another account on this device:";

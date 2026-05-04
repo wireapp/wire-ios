@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
 
     fileprivate static let path: String = "/self"
     public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
-    fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
+    fileprivate(set) var deleteSync: ZMSingleRequestSync!
     let cookieStorage: ZMPersistentCookieStorage
 
     public init(
@@ -36,10 +36,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
         self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }

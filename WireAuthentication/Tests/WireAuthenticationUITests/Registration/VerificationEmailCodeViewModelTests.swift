@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
     private var mockRegisterPersonalAccountUseCase: MockRegisterPersonalAccountUseCaseProtocol!
     private var mockRequestEmailVerificationCodeUseCase: MockRequestEmailVerificationCodeUseCaseProtocol!
     private var onRegisterAccountCalled = false
+    private var analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -40,13 +41,16 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         router = MockRouter()
         mockRegisterPersonalAccountUseCase = MockRegisterPersonalAccountUseCaseProtocol()
         mockRequestEmailVerificationCodeUseCase = MockRequestEmailVerificationCodeUseCaseProtocol()
+        analyticsEventTracker = MockRegistrationAnalyticsTrackerProtocol()
+        analyticsEventTracker.trackPersonalAccountCreationFailedCodeVerification_MockMethod = {}
         sut = VerificationEmailCodeViewModel(
             factory: self,
             router: router,
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true }
+            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
+            analyticsEventTracker: analyticsEventTracker
         )
     }
 
@@ -56,6 +60,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         sut = nil
         mockRegisterPersonalAccountUseCase = nil
         mockRequestEmailVerificationCodeUseCase = nil
+        analyticsEventTracker = nil
     }
 
     // MARK: - Factory
@@ -91,7 +96,9 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
         // mock
         mockRegisterPersonalAccountUseCase.invokeEmailPasswordVerificationCodeName_MockMethod = { _, _, _, _ in

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,21 +20,37 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 extension ZMConversationMessage {
-    func replyPreview() -> UIView? {
+    func replyPreview(
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) -> UIView? {
         guard canBeQuoted else {
             return nil
         }
-        return preparePreviewView()
+        return preparePreviewView(
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
     }
 
-    func preparePreviewView(shouldDisplaySender: Bool = true) -> UIView {
+    func preparePreviewView(
+        userSession: UserSession,
+        shouldDisplaySender: Bool = true,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) -> UIView {
         if isImage || isVideo {
-            MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
+            MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender, userSession: userSession)
         } else {
-            MessagePreviewView(message: self, displaySender: shouldDisplaySender)
+            MessagePreviewView(
+                message: self,
+                displaySender: shouldDisplaySender,
+                userSession: userSession,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            )
         }
     }
 }
@@ -67,15 +83,17 @@ final class MessageThumbnailPreviewView: UIView {
     private let imagePreview = ImageResourceView()
     private var observerToken: Any?
     private let displaySender: Bool
+    private let userSession: UserSession
     private let iconColor = SemanticColors.Icon.foregroundDefault
 
     let message: ZMConversationMessage
 
-    init(message: ZMConversationMessage, displaySender: Bool = true) {
+    init(message: ZMConversationMessage, displaySender: Bool = true, userSession: UserSession) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
+        self.userSession = userSession
         super.init(frame: .zero)
         setupSubviews()
         setupConstraints()
@@ -84,7 +102,7 @@ final class MessageThumbnailPreviewView: UIView {
     }
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(
                 observer: self,
                 for: message,
@@ -232,15 +250,27 @@ final class MessagePreviewView: UIView {
     private let contentTextView = UITextView.previewTextView()
     private var observerToken: Any?
     private let displaySender: Bool
+    private let userSession: UserSession
     private let iconColor = SemanticColors.Icon.foregroundDefault
 
     let message: ZMConversationMessage
 
-    init(message: ZMConversationMessage, displaySender: Bool = true) {
+    private let contentAttachmentsView = UIView()
+    private let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
+
+    init(
+        message: ZMConversationMessage,
+        displaySender: Bool = true,
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
+    ) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
+        self.userSession = userSession
+        self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
+
         super.init(frame: .zero)
         setupSubviews()
         setupConstraints()
@@ -249,7 +279,7 @@ final class MessagePreviewView: UIView {
     }
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(
                 observer: self,
                 for: message,
@@ -268,6 +298,11 @@ final class MessagePreviewView: UIView {
             senderLabel.isAccessibilityElement = true
             senderLabel.accessibilityIdentifier = "SenderLabel_ReplyPreview"
         }
+
+        if message.isMultipart {
+            allViews.append(contentAttachmentsView)
+        }
+
         allViews.forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             addSubview(view)
@@ -279,7 +314,6 @@ final class MessagePreviewView: UIView {
 
         NSLayoutConstraint.activate([
             contentTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
-            contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             contentTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset)
         ])
 
@@ -292,6 +326,22 @@ final class MessagePreviewView: UIView {
             ])
         } else {
             contentTextView.topAnchor.constraint(equalTo: topAnchor, constant: inset).isActive = true
+        }
+
+        if message.isMultipart {
+            let topConstraint = if message.text?.isEmpty == true {
+                displaySender ? senderLabel.bottomAnchor : topAnchor
+            } else {
+                contentTextView.bottomAnchor
+            }
+            NSLayoutConstraint.activate([
+                contentAttachmentsView.topAnchor.constraint(equalTo: topConstraint, constant: inset / 2),
+                contentAttachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
+                contentAttachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
+                contentAttachmentsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset)
+            ])
+        } else {
+            contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset).isActive = true
         }
     }
 
@@ -328,8 +378,8 @@ final class MessagePreviewView: UIView {
                 message: textMessageData,
                 inputMode: true,
                 accentColor: (
-                    ZMUserSession
-                        .shared()?.selfUser.zmAccentColor ?? .default
+                    (userSession as? ZMUserSession)?
+                        .selfUser.zmAccentColor ?? .default
                 ).accentColor
             )
         } else if let location = message.locationMessageData {
@@ -348,6 +398,19 @@ final class MessagePreviewView: UIView {
             let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                 (fileData.filename ?? L10n.Localizable.Conversation.InputBar.MessagePreview.file).localizedUppercase
             contentTextView.attributedText = initialString && attributes
+        }
+
+        if message.isMultipart,
+           let attachments = message.multipartMessageData?.attachments,
+           let messageReplyAttachmentsViewModel {
+
+            let messageReplyAttachmentView = MessageReplyAttachmentsView(
+                attachments: attachments,
+                viewModel: messageReplyAttachmentsViewModel
+            )
+
+            contentAttachmentsView.addSubview(messageReplyAttachmentView)
+            messageReplyAttachmentView.fitIn(view: contentAttachmentsView)
         }
     }
 

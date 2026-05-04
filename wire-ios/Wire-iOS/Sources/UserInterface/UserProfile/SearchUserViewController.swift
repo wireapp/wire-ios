@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -34,6 +35,7 @@ final class SearchUserViewController: UIViewController {
     private let userSession: UserSession
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -47,18 +49,28 @@ final class SearchUserViewController: UIViewController {
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.qualifiedID = qualifiedID
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared() {
-            self.searchDirectory = SearchDirectory(userSession: session)
+        if let session = userSession as? ZMUserSession,
+           let searchAPI = session.clientSessionComponent?.searchAPI,
+           let teamsAPI = session.clientSessionComponent?.teamsAPI,
+           let usersAPI = session.clientSessionComponent?.usersAPI {
+            self.searchDirectory = SearchDirectory(
+                userSession: session,
+                searchAPI: searchAPI,
+                teamsAPI: teamsAPI,
+                usersAPI: usersAPI
+            )
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -79,16 +91,7 @@ final class SearchUserViewController: UIViewController {
         super.viewDidLoad()
 
         activityIndicator.start()
-
-        if let task = searchDirectory?.lookup(qualifiedID: qualifiedID) {
-            task.addResultHandler { [weak self] in
-                self?.activityIndicator.stop()
-                self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            }
-            task.start()
-
-            pendingSearchTask = task
-        }
+        startLookup()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -104,8 +107,21 @@ final class SearchUserViewController: UIViewController {
 
     // MARK: - Methods
 
-    private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
-        guard !resultHandled, isCompleted else { return }
+    private func startLookup() {
+        guard let searchDirectory else { return }
+
+        Task {
+            let task = searchDirectory.createLookupTask(with: qualifiedID)
+            pendingSearchTask = task
+            let searchResult = await task.start()
+            pendingSearchTask = nil
+            activityIndicator.stop()
+            handleSearchResult(searchResult: searchResult)
+        }
+    }
+
+    private func handleSearchResult(searchResult: SearchResult) {
+        guard !resultHandled else { return }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -126,13 +142,14 @@ final class SearchUserViewController: UIViewController {
                 context: .profileViewer,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = profileViewControllerDelegate
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
-        } else if isCompleted {
+        } else {
             let alert = UIAlertController(
                 title: L10n.Localizable.UrlAction.InvalidUser.title,
                 message: L10n.Localizable.UrlAction.InvalidUser.message,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,19 +19,22 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireReusableUIComponents
 
 package protocol VerificationCodeFactory {
 
     @MainActor var viewModel: VerificationCodeViewModel { get }
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+
 }
 
 package struct VerificationCodeView: View {
 
     @StateObject private var viewModel: VerificationCodeViewModel
 
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState private var focusedIndex: Int?
 
     private typealias Strings = L10n.Localizable
@@ -45,7 +48,7 @@ package struct VerificationCodeView: View {
     package var body: some View {
         VStack(spacing: 20) {
             Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
@@ -91,11 +94,7 @@ package struct VerificationCodeView: View {
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
             case let .noHistory(authenticationResult):
-                NoHistoryView(
-                    factory: viewModel.factory.noHistoryFactory(
-                        authenticationResult: authenticationResult
-                    )
-                )
+                viewModel.factory.noHistoryView(result: authenticationResult)
             }
         }
         .onAppear {
@@ -108,23 +107,27 @@ package struct VerificationCodeView: View {
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
             ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
-                TextField("", text: $viewModel.code[index])
-                    .frame(width: 50, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(
-                                focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
-                                lineWidth: 1
-                            )
-                    )
-                    .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
-                    .keyboardType(.numberPad)
-                    .foregroundColor(.primary)
-                    .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { newValue in
-                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
-                    }
+                ContextMenuControllableTextField(
+                    text: $viewModel.code[index],
+                    placeholder: "",
+                    isContextMenuAllowed: isClipboardEnabled,
+                    textAlignment: .center,
+                    keyboardType: .numberPad
+                )
+                .frame(width: 50, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
+                            lineWidth: 1
+                        )
+                )
+                .font(for: .h2)
+                .foregroundColor(.primary)
+                .focused($focusedIndex, equals: index)
+                .onChange(of: viewModel.code[index]) { newValue in
+                    focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
+                }
             }
         }
         .onAppear {

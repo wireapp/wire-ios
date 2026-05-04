@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireReusableUIComponents
 
 package struct VerificationEmailCodeView: View {
 
@@ -35,53 +37,58 @@ package struct VerificationEmailCodeView: View {
     }
 
     package var body: some View {
-        VStack(spacing: 20) {
-            Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
-                .multilineTextAlignment(.center)
-                .lineLimit(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundStyle(Color.primaryText)
+        ScrollView {
+            VStack(spacing: 20) {
+                Text(Strings.VerificationCode.message(viewModel.email))
+                    .font(for: .body1)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundStyle(Color.primaryText)
 
-            verificationCodeView
+                verificationCodeView
 
-            Button(action: {
-                Task { await viewModel.confirm() }
-            }, label: {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
+                Button(action: {
+                    Task { await viewModel.confirm() }
+                }, label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+
+                        Text(Strings.VerificationCode.confirm)
                     }
+                })
+                .accessibilityIdentifier(Locators.VerificationCodePage.confirmButton.rawValue)
+                .wireButtonStyle(.primary)
+                .padding(.horizontal)
+                .disabled(viewModel.isConfirmButtonDisabled)
 
-                    Text(Strings.VerificationCode.confirm)
-                }
-            })
-            .wireButtonStyle(.primary)
-            .padding(.horizontal)
-            .disabled(viewModel.isConfirmButtonDisabled)
-
-            Button(action: {
-                Task.detached { await viewModel.requestVerificationCode() }
-            }, label: {
-                Text(Strings.VerificationCode.resendCode)
-            })
-            .wireButtonStyle(.link)
-            .disabled(viewModel.isResending)
-        }
-        .padding()
-        .background(ColorTheme.Backgrounds.surface.color)
-        .navigationTitle(Strings.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .setPreferredSize(navigationBarHidden: false)
-        .customBackButton()
-        .alert(
-            item: $viewModel.alert,
-            title: { Text($0.title) },
-            message: { Text($0.message) },
-            actions: { _ in
-                Button(L10n.Localizable.Authentication.Error.confirm, action: {})
+                Button(action: {
+                    Task.detached { await viewModel.requestVerificationCode() }
+                }, label: {
+                    Text(Strings.VerificationCode.resendCode)
+                })
+                .wireButtonStyle(.link)
+                .disabled(viewModel.isResending)
             }
-        )
+            .background(ColorTheme.Backgrounds.surface.color)
+            .navigationTitle(Strings.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in
+                    Button(L10n.Localizable.Authentication.Error.confirm, action: {})
+                }
+            )
+            .onAppear {
+                viewModel.trackReachedVerificationCodeIfNeeded()
+            }
+        }
     }
 
     private var verificationCodeView: some View {
@@ -97,11 +104,12 @@ package struct VerificationEmailCodeView: View {
                             )
                     )
                     .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
-                    .onChange(of: viewModel.code[index]) { newValue in
+                    .accessibilityIdentifier(Locators.VerificationCodePage.verificationCodeTextField.rawValue)
+                    .onChange(of: viewModel.code[index]) { _, newValue in
                         focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
             }

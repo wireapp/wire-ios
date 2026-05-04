@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@ class StylableButton: UIButton, Stylable {
     }
 
     private func applyStyleToNonDynamicProperties(style: ButtonStyle) {
-        setBackgroundImageColor(style.normalStateColors.background, for: .normal)
-        setBackgroundImageColor(style.highlightedStateColors.background, for: .highlighted)
-        setBackgroundImageColor(style.selectedStateColors?.background, for: .selected)
+        setBackgroundImageColor(style.normalStateColors.background(), for: .normal)
+        setBackgroundImageColor(style.highlightedStateColors.background(), for: .highlighted)
+        setBackgroundImageColor(style.selectedStateColors?.background(), for: .selected)
 
         setBorder(for: style)
     }
@@ -46,7 +46,7 @@ class StylableButton: UIButton, Stylable {
             style.selectedStateColors?.border != nil else { return }
         let normalStateColor = style.normalStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let highlightedStateColor = style.highlightedStateColors.border?.cgColor ?? UIColor.clear.cgColor
-        let selectedStateColor = style.selectedStateColors?.border.cgColor ?? UIColor.clear.cgColor
+        let selectedStateColor = style.selectedStateColors?.border?.cgColor ?? UIColor.clear.cgColor
         layer.borderWidth = 1
         layer.borderColor = isHighlighted ? highlightedStateColor : normalStateColor
         layer.borderColor = isSelected ? selectedStateColor : normalStateColor

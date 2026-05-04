@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,14 +62,15 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         let testImageData = Data("test image data".utf8)
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: testImageData)
 
         // WHEN
-        try sut.invoke(withImageData: testImageData, in: mockConversation)
+        try sut.invoke(image: image, in: mockConversation)
 
         // THEN
         XCTAssertEqual(mockConversation.appendImage_Invocations.count, 1)
         let appendImageInvocation = try XCTUnwrap(mockConversation.appendImage_Invocations.first)
-        XCTAssertEqual(appendImageInvocation.imageData, testImageData)
+        XCTAssertEqual(appendImageInvocation.image.data, testImageData)
         XCTAssertNotNil(appendImageInvocation.nonce)
 
         let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(

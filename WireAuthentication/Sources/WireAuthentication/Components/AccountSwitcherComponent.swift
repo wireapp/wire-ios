@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,17 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 
 protocol AccountSwitcherComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
+    var accountsPublisher: CurrentValuePublisher<[AccountUIModel]> { get }
+    var environment: BackendEnvironment2 { get }
 
 }
 
-class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
+final class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
 
 extension AccountSwitcherComponent: AccountSwitcherFactory {
 
@@ -38,8 +40,9 @@ extension AccountSwitcherComponent: AccountSwitcherFactory {
 
     @MainActor var viewModel: AccountSwitcherModalViewModel {
         AccountSwitcherModalViewModel(
-            otherAccountsPublisher: dependency.otherAccountsPublisher,
-            router: dependency.router
+            accountsPublisher: dependency.accountsPublisher,
+            router: dependency.router,
+            defaultEnvironment: dependency.environment
         )
     }
 }

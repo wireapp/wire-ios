@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 //
 
 import CoreData
-import WireAPI
+import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -48,7 +49,8 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
     /// Persists an event envelopes locally.
@@ -58,15 +60,19 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
+    /// - parameter privateKeys: The private keys to use for decryption (if needed).
     /// - returns: A list of decoded event envelopes and their related object IDs.
 
     func fetchStoredEventEnvelopes(
-        limit: UInt
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
     ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.
@@ -76,6 +82,10 @@ public protocol UpdateEventsLocalStoreProtocol {
         with objectIDs: [NSManagedObjectID]
     ) async throws
 
+    /// Delete all stored events matching given indexes
+    /// - Parameter indexes: array of indexes matching the stored events
+    func deleteEventEnvelopes(at indexes: [Int64]) async throws
+
     /// Delete the event envelope with the given index.
     /// - parameter index: The index of the envelope to delete
 
@@ -84,4 +94,8 @@ public protocol UpdateEventsLocalStoreProtocol {
     ) async throws
 
     func calculateLastUnreadMessages() async
+
+    func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async
 }

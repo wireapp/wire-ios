@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@ import avs
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "calling")
 
 protocol ActiveCallViewControllerDelegate: AnyObject {
     func activeCallViewControllerDidDisappear(
@@ -84,6 +83,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         callingActionsInfoViewController
             .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.actionsView.bottomSheetScrollingDelegate = self
+        callingActionsInfoViewController.delegate = self
+
         visibleVoiceChannelViewController.configurationObserver = self
         self.participantsObserverToken = voiceChannel.addParticipantObserver(self)
         visibleVoiceChannelViewController.delegate = self
@@ -107,8 +108,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let userSession = ZMUserSession.shared() else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
+        // This is a hack for testing as a real ZMUserSession is not available
+        guard userSession is ZMUserSession else {
+            WireLogger.calling.error("UserSession not available when initializing \(type(of: self))")
             return
         }
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
@@ -207,7 +209,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
     func updateVisibleVoiceChannelViewController() {
         guard
-            let conversation = ZMUserSession.shared()?.priorityCallConversation,
+            let conversation = (userSession as? ZMUserSession)?.priorityCallConversation,
             visibleVoiceChannelViewController.conversation != conversation,
             let voiceChannel = conversation.voiceChannel
         else {
@@ -315,6 +317,19 @@ extension CallingBottomSheetViewController: CallViewControllerDelegate {
     @objc
     func hideCallView() {
         delegate?.activeCallViewControllerDidDisappear(self, for: voiceChannel.conversation)
+    }
+}
+
+extension CallingBottomSheetViewController: CallingActionsInfoViewControllerDelegate {
+
+    func actionsViewHeightChanged(to height: CGFloat) {
+        updateMinimalOffset(height)
+    }
+
+    private func updateMinimalOffset(_ offset: CGFloat) {
+        guard configuration.initialOffset != offset else { return }
+        configuration = BottomSheetConfiguration(height: configuration.height, initialOffset: offset)
+        hideBottomSheet()
     }
 }
 

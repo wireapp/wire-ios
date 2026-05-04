@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 @import WireImages;
 @import WireUtilities;
-@import WireCryptobox;
-@import WireProtos;
 @import WireTransport;
 @import Foundation;
 
@@ -64,6 +62,8 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+static NSString *const TypeKey = @"typeValue";
+static NSString *const AppInfoKey = @"appInfo";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -89,7 +89,7 @@ static NSString *const NeedsToAcknowledgeLegalHoldStatusKey = @"needsToAcknowled
 static NSString *const NeedsToRefetchLabelsKey = @"needsToRefetchLabels";
 static NSString *const ParticipantRolesKey = @"participantRoles";
 
-static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
+NS_SWIFT_NAME(TrackingIDKey) static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
@@ -158,14 +158,19 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
-    return self.serviceIdentifier != nil && self.providerIdentifier != nil;
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsBot
 {
-    return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsAppOrBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
 - (BOOL)isSelfUser
@@ -244,7 +249,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser || self.isWirelessUser) {
+    if (self.isAppOrBot || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -338,6 +343,7 @@ static NSString *const PrimaryKey = @"primaryKey";
                                            HandleKey, // this is not set on the user directly
                                            MembershipKey,
                                            CreatedTeamsKey,
+                                           AppInfoKey,
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,
@@ -506,11 +512,11 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
     if (arrayProtocols != nil) {
         NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
-        [self setSupportedProtocols:supportedProtocols];
+        [self updateSupportedProtocols:supportedProtocols];
     } else {
         // fallback to proteus as default supported protocol,
         // we don't have swift constants here unfortunately.
-        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+        [self updateSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
     }
 
 
@@ -708,17 +714,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     [self boxSelfUser:selfUser inContextUserInfo:moc];
     
     return selfUser;
-}
-
-@end
-
-
-@implementation ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
-{
-    VerifyReturnNil(session != nil);
-    return [self selfUserInContext:session.viewContext];
 }
 
 @end
