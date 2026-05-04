@@ -18,7 +18,8 @@
 
 import Foundation
 
-protocol ResolveBackendMetadataUseCaseProtocol {
+// sourcery: AutoMockable
+public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
 
     /// Resolve the metadata of the currently connected backend.
     ///
