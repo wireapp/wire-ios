@@ -141,10 +141,7 @@ extension SettingsCellDescriptorFactory {
 
     func conversationsSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
-            cellDescriptors: [
-                backUpElement(),
-                importMessagesElement()
-            ],
+            cellDescriptors: [backUpElement()],
             header: L10n.Localizable.Self.Settings.Conversations.title
         )
     }
@@ -348,16 +345,6 @@ extension SettingsCellDescriptorFactory {
                     return nil
                 }
         })
-    }
-
-    func importMessagesElement() -> SettingsCellDescriptorType {
-        SettingsExternalScreenCellDescriptor(
-            title: "Import Messages",
-            isDestructive: false,
-            presentationStyle: .navigation
-        ) {
-            UIHostingController(rootView: ImportMessagesView())
-        }
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {

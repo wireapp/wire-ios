@@ -98,7 +98,6 @@ jobs:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-    if: false
 
     steps:
       - uses: actions/checkout@v3
@@ -812,7 +811,7 @@ jobs:
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
     needs: run-tests
-    if: false
+    if: always()
     steps:
       - name: Download tests results
         uses: actions/download-artifact@v3
