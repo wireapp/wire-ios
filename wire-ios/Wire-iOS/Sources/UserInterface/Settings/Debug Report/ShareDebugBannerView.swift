@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 struct ShareDebugBannerView: View {
 
@@ -60,6 +61,7 @@ struct ShareDebugBannerView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.Localizable.Self.Settings.ShareDebugReport.Banner.title)
+        .accessibilityIdentifier(Locators.SettingsPage.shareDebugBanner.rawValue)
     }
 }
 

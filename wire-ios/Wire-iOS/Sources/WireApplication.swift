@@ -21,17 +21,21 @@ import WireSyncEngine
 
 final class WireApplication: UIApplication {
 
-    private let presenter = DeveloperToolsPresenter()
+    private let developerToolsPresenter = DeveloperToolsPresenter()
+    private let shareDebugPresenter = ShareDebugReportPresenter()
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        guard Bundle.developerModeEnabled else {
-            return
-        }
-
+        guard Bundle.developerModeEnabled else { return }
         guard motion == .motionShake else { return }
 
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            presenter.presentIfNotDisplayed(
+        if DeveloperFlag.shakeToReport.isOn {
+            Task { @MainActor in
+                await self.shareDebugPresenter.present(
+                    from: self.topmostViewController(onlyFullScreen: false)
+                )
+            }
+        } else if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            developerToolsPresenter.presentIfNotDisplayed(
                 with: appDelegate.appRootRouter,
                 from: self.topmostViewController(onlyFullScreen: false)
             )

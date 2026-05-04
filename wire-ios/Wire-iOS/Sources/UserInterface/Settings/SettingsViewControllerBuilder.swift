@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireMainNavigationUI
 import WireSettingsUI
 import WireSyncEngine
@@ -74,11 +75,29 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
         )
-        return .init(
+        let vc = SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
             userSession: userSession
         )
+        vc.footerViewController = makeShareDebugBannerVC(mainCoordinator: mainCoordinator)
+        return vc
+    }
+
+    private func makeShareDebugBannerVC(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let shareUseCase = ShareDebugReportUseCase(
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
+        let viewModel = ShareDebugReportViewModel(shareReport: shareUseCase)
+        let bannerVC = UIHostingController(
+            rootView: ShareDebugBannerView {
+                guard let topVC = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+                Task { @MainActor in await viewModel.share(from: topVC) }
+            }
+        )
+        bannerVC.view.backgroundColor = .clear
+        return bannerVC
     }
 
     func build(

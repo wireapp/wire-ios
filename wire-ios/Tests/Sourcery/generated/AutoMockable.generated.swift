@@ -475,6 +475,37 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
 
 }
 
+class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> URL)?
+    var invoke_MockValue: URL?
+
+    func invoke() async throws -> URL {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
 
     // MARK: - Life cycle
@@ -1532,6 +1563,30 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
         }
 
         await mock()
+    }
+
+}
+
+class MockShareDebugReportUseCaseProtocol: ShareDebugReportUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeLogFileURLFrom_Invocations: [(logFileURL: URL, viewController: UIViewController)] = []
+    var invokeLogFileURLFrom_MockMethod: ((URL, UIViewController) async -> Void)?
+
+    @MainActor
+    func invoke(logFileURL: URL, from viewController: UIViewController) async {
+        invokeLogFileURLFrom_Invocations.append((logFileURL: logFileURL, viewController: viewController))
+
+        guard let mock = invokeLogFileURLFrom_MockMethod else {
+            fatalError("no mock for `invokeLogFileURLFrom`")
+        }
+
+        await mock(logFileURL, viewController)
     }
 
 }

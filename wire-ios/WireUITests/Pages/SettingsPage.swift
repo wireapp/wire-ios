@@ -43,9 +43,20 @@ class SettingsPage: PageModel {
         return try AccountSettingsPage()
     }
 
+    var shareDebugBanner: XCUIElement {
+        app.buttons[Locators.SettingsPage.shareDebugBanner.rawValue].firstMatch
+    }
+
     func openOptionsMenu() throws -> OptionsOnSettingsPage {
         optionsMenu.tap()
         return try OptionsOnSettingsPage()
+    }
+
+    @discardableResult
+    func tapShareDebugBanner() -> SettingsPage {
+        XCTAssertTrue(shareDebugBanner.waitForExistence(timeout: 5))
+        shareDebugBanner.tap()
+        return self
     }
 
     func switchToConversationsTab() throws -> ConversationsPage {

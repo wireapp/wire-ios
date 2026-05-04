@@ -89,6 +89,7 @@ public enum Locators {
 
         case accountCell
         case optionsCell
+        case shareDebugBanner
     }
 
     public enum AccountSettingsPage: String {

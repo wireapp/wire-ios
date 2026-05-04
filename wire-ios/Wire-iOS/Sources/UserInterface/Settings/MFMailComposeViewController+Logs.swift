@@ -25,14 +25,9 @@ import WireSystem
 extension MFMailComposeViewController {
 
     func prefilledBody(withMessage message: String = "") -> String {
-        var body = """
-        --DO NOT EDIT--
-        \(LogFilesProvider().info())
-        ---------------\n
-        """
-
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
-        let details = """
+
+        return """
         \(l10n.firstline)
 
         - \(l10n.section1)
@@ -44,9 +39,9 @@ extension MFMailComposeViewController {
         - \(l10n.section3)
 
 
+        --DO NOT EDIT BELOW--
+        \(LogFilesProvider().info())
         """
-        body.append("\n\(details)\n")
-        return body
     }
 
     func attachLogs() {
