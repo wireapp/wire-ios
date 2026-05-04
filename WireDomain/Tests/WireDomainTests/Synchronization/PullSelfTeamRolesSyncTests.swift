@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class PullSelfTeamRolesSyncTests: XCTestCase {
 
     private var sut: PullSelfTeamRolesSync!
-    private var api: TeamsAPIMock!
+    private var api: MockTeamsAPI!
     private var store: MockTeamLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = TeamsAPIMock()
+        api = MockTeamsAPI()
         store = MockTeamLocalStoreProtocol()
         sut = PullSelfTeamRolesSync(api: api, store: store)
     }
@@ -43,14 +42,14 @@ final class PullSelfTeamRolesSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getTeamRolesForTeamIDTeamIDConversationRoleReturnValue = Scaffolding.remoteTeamRoles
+        api.getTeamRolesFor_MockValue = Scaffolding.remoteTeamRoles
         store.storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod = { _, _ in }
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getTeamRolesForTeamIDTeamIDConversationRoleReceivedInvocations
+        let apiInvocations = api.getTeamRolesFor_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.selfTeamID)
 

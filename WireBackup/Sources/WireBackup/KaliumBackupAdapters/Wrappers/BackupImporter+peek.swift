@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 @preconcurrency import KaliumBackup
+import WireFoundation
 
 extension BackupImporter {
 
@@ -28,7 +29,7 @@ extension BackupImporter {
         switch result {
         case let result as BackupPeekResult.Success:
             let userIDMatches = try await result.isCreatedBySameUser(userId: BackupQualifiedId(selfUserID)).boolValue
-            guard userIDMatches else { throw PeekBackupFileError.selfUserIDMismatch }
+            guard userIDMatches else { throw ImportBackupError.selfUserIDMismatch }
             return PeekResult(result.version, result.isEncrypted)
         case is BackupPeekResult.FailureUnknownFormat:
             throw PeekBackupFileError.unknownFormat
@@ -55,7 +56,6 @@ extension BackupImporter {
 
     enum PeekBackupFileError: Error {
 
-        case selfUserIDMismatch
         case unknownFormat
         case unsupportedVersion(_ backupVersion: String)
         case unexpectedPeekResultType

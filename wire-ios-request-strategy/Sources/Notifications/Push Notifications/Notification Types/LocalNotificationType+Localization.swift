@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,8 +43,6 @@ private let ZMPushStringLocationAdd         = "add.location"         // "[sender
 // [senderName]"
 
 private let ZMPushStringFailedToSend        = "failed.message"       // "Unable to send a message"
-
-private let ZMPushStringAlertAvailability   = "alert.availability"   // "Availability now affects notifications"
 
 private let ZMPushStringBundledMessages     = "bundled-messages"
 
@@ -142,9 +140,6 @@ extension LocalNotificationType {
         case .failedMessage:
             ZMPushStringFailedToSend
 
-        case .availabilityBehaviourChangeAlert:
-            ZMPushStringAlertAvailability
-
         case .bundledMessages:
             ZMPushStringBundledMessages
         }
@@ -210,31 +205,6 @@ extension LocalNotificationType {
         }
 
         return nil
-    }
-
-    public func alertTitleText(team: Team?) -> String? {
-        guard case let .availabilityBehaviourChangeAlert(availability) = self,
-              availability.isOne(of: .away, .busy) else { return nil }
-
-        let teamName = team?.name
-        let teamKey = teamName != nil ? TeamKey : nil
-        let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap(\.self).joined(separator: ".")
-        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap(\.self))
-    }
-
-    public func alertMessageBodyText() -> String {
-        guard case let .availabilityBehaviourChangeAlert(availability) = self,
-              availability.isOne(of: .away, .busy) else { return "" }
-
-        let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "message"].compactMap(\.self).joined(separator: ".")
-        return .localizedStringWithFormat(localizationKey.pushFormatString)
-    }
-
-    func bundledMessagesBodyText(messageCount: Int) -> String {
-        guard case .bundledMessages = self else { return "" }
-        return .localizedStringWithFormat(baseKey.pushFormatString, arguments: [messageCount])
     }
 
     func messageBodyText(senderName: String?) -> String {

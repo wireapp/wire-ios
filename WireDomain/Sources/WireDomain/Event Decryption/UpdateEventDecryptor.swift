@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
@@ -69,20 +69,25 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(
         in eventEnvelope: UpdateEventEnvelope,
         context: CoreCryptoContextProtocol?
-    ) async throws -> EventDecryptorResult {
+    ) async -> EventDecryptorResult {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }
-        let logAttributes: LogAttributes = [
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
         var brokenMLSGroupIDs = Set<String>()
-        var shouldCommitPendingProposals = false
+
+        if DeveloperFlag.ignoreIncomingEvents.isOn {
+            WireLogger.updateEvent.warn("debugging out of sync - ignore decrypting events")
+            return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
+        }
 
         for event in eventEnvelope.events {
+            logAttributes[.messageType] = event.name
             switch event {
             case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(
@@ -119,7 +124,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                shouldCommitPendingProposals = true
 
                 do {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
@@ -165,25 +169,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
             default:
                 // No decryption needed.
+                WireLogger.updateEvent.debug("event without decryption needed", attributes: logAttributes)
                 decryptedEvents.append(event)
             }
         }
 
-        if shouldCommitPendingProposals {
-            Task.detached {
-                // we don't need to wait for this, as it can take a while to finish
-                // it should not block decryption
-                await commitPendingProposalsIfNeeded()
-            }
-        }
-
         return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
-    }
-
-    private func commitPendingProposalsIfNeeded() async {
-        // MLSService will be nil when called from push notification service.
-        // As we don't need to commit pending proposals in that case.
-        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     private func appendFailedToDecryptProteusMessage(
@@ -196,7 +187,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         }
 
         let systemMessageType: SystemMessageType = .decryptionFailed(
-            sender: (eventData.senderID.uuid, eventData.senderID.domain),
+            sender: (eventData.senderID.id, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             remoteIdentityChanged: error == .RemoteIdentityChanged,
             date: eventData.timestamp
@@ -204,7 +195,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: eventData.conversationID.uuid,
+            conversationID: eventData.conversationID.id,
             conversationDomain: eventData.conversationID.domain
         )
     }

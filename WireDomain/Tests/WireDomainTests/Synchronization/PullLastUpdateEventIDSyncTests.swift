@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -25,11 +25,11 @@ import XCTest
 final class PullLastUpdateEventIDSyncTests: XCTestCase {
 
     private var sut: PullLastUpdateEventIDSync!
-    private var api: UpdateEventsAPIMock!
+    private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = UpdateEventsAPIMock()
+        api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         sut = PullLastUpdateEventIDSync(
             selfClientID: Scaffolding.selfClientID,
@@ -46,14 +46,14 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getLastUpdateEventSelfClientIDStringUpdateEventEnvelopeReturnValue = Scaffolding.envelope1
+        api.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
         store.storeLastEventIDId_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        let apiInvocations = api.getLastUpdateEventSelfClientIDStringUpdateEventEnvelopeReceivedInvocations
+        let apiInvocations = api.getLastUpdateEventSelfClientID_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.selfClientID)
 

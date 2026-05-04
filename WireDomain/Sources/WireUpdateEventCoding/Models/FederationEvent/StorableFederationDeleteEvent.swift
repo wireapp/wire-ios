@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableFederationDeleteEvent: Equatable, Codable, Sendable {
 
     private let domain: String
 
-    init(_ value: WireAPI.FederationDeleteEvent) {
+    init(_ value: WireNetwork.FederationDeleteEvent) {
         self.domain = value.domain
     }
 
-    func toAPIModel() -> WireAPI.FederationDeleteEvent {
+    func toAPIModel() -> WireNetwork.FederationDeleteEvent {
         .init(domain: domain)
     }
 

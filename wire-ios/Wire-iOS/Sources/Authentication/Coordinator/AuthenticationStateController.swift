@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
 
     /// Called when the current state changes in the state controller.
     /// - parameter newState: The new state held by the state controller
-    /// - parameter mode: The kind of change that occured in the state. This
+    /// - parameter mode: The kind of change that occurred in the state. This
     /// influences the way we display the new state.
 
     func stateDidChange(_ newState: AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
@@ -43,7 +43,7 @@ final class AuthenticationStateController {
         case createCredentials(_ user: UnregisteredUser)
     }
 
-    /// The type of change that occured.
+    /// The type of change that occurred.
 
     enum StateChangeMode: Equatable {
         /// The state was reset to the new value. All the previous states are invalidated.

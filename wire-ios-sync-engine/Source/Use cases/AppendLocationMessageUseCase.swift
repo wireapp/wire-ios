@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,19 @@
 
 public import WireFoundation
 public import WireAnalytics
+
 import WireDataModel
 
-public protocol AppendLocationMessagekUseCaseProtocol {
+public protocol AppendLocationMessageUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         withLocationData locationData: LocationData,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws
 
 }
 
-public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtocol {
+public struct AppendLocationMessageUseCase: AppendLocationMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 

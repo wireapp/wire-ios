@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "下一步";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "電子郵件";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "密碼";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "下一步";
 "cloud_user_login.forgot_password" = "忘記密碼？";
+
+"login.sso.title" = "登入";
+"login.sso.expiration_message" = "您太久沒使用Wire。使用您的企業帳戶登錄以繼續。";
+"login.sso.input_code.title" = "單一登入(SSO)存取碼";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "企業登錄";
+
+"logout.button.title" = "登出";
+"logout.alert.title" = "登出";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "取消";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "這是您首次在此設備使用Wire。";
 "authentication.no_history.message" = "基於隱私，將不會顯示您的聊天紀錄。";
+"authentication.missing_history.title" = "您曾在此設備登錄Wire。";
+"authentication.missing_history.message" = "登出期間收到的訊息不會顯示。";
 "authentication.no_history.confirm" = "確認";
 
 "authentication.error.title.no_internet" = "No internet connection";
@@ -109,6 +127,59 @@
 "obsolete_client.alert.title" = "必要更新";
 "obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "到App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
+
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
+"obsolete.alert.update_button" = "Update";
+"obsolete.alert.switch_accounts" = "Switch Accounts";
+"obsolete.alert.logout" = "登出";
+"obsolete.alert.cancel" = "取消";
+"obsolete.alert.ok" = "確認";
 
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+"obsolete_backend_multibackend.alert.message" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+// Registration
+
+"create_personal_account.title" = "Create personal account";
+"create_personal_account.continue" = "繼續";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
+"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.create_team" = "建立團隊";
+"create_personal_account.input_name.title" = "名稱";
+"create_personal_account.input_name.placeholder" = "Enter your name";
+"create_personal_account.input_email.title" = "電子郵件";
+"create_personal_account.input_email.placeholder" = "Enter your email";
+"create_personal_account.input_password.title" = "密碼";
+"create_personal_account.input_password.placeholder" = "Enter a password";
+"create_personal_account.input_confirm_password.placeholder" = "Confirm password";
+"create_personal_account.input_confirm_password.error" = "Passwords don’t match";
+"create_personal_account.confirmation_alert.title" = "Terms of use";
+"create_personal_account.confirmation_alert.message" = "請接受我們的服務條款以繼續。";
+"create_personal_account.confirmation_alert.accept" = "接聽";
+"create_personal_account.confirmation_alert.view" = "檢視";
+"create_personal_account.confirmation_alert.cancel" = "取消";
+"create_personal_account.verification_code.resend_code" = "Resend Code";
+"create_personal_account.verification_code.confirm" = "確認";
+"create_personal_account.verification_code.message" = "輸入我們發送到%@的驗證碼。";
+
+"create_personal_account.error.title.email-exists" = "帳戶已存在";
+"create_personal_account.error.message.email-exists" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
+"create_personal_account.error.title.invalid-email" = "Invalid information";
+"create_personal_account.error.message.invalid-email" = "Please enter a valid format for your email.";
+"create_personal_account.error.title.blacklisted-email" = "Invalid information";
+"create_personal_account.error.message.blacklisted-email" = "Your email has been identified as not trusted, for example, due to a rejection by a spam filter.";
+"create_personal_account.error.title.domain-blocked" = "Invalid information";
+"create_personal_account.error.message.domain-blocked" = "You can't create this account as your email domain is intentionally blocked.";
+"create_personal_account.error.title.invalid-code" = "Invalid information";
+"create_personal_account.error.message.invalid-code" = "Invalid code, or maximum attempts exceeded. Please retry, or request another code";
+"create_personal_account.error.title.too-many-team-members" = "Invalid information";
+"create_personal_account.error.message.too-many-team-members" = "This team has reached its membership limit.";
+"create_personal_account.error.title.user-creation-restricted" = "Invalid information";
+"create_personal_account.error.message.user-creation-restricted" = "This application version does not allow creation of personal accounts.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

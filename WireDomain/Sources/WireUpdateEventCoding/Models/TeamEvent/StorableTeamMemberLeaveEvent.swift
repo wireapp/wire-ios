@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableTeamMemberLeaveEvent: Equatable, Codable, Sendable {
 
@@ -25,13 +25,13 @@ struct StorableTeamMemberLeaveEvent: Equatable, Codable, Sendable {
     private let userID: UUID
     private let time: Date
 
-    init(_ value: WireAPI.TeamMemberLeaveEvent) {
+    init(_ value: WireNetwork.TeamMemberLeaveEvent) {
         self.teamID = value.teamID
         self.userID = value.userID
         self.time = value.time
     }
 
-    func toAPIModel() -> WireAPI.TeamMemberLeaveEvent {
+    func toAPIModel() -> WireNetwork.TeamMemberLeaveEvent {
         .init(
             teamID: teamID,
             userID: userID,

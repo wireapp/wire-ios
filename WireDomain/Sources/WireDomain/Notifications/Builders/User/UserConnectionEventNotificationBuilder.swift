@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UserNotifications
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct UserConnectionEventNotificationBuilder {
 
@@ -33,19 +33,21 @@ struct UserConnectionEventNotificationBuilder {
     func buildContent(
         event: UserConnectionEvent
     ) async -> UserNotification? {
-        let canBuildNotification = await validator.validate()
+        let canBuildNotification = await validator.validate(
+            connectionStatus: event.connection.status
+        )
 
         guard canBuildNotification else {
             return nil
         }
 
-        var qualifiedID: WireAPI.QualifiedID?
+        var qualifiedID: WireNetwork.QualifiedID?
         let connection = event.connection
 
         if let qualifiedConversationID = connection.qualifiedConversationID {
             qualifiedID = qualifiedConversationID
         } else if let conversationID = connection.conversationID {
-            qualifiedID = .init(uuid: conversationID, domain: "")
+            qualifiedID = .init(id: conversationID, domain: "")
         }
 
         let isPendingConnection = event.connection.status == .pending
@@ -56,7 +58,7 @@ struct UserConnectionEventNotificationBuilder {
         let username: String? = if let receiverQualifiedID = connection.receiverQualifiedID {
             await context.username(
                 for: context.getUser(
-                    id: receiverQualifiedID.uuid,
+                    id: receiverQualifiedID.id,
                     domain: receiverQualifiedID.domain
                 )
             )
@@ -88,7 +90,7 @@ struct UserConnectionEventNotificationBuilder {
         username: String?,
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: WireNetwork.QualifiedID?
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
@@ -152,13 +154,13 @@ struct UserConnectionEventNotificationBuilder {
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: WireNetwork.QualifiedID?
     ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID?.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID?.id.uuidString
 
         return userInfo
     }
@@ -168,8 +170,13 @@ struct UserConnectionEventNotificationBuilder {
 extension UserConnectionEventNotificationBuilder {
     struct Validator {
 
-        func validate() async -> Bool {
-            true // No validation criteria for this notification
+        func validate(connectionStatus: WireNetwork.ConnectionStatus) async -> Bool {
+            switch connectionStatus {
+            case .accepted, .pending:
+                true
+            default:
+                false // do not display notifications for other statuses
+            }
         }
     }
 
@@ -181,7 +188,7 @@ extension UserConnectionEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ import WireDesign
 private enum EmptySearchResultsViewState {
     case initialSearch
     case noUsers
-    case noServices
     case everyoneAdded
-    case noServicesEnabled
+    case noBots
+    case noAppsEnabled
 }
 
 // MARK: - EmptySearchResultsViewAction
@@ -41,7 +41,7 @@ extension EmptySearchResultsViewAction {
     var title: String {
         switch self {
         case .openManageServices:
-            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageServices
+            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageApps
         case .openSearchSupportPage:
             L10n.Localizable.Peoplepicker.NoMatchingResults.Action.learnMore
         }
@@ -71,25 +71,21 @@ final class EmptySearchResultsView: UIView {
     private var text: String {
         typealias Message = L10n.Localizable.Peoplepicker.NoMatchingResults.Message
 
-        switch state {
+        return switch state {
         case .everyoneAdded:
-            return Message.usersAllAdded
+            Message.usersAllAdded
+        case .noUsers where isFederationEnabled:
+            Message.usersAndFederation
         case .noUsers:
-            if isFederationEnabled {
-                return Message.usersAndFederation
-            } else {
-                return Message.users
-            }
-        case .noServices:
-            return Message.services
-        case .noServicesEnabled:
-            if isSelfUserAdmin {
-                return Message.servicesNotEnabledAdmin
-            } else {
-                return Message.servicesNotEnabled
-            }
+            Message.users
+        case .noBots:
+            Message.apps
+        case .noAppsEnabled where isSelfUserAdmin:
+            Message.appsNotEnabledAdmin
+        case .noAppsEnabled:
+            Message.appsNotEnabled
         case .initialSearch:
-            return ""
+            ""
         }
     }
 
@@ -99,7 +95,7 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .initialSearch:
             return UIImage()
-        case .noServices, .noServicesEnabled:
+        case .noBots, .noAppsEnabled:
             icon = .bot
         default:
             icon = .personalProfile
@@ -110,7 +106,7 @@ final class EmptySearchResultsView: UIView {
 
     private var buttonAction: EmptySearchResultsViewAction? {
         switch state {
-        case .noServicesEnabled where isSelfUserAdmin:
+        case .noAppsEnabled where isSelfUserAdmin:
             .openManageServices
         case .noUsers:
             .openSearchSupportPage
@@ -175,12 +171,12 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Public Interface
 
-    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
-        switch (searchingForServices, hasFilter) {
+    func updateStatus(searchingForBots: Bool, hasFilter: Bool) {
+        switch (searchingForBots, hasFilter) {
         case (true, false):
-            state = .noServicesEnabled
+            state = .noAppsEnabled
         case (true, true):
-            state = .noServices
+            state = .noBots
         case (false, true):
             state = .noUsers
         case (false, false):
@@ -246,7 +242,6 @@ final class EmptySearchResultsView: UIView {
         isSelfUserAdmin: true,
         isFederationEnabled: false
     )
-
-    view.state = .noServicesEnabled
+    view.state = .noAppsEnabled
     return view
 }

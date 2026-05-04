@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 @testable import WireDomain
@@ -29,7 +29,7 @@ final class TeamRepositoryTests: XCTestCase {
 
     private var sut: TeamRepository!
     private var userRespository: MockUserRepositoryProtocol!
-    private var teamsAPI: TeamsAPIMock!
+    private var teamsAPI: MockTeamsAPI!
     private var teamLocalStore: MockTeamLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -44,7 +44,7 @@ final class TeamRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
-        teamsAPI = TeamsAPIMock()
+        teamsAPI = MockTeamsAPI()
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
@@ -71,7 +71,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamForTeamIDTeamIDTeamReturnValue = WireAPI.Team(
+        teamsAPI.getTeamFor_MockValue = WireNetwork.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
             creatorID: Scaffolding.teamCreatorID,
@@ -88,14 +88,14 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamForTeamIDTeamIDTeamReceivedInvocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamFor_Invocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamIdNameCreatorIDLogoIDLogoKey_Invocations.count, 1)
     }
 
     func testPullSelfTeamRoles_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamRolesForTeamIDTeamIDConversationRoleReturnValue = [
+        teamsAPI.getTeamRolesFor_MockValue = [
             ConversationRole(
                 name: "admin",
                 actions: [
@@ -119,14 +119,14 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamRolesForTeamIDTeamIDConversationRoleReceivedInvocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamRolesFor_Invocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations.count, 1)
     }
 
     func testPullSelfTeamMembers_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReturnValue = [
+        teamsAPI.getTeamMembersForMaxResults_MockValue = [
             TeamMember(
                 userID: Scaffolding.member1ID,
                 creationDate: Scaffolding.member1CreationDate,
@@ -157,7 +157,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReceivedInvocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamMembersForMaxResults_Invocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 1)
     }
 
@@ -165,8 +165,7 @@ final class TeamRepositoryTests: XCTestCase {
     ) async throws {
         // Mock
 
-        teamsAPI.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
-            .teamMemberLegalhold
+        teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
         teamLocalStore.selfUserID_MockValue = UUID()
 
         // When
@@ -176,10 +175,7 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(teamLocalStore.selfUserID_Invocations.count, 1)
-        XCTAssertEqual(
-            teamsAPI.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations.count,
-            1
-        )
+        XCTAssertEqual(teamsAPI.getLegalholdInfoForUserID_Invocations.count, 1)
         XCTAssertEqual(result, .pending)
     }
 

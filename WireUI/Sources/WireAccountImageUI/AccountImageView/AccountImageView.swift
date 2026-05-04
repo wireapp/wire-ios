@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,14 +128,6 @@ public final class AccountImageView: UIView {
         updateShape()
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-            updateAvailabilityIndicator()
-        }
-    }
-
     // MARK: - Methods
 
     private func setupSubviews() {
@@ -258,10 +250,8 @@ public final class AccountImageView: UIView {
         updateAvailabilityIndicator()
         updateNotificationBadge()
 
-        if #available(iOS 17.0, *) {
-            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
-                self.updateAvailabilityIndicator()
-            }
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
+            self.updateAvailabilityIndicator()
         }
     }
 

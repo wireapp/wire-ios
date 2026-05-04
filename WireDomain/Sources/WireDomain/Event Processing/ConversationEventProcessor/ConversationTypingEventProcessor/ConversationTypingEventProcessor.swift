@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 
@@ -34,12 +34,12 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
         let isTyping = event.isTyping
 
         let user = await userRepository.fetchOrCreateUser(
-            id: senderID.uuid,
+            id: senderID.id,
             domain: senderID.domain
         )
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
@@ -47,7 +47,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
 
         // Since we'll be manipulating managed object IDs in `ConversationTypingUsersTimeout`
         // we need to make sure we have valid, consistent IDs for the user and conversation.
-        conversationLocalStore.obtainPermanentIDs(
+        await conversationLocalStore.obtainPermanentIDs(
             user: user,
             conversation: conversation
         )

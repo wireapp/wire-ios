@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -54,7 +54,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
 
         sut = CalculateSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
-                featureConfigsAPI: FeatureConfigsAPIMock(),
+                featureConfigsAPI: MockFeatureConfigsAPI(),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
             userClientsLocalStore: userClientsLocalStore,
@@ -92,7 +92,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         let supportedProtocols = await sut.invoke()
 
         // Then
-        XCTAssertEqual([WireAPI.MessageProtocol.mls, WireAPI.MessageProtocol.proteus], supportedProtocols)
+        XCTAssertEqual([WireNetwork.MessageProtocol.mls, WireNetwork.MessageProtocol.proteus], supportedProtocols)
     }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() async throws {
@@ -102,7 +102,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -127,7 +127,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.proteus, .mls]),
@@ -152,7 +152,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.mls]),
@@ -177,7 +177,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -202,7 +202,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -220,13 +220,36 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         }
     }
 
+    func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
+        // Given
+        await setup(remoteSupportedProtocols: [.mls])
+
+        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
+        let selfProtocols = [WireDataModel.MessageProtocol.proteus, WireDataModel.MessageProtocol.mls]
+        userLocalStore.fetchSelfUserSupportedProtocols_MockValue = Set(selfProtocols)
+        let testCases: [
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
+        ] =
+            [
+                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls])
+            ]
+
+        for testCase in testCases {
+            await setup(migrationState: testCase.migrationState)
+            // When
+            let supportedProtocols = await sut.invoke()
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, supportedProtocols)
+        }
+    }
+
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.mls])
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 
         let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
                 (migrationState: .disabled, supportedProtocols: [.mls]),

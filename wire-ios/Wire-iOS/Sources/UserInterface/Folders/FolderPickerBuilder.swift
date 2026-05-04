@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import SwiftUI
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
@@ -39,12 +40,14 @@ struct FolderPickerBuilder {
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
-            updateConversationFolderUseCase: useCase
+            updateConversationFolderUseCase: useCase,
+            createFolderUseCase: createConversationFolderUseCase
         )
 
         return FolderPickerHostingController(
             viewModel: viewModel,
             createFolderUseCase: createConversationFolderUseCase,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled,
             conversationName: conversationName
         )
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@ final class FolderCreationViewModelTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: CreateFolderViewModel!
-    private var mockUseCase: CreateConversationFolderUseCaseProtocolMock!
+    private var mockUseCase: MockCreateConversationFolderUseCase!
 
     // MARK: - setUp
 
     override func setUp() {
-        mockUseCase = .init()
+        mockUseCase = MockCreateConversationFolderUseCase()
     }
 
     // MARK: - tearDown
@@ -126,14 +126,14 @@ final class FolderCreationViewModelTests: XCTestCase {
         createSUT()
         sut.name = "Work"
         let expectedFolder = Folder(identifier: UUID(), name: "Work")
-        mockUseCase.invokeNameStringFolderClosure = { (_: String) in expectedFolder }
+        mockUseCase.invokeName_MockMethod = { (_: String) in expectedFolder }
 
         // WHEN
         let folder = try await sut.createFolder()
 
         // THEN
-        XCTAssertEqual(mockUseCase.invokeNameStringFolderReceivedInvocations.count, 1)
-        XCTAssertEqual(mockUseCase.invokeNameStringFolderReceivedInvocations.first, "Work")
+        XCTAssertEqual(mockUseCase.invokeName_Invocations.count, 1)
+        XCTAssertEqual(mockUseCase.invokeName_Invocations.first, "Work")
         XCTAssertEqual(folder, expectedFolder)
     }
 
@@ -144,15 +144,15 @@ final class FolderCreationViewModelTests: XCTestCase {
         sut.name = "Work"
         struct TestError: Error {}
         let expectedError = TestError()
-        mockUseCase.invokeNameStringFolderThrowableError = expectedError
+        mockUseCase.invokeName_MockError = expectedError
 
         // WHEN & THEN
         do {
             _ = try await sut.createFolder()
             XCTFail("Expected error to be thrown")
         } catch {
-            XCTAssertEqual(mockUseCase.invokeNameStringFolderReceivedInvocations.count, 1)
-            XCTAssertEqual(mockUseCase.invokeNameStringFolderReceivedInvocations.first, "Work")
+            XCTAssertEqual(mockUseCase.invokeName_Invocations.count, 1)
+            XCTAssertEqual(mockUseCase.invokeName_Invocations.first, "Work")
         }
     }
 

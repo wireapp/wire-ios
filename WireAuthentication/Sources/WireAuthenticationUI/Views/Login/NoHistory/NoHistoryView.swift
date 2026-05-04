@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireLocators
+import WireReusableUIComponents
 
 package struct NoHistoryView: View {
 
@@ -33,14 +35,14 @@ package struct NoHistoryView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(Strings.NoHistory.title)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(Strings.NoHistory.message)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -59,6 +61,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
 
         }
         .alert(

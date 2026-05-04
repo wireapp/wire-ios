@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserLegalholdRequestEvent: Equatable, Codable, Sendable {
 
@@ -25,17 +25,17 @@ struct StorableUserLegalholdRequestEvent: Equatable, Codable, Sendable {
     private let clientID: String
     private let lastPrekey: Prekey
 
-    init(_ value: WireAPI.UserLegalholdRequestEvent) {
+    init(_ value: WireNetwork.UserLegalholdRequestEvent) {
         self.userID = value.userID
         self.clientID = value.clientID
         self.lastPrekey = Prekey(id: value.lastPrekey.id, base64EncodedKey: value.lastPrekey.base64EncodedKey)
     }
 
-    func toAPIModel() -> WireAPI.UserLegalholdRequestEvent {
+    func toAPIModel() -> WireNetwork.UserLegalholdRequestEvent {
         .init(
             userID: userID,
             clientID: clientID,
-            lastPrekey: WireAPI.Prekey(
+            lastPrekey: WireNetwork.Prekey(
                 id: lastPrekey.id,
                 base64EncodedKey: lastPrekey.base64EncodedKey
             )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,11 +97,20 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: - Helper methods
 
-    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
+    private func makeViewModel(
+        config: MockOptionsViewModelConfiguration,
+        apiVersion: APIVersion = .v0
+    ) -> ConversationGuestOptionsViewModel {
         ConversationGuestOptionsViewModel(
             configuration: config,
             conversation: mockConversation.convertToRegularConversation(),
-            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase
+            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase,
+            metadata: BackendMetadataProvider(
+                apiVersionOverride: apiVersion,
+                domainOverride: "wire.com",
+                isFederationEnabledOverride: false,
+                isBackendMLSEnabledOverride: false
+            )
         )
     }
 
@@ -464,9 +473,8 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
         // GIVEN
-        BackendInfo.apiVersion = .v4
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = makeViewModel(config: config)
+        let viewModel = makeViewModel(config: config, apiVersion: .v4)
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
         mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }

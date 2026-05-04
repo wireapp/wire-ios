@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ final class ConversationInputBarSendController: NSObject {
     }
 
     func sendMessage(
-        withImageData imageData: Data,
+        image: SendableImage,
         userSession: UserSession,
         completion completionHandler: Completion? = nil
     ) {
@@ -38,24 +38,28 @@ final class ConversationInputBarSendController: NSObject {
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
-        userSession.enqueue({
+        userSession.enqueue {
             do {
                 let useCase = userSession.makeAppendImageMessageUseCase()
-                try useCase.invoke(withImageData: imageData, in: conversation)
+                try useCase.invoke(
+                    image: image,
+                    in: conversation
+                )
                 self.feedbackGenerator.impactOccurred()
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
+        } completionHandler: {
             completionHandler?()
-        })
+        }
     }
 
     func sendTextMessage(
         _ text: String,
+        attachments: [MultipartAttachment],
         mentions: [Mention],
         userSession: UserSession,
-        replyingTo message: ZMConversationMessage?
+        replyingTo message: ZMConversationMessage?,
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -63,14 +67,27 @@ final class ConversationInputBarSendController: NSObject {
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                let useCase = userSession.makeAppendTextMessageUseCase()
-                try useCase.invoke(
-                    text: text,
-                    mentions: mentions,
-                    replyingTo: message,
-                    in: conversation,
-                    fetchLinkPreview: shouldFetchLinkPreview
-                )
+                if attachments.isEmpty {
+                    let useCase = userSession.makeAppendTextMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview
+                    )
+
+                } else {
+                    let useCase = userSession.makeAppendMultipartMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview,
+                        attachments: attachments
+                    )
+                }
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
@@ -81,7 +98,7 @@ final class ConversationInputBarSendController: NSObject {
         _ text: String,
         mentions: [Mention],
         userSession: UserSession,
-        withImageData data: Data
+        withGIFImageData data: Data
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -98,7 +115,15 @@ final class ConversationInputBarSendController: NSObject {
                     in: conversation,
                     fetchLinkPreview: shouldFetchLinkPreview
                 )
-                try imageMessageUseCase.invoke(withImageData: data, in: conversation)
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: data
+                )
+                try imageMessageUseCase.invoke(
+                    image: image,
+                    in: conversation
+                )
             } catch {
                 Logging.messageProcessing
                     .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")

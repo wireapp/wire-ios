@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "关闭团队创建选项";
 
 "conversation.backButton.description" = "返回到对话列表";
 "conversation.searchButton.description" = "打开搜索";
@@ -233,6 +235,10 @@
 "conversationsList.filter_menu_options.groups.description" = "显示所有群组对话";
 "conversationsList.filter_menu_options.channels.description" = "显示所有频道对话";
 "conversationsList.filter_menu_options.oneOnOne.description" = "显示所有一对一对话";
+"conversationsList.filter_menu_options.unread.description" = "显示所有未读对话";
+"conversationsList.filter_menu_options.mentions.description" = "显示所有提及的对话";
+"conversationsList.filter_menu_options.replies.description" = "显示所有带有回复的对话";
+"conversationsList.filter_menu_options.drafts.description" = "显示所有带有草稿的对话";
 "conversationsList.filter_menu_options.folders.description" = "文件夹";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "选中的所有对话";
@@ -241,6 +247,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "所选的频道";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "选中的一对一对话";
 "conversationsList.filter_menu_options.folders.selected.description" = "选中的文件夹";
+"conversationsList.filter_menu_options.unread.selected.description" = "选中的未读";
+"conversationsList.filter_menu_options.mentions.selected.description" = "选中的提及";
+"conversationsList.filter_menu_options.drafts.selected.description" = "选中的草稿";
+"conversationsList.filter_menu_options.replies.selected.description" = "选中的回复";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "移除对话筛选器";
 
@@ -323,4 +334,10 @@
 "searchGifs.gifItems_loaded.announcement" = "已加载 %@ 张新 GIF";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "返回新对话概览";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "身份提供商 URL";
+"webAuth.urlLabel.hint" = "选择以打开完整的 URL。";

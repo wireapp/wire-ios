@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,26 +19,43 @@
 // Methods to reset app or simulator caused issues, so instead
 // of using a script in the scheme, we delete the app using springboard
 
+import WireFoundation
 import XCTest
 
 class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    var userHelper: UserHelper!
+    var ssoHelper: SSOHelper!
+    let testServicesClient = TestServicesClient()
+    var callingServiceClient: CallingServiceClient!
+    var uiTestConfig = UITestConfig()
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUpWithError() throws {
-        // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
+        // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
+        dismissAllowIfPresent()
         XCUIApplication().terminate()
-        deleteApp()
+        callingServiceClient = try CallingServiceClient()
+        registerNotificationPermissionMonitor()
 
         let launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
-            "--preferred-api-version=8"
+            "-resetData",
+            "--useEnvStaging"
         ]
 
+        userHelper = UserHelper()
+        ssoHelper = SSOHelper()
+
         app = XCUIApplication()
+        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
-        app.useWireAuthentication()
+        app.setDeveloperFlags([
+            .useWireAuthentication: true
+        ])
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
@@ -46,35 +63,91 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    @MainActor
     override func tearDown() async throws {
-//        TODO: [WPB-17516] Restore once fixed
-//        let email = context["email"] as! String
-//        let password = context["password"] as! String
-//        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
-//        if(access_token != nil) {
-//            try? await BackendClient.deletePersonalUser(access_token:access_token!, password:password)
-//            puts("Cleaned up \(email)")
-//        }
+        await callingServiceClient.destroyCreatedInstances()
+        await userHelper.deleteCreatedUsers()
+        userHelper = nil
+        await ssoHelper.cleanUpOktaResources()
     }
 
-    // MARK: - Helpers
-
-    func deleteApp() {
-        let icon = springboard.icons["Wire"]
-        if icon.exists {
-            icon.press(forDuration: 1.3)
-
-            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
-
-            // For some reason the following commands were unreliable when called once
-            let deleteApp = springboard.buttons["Delete App"]
-            if deleteApp.waitForExistence(timeout: 1) {
-                deleteApp.tap()
+    func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
+        XCTContext.runActivity(named: "Set custom backend via deeplink") { _ in
+            let deeplinkFullURL = "wire://access/?config=\(deeplink)"
+            guard let url = URL(string: deeplinkFullURL) else {
+                XCTFail("Invalid deeplink: \(deeplinkFullURL)")
+                return
             }
-            let delete = springboard.buttons["Delete"]
-            if delete.waitForExistence(timeout: 1) {
-                delete.tap()
+
+            XCUIDevice.shared.system.open(url)
+
+            let alert = springboard.alerts.firstMatch
+            if alert.waitForExistence(timeout: 2) {
+                let openButton = springboard.alerts.buttons
+                    .matching(NSPredicate(format: "label BEGINSWITH[c] 'Open'"))
+                    .firstMatch
+                if openButton.waitForExistence(timeout: 1) {
+                    openButton.tap()
+                }
             }
+
+            XCTAssertTrue(
+                app.wait(for: .runningForeground, timeout: timeout),
+                "App did not return to foreground after opening deeplink"
+            )
+            guard let welcomePage = try? SetCustomBackendPage().tapOnProceedButton() else {
+                XCTFail("Failed to proceed to set custom backend")
+                return
+            }
+            let labeltext = welcomePage.setBackendLabel.label
+            XCTAssertTrue(
+                labeltext.contains(domainInfo),
+                "Expected domain missing from \(labeltext)"
+            )
         }
+    }
+
+    func switchBackend(target: BackendTarget) throws {
+
+        let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
+        setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
+        // need to change for Inbucket
+        BackendContext.current = target
+    }
+
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
+    }
+
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> ConversationsPage {
+        print("login: email \(user.email) and password \(user.password)")
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup()
+    }
+
+    func registerNotificationPermissionMonitor() {
+        guard notificationPermissionMonitor == nil else { return }
+
+        notificationPermissionMonitor =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
     }
 }

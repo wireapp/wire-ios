@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +21,36 @@ import WireDesign
 
 public struct AccountSwitcherView: View {
 
-    let accounts: [AccountUIModel]
+    let otherAccounts: [AccountUIModel]
     let options: [Option]
+    let showLastSeparator: Bool
 
-    public init(accounts: [AccountUIModel], options: [Option]) {
-        self.accounts = accounts
+    public init(
+        otherAccounts: [AccountUIModel],
+        options: [Option],
+        showLastSeparator: Bool
+    ) {
+        self.otherAccounts = otherAccounts
         self.options = options
+        self.showLastSeparator = showLastSeparator
     }
 
     public var body: some View {
         VStack(spacing: 0) {
-            ForEach(accounts.indices, id: \.self) { index in
-                AccountView(account: accounts[index])
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8.5)
-                    .padding(.bottom, 10.5)
-                if index < accounts.count - 1 || !options.isEmpty {
-                    divider()
+
+            let totalCount = otherAccounts.count + options.count
+
+            ForEach(0 ..< totalCount, id: \.self) { index in
+                if index < otherAccounts.count {
+                    AccountView(account: otherAccounts[index])
+                        .padding(EdgeInsets(top: 8.5, leading: 16, bottom: 8.5, trailing: 20))
+                } else {
+                    OptionView(option: options[index - otherAccounts.count])
+                        .padding(EdgeInsets(top: 16.5, leading: 16, bottom: 18.5, trailing: 20))
                 }
-            }
 
-            ForEach(options.indices, id: \.self) { index in
-                OptionView(option: options[index])
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16.5)
-                    .padding(.bottom, 18.5)
-
-                if index < options.count - 1 {
+                let isLastItem = index == totalCount - 1
+                if showLastSeparator || !isLastItem {
                     divider()
                 }
             }
@@ -66,7 +69,7 @@ public struct AccountSwitcherView: View {
 
 #Preview {
     AccountSwitcherView(
-        accounts: [
+        otherAccounts: [
             AccountUIModel(
                 avatarSource: .image(.strokedCheckmark),
                 name: "Kim Dawson",
@@ -96,6 +99,7 @@ public struct AccountSwitcherView: View {
         options: [
             .addAccountOption(action: {}),
             .manageTeamOption(action: {})
-        ]
+        ],
+        showLastSeparator: false
     )
 }

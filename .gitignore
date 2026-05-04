@@ -103,10 +103,10 @@ vendor/*
 SnapshotResults
 artifacts/
 
-# Automation Config
-wire-ios-automation/ios/backendConnections.json
-**/backendConnections.json
-**/.project
+# Allure Report
+allure-report/
+allure-results/
+.allure/ 
 
-# Automation Output
-wire-ios-automation/out/
+# AI
+.claude

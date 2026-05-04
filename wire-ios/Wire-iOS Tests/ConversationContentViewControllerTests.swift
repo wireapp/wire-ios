@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import XCTest
 
 @testable import Wire
@@ -32,11 +33,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
     @MainActor
     override func setUp() async throws {
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
-    }
 
-    override func setUp() {
-
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         mockConversation = createTeamGroupConversation()
 
@@ -53,7 +51,9 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             mediaPlaybackManager: nil,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // Call the setup codes in viewDidLoad
@@ -81,6 +81,6 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             message: mockMessage,
             sourceView: view,
             userSession: userSession
-        ) { _ in })
+        ) { _, _ in })
     }
 }

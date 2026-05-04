@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireCoreCrypto
+import WireDataModel
 import WireLogging
+import WireNetwork
 
 final class MLSTransportImpl: MlsTransport {
 
     let mlsAPI: MLSAPI
     let conversationEventProcessor: ConversationEventProcessorProtocol
 
-    init(mlsAPI: MLSAPI, conversationEventProcessor: ConversationEventProcessorProtocol) {
+    init(
+        mlsAPI: MLSAPI,
+        conversationEventProcessor: ConversationEventProcessorProtocol
+    ) {
         self.mlsAPI = mlsAPI
         self.conversationEventProcessor = conversationEventProcessor
     }
@@ -38,7 +42,14 @@ final class MLSTransportImpl: MlsTransport {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
             do {
-                return .abort(reason: try error.encodeAsString())
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .sortedKeys
+                let encodableError = MLSTransportError(error)
+                let string = String(
+                    decoding: try encoder.encode(encodableError),
+                    as: UTF8.self
+                )
+                return .abort(reason: string)
             } catch {
                 return .abort(reason: "failed to encode error")
             }
@@ -64,6 +75,12 @@ final class MLSTransportImpl: MlsTransport {
 
     func sendMessage(mlsMessage: Data) async -> WireCoreCryptoUniffi.MlsTransportResponse {
         .abort(reason: "not implemented")
+    }
+
+    func prepareForTransport(historySecret: WireCoreCryptoUniffi.HistorySecret) async -> WireCoreCryptoUniffi
+        .MlsTransportData {
+        // TODO: [WPB-19197] implement `prepareForTransport(historySecret:)`
+        fatalError("not implemented")
     }
 
 }

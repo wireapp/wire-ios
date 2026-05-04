@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,10 @@ final class ConversationMessageCellTableViewAdapter<
     private var trailing: NSLayoutConstraint!
     private var bottom: NSLayoutConstraint!
 
+    private var existingHorizontalConstraints: [NSLayoutConstraint] = []
+    private var ownMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+    private var othersMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+
     private var longPressGesture: UILongPressGestureRecognizer!
     private var doubleTapGesture: UITapGestureRecognizer!
     private var singleTapGesture: UITapGestureRecognizer!
@@ -75,9 +79,9 @@ final class ConversationMessageCellTableViewAdapter<
         self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
 
+        self.existingHorizontalConstraints = [leading, trailing]
+
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom
         ])
@@ -106,6 +110,89 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = cellDescription?.topMargin ?? 0
         bottom.constant = cellDescription?.bottomMargin ?? 0
+        configureChatBubbleConstraints()
+    }
+
+    private func configureChatBubbleConstraints() {
+        // Deactivate all horizontal constraints before applying new ones.
+        NSLayoutConstraint.deactivate(
+            ownMessagesHorizontalConstraints +
+                othersMessagesHorizontalConstraints
+        )
+        let othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: isCellAlreadyAligned() ? 0 : conversationHorizontalMargins.left
+        )
+
+        if isBubbleHasMaximumWidth() {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        equalTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+
+        } else {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        greaterThanOrEqualTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    lessThanOrEqualTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+        }
+
+        if cellDescription?.shouldAlignMessageContentForBubbles == true {
+            if cellDescription?.message?.isSentBySelfUser == true {
+                // Right-align the bubble content
+                NSLayoutConstraint.activate(ownMessagesHorizontalConstraints)
+            } else {
+                // Left-align the bubble content
+                NSLayoutConstraint.activate(othersMessagesHorizontalConstraints)
+            }
+        } else {
+            setupExistingLayout()
+        }
+        setNeedsLayout()
+    }
+
+    private func isCellAlreadyAligned() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isCellAlreadyAligned
+    }
+
+    private func isBubbleHasMaximumWidth() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isBubbleHasMaximumWidth
+    }
+
+    private func setupExistingLayout() {
+        NSLayoutConstraint.activate(existingHorizontalConstraints)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

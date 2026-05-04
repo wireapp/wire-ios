@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
+import WireFoundation
+import WireNetworkSupport
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullMLSOneOnOneSyncTests: XCTestCase {
 
     private var sut: PullMLSOneOnOneSync!
-    private var api: ConversationsAPIMock!
+    private var api: MockConversationsAPI!
     private var store: MockConversationLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = ConversationsAPIMock()
+        api = MockConversationsAPI()
         store = MockConversationLocalStoreProtocol()
         sut = PullMLSOneOnOneSync(
             api: api,
@@ -49,17 +50,17 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getMLSOneToOneConversationUserIDStringInDomainStringConversationReturnValue = Scaffolding.conversation
+        api.getMLSOneToOneConversationUserIDIn_MockValue = (Scaffolding.conversation, Scaffolding.mlsPublicKeys)
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
-        let mlsGroupID = try await sut.pull(
+        let (mlsGroupID, publicKeys) = try await sut.pull(
             userID: Scaffolding.userID,
             userDomain: Scaffolding.userDomain
         )
 
         // Then
-        let apiInvocations = api.getMLSOneToOneConversationUserIDStringInDomainStringConversationReceivedInvocations
+        let apiInvocations = api.getMLSOneToOneConversationUserIDIn_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.userID.uuidString.lowercased())
         XCTAssertEqual(apiInvocations[0].domain, Scaffolding.userDomain)
@@ -71,6 +72,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
 
         XCTAssertEqual(mlsGroupID, MLSGroupID(base64Encoded: Scaffolding.mlsGroupID))
+        XCTAssertEqual(publicKeys, Scaffolding.mlsPublicKeys)
     }
 
 }
@@ -84,7 +86,7 @@ private enum Scaffolding {
 
     static let conversation = Conversation(
         id: userID,
-        qualifiedID: .init(uuid: userID, domain: userDomain),
+        qualifiedID: .init(id: userID, domain: userDomain),
         teamID: userID,
         type: .group,
         messageProtocol: .proteus,
@@ -104,6 +106,12 @@ private enum Scaffolding {
         lastEventTime: nil
     )
 
+    static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+        ed25519: .randomAlphanumerical(length: 5),
+        p256: .randomAlphanumerical(length: 5),
+        p384: .randomAlphanumerical(length: 5),
+        p521: .randomAlphanumerical(length: 5)
+    )
     static let mlsGroupID =
         "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 

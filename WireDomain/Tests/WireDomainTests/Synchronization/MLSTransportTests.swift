@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,23 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
+import WireDataModel
+import WireNetwork
 import XCTest
 
-@testable import WireAPISupport
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetworkSupport
 
 final class MLSTransportTests: XCTestCase {
 
     private var sut: MLSTransportImpl!
-    private var mlsAPI: MLSAPIMock!
+    private var mlsAPI: MockMLSAPI!
     private var conversationEventProcessor: MockConversationEventProcessorProtocol!
 
     override func setUp() async throws {
-        mlsAPI = MLSAPIMock()
+        mlsAPI = MockMLSAPI()
         conversationEventProcessor = MockConversationEventProcessorProtocol()
         sut = MLSTransportImpl(
             mlsAPI: mlsAPI,
@@ -48,25 +49,22 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_CommitBundleIsPostedToMLSAPI() async throws {
         // Given
-        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = []
+        mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        XCTAssertEqual(
-            mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReceivedInvocations,
-            [Scaffolding.commitBundle.toAPIModel()]
-        )
+        XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle])
     }
 
     func testOnSendCommitBundle_ConversationEventsAreForwaredToConversationEventProcessor() async throws {
         // Given
-        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = [Scaffolding.conversationUpdateEvent]
+        mlsAPI.postCommitBundle_MockValue = [Scaffolding.conversationUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [Scaffolding.conversationEvent])
@@ -74,11 +72,11 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_UnknownEventsAreNotForwaredToConversationEventProcessor() async throws {
         // Given
-        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = [Scaffolding.unknownUpdateEvent]
+        mlsAPI.postCommitBundle_MockValue = [Scaffolding.unknownUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [])
@@ -86,35 +84,37 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_ReturnsSuccessWhenThereIsNoError() async throws {
         // Given
-        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = []
+        mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        XCTAssertEqual(result, .success)
+        XCTAssertEqual(result, MlsTransportResponse.success)
     }
 
     func testOnSendCommitBundle_ReturnsAbortWhenThereIsAnError() async throws {
         // Given
-        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventThrowableError = MLSAPIError.mlsStaleMessage
+        mlsAPI.postCommitBundle_MockError = MLSAPIError.mlsStaleMessage
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        XCTAssertEqual(result, .abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
+        let data = try JSONEncoder().encode(MLSTransportError.mlsStaleMessage)
+        let expectedReason = String(decoding: data, as: UTF8.self)
+        XCTAssertEqual(result, MlsTransportResponse.abort(reason: expectedReason))
     }
 
     enum Scaffolding {
 
         static let conversationID = ConversationID(
-            uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
+            id: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
             domain: "example.com"
         )
 
         static let senderID = UserID(
-            uuid: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
+            id: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
             domain: "example.com"
         )
 
@@ -125,8 +125,8 @@ final class MLSTransportTests: XCTestCase {
             GroupInfoBundle(
                 encryptionType: .plaintext,
                 ratchetTreeType: .full,
-                payload: .random()
-            )
+                payload: GroupInfo(bytes: .random())
+            ).payload.copyBytes()
         )
 
         static let conversationEvent = ConversationEvent.typing(
@@ -141,5 +141,20 @@ final class MLSTransportTests: XCTestCase {
 
         static let unknownUpdateEvent = UpdateEvent.unknown(eventType: "Unknown event")
 
+    }
+}
+
+extension WireNetwork.CommitBundle {
+    var coreCryptoCommitBundle: WireCoreCryptoUniffi.CommitBundle {
+        .init(
+            welcome: welcome != nil ? Welcome(bytes: welcome!) : nil,
+            commit: commit,
+            groupInfo: GroupInfoBundle(
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
+                payload: GroupInfo(bytes: groupInfo)
+            ),
+            encryptedMessage: nil
+        )
     }
 }

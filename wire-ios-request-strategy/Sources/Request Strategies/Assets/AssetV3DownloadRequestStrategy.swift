@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireImages
 import WireTransport
 
@@ -25,17 +26,19 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
 
-    private let requestFactory = AssetDownloadRequestFactory()
+    private let requestFactory: AssetDownloadRequestFactory
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = .allowsRequestsWhileOnline
@@ -177,7 +180,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreImage(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys
@@ -198,7 +201,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreFile(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys

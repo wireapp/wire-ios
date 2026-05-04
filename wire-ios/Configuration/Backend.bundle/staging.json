@@ -7,6 +7,6 @@
         "teamsURL": "https://wire-teams-staging.zinfra.io",
         "accountsURL": "https://wire-account-staging.zinfra.io",
         "websiteURL": "https://wire.com",
-        "countlyURL": "https://countly.wire.com"
+        "countlyURL": "https://wire.count.ly"
     }
 }

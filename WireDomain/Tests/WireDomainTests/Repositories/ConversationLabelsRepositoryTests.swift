@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-
-@testable import WireAPI
 @testable import WireDataModel
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
     private var sut: ConversationLabelsRepository!
-    private var userPropertiesAPI: UserPropertiesAPIMock!
+    private var userPropertiesAPI: MockUserPropertiesAPI!
     private var conversationLabelsLocalStore: MockConversationLabelsLocalStoreProtocol!
 
     override func setUp() async throws {
         conversationLabelsLocalStore = MockConversationLabelsLocalStoreProtocol()
 
-        userPropertiesAPI = UserPropertiesAPIMock()
+        userPropertiesAPI = MockUserPropertiesAPI()
 
         sut = ConversationLabelsRepository(
             userPropertiesAPI: userPropertiesAPI,
@@ -54,7 +53,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     func testPullConversationLabels_It_Invokes_Local_Store_And_User_Properties_API_Methods() async throws {
         // Mock
 
-        userPropertiesAPI.getLabelsConversationLabelReturnValue = [
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel1
         ]
 
@@ -66,7 +65,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userPropertiesAPI.getLabelsConversationLabelCallsCount, 1)
+        XCTAssertEqual(userPropertiesAPI.getLabels_Invocations.count, 1)
         XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,31 +26,31 @@ extension ZMUserSession {
         .init(id: #function, interval: .oneDay) { [weak self] in
             guard
                 let self,
-                mlsFeature.isEnabled else {
+                await viewContext.perform({ self.mlsFeature.isEnabled })
+            else {
                 return
             }
 
-            Task { [weak self] in
-                do {
-                    try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
-                } catch {
-                    WireLogger.mls
-                        .error(
-                            "proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))"
-                        )
-                }
+            do {
+                try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
+            } catch {
+                WireLogger.mls
+                    .error(
+                        "proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))"
+                    )
             }
         }
     }
 
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
-            // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
+            guard let context = self?.syncContext else {
+                return
+            }
 
-                let fetchRequest = ZMUser
-                    .sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+            await context.perform {
+                let predicate = ZMUser.predicateForUsersArePendingToRefreshMetadata()
+                let fetchRequest = ZMUser.sortedFetchRequest(with: predicate)
                 guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }
@@ -63,10 +63,11 @@ extension ZMUserSession {
 
     var refreshConversationsMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
+            guard let context = self?.syncContext else {
+                return
+            }
 
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
-
+            await context.perform {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
@@ -82,11 +83,14 @@ extension ZMUserSession {
 
     var refreshTeamMetadataAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
+            guard let context = self?.syncContext else {
+                return
+            }
 
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
-
-                guard let team = ZMUser.selfUser(in: context).team else { return }
+            await context.perform {
+                guard let team = ZMUser.selfUser(in: context).team else {
+                    return
+                }
                 team.refreshMetadata()
             }
         }
@@ -94,20 +98,19 @@ extension ZMUserSession {
 
     var refreshFederationCertificatesAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
-            Task { [weak self] in
-                do {
-                    guard let self else { return }
+            do {
+                guard let self else { return }
 
-                    let (e2eiFeature, e2eiRepository) = await viewContext.perform {
-                        (self.e2eiFeature, self.e2eiRepository)
-                    }
-
-                    guard e2eiFeature.isEnabled else { return }
-                    try await e2eiRepository.fetchFederationCertificates()
-                } catch {
-                    WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
+                let (e2eiFeature, e2eiRepository) = await viewContext.perform {
+                    (self.e2eiFeature, self.e2eiRepository)
                 }
+
+                guard e2eiFeature.isEnabled else { return }
+                try await e2eiRepository.fetchFederationCertificates()
+            } catch {
+                WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
             }
         }
     }
+
 }

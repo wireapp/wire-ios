@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,25 +26,24 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
         let sharedContainerURL = sharedContainerURL
-        let dispatchGroup = dispatchGroup
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {
-                self?.activeUserSession = nil
-                CoreDataStack.migrateLocalStorage(
-                    accountIdentifier: account.userIdentifier,
-                    applicationContainer: sharedContainerURL,
-                    dispatchGroup: dispatchGroup,
-                    migration: onReady,
-                    completion: { result in
-                        switch result {
-                        case .success:
-                            self?.loadSession(for: account, completion: { _ in })
-                        case let .failure(error):
-                            WireLogger.ear.error("failed to migrate account: \(error)")
-                        }
+                self?.setActiveUserSession(nil)
+                Task {
+                    do {
+                        try await CoreDataStack.migrateLocalStorage(
+                            accountIdentifier: account.userIdentifier,
+                            applicationContainer: sharedContainerURL,
+                            migration: onReady
+                        )
+
+                    } catch {
+                        WireLogger.ear.error("failed to migrate account: \(error)")
                     }
-                )
+
+                    _ = await self?.loadSession(for: account)
+                }
             }
         })
     }

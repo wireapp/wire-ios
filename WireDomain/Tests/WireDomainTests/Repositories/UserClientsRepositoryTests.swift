@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserClientsRepositoryTests: XCTestCase {
 
     private var sut: UserClientsRepository!
-    private var userClientsAPI: UserClientsAPIMock!
+    private var userClientsAPI: MockUserClientsAPI!
     private var userRepository: MockUserRepositoryProtocol!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var stack: CoreDataStack!
@@ -44,7 +43,7 @@ final class UserClientsRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        userClientsAPI = UserClientsAPIMock()
+        userClientsAPI = MockUserClientsAPI()
         userRepository = MockUserRepositoryProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
 
@@ -96,7 +95,7 @@ final class UserClientsRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.updateClient(
+        await sut.updateClient(
             id: Scaffolding.userClientID,
             from: Scaffolding.selfUserClient,
             isNewClient: false
@@ -117,7 +116,7 @@ final class UserClientsRepositoryTests: XCTestCase {
             )
         }
 
-        userClientsAPI.getSelfClientsSelfUserClientReturnValue = [
+        userClientsAPI.getSelfClients_MockValue = [
             Scaffolding.selfUserClient
         ]
 
@@ -170,7 +169,7 @@ final class UserClientsRepositoryTests: XCTestCase {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString
 
-        static let selfUserClient = WireAPI.SelfUserClient(
+        static let selfUserClient = WireNetwork.SelfUserClient(
             id: userClientID,
             type: .permanent,
             activationDate: .now,

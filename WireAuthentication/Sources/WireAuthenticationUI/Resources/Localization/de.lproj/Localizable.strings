@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Weiter";
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
+"cloud_user_login.expiration_message" = "Die Session ist abgelaufen. Zum Fortfahren bitte Passwort eingeben.";
 "cloud_user_login.input_email.title" = "E-Mail";
 "cloud_user_login.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "cloud_user_login.input_password.title" = "Passwort";
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
 "cloud_user_login.submit" = "Weiter";
 "cloud_user_login.forgot_password" = "Passwort vergessen?";
+
+"login.sso.title" = "Anmelden";
+"login.sso.expiration_message" = "Ihre Session ist abgelaufen. Melden Sie sich mit Ihrem Unternehmenskonto an, um fortzufahren.";
+"login.sso.input_code.title" = "SSO Zugangscode";
+"login.sso.input_code.placeholder" = "SSO-Code eingeben";
+"login.sso.submit" = "Anmeldung für Unternehmen";
+
+"logout.button.title" = "Abmelden";
+"logout.alert.title" = "Abmelden";
+"logout.alert.message" = "Entscheiden Sie, ob Sie Ihren Gesprächsverlauf behalten oder unwiderruflich von diesem Gerät löschen möchten.";
+"logout.alert.delete_data_button" = "Abmelden und Verlauf löschen";
+"logout.alert.keep_data_button" = "Abmelden und Verlauf behalten";
+"logout.alert.cancel" = "Abbrechen";
+
 "create_account_or_team.title" = "Sie haben kein Benutzerkonto? ";
 "create_account_or_team.button" = "Konto oder Team erstellen";
+"create_account.button" = "Konto erstellen";
 
 "account_type_selector.title" = "Wie werden Sie Wire verwenden?";
 "account_type_selector.option_team.title" = "Für die Zusammenarbeit";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
 "authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
+"authentication.missing_history.title" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
+"authentication.missing_history.message" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "Keine Internetverbindung";
@@ -109,6 +127,59 @@
 "obsolete_client.alert.title" = "Aktualisierung erforderlich";
 "obsolete_client.alert.message" = "Sie verpassen neue Funktionen.\nLaden Sie die neueste Version von Wire herunter.";
 "obsolete_client.alert.ok_button" = "Zum App Store";
+"obsolete_client.alert.switch_accounts" = "Konto wechseln";
+
+"obsolete_client_multibackend.alert.title" = "Aktualisierung erforderlich";
+"obsolete_client_multibackend.alert.message" = "Sie verpassen neue Funktionen.\nLaden Sie die neueste Version von Wire herunter, um die App weiterhin mit diesem Benutzerkonto zu verwenden.";
+
+"obsolete.alert.update_button" = "Aktualisieren";
+"obsolete.alert.switch_accounts" = "Konto wechseln";
+"obsolete.alert.logout" = "Abmelden";
+"obsolete.alert.cancel" = "Abbrechen";
+"obsolete.alert.ok" = "OK";
 
 "obsolete_backend.alert.title" = "Serverversion wird nicht unterstützt";
 "obsolete_backend.alert.message" = "Die Serverversion wird von dieser App nicht unterstützt. Bitte wenden Sie sich an Ihren Systemadministrator.";
+"obsolete_backend_multibackend.alert.message" = "Ihr Wire-Server muss aktualisiert werden. Bitte informieren Sie Ihren Systemadministrator.";
+
+// Registration
+
+"create_personal_account.title" = "Privates Benutzerkonto erstellen";
+"create_personal_account.continue" = "Weiter";
+"create_personal_account.share_data_usage" = "Ich bin mit dem Teilen anonymer Nutzungsdaten einverstanden. Alle Details finden Sie in unserer [Datenschutzerklärung](%@) (optional)";
+"create_personal_account.looking_for_collaboration" = "Wollen Sie eher im Team zusammenarbeiten?";
+"create_personal_account.create_team" = "Team erstellen";
+"create_personal_account.input_name.title" = "Name";
+"create_personal_account.input_name.placeholder" = "Name eingeben";
+"create_personal_account.input_email.title" = "E-Mail";
+"create_personal_account.input_email.placeholder" = "E-Mail-Adresse eingeben";
+"create_personal_account.input_password.title" = "Passwort";
+"create_personal_account.input_password.placeholder" = "Passwort eingeben";
+"create_personal_account.input_confirm_password.placeholder" = "Passwort bestätigen";
+"create_personal_account.input_confirm_password.error" = "Passwörter stimmen nicht überein";
+"create_personal_account.confirmation_alert.title" = "Nutzungsbedingungen";
+"create_personal_account.confirmation_alert.message" = "Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren.";
+"create_personal_account.confirmation_alert.accept" = "Annehmen";
+"create_personal_account.confirmation_alert.view" = "Anzeigen";
+"create_personal_account.confirmation_alert.cancel" = "Abbrechen";
+"create_personal_account.verification_code.resend_code" = "Code erneut senden";
+"create_personal_account.verification_code.confirm" = "Bestätigen";
+"create_personal_account.verification_code.message" = "Geben Sie den Code ein, den wir an %@ gesendet haben.";
+
+"create_personal_account.error.title.email-exists" = "Konto Vorhanden";
+"create_personal_account.error.message.email-exists" = "Die für die Registrierung verwendete E-Mail-Adresse ist bereits mit einem Konto verknüpft.\n\n Bitte andere E-Mail-Adresse nutzen oder versuchen, sich mit dieser E-Mail-Adresse anzumelden.";
+"create_personal_account.error.title.invalid-email" = "Ungültige Information";
+"create_personal_account.error.message.invalid-email" = "Bitte geben Sie ein gültiges Format für Ihre E-Mail-Adresse ein.";
+"create_personal_account.error.title.blacklisted-email" = "Ungültige Information";
+"create_personal_account.error.message.blacklisted-email" = "Ihre E-Mail-Adresse wurde als nicht vertrauenswürdig identifiziert, zum Beispiel aufgrund einer Ablehnung durch einen Spam-Filter.";
+"create_personal_account.error.title.domain-blocked" = "Ungültige Information";
+"create_personal_account.error.message.domain-blocked" = "Sie können dieses Benutzerkonto nicht einrichten, da Ihre E-Mail-Domain absichtlich blockiert ist.";
+"create_personal_account.error.title.invalid-code" = "Ungültige Information";
+"create_personal_account.error.message.invalid-code" = "Ungültiger Code oder maximale Versuche überschritten. Bitte versuchen Sie es erneut oder fordern Sie einen anderen Code an";
+"create_personal_account.error.title.too-many-team-members" = "Ungültige Information";
+"create_personal_account.error.message.too-many-team-members" = "Dieses Team hat die Höchstanzahl an Mitgliedern erreicht.";
+"create_personal_account.error.title.user-creation-restricted" = "Ungültige Information";
+"create_personal_account.error.message.user-creation-restricted" = "In dieser Version der App können Sie keine privaten Konten erstellen.";
+
+"switching_accounts.title" = "Konto wechseln";
+"switching_accounts.subtitle" = "Wählen Sie ein anderes Konto auf diesem Gerät:";

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullSelfUserSettingsSyncTests: XCTestCase {
 
     private var sut: PullSelfUserSettingsSync!
-    private var api: UserPropertiesAPIMock!
+    private var api: MockUserPropertiesAPI!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = UserPropertiesAPIMock()
+        api = MockUserPropertiesAPI()
         store = MockUserLocalStoreProtocol()
         sut = PullSelfUserSettingsSync(api: api, store: store)
     }

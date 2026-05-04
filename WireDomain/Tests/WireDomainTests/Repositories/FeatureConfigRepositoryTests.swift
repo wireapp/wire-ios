@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 //
 
 import Combine
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
+@testable import WireNetwork
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
     private var sut: FeatureConfigRepository!
-    private var featureConfigsAPI: FeatureConfigsAPIMock!
+    private var featureConfigsAPI: MockFeatureConfigsAPI!
     private var featureConfigLocalStore: MockFeatureConfigLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -43,7 +44,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        featureConfigsAPI = FeatureConfigsAPIMock()
+        featureConfigsAPI = MockFeatureConfigsAPI()
         featureConfigLocalStore = MockFeatureConfigLocalStoreProtocol()
 
         sut = FeatureConfigRepository(
@@ -63,6 +64,36 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
+    func test_isFeatureEnabled_forDefaultValueWithDefaultValue() async {
+
+        for feature in Feature.Name.allCases {
+            featureConfigLocalStore.fetchFeatureName_MockError = FeatureConfigLocalStore.Error
+                .failedToFetchFeatureLocally(feature)
+            let result = await sut.isFeatureEnabled(feature)
+            XCTAssertEqual(result, feature == .simplifiedUserConnectionRequestQRCode)
+        }
+    }
+
+    func test_isFeatureEnabled_statusHandling() async {
+        let testCases: [(status: Feature.Status, expected: Bool)] = [
+            (.enabled, true),
+            (.disabled, false)
+        ]
+
+        for scenario in testCases {
+            featureConfigLocalStore.isFeatureEnabled_ReturnValue = scenario.expected
+            featureConfigLocalStore.fetchFeatureName_MockValue = Feature()
+
+            let result = await sut.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode)
+
+            XCTAssertEqual(
+                result,
+                scenario.expected,
+                "Failed for status: \(scenario.status). Should follow store value, ignoring fallback."
+            )
+        }
+    }
+
     func testPullFeatureConfigs_It_Invokes_Local_Store_Methods() async throws {
         // Mock
 
@@ -78,10 +109,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             )
         }
 
-        featureConfigsAPI.getFeatureConfigsFeatureConfigReturnValue = Scaffolding.featureConfigs
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -89,43 +119,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
         )
-    }
-
-    func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
-        // Mock
-
-        let feature = await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .conversationGuestLinks,
-                in: context
-            ) { $0.status = .enabled }
-
-            return Feature.fetch(
-                name: .conversationGuestLinks,
-                context: context
-            )
-        }
-
-        featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.storeFeatureNeedsToNotifyUser(
-            true,
-            name: .conversationGuestLinks
-        )
-
-        // Then
-
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_Invocations.count, 1)
     }
 
     func testFetchFeatureConfig_It_Invokes_Local_Store_Methods_And_Retrieves_Correct_Config() async throws {
@@ -155,10 +152,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let localFeature = try await sut.fetchFeatureConfig(
-            name: .appLock,
-            type: Feature.AppLock.Config.self
-        )
+        let localFeature = try await sut.fetchAppLock()
 
         // Then
 
@@ -203,10 +197,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Mock
 
-        featureConfigsAPI.getFeatureConfigsFeatureConfigReturnValue = Scaffolding.featureConfigs
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -216,9 +209,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigsAPI.getFeatureConfigsFeatureConfigCallsCount, 1)
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
+        XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -239,6 +230,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     isMandatory: true,
                     inactivityTimeoutInSeconds: 2_147_483_647
                 )
+            ),
+            .apps(
+                .init(status: .disabled)
             ),
             .classifiedDomains(
                 .init(
@@ -301,7 +295,32 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 status: .enabled,
                 allowedToCreateChannels: .admins,
                 allowedToOpenChannels: .everyone
-            ))
+            )),
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
+                    status: .enabled,
+                    resetMLSConversations: true
+                )
+            ),
+            .consumableNotifications(
+                ConsumableNotificationsFeatureConfig(
+                    status: .enabled
+                )
+            ),
+            .simplifiedUserConnectionRequestQRCode(
+                SimplifiedUserConnectionRequestQRCodeConfig(
+                    status: .disabled
+                )
+            ),
+            .cells(
+                .init(status: .enabled)
+            ),
+            .cellsInternal(
+                .init(
+                    status: .enabled,
+                    backendURL: URL(string: "https://wire.com")!
+                )
+            )
         ]
 
     }

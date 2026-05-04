@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullConversationLabelsSyncTests: XCTestCase {
 
     private var sut: PullConversationLabelsSync!
-    private var api: UserPropertiesAPIMock!
+    private var api: MockUserPropertiesAPI!
     private var store: MockConversationLabelsLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = UserPropertiesAPIMock()
+        api = MockUserPropertiesAPI()
         store = MockConversationLabelsLocalStoreProtocol()
         sut = PullConversationLabelsSync(api: api, store: store)
     }
@@ -43,14 +42,14 @@ final class PullConversationLabelsSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getLabelsConversationLabelReturnValue = Scaffolding.remoteLabels
+        api.getLabels_MockValue = Scaffolding.remoteLabels
         store.setLabels_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getLabelsConversationLabelCallsCount, 1)
+        XCTAssertEqual(api.getLabels_Invocations.count, 1)
 
         try XCTAssertCount(store.setLabels_Invocations, count: 1)
         XCTAssertEqual(store.setLabels_Invocations[0], Scaffolding.localLabels)

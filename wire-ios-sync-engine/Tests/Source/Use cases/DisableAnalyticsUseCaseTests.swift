@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,13 +28,12 @@ import XCTest
 final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvider {
 
     private var sut: DisableAnalyticsUseCase!
-    private var service: MockAnalyticsServiceProtocol!
+    private var service: AnalyticsServiceProtocolMock!
 
     var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     override func setUp() {
-        super.setUp()
-        service = MockAnalyticsServiceProtocol()
+        service = AnalyticsServiceProtocolMock()
         sut = DisableAnalyticsUseCase(service: service, provider: self)
         analyticsEventTracker = AnalyticsEventTrackerProtocolMock()
     }
@@ -43,7 +42,6 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
         sut = nil
         service = nil
         analyticsEventTracker = nil
-        super.tearDown()
     }
 
     func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?) {
@@ -51,12 +49,12 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        AnalyticsUser(analyticsIdentifier: UUID().uuidString)
+        AnalyticsUser(trackingID: UUID())
     }
 
     func testInvoke_disables_via_service() throws {
         // Mock
-        service.disableTracking_MockMethod = {}
+        service.disableTrackingVoidClosure = {}
 
         // Given
         XCTAssertNotNil(analyticsEventTracker)
@@ -65,7 +63,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
         try sut.invoke()
 
         // Then
-        XCTAssertEqual(service.disableTracking_Invocations.count, 1)
+        XCTAssertEqual(service.disableTrackingVoidCallsCount, 1)
         XCTAssertNil(analyticsEventTracker)
     }
 

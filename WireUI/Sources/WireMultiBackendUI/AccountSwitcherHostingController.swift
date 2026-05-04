@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,49 @@
 
 import SwiftUI
 import UIKit
+import WireDesign
 
-public class AccountSwitcherHostingController: UIHostingController<AccountSwitcherView> {
+public class AccountSwitcherHostingController: UIHostingController<AccountSwitcherRootView> {
 
-    public init(accounts: [AccountUIModel], options: [Option]) {
-        super.init(rootView: AccountSwitcherView(accounts: accounts, options: options))
+    public init(otherAccounts: [AccountUIModel], options: [Option]) {
+        super.init(
+            rootView: AccountSwitcherRootView(
+                otherAccounts: otherAccounts,
+                options: options
+            )
+        )
         view.backgroundColor = .clear
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+public struct AccountSwitcherRootView: View {
+
+    let otherAccounts: [AccountUIModel]
+    let options: [Option]
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if !otherAccounts.isEmpty {
+                Text(L10n.Localizable.Accounts.header.uppercased())
+                    .font(for: .h5)
+                    .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
+                    .padding(.leading, 16)
+            }
+            switcherView()
+        }
+    }
+
+    @ViewBuilder
+    func switcherView() -> some View {
+        AccountSwitcherView(
+            otherAccounts: otherAccounts,
+            options: options,
+            showLastSeparator: false
+        )
     }
 }

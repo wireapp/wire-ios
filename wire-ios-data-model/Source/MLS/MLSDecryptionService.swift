@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,7 +76,6 @@ public enum MLSDecryptResult: Equatable {
 protocol DecryptedMessageBundle {
 
     var message: Data? { get }
-    var proposals: [WireCoreCrypto.ProposalBundle] { get }
     var isActive: Bool { get }
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }
@@ -201,7 +200,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         } catch let CoreCryptoError.Mls(error) {
             WireLogger.mls
                 .error(
-                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))), CoreCryptoError: \(String(describing: error)) | \(debugInfo)"
+                    "failed to decrypt message for group and subconversation type (\(String(describing: subconversationType))), CoreCryptoError: \(String(describing: error)) | \(debugInfo)",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
 
             switch error {
@@ -248,7 +248,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         } catch {
             WireLogger.mls
                 .error(
-                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                    "failed to decrypt message for group and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
 
             throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
@@ -275,8 +276,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         return nil
     }
 
-    private func senderClientId(from data: ClientId) throws -> MLSClientID {
-        guard let clientID = MLSClientID(data: data) else {
+    private func senderClientId(from clientID: ClientId) throws -> MLSClientID {
+        guard let clientID = MLSClientID(data: clientID.copyBytes()) else {
             throw MLSMessageDecryptionError.failedToDecodeSenderClientID
         }
         return clientID

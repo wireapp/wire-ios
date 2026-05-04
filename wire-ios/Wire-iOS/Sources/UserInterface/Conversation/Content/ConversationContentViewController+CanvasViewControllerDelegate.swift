@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,15 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
                 self.userSession.enqueue {
                     do {
                         let useCase = self.userSession.makeAppendImageMessageUseCase()
-                        try useCase.invoke(withImageData: imageData, in: self.conversation)
+                        let image = SendableImage(
+                            name: nil,
+                            utType: nil,
+                            data: imageData
+                        )
+                        try useCase.invoke(
+                            image: image,
+                            in: self.conversation
+                        )
                     } catch {
                         WireLogger.messageProcessing
                             .warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")

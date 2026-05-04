@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "Nein, danke";
 "general.failure" = "Ein Fehler ist aufgetreten";
 "general.failure.try_again" = "Bitte erneut versuchen.";
-"general.service" = "Dienst";
 "general.off" = "Aus";
 "general.on" = "An";
 "general.loading" = "Wird geladen…";
@@ -61,6 +60,10 @@
 "peoplepicker.header.directory" = "Verbinden";
 "peoplepicker.header.federation" = "Mit einer anderen Domain verbinden";
 
+"peoplepicker.upgrade_banner.headline" = "Channels sind für Team-Mitglieder verfügbar.";
+"peoplepicker.upgrade_banner.subheadline" = "Erstellen Sie ein Team und arbeiten Sie kostenlos zusammen!";
+"peoplepicker.upgrade_banner.button.title" = "Wire Team erstellen";
+
 "peoplepicker.group.title.singular" = "Teilnehmer auswählen";
 "peoplepicker.group.title.plural" = "Teilnehmer auswählen (%d)";
 "peoplepicker.group.skip" = "Überspringen";
@@ -68,12 +71,12 @@
 "peoplepicker.group.create" = "Erstellen";
 
 "peoplepicker.header.people" = "Kontakte";
-"peoplepicker.header.services" = "Dienste";
-"peoplepicker.services.open_conversation.item" = "Unterhaltung öffnen";
-"peoplepicker.services.add_service.button" = "Dienst hinzufügen";
-"peoplepicker.services.add_service.error.title" = "Der Dienst kann nicht hinzugefügt werden";
-"peoplepicker.services.add_service.error.default" = "Der Dienst ist derzeit nicht verfügbar";
-"peoplepicker.services.add_service.error.full" = "Die Unterhaltung ist voll";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Unterhaltung öffnen";
+"peoplepicker.apps.add_app.button" = "App hinzufügen";
+"peoplepicker.apps.add_app.error.title" = "Die App kann nicht hinzugefügt werden";
+"peoplepicker.apps.add_app.error.default" = "Die App ist derzeit nicht verfügbar";
+"peoplepicker.apps.add_app.error.full" = "Die Unterhaltung ist voll";
 
 "peoplepicker.no_contacts_title" = "Keine Kontakte";
 
@@ -82,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Einladung versenden";
 "peoplepicker.no_matching_results.action.share_contacts" = "Kontakte teilen";
 "peoplepicker.no_matching_results.action.learn_more" = "Mehr erfahren";
-"peoplepicker.no_matching_results.action.manage_services" = "Dienste verwalten";
+"peoplepicker.no_matching_results.action.manage_apps" = "Apps verwalten";
 
 "peoplepicker.no_matching_results.message.users" = "Finden Sie Personen in Wire anhand ihrer Namen oder @Benutzernamen";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Finden Sie Personen in Wire anhand ihrer Namen oder @Benutzernamen\n\nFinden Sie Personen einer anderen Domain mit @Benutzername@Domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Alle sind hier.";
-"peoplepicker.no_matching_results.message.services" = "Keine Ergebnisse.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Dienste sind Helfer, die den Workflow verbessern können.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Dienste sind Helfer, die den Workflow verbessern können. Bitte an den Administrator wenden, um diese zu aktivieren.";
+"peoplepicker.no_matching_results.message.apps" = "Keine Ergebnisse.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps sind Helfer, die den Workflow verbessern können.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps sind Helfer, die den Workflow verbessern können. Um sie zu aktivieren, wenden Sie sich bitte an Ihren Admin.";
+"peoplepicker.no_apps_added.title" = "Ihr Team hat noch keine Apps hinzugefügt";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps sind Helfer, die Ihren Workflow verbessern können. Um sie zu verwenden, fragen Sie bitte Ihren Team-Admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps sind Helfer, die Ihren Workflow verbessern können. Als Team-Admin können Sie diese im Team-Management hinzufügen.";
+"peoplepicker.app_details.created_by" = "Erstellt von %@";
+"peoplepicker.app_details.description" = "Beschreibung";
 
 "peoplepicker.send_invitation.dialog.title" = "Einladung versendet";
 "peoplepicker.send_invitation.dialog.message" = "Diese Einladung ist 2 Wochen gültig. Senden Sie eine neue, wenn diese abläuft.";
@@ -97,7 +105,7 @@
 
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
-"peoplepicker.quick-action.admin-services" = "Dienste verwalten";
+"peoplepicker.quick-action.admin-apps" = "Apps verwalten";
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
 
@@ -132,6 +140,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Gruppe suchen";
 "conversation_list.search_bar.channelsPlaceholder" = "Channels suchen";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "1:1 Unterhaltung suchen";
+"conversation_list.search_bar.unreadPlaceholder" = "Ungelesene Unterhaltungen suchen";
+"conversation_list.search_bar.mentionsPlaceholder" = "Unterhaltungen mit Erwähnungen suchen";
+"conversation_list.search_bar.repliesPlaceholder" = "Unterhaltungen mit Antworten suchen";
+"conversation_list.search_bar.draftsPlaceholder" = "Unterhaltungen mit Entwürfen suchen";
 "conversation_list.search_bar.foldersPlaceholder" = "%@ suchen";
 
 
@@ -144,6 +156,10 @@
 "conversation_list.filter.folders.title" = "Ordner";
 "conversation_list.filter_label.text" = "Gefiltert nach %@";
 "conversation_list.filter.remove_button.title" = "Entfernen";
+"conversation_list.filter.unread.title" = "Ungelesen";
+"conversation_list.filter.mentions.title" = "Erwähnungen";
+"conversation_list.filter.replies.title" = "Antworten";
+"conversation_list.filter.drafts.title" = "Entwürfe";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Beitreten";
@@ -169,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "Neue Unterhaltung";
 "conversation_list.empty_placeholder.search.button.ipad" = "Beginnen Sie eine neue Unterhaltung";
 "conversation_list.empty_placeholder.search.connect_button" = "Mit Personen verbinden";
+"conversation_list.empty_state.unread.title" = "Keine ungelesenen Unterhaltungen";
+"conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
+"conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
+"conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
+"conversation_list.empty_state.up_to_date.subtitle" = "All Ihre Unterhaltungen sind auf dem neuesten Stand";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -316,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "in Kontakte";
 "conversation.connection_view.encryption_info" = "Kommunikation in Wire ist immer Ende-zu-Ende verschlüsselt. Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.";
+"conversation.connection_view.wire_cells.encryption_info" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.";
 "conversation.connection_view.sensitive_information_warning" = "Bitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.title.wire" = "Kommunikation in Wire ist immer Ende-zu-Ende-verschlüsselt.";
+"conversation.connection_view.welcome.title.wire_cells" = "Kommunikation in Wire ist immer sicher.";
+"conversation.connection_view.welcome.message.wire_channel" = "Alles, was Sie in diesem Channel senden und empfangen, ist nur für Sie und andere Teilnehmer zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.message.wire_group" = "Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und andere Teilnehmer zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.message.wire_cells" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.\n\n";
+"conversation.connection_view.welcome.learn_more" = "Mehr erfahren";
 
 "conversation.input_bar.shortcut.send" = "Nachricht senden";
 "conversation.input_bar.shortcut.newline" = "Zeilenumbruch Einfügen";
@@ -335,8 +364,10 @@
 "conversation.create.options.title" = "UNTERHALTUNGSOPTIONEN";
 "conversation.create.guests.title" = "Gäste zulassen";
 "conversation.create.guests.subtitle" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams.";
-"conversation.create.services.title" = "Dienste zulassen";
-"conversation.create.services.subtitle" = "Öffnen Sie diese Unterhaltung für Dienste.";
+"conversation.create.apps.title" = "Apps zulassen";
+"conversation.create.apps.subtitle" = "Öffnen Sie diese Unterhaltung für Apps.";
+"conversation.create.apps_disabled.title" = "Ihr Team verwendet noch keine Apps";
+"conversation.create.apps_disabled.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden. Bitte wenden Sie sich an Ihren Team-Admin.";
 "conversation.create.receipts.title" = "Lesebestätigungen";
 "conversation.create.receipts.subtitle" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "conversation.create.mls.title" = "Protokoll";
@@ -352,6 +383,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (Standard)";
+"conversation.create.file_management.title" = "Geteiltes Drive";
+"conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in Geteiltes Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
+"conversation.create.file_management.learnMore" = "Mehr erfahren";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -361,16 +395,25 @@
 "conversation.alert.message_deleted" = "Die Nachricht ist gelöscht.";
 
 // Conversation banner
-"conversation.banner.guests" = "Gäste";
-"conversation.banner.services" = "Dienste";
-"conversation.banner.externals" = "Externe";
-"conversation.banner.remotes" = "Föderierte Benutzer";
-"conversation.banner.are_present" = "%@ sind anwesend";
-"conversation.banner.are_active" = "%@ sind aktiv";
-"conversation.banner.separator" = "  und ";
+"conversation.banner.remotes_externals_guests_apps_present" = "Föderierte Benutzer, Externe und Gäste anwesend, Apps aktiv";
+"conversation.banner.remotes_externals_guests_present" = "Föderierte Benutzer, Externe und Gäste anwesend";
+"conversation.banner.remotes_externals_apps_present" = "Föderierte Benutzer und Externe anwesend, Apps aktiv";
+"conversation.banner.remotes_guests_apps_present" = "Föderierte Benutzer und Gäste anwesend, Apps aktiv";
+"conversation.banner.externals_guests_apps_present" = "Externe und Gäste anwesend, Apps aktiv";
+"conversation.banner.remotes_externals_present" = "Föderierte Benutzer und Externe anwesend";
+"conversation.banner.remotes_guests_present" = "Föderierte Benutzer und Gäste anwesend";
+"conversation.banner.remotes_apps_present" = "Föderierte Benutzer anwesend, Apps aktiv";
+"conversation.banner.externals_guests_present" = "Externe und Gäste anwesend";
+"conversation.banner.externals_apps_present" = "Externe anwesend, Apps aktiv";
+"conversation.banner.guests_apps_present" = "Gäste anwesend, Apps aktiv";
+"conversation.banner.remotes_present" = "Föderierte Benutzer anwesend";
+"conversation.banner.externals_present" = "Externe anwesend";
+"conversation.banner.guests_present" = "Gäste anwesend";
+"conversation.banner.apps_active" = "Apps sind aktiv";
 
 "conversation.action.search" = "Suche";
 "conversation.action.conversationDetails" = "Unterhaltungsdetails";
+"conversation.action.files" = "Geteiltes Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Bild";
@@ -455,9 +498,12 @@
 "content.system.other_removed_you" = "%@ hat Sie entfernt";
 "content.system.you_removed_other" = "Sie haben %@ entfernt";
 
-"content.system.services.warning" = "Dienste haben Zugriff auf den Inhalt dieser Unterhaltung";
+"content.system.apps.warning" = "Apps haben Zugriff auf den Inhalt dieser Unterhaltung";
 
 "content.system.missing_messages" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.";
+"content.system.message_more_history_available" = "Gesprächsverlauf wird geladen…";
+"content.system.message_no_more_history_available" = "🥳 Sie können jetzt alle verfügbaren Nachrichten lesen.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %@ hinzugefügt.";
 
@@ -574,6 +620,8 @@
 "content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
 "content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
+"content.system.message_timer_unavailable" = "Selbstlöschende Nachrichten sind deaktiviert";
+
 "content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
 "content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
 
@@ -586,6 +634,8 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
+"content.system.file_collaboration.enabled" = "Geteiltes Drive aktiv";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ hat Lesebestätigungen für alle aktiviert";
@@ -595,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@ hat Lesebestätigungen für alle deaktiviert";
 
 "content.system.message_read_receipt_on_add_to_group" = "Lesebestätigungen aktiv";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "Neue Teilnehmer können Nachrichten der letzten %@ Tage sehen";
+"content.system.message_history_depth_initially_set_weeks" = "Neue Teilnehmer können Nachrichten der letzten %@ Wochen sehen";
+"content.system.message_history_depth_modified_days" = "%@ hat den Gesprächsverlauf auf %@ Tage eingestellt";
+"content.system.message_history_depth_modified_weeks" = "%@ hat den Gesprächsverlauf auf %@ Wochen eingestellt";
+"content.system.message_history_depth_modified_disabled" = "%@ hat den Gesprächsverlauf deaktiviert";
 
 // legal hold
 
@@ -616,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "Eine Nachricht von Ihnen konnte nicht entschlüsselt werden.";
 "content.system.cannot_decrypt.other" = "Eine Nachricht von %@ konnte nicht entschlüsselt werden.";
-"content.system.cannot_decrypt.reset_session" = "Entschlüsselung künftiger Nachrichten";
 "content.system.cannot_decrypt.error_details" = "(Behobener Fehler: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Sie können jetzt Nachrichten von sich selbst entschlüsseln. Um verlorene Nachrichten wiederherzustellen, müssen Sie sie erneut senden.";
@@ -629,6 +685,10 @@
 "content.system.session_reset.self" = " Sie konnten einige Ihrer Nachrichten nicht entschlüsseln, haben das Problem aber gelöst. Dies betraf alle Unterhaltungen.";
 
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
+"content.system.unknown_message_received.body" = "Sie haben eine Nachricht erhalten, die nicht angezeigt werden kann. Möglicherweise verwenden Sie eine ältere Version von Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";
 
 "content.file.uploading" = "Hochladen…";
 "content.file.downloading" = "Herunterladen…";
@@ -685,6 +745,15 @@
 "content.reactions_list.likers" = "Gefällt";
 
 "content.file.too_big" = "Sie können Dateien bis zu %@ senden";
+
+"content.message.reply.files.count" = "%@ Dateien";
+"content.message.reply.files.notAvailable" = "Datei nicht verfügbar";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Inkompatible Zeichen ersetzen";
+"content.uploaded_file_needs_rename.message" = "Sie können die Zeichen %@ und %@nicht verwenden.\nErsetzen Sie sie automatisch oder benennen Sie die Datei manuell um.";
+"content.uploaded_file_needs_rename.confirmButton" = "Ersetzen";
+"content.uploaded_file_needs_rename.cancelButton" = "Abbrechen";
 
 // Reactions
 "content.reactions.title" = "Reaktion auswählen";
@@ -857,7 +926,7 @@
 "participants.title" = "Details";
 "participants.all.title" = "Kontakte";
 "participants.section.participants" = "Personen (%d)";
-"participants.section.services" = "Dienste (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Optionen";
 "participants.footer.add_title" = "Teilnehmer hinzufügen";
 "participants.section.name.footer" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen.";
@@ -983,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "LESEBESTÄTIGUNGEN AUS";
 "profile.read_receipts_memo.body" = "Wenn beide Seiten Lesebestätigungen aktivieren, können alle sehen, wenn Nachrichten gelesen werden.\nDiese Option kann in den Kontoeinstellungen geändert werden.";
 
-"profile.group_admin_status_memo.body" = "Wenn diese Option aktiviert ist, kann der Admin Personen und Dienste hinzufügen oder entfernen, Einstellungen aktualisieren und die Rolle eines Teilnehmers ändern.";
+"profile.group_admin_status_memo.body" = "Wenn diese Option aktiviert ist, kann der Admin Personen und Apps hinzufügen oder entfernen, Einstellungen aktualisieren und die Rolle eines Teilnehmers ändern.";
 
 "profile.extended_metadata.header" = "Informationen";
 
@@ -1025,21 +1094,26 @@
 "device.type.unknown" = "Unbekannt";
 
 // Bot
-"participants.services.remove_integration.button" = "Dienst entfernen";
+"participants.apps.remove_integration.button" = "App entfernen";
 
 // Group details
 "group_details.guest_options_cell.title" = "Gäste";
 "group_details.guest_options_cell.enabled" = "An";
 "group_details.guest_options_cell.disabled" = "Aus";
-"group_details.services_options_cell.title" = "Dienste";
-"group_details.services_options_cell.enabled" = "An";
-"group_details.services_options_cell.disabled" = "Aus";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "An";
+"group_details.apps_options_cell.disabled" = "Aus";
 "group_details.timeout_options_cell.title" = "Selbstlöschende Nachrichten";
 "group_details.notification_options_cell.title" = "Benachrichtigungen";
 "group_details.notification_options_cell.description" = "Immer benachrichtigen (einschließlich Audio- und Videoanrufe) oder nur bei Erwähnungen oder wenn jemand auf eine Ihrer Nachrichten antwortet.";
 "group_details.receipt_options_cell.title" = "Lesebestätigungen";
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "group_details.access_options_cell.title" = "Channel-Zugang";
+"group_details.channel_history_options_cell.title" = "Gesprächsverlauf";
+"group_details.file_collaboration_cell.title" = "Geteiltes Drive";
+"group_details.file_collaboration_cell.subtitle" = "An";
+"group_details.file_collaboration_cell.footer" = "Dauerhaft aktiv für diese Unterhaltung";
+"group_details.timeout_options_disabled.footer" = "Die Funktion ist für Unterhaltungen mit Geteiltes Drive nicht verfügbar.";
 
 "group_details.message_protocol.section_tile" = "Details zum Protokoll";
 "group_details.message_protocol.title" = "Protokoll";
@@ -1123,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Team erstellen";
+"self.settings.add_account_or_team.title" = "Konto oder Team hinzufügen";
 "self.settings.manage_team.title" = "Team verwalten";
-"self.settings.add_team_or_account.title" = "Benutzerkonto hinzufügen";
 "self.settings.add_account.title" = "Ein Konto hinzufügen";
 
 "self.settings.add_account.error.title" = "Drei Benutzerkonten sind aktiv";
@@ -1159,7 +1233,7 @@
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
 "self.settings.account_appearance_group.title" = "Erscheinungsbild";
-"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
+"self.settings.account_appearance_group.footer" = "Wenn diese Option aktiviert ist, zeigen Ihre Unterhaltungen einen auf Ihr Erscheinungsbild angepassten Hintergrund.";
 
 "self.settings.privacy_section_group.title" = "Datenschutz";
 "self.settings.enable_read_receipts.title" = "Lesebestätigungen senden";
@@ -1199,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "Abmelden";
 "self.settings.account_details.log_out.alert.message" = "Der Nachrichtenverlauf wird auf diesem Gerät gelöscht.";
 "self.settings.account_details.log_out.alert.password" = "Passwort";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Abmelden";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Ihre persönlichen Daten und Unterhaltungen vollständig von diesem Gerät entfernen?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Abmelden und Daten löschen";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Abmelden und Daten behalten";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Nutzungs- und Fehlerberichte";
@@ -1377,7 +1455,6 @@
 
 "self.settings.conversations.title" = "Gesprächsverlauf";
 "self.settings.history_backup.title" = "Sichern oder Wiederherstellen";
-"self.settings.history_backup.error.title" = "Fehler";
 "self.settings.history_backup.set_email.title" = "Fügen Sie E-Mail-Adresse und Passwort hinzu.";
 "self.settings.history_backup.set_email.message" = "Fügen Sie in den Einstellungen eine E-Mail-Adresse und ein Passwort hinzu, um den Gesprächsverlauf zu sichern.";
 
@@ -1486,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Unterhaltung beitreten";
 "join.group.conversation.alert.learnMoreAction.title" = "Erfahren Sie mehr über Gäste-Links.";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Dienste zulassen";
-"services_options.allow_services.subtitle" = "Öffnen Sie diese Unterhaltung für Dienste.";
-"services_options.remove_services.message" = "Aktuelle Dienste werden aus der Unterhaltung entfernt. Neue Dienste können nicht hinzugefügt werden.";
-"services_options.remove_services.action" = "Entfernen";
+"apps_options.allow_apps.title" = "Apps zulassen";
+"apps_options.allow_apps.subtitle" = "Öffnen Sie diese Unterhaltung für Apps.";
+"apps_options.remove_apps.message" = "Aktuelle Apps werden aus der Unterhaltung entfernt. Neue Apps können nicht hinzugefügt werden.";
+"apps_options.remove_apps.action" = "Entfernen";
 
 
 // Registration
@@ -1557,7 +1634,7 @@
 
 "registration.terms_of_use.terms.title" = "Nutzungsbedingungen";
 "registration.terms_of_use.terms.message" = "Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren.";
-"registration.terms_of_use.terms.view" = "Ansicht";
+"registration.terms_of_use.terms.view" = "Anzeigen";
 "registration.terms_of_use.accept" = "Annehmen";
 
 "registration.email_flow.title" = "Mit E-Mail registrieren";
@@ -1565,7 +1642,7 @@
 
 "registration.country_select.title" = "Land";
 
-"registration.push_access_denied.hero.title" = "Verpassen Sie keinen Anrufe oder Nachrichten.";
+"registration.push_access_denied.hero.title" = "Verpassen Sie keine Anrufe oder Nachrichten.";
 "registration.push_access_denied.hero.paragraph1" = "Aktivieren Sie Benachrichtigungen in den Einstellungen.";
 "registration.push_access_denied.settings_button.title" = "Einstellungen öffnen";
 "registration.push_access_denied.maybe_later_button.title" = "Vielleicht später";
@@ -1594,6 +1671,7 @@
 "enroll_e2ei_certificate.subtitle" = "Das Zertifikat ist aktiv und Ihr Gerät überprüft.";
 "enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity-Provider-URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Zertifikat aktualisiert";
@@ -1783,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Weiter";
 "databaseloadingfailure.alert.retry" = "Wiederholen";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Serverversion wird nicht unterstützt";
-"backend_not_supported.alert.message" = "Die Serverversion wird von dieser App nicht unterstützt. Bitte wenden Sie sich an Ihren Systemadministrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
@@ -1803,7 +1877,7 @@
 
 // Collections
 "collections.section.images.title" = "Bilder";
-"collections.section.files.title" = "Dokumente";
+"collections.section.files.title" = "Dateien";
 "collections.section.videos.title" = "Videos";
 "collections.section.links.title" = "Links";
 "collections.section.all.button" = "Zeige alle %d →";
@@ -1812,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "Textnachrichten suchen";
 "collections.search.no_items" = "Keine Ergebnisse";
+
+"collections.section.searchFiles.description" = "Dateien suchen";
+"collections.section.searchFiles.alert.title" = "Geteiltes Drive";
+"collections.section.searchFiles.alert.message" = "Finden Sie alle Dateien oder Ordner in dieser Unterhaltung.";
 
 
 
@@ -1869,6 +1947,7 @@
 "url_action.confirm" = "Bestätigen";
 "url_action.title" = "URL-Aktion bestätigen";
 "url_action.connect_to_bot.message" = "Möchten Sie sich mit dem Bot verbinden?";
+"url_action.user_profile_qr_feature_flag.message" = "Die Verwendung von Profil-Links oder QR-Codes ist in Ihrem Team nicht gestattet. Wenden Sie sich an Ihren Admin.";
 
 "url_action.switch_backend_confirmation.title" = "Umleitung auf ein lokales Backend?";
 "url_action.switch_backend_confirmation.message" = "Wenn Sie fortfahren, werden Sie zum folgenden lokalen Backend weitergeleitet, um sich anzumelden:";
@@ -2102,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "MLS-Daumenabdruck: %@";
 "device.details.certificate_details.title" = "Zertifikatsdetails";
 "device.details.certificate_details.copy_to_clipboard" = "In Zwischenablage kopieren";
+
+"account_blocked.network_error.alert.title" = "Netzwerkproblem";
+"account_blocked.network_error.alert.message" = "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+"account_blocked.generic_error.alert.title" = "Ein Fehler ist aufgetreten";
+"account_blocked.generic_error.alert.message" = "Bitte kontaktieren Sie den Support, falls dieser Fehler weiterhin auftritt.";
+"account_blocked.generic_error.alert.switch_accounts" = "Konto wechseln";
+"account_blocked.generic_error.alert.send_logs" = "Fehlerbericht senden";
+"account_blocked.generic_error.alert.retry" = "Wiederholen";

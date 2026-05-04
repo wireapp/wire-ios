@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,25 +19,27 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireNetwork
 
 package struct OnPremHeaderView: View {
 
     @State private var showCustomBackendAlert = false
-    private let backendConfig: BackendConfig
+    private let environment: BackendEnvironment2
 
     private typealias Strings = L10n.Localizable.OnPremUserLogin
 
-    package init(backendConfig: BackendConfig) {
-        self.backendConfig = backendConfig
+    package init(environment: BackendEnvironment2) {
+        self.environment = environment
     }
 
     private var backendInfo: String {
         [
             Strings.Alert.Message.backendName,
-            backendConfig.title,
+            environment.title,
             "",
             Strings.Alert.Message.backendUrl,
-            backendConfig.endpoints.backendURL.absoluteString
+            environment.config.endpoints.restAPIURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -45,13 +47,14 @@ package struct OnPremHeaderView: View {
         Button(action: {
             showCustomBackendAlert.toggle()
         }, label: {
-            Text(Strings.title(backendConfig.title) + " ")
+            Text(Strings.title(environment.title) + " ")
                 .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
         })
+        .accessibilityIdentifier(Locators.WelcomePage.onPremInfoButton.rawValue)
         .multilineTextAlignment(.center)
-        .font(.textStyle(.h2))
+        .font(for: .h2)
         .lineLimit(nil)
         .fixedSize(horizontal: false, vertical: true)
         .alert(Strings.Alert.title, isPresented: $showCustomBackendAlert) {
@@ -64,19 +67,22 @@ package struct OnPremHeaderView: View {
 
 #Preview {
     OnPremHeaderView(
-        backendConfig: BackendConfig(
+        environment: BackendEnvironment2(
             title: "<backend name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: nil
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "example")!,
+                    websocketURL: URL(string: "example")!,
+                    blacklistURL: URL(string: "example")!,
+                    teamsURL: URL(string: "example")!,
+                    accountsURL: URL(string: "example")!,
+                    websiteURL: URL(string: "example")!,
+                    countlyURL: nil
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     )
 }

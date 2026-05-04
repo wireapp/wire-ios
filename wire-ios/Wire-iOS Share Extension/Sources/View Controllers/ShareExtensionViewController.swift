@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,9 +25,14 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireDataModel
 import WireDesign
+import WireDomain
+import WireFoundation
 import WireLinkPreview
+import WireLocators
 import WireLogging
+import WireNetwork
 import WireShareEngine
+import WireUtilities
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -105,9 +110,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Host App State
 
     private var accountManager: AccountManager? {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        guard
+            let currentAppVersion = Bundle.main.shortVersionString,
+            let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier
+        else {
+            return nil
+        }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        let accountURLs = AccountURLs(root: sharedContainerURL)
+        return try? AccountManager(
+            currentAppVersion: currentAppVersion,
+            directory: accountURLs.accounts
+        )
     }
 
     // MARK: - Configuration
@@ -123,6 +137,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setup() {
+        DeveloperOverrides.storage = .shared()
         setUpObserver()
         setUpDatadog()
     }
@@ -137,7 +152,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setUpDatadog() {
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .shareExtension)
+        CoreCrypto.registerLogger()
     }
 
     override func viewDidLoad() {
@@ -145,10 +161,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        updateAccount(currentAccount)
 
         if let sortedAttachments = extensionContext?.attachments.sorted {
             attachments = sortedAttachments
+        }
+
+        Task { @MainActor in
+            await updateAccount(currentAccount)
         }
     }
 
@@ -168,6 +187,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
+        item.rightBarButtonItem?.accessibilityIdentifier = Locators.ShareExtensionPage.sendButtonOnShareExtension
+            .rawValue
         item
             .titleView = UIImageView(
                 image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
@@ -180,27 +201,32 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
-    private func recreateSharingSession(account: Account?) throws {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-              let accountIdentifier = account?.userIdentifier
-        else { return }
+    private func recreateSharingSession(account: Account?) async throws {
+        guard
+            let account,
+            let appGroupID = Bundle.main.applicationGroupIdentifier,
+            let hostBundleID = Bundle.main.hostBundleIdentifier,
+            let bundleInfo = Bundle.main.infoDictionary,
+            let buildNumber = bundleInfo[kCFBundleVersionKey as String] as? String
+        else {
+            return
+        }
 
-        let legacyConfig = AppLockController.LegacyConfig.fromBundle()
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
 
-        sharingSession = try SharingSession(
-            applicationGroupIdentifier: applicationGroupIdentifier,
-            accountIdentifier: accountIdentifier,
-            hostBundleIdentifier: hostBundleIdentifier,
-            environment: BackendEnvironment.shared,
-            appLockConfig: legacyConfig,
+        let loader = try SharingSessionLoader(
+            account: account,
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: buildNumber,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
+        sharingSession = try await loader.load()
     }
 
     override func configurationItems() -> [Any]! {
-        if let count = accountManager?.accounts.count, count > 1 {
+        if let count = accountManager?.numberOfAccounts, count > 1 {
             [accountItem, conversationItem]
         } else {
             [conversationItem]
@@ -478,7 +504,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         postContent?.target = conversation
     }
 
-    func updateAccount(_ account: Account?) {
+    @MainActor
+    func updateAccount(_ account: Account?) async {
 
         var account = account
         let authenticated = authenticatedAccounts
@@ -493,7 +520,28 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         }
 
         do {
-            try recreateSharingSession(account: account)
+            try await recreateSharingSession(account: account)
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            presentError(message: L10n.ShareExtension.NoInternetConnection.title)
+        } catch NetworkStackError.backendAPIVersionObsolete {
+            presentError(
+                title: L10n.ShareExtension.Error.UpdateRequired.title,
+                message: L10n.ShareExtension.Error.UpdateRequired.obsoleteBackend
+            )
+        } catch NetworkStackError.clientAPIVersionObsolete, SharingSessionLoader.Failure.buildIsBlacklisted {
+            presentError(
+                title: L10n.ShareExtension.Error.UpdateRequired.title,
+                message: L10n.ShareExtension.Error.UpdateRequired.obsoleteClient
+            )
+        } catch let SharingSessionLoader.Failure.mainAppRequired(message) {
+            WireLogger.shareExtension.error(
+                "main app required: \(message)",
+                attributes: .safePublic
+            )
+            presentError(
+                title: L10n.ShareExtension.Error.OpenApp.title,
+                message: L10n.ShareExtension.Error.OpenApp.message
+            )
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
@@ -555,14 +603,16 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         guard let accountManager else { return }
         let accountSelectionViewController = AccountSelectionViewController(
-            accounts: accountManager.accounts,
+            accounts: accountManager.sortedAccounts(),
             current: currentAccount
         )
 
         accountSelectionViewController.selectionHandler = { [weak self] account in
-            self?.updateAccount(account)
-            self?.popConfigurationViewController()
-            self?.validateContent()
+            Task { @MainActor in
+                await self?.updateAccount(account)
+                self?.popConfigurationViewController()
+                self?.validateContent()
+            }
         }
 
         pushConfigurationViewController(accountSelectionViewController)
@@ -631,6 +681,23 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func degradationMessageForUsers(_ users: String, count: Int) -> String {
         typealias DegradationReasonMessageLocale = L10n.ShareExtension.Meta.Degraded.DegradationReasonMessage
         return count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
+    }
+
+    private func presentError(
+        title: String? = nil,
+        message: String
+    ) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.General.ok,
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
     }
 
 }

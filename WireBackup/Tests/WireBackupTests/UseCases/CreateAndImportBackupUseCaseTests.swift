@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import WireBackupSupport
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
+import WireUtilitiesPackage
 import XCTest
 
 @testable import WireBackup
@@ -32,7 +33,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
     private var fileArchiver: ZIPFoundationFileArchiver!
     private var fileUnarchiver: ZIPFoundationFileUnarchiver!
     private var createBackupUseCase: CreateBackupUseCase!
-    private var importBackupUseCase: ImportBackupUseCase!
+    private var importBackupUseCaseFactory: ((_ url: URL) -> ImportBackupUseCase)!
     private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {
@@ -51,17 +52,20 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
         let syncTriggerExpectation = XCTestExpectation()
         self.syncTriggerExpectation = syncTriggerExpectation
-        importBackupUseCase = ImportBackupUseCase(
-            selfUserID: selfUserID,
-            backupLocalStore: backupLocalStoreMock,
-            fileUnarchiver: fileUnarchiver,
-            syncTrigger: { syncTriggerExpectation.fulfill() },
-            logger: WireLogger(tag: "???")
-        )
+        importBackupUseCaseFactory = { [backupLocalStoreMock, fileUnarchiver] url in
+            ImportBackupUseCase(
+                url: url,
+                selfUserID: selfUserID,
+                backupLocalStore: backupLocalStoreMock!,
+                fileUnarchiver: fileUnarchiver!,
+                syncTrigger: { syncTriggerExpectation.fulfill() },
+                logger: WireLogger(tag: "???")
+            )
+        }
     }
 
     override func tearDownWithError() throws {
-        importBackupUseCase = nil
+        importBackupUseCaseFactory = nil
         createBackupUseCase = nil
         fileArchiver = nil
         fileUnarchiver = nil
@@ -83,6 +87,12 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
             .makeStream(of: [conversation])
         backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
             .makeStream(of: [message])
+        backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReturnValue =
+            BackupMessagesImportResult(
+                validationCount: .init(successCount: 1, failureCount: 0),
+                insertionCount: .init(successCount: 1, failureCount: 0),
+                rehydrationCount: .init(successCount: 1, failureCount: 0)
+            )
 
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
@@ -92,15 +102,20 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         // import
 
         backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
-        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsSetUUIDReturnValue = []
 
-        let importEvents = try await importBackupUseCase.invoke(url: backupURL, password: password)
+        let importBackupUseCase = importBackupUseCaseFactory(backupURL)
+        let importEvents = try await importBackupUseCase.invoke(password: password)
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
         await fulfillment(of: [syncTriggerExpectation], timeout: 1)
 
         XCTAssertEqual(importEvents.last, .done)
         XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
-        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelVoidReceivedInvocations, [message])
+        XCTAssertEqual(
+            backupLocalStoreMock
+                .addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReceivedInvocations,
+            [[message]]
+        )
 
     }
 

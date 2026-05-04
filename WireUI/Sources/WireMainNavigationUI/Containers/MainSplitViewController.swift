@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,9 +41,19 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         set { setConversationListUI(newValue, animated: false) }
     }
 
+    public var filesUI: FilesUI? {
+        get { _filesUI }
+        set { setFilesUI(newValue, animated: false) }
+    }
+
     public var archiveUI: ArchiveUI? {
         get { _archiveUI }
         set { setArchiveUI(newValue, animated: false) }
+    }
+
+    public var meetingsUI: MeetingsUI? {
+        get { _meetingsUI }
+        set { setMeetingsUI(newValue, animated: false) }
     }
 
     public var settingsUI: SettingsUI? {
@@ -79,7 +89,9 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
     private weak var _conversationListUI: ConversationListUI?
     private weak var _archiveUI: ArchiveUI?
+    private weak var _meetingsUI: MeetingsUI?
     private weak var _settingsUI: SettingsUI?
+    private weak var _filesUI: FilesUI?
 
     private weak var _conversationUI: ConversationUI?
     private weak var _settingsContentUI: SettingsContentUI?
@@ -162,11 +174,31 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
+    private func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
+        _filesUI = filesUI
+
+        let viewControllers = [filesUI].compactMap(\.self)
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryColumnWidth = filesUI == nil ? 320 : UIScreen.main.bounds
+            .width // when files shown, take up full width
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
         _archiveUI = archiveUI
 
         let viewControllers = [archiveUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
+        _meetingsUI = meetingsUI
+
+        let viewControllers = [meetingsUI].compactMap(\.self)
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryColumnWidth = meetingsUI == nil ? preferredPrimaryColumnWidth : UIScreen.main.bounds
+            .width
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
@@ -179,6 +211,11 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     }
 
     private func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
+        // Before replacing the conversation, ensure the current one saves its draft
+        if let currentConversation = _conversationUI {
+            currentConversation.view.endEditing(true)
+        }
+
         _conversationUI = conversationUI
 
         let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap(\.self)

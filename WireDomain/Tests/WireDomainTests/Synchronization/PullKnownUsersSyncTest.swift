@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullKnownUsersSyncTests: XCTestCase {
 
     private var sut: PullKnownUsersSync!
-    private var api: UsersAPIMock!
+    private var api: MockUsersAPI!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = UsersAPIMock()
+        api = MockUsersAPI()
         store = MockUserLocalStoreProtocol()
         sut = PullKnownUsersSync(api: api, store: store)
     }
@@ -43,7 +42,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getUsersUserIDsUserIDUserListReturnValue = WireAPI.UserList(
+        api.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: [Scaffolding.user2.id]
         )
@@ -61,7 +60,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(store.fetchUsersQualifiedIDs_Invocations.count, 1)
 
-        let apiInvocations = api.getUsersUserIDsUserIDUserListReceivedInvocations
+        let apiInvocations = api.getUsersUserIDs_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], [Scaffolding.user1.id, Scaffolding.user2.id])
 
@@ -75,30 +74,34 @@ final class PullKnownUsersSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let user1 = User(
-        id: QualifiedID(uuid: UUID(), domain: "wire.com"),
+        id: QualifiedID(id: UUID(), domain: "wire.com"),
         name: "user1",
         handle: "handle1",
         teamID: nil,
+        type: .regular,
         accentID: 1,
         assets: [],
         deleted: false,
         email: "john.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled
     )
 
     static let user2 = User(
-        id: QualifiedID(uuid: UUID(), domain: "wire.com"),
+        id: QualifiedID(id: UUID(), domain: "wire.com"),
         name: "user2",
         handle: "handle2",
         teamID: nil,
+        type: .regular,
         accentID: 1,
         assets: [],
         deleted: false,
         email: "jane.doe@wire.com",
         expiresAt: nil,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls],
         legalholdStatus: .disabled

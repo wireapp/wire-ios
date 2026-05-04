@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Testing
-import WireAPI
-import WireAPISupport
 import WireAuthenticationAPI
+import WireNetwork
+import WireNetworkSupport
 
 @testable import WireAuthenticationLogic
 
@@ -28,13 +28,13 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase passes the argument to the API")
     func passEmailArgumentToAPI() async throws {
         // Given
-        let mockAuthenticationAPI = AuthenticationAPIMock()
+        let mockAuthenticationAPI = MockAuthenticationAPI()
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         try await confirmation { confirmation in
 
             // Then
-            mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidClosure = { email in
+            mockAuthenticationAPI.requestVerificationCodeFor_MockMethod = { email in
                 #expect(email == "email value")
                 confirmation()
             }
@@ -47,9 +47,8 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase maps invalid email error")
     func mapInvalidEmailError() async throws {
         // Given
-        let mockAuthenticationAPI = AuthenticationAPIMock()
-        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = AuthenticationAPIError
-            .invalidEmail
+        let mockAuthenticationAPI = MockAuthenticationAPI()
+        mockAuthenticationAPI.requestVerificationCodeFor_MockError = AuthenticationAPIError.invalidEmail
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         do {
@@ -73,8 +72,8 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase forwards any other error")
     func mapUnexpectedError() async throws {
         // Given
-        let mockAuthenticationAPI = AuthenticationAPIMock()
-        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = SomeError.some
+        let mockAuthenticationAPI = MockAuthenticationAPI()
+        mockAuthenticationAPI.requestVerificationCodeFor_MockError = SomeError.some
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         do {

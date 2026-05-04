@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PushSupportedProtocolsSyncTests: XCTestCase {
 
     private var sut: PushSupportedProtocolsSync!
-    private var api: SelfUserAPIMock!
+    private var api: MockSelfUserAPI!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = SelfUserAPIMock()
+        api = MockSelfUserAPI()
         store = MockUserLocalStoreProtocol()
         sut = PushSupportedProtocolsSync(api: api, store: store)
     }
@@ -43,14 +42,14 @@ final class PushSupportedProtocolsSyncTests: XCTestCase {
 
     func testPush() async throws {
         // Mock
-        api.pushSupportedProtocolsSupportedProtocolsSetMessageProtocolVoidClosure = { _ in }
+        api.pushSupportedProtocols_MockMethod = { _ in }
         store.updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod = { _ in }
 
         // When
         try await sut.push(supportedProtocols: Scaffolding.supportedProtocols)
 
         // Then
-        let apiInvocations = api.pushSupportedProtocolsSupportedProtocolsSetMessageProtocolVoidReceivedInvocations
+        let apiInvocations = api.pushSupportedProtocols_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.supportedProtocols)
 
@@ -59,12 +58,40 @@ final class PushSupportedProtocolsSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0], Scaffolding.supportedProtocols.toDomainModel())
     }
 
+    func testPush_handles_mlsProtocolError() async throws {
+        var attempts = 1
+        // Mock
+        api.pushSupportedProtocols_MockMethod = { _ in
+            if attempts == 1 {
+                attempts -= 1
+                throw SelfUserAPIError.mlsProtocolError("Cannot remove MLS PROTOCOL")
+            }
+
+        }
+        store.updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod = { _ in }
+
+        // When
+        try await sut.push(supportedProtocols: Scaffolding.proteusSupportedProtocols)
+
+        // Then
+        let apiInvocations = api.pushSupportedProtocols_Invocations
+        try XCTAssertCount(apiInvocations, count: 2)
+        XCTAssertEqual(apiInvocations[0], Scaffolding.proteusSupportedProtocols)
+        XCTAssertEqual(apiInvocations[1], Scaffolding.supportedProtocols, "Should push MLS PROTOCOL on retry")
+        let storeInvocations = store.updateSelfUserSupportedProtocolsSupportedProtocols_Invocations
+        try XCTAssertCount(storeInvocations, count: 1)
+        XCTAssertEqual(storeInvocations[0], Scaffolding.supportedProtocols.toDomainModel())
+    }
 }
 
 private enum Scaffolding {
 
-    static let supportedProtocols: Set<WireAPI.MessageProtocol> = [
+    static let supportedProtocols: Set<WireNetwork.MessageProtocol> = [
         .proteus, .mls
+    ]
+
+    static let proteusSupportedProtocols: Set<WireNetwork.MessageProtocol> = [
+        .proteus
     ]
 
 }

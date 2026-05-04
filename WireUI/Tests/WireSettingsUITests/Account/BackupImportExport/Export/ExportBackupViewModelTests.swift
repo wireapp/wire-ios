@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import XCTest
 final class ExportBackupViewModelTests: XCTestCase {
 
     private var mockCreateBackupUseCase: CreateBackupUseCaseProtocolMock!
-    private var mockCleanUpBackupsUseCase: CleanUpBackupsUseCaseProtocolMock!
+    private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
     private var mockLogger: (any LoggerProtocol)!
     private var sut: ExportBackupViewModel!
 
@@ -37,7 +37,7 @@ final class ExportBackupViewModelTests: XCTestCase {
         mockCreateBackupUseCase = .init()
 
         mockCleanUpBackupsUseCase = .init()
-        mockCleanUpBackupsUseCase.invokeVoidClosure = {}
+        mockCleanUpBackupsUseCase.invoke_MockMethod = {}
 
         mockLogger = WireLogger(tag: "mock")
 
@@ -83,7 +83,7 @@ final class ExportBackupViewModelTests: XCTestCase {
 
         continuation.finish()
         sut.cancel()
-        wait(forConditionToBeTrue: self.mockCleanUpBackupsUseCase.invokeVoidCallsCount > 0, timeout: 3)
+        wait(forConditionToBeTrue: !self.mockCleanUpBackupsUseCase.invoke_Invocations.isEmpty, timeout: 3)
     }
 
     func testCancelTerminatesTask() {

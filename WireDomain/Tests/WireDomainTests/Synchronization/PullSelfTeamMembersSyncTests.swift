@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class PullSelfTeamMembersSyncTests: XCTestCase {
 
     private var sut: PullSelfTeamMembersSync!
-    private var api: TeamsAPIMock!
+    private var api: MockTeamsAPI!
     private var store: MockTeamLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = TeamsAPIMock()
+        api = MockTeamsAPI()
         store = MockTeamLocalStoreProtocol()
         sut = PullSelfTeamMembersSync(api: api, store: store)
     }
@@ -43,7 +42,7 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReturnValue = Scaffolding.remoteMembers
+        api.getTeamMembersForMaxResults_MockValue = Scaffolding.remoteMembers
 
         store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
 
@@ -51,7 +50,7 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReceivedInvocations
+        let apiInvocations = api.getTeamMembersForMaxResults_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].maxResults, 2000)

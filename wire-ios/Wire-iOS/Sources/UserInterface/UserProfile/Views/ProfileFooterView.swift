@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 
 protocol ProfileFooterViewDelegate: AnyObject {
 
@@ -44,8 +45,8 @@ final class ProfileFooterView: ConversationDetailFooterView {
     // MARK: - Configuration
 
     override func setupButtons() {
-        leftButton.accessibilityIdentifier = "left_button"
-        rightButton.accessibilityIdentifier = "right_button"
+        leftButton.accessibilityIdentifier = Locators.UserDetailsPage.connectLeftButton.rawValue
+        rightButton.accessibilityIdentifier = Locators.UserDetailsPage.moreOptionRightButton.rawValue
         rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
