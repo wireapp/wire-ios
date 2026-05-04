@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@ import WireCommonComponents
 import WireConversationListUI
 import WireDataModel
 import WireDesign
+import WireFoundation
+import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -34,6 +37,7 @@ final class ConversationListViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
@@ -41,6 +45,7 @@ final class ConversationListViewController: UIViewController {
 
     private static let contentControllerBottomInset: CGFloat = 16
     private var userDefaultsObservation: NSKeyValueObservation?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     private lazy var filterContainerView = UIView()
 
@@ -115,7 +120,7 @@ final class ConversationListViewController: UIViewController {
 
     weak var accountImageView: AccountImageView?
 
-    let networkStatusViewController = NetworkStatusViewController()
+    let networkStatusViewController: NetworkStatusViewController
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
 
     var mainSplitViewState: MainSplitViewState = .expanded {
@@ -138,6 +143,7 @@ final class ConversationListViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
@@ -157,6 +163,7 @@ final class ConversationListViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
             folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
         )
@@ -168,6 +175,7 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
@@ -176,6 +184,7 @@ final class ConversationListViewController: UIViewController {
         self.zClientViewController = zClientViewController
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
@@ -187,9 +196,11 @@ final class ConversationListViewController: UIViewController {
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
+        self.networkStatusViewController = NetworkStatusViewController(userSession: viewModel.userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -382,6 +393,7 @@ final class ConversationListViewController: UIViewController {
             self?.presentCreateConversationUI()
         }
         emptyPlaceholderView = EmptyPlaceholderContainerView(
+            wireAccentColor: WireAccentColor(rawValue: viewModel.userSession.selfUser.accentColorValue) ?? .default,
             content: emptyPlaceholderForSelectedFilter,
             connectWithPeopleAction: connectWithPeopleAction,
             newConversationAction: createConversation
@@ -482,6 +494,11 @@ final class ConversationListViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
@@ -592,7 +609,10 @@ final class ConversationListViewController: UIViewController {
 
     private func presentConnectUI() {
         Task {
-            let rootViewController = await connectViewControllerBuilder.build()
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, view controller is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)

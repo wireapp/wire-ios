@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ package struct ReloginViaSSOView: View {
 
     @ViewBuilder private var expirationMessage: some View {
         Text(Strings.expirationMessage)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .multilineTextAlignment(.center)
             .foregroundStyle(Color.primaryText)
     }
@@ -99,11 +99,10 @@ package struct ReloginViaSSOView: View {
         LabeledTextField(
             placeholder: Strings.InputCode.placeholder,
             title: Strings.InputCode.title,
-            string: $viewModel.rawSSOCode
+            string: $viewModel.rawSSOCode,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
     }
 
     @ViewBuilder private var submitButton: some View {

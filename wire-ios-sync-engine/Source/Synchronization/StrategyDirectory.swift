@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,10 +25,9 @@ import WireRequestStrategy
 @objc
 public protocol StrategyDirectoryProtocol {
 
-    var eventConsumers: [ZMEventConsumer] { get }
-    var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
     var contextChangeTrackers: [ZMContextChangeTracker] { get }
+    var clientContextChangeTrackers: [ZMContextChangeTracker] { get }
 
 }
 
@@ -37,11 +36,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     public private(set) var strategies: [Any]
     public private(set) var requestStrategies: [RequestStrategy]
-    public private(set) var eventConsumers: [ZMEventConsumer]
-    public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
-    public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
-        .InitiateResetMLSConversationUseCaseProtocol
+    public private(set) var clientContextChangeTrackers: [ZMContextChangeTracker] = []
 
     init(
         contextProvider: ContextProvider,
@@ -49,17 +45,12 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         cookieStorage: ZMPersistentCookieStorage,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
-        updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
-        initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
-            .InitiateResetMLSConversationUseCaseProtocol,
         metadata: BackendMetadataProvider
     ) {
         self.strategies = Self.buildStrategies(
@@ -68,22 +59,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             cookieStorage: cookieStorage,
             pushMessageHandler: pushMessageHandler,
             flowManager: flowManager,
-            updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
-            lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache,
             metadata: metadata
         )
-        self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
-
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
-        self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
-        self.eventAsyncConsumers = strategies.compactMap { $0 as? ZMEventAsyncConsumer }
         self.contextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
             if let source = object as? ZMContextChangeTrackerSource {
                 return source.contextChangeTrackers
@@ -109,29 +93,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         cookieStorage: ZMPersistentCookieStorage,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
-        updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
         metadata: BackendMetadataProvider
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
-        let featureRepository = LegacyFeatureRepository(context: syncMOC)
-
-        let mlsFeature = featureRepository.fetchMLS()
-        let oneOnOneResolver = LegacyOneOnOneResolver(
-            migrator: OneOnOneMigrator(mlsService: mlsService),
-            isMLSEnabled: mlsFeature.isEnabled
-        )
-        let mlsClientManager = MLSClientManager(
-            coreCryptoProvider: coreCryptoProvider,
-            mlsService: mlsService
-        )
 
         var isCloudDomain = false
         if let localDomain = metadata.domain, BackendEnvironment2.isCloudDomain(localDomain) {
@@ -143,16 +113,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider
-            ),
-            ZMMissingUpdateEventsTranscoder(
-                managedObjectContext: syncMOC,
-                eventProcessor: updateEventProcessor,
-                applicationStatus: applicationStatusDirectory,
-                pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-                syncStatus: applicationStatusDirectory.syncStatus,
-                operationStatus: applicationStatusDirectory.operationStatus,
-                lastEventIDRepository: lastEventIDRepository
+                proteusService: proteusService
             ),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -233,16 +194,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),
-            SearchUserImageStrategy(
-                applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC,
-                searchUsersCache: searchUsersCache
-            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: oneOnOneResolver,
                 apiVersion: metadata.apiVersion,
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
@@ -250,7 +204,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
                 removeLocalConversation: RemoveLocalConversationUseCase(),
                 apiVersion: metadata.apiVersion,
@@ -260,47 +213,30 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus,
-                oneOnOneResolver: oneOnOneResolver,
                 apiVersion: metadata.apiVersion,
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),
-            ZMLastUpdateEventIDTranscoder(
-                managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus,
-                lastEventIDRepository: lastEventIDRepository
-            ),
             ZMSelfStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                syncStatus: applicationStatusDirectory.syncStatus
+                clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus
             ) as Any,
             SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
-            LegalHoldRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
-            ),
             TeamDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
+                applicationStatus: applicationStatusDirectory
             ),
             TeamRolesDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
+                applicationStatus: applicationStatusDirectory
             ),
             TeamMembersDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
+                applicationStatus: applicationStatusDirectory
             ),
             PermissionsDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -326,11 +262,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 localDomain: metadata.domain
             ),
-            LabelDownstreamRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus
-            ),
             LabelUpstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
@@ -339,38 +270,17 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
-            SignatureRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
-            ),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus,
-                mlsClientManager: mlsClientManager,
                 apiVersion: metadata.apiVersion
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus
-            ),
-            TerminateFederationRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
             ),
             ConversationStatusStrategy(
                 managedObjectContext: syncMOC
-            ),
-            UserClientEventConsumer(
-                managedObjectContext: syncMOC,
-                clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
-                    context: syncMOC,
-                    resolver: oneOnOneResolver,
-                    pullSelfUserClientsFactory: pullSelfUserClientsFactory
-                )
             ),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
@@ -385,28 +295,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
-            ),
-            SelfSupportedProtocolsRequestStrategy(
-                context: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus,
-                selfUserProvider: WireDomain.SelfUserProvider(context: syncMOC)
-            ),
-            EvaluateOneOnOneConversationsStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
     }
 
-    func makeClientRelatedStategies(
+    func makeClientRelatedStrategies(
         applicationStatusDirectory: ApplicationStatusDirectory,
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        initiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol,
         metadata: BackendMetadataProvider
     ) {
         syncContext.performAndWait {
@@ -427,7 +327,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
-                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
                 apiVersion: metadata.apiVersion
             )
@@ -440,10 +340,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 ClientMessageRequestStrategy(
                     context: syncContext,
                     localNotificationDispatcher: pushMessageHandler,
-                    messageSender: messageSender
-                ),
-                DeliveryReceiptRequestStrategy(
-                    managedObjectContext: syncContext,
                     messageSender: messageSender
                 ),
                 AvailabilityRequestStrategy(
@@ -470,34 +366,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
             self.strategies.append(contentsOf: strategies)
             self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
-            self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
-            self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
-            self.contextChangeTrackers
-                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
-                    if let source = object as? ZMContextChangeTrackerSource {
-                        return source.contextChangeTrackers
-                    } else if let tracker = object as? ZMContextChangeTracker {
-                        return [tracker]
-                    } else {
-                        return []
-                    }
-                })
+            self.clientContextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                if let source = object as? ZMContextChangeTrackerSource {
+                    return source.contextChangeTrackers
+                } else if let tracker = object as? ZMContextChangeTracker {
+                    return [tracker]
+                } else {
+                    return []
+                }
+            }
+            self.contextChangeTrackers.append(contentsOf: clientContextChangeTrackers)
         }
-    }
-
-    // MARK: Use Cases
-
-    private static func makeResolveOneOnOneConversationsUseCase(
-        context: NSManagedObjectContext,
-        resolver: any OneOnOneResolverInterface,
-        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
-    ) -> any LegacyResolveOneOnOneConversationsUseCaseProtocol {
-
-        LegacyResolveOneOnOneConversationsUseCase(
-            context: context,
-            supportedProtocolService: LegacySupportedProtocolsService(context: context),
-            resolver: resolver,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory
-        )
     }
 }

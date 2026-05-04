@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ public final class E2EIService: E2EIServiceInterface {
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
     private let defaultDPoPTokenExpiry: UInt32 = 30
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }

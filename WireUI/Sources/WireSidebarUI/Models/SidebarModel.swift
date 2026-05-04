@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
 //
 
 import UIKit
+import WireDesign
 import WireFoundation
 
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.
 /// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a
 /// reference.
+
 final class SidebarModel: ObservableObject {
 
     @Published var wireAccentColor: WireAccentColor = .default
-    @Published var wireAccentColorMapping: WireAccentColorMapping?
-    @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = defaultTextColor
     @Published var sidebarAccountInfoViewUsernameColor: UIColor = .gray

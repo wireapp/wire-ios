@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ class MLSAPITests_SwiftTesting {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1 ... 1000)
+    static let epoch: UInt64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
 
 }

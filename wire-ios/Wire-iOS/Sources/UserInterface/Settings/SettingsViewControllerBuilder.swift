@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator,
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: userSession.resolvedBackendMetadata.domain,
-            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
     }
 
@@ -74,7 +74,11 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
         )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        return .init(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
+        )
     }
 
     func build(
@@ -112,12 +116,19 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
     private func buildDevices() -> UIViewController {
-        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+        ClientListViewController(
+            clientsList: .none,
+            selfClient: userSession.selfUserClient,
+            userSession: userSession,
+            contextProvider: userSession.contextProvider,
+            detailedView: true
+        )
     }
 
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
@@ -127,7 +138,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.optionsGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -141,7 +153,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -152,7 +165,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.helpSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -163,7 +177,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.aboutSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -174,7 +189,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.developerGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 }

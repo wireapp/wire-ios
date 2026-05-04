@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import WireDesign
 import WireDomainPackage
 import WireFoundation
 import WireIndividualToTeamMigrationUI
+import WireLocators
 import WireMainNavigationUI
 import WireMultiBackendUI
 import WireNetwork
@@ -48,12 +49,11 @@ final class SelfProfileViewController: UIViewController {
     private var bottomController: UIViewController!
     private var settingsController: SettingsTableViewController?
     private var accountSwitcherViewController: AccountSwitcherHostingController?
-    private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
     private var profileLayoutGuideBannerTopConstraint = NSLayoutConstraint()
     private let profileHeaderViewController: ProfileHeaderViewController
-    private let profileImagePicker = ProfileImagePickerManager()
+    private let profileImagePicker: ProfileImagePickerManager
     private var teamMigrationBanner: UIViewController?
 
     private let accountSelector: AccountSelector?
@@ -96,9 +96,9 @@ final class SelfProfileViewController: UIViewController {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: userSession.resolvedBackendMetadata.domain,
-            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
@@ -121,6 +121,7 @@ final class SelfProfileViewController: UIViewController {
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
+        self.profileImagePicker = ProfileImagePickerManager(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
@@ -131,24 +132,19 @@ final class SelfProfileViewController: UIViewController {
             let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
-            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-                actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
-                }
-            )
+            let accentColor = WireAccentColor(rawValue: selfUser.accentColorValue) ?? .default
+            let upgradeBanner = SelfProfileViewCallToActionBanner { [weak self] in
+                self?.onTeamCreationBannerInteraction(apiVersion: apiVersion)
+            }.environment(\.wireAccentColor, accentColor)
+            self.teamMigrationBanner = UIHostingController(rootView: upgradeBanner)
+            teamMigrationBanner?.view.backgroundColor = .clear
         }
 
-        if DeveloperFlag.multibackend.isOn {
-            let accountSwitcherViewController = makeAccountSwitcherViewController(
-                settingsCellDescriptorFactory: settingsCellDescriptorFactory
-            )
-            self.bottomController = accountSwitcherViewController
-            self.accountSwitcherViewController = accountSwitcherViewController
-        } else {
-            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-            self.bottomController = settingsController
-            self.settingsController = settingsController
-        }
+        let accountSwitcherViewController = makeAccountSwitcherViewController(
+            settingsCellDescriptorFactory: settingsCellDescriptorFactory
+        )
+        self.bottomController = accountSwitcherViewController
+        self.accountSwitcherViewController = accountSwitcherViewController
     }
 
     private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory)
@@ -221,10 +217,11 @@ final class SelfProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         selfProfileViewsMonitor.onDidViewSelfProfile()
-        configureAccountTitle()
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+        let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.dismiss()
         }, accessibilityLabel: L10n.Localizable.General.close)
+        closeButton.accessibilityIdentifier = Locators.UserProfilePage.close.rawValue
+        navigationItem.rightBarButtonItem = closeButton
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.backButtonDisplayMode = .minimal
     }
@@ -234,21 +231,6 @@ final class SelfProfileViewController: UIViewController {
 
         if !presentNewLoginAlertControllerIfNeeded() {
             presentUserSettingChangeControllerIfNeeded()
-        }
-    }
-
-    private func configureAccountTitle() {
-        guard !DeveloperFlag.multibackend.isOn else {
-            return
-        }
-        if let accounts = accountManager?.sortedAccounts(), accounts.count > 1 {
-            let accountSelectorView = AccountSelectorView()
-            accountSelectorView.delegate = self
-            accountSelectorView.accounts = accounts
-            navigationItem.titleView = accountSelectorView
-            self.accountSelectorView = accountSelectorView
-        } else {
-            setupNavigationBarTitle(L10n.Localizable.Self.account)
         }
     }
 
@@ -309,27 +291,22 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Events
 
     private func onTeamCreationBannerInteraction(
-        _ action: SelfProfileViewCallToActionBanner.Action,
         apiVersion: WireNetwork.APIVersion
     ) {
-        switch action {
-        case .createWireTeam:
-            let sessionContextProvider = userSession.contextProvider
-            let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
-            guard let userName = user.normalizedName,
-                  let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase() else {
-                return
-            }
-            userDidTapCreateTeam(useCase: useCase, userName: userName)
+        let user = ZMUser.selfUser(in: userSession.contextProvider.viewContext)
+        guard let userName = user.normalizedName,
+              let useCase = SessionManager.shared?.activeUserSession?
+              .createIndividualToTeamMigrationUseCase() else {
+            return
         }
+        userDidTapCreateTeam(useCase: useCase, userName: userName)
     }
 
     func triggerCreateTeamFlow() {
         if let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
-            onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
+            onTeamCreationBannerInteraction(apiVersion: apiVersion)
         }
     }
 
@@ -436,20 +413,6 @@ final class SelfProfileViewController: UIViewController {
         dismiss(animated: true)
         return true
     }
-}
-
-// MARK: - UIAdaptivePresentationControllerDelegate
-
-extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
-
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        sendDismissAnalyticsEventIfNeeded()
-    }
-}
-
-// MARK: - AccountSelectorViewDelegate
-
-extension SelfProfileViewController: AccountSelectorViewDelegate {
 
     private func handleAccountSelected(_ account: Account) {
         guard accountManager?.selectedAccount != account else { return }
@@ -462,9 +425,14 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+}
 
-    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
-        handleAccountSelected(account)
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        sendDismissAnalyticsEventIfNeeded()
     }
 }
 

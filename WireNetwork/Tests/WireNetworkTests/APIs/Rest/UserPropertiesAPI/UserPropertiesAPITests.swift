@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,19 +42,37 @@ final class UserPropertiesAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetLabelsRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUserLabelsPropertySuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getLabels()
         }
     }
 
     func testGetWireIndicatorModeRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUserReceiptModePropertySuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.areTypingIndicatorsEnabled
         }
     }
 
     func testGetWireReceiptModeRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUserTypingIndicatorModePropertySuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.areReadReceiptsEnabled
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
+                userSession: userSession,
                 credentials: credentials
             ) { [logger] error in
                 if let error {

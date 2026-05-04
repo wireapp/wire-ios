@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,21 @@ extension WireNetwork.MessageProtocol {
         case .proteus: .proteus
         }
     }
+}
+
+extension WireNetwork.UserType {
+
+    func toDomainModel() -> WireDataModel.TypeOfUser {
+        switch self {
+        case .regular:
+            .regular
+        case .app:
+            .app
+        case .bot:
+            .bot
+        }
+    }
+
 }
 
 extension WireNetwork.UserClientType {
@@ -135,6 +150,7 @@ extension WireNetwork.User {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: type?.toDomainModel(),
             accentID: accentID,
             previewAssetKey: assets
                 .first(where: { $0.size == .preview })
@@ -145,6 +161,8 @@ extension WireNetwork.User {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()
@@ -162,6 +180,7 @@ extension WireNetwork.SelfUser {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: .regular,
             accentID: accentID,
             previewAssetKey: assets?
                 .first(where: { $0.size == .preview })
@@ -172,6 +191,8 @@ extension WireNetwork.SelfUser {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()

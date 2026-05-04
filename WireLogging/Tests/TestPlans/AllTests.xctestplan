@@ -1,20 +1,20 @@
 {
   "configurations" : [
     {
-      "id" : "8C7B2297-3D36-4CFC-9B55-BF2CC1C85BF4",
-      "name" : "Configuration 1",
+      "id" : "8DA8C849-71C0-4072-92BA-9AF39BAA1039",
+      "name" : "Test Scheme Action",
       "options" : {
 
       }
     }
   ],
   "defaultOptions" : {
-
+    "performanceAntipatternCheckerEnabled" : true
   },
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireLogging",
         "identifier" : "WireLoggingTests",
         "name" : "WireLoggingTests"
       }

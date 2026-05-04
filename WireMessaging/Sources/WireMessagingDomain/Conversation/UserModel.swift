@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,26 @@
 
 public import Foundation
 
+// To be refined later
 public struct UserModel: Sendable {
-    // To be refined later
+
+    // 'objectID' to abstract id from data layer hide behind abstract 'any Sendable'
+    // used as a way to map domain models back to data models
+    public let objectID: any Sendable
+
     public let remoteIdentifier: UUID
     public let name: String?
     public let handle: String?
 
-    public init(remoteIdentifier: UUID, name: String?, handle: String?) {
+    public init(
+        objectID: any Sendable,
+        remoteIdentifier: UUID,
+        name: String?,
+        handle: String?
+    ) {
         self.remoteIdentifier = remoteIdentifier
         self.name = name
         self.handle = handle
+        self.objectID = objectID
     }
-
 }

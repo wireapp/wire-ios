@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -273,6 +273,25 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(self.otherUser.handle, oldHandle)
+        }
+    }
+
+    func testUpdateUserProfile_UpdatesType() throws {
+        syncMOC.performGroupedAndWait {
+            // given
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
+            let type = Payload.UserType.app
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, type: type)
+
+            // when
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
+
+            // then
+            XCTAssertEqual(self.otherUser.type, .app)
         }
     }
 

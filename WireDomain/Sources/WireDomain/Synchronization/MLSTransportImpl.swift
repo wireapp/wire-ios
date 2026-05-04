@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireCoreCrypto
+import WireDataModel
 import WireLogging
 import WireNetwork
 
@@ -41,7 +42,14 @@ final class MLSTransportImpl: MlsTransport {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
             do {
-                return .abort(reason: try error.encodeAsString())
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .sortedKeys
+                let encodableError = MLSTransportError(error)
+                let string = String(
+                    decoding: try encoder.encode(encodableError),
+                    as: UTF8.self
+                )
+                return .abort(reason: string)
             } catch {
                 return .abort(reason: "failed to encode error")
             }

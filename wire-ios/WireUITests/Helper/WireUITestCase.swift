@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,29 +19,42 @@
 // Methods to reset app or simulator caused issues, so instead
 // of using a script in the scheme, we delete the app using springboard
 
+import WireFoundation
 import XCTest
 
 class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let userHelper = UserHelper()
+    var userHelper: UserHelper!
+    var ssoHelper: SSOHelper!
+    let testServicesClient = TestServicesClient()
+    var callingServiceClient: CallingServiceClient!
+    var uiTestConfig = UITestConfig()
+    private var notificationPermissionMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUpWithError() throws {
+        // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
+        dismissAllowIfPresent()
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
+        registerNotificationPermissionMonitor()
 
         let launchArguments = [
             "-resetData",
-            "--useEnvStaging",
-            "--preferred-api-version=8"
+            "--useEnvStaging"
         ]
+
+        userHelper = UserHelper()
+        ssoHelper = SSOHelper()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
-            .useWireAuthentication: true,
-            .multibackend: true
+            .useWireAuthentication: true
         ])
         app.launch()
 
@@ -50,8 +63,12 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    @MainActor
     override func tearDown() async throws {
+        await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
+        userHelper = nil
+        await ssoHelper.cleanUpOktaResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -96,5 +113,41 @@ class WireUITestCase: XCTestCase {
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
         // need to change for Inbucket
         BackendContext.current = target
+    }
+
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        if alert.buttons["Allow"].exists {
+            alert.buttons["Allow"].tap()
+        }
+    }
+
+    @MainActor
+    func loginToBackend(user: UserInfo) async throws -> ConversationsPage {
+        print("login: email \(user.email) and password \(user.password)")
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
+        return try firstTimePage
+            .acceptPopup()
+    }
+
+    func registerNotificationPermissionMonitor() {
+        guard notificationPermissionMonitor == nil else { return }
+
+        notificationPermissionMonitor =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                let allowButton = alertElement.buttons["Allow"].firstMatch
+
+                guard alertElement.label.contains(notifPermission),
+                      allowButton.waitForExistence(timeout: 1) else {
+                    return false
+                }
+
+                allowButton.tap()
+                return true
+            }
     }
 }

@@ -35,6 +35,20 @@
                ReferencedContainer = "container:WireCalling">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireCallingUITests"
+               BuildableName = "WireCallingUITests"
+               BlueprintName = "WireCallingUITests"
+               ReferencedContainer = "container:WireCalling">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

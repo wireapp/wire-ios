@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,28 +46,35 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     init(
         multipartMessage: MultipartMessageData,
-        isSimpleChatBubblesEnabled: Bool,
         isSentBySelfUser: Bool
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
-            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading
+            alignment: isSentBySelfUser ? .trailing : .leading
         )
 
         let attachments = multipartMessage.attachments.map {
-            WireCellsMessageAttachment(
+            WireDriveMessageAttachment(
                 nodeID: $0.nodeID,
                 contentType: $0.contentType,
                 initialName: $0.initialName,
                 initialSize: $0.initialSize,
-                initialMetadata: nil
+                initialMetadata: $0.initialMetadata.map { metadata in
+                    switch metadata {
+                    case let .image(width: width, height: height):
+                        .image(width: width, height: height)
+                    case let .video(width: width, height: height, duration: duration):
+                        .video(width: width, height: height, duration: duration)
+                    case let .audio(duration: duration, normalizedLoudness: normalizedLoudness):
+                        .audio(duration: duration, normalizedLoudness: normalizedLoudness)
+                    }
+                }
             )
         }
 
         self.model = MultipartAttachmentsModel(
             attachments: attachments,
             isSentBySelfUser: isSentBySelfUser,
-            isChatBubblesEnabled: isSimpleChatBubblesEnabled
         )
 
     }

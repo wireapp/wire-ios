@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     typealias ConversationListUI = PreviewConversationListViewController
     typealias ArchiveUI = UIViewController
     typealias SettingsUI = UIViewController
+    typealias MeetingsUI = UIViewController
     typealias FilesUI = UIViewController
 
     typealias ConversationUI = MockConversationViewController<PreviewConversationModel>
@@ -38,6 +39,7 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     var connectUI: ConnectUI?
     var settingsUI: SettingsUI?
     var conversationUI: ConversationUI?
+    var meetingsUI: MeetingsUI?
     var settingsContentUI: SettingsContentUI?
     var filesUI: FilesUI?
     var tabController: MockTabBarController!
@@ -51,6 +53,10 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     }
 
     func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 

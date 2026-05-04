@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-@objc
+@objc(ZMContextProvider)
 public protocol ContextProvider {
 
     var account: Account { get }
@@ -48,8 +48,8 @@ public protocol ContextProvider {
     var viewContext: NSManagedObjectContext { get }
     func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
-    var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -112,10 +112,12 @@ public protocol CoreDataStackProtocol: ContextProvider {
 
     func load() async throws
 
+    func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol)
+
 }
 
-@objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol {
+@objc @objcMembers
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
@@ -123,19 +125,37 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         messagesContainer.viewContext
     }
 
+    private var earMessageEncryptionService: EARMessageEncryptionServiceProtocol?
+
     public func newBackgroundContext() -> NSManagedObjectContext {
         #if DEBUG
-            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+            let context = newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
         #else
-            return messagesContainer.newBackgroundContext()
+            let context = messagesContainer.newBackgroundContext()
         #endif
+
+        // Set the EARMessageEncryptionService on the new background context
+        context.performAndWait {
+            context.earMessageEncryptionService = earMessageEncryptionService
+        }
+
+        return context
     }
 
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    public func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol) {
+        earMessageEncryptionService = service
+    }
 
-    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    private var _syncContext: NSManagedObjectContext!
+    private var _eventContext: NSManagedObjectContext!
 
-    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
+    public var syncContext: NSManagedObjectContext {
+        _syncContext
+    }
+
+    public var eventContext: NSManagedObjectContext {
+        _eventContext
+    }
 
     public let accountContainer: URL
     public let applicationContainer: URL
@@ -180,8 +200,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         self.accountContainer = accountDirectory
 
-        let eventContainer = PersistentContainer(name: "ZMEventModel")
-        let messagesContainer = PersistentContainer(name: "zmessaging")
+        let eventContainer = PersistentContainer(
+            name: "ZMEventModel",
+            managedObjectModel: CoreDataStack.loadEventsModel()
+        )
+        let messagesContainer = PersistentContainer(
+            name: "zmessaging",
+            managedObjectModel: CoreDataStack.loadMessagingModel()
+        )
 
         let description: NSPersistentStoreDescription
         let eventStoreDescription: NSPersistentStoreDescription
@@ -241,9 +267,15 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         defer { hasBeenClosed = true }
 
         viewContext.tearDown()
-        syncContext.tearDown()
-        searchContext.tearDown()
-        eventContext.tearDown()
+
+        // Only tear down contexts if they were initialized
+        if _syncContext != nil {
+            syncContext.tearDown()
+        }
+        if _eventContext != nil {
+            eventContext.tearDown()
+        }
+
         closeStores()
     }
 
@@ -297,10 +329,12 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                 }
             }
 
-            await configureContextReferences()
+            // Initialize syncContext before configuration
+            _syncContext = messagesContainer.newBackgroundContext()
+
             await configureViewContext(viewContext)
-            await configureSyncContext(syncContext)
-            await configureSearchContext(searchContext)
+            await configureSyncContext(_syncContext)
+            await configureContextReferences()
 
         } catch {
             WireLogger.localStorage.critical(
@@ -329,7 +363,10 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                 }
             }
 
-            await configureEventContext(eventContext)
+            // Initialize eventContext before configuration
+            _eventContext = eventsContainer.newBackgroundContext()
+
+            await configureEventContext(_eventContext)
 
         } catch {
             WireLogger.localStorage.critical(
@@ -384,8 +421,10 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        context.markAsSyncContext()
         await context.perform {
+            // Mark as sync context directly (already on context's queue)
+            context.markAsSyncContext()
+
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
@@ -395,30 +434,10 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
             context.accountDirectoryURL = self.accountContainer
             context.applicationContainerURL = self.applicationContainer
 
-            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-                context.setupUserKeyStore(
-                    accountDirectory: self.accountContainer,
-                    applicationContainer: self.applicationContainer
-                )
-            }
-
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
             LegacyFeatureRepository(context: context).createDefaultConfigsIfNeeded()
-        }
-    }
-
-    func configureSearchContext(_ context: NSManagedObjectContext) async {
-        context.markAsSearch()
-        await context.perform {
-            context.localDomain = self.localDomain
-            context.isFederationEnabled = self.isFederationEnabled
-            context.createDispatchGroups()
-            self.dispatchGroup.map(context.addGroup(_:))
-            context.setupLocalCachedSessionAndSelfUser()
-            context.undoManager = nil
-            context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         }
     }
 
@@ -427,13 +446,6 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
         }
-    }
-
-    public func linkContexts() {
-        syncContext.performGroupedAndWait {
-            self.syncContext.zm_userInterface = self.viewContext
-        }
-        viewContext.zm_sync = syncContext
     }
 
     // MARK: - Static Helpers
@@ -445,7 +457,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadMessagingModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL
@@ -458,7 +470,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadEventsModel() -> NSManagedObjectModel {
-        let modelBundle = WireDataModelBundle.bundle
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL

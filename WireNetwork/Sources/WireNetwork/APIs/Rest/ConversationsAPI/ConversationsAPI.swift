@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,23 +23,24 @@ public import Foundation
 public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]>
+    func getLegacyConversationIdentifiers() throws -> PayloadPager<[UUID]>
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
+    func getConversationIdentifiers() throws -> PayloadPager<[QualifiedID]>
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
 
     /// Fetches a user MLS one to one conversation.
-    /// - parameters:
-    ///     - userID: The user ID to fetch the MLS one to one conversation for.
-    ///     - domain: The domain of the one to one conversation.
+    /// - Parameters:
+    ///   - userID: The user ID to fetch the MLS one to one conversation for.
+    ///   - domain: The domain of the one to one conversation.
+    /// - Returns: The 1:1 mls conversation and it's mls public keys (from ``APIVersion`` v6)
 
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String
-    ) async throws -> Conversation
+    ) async throws -> (Conversation, MLSPublicKeys?)
 
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation identifier.
@@ -52,11 +53,9 @@ public protocol ConversationsAPI {
     /// Creates a group conversation given provided parameters.
     /// - parameter parameters: API body parameters required to create the group.
     /// - returns: The created group conversation.
-
     func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation
-
     /// Add channel permission.
     /// - parameter conversationID: The conversation ID.
     /// - parameter conversationDomain: The conversation domain.
@@ -69,5 +68,11 @@ public protocol ConversationsAPI {
         conversationDomain: String,
         permission: ChannelPermission
     ) async throws -> ChannelPermission
+
+    func updateConversationAccess(
+        conversationID: QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         guard 1 ... 1000 ~= identifiers.count else {
             throw ConversationsAPIError.illegalArgument(
-                message: "identifiers must contain between 1 and 1000 elements, got  \(identifiers.count)"
+                message: "identifiers must contain between 1 and 1000 elements, got \(identifiers.count)"
             )
         }
 
@@ -55,7 +55,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
     override func getMLSOneToOneConversation(
         userID: String,
         in domain: String
-    ) async throws -> Conversation {
+    ) async throws -> (Conversation, MLSPublicKeys?) {
         guard !userID.isEmpty, !domain.isEmpty else {
             throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
         }
@@ -71,11 +71,13 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             requiringAccessToken: true
         )
 
-        return try ResponseParser()
+        let conversation = try ResponseParser()
             .success(code: .ok, type: ConversationV5.self)
             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
+
+        return (conversation, nil)
     }
 
     override func createGroupConversation(
@@ -132,6 +134,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             }
         }
     }
+
 }
 
 // MARK: Decodables
@@ -156,7 +159,7 @@ private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct ConversationV5: Decodable, ToAPIModelConvertible {
+struct ConversationV5: Decodable, ToAPIModelConvertible, DecodableConversation {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRoles = "access_role"

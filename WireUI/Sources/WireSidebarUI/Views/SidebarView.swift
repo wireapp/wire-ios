@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
@@ -163,7 +163,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private func menuItemHeader(_ title: String, addTopPadding: Bool = true) -> some View {
         let text = Text(title)
             .foregroundStyle(menuHeaderForegroundColor)
-            .wireTextStyle(.h2)
+            .font(for: .h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
             .accessibilityAddTraits(.isHeader)
@@ -194,7 +194,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text.wireTextStyle(.body1) },
+            title: { text.font(for: .body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )
@@ -302,7 +302,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
-            title: { text.wireTextStyle(.body1) },
+            title: { text.font(for: .body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )

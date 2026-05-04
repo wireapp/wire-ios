@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,19 @@
 
 @objc(ZMTypeOfUser)
 public enum TypeOfUser: Int16, CaseIterable, Sendable {
-    /// Regular users
+
+    /// Regular users (default)
+
     case regular
-    /// Apps
+
+    /// Apps (new services, only supporting MLS)
+
     case app
-    /// Old style bots (services)
+
+    /// Old-style bots (services for Proteus only)
+
     case bot
+
 }
 
 extension TypeOfUser: CustomDebugStringConvertible {

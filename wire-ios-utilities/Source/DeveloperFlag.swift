@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,25 +22,24 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case createLegacyBackups
-    case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
-    case forceDatabaseLoadingFailure
-    case ignoreIncomingEvents
-    case skipMLSMessagesDecryption
-    case debugDuplicateObjects
-    case decryptAndStoreEventsSleep
-    case forceCRLExpiryAfterOneMinute
-    case useWireAuthentication
-    case disablePushChannelBatching
-    case multibackend
-    case newRegistration
-    case showUnreadConversationsFilter
     case channelsHistory
     case chatBubbles
-    case chatBubblesSimple
     case consumableNotifications
+    case createLegacyBackups
+    case debugDuplicateObjects
+    case decryptAndStoreEventsSleep
+    case disablePushChannelBatching
+    case forceCRLExpiryAfterOneMinute
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case newRegistration
+    case showCreateMLSGroupToggle
+    case showUnreadConversationsFilter
+    case skipMLSMessagesDecryption
+    case useWireAuthentication
     case wireMeetings
+    case lowKeyPackageCount
+    case enabledCCDebugLogs
 
     public var description: String {
         switch self {
@@ -49,9 +48,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             "Turn on to force database loading failure in the process of database migration"
@@ -77,9 +73,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .disablePushChannelBatching:
             "Turn on to disable batching while app is live"
 
-        case .multibackend:
-            "Turn on to be able to log in with accounts from multiple backends"
-
         case .newRegistration:
             "Turn on to use the new registration flow"
 
@@ -92,14 +85,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
 
-        case .chatBubblesSimple:
-            "Turn on the simplified version of chat bubbles"
-
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
+
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
+
+        case .enabledCCDebugLogs:
+            "Turn on to enable Core Crypto debug logs"
         }
     }
 
@@ -130,16 +126,12 @@ public enum DeveloperFlag: String, CaseIterable {
         switch self {
         case .createLegacyBackups:
             "CreateLegacyBackupsEnabled"
-        case .proteusViaCoreCrypto:
-            "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
-        case .multibackend:
-            "MultibackendEnabled"
         default:
             nil
         }

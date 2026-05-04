@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,10 +46,11 @@ struct IsBuildBlacklistedUseCaseTest {
         )
 
         // When
-        let isBlacklisted = try await sut.invoke()
+        let (isBlacklisted, error) = await sut.invoke()
 
         // Then
         #expect(isBlacklisted == true)
+        #expect(error == nil)
     }
 
     @Test(
@@ -64,10 +65,31 @@ struct IsBuildBlacklistedUseCaseTest {
         )
 
         // When
-        let isBlacklisted = try await sut.invoke()
+        let (isBlacklisted, error) = await sut.invoke()
 
         // Then
         #expect(isBlacklisted == false)
+        #expect(error == nil)
+    }
+
+    @Test("Failures are equivalent to empty blacklist")
+    func failuresAreEquivalentToEmptyBlacklist() async throws {
+        struct SomeError: Error {}
+
+        // Given
+        let sut = IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: "1",
+            api: api
+        )
+
+        api.getBlacklist_MockError = SomeError()
+
+        // When
+        let (isBlacklisted, error) = await sut.invoke()
+
+        // Then
+        #expect(isBlacklisted == false)
+        #expect(error is SomeError)
     }
 
 }

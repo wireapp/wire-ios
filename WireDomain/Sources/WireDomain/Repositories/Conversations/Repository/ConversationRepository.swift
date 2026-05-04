@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,16 +82,19 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for: [qualifiedID]
         )
 
-        guard let conversation = conversationList.found.first else {
+        if let conversation = conversationList.found.first {
+            await conversationsLocalStore.storeConversation(
+                conversation.toDomainModel(),
+                timestamp: .now,
+                isFederationEnabled: isFederationEnabled,
+                isMLSEnabled: isMLSEnabled
+            )
+        } else if conversationList.notFound.contains(qualifiedID) {
             throw ConversationRepositoryError.conversationNotFound
+        } else {
+            throw ConversationRepositoryError.retrievalFailed
         }
 
-        await conversationsLocalStore.storeConversation(
-            conversation.toDomainModel(),
-            timestamp: .now,
-            isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
-        )
     }
 
     public func fetchConversation(
@@ -129,8 +132,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String {
-        let mlsConversation =
+    ) async throws -> (String, MLSPublicKeys?) {
+        let (mlsConversation, mlsPublicKeys) =
             try await conversationsAPI.getMLSOneToOneConversation(
                 userID: userID,
                 in: userDomain
@@ -147,7 +150,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isMLSEnabled: isMLSEnabled
         )
 
-        return mlsGroupID
+        return (mlsGroupID, mlsPublicKeys)
     }
 
     public func fetchMLSConversation(
@@ -235,7 +238,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         if let mlsGroupID {
 
-            try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
+            try await mlsProvider.service.wipeGroup(mlsGroupID)
 
             await conversationsLocalStore.deleteConversation(
                 conversation
@@ -375,6 +378,23 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await deleteMembership(for: removedUserIDs, time: date)
+    }
+
+    public func isSelfAnActiveMember(
+        in conversationID: WireDataModel.QualifiedID
+    ) async -> Bool {
+        nonisolated(unsafe) var isSelfAnActiveMember = false
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, _ in
+            isSelfAnActiveMember = conversation?.isSelfAnActiveMember ?? false
+        }
+        return isSelfAnActiveMember
+    }
+
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, context in
+            conversation?.commitPendingProposalDate = nil
+            context.saveOrRollback()
+        }
     }
 
     // MARK: - Private

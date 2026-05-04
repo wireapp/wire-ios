@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,7 +101,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
             voiceChannel: mockVoiceChannel,
             configuration: configuration,
             mediaManager: mediaManager,
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
 
         sut.isCovered = false
@@ -360,7 +361,8 @@ extension CallGridViewControllerSnapshotTests {
                         isCovered: false,
                         shouldShowActiveSpeakerFrame: true,
                         shouldShowBorderWhenVideoIsStopped: true,
-                        pinchToZoomRule: .enableWhenFitted
+                        pinchToZoomRule: .enableWhenFitted,
+                        userSession: UserSessionMock()
                     )
                 }
             }

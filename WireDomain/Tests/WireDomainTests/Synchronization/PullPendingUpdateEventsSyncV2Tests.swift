@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,8 +36,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var journal: Journal!
+    var coreCryptoContext: MockCoreCryptoContextProtocol!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var coreCrypto: MockSafeCoreCrypto!
+    var coreCrypto: MockCoreCryptoProtocol!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -46,7 +47,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         messageLocalStore = MockMessageLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
 
         journal = Journal(
             userID: UUID(),
@@ -70,7 +73,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
 
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
     }
 
     override func tearDown() {
@@ -82,6 +85,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         databaseSaver = nil
         coreCryptoProvider = nil
         coreCrypto = nil
+        coreCryptoContext = nil
         journal = nil
     }
 
@@ -241,7 +245,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             line: line
         )
         try XCTAssertCount(
-            updateEventsStore.persistEventEnvelopeIndex_Invocations,
+            updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations,
             count: storedEventsCount,
             "storedEventsCount mismatch",
             file: file,

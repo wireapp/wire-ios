@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,29 +16,58 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingAssembly
+import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
+import WireDomain
+import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
 
-struct ZClientControllerBuilder {
+final class ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
+    private var wireDriveBackendURL: URL? {
+        let contextProvider = userSession.contextProvider
+        let viewContext = contextProvider.viewContext
+        let featureRepository = LegacyFeatureRepository(context: viewContext)
+
+        return viewContext.performAndWait {
+            featureRepository.fetchCellsInternal()?.config.backend.url
+        }
+    }
+
+    init(
+        account: Account,
+        userSession: UserSession,
+        trackingManager: TrackingManager? = nil,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: WireNetwork.BackendEnvironment2?
+    ) {
+        self.account = account
+        self.userSession = userSession
+        self.trackingManager = trackingManager
+        self.legacyEnvironment = legacyEnvironment
+        self.newEnvironment = newEnvironment
+    }
 
     @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
+            wireMeetingsFactory: buildWireMeetingsFactory(),
             wireMessagingFactory: buildWireMessagingFactory()
         )
         viewController.router = router
@@ -52,14 +81,45 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        WireMessagingFactory(
-            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
-            // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
+        let driveURLResolver: @Sendable () throws -> URL = { [weak self] in
+            enum Failure: Error {
+                case missingDriveBackendURL
+            }
+
+            guard let self, let wireDriveBackendURL else {
+                throw Failure.missingDriveBackendURL
+            }
+
+            return wireDriveBackendURL
+        }
+
+        let context = userSession.contextProvider.syncContext
+        let driveConversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: nil,
+            messageLocalStore: MessageLocalStore(context: context),
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+        )
+
+        return WireMessagingFactory(
+            driveURLResolver: driveURLResolver,
+            driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
+            analyticsProvider: { [self] in userSession.analyticsEventTracker }
         )
     }
+
+    @MainActor
+    private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
+        WireMeetingsFactory(
+            passwordValidator: AuthenticationPasswordValidator(),
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
+    }
+
 }
 
 private struct DefaultAccessTokenProvider: AccessTokenProvider {
@@ -70,31 +130,58 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 
     let userSession: UserSession
 
-    func accessToken() async throws -> WireCellsAccessToken {
+    func accessToken() async throws -> WireDriveAccessToken {
         guard let authManager = userSession.clientSessionComponent?.authenticationManager else {
             throw Error.noAuthenticationManager
         }
 
         let token = try await authManager.getValidAccessToken()
-        return WireCellsAccessToken(
+        return WireDriveAccessToken(
             token: token.token,
             expirationDate: token.expirationDate
         )
     }
+
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
+extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreProtocol,
+    @unchecked @retroactive Sendable {
+    public func fetchDriveConversations() async -> [WireMessagingDomain.WireDriveConversation] {
+        let driveEnabledConversations: [ZMConversation] = await fetchDriveConversations()
 
-private struct DefaultContextProvider: ManagedObjectContextProvider {
+        return await context.perform {
+            driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+                if let name = conversation.name {
+                    let participants: [WireDriveConversation.Participant] = conversation.participants
+                        .compactMap { item -> WireDriveConversation.Participant? in
+                            guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
 
-    let contextProvider: any ContextProvider
+                            return .init(
+                                handle: item.handle ?? "-",
+                                displayName: item.name ?? "-",
+                                isSelfUser: item.isSelfUser,
+                                id: id.uuidString + "@" + domain,
+                                iconData: WireDriveConversation.Participant.IconData(
+                                    initials: item.initials ?? "",
+                                    color: item.accentColor,
+                                    image: item.previewImageData.flatMap(UIImage.init)
+                                )
+                            )
+                        }
 
-    var viewContext: NSManagedObjectContext {
-        contextProvider.viewContext
+                    let kind: WireDriveConversation.Kind = conversation.isChannel ? .channel : .group
+
+                    let driveConversation = WireDriveConversation(
+                        id: conversation.wireDriveCellName,
+                        name: name,
+                        kind: kind,
+                        participants: Set(participants)
+                    )
+
+                    result.append(driveConversation)
+                }
+            }
+        }
     }
-
-    func newBackgroundContext() -> NSManagedObjectContext {
-        contextProvider.newBackgroundContext()
-    }
-
 }

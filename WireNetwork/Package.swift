@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireNetwork",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireNetwork", targets: ["WireNetwork"]),
         .library(name: "WireNetworkSupport", targets: ["WireNetworkSupport"])
@@ -20,8 +20,8 @@ let package = Package(
         .target(
             name: "WireNetwork",
             dependencies: [
-                "WireFoundation",
-                "WireLogging",
+                .product(name: "WireFoundation", package: "WireFoundation"),
+                .product(name: "WireLogging", package: "WireLogging"),
                 .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),
@@ -43,24 +43,25 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
-                .process("APIs/Rest/AuthenticationAPI/Resources"),
+                .process("APIs/Blacklist/Resources"),
                 .process("APIs/Rest/AccountsAPI/Resources"),
+                .process("APIs/Rest/AuthenticationAPI/Resources"),
                 .process("APIs/Rest/BackendMetadataAPI/Resources"),
                 .process("APIs/Rest/ConnectionsAPI/Resources"),
                 .process("APIs/Rest/ConversationsAPI/Resources"),
+                .process("APIs/Rest/FeatureConfigsAPI/Resources"),
                 .process("APIs/Rest/MLSAPI/Resources"),
+                .process("APIs/Rest/Search/Resources"),
+                .process("APIs/Rest/SelfUserAPI/Resources"),
                 .process("APIs/Rest/TeamsAPI/Resources"),
                 .process("APIs/Rest/UpdateEventsAPI/Resources"),
-                .process("APIs/Rest/UsersAPI/Resources"),
-                .process("UpdateEvent/Resources"),
-                .process("APIs/Rest/FeatureConfigsAPI/Resources"),
-                .process("APIs/Rest/UserPropertiesAPI/Resources"),
-                .process("APIs/Rest/SelfUserAPI/Resources"),
                 .process("APIs/Rest/UserClientsAPI/Resources"),
-                .process("Network/PushChannel/Resources"),
+                .process("APIs/Rest/UserPropertiesAPI/Resources"),
+                .process("APIs/Rest/UsersAPI/Resources"),
                 .process("Authentication/Resources"),
                 .process("Backend/Resources"),
-                .process("APIs/Blacklist/Resources")
+                .process("Network/PushChannel/Resources"),
+                .process("UpdateEvent/Resources")
             ]
         )
     ]

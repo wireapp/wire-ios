@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -124,6 +124,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set up Datadog and other loggers
         WireAnalytics.setup(for: .app)
+        CoreCrypto.registerLogger()
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -345,23 +346,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
-
-        guard let appRootRouter else {
-            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
-            completionHandler(.noData)
-            return
-        }
-
-        appRootRouter.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
@@ -412,9 +396,11 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
+        let defaultEnvironment = fetchDefaultEnvironment()
+
         let sessionManager: SessionManager
         do {
-            sessionManager = try createSessionManager()
+            sessionManager = try createSessionManager(defaultEnvironment: defaultEnvironment)
         } catch {
             fatalError("sessionManager is not created")
         }
@@ -426,7 +412,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            defaultEnvironment: fetchDefaultEnvironment(),
+            defaultEnvironment: defaultEnvironment,
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
@@ -437,7 +423,7 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager() throws -> SessionManager {
+    private func createSessionManager(defaultEnvironment: BackendEnvironment2) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
@@ -481,6 +467,7 @@ private extension AppDelegate {
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
+            defaultEnvironment: defaultEnvironment,
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
@@ -528,7 +515,7 @@ private extension AppDelegate {
             let data = try Data(contentsOf: URL(filePath: path))
             return try BackendEnvironment2.fromJSON(data, environmentType: .default)
         } catch {
-            fatalError("unabled to fetch default environment: \(error)")
+            fatalError("unable to fetch default environment: \(error)")
         }
     }
 

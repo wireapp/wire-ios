@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ public import Foundation
 
 /// A configuration for the *MLS Migration* feature.
 
-public struct MLSMigrationFeatureConfig: Equatable, Sendable {
+public struct MLSMigrationFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

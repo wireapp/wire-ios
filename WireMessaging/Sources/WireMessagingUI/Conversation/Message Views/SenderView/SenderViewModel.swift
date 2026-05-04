@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
+package import Combine
 
-class SenderViewModel: ObservableObject {
+package class SenderViewModel: ObservableObject {
 
-    enum State {
+    package enum State {
         case empty
         case exists(AttributedString)
     }
 
     @Published var state: State
 
-    init(state: State) {
+    private var cancellables: Set<AnyCancellable> = []
+
+    package init(
+        state: State,
+        namePublisher: AnyPublisher<String, Never>?
+    ) {
         self.state = state
+        namePublisher?.sink { [weak self] name in
+            self?.state = .exists(AttributedString(name))
+        }.store(in: &cancellables)
     }
 }

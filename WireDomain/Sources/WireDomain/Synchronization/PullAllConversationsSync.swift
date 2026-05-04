@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,12 +47,12 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
     public func pull() async throws {
         var conversationIDs = [QualifiedID]()
         do {
-            for try await ids in try await api.getConversationIdentifiers() {
+            for try await ids in try api.getConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids)
             }
         } catch ConversationsAPIError.notImplemented {
             // Fallback
-            for try await ids in try await api.getLegacyConversationIdentifiers() {
+            for try await ids in try api.getLegacyConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids.map {
                     .init(id: $0, domain: localDomain)
                 })
@@ -97,7 +97,7 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
         for conversation in conversations.found {
             await store.storeConversation(
                 conversation.toDomainModel(),
-                timestamp: .now,
+                timestamp: conversation.lastEventTime ?? Date.distantPast,
                 isFederationEnabled: isFederationEnabled,
                 isMLSEnabled: isMLSEnabled
             )

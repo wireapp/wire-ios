@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,6 +119,11 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.handle = payload.handle
         }
 
+        if (payload.type != nil || authoritative) && !user.isAccountDeleted {
+            let fallbackType: TypeOfUser = payload.serviceID == nil ? .regular : .bot
+            user.type = payload.type.map(TypeOfUser.init) ?? fallbackType
+        }
+
         if payload.managedBy != nil || authoritative {
             user.managedBy = payload.managedBy
         }
@@ -191,4 +196,17 @@ private extension Payload.UserProfile.MessageProtocol {
         }
     }
 
+}
+
+private extension TypeOfUser {
+    init(_ type: Payload.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
 }

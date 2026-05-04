@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ public struct SwitchBackendConfirmation: View {
 
     private var title: some View {
         Text(Strings.title)
-            .font(.textStyle(.h2))
+            .font(for: .h2)
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
             .lineLimit(nil)
@@ -175,7 +175,7 @@ public struct SwitchBackendConfirmation: View {
                     }
                 } label: {
                     Text(Strings.showDetails)
-                        .font(.textStyle(.body1))
+                        .font(for: .body1)
                 }
                 .wireButtonStyle(.link)
             }
@@ -212,7 +212,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(false)
         } label: {
             Text(Strings.cancel)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .wireButtonStyle(.secondary)
     }
@@ -223,7 +223,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(true)
         } label: {
             Text(Strings.proceed)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .wireButtonStyle(.primary)
     }

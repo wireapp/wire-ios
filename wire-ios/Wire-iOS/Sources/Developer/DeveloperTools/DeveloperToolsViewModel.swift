@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,6 +98,8 @@ final class DeveloperToolsViewModel: ObservableObject {
     let router: AppRootRouter?
     let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
+    private let userSession: ZMUserSession?
+
     // MARK: - State
 
     var sections: [Section]
@@ -107,18 +109,13 @@ final class DeveloperToolsViewModel: ObservableObject {
     var alertTitle: String?
     var alertBody: String?
 
-    // MARK: - Computed
-
-    private var userSession: ZMUserSession? {
-        ZMUserSession.shared()
-    }
-
     // MARK: - Life cycle
 
     init(
         router: AppRootRouter? = nil,
         onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
+        self.userSession = router?.sessionManager.activeUserSession
         self.router = router
         self.onDismiss = onDismiss
         self.sections = []
@@ -156,9 +153,21 @@ final class DeveloperToolsViewModel: ObservableObject {
                 Section(
                     header: "Self user",
                     items: [
-                        .destination(DestinationItem(title: "Journal", makeView: {
-                            AnyView(JournalView(viewModel: JournalViewModel(userId: selfUser.remoteIdentifier!)))
-                        })),
+                        .destination(
+                            DestinationItem(
+                                title: "Journal",
+                                makeView: { [weak userSession] in
+                                    AnyView(
+                                        JournalView(
+                                            viewModel: JournalViewModel(
+                                                userId: selfUser.remoteIdentifier!,
+                                                userSession: userSession
+                                            )
+                                        )
+                                    )
+                                }
+                            )
+                        ),
                         .text(TextItem(
                             title: "Handle",
                             value: selfUser.handleDisplayString(withDomain: true) ?? "None"
@@ -201,7 +210,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func oneOnOneMLSConversationsCount() -> String {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+        guard let context = userSession?.managedObjectContext else {
             return "-"
         }
         let allOneOnOneRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
@@ -238,8 +247,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Datadog",
                 items: [
-                    .text(TextItem(title: "User ID", value: datadogUserIdentifier)),
-                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
+                    .text(TextItem(title: "User ID", value: datadogUserIdentifier))
                 ]
             ))
         }
@@ -269,13 +277,13 @@ final class DeveloperToolsViewModel: ObservableObject {
             Section(
                 header: "Actions",
                 items: [
-                    .destination(DestinationItem(title: "E2E Identity", makeView: {
-                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                    .destination(DestinationItem(title: "E2E Identity", makeView: { [weak self] in
+                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: self?.userSession)))
                     })),
                     .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                         AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
-                            selfClient: self?
-                                .selfClient,
+                            userSession: self?.userSession,
+                            selfClient: self?.selfClient,
                             onDismiss: { self?.onDismiss {} }
                         )))
                     })),
@@ -311,7 +319,18 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func setupBackenInfo() {
         let header = "Backend info"
         var items = [Item]()
+        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
+            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
+        })))
 
+        defer {
+            sections.append(
+                Section(
+                    header: header,
+                    items: items
+                )
+            )
+        }
         guard
             let sessionManager = SessionManager.shared,
             let accountID = selfUser?.remoteIdentifier,
@@ -328,9 +347,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.text(TextItem(title: "Name", value: environment.title)))
         items.append(.text(TextItem(title: "Domain", value: metadata.domain)))
         items.append(.text(TextItem(title: "API version", value: String(describing: metadata.apiVersion))))
-        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
-            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
-        })))
 
         if let userSession {
             items.append(.destination(DestinationItem(title: "Feature configs", makeView: {
@@ -357,13 +373,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
             self?.stopBellaFomaFederating()
         })))
-
-        sections.append(
-            Section(
-                header: header,
-                items: items
-            )
-        )
     }
 
     private lazy var debugViewSection: Section = {
@@ -455,7 +464,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var selfUser: ZMUser? {
         guard let userSession else { return nil }
-        return ZMUser.selfUser(inUserSession: userSession)
+        return ZMUser.selfUser(in: userSession.viewContext)
     }
 
     private var selfClient: UserClient? {

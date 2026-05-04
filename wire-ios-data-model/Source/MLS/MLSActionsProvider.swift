@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,11 +44,6 @@ protocol MLSActionsProviderProtocol {
         excludedSelfClientID: String?,
         in context: NotificationContext
     ) async throws -> [WireDataModel.KeyPackage]
-
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
 
     func fetchConversationGroupInfo(
         conversationId: UUID,
@@ -145,15 +140,6 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             excludedSelfClientId: excludedSelfClientID
         )
 
-        return try await action.perform(in: context)
-    }
-
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    )
-        async throws -> [ZMUpdateEvent] {
-        var action = SendCommitBundleAction(commitBundle: bundle)
         return try await action.perform(in: context)
     }
 

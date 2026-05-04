@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A configuration for the *Apps* feature.
+/// A configuration for enabling the *Apps* feature.
+/// This flag only affects new-style apps, not old-style services/bots.
 
-public struct AppsFeatureConfig: Equatable, Sendable {
+public struct AppsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

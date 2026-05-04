@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ private struct BackendEnvironmentJSON: Decodable {
         case title
         case endpoints
         case apiProxy
-        case pinnedKeys
+        case pinnedKeys = "pinned_keys"
 
     }
 
@@ -141,14 +141,23 @@ private struct BackendEnvironmentJSON: Decodable {
         let certificateKey: Data
         let hosts: [Host]
 
+        enum CodingKeys: String, CodingKey {
+
+            case certificateKey = "certificate_key"
+            case hosts
+
+        }
+
         struct Host: Decodable {
 
             let rule: Rule
             let value: String
 
             enum Rule: String, Decodable {
+
                 case endsWith = "ends_with"
                 case equals
+
             }
 
         }

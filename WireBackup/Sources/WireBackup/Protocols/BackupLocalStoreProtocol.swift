@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 public import WireFoundation
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {
@@ -47,12 +48,14 @@ public protocol BackupLocalStoreProtocol: Sendable {
     // MARK: -
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> Set<String>
+    func fetchAllMessageIDs() async throws -> Set<UUID>
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error>
 
     /// Adds a batch of messages from the backup file to the local data store.
-    func addMessages(_ backupMessages: [MessageBackupModel]) async throws
+    func addMessages(_ backupMessages: [MessageBackupModel]) async throws -> BackupMessagesImportResult
 
+    /// Refreshes the managed objects in the view context
+    func refreshViewContext() async throws
 }

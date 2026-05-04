@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -260,6 +260,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
 
         return .unregistered
+
     }
 
     public var clientIsReadyForRequests: Bool {
@@ -698,7 +699,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        let canRegisterMLSCLient = DeveloperFlag.multibackend.isOn ? isBackendMLSEnabled : BackendInfo.isMLSEnabled
+        let canRegisterMLSCLient = isBackendMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }

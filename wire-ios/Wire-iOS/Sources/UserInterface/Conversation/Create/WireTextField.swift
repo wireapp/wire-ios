@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 class WireTextField: ContextMenuControllableUITextField {
 
@@ -87,7 +88,7 @@ class WireTextField: ContextMenuControllableUITextField {
     private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
-        accessibilityIdentifier = "NameField"
+        accessibilityIdentifier = Locators.CreateGroupPage.groupNameField.rawValue
         autocorrectionType = .no
         contentVerticalAlignment = .center
         font = .font(for: .body1)

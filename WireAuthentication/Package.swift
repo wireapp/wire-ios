@@ -1,5 +1,4 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -8,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireAuthentication",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
         .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
@@ -22,7 +21,7 @@ let package = Package(
         .package(path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
-        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0"),
     ],
     targets: [
         .target(

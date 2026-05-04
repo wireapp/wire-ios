@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ package struct ReloginViaEmailView: View {
 
     @ViewBuilder private var expirationMessage: some View {
         Text(Strings.CloudUserLogin.expirationMessage)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .multilineTextAlignment(.center)
             .foregroundStyle(Color.primaryText)
     }
@@ -129,12 +129,11 @@ package struct ReloginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            string: .constant(viewModel.email),
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(true)
     }
 
@@ -179,14 +178,14 @@ package struct ReloginViaEmailView: View {
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let proxyServer = viewModel.proxyServer {
                 Text(Strings.ProxyCredentials.message(proxyServer))
                     .multilineTextAlignment(.center)
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -194,12 +193,11 @@ package struct ReloginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,

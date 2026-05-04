@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,14 +90,16 @@ public class Team: ZMManagedObject, TeamType {
 
 public extension Team {
 
-    func members(matchingQuery query: String) -> [Member] {
+    func members(
+        matchingQuery query: String,
+        filteredBy type: TypeOfUser?
+    ) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
         return members
             .filter { member in
-                guard let user = member.user else {
-                    return false
-                }
+                guard let user = member.user else { return false }
+                if let type, user.type != type { return false }
                 return !user.isSelfUser && searchPredicate.evaluate(with: user)
             }
             .sortedAscendingPrependingNil { $0.user?.normalizedName }

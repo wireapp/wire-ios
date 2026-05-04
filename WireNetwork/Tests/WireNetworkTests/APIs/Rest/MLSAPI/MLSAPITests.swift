@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,8 +46,15 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
 
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetBackendMLSPublicKeysSuccessResponse1"),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.getBackendMLSPublicKeys()
         }
@@ -76,10 +83,9 @@ final class MLSAPITests: XCTestCase {
                         BackendMLSPublicKeys(
                             removal: .init(
                                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-                                ed448: nil,
                                 p256: "BM036midcNiOMgny9m7N",
                                 p384: "BPSlomkR8K4BcFLGTDOJx",
-                                p512: "BAC3OmJi7rAPFAIXjU"
+                                p521: "BAC3OmJi7rAPFAIXjU"
                             )
                         )
                     )
@@ -110,8 +116,15 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
 
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "PostCommitBundleSuccessResponse1"),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.postCommitBundle(Scaffolding.commitBundle)
         }
@@ -181,6 +194,34 @@ final class MLSAPITests: XCTestCase {
         }
     }
 
+    func testPostCommitBundle_givenv13AndErrorResponse() async throws {
+        // Given
+        struct Payload: Encodable {
+            let code = 409
+            let label = "mls-group-out-of-sync"
+            let message = ""
+            let missing_users: Set<QualifiedIDV0>
+        }
+        let missingUsers = Set([
+            QualifiedID(id: UUID(), domain: "example.com"),
+            QualifiedID(id: UUID(), domain: "example.com")
+        ])
+        let payload = Payload(missing_users: Set(missingUsers.map {
+            $0.toNetworkModel()
+        }))
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .conflict,
+            payload: payload
+        )
+        let api = MLSAPIV13(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MLSAPIError.groupOutOfSync(missingUsers: missingUsers)) {
+            // When
+            try await api.postCommitBundle(Scaffolding.commitBundle)
+        }
+    }
+
     // MARK: - Reset MLS conversation
 
     func testResetMLSConversation_SuccessResponse_V9() async throws {
@@ -193,6 +234,95 @@ final class MLSAPITests: XCTestCase {
         // Then
         // When
         try await api.resetMLSConversation(epoch: Scaffolding.epoch, groupID: Scaffolding.groupID)
+    }
+
+    // MARK: - Upload key packages
+
+    func testUploadKeyPackagesRequest() async throws {
+        // Given
+        let apiVersions = APIVersion.v5.andNextVersions
+
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, nil), // No sample expected file works.
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
+            // When
+            _ = try await sut.uploadKeyPackages(
+                clientID: Scaffolding.clientID,
+                keyPackages: Scaffolding.keyPackageUpload
+            )
+        }
+    }
+
+    func testUploadKeyPackages_SuccessResponse_201_V5_And_Next_Versions() async throws {
+        // Given
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            let testedVersions = APIVersion.v5.andNextVersions
+
+            for version in testedVersions {
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.created, nil)
+                ])
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.uploadKeyPackages(
+                        clientID: Scaffolding.clientID,
+                        keyPackages: Scaffolding.keyPackageUpload
+                    )
+                }
+
+                for try await _ in taskGroup {
+                    // Then - no assertion needed, just checking it doesn't throw
+                }
+            }
+        }
+    }
+
+    func testUploadKeyPackages_givenV5AndProtocolErrorResponse() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: "mls-protocol-error",
+            message: "something went wrong"
+        )
+
+        let api = MLSAPIV5(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(
+            MLSAPIError.mlsProtocolError(message: "something went wrong")
+        ) {
+            // When
+            try await api.uploadKeyPackages(
+                clientID: Scaffolding.clientID,
+                keyPackages: Scaffolding.keyPackageUpload
+            )
+        }
+    }
+
+    func testUploadKeyPackages_givenV5AndIdentityMismatchErrorResponse() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "mls-identity-mismatch"
+        )
+
+        let api = MLSAPIV5(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MLSAPIError.mlsIdentityMismatch) {
+            // When
+            try await api.uploadKeyPackages(
+                clientID: Scaffolding.clientID,
+                keyPackages: Scaffolding.keyPackageUpload
+            )
+        }
     }
 
 }
@@ -210,7 +340,7 @@ private extension APIVersion {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1 ... 1000)
+    static let epoch: UInt64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
 
     static let commitBundle = CommitBundle(
@@ -222,5 +352,18 @@ private enum Scaffolding {
     static let updateEvents = [
         UpdateEvent.unknown(eventType: "some event")
     ]
+
+    static let clientID = "60f85e4b15ad3786"
+
+    static let keyPackageUpload = KeyPackageUpload(
+        keyPackages: [
+            KeyPackage(
+                base64EncodedData: "pQABARn//wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f/GEEY="
+            ),
+            KeyPackage(
+                base64EncodedData: "pQABARn//wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E="
+            )
+        ]
+    )
 
 }

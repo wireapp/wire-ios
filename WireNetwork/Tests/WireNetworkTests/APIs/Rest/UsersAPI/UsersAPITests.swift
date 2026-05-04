@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -27,7 +28,6 @@ final class UsersAPITests: XCTestCase {
     // MARK: - Setup
 
     override func setUp() {
-        super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
             let builder = UsersAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
@@ -36,19 +36,36 @@ final class UsersAPITests: XCTestCase {
 
     override func tearDown() {
         apiSnapshotHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Request generation
 
     func testGetUserRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUserSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getUser(for: .mockID1)
         }
     }
 
     func testGetUsersRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        var responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUsersSuccessResponseV0"),
+            count: APIVersion.allCasesUpTo(.v4).count
+        )
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "GetUsersSuccessResponseV4"),
+                count: APIVersion.v4.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
         }
     }
@@ -70,7 +87,7 @@ final class UsersAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                Scaffolding.user
+                Scaffolding.userV0
             )
         }
     }
@@ -88,7 +105,7 @@ final class UsersAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                UserList(found: [Scaffolding.user], failed: [])
+                UserList(found: [Scaffolding.userV0], failed: [])
             )
         }
     }
@@ -126,7 +143,7 @@ final class UsersAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                Scaffolding.user
+                Scaffolding.userV0
             )
         }
     }
@@ -160,10 +177,108 @@ final class UsersAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                UserList(found: [Scaffolding.user], failed: [Scaffolding.userID])
+                UserList(found: [Scaffolding.userV0], failed: [Scaffolding.userID])
             )
         }
     }
+
+    // MARK: - V12
+
+    func testGetUserForID_SuccessResponse_200_V12_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUserSuccessResponseV12")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v12], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUser(
+                for: Scaffolding.userID
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.userV12
+            )
+        }
+    }
+
+    func testGetUsersForIDs_FailureResponse_NotFound_V12() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "not-found"
+        )
+
+        let sut = UsersAPIV12(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(UsersAPIError.userNotFound) {
+            // When
+            try await sut.getUser(for: Scaffolding.userID)
+        }
+    }
+
+    func testGetUsersForIDs_SuccessResponse_200_V12_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUsersSuccessResponseV12")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v12], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+
+            // Then
+            XCTAssertEqual(
+                result,
+                UserList(found: [Scaffolding.userV12], failed: [Scaffolding.userID])
+            )
+        }
+    }
+
+    // MARK: - V15
+
+    func testGetUserForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUserSuccessResponseV15")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUser(
+                for: Scaffolding.userID
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.userV15
+            )
+        }
+    }
+
+    func testGetUsersForIDs_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUsersSuccessResponseV15")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+
+            // Then
+            XCTAssertEqual(
+                result,
+                UserList(found: [Scaffolding.userV15], failed: [Scaffolding.userID])
+            )
+        }
+    }
+
+    // MARK: -
 
     enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
@@ -171,11 +286,12 @@ final class UsersAPITests: XCTestCase {
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
             domain: "example.com"
         )
-        static let user = User(
+        static let userV0 = User(
             id: userID,
             name: "name",
             handle: "handle",
             teamID: teamID,
+            type: nil,
             accentID: 1,
             assets: [UserAsset(
                 key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
@@ -185,6 +301,56 @@ final class UsersAPITests: XCTestCase {
             deleted: true,
             email: "john.doe@example.com",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
+            service: Service(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+            ),
+            supportedProtocols: [.proteus],
+            legalholdStatus: .enabled
+        )
+        static let userV12 = User(
+            id: userID,
+            name: "name",
+            handle: "handle",
+            teamID: teamID,
+            type: .regular, // added in v12
+            accentID: 1,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "john.doe@example.com",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
+            service: Service(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+            ),
+            supportedProtocols: [.proteus],
+            legalholdStatus: .enabled
+        )
+        static let userV15 = User(
+            id: userID,
+            name: "name",
+            handle: "handle",
+            teamID: teamID,
+            type: .regular,
+            accentID: 1,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "john.doe@example.com",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: AppInfo( // added in v15
+                category: "cat",
+                description: "desc"
+            ),
             service: Service(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!

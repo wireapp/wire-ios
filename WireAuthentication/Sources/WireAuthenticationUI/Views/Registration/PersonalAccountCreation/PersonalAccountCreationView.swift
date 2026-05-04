@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 package struct PersonalAccountCreationView: View {
@@ -103,23 +104,23 @@ package struct PersonalAccountCreationView: View {
         LabeledTextField(
             placeholder: Strings.InputName.placeholder,
             title: Strings.InputName.title,
-            string: $viewModel.name
+            string: $viewModel.name,
+            textContentType: .name,
+            autocapitalizationType: .words
         )
-        .autocapitalization(.words)
         .autocorrectionDisabled()
-        .textContentType(.name)
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterNameField.rawValue)
     }
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
             placeholder: Strings.InputEmail.placeholder,
             title: Strings.InputEmail.title,
-            string: $viewModel.email
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -130,6 +131,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: viewModel.localizedPasswordRules,
             isValidPassword: { _ in viewModel.isPasswordValid }
         )
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue)
     }
 
     @ViewBuilder private var confirmPasswordField: some View {
@@ -140,6 +142,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: Strings.InputConfirmPassword.error,
             isValidPassword: { _ in viewModel.isPasswordMatchConfirmedPassword }
         )
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue)
     }
 
     @ViewBuilder private var dataUsageAgreementView: some View {
@@ -161,6 +164,7 @@ package struct PersonalAccountCreationView: View {
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.continueButton.rawValue)
         .bold()
         .disabled(!viewModel.canRequestVerificationCode)
     }

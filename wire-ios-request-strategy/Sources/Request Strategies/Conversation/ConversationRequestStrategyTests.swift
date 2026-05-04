@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockSyncProgress: MockSyncProgress!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
     var mockMLSService: MockMLSServiceInterface!
 
@@ -39,16 +38,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
         mockMLSService = MockMLSServiceInterface()
-
-        mockSyncProgress = MockSyncProgress()
-        mockSyncProgress.currentSyncPhase = .done
-        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
-        mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
     }
 
     override func tearDown() {
         sut = nil
-        mockSyncProgress = nil
         mockApplicationStatus = nil
         mockRemoveLocalConversation = nil
 
@@ -59,7 +52,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: mockSyncProgress,
             mlsService: mockMLSService,
             removeLocalConversation: mockRemoveLocalConversation,
             apiVersion: apiVersion,
@@ -69,46 +61,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: - Request generation
-
-    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            let domain = "example.com"
-            let conversationID = self.groupConversation.remoteIdentifier!
-            self.groupConversation.domain = domain
-            self.groupConversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .get)
-        }
-    }
-
-    func testThatLegacyRequestToFetchConversationIsGenerated_WhenDomainIsNotSet() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v0
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            ZMUser.selfUser(in: self.syncMOC).domain = nil
-            let conversationID = self.groupConversation.remoteIdentifier!
-            self.groupConversation.domain = nil
-            self.groupConversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .get)
-        }
-    }
 
     func testThatRequestToUpdateConversationNameIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedAndWait {
@@ -181,161 +133,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    // MARK: - Slow Sync
-
-    func testThatRequestToListConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/v1/conversations/list-ids")
-        }
-    }
-
-    func testThatRequestToListConversationsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-            _ = self.sut.nextRequest(for: apiVersion)!
-
-            // when
-            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
-        }
-    }
-
-    func testThatRequestToFetchConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-        fetchConversationListDuringSlowSync(apiVersion: apiVersion)
-
-        syncMOC.performGroupedAndWait {
-            // when
-            let fetchRequest = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            guard let fetchPayload = Payload.QualifiedUserIDList(fetchRequest) else {
-                return XCTFail("Fetch payload is invalid")
-            }
-
-            let qualifiedConversationID = QualifiedID(
-                uuid: self.groupConversation.remoteIdentifier!,
-                domain: self.groupConversation.domain!
-            )
-            XCTAssertEqual(fetchPayload.qualifiedIDs.count, 1)
-            XCTAssertEqual(fetchPayload.qualifiedIDs, [qualifiedConversationID])
-        }
-    }
-
-    func testThatFetchingConversationsSyncPhaseIsFinished_WhenFetchIsCompleted() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-        fetchConversationListDuringSlowSync(apiVersion: apiVersion)
-
-        // when
-        fetchConversationsDuringSlowSync(apiVersion: apiVersion)
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
-        }
-    }
-
-    func testThatFetchingConversationsSyncPhaseIsFinished_WhenThereIsNoConversationsToFetch() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-
-        // when
-        fetchConversationListDuringSlowSyncWithEmptyResponse(apiVersion: apiVersion)
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
-        }
-    }
-
-    func testThatFetchingConversationsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-
-        // when
-        fetchConversationListDuringSlowSyncWithPermanentError(apiVersion: apiVersion)
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertEqual(self.mockSyncProgress.failCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
-        }
-    }
-
-    func testThatConversationMembershipStatusIsQueried_WhenNotFoundDuringSlowSyncPhase() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-        fetchConversationListDuringSlowSync(apiVersion: apiVersion)
-
-        // when
-        fetchConversationsDuringSlowSync(notFound: [qualifiedID(for: oneToOneConversation)], apiVersion: apiVersion)
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(self.oneToOneConversation.needsToBeUpdatedFromBackend)
-        }
-    }
-
-    func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
-        // given
-        let apiVersion = APIVersion.v4
-        sut = createSUT(apiVersion: apiVersion)
-        startSlowSync()
-        fetchConversationListDuringSlowSync(apiVersion: apiVersion)
-
-        // when
-        fetchConversationsDuringSlowSync(failed: [qualifiedID(for: groupConversation)], apiVersion: apiVersion)
-
-        // then
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(self.groupConversation.isPendingMetadataRefresh)
-        }
-    }
-
-    func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion)
-        let conversationID = QualifiedID(uuid: UUID(), domain: owningDomain)
-        startSlowSync()
-        fetchConversationListDuringSlowSync(apiVersion: apiVersion)
-
-        // when
-        fetchConversationsDuringSlowSync(failed: [conversationID], apiVersion: apiVersion)
-
-        // then
-        try syncMOC.performGroupedAndWait {
-            let conversation = try XCTUnwrap(ZMConversation.fetch(
-                with: conversationID.uuid,
-                domain: conversationID.domain,
-                in: syncMOC
-            ))
-            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
-        }
-    }
-
     // MARK: - Response processing
 
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
@@ -365,10 +162,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        XCTAssertEqual(
-            mockRemoveLocalConversation.invokeCalls,
-            [groupConversation]
-        )
+        syncMOC.performAndWait {
+            XCTAssertEqual(
+                mockRemoveLocalConversation.invokeCalls,
+                [groupConversation]
+            )
+        }
     }
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
@@ -399,21 +198,17 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         return qualifiedID
     }
 
-    func startSlowSync() {
-        syncMOC.performGroupedAndWait {
-            self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-        }
-    }
-
     func fetchConversation(_ conversation: ZMConversation, with response: ZMTransportResponse, apiVersion: APIVersion) {
         syncMOC.performGroupedAndWait {
             // given
-            conversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([conversation])) }
+            self.sut.fetch([conversation], for: apiVersion)
 
             // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-            request.complete(with: response)
+            if let request = self.sut.nextRequest(for: apiVersion) {
+                request.complete(with: response)
+            } else {
+                XCTFail("could not produce a request")
+            }
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

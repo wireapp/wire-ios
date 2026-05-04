@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,30 +24,6 @@ let appDelegateClass: AnyClass = NSClassFromString("TestingAppDelegate") ?? AppD
 UIApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
-    NSStringFromClass(UIApplication.self),
-    NSStringFromClass(TempAppDelegate.self)
+    NSStringFromClass(WireApplication.self),
+    NSStringFromClass(appDelegateClass)
 )
-
-final class TempAppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow?
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-
-        guard let windowScene = application.connectedScenes.first as? UIWindowScene else { fatalError() }
-
-        window = UIWindow(windowScene: windowScene)
-
-        let tempVC = UIViewController()
-        tempVC.view.backgroundColor = .green
-        tempVC.navigationItem.title = "Temporary"
-        let tempNC = UINavigationController(rootViewController: tempVC)
-
-        window?.rootViewController = tempNC
-        window?.makeKeyAndVisible()
-
-        return true
-
-    }
-
-}

@@ -1,11 +1,10 @@
 // swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "WireFoundation",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         // TODO: [WPB-7394] `Clibsodium` is no longer needed as a product
         .library(name: "Clibsodium", targets: ["Clibsodium"]),
@@ -20,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
+        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -50,12 +50,17 @@ let package = Package(
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
 
         .target(
             name: "WireUtilitiesPackage",
-            dependencies: ["ZIPFoundation"]
+            dependencies: [
+                "WireLogging",
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+            ]
         ),
         .testTarget(
             name: "WireUtilitiesPackageTests",
@@ -71,7 +76,9 @@ let package = Package(
         .target(
             name: "WireUtilitiesPackageSupport",
             dependencies: ["WireUtilitiesPackage"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
 
         .target(

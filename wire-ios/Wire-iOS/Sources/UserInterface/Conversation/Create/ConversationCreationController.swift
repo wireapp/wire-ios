@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
+import WireFoundation
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireSyncEngine
@@ -47,6 +49,8 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
+    private let isAppsFeatureEnabled: Bool
+    private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
 
@@ -67,11 +71,11 @@ final class ConversationCreationController: UIViewController {
     private var optionsSections: [ConversationCreateSectionController] {
         let sections = [
             guestsSection,
-            values.shouldIncludeServices ? servicesSection : nil,
+            (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            userSession.isWireCellsEnabled ? fileManagementSection : nil
+            userSession.isWireDriveEnabled ? fileManagementSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -104,11 +108,12 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var servicesSection: ConversationCreateServicesSectionController = {
-        let section = ConversationCreateServicesSectionController(values: values)
+    private lazy var appsSection: ConversationCreateAllowAppsSectionController = {
+        let section = ConversationCreateAllowAppsSectionController(values: values)
 
-        section.toggleAction = { [unowned self] allowServices in
-            values.allowServices = allowServices
+        section.wireAccentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
+        section.toggleAction = { [unowned self] allowApps in
+            values.allowApps = allowApps
             updateOptions()
         }
         return section
@@ -170,12 +175,18 @@ final class ConversationCreationController: UIViewController {
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
             isChannel: false,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -235,7 +246,6 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateSections() {
-        servicesSection.isHidden = !values.shouldIncludeServices
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
@@ -259,7 +269,7 @@ final class ConversationCreationController: UIViewController {
             }
         )
 
-        nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
+        nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem
@@ -281,11 +291,16 @@ final class ConversationCreationController: UIViewController {
 
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
+            if let participantsController {
+                participantsController.conversationCreationDelegate = self
+                navigationController?.pushViewController(participantsController, animated: true)
+            } else {
+                WireLogger.ui.error("failed to present participants VC, it is nil", attributes: .safePublic)
+            }
         }
     }
 
@@ -305,7 +320,7 @@ final class ConversationCreationController: UIViewController {
 
     private func updateOptions() {
         guestsSection.configure(with: values)
-        servicesSection.configure(with: values)
+        appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
         fileManagementSection.configure(with: values)
     }
@@ -372,7 +387,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
+            allowApps: (values.isAppsFeatureEnabled || values.areLegacyBotsAvailable) ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }
@@ -395,7 +410,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 
@@ -599,8 +614,8 @@ extension ConversationAccessRoleV2 {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

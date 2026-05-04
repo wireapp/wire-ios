@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -464,11 +464,13 @@ final class UserRepositoryTests: XCTestCase {
             name: "user1",
             handle: "handle1",
             teamID: nil,
+            type: .regular,
             accentID: 1,
             assets: [],
             deleted: false,
             email: "john.doe@example.com",
             expiresAt: nil,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
@@ -488,6 +490,7 @@ final class UserRepositoryTests: XCTestCase {
             deleted: false,
             email: "username@wire.com",
             expiresAt: .now,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls]
         )

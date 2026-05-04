@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,6 +64,13 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    private var meetingsUI: TabBarController.MeetingsUI! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.meetingsUI
+        case .expanded: splitViewController.meetingsUI
+        }
+    }
+
     private var settingsUI: TabBarController.SettingsUI! {
         switch mainSplitViewState {
         case .collapsed: tabBarController.settingsUI
@@ -117,6 +124,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .expanded:
             dismissArchiveIfNeeded()
             dismissSettingsIfNeeded()
+            dismissMeetingsIfNeeded()
             dismissFilesIfNeeded()
 
             // Move the conversation list from the tab bar controller to the split view controller if needed.
@@ -167,6 +175,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
+        dismissMeetingsIfNeeded()
         dismissFilesIfNeeded()
 
         // move the archive from the tab bar controller to the split view controller
@@ -189,6 +198,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
+        dismissMeetingsIfNeeded()
         dismissFilesIfNeeded()
 
         // move the settings from the tab bar controller to the split view controller
@@ -201,7 +211,25 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     }
 
     public func showMeetings() async {
-        // TODO: [WPB-20272]: add list of meetings
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+        tabBarController.selectedContent = .meetings
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissFilesIfNeeded()
+
+        if let meetingsUI = tabBarController.meetingsUI {
+            tabBarController.meetingsUI = nil
+            splitViewController.meetingsUI = meetingsUI
+        }
     }
 
     public func showFiles() async {
@@ -219,6 +247,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
+        dismissMeetingsIfNeeded()
 
         // move the files from the tab bar controller to the split view controller
         if let filesUI = tabBarController.filesUI {
@@ -337,6 +366,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             if splitViewController != nil {
                 splitViewController.dismiss(animated: true, completion: continuation.resume)
             }
+        }
+    }
+
+    private func dismissMeetingsIfNeeded() {
+        // Move the files back to the tab bar controller if it's visible in the split view controller.
+        if let meetingsUI = splitViewController.meetingsUI {
+            splitViewController.meetingsUI = nil
+            tabBarController.meetingsUI = meetingsUI
         }
     }
 
@@ -494,6 +531,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .expanded:
             splitViewController.conversationUI != nil
         }
+    }
+
+    public func splitViewController(
+        _ svc: UISplitViewController,
+        willChangeTo displayMode: UISplitViewController.DisplayMode
+    ) {
+        guard displayMode == .oneOverSecondary else { return }
+        splitViewController.view.endEditing(true)
     }
 }
 

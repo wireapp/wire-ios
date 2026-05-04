@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,8 +40,16 @@ class ConnectionsAPITests: XCTestCase {
 
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
+        let apiVersions = APIVersion.v0.andNextVersions
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.2"),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // then
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             let pager = try await sut.getConnections()
             for try await _ in pager {
                 // this triggers fetching the data

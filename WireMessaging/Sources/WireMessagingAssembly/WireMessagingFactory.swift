@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,85 +18,89 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
-import WireFoundation
+public import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 public import WireMessagingUI
 
 public struct WireMessagingFactory {
 
+    public typealias DriveURLResolver = @Sendable () throws -> URL
+    public typealias DriveAnalyticsProvider = @Sendable () -> (any AnalyticsEventTrackerProtocol)?
+
     private let nodesAPI: NodesAPI
-    private let uploadManager: WireCellsNodeUploadManager
+    private let uploadManager: WireDriveNodeUploadManager
     private let draftsRepository: DraftsRepository
     private let fileCache: any FileCache
-    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
-    private let localAssetRepository: WireCellsLocalAssetRepository
+    private let localAssetStore: any WireDriveLocalAssetStoreProtocol
+    private let localAssetRepository: WireDriveLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
-    private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache = WireCellsNodeCache()
+    private let lastOpenRequest: WireDriveLastOpenRequest
+    private let nodeCache: WireDriveNodeCache
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
+    private let analyticsProvider: DriveAnalyticsProvider
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
-        serverURL: URL,
+        driveURLResolver: @escaping DriveURLResolver,
+        driveConversationLocalStore: any WireDriveConversationsLocalStoreProtocol,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider
+        contextProvider: any ManagedObjectContextProvider,
+        analyticsProvider: @escaping DriveAnalyticsProvider
     ) {
-        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
-        let serverURL = switch serverURL.host {
-        case "prod-nginz-https.wire.com": // Production
-            URL(string: "https://cells-beta.wire.com")!
-        case "staging-nginz-https.zinfra.io": // Staging
-            URL(string: "https://cells.staging.zinfra.io")!
-        case "nginz-https.fulu.wire.link": // Fulu
-            URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link": // Imai
-            URL(string: "https://cells.imai.wire.link")!
-        default:
-            serverURL
-        }
-
-        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
-        self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+        self.nodeCache = WireDriveNodeCache()
+        self.nodesAPI = NodesAPI(
+            serverURLResolver: driveURLResolver,
+            localStore: driveConversationLocalStore,
+            accessToken: accessToken
+        )
+        self.uploadManager = WireDriveNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
-        self.localAssetStore = WireCellsLocalAssetStore(contextProvider: contextProvider)
-        self.localAssetRepository = WireCellsLocalAssetRepository(
+        self.localAssetStore = WireDriveLocalAssetStore(contextProvider: contextProvider)
+        self.localAssetRepository = WireDriveLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
             store: localAssetStore
         )
-        self.lastOpenRequest = WireCellsLastOpenRequest()
+        self.lastOpenRequest = WireDriveLastOpenRequest()
+        self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
+        self.analyticsProvider = analyticsProvider
     }
 
-    public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
+    public func makeUploadDraftUseCase(cellName: String) -> any WireDriveUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository(),
+            metadataRepository: WireDriveDraftMetadataRepository(),
             filenameGenerator: filenameGenerator
         )
     }
 
-    public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
+    public func makeObserveDraftsUseCase(cellName: String) -> any WireDriveObserveDraftsUseCaseProtocol {
         ObserveDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
-    public func makePublishDraftsUseCase(cellName: String) -> any WireCellsPublishDraftsUseCaseProtocol {
-        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
+    public func makePublishDraftsUseCase(cellName: String) -> any WireDrivePublishDraftsUseCaseProtocol {
+        PublishDraftsUseCase(
+            cellName: cellName,
+            draftRepository: draftsRepository,
+            analyticsProvider: analyticsProvider
+        )
     }
 
-    public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol {
+    public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireDriveClearPublishedDraftsUseCaseProtocol {
         ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
-    public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
+    public func makeDeleteDraftUseCase(cellName: String) -> any WireDriveDeleteDraftUseCaseProtocol {
         DeleteDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
@@ -105,25 +109,39 @@ public struct WireMessagingFactory {
         )
     }
 
-    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
+    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireDriveRetryUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository(),
+            metadataRepository: WireDriveDraftMetadataRepository(),
             filenameGenerator: filenameGenerator
         )
     }
 
-    public func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
-        WireCellsDeleteNodesUseCase(
+    public func makeDeleteNodesUseCase() -> any WireDriveDeleteNodesUseCaseProtocol {
+        WireDriveDeleteNodesUseCase(
             repository: nodesAPI,
             fileCache: fileCache,
             localAssetStore: localAssetStore
         )
     }
 
+    public func makeUpdateTagsUseCase() -> some WireDriveUpdateTagsUseCaseProtocol {
+        WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI)
+    }
+
+    public func makeFetchNodeUseCase() -> any WireDriveFetchNodeUseCaseProtocol {
+        WireDriveFetchNodeUseCase(
+            repository: nodesAPI,
+            cache: nodeCache
+        )
+    }
+
+    public func makeFetchCachedNodeUseCase() -> any WireDriveFetchCachedNodeUseCaseProtocol {
+        nodeCache
+    }
 }
 
 public extension WireMessagingFactory {
@@ -132,96 +150,100 @@ public extension WireMessagingFactory {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        nodeIDs: [UUID]
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = nodeIDs
-            .isEmpty ? .conversationFileView(root: .path(cellName)) :
-            .nodesFileView(nodeIDs: nodeIDs)
-
-        let filesView: UIHostingController<FilesView>
-
-        filesView = makeFilesHostingController(
-            configuration: configuration,
-            isCellsStatePending: isCellsStatePending
-        )
-
-        return filesView
-    }
-
-    @MainActor
-    func makeFilesBrowserView() -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = .filesBrowserView()
-        let filesBrowserView: UIHostingController<FilesBrowserView>
-        filesBrowserView = makeFilesHostingController(
-            configuration: configuration
-        )
-        return filesBrowserView
-    }
-
-    @MainActor
-    private func makeFilesHostingController<T: FilesViewProtocol>(
-        configuration: WireCellsFetchNodesUseCase.Configuration,
-        isCellsStatePending: Bool = false
-    ) -> UIHostingController<T> {
-        let viewModel = FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: configuration,
-                repository: nodesAPI
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesAPI,
+        UIHostingController(
+            rootView: FilesViewContainer(
+                cellName: cellName,
+                nodesAPI: nodesAPI,
+                nodesRepository: nodesAPI,
+                isCellsStatePending: isCellsStatePending,
+                localAssetStore: localAssetStore,
+                localAssetRepository: localAssetRepository,
+                nodeCache: nodeCache,
+                nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+                accentColorProvider: accentColorProvider
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
-
-        return UIHostingController(rootView: T(viewModel: viewModel))
     }
 
     @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
+    func makeFilesBrowserView(
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
-        let viewController = UIHostingController(
-            rootView: WireCellsAttachmentsPreviewView(
-                viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments,
-                    alignment: alignment,
-                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
-                        repository: nodesAPI,
-                        cache: nodeCache
+        UIHostingController(
+            rootView: FilesBrowserView(
+                viewModel: FilesViewModel(
+                    useCases: .init(
+                        fetchNodes: WireDriveFetchNodesPageUseCase(
+                            configuration: .filesBrowserView,
+                            repository: nodesAPI
+                        ),
+                        deleteNodes: WireDriveDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        restoreNodes: WireDriveRestoreNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        renameNode: WireDriveRenameNodeUseCase(
+                            nodesRepository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache,
+                            nodeRenameNotifier: nodeRenameNotifier
+                        ),
+                        updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
+                        getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
+                        getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                        getAssetUseCase: WireDriveGetAssetUseCase(
+                            localAssetRepository: localAssetRepository,
+                            fileCache: fileCache
+                        ),
+                        getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                        createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                        deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+                        getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
                     ),
-                    getAssetUseCase: WireCellsGetAssetUseCase(
-                        localAssetRepository: localAssetRepository,
-                        fileCache: fileCache
-                    ),
+                    isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest
+                    nodesRepository: nodesAPI,
+                    fileCache: fileCache,
+                    isBrowsing: true,
+                    accentColorProvider: accentColorProvider
                 )
-            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
-        viewController.view.backgroundColor = .clear
-        return viewController
     }
 
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
         ConversationCellProvider(
-            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+            fetchCachedNodeUseCase: nodeCache,
+            fetchNodeUseCase: WireDriveFetchNodeUseCase(
                 repository: nodesAPI,
                 cache: nodeCache
             ),
-            getAssetUseCase: WireCellsGetAssetUseCase(
+            getAssetUseCase: WireDriveGetAssetUseCase(
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             insetsProvider: insetsProvider
         )
     }

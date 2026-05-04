@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ struct AccountSwitcherModalView: View {
         VStack {
             VStack(alignment: .center, spacing: 16) {
                 Text(L10n.Localizable.SwitchingAccounts.title)
-                    .font(.textStyle(.h3))
+                    .font(for: .h3)
                     .bold()
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -45,7 +45,7 @@ struct AccountSwitcherModalView: View {
                     .lineLimit(nil)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                    .font(Font.textStyle(.body1))
+                    .font(for: .body1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 AccountSwitcherView(

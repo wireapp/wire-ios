@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,11 +77,19 @@ public extension ZMUser {
     @objc(canAddUserToConversation:)
     func canAddUser(to conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(
+
+        let hasAddPermission = hasRoleWithAction(
             actionName: ConversationAction.addConversationMember.name,
             conversation: conversation
-        ) || isChannelAdmin(conversation)
-            || (conversation.privateChannelPermission == .everyone && conversation.isChannel)
+        )
+
+        let isAdmin = isChannelAdmin(conversation)
+
+        let canAddUsersToChannel = conversation.isChannel
+            && conversation.privateChannelPermission == .everyone
+            && !isGuest(in: conversation)
+
+        return hasAddPermission || isAdmin || canAddUsersToChannel
     }
 
     @objc(canRemoveUserFromConversation:)
@@ -242,7 +250,12 @@ public extension ZMUser {
 
             if let team {
                 // If the self user belongs to a team he/she's a guest in every non team conversation
-                return conversation.teamRemoteIdentifier != team.remoteIdentifier
+                if conversation.conversationType == .oneOnOne {
+                    return conversation.localParticipantsExcludingSelf.first?.teamIdentifier != team.remoteIdentifier
+
+                } else {
+                    return conversation.teamRemoteIdentifier != team.remoteIdentifier
+                }
             } else {
                 // If the self user doesn't belong to a team he/she's a guest in all team conversations
                 return conversation.teamRemoteIdentifier != nil
@@ -252,7 +265,7 @@ public extension ZMUser {
                 return false
             }
 
-            return !isServiceUser // Bots are never guests
+            return !isAppOrBot // Apps or bots are never guests
                 && !isFederated // Federated users are never guests
                 && ZMUser.selfUser(in: context).hasTeam // There can't be guests in a team that doesn't exist
                 && conversation.localParticipantsContain(user: self)

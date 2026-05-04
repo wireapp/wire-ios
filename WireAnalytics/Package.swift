@@ -4,12 +4,13 @@ import Foundation
 import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
+// open --env ENABLE_DATADOG=true --env ENABLE_COUNTLY=true wire-ios-mono.xcworkspace
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
 let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
@@ -26,7 +27,10 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: ["WireFoundation", "WireLogging"]
+            dependencies: [
+                .product(name: "WireFoundation", package: "WireFoundation"),
+                .product(name: "WireLogging", package: "WireLogging"),
+            ]
         ),
         .target(
             name: "WireAnalyticsSupport",

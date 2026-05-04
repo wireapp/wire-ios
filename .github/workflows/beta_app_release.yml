@@ -8,7 +8,7 @@ on:
     inputs:
       distribute_externals:
         type: boolean
-        description: 'Distribute externally'
+        description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees (Public Beta)'
         default: false
 permissions: 
   checks: write
@@ -21,4 +21,5 @@ jobs:
       datadog_enabled: true
       fastlane_action: testflight_beta
       distribute_externals: ${{ inputs.distribute_externals || false }}
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

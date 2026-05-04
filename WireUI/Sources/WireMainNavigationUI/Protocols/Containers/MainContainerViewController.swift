@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,12 +25,14 @@ public protocol MainContainerViewControllerProtocol: UIViewController {
     associatedtype ConversationListUI: MainConversationListUIProtocol
     associatedtype ArchiveUI: UIViewController
     associatedtype SettingsUI: UIViewController
+    associatedtype MeetingsUI: UIViewController
     associatedtype FilesUI: UIViewController
     associatedtype ConversationUI: MainConversationUIProtocol
 
     // These three properties represent the tabs of the main tab bar controller.
     var conversationListUI: ConversationListUI? { get set }
     var archiveUI: ArchiveUI? { get set }
+    var meetingsUI: MeetingsUI? { get set }
     var settingsUI: SettingsUI? { get set }
     var filesUI: FilesUI? { get set }
 

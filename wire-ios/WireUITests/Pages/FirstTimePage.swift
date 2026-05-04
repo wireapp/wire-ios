@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,60 +25,63 @@ class FirstTimePage: PageModel {
         okButton
     }
 
-    deinit {
-        if let token = handler?.1 {
-            handler?.0.removeUIInterruptionMonitor(token)
-        }
-    }
-
     var okButton: XCUIElement {
-        app.buttons[Locators.FirstTimePage.okButton.rawValue]
+        app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
     }
 
     var savePasswordSheet: XCUIElement {
-        app.staticTexts["Save Password?"]
+        app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
     }
 
     var notNowOptionOnSavePasswordSheet: XCUIElement {
-        app.buttons["Not Now"]
+        app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
-    var handler: (XCTestCase, any NSObjectProtocol)?
+    var conversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
+    }
+
+    var usernameField: XCUIElement {
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
+    }
 
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
-        okButton.tap()
+        _ = okButton.waitForExistence(timeout: 2)
+        if !okButton.isHittable {
+            dismissSavePasswordAlertIfPresent()
+        }
+        if okButton.isHittable {
+            okButton.tap()
+        }
+        okButton.waitToDisappear()
         return self
     }
 
-    func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
-        handleNotificationPermissionAlert(testCase: testCase)
+    func acceptPopup() throws -> ConversationsPage {
+        // Sometimes the OK button take longer to disappear after tapping.
+        guard conversationsButton.waitForExistence(timeout: 15) else {
+            throw NSError(
+                domain: "XCUITest Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "OK button loader shown longer...conversationsButton could not be shown within 15 seconds"
+                ]
+            )
+        }
+        conversationsButton.tap()
         return try ConversationsPage()
     }
 
-    func acceptPopupOnTeamMemberSetup(with testCase: XCTestCase) throws -> SetUsernamePage {
-        handleNotificationPermissionAlert(testCase: testCase)
-        return try SetUsernamePage()
-    }
-
-    private func handleNotificationPermissionAlert(testCase: XCTestCase) {
-        let handler = testCase
-            .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
-                if alertElement.label.contains(notifPermission) {
-                    alertElement.buttons["Allow"].tap()
-                }
-
-                return true
-            }
-        self.handler = (testCase, handler)
+    func acceptPopupOnTeamMemberSetup() throws -> SetUsernamePage {
+        try SetUsernamePage()
     }
 
     private func dismissSavePasswordAlertIfPresent() {
-        if savePasswordSheet.waitForExistence(timeout: 2) {
+        if savePasswordSheet.waitForExistence(timeout: 4) {
             notNowOptionOnSavePasswordSheet.tap()
-            _ = savePasswordSheet.waitToDisappear(timeout: 2)
+            _ = savePasswordSheet.waitToDisappear(timeout: 4)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -100,7 +101,6 @@ final class ConversationContentViewController: UIViewController {
             insetsProvider: {
                 let margins = HorizontalMargins.conversationHorizontalMargins()
                 return ConversationCellInsets(
-                    legacy: .init(leading: margins.left, trailing: margins.right),
                     leadingBubble: .init(leading: margins.left, trailing: margins.chatBubbleMinimumTrailing),
                     trailingBubble: .init(leading: margins.chatBubbleMinimumLeading, trailing: margins.right)
                 )
@@ -117,9 +117,9 @@ final class ConversationContentViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
-    var userClientToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
     private var mediaPlaybackManager: MediaPlaybackManager?
@@ -143,13 +143,15 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
-        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
@@ -269,12 +271,24 @@ final class ConversationContentViewController: UIViewController {
             object: .none
         )
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(clearedContent),
+            name: .clearContentNotification,
+            object: userSession.notificationContext
+        )
+
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(userSession: userSession) { [unowned self] color in
                 updateBackgroundColor(color: color)
             }
+    }
+
+    @objc
+    private func clearedContent() {
+        dataSource.resetSectionControllers()
     }
 
     private func updateBackgroundColor(color: ZMAccentColor?) {
@@ -622,8 +636,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // different to actionControllers[<message.nonce>], so it was out of sync
         // it was fixed but for extra safety backup action controller if not found
         var backupActionController: ConversationMessageActionController?
-        if let nonce = cellDescription?.message?.nonce {
-            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+
+        if let message = cellDescription?.message, let cacheIdentifier = MessageCacheIdentifier(message: message) {
+            backupActionController = dataSource.sectionControllers.get(for: cacheIdentifier)?.actionController
         }
 
         if cellDescription?.supportsActions ?? false,

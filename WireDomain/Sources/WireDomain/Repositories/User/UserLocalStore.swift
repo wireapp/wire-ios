@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireData
 import WireDataModel
 import WireLogging
 import WireNetwork
@@ -86,13 +87,11 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
             request.predicate = predicate
 
-            return try context
+            let results = try context
                 .fetch(request)
+            return results
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        WireLogger.conversation.error(
-                            "Missing user's qualifiedID"
-                        )
                         return nil
                     }
                     return userID
@@ -255,50 +254,63 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             )
         }
 
-        let allGroupConversations = await context.perform {
+        let allConversations = await context.perform {
             // swiftformat:disable:next redundantProperty
-            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
-                guard $0.conversation?.conversationType == .group else {
-                    return nil
-                }
-
-                return $0.conversation
-            }
-
-            return allGroupConversations
+            user.participantRoles.compactMap(\.conversation)
         }
 
-        for conversation in allGroupConversations {
-            let (userTeam, isTeamMember, conversationTeam, conversationID, conversationDomain) = await context.perform {
+        for conversation in allConversations {
+            let (
+                userTeam,
+                isTeamMember,
+                conversationTeam,
+                conversationID,
+                conversationDomain,
+                conversationType
+            ) = await context.perform {
                 (
                     user.team,
                     user.isTeamMember,
                     conversation.team,
                     conversation.remoteIdentifier as UUID,
-                    conversation.domain
+                    conversation.domain,
+                    conversation.conversationType
                 )
             }
 
-            if isTeamMember, conversationTeam == userTeam {
+            if conversationType == .group {
+                if isTeamMember, conversationTeam == userTeam {
 
-                let systemMessageType: SystemMessageType = .teamMemberRemoved(
-                    member: (id, domain),
-                    date: date
-                )
+                    let systemMessageType: SystemMessageType = .teamMemberRemoved(
+                        member: (id, domain),
+                        date: date
+                    )
 
-                await messageLocalStore.addSystemMessage(
-                    messageType: systemMessageType,
-                    conversationID: conversationID,
-                    conversationDomain: conversationDomain
-                )
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
 
-            } else {
+                } else {
 
-                let systemMessageType: SystemMessageType = .participantsRemoved(
-                    participants: [(id, domain)],
-                    sender: (id, domain),
-                    date: date
-                )
+                    let systemMessageType: SystemMessageType = .participantsRemoved(
+                        participants: [(id, domain)],
+                        sender: (id, domain),
+                        date: date
+                    )
+
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
+                }
+
+            } else if conversationType == .oneOnOne {
+
+                // insert User is no longer available system message
+                let systemMessageType: SystemMessageType = .userDeleted(sender: (id, domain))
 
                 await messageLocalStore.addSystemMessage(
                     messageType: systemMessageType,
@@ -308,6 +320,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             }
 
             await context.perform {
+                if conversationType == .oneOnOne, conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                    conversation.mlsStatus = .invalid
+                }
                 conversation.removeParticipantAndUpdateConversationState(
                     user: user,
                     initiatingUser: user
@@ -322,11 +337,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             domain: userInfo.userID.domain
         )
 
-        await context.perform {
-            guard !userInfo.isDeleted else {
-                return persistedUser.markAccountAsDeleted(at: Date())
-            }
-
+        await context.perform { [context] in
             persistedUser.name = userInfo.name
             persistedUser.handle = userInfo.handle
             persistedUser.teamIdentifier = userInfo.teamID
@@ -335,10 +346,23 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.previewProfileAssetIdentifier = userInfo.completeAssetKey
             persistedUser.emailAddress = userInfo.email
             persistedUser.expiresAt = userInfo.expiresAt
+            if let appDescription = userInfo.appDescription, let appCategory = userInfo.appCategory {
+                let appInfo = persistedUser.appInfo ?? WireData.AppInfo(context: context)
+                appInfo.appDescription = appDescription
+                appInfo.category = appCategory
+                persistedUser.appInfo = appInfo
+            }
             persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()
             persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
             persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]
             persistedUser.needsToBeUpdatedFromBackend = false
+            // `type` only exists in v12 or later
+            let fallbackType: TypeOfUser = persistedUser.serviceIdentifier != nil ? .bot : .regular
+            persistedUser.type = userInfo.type ?? fallbackType
+
+            if userInfo.isDeleted {
+                return persistedUser.markAccountAsDeleted(at: Date())
+            }
         }
     }
 

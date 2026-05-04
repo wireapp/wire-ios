@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
     case teamMember
     case nonTeamMember
     case guest
-    case service
+    case app = "service"
 
     init(_ value: WireNetwork.ConversationAccessRole) {
         switch value {
@@ -33,8 +33,8 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             self = .nonTeamMember
         case .guest:
             self = .guest
-        case .service:
-            self = .service
+        case .app:
+            self = .app
         }
     }
 
@@ -46,8 +46,8 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

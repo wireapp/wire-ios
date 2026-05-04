@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ public enum KeychainManager {
 
     // MARK: - Key generation
 
-    static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
+    public static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
         let status = SecRandomCopyBytes(kSecRandomDefault, key.count, &key)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireNetworkSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireNetwork
 
@@ -62,6 +63,36 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     }
 
     // MARK: - Tests
+
+    func test_isFeatureEnabled_forDefaultValueWithDefaultValue() async {
+
+        for feature in Feature.Name.allCases {
+            featureConfigLocalStore.fetchFeatureName_MockError = FeatureConfigLocalStore.Error
+                .failedToFetchFeatureLocally(feature)
+            let result = await sut.isFeatureEnabled(feature)
+            XCTAssertEqual(result, feature == .simplifiedUserConnectionRequestQRCode)
+        }
+    }
+
+    func test_isFeatureEnabled_statusHandling() async {
+        let testCases: [(status: Feature.Status, expected: Bool)] = [
+            (.enabled, true),
+            (.disabled, false)
+        ]
+
+        for scenario in testCases {
+            featureConfigLocalStore.isFeatureEnabled_ReturnValue = scenario.expected
+            featureConfigLocalStore.fetchFeatureName_MockValue = Feature()
+
+            let result = await sut.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode)
+
+            XCTAssertEqual(
+                result,
+                scenario.expected,
+                "Failed for status: \(scenario.status). Should follow store value, ignoring fallback."
+            )
+        }
+    }
 
     func testPullFeatureConfigs_It_Invokes_Local_Store_Methods() async throws {
         // Mock
@@ -276,13 +307,19 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled
                 )
             ),
-            .chatBubblesSimple(
-                .init(
-                    status: .enabled
+            .simplifiedUserConnectionRequestQRCode(
+                SimplifiedUserConnectionRequestQRCodeConfig(
+                    status: .disabled
                 )
             ),
             .cells(
                 .init(status: .enabled)
+            ),
+            .cellsInternal(
+                .init(
+                    status: .enabled,
+                    backendURL: URL(string: "https://wire.com")!
+                )
             )
         ]
 

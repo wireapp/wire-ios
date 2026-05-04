@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ struct ContentView: View {
     var body: some View {
         WireAuthenticationAssembly()
             .assemble(
+                authenticationType: .new,
                 environmentType: configuration.defaultBackendEnvironment,
                 environment: BackendEnvironment2(
                     title: "Mock backend",
@@ -79,7 +80,6 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                isMultibackendEnabled: true,
                 registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }

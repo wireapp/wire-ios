@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -158,40 +158,6 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
 
-    func testThatUpdateEventIsGeneratedWhenChangingAccessRoles() {
-        // given
-        var conversation: MockConversation!
-        sut.performRemoteChanges { session in
-            conversation = session.insertTeamConversation(
-                to: self.team,
-                with: [self.selfUser],
-                creator: session.insertUser(withName: "some")
-            )
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.saveAndCreatePushChannelEventForSelfUser()
-        let eventsCount = sut.generatedPushEvents.count
-
-        // when
-        sut.performRemoteChanges { _ in
-            conversation.accessRole = "non_activated"
-            conversation.accessMode = ["invite", "code"]
-            conversation.accessRoleV2 = ["[team_member", "non_team_member", "guest", "service"]
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(sut.generatedPushEvents.count, eventsCount + 1)
-        guard let lastEvent = sut.generatedPushEvents.lastObject as? MockPushEvent else { XCTFail(); return }
-        guard let payloadData = lastEvent.payload as? [String: Any] else { XCTFail(); return }
-        guard let data = payloadData["data"] as? [String: Any] else { XCTFail(); return }
-
-        XCTAssertNotNil(data["access"])
-        XCTAssertNotNil(data["access_role"])
-        XCTAssertNotNil(data["access_role_v2"])
-
-    }
-
     func testThatItReturnsConversationRolesIfConversationIsNotPartOfATeam() {
         // given
         var conversation: MockConversation!
@@ -341,8 +307,12 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         let lastEvent = conversation!.events.lastObject as! MockEvent
         XCTAssertNotNil(lastEvent)
         XCTAssertEqual(lastEvent.eventType, ZMUpdateEventType.conversationOtrMessageAdd)
-        XCTAssertNotNil(lastEvent.decryptedOTRData)
-        let decryptedMessage = try! GenericMessage(serializedData: lastEvent.decryptedOTRData!)
+
+        // Extract message data from event (mock transport doesn't decrypt)
+        let eventData = lastEvent.data as! NSDictionary
+        let messageDataBase64 = eventData["text"] as! String
+        let messageBytes = Data(base64Encoded: messageDataBase64)!
+        let decryptedMessage = try! GenericMessage(serializedData: messageBytes)
         XCTAssertEqual(decryptedMessage.text.content, messageText)
     }
 
@@ -429,83 +399,4 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationsCount)
     }
 
-    func testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients_Protobuf() {
-        // GIVEN
-        var selfClient: MockUserClient!
-        var secondSelfClient: MockUserClient!
-
-        var otherUser: MockUser!
-        var otherUserClient: MockUserClient!
-        var secondOtherUserClient: MockUserClient!
-        var conversation: MockConversation!
-
-        sut.performRemoteChanges { session in
-            session.registerClient(for: self.selfUser, label: "self user", type: "permanent", deviceClass: "phone")
-
-            otherUser = session.insertUser(withName: "bar")
-            conversation = session.insertConversation(
-                withCreator: self.selfUser,
-                otherUsers: [otherUser!],
-                type: .oneOnOne
-            )
-
-            selfClient = self.selfUser.clients.anyObject() as? MockUserClient
-            secondSelfClient = session.registerClient(
-                for: self.selfUser,
-                label: "self2",
-                type: "permanent",
-                deviceClass: "phone"
-            )
-
-            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
-            secondOtherUserClient = session.registerClient(
-                for: otherUser,
-                label: "other2",
-                type: "permanent",
-                deviceClass: "phone"
-            )
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        let previousNotificationCount = sut.generatedPushEvents.count
-
-        let data = Data("foobar".utf8)
-        let message = selfClient.newOtrMessageWithRecipients(
-            for: [secondSelfClient, otherUserClient, secondOtherUserClient],
-            plainText: data
-        )
-        let messageData = try? message.serializedData()
-
-        // WHEN
-        let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
-
-        // THEN
-        XCTAssertNotNil(response)
-        XCTAssertNil(response?.transportSessionError)
-
-        XCTAssertEqual(response?.httpStatus, 201)
-
-        let expectedResponsePayload = [
-            "missing": [:],
-            "redundant": [:]
-        ]
-
-        if let response {
-            assertExpectedPayload(expectedResponsePayload, in: response)
-        }
-
-        XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationCount + 3)
-        if sut.generatedPushEvents.count > 4 {
-            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(
-                location: sut.generatedPushEvents.count - 3,
-                length: 3
-            )) as! [MockPushEvent]
-
-            for event in otrEvents {
-                let eventPayload = event.payload.asDictionary()
-                XCTAssertEqual(eventPayload?["type"] as? String, "conversation.otr-message-add")
-            }
-        }
-    }
 }

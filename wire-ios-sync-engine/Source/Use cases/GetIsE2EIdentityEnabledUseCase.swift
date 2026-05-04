@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     public func invoke() async throws -> Bool {
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        return try await coreCrypto.perform {
+        return try await coreCrypto.transaction {
             try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
         }
     }

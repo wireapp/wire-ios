@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import Foundation
 import WireFoundation
-import WireNetwork
+@preconcurrency import WireNetwork
 
-public protocol IsBuildBlacklistedUseCase {
+// sourcery: AutoMockable
+public protocol IsBuildBlacklistedUseCase: Sendable {
 
-    func invoke() async throws -> Bool
+    func invoke() async -> (isBuildBlacklisted: Bool, error: Error?)
 
 }
 
@@ -41,26 +42,34 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         currentBuildNumber: String,
         api: any BlacklistAPI
     ) {
+        #if DEBUG
+            let currentBuildNumber = UITestConfig.environment.isBuildBlacklisted ? "0" : currentBuildNumber
+        #endif
+
         self.currentBuildNumber = DeveloperOverrides.buildNumber ?? currentBuildNumber
         self.api = api
     }
 
-    public func invoke() async throws -> Bool {
-        let blacklist = try await api.getBlacklist()
+    public func invoke() async -> (isBuildBlacklisted: Bool, error: Error?) {
+        do {
+            let blacklist = try await api.getBlacklist()
 
-        guard let currentVersion = Int(currentBuildNumber) else {
-            throw IsBuildBlacklistedUseCaseError.decodingFailed(
-                message: "current build number '\(currentBuildNumber)' must be an integer"
-            )
+            guard
+                let currentVersion = Int(currentBuildNumber),
+                let minLegalVersion = Int(blacklist.minimumLegalBuildNumber)
+            else {
+                return (false, nil)
+            }
+
+            let isBlacklisted = currentVersion < minLegalVersion
+                || blacklist.illegalBuildNumbers.contains(String(currentVersion))
+            return (isBlacklisted, nil)
+        } catch {
+            // As per specs, if there is any failure obtaining the blacklist,
+            // whether it is missing, can't be decoded, or otherwise, then
+            // consider it empty (i.e all clients valid).
+            return (false, error)
         }
-
-        guard let minLegalVersion = Int(blacklist.minimumLegalBuildNumber) else {
-            throw IsBuildBlacklistedUseCaseError.decodingFailed(
-                message: "blacklist version '\(blacklist.minimumLegalBuildNumber)' must be an integer"
-            )
-        }
-
-        return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(String(currentVersion))
     }
 
 }

@@ -1,0 +1,31 @@
+name: Critical Flows
+
+on:
+  workflow_dispatch:
+    inputs:
+      testiny_run_name:
+        description: "Testiny test run name: paste the exact run name from Testiny"
+        required: false
+        type: string
+  push:
+    branches:
+      - 'develop'
+      - 'release/cycle-*'  
+  
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  critical_flows:
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      all: false
+      notify_secret: WIRE_IOS_QA_WEBHOOK
+      test_dependencies: false
+      run_critical_flows: true
+      testiny_run_name: ${{ inputs.testiny_run_name }}
+      notify: always
+    secrets: inherit

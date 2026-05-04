@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -193,7 +193,11 @@ public class MLSEventProcessor: MLSEventProcessing {
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: LegacyOneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
+            oneOnOneResolver: LegacyOneOnOneResolver(
+                migrator: migrator,
+                isMLSEnabled: mlsFeature
+                    .isEnabled
+            ) // note this is still used by ConversationEventProcessor (legacy processing)
         )
     }
 

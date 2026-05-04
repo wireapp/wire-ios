@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -184,10 +184,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
 
         var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
         if shouldUploadExtraMetaData {
-            guard
-                let original = managedObjectContext.zm_fileAssetCache.originalImageData(for: message),
-                let domain = conversation.domain ?? localDomain
-            else {
+            guard let domain = conversation.domain ?? localDomain else {
                 WireLogger.assets.warn(
                     "should include extra metadata for link preview but not able to",
                     attributes: logAttributes
@@ -209,7 +206,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             extraMetaData = .init(
                 conversationID: conversationID,
                 fileName: image.name,
-                mimeType: image.utType?.preferredMIMEType ?? ""
+                mimeType: image.utType?.preferredMIMEType
             )
         }
 

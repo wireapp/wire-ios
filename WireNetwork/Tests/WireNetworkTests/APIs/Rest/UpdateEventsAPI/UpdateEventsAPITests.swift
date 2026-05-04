@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,13 @@ final class UpdateEventsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetLastUpdateEvent() async throws {
-        try await createSnapshotter().verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetLastEventSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await createSnapshotter().verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
     }
@@ -56,7 +62,13 @@ final class UpdateEventsAPITests: XCTestCase {
     }
 
     func testGetServerTime() async throws {
-        try await createSnapshotter().verifyRequest(for: APIVersion.v9.andNextVersions) { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetServerTimeSuccessResponseV8"),
+            count: APIVersion.allCasesUpTo(.v8).count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await createSnapshotter().verifyRequest(for: APIVersion.v9.andNextVersions, apiService: apiService) { sut in
             _ = try await sut.getServerTime()
         }
     }
@@ -253,9 +265,7 @@ final class UpdateEventsAPITests: XCTestCase {
     func testServerTime_givenV0_To_V8_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting(
-            [.v9, .v10, .v11, .v12]
-        )
+        let unsupportedVersions: [APIVersion] = APIVersion.allCasesUpTo(.v9)
 
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
 

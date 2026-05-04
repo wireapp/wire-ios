@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,8 +75,10 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
+        connectionsRepository.scheduleToSyncConversationWith_MockMethod = { _ in }
         oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
             expectation.fulfill()
+            return .noAction
         }
 
         // When
@@ -87,6 +89,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
     }
 
@@ -101,7 +104,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in .noAction }
         _ = await context.perform { [self] in
             modelHelper.createUser(
                 qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),
@@ -117,6 +120,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations.count, 0)
     }
 
     private enum Scaffolding {

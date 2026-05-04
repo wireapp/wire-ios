@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,21 @@
 public import UIKit
 import WireMessagingUI
 public import WireMessagingDomain
+import Combine
 
 public enum WireMessagingAssembly {
 
     @MainActor
     public static func makeConversationScreen(
-        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol)
+        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol),
+        senderNameObserverProvider: SenderNameObserverProvider?
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
+                dataSource: ConversationDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
-                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo)
+                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
+                    senderNameObserverProvider: AnySenderNameObserverProvider(senderNameObserverProvider)
                 )
             )
         )

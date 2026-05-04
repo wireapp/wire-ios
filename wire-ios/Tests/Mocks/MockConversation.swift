@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var relatedConnectionState: ZMConnectionStatus = .invalid
 
     var sortedOtherParticipants: [UserType] = []
-    var sortedServiceUsers: [UserType] = []
+    var sortedApps: [UserType] = []
 
     func verifyLegalHoldSubjects() {
         // no-op
@@ -61,7 +61,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var allowGuests: Bool = false
 
-    var allowServices: Bool = false
+    var allowApps = false
 
     var teamType: TeamType?
 
@@ -81,7 +81,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var lastMessage: ZMConversationMessage?
     var firstUnreadMessage: ZMConversationMessage?
 
-    var areServicesPresent: Bool = false
+    var areAppsPresent = false
 
     var domain: String?
 
@@ -93,9 +93,9 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var hasMoreHistory: Bool = false
 
-    var wireCellName: String = ""
+    var wireDriveCellName: String = ""
 
-    var isCellsEnabled: Bool = false
+    var isWireDriveEnabled: Bool = false
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

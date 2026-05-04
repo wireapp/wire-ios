@@ -350,11 +350,11 @@
         <key>one</key>
         <string>Zgrešen klic</string>
         <key>two</key>
-        <string>Missed calls</string>
+        <string>Missed calls (%d)</string>
         <key>few</key>
-        <string>Missed calls</string>
+        <string>Missed calls (%d)</string>
         <key>other</key>
-        <string>Missed calls</string>
+        <string>Missed calls (%d)</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -390,11 +390,11 @@
         <key>one</key>
         <string>Missed call from %2$@</string>
         <key>two</key>
-        <string>Missed calls from %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>few</key>
-        <string>Missed calls from %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>other</key>
-        <string>Missed calls from %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

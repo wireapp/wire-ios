@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +80,8 @@ extension SettingsCellDescriptorFactory {
             icon: .personalProfile,
             accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
             settingsTopLevelMenuItem: .account,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -252,11 +253,14 @@ extension SettingsCellDescriptorFactory {
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
         if enabled {
-            let presentation = {
-                ChangeHandleViewController(
+            let presentation: () -> UIViewController? = { [weak userSession] in
+                guard let userSession else { return nil }
+
+                return ChangeHandleViewController(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
                     settingsCoordinator: settingsCoordinator,
-                    isFederationEnabled: isFederationEnabled
+                    isFederationEnabled: isFederationEnabled,
+                    userSession: userSession
                 )
             }
 
@@ -308,7 +312,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func pictureElement() -> any SettingsCellDescriptorType {
-        let profileImagePicker = ProfileImagePickerManager()
+        let profileImagePicker = ProfileImagePickerManager(userSession: userSession)
         let previewGenerator: PreviewGeneratorType = { _ in
             guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
             return .image(image)
@@ -358,10 +362,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func colorElementPresentationAction(sender: UIView) -> UIViewController {
-        guard
-            let selfUser = ZMUser.selfUser(),
-            let userSession = ZMUserSession.shared()
-        else {
+        guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("misses prerequisites to present color elements!")
             return UIViewController()
         }
@@ -391,22 +392,15 @@ extension SettingsCellDescriptorFactory {
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
-        let context = selfUser.managedObjectContext!.performAndWait {
-            selfUser.managedObjectContext!.zm_sync!
-        }
+        let selfUserID = selfUser.qualifiedID!
         let backupLocalStore = BackupLocalStore(
-            context: context,
-            processor: ConversationProtobufMessageProcessor(
-                context: context,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            )
+            contextProvider: sessionManager.activeUserSession!.contextProvider
         )
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
             ImportBackupUseCase(
                 url: url,
-                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserID: .init(selfUserID),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZIPFoundationFileUnarchiver(),
                 syncTrigger: {
@@ -423,7 +417,7 @@ extension SettingsCellDescriptorFactory {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
-                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserID: .init(selfUserID),
                 backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
                 logger: WireLogger.backupExport
@@ -437,7 +431,6 @@ extension SettingsCellDescriptorFactory {
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
-            wireAccentColorMapping: WireAccentColorMapping(),
             wireAccentColor: selfUser.accentColor ?? .default,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
@@ -496,7 +489,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func deleteAccountButtonElement() -> any SettingsCellDescriptorType {
-        let presentationAction: () -> UIViewController = {
+        let presentationAction: () -> UIViewController = { [weak userSession] in
             let alert = UIAlertController(
                 title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
                 message: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.message,
@@ -505,8 +498,9 @@ extension SettingsCellDescriptorFactory {
             let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
             alert.addAction(actionCancel)
             let actionDelete = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive) { _ in
-                ZMUserSession.shared()?.enqueue {
-                    ZMUserSession.shared()?.initiateUserDeletion()
+                guard let session = userSession as? ZMUserSession else { return }
+                session.enqueue {
+                    session.initiateUserDeletion()
                 }
             }
             alert.addAction(actionDelete)
@@ -522,35 +516,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     func signOutElement() -> any SettingsCellDescriptorType {
-        SettingsSignOutCellDescriptor()
+        SettingsSignOutCellDescriptor(userSession: userSession)
     }
-
-}
-
-// MARK: -
-
-private extension ConversationProtobufMessageProcessor {
-
-    init(
-        context: NSManagedObjectContext,
-        localDomain: String?,
-        isFederationEnabled: Bool
-    ) {
-        let messageLocalStore = MessageLocalStore(context: context)
-        self.init(
-            messageLocalStore: messageLocalStore,
-            conversationLocalStore: ConversationLocalStore(
-                context: context,
-                mlsService: context.performAndWait { context.mlsService },
-                messageLocalStore: messageLocalStore,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            ),
-            userLocalStore: UserLocalStore(
-                context: context,
-                messageLocalStore: messageLocalStore
-            )
-        )
-    }
-
 }

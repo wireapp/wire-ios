@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ public struct ChannelBannerView: View {
     private var titleView: some View {
         HStack(alignment: .top) {
             Text(configuration.title)
-                .wireTextStyle(.body3)
+                .font(for: .body3)
                 .foregroundStyle(Color.white)
                 .accessibilityLabel(Text(configuration.title))
 
@@ -76,7 +76,7 @@ public struct ChannelBannerView: View {
 
     private var messageView: some View {
         Text(configuration.message)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .foregroundStyle(.white)
             .accessibilityLabel(
                 configuration.message
@@ -112,6 +112,5 @@ public struct ChannelBannerView: View {
             )
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     .preferredColorScheme(.dark)
 }

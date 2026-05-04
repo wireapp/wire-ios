@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,4 +90,85 @@ public enum ConversationEvent: Equatable, Sendable {
 
     case mlsReset(ConversationMLSResetEvent)
 
+}
+
+extension ConversationEvent {
+
+    public var name: String {
+        switch self {
+        case .accessUpdate:
+            "accessUpdate"
+        case .codeUpdate:
+            "codeUpdate"
+        case .create:
+            "create"
+        case .delete:
+            "delete"
+        case .memberJoin:
+            "memberJoin"
+        case .memberLeave:
+            "memberLeave"
+        case .memberUpdate:
+            "memberUpdate"
+        case .messageTimerUpdate:
+            "messageTimerUpdate"
+        case .mlsMessageAdd:
+            "mlsMessageAdd"
+        case .mlsWelcome:
+            "mlsWelcome"
+        case .proteusMessageAdd:
+            "proteusMessageAdd"
+        case .protocolUpdate:
+            "protocolUpdate"
+        case .receiptModeUpdate:
+            "receiptModeUpdate"
+        case .rename:
+            "rename"
+        case .typing:
+            "typing"
+        case .permissionUpdate:
+            "permissionUpdate"
+        case .mlsReset:
+            "mlsReset"
+        }
+    }
+
+    var conversationID: ConversationID {
+        switch self {
+        case let .accessUpdate(event):
+            event.conversationID
+        case let .codeUpdate(event):
+            event.conversationID
+        case let .create(event):
+            event.conversationID
+        case let .delete(event):
+            event.conversationID
+        case let .memberJoin(event):
+            event.conversationID
+        case let .memberLeave(event):
+            event.conversationID
+        case let .memberUpdate(event):
+            event.conversationID
+        case let .messageTimerUpdate(event):
+            event.conversationID
+        case let .mlsMessageAdd(event):
+            event.conversationID
+        case let .mlsWelcome(event):
+            event.conversationID
+        case let .proteusMessageAdd(event):
+            event.conversationID
+        case let .protocolUpdate(event):
+            event.conversationID
+        case let .receiptModeUpdate(event):
+            event.conversationID
+        case let .rename(event):
+            event.conversationID
+        case let .typing(event):
+            event.conversationID
+        case let .permissionUpdate(event):
+            event.conversationID
+        case let .mlsReset(event):
+            event.conversationID
+        }
+    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,10 +31,13 @@ struct ConversationMessageContext: Equatable {
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
+
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
-        didRequestRefreshForMessage message: ZMConversationMessage
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
     )
+
 }
 
 extension ZMConversationMessage {
@@ -47,9 +50,9 @@ extension ZMConversationMessage {
 ///
 /// A message will be represented as a table/collection section, and the components that make
 /// the view of the message (timestamp, reply, content...) will be displayed as individual cells,
-/// to reduce the number of cells that are instanciated at a given time.
+/// to reduce the number of cells that are instantiated at a given time.
 ///
-/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
+/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeuing
 /// the cells from the table or collection view and configuring them with a message.
 
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
@@ -107,7 +110,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
-    private let isChatBubbleSimpleEnabled: Bool
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -125,7 +128,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
-        isChatBubbleSimpleEnabled: Bool
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.message = message
         self.context = context
@@ -138,10 +141,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             userID: selfUser.remoteIdentifier,
             storage: userDefaults
         )
-
-        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
-        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
-        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init()
 
@@ -157,7 +157,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        privateDefaults.bool(forKey: .collapseOwnMessages) && !isChatBubbleSimpleEnabled
+        false
+        // Temporarily disabling collapsing own messages,
+        // because it conflicts with chat bubbles.
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+        //
+        // privateDefaults.bool(forKey: .collapseOwnMessages)
     }
 
     private func isCollapsedInitialValue() -> Bool {
@@ -241,7 +246,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else {
             privateDefaults.saveWasUncollapsed(message)
         }
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
 
     func collapse() {
@@ -255,10 +264,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell()
         }
 
-        let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
             multipartMessage: message.multipartMessageData!,
-            isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
             isSentBySelfUser: message.isSentBySelfUser
         )
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
@@ -275,9 +282,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
+        guard let imageMessageData = message.imageMessageData else {
+            return []
+        }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
             message: message,
-            image: message.imageMessageData!
+            image: imageMessageData
         )
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
@@ -306,6 +316,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+            userSession: userSession,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
             }
@@ -318,14 +329,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell()
         }
 
-        let attachments = message.multipartMessageData?.attachments ?? []
-
         return ConversationTextMessageCellDescription
             .cells(
                 for: message,
                 searchQueries: context.searchQueries,
                 selfUser: selfUser,
-                userSession: userSession
+                userSession: userSession,
+                wireMessagingFactory: wireMessagingFactory
             )
     }
 
@@ -344,7 +354,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
-        let cellDescription = ConversationAudioMessageCellDescription(message: message)
+        let cellDescription = ConversationAudioMessageCellDescription(message: message, userSession: userSession)
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
@@ -386,17 +396,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
-        let attachments = message.multipartMessageData?.attachments ?? []
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
 
             case let .text(data):
+
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
                     searchQueries: context.searchQueries,
                     selfUser: selfUser,
-                    userSession: userSession
+                    userSession: userSession,
+                    wireMessagingFactory: wireMessagingFactory
                 )
 
             case let .button(data):
@@ -463,7 +474,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             let description = ConversationSenderMessageCellDescription(
                 sender: sender,
                 selfUser: selfUser,
-                message: message
+                message: message,
+                userSession: userSession
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
@@ -484,18 +496,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         func addReactions() {
             if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-                let description = MessageReactionsCellDescription(message: message)
+                let description = MessageReactionsCellDescription(message: message, userSession: userSession)
                 cellDescriptions.append(AnyConversationMessageCellDescription(description))
             }
         }
 
-        if isChatBubbleSimpleEnabled {
-            addReactions()
-            addToolbox()
-        } else {
-            addToolbox()
-            addReactions()
-        }
+        addReactions()
+        addToolbox()
 
         if isFailedRecipientsVisible(in: context) {
             let description = ConversationMessageFailedRecipientsCellDescription(
@@ -664,14 +671,34 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        var animated = true
+        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
+            // WPB-24283: prevent flickering of composite messages
+            // When only button states changed, skip animation.
+            // The NSFetchedResultsController will handle the update via
+            // controllerDidChangeContent, which is already debounced.
+            // Firing both paths causes duplicate reloads and visible flickering.
+            animated = false
+        }
+
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: animated
+        )
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
     }
+
 }
 
 extension ConversationMessageSectionController {

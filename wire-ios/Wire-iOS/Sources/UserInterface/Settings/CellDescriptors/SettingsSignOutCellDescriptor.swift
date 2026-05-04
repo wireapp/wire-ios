@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@ import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
-    lazy var logoutHelper: LogOutHelper? = LogOutHelper(showLoading: { [weak self] in
+    private let userSession: UserSession
+
+    lazy var logoutHelper: LogOutHelper? = LogOutHelper(userSession: userSession, showLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.start() }
     }, hideLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.stop() }
@@ -34,7 +36,8 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         return BlockingActivityIndicator(view: topMostViewController.view)
     }()
 
-    init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         super.init(
             title: L10n.Localizable.Self.signOut,
             isDestructive: true,

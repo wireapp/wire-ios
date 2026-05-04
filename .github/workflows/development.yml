@@ -18,4 +18,6 @@ jobs:
       fastlane_action: development
       is_cloud_build: true
       produce_changelog: false
+      distribute_externals: true # automatically deliver to Wire Employees
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

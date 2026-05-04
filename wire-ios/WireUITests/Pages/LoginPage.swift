@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@ class LoginPage: PageModel {
 
     var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account"]
+        return elementsQuery.buttons[Locators.LoginPage.createAccountLink.rawValue]
     }
 
     var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.LoginPage.nextButton.rawValue].firstMatch
     }
 
     var emailField: XCUIElement {
@@ -49,7 +49,7 @@ class LoginPage: PageModel {
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
         try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        nextButton.tap()
+        nextButton.waitAndTap()
         return try FirstTimePage()
     }
 }

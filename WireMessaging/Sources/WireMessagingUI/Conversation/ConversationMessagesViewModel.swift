@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 @MainActor
 package protocol ConversationMessagesViewModelProtocol {
-    func updatesStream() async -> AsyncStream<MessagesUpdate>
+    func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
     func onWillDisappear()
 }
@@ -31,14 +31,14 @@ package protocol ConversationMessagesViewModelProtocol {
 // since DataSource is actor and works on background thread
 package struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
 
-    private let dataSource: any ConversationMessagesDataSourceProtocol
+    private let dataSource: any ConversationDataSourceProtocol
 
-    package init(dataSource: any ConversationMessagesDataSourceProtocol) {
+    package init(dataSource: any ConversationDataSourceProtocol) {
         self.dataSource = dataSource
     }
 
-    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
-        await dataSource.updatesStream()
+    package func makeUpdatesStream() async -> AsyncStream<MessagesUpdate> {
+        await dataSource.makeUpdatesStream()
     }
 
     package func onViewReady() {

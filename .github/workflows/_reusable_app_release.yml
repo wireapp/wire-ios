@@ -21,7 +21,13 @@ on:
       produce_changelog:
         type: boolean
         default: true
-      
+      notify_secret:
+        type: string
+        required: true
+      produce_debug_builds:
+        type: boolean
+        required: true
+        default: false
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -33,8 +39,6 @@ on:
       WIRE_INTERNAL_GITHUB_USER:
         required: true
       WIRE_INTERNAL_GITHUB_TOKEN:
-        required: true
-      APPCENTER_API_TOKEN:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
@@ -85,7 +89,7 @@ jobs:
     if: always()
     timeout-minutes: 60
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -93,8 +97,6 @@ jobs:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -114,13 +116,12 @@ jobs:
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
       COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      UI_TEST_LOGIN_EMAIL: "test@example.com"
-      UI_TEST_LOGIN_PASSWORD: "12345"
+      DEBUG_BUILDS: ${{ inputs.produce_debug_builds == true }}
 
     steps:
       - name: Add Masks
@@ -171,6 +172,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          
+      - name: Install ImageMagick
+        uses: gerlero/brew-install@v1
+        with:
+          packages: imagemagick ghostscript freetype
+          
       - name: Run setup
         run: sh ./setup.sh
       - name: Configure AWS Credentials
@@ -183,6 +190,10 @@ jobs:
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()
