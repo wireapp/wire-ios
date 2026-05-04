@@ -511,12 +511,14 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     static func parseNetworkQuality(from qualityInfo: String) -> NetworkQuality? {
-        guard
-            let data = qualityInfo.data(using: .utf8),
-            let payload = try? JSONDecoder().decode(NetworkQualityPayload.self, from: data)
-        else {
+        guard let data = qualityInfo.data(using: .utf8) else { return nil }
+
+        do {
+            let payload = try JSONDecoder().decode(NetworkQualityPayload.self, from: data)
+            return NetworkQuality(rawValue: payload.quality)
+        } catch {
+            WireLogger.avs.error("Failed to parse NetworkQualityPayload from \(qualityInfo)")
             return nil
         }
-        return NetworkQuality(rawValue: payload.quality)
     }
 }
