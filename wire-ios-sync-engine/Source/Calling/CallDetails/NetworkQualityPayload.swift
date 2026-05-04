@@ -85,7 +85,7 @@ public struct NetworkQualityPayload: Decodable {
 
     let quality: Int32
     let rtt: Double?
-    let loss: PacketLoss?
+    let packetLoss: PacketLoss?
     let jitter: Jitter?
     let connection: Connection?
     let peer: PeerType?
