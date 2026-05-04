@@ -26,44 +26,8 @@ public extension ConversationCellModel {
 
         let cellType = switch self {
 
-        case .guestsAllowedInfo:
-            ConversationCell<GuestsAllowedInfoModel>.self
-
         case .timeDivider:
             ConversationCell<TimeDividerModel>.self
-
-        case .systemMessage:
-            fatalError()
-
-        case .ping:
-            fatalError()
-
-        case .collapsedMessage:
-            fatalError()
-
-        case .compositeMessage:
-            fatalError()
-
-        case .simpleTextMessage:
-            ConversationCell<SimpleTextMessageModel>.self
-
-        case .extendedTextMessage:
-            fatalError()
-
-        // case .audioMessage:
-        //     fatalError()
-
-        // case .videoMessage:
-        //     fatalError()
-
-        // case .fileMessage:
-        //     fatalError()
-
-        // case .location:
-        //     fatalError()
-
-        case .deletedMessage:
-            fatalError()
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)

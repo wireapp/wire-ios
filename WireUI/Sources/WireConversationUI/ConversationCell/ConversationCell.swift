@@ -18,12 +18,6 @@
 
 import SwiftUI
 
-// TODO: remove after performance review
-import os
-
-@MainActor private var instanceCount = 0
-private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationCell")
-
 final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
 
     var model = Model() {
@@ -33,36 +27,10 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
             model.buildView()
-            // .id(model.id) // TODO: check if .id should or must not be used
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
         .background(.clear)
-    }
-
-    // TODO: remove global var and init/deinit
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        instanceCount += 1
-        logger
-            .info(
-                "ConversationCell<\(String(describing: Model.self), privacy: .public)>.init, total instance count: \(instanceCount, privacy: .public)"
-            )
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    deinit {
-        Task { @MainActor in
-            instanceCount -= 1
-            logger
-                .info(
-                    "ConversationCell<\(String(describing: Model.self), privacy: .public)>.deinit, total instance count: \(instanceCount, privacy: .public)"
-                )
-        }
     }
 
 }
@@ -73,32 +41,9 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 #Preview {
     ConversationCellsPreview(
         itemIdentifiers: [
-            .timeDivider(text: "Tuesday, Mar 18", isUnread: false),
-            .simpleTextMessage(
-                text: "message",
-                dateTime: "10:11 AM",
-                status: ""
-            ),
-            .simpleTextMessage(
-                text: "message",
-                dateTime: "11:10 AM",
-                status: ""
-            ),
-            .timeDivider(text: "25 hours ago", isUnread: true),
-            .simpleTextMessage(
-                text: "message",
-                dateTime: "11:30 AM",
-                status: ""
-            ),
-            .timeDivider(text: "Today", isUnread: false),
-            .simpleTextMessage(
-                text: "message",
-                dateTime: "12:30 AM",
-                status: "👁️"
-            )
+            .timeDivider(text: "Friday", isUnread: false),
+            .timeDivider(text: "Saturday", isUnread: false),
+            .timeDivider(text: "Today", isUnread: true)
         ]
     )
 }
-
-// seen+sent timestamps only time
-// read indicator on last message and without timestamp
