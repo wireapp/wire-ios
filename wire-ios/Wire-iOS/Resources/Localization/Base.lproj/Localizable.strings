@@ -1445,6 +1445,11 @@
 "self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
 "self.settings.technical_report.mail_body.section2" = "What Happened:";
 "self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Reset Password";
 

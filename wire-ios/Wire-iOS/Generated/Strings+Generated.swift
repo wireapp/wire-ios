@@ -6095,6 +6095,14 @@ internal enum L10n {
           /// Switching accounts will hang up the current call.
           internal static let message = L10n.tr("Localizable", "self.settings.switch_account.message", fallback: "A call is active in this account.\nSwitching accounts will hang up the current call.")
         }
+        internal enum ShareDebugReport {
+          internal enum Banner {
+            /// Having trouble?
+            internal static let title = L10n.tr("Localizable", "self.settings.share_debug_report.banner.title", fallback: "Having trouble?")
+            /// To improve Wire's quality, please send us your feedback and let us know about any problems.
+            internal static let message = L10n.tr("Localizable", "self.settings.share_debug_report.banner.message", fallback: "To improve Wire's quality, please send us your feedback and let us know about any problems.")
+          }
+        }
         internal enum TechnicalReport {
           /// Include detailed log
           internal static let includeLog = L10n.tr("Localizable", "self.settings.technical_report.include_log", fallback: "Include detailed log")
