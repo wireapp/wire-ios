@@ -63,7 +63,7 @@ final class ExpirationDatePickerViewTests: XCTestCase {
                 viewModel = .init(
                     linkID: "test",
                     calendar: Calendar(identifier: .gregorian),
-                    expirationDate: .init(timeIntervalSince1970: TimeInterval(60 * 60 * 24 * 365 * 1100)),
+                    expirationDate: .distantFuture,
                     didSave: { _ in },
                     updatePublicLinkExpiration: updatePublicLinkExpiration
                 )
