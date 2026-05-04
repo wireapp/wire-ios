@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,27 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-extension GenericMessage {
-    public init?(from updateEvent: ZMUpdateEvent) {
-        let base64Content: String?
+public extension GenericMessage {
 
-        switch updateEvent.type {
-        case .conversationClientMessageAdd:
-            base64Content = updateEvent.payload.string(forKey: "data")
-        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "text")
-        case .conversationOtrAssetAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "info")
-        default:
-            return nil
-        }
+    init?(
+        from updateEvent: ZMUpdateEvent,
+        validate: Bool
+    ) {
 
-        var message = GenericMessage(withBase64String: base64Content)
+        guard let base64Content = updateEvent.genericMessageBase64Content else { return nil }
+
+        var message = GenericMessage(from: base64Content, validate: validate)
 
         if case let .some(.external(external)) = message?.content {
-            message = GenericMessage(from: updateEvent, withExternal: external)
+            message = GenericMessage(from: updateEvent, withExternal: external, validate: validate)
         }
 
         guard let unwrappedMessage = message else { return nil }
+
         self = unwrappedMessage
+
     }
 
     static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
@@ -49,4 +46,26 @@ extension GenericMessage {
         }
         return ZMClientMessage.self
     }
+
+}
+
+extension ZMUpdateEvent {
+
+    var genericMessageBase64Content: String? {
+        switch type {
+
+        case .conversationClientMessageAdd:
+            payload.string(forKey: "data")
+
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "text")
+
+        case .conversationOtrAssetAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "info")
+
+        default:
+            nil
+        }
+    }
+
 }

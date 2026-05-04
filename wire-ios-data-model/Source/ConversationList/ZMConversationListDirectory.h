@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,12 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
 @property (nonatomic, readonly, nonnull) ZMConversationList* oneToOneConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* channelConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* unreadConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* mentionedConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* repliedConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* draftConversations;
 
 @property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;

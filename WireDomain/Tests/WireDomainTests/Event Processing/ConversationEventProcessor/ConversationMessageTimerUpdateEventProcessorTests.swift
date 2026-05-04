@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
 
@@ -76,7 +76,7 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         conversationLocalStore.conversationMessageDestructionTimeout_MockValue = .fiveMinutes
         conversationLocalStore.storeConversationTimeoutValueFor_MockMethod = { _, _ in }
         messageLocalStore
-            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -88,7 +88,7 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.conversationMessageDestructionTimeout_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationTimeoutValueFor_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
             1
         )
@@ -98,8 +98,8 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         static let id = UUID()
         static let domain = "domain.com"
         static let event = ConversationMessageTimerUpdateEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
+            conversationID: ConversationID(id: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             timestamp: .now,
             newTimer: 10_000
         )

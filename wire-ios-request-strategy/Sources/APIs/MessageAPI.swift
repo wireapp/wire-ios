@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol MessageAPI {
@@ -151,7 +152,7 @@ func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     }
 }
 
-func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
+private func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     guard
         let value = T(response, decoder: .defaultDecoder)
     else {
@@ -367,9 +368,25 @@ class MessageAPIV5: MessageAPIV4 {
         }
 
         let response = await httpClient.send(request)
-        let payload: Payload.MLSMessageSendingStatus = try mapResponse(response)
+
+        let payload: Payload.MLSMessageSendingStatus
+        if response.result == .success {
+            payload = try mapSuccessResponse(response)
+        } else {
+            throw customMapFailureResponse(response)
+        }
 
         return (payload, response)
+    }
+
+    func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
+        if let error = SendMLSMessageFailure(from: response) {
+            error
+        } else {
+            // This will return a NetworkError
+            // (i.e. federation error will be caughted on MessageSender)
+            mapFailureResponse(response)
+        }
     }
 }
 
@@ -379,6 +396,94 @@ class MessageAPIV6: MessageAPIV5 {
     }
 }
 
-final class MessageAPIV7: MessageAPIV6 {
+class MessageAPIV7: MessageAPIV6 {
     override var apiVersion: APIVersion { .v7 }
+}
+
+class MessageAPIV8: MessageAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
+}
+
+class MessageAPIV9: MessageAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+class MessageAPIV10: MessageAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
+}
+
+class MessageAPIV11: MessageAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
+}
+
+class MessageAPIV12: MessageAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
+}
+
+class MessageAPIV13: MessageAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
+
+    override func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+
+        let request = ZMTransportRequest(
+            path: "/mls/messages",
+            method: .post,
+            binaryData: encryptedMessage,
+            type: "message/mls",
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+
+        let payload: Payload.MLSMessageSendingStatus
+        if response.result == .success {
+            payload = try mapSuccessResponse(response)
+        } else if response.httpStatus == 409, response.payloadLabel() == "mls-group-out-of-sync" {
+            // New error to handle.
+            guard let data = response.rawData else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+
+            let missingUsers: Set<QualifiedID>
+            do {
+                let decoder = JSONDecoder.defaultDecoder
+                let payload = try decoder.decode(MissingUsersPayload.self, from: data)
+                missingUsers = payload.missingUsers
+            } catch {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+            throw SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)
+        } else {
+            throw customMapFailureResponse(response)
+        }
+
+        return (payload, response)
+    }
+
+    private struct MissingUsersPayload: Decodable {
+
+        let missingUsers: Set<QualifiedID>
+
+        enum CodingKeys: String, CodingKey {
+            case missingUsers = "missing_users"
+        }
+
+    }
+}
+
+class MessageAPIV14: MessageAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class MessageAPIV15: MessageAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }

@@ -24,7 +24,9 @@ jobs:
     with:
       fastlane_action: appstore_col_1_prod
       is_cloud_build: false
+      countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit
 
 
@@ -34,7 +36,9 @@ jobs:
     with:
       fastlane_action: appstore_col_2_prod
       is_cloud_build: false
+      countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit
   
   column_3_production:
@@ -43,5 +47,7 @@ jobs:
     with:
       fastlane_action: appstore_col_3_prod
       is_cloud_build: false
+      countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

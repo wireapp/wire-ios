@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #import "ZMUserSessionRegistrationNotification.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "ZMAuthenticationStatus_Internal.h"
-
 
 static NSString *const TimerInfoOriginalCredentialsKey = @"credentials";
 static NSString *const AuthenticationCenterDataChangeNotificationName = @"ZMAuthenticationStatusDataChangeNotificationName";
@@ -96,21 +95,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     if(credentials != self.internalLoginCredentials) {
         self.internalLoginCredentials = credentials;
         [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
-        [[[NotificationInContext alloc] initWithName:AuthenticationCenterDataChangeNotificationName
-                                             context:self object:nil userInfo:nil] post];
+        [[[NotificationInContext alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                      name:AuthenticationCenterDataChangeNotificationName
+                                                           context:self
+                                                            object:nil
+                                                          userInfo:nil] post];
     }
 }
 
 - (id)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 {
     ZM_WEAK(observer);
-    return [NotificationInContext addObserverWithName:AuthenticationCenterDataChangeNotificationName
-                                       context:self
-                                        object:nil
-                                         queue:nil
-                                         using:^(NotificationInContext * notification __unused) {
-                                             ZM_STRONG(observer);
-                                             [observer didChangeAuthenticationData];
+    return [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                               name:AuthenticationCenterDataChangeNotificationName
+                                                            context:self
+                                                             object:nil
+                                                              queue:nil
+                                                              using:^(NotificationInContext * notification __unused) {
+        ZM_STRONG(observer);
+        [observer didChangeAuthenticationData];
      }];
 }
 
@@ -282,6 +285,19 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeAccountSuspended userInfo:nil];
     [self.delegate authenticationDidFail: error];
     [self resetLoginAndRegistrationStatus];
+    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
+- (void)didFailLoginBecauseTooManyRequests
+{
+    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
+    // This fixes a request loop on login
+    // we break the state of currentPhase ZMAuthenticationPhaseLoginWithEmail
+    if (self.isWaitingForLogin) {
+        self.isWaitingForLogin = NO;
+    }
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeTooManyRequests userInfo:nil];
+    [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 

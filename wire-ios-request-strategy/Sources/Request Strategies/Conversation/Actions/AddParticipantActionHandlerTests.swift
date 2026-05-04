@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,9 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
                 conversationService: mockConversationService,
-                mlsEventProcessor: MockMLSEventProcessing()
+                mlsEventProcessor: MockMLSEventProcessing(),
+                localDomain: "wire.com",
+                isFederationEnabled: false
             )
         )
     }
@@ -197,7 +199,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedID: user.qualifiedID,
                 conversationRole: ZMConversation.defaultMemberRoleName
             )
-            let memberJoined = Payload.UpdateConverationMemberJoin(
+            let memberJoined = Payload.UpdateConversationMemberJoin(
                 userIDs: [user.remoteIdentifier],
                 users: [member]
             )
@@ -288,7 +290,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedID: user.qualifiedID,
                 conversationRole: ZMConversation.defaultMemberRoleName
             )
-            let memberJoined = Payload.UpdateConverationMemberJoin(
+            let memberJoined = Payload.UpdateConversationMemberJoin(
                 userIDs: [user.remoteIdentifier],
                 users: [member]
             )

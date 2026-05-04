@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,19 +32,16 @@ final class ConversationCreationValues {
     private var unfilteredParticipants: UserSet
     private let selfUser: UserType
 
+    let isChannel: Bool
+    let isAppsFeatureEnabled: Bool
+    let areLegacyBotsAvailable: Bool
+    var channelHistoryDepth: String?
     var name: String
     var allowGuests: Bool
-    var allowServices: Bool
+    var allowApps: Bool
     var enableReceipts: Bool
-    var encryptionProtocol: MessageProtocol {
-        didSet {
-            allowServices = shouldIncludeServices
-        }
-    }
-
-    var shouldIncludeServices: Bool {
-        encryptionProtocol.supportsBots
-    }
+    var enableFileManagement: Bool
+    var encryptionProtocol: MessageProtocol
 
     var participants: UserSet {
         get {
@@ -55,9 +52,9 @@ final class ConversationCreationValues {
                 result = UserSet(noGuests)
             }
 
-            if !allowServices {
-                let noServices = result.filter { !$0.isServiceUser }
-                result = UserSet(noServices)
+            if !allowApps {
+                let noAppsOrBots = result.filter { !$0.isAppOrBot }
+                result = UserSet(noAppsOrBots)
             }
 
             return result
@@ -70,19 +67,27 @@ final class ConversationCreationValues {
     // MARK: - Life cycle
 
     init(
+        isChannel: Bool,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool,
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         enableReceipts: Bool = true,
+        enableFileManagement: Bool = false,
         encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
+        self.isChannel = isChannel
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowServices = allowServices
+        self.allowApps = isAppsFeatureEnabled ? allowApps : false
         self.enableReceipts = enableReceipts
+        self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser
     }

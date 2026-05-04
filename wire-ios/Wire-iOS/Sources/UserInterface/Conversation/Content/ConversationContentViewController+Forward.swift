@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,12 +35,20 @@ extension ZMConversation: ShareDestination {
     }
 }
 
-extension ShareDestination where Self: ConversationAvatarViewConversation {
+extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
 
     var avatarView: UIView? {
-        let avatarView = ConversationAvatarView()
-        avatarView.configure(context: .conversation(conversation: self))
+        let avatarView = ConversationGroupAvatarView()
+        avatarView.configure(
+            context: ConversationGroupAvatarView.Context(
+                conversation: self
+            )
+        )
         return avatarView
+    }
+
+    var qualifiedID: WireDataModel.QualifiedID? {
+        nil
     }
 }
 
@@ -64,17 +72,17 @@ extension [ZMConversation] {
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
 
-    func share(to: [some Any]) {
-        forward(to: to as [AnyObject])
+    func share(to: [some Any], userSession: UserSession) {
+        forward(to: to as [AnyObject], userSession: userSession)
     }
 
-    func forward(to: [AnyObject]) {
+    func forward(to: [AnyObject], userSession: UserSession) {
 
         let conversations = to as! [ZMConversation]
 
         if isText {
             let fetchLinkPreview = !Settings.disableLinkPreviews
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         // We should not forward any mentions to other conversations
@@ -89,11 +97,16 @@ extension ZMMessage: Shareable {
                     }
                 }
             }
-        } else if isImage, let imageData = imageMessageData?.imageData {
-            ZMUserSession.shared()?.perform {
+        } else if isImage, let imageMessageData, let data = imageMessageData.imageData {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
-                        try $0.appendImage(from: imageData)
+                        let image = SendableImage(
+                            name: imageMessageData.name,
+                            utType: nil,
+                            data: data
+                        )
+                        try $0.appendImage(image, nonce: UUID())
                     } catch {
                         WireLogger.messageProcessing
                             .warn("Failed to append image message. Reason: \(error.localizedDescription)")
@@ -102,19 +115,20 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            Task {
+            Task { [weak userSession] in
                 let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
-                let userSession = ZMUserSession.shared()
-                await userSession?.managedObjectContext.perform {
-                    conversations.forEachNonEphemeral {
-                        do {
-                            try $0.appendFile(with: fileMetadata)
-                        } catch {
-                            WireLogger.messageProcessing
-                                .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                if let userSession = userSession as? ZMUserSession {
+                    await userSession.managedObjectContext.perform {
+                        conversations.forEachNonEphemeral {
+                            do {
+                                try $0.appendFile(with: fileMetadata)
+                            } catch {
+                                WireLogger.messageProcessing
+                                    .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            }
                         }
+                        userSession.saveOrRollbackChanges()
                     }
-                    userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {
@@ -124,7 +138,7 @@ extension ZMMessage: Shareable {
                 name: locationMessageData!.name,
                 zoomLevel: locationMessageData!.zoomLevel
             )
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         try $0.appendLocation(with: locationData)
@@ -142,15 +156,15 @@ extension ZMMessage: Shareable {
 }
 
 extension ZMConversationMessage {
-    func previewView() -> UIView? {
-        let view = preparePreviewView(shouldDisplaySender: false)
+    func previewView(userSession: UserSession) -> UIView? {
+        let view = preparePreviewView(userSession: userSession, shouldDisplaySender: false)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SemanticColors.View.backgroundUserCell
         return view
     }
 }
 
-// MARK: - popover apperance update
+// MARK: - popover appearance update
 
 extension ConversationContentViewController {
 
@@ -167,6 +181,17 @@ extension ConversationContentViewController {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
     }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        // TODO: [WPB-16431] this is to update the cells on iPad when sidebar
+        // is hidden or shown. This is a quick fix for now. To improve later
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.dataSource.resetSectionControllers()
+        }
+    }
+
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {

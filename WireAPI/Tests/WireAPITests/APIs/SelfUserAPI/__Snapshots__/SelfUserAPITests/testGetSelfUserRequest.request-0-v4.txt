@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/v4/self"
-  - method: get
-  - body: none

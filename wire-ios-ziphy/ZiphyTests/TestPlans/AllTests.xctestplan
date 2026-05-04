@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Ziphy.xcodeproj",
+      "identifier" : "DBF380631B15C0B800369FB7",
+      "name" : "ZiphyTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

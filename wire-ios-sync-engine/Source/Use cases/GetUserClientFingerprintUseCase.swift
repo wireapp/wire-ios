@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,16 +27,18 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
 
 public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
-    let proteusProvider: ProteusProviding
+    let proteusService: ProteusServiceInterface
     let context: NSManagedObjectContext
     let sessionEstablisher: SessionEstablisherInterface
+    let metadata: BackendMetadataProvider
 
     // MARK: - Initialization
 
     init(
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding
+        proteusService: ProteusServiceInterface,
+        metadata: BackendMetadataProvider
     ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
@@ -49,20 +51,23 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         )
 
         self.init(
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             sessionEstablisher: sessionEstablisher,
-            managedObjectContext: syncContext
+            managedObjectContext: syncContext,
+            metadata: metadata
         )
     }
 
     init(
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         sessionEstablisher: SessionEstablisherInterface,
-        managedObjectContext: NSManagedObjectContext
+        managedObjectContext: NSManagedObjectContext,
+        metadata: BackendMetadataProvider
     ) {
-        self.proteusProvider = proteusProvider
+        self.proteusService = proteusService
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher
+        self.metadata = metadata
     }
 
     // MARK: - Methods
@@ -80,7 +85,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         let shouldEstablishSession = await existingClient.hasSessionWithSelfClient == false
 
         if shouldEstablishSession {
-            if let apiVersion = BackendInfo.apiVersion {
+            if let apiVersion = metadata.apiVersion {
                 do {
                     try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)
                 } catch {
@@ -95,15 +100,6 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
             existingClient.isSelfClient()
         }
 
-        let canPerform = await context.perform {
-            proteusProvider.canPerform
-        }
-
-        guard canPerform else {
-            WireLogger.proteus.error("cannot get localFingerprint, proteusProvider not ready")
-            return nil
-        }
-
         if isSelfClient {
             return await localFingerprint()
         } else {
@@ -112,24 +108,13 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
     }
 
     func localFingerprint() async -> Data? {
-        var fingerprintData: Data?
-
-        await proteusPerform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try await proteusService.localFingerprint()
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    WireLogger.proteus.error("Cannot fetch local fingerprint")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.localFingerprint
-                }
-            }
-        )
-        return fingerprintData
+        do {
+            let fingerprint = try await proteusService.localFingerprint()
+            return fingerprint.utf8Data
+        } catch {
+            WireLogger.proteus.error("Cannot fetch local fingerprint")
+            return nil
+        }
     }
 
     func fetchRemoteFingerprint(for userClient: UserClient) async -> Data? {
@@ -137,33 +122,12 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
             return nil
         }
 
-        var fingerprintData: Data?
-
-        await proteusPerform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try await proteusService.remoteFingerprint(forSession: sessionId)
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.fingerprint(for: sessionId.mapToEncryptionSessionID())
-                }
-            }
-        )
-
-        return fingerprintData
-    }
-
-    // MARK: - Helpers
-
-    private func proteusPerform<T>(
-        withProteusService proteusServiceBlock: @escaping ProteusServicePerformAsyncBlock<T>,
-        withKeyStore keyStoreBlock: @escaping KeyStorePerformAsyncBlock<T>
-    ) async rethrows -> T {
-        try await proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
+        do {
+            let fingerprint = try await proteusService.remoteFingerprint(forSession: sessionId)
+            return fingerprint.utf8Data
+        } catch {
+            WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
+            return nil
+        }
     }
 }

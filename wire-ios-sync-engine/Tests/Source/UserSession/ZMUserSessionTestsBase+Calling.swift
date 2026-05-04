@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,21 +17,26 @@
 //
 
 import Foundation
-
 import XCTest
+
 @testable import WireSyncEngine
 
 extension ZMUserSessionTestsBase {
 
     @objc
-    func createCallCenter() -> WireCallCenterV3Mock {
+    func createCallCenter(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) -> WireCallCenterV3Mock {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         return WireCallCenterV3Factory.callCenter(
             withUserId: selfUser.avsIdentifier,
             clientId: selfUser.selfClient()!.remoteIdentifier!,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         ) as! WireCallCenterV3Mock
     }
 
@@ -40,7 +45,7 @@ extension ZMUserSessionTestsBase {
         guard let callCenter = user.managedObjectContext?.zm_callCenter as? WireCallCenterV3Mock
         else { XCTFail(); return }
         callCenter.setMockCallState(
-            .incoming(video: false, shouldRing: true, degraded: false),
+            .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversationId: conversation.avsIdentifier!,
             callerId: user.avsIdentifier,
             isVideo: false

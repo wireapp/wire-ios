@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 import avs
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "calling")
 
 final class ProximityMonitorManager: NSObject {
 
     typealias RaisedToEarHandler = (_ raisedToEar: Bool) -> Void
+
+    private let userSession: UserSession
 
     var callStateObserverToken: Any?
 
@@ -46,15 +47,20 @@ final class ProximityMonitorManager: NSObject {
         NotificationCenter.default.removeObserver(self)
     }
 
-    override init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         super.init()
 
-        guard let userSession = ZMUserSession.shared() else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
+        // This is a hack for testing as a real ZMUserSession is not available
+        guard userSession is ZMUserSession else {
+            WireLogger.calling.error("UserSession not available when initializing \(type(of: self))")
             return
         }
 
-        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: userSession.contextProvider
+        )
         AVSMediaManagerClientChangeNotification.add(self)
 
         updateProximityMonitorState()
@@ -62,12 +68,13 @@ final class ProximityMonitorManager: NSObject {
 
     func updateProximityMonitorState() {
         // Only do proximity monitoring on phones
-        guard UIDevice.current.userInterfaceIdiom == .phone, let callCenter = ZMUserSession.shared()?.callCenter,
+        guard UIDevice.current.userInterfaceIdiom == .phone,
+              let callCenter = (userSession as? ZMUserSession)?.callCenter,
               !listening else { return }
 
         let ongoingCalls = callCenter.nonIdleCalls.filter { (_, callState: CallState) -> Bool in
             switch callState {
-            case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(degraded: false):
+            case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(_, degraded: false):
                 return true
             default:
                 return false

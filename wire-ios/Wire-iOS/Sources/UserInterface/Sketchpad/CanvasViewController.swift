@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCanvas
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - CanvasViewControllerDelegate - didExportImage
@@ -64,21 +65,31 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     let emojiKeyboardViewController = EmojiKeyboardViewController()
     let colorPickerController = SketchColorPickerController()
 
+    private let userSession: UserSession
+
+    // MARK: - Init
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Override methods
 
-    override var shouldAutorotate: Bool {
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            true
-        default:
-            false
-        }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         canvas.setNeedsDisplay()
+        colorPickerController.selectedColorIndex = 0
     }
 
     override func viewDidLoad() {
@@ -87,7 +98,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         canvas.delegate = self
         canvas.backgroundColor = .white
         canvas.isAccessibilityElement = true
-        canvas.accessibilityIdentifier = "canvas"
+        canvas.accessibilityIdentifier = Locators.ActiveConversationPage.canvas.rawValue
 
         emojiKeyboardViewController.delegate = self
 
@@ -145,6 +156,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         sendButton.isEnabled = false
         sendButton.hitAreaPadding = hitAreaPadding
         sendButton.accessibilityLabel = Sketch.SendButton.description
+        sendButton.accessibilityIdentifier = Locators.ActiveConversationPage.canvasSendButton.rawValue
 
         drawButton.setIcon(.brush, size: .tiny, for: .normal)
         drawButton.addTarget(self, action: #selector(toggleDrawTool), for: .touchUpInside)
@@ -158,7 +170,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         photoButton.hitAreaPadding = hitAreaPadding
         photoButton.accessibilityIdentifier = "photoButton"
         photoButton.accessibilityLabel = Sketch.SelectPictureButton.description
-        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
             .hasAccessToCameraRoll
 
         emojiButton.setIcon(.emoji, size: .tiny, for: .normal)

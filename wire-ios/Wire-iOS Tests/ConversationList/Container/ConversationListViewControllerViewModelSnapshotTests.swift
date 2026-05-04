@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,10 +37,8 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
-    }
 
-    override func setUp() {
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         userSession = UserSessionMock()
 
@@ -54,6 +52,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         let selfUser = MockUserType.createSelfUser(name: "Bob")
         sut = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,

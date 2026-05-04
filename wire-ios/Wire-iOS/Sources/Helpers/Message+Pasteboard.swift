@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,7 @@ extension ZMConversationMessage {
             if let text = textMessageData?.messageText, !text.isEmpty {
                 pasteboard.string = text
             }
-        } else if isImage,
-                  let imageData = imageMessageData?.imageData {
+        } else if isImage, let imageData = imageMessageData?.imageData {
 
             let mediaAsset: MediaAsset? = if imageMessageData?.isAnimatedGIF == true {
                 FLAnimatedImage(animatedGIFData: imageData)

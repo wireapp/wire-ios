@@ -14,23 +14,27 @@
         "argument" : "-NSShowNonLocalizedStrings YES"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireUI",
+      "identifier" : "WireDesignTests",
+      "name" : "WireDesignTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireMoveToFolderUITests",
-        "name" : "WireMoveToFolderUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
       }
     },
     {
@@ -43,8 +47,8 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
       }
     },
     {
@@ -57,13 +61,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireSidebarUITests",
-        "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireMainNavigationUITests",
         "name" : "WireMainNavigationUITests"
       }
@@ -71,8 +68,15 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireDesignTests",
-        "name" : "WireDesignTests"
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireIndividualToTeamMigrationUITests",
+        "name" : "WireIndividualToTeamMigrationUITests"
       }
     },
     {
@@ -85,8 +89,8 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
+        "identifier" : "WireMultiBackendUITests",
+        "name" : "WireMultiBackendUITests"
       }
     }
   ],

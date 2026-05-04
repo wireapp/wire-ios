@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,6 @@ public protocol E2EIEnrollmentInterface {
     /// Validate OIDC challenge.
     func validateOIDCChallenge(
         idToken: String,
-        refreshToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge
     ) async throws -> ChallengeResponse
@@ -98,9 +97,6 @@ public protocol E2EIEnrollmentInterface {
     /// Create new MLS client with e2e identity
     func createMLSClient(certificateChain: String) async throws
 
-    /// Fetch the OIDC refresh token.
-    func getOAuthRefreshToken()  async throws -> String?
-
 }
 
 /// This class implements the steps of the E2EI certificate enrollment process.
@@ -111,6 +107,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     private let apiProvider: APIProviderInterface
     private let e2eiService: E2EIServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
+    private let apiVersion: WireTransport.APIVersion?
 
     private let logger = WireLogger.e2ei
 
@@ -119,13 +116,15 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         apiProvider: APIProviderInterface,
         e2eiService: E2EIServiceInterface,
         acmeDirectory: AcmeDirectory,
-        keyRotator: E2EIKeyPackageRotating
+        keyRotator: E2EIKeyPackageRotating,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
         self.e2eiService = e2eiService
         self.acmeDirectory = acmeDirectory
         self.keyRotator = keyRotator
+        self.apiVersion = apiVersion
     }
 
     public func getACMENonce() async throws -> String {
@@ -238,8 +237,9 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
 
-        guard let apiVersion = BackendInfo.apiVersion,
-              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        guard
+            let apiVersion,
+            let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {
             throw MessageSendError.unresolvedApiVersion
         }
@@ -268,8 +268,9 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         logger.info("get Wire access token")
 
-        guard let apiVersion = BackendInfo.apiVersion,
-              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        guard
+            let apiVersion,
+            let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {
             throw MessageSendError.unresolvedApiVersion
         }
@@ -314,7 +315,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
     public func validateOIDCChallenge(
         idToken: String,
-        refreshToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge
     ) async throws -> ChallengeResponse {
@@ -323,7 +323,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         do {
             let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(
                 idToken: idToken,
-                refreshToken: refreshToken,
                 nonce: prevNonce
             )
             let apiResponse = try await acmeApi.sendChallengeRequest(
@@ -434,18 +433,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         try await e2eiService.createNewClient(certificateChain: certificateChain)
     }
 
-    public func getOAuthRefreshToken()  async throws -> String? {
-        logger.info("get OAuth refresh token")
-
-        do {
-            return try await e2eiService.getOAuthRefreshToken()
-        } catch {
-            logger.error("failed to get OAuth refresh token: \(error.localizedDescription)")
-
-            throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
-        }
-    }
-
 }
 
 enum E2EIRepositoryFailure: Error {
@@ -466,7 +453,6 @@ enum E2EIRepositoryFailure: Error {
     case failedToFinalize(_ underlyingError: Error)
     case failedToSendCertificateRequest(_ underlyingError: Error)
     case failedToRotateKeys(_ underlyingError: Error)
-    case failedToGetOAuthRefreshToken(_ underlyingError: Error)
 
 }
 

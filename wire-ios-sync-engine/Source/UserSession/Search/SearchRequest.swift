@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,43 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
-public struct SearchOptions: OptionSet {
+public struct SearchOptions: OptionSet, CustomDebugStringConvertible {
+
     public let rawValue: Int
 
     /// Users you are connected to via connection request.
 
     public static let contacts = SearchOptions(rawValue: 1 << 0)
 
-    /// Users found in your address book.
-
-    public static let addressBook = SearchOptions(rawValue: 1 << 1)
-
     /// Users which are a member of the same team as you.
 
-    public static let teamMembers = SearchOptions(rawValue: 1 << 2)
+    public static let teamMembers = SearchOptions(rawValue: 1 << 1)
 
     /// Exclude team members which aren't in an active conversation with you.
 
-    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 3)
+    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 2)
 
     /// Exclude team members with the role .partner which aren't in an active conversation with you.
 
-    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 4)
+    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 3)
 
     /// Users from the public directory.
 
-    public static let directory = SearchOptions(rawValue: 1 << 5)
+    public static let directory = SearchOptions(rawValue: 1 << 4)
 
     /// Group conversations you are or were a participant of.
 
-    public static let conversations = SearchOptions(rawValue: 1 << 6)
+    public static let conversations = SearchOptions(rawValue: 1 << 5)
 
-    /// Services which are enabled in your team.
+    /// Apps (new-style services for MLS).
 
-    public static let services = SearchOptions(rawValue: 1 << 7)
+    public static let apps = SearchOptions(rawValue: 1 << 6)
+
+    /// Bots (old-style services for Proteus).
+
+    public static let bots = SearchOptions(rawValue: 1 << 7)
 
     /// Users from federated servers.
 
@@ -66,9 +66,29 @@ public struct SearchOptions: OptionSet {
         self.rawValue = rawValue
     }
 
+    public var debugDescription: String {
+        let allOptions: [(SearchOptions, String)] = [
+            (.contacts, "contacts"),
+            (.teamMembers, "teamMembers"),
+            (.excludeNonActiveTeamMembers, "excludeNonActiveTeamMembers"),
+            (.excludeNonActivePartners, "excludeNonActivePartners"),
+            (.directory, "directory"),
+            (.conversations, "conversations"),
+            (.apps, "apps"),
+            (.bots, "bots"),
+            (.federated, "federated"),
+            (.localResultsOnly, "localResultsOnly")
+        ]
+        let names = allOptions
+            .filter { contains($0.0) }
+            .map(\.1)
+        return "[\(names.joined(separator: ", "))]"
+    }
+
 }
 
 public extension SearchOptions {
+
     mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
@@ -77,6 +97,7 @@ public extension SearchOptions {
             insert(.excludeNonActivePartners)
         }
     }
+
 }
 
 public struct SearchRequest {
@@ -116,9 +137,14 @@ public struct SearchRequest {
         searchOptions: SearchOptions,
         team: Team? = nil
     ) {
-        let (query, parsedDomain) = Self.parseQuery(query)
-        self.query = query
-        self.searchDomain = searchDomain ?? parsedDomain
+        if let searchDomain {
+            self.query = .fullTextSearch(query)
+            self.searchDomain = searchDomain
+        } else {
+            let (query, parsedDomain) = Self.parseQuery(query)
+            self.query = query
+            self.searchDomain = parsedDomain
+        }
         self.searchOptions = searchOptions
         self.team = team
     }
@@ -167,4 +193,5 @@ private extension String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
+
 }

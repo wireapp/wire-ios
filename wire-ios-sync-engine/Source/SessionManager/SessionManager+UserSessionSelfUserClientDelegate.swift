@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,11 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 }
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
@@ -55,7 +60,15 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
         let account = accountManager.account(with: accountId)
         guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidFailToLogin(error: error)
+
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: accountId)
+
+        delegate?.sessionManagerWillLogout(
+            accountID: accountId,
+            environment: environment,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
     }
 
     public func clientCompletedInitialSync(accountId: UUID) {
@@ -74,5 +87,15 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
                 delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
             }
         }
+    }
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        delegate?.sessionManagerDidFailSyncing(
+            error: error,
+            retryHandler: retryHandler
+        )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@ import WireCommonComponents
 import WireConversationListUI
 import WireDataModel
 import WireDesign
+import WireFoundation
+import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -34,13 +37,15 @@ final class ConversationListViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     weak var zClientViewController: ZClientViewController?
 
-    private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+    private var userDefaultsObservation: NSKeyValueObservation?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
     private lazy var filterContainerView = UIView()
 
@@ -75,8 +80,18 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
+        case .channels:
+            return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case .unread:
+            return FilterMenuLocale.Unread.title
+        case .mentions:
+            return FilterMenuLocale.Mentions.title
+        case .replies:
+            return FilterMenuLocale.Replies.title
+        case .drafts:
+            return FilterMenuLocale.Drafts.title
         case let .folder(_, name):
             return name
         case .none:
@@ -105,7 +120,7 @@ final class ConversationListViewController: UIViewController {
 
     weak var accountImageView: AccountImageView?
 
-    let networkStatusViewController = NetworkStatusViewController()
+    let networkStatusViewController: NetworkStatusViewController
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
 
     var mainSplitViewState: MainSplitViewState = .expanded {
@@ -128,12 +143,14 @@ final class ConversationListViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
@@ -146,6 +163,7 @@ final class ConversationListViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
             folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
         )
@@ -157,6 +175,7 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
@@ -165,6 +184,7 @@ final class ConversationListViewController: UIViewController {
         self.zClientViewController = zClientViewController
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
@@ -176,9 +196,11 @@ final class ConversationListViewController: UIViewController {
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
+        self.networkStatusViewController = NetworkStatusViewController(userSession: viewModel.userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -246,12 +268,6 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.updateE2EICertifiedStatus()
 
-        if !viewDidAppearCalled {
-            viewDidAppearCalled = true
-
-            zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
-        }
-
         navigationItem.hidesSearchBarWhenScrolling = true
     }
 
@@ -280,6 +296,15 @@ final class ConversationListViewController: UIViewController {
 
     private func setupObservers() {
         viewModel.setupObservers()
+
+        // Observe developer flag changes for unread filters using KVO
+        userDefaultsObservation = UserDefaults.standard
+            .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+                // Update navigation bar to reflect filter visibility changes
+                DispatchQueue.main.async {
+                    self?.updateNavigationItem()
+                }
+            }
     }
 
     /// Sets up a vertical stack view containing all subviews
@@ -342,7 +367,9 @@ final class ConversationListViewController: UIViewController {
 
     func updateFilterContainerView() {
         filterContainerView
-            .isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController
+            // This used to check for isEmptyPlaceholderVisible as well,
+            // which lead to the filter not being removable if the filter found no matches
+            .isHidden = mainSplitViewState == .expanded || listContentController
             .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
@@ -366,6 +393,7 @@ final class ConversationListViewController: UIViewController {
             self?.presentCreateConversationUI()
         }
         emptyPlaceholderView = EmptyPlaceholderContainerView(
+            wireAccentColor: WireAccentColor(rawValue: viewModel.userSession.selfUser.accentColorValue) ?? .default,
             content: emptyPlaceholderForSelectedFilter,
             connectWithPeopleAction: connectWithPeopleAction,
             newConversationAction: createConversation
@@ -440,8 +468,18 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
         case .groups:
             L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .channels:
+            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case .unread:
+            L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
+        case .mentions:
+            L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
+        case .replies:
+            L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
+        case .drafts:
+            L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder
         case let .folder(_, name):
             L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
@@ -456,6 +494,11 @@ final class ConversationListViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
@@ -515,11 +558,11 @@ final class ConversationListViewController: UIViewController {
 
         let filter = listContentController.listViewModel.selectedFilter
         navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
-        if #available(iOS 16.4, *) {
-            // This should actually be done as a result of an empty list of conversations, not directly when selecting a
-            // filter.
-            navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
-        }
+
+        // This should actually be done as a result of an empty list of conversations, not directly when selecting a
+        // filter.
+        navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
+
     }
 
     @objc
@@ -566,7 +609,11 @@ final class ConversationListViewController: UIViewController {
 
     private func presentConnectUI() {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectViewControllerBuilder.build())
+            guard let rootViewController = await connectViewControllerBuilder.build() else {
+                WireLogger.ui.error("failed to present connect UI, view controller is nil", attributes: .safePublic)
+                return
+            }
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }

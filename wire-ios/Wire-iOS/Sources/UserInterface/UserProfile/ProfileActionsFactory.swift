@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -147,9 +147,11 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     /// Calculates the list of actions to display to the user.
     ///
-    /// - Returns: array of availble actions
+    /// - Returns: array of available actions
     func makeActionsList(completion: @escaping ([ProfileAction]) -> Void) {
-        guard let userID = user.qualifiedID else {
+        guard let userID = user.qualifiedID(
+            localDomain: userSession.resolvedBackendMetadata.domain
+        ) else {
             return completion([])
         }
 
@@ -179,9 +181,9 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     private var canCreateConversationWithOtherDomain: Bool {
         if userSession.isFederationUsageAllowed {
-            return true
+            true
         } else {
-            return viewer.domain == user.domain
+            viewer.domain == user.domain
         }
     }
 
@@ -223,7 +225,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         switch (context, conversation?.conversationType) {
         case (_, .oneOnOne?):
 
-            if viewer.canCreateConversation(type: .group) && canCreateConversationWithOtherDomain {
+            if viewer.canCreateConversation(type: .group), canCreateConversationWithOtherDomain {
                 actions.append(.createGroup)
             }
 

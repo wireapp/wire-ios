@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    func removePendingDeliveryReceipts() {
+    internal func removePendingDeliveryReceipts() {
         // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the
         // backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
@@ -31,7 +32,7 @@ extension ZMMessage {
 
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
 
-        let possibleMatches = try! managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
+        let possibleMatches = try? managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
         let confirmationReceipts = possibleMatches?.filter { candidateConfirmationReceipt in
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
                 return false

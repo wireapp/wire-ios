@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -171,12 +171,27 @@ class TextView: UITextView {
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+
         if action == #selector(paste(_:)) {
-            let pasteboard = UIPasteboard.general
-            return pasteboard.hasImages || pasteboard.hasStrings
+            if isContextMenuAllowed {
+                let pasteboard = UIPasteboard.general
+                return pasteboard.hasImages || pasteboard.hasStrings
+            } else {
+                return false
+            }
         }
 
         return super.canPerformAction(action, withSender: sender)
+    }
+
+    var isContextMenuAllowed: Bool {
+        SecurityFlags.clipboard.isEnabled
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            builder.remove(menu: .autoFill)
+        }
     }
 
     @discardableResult

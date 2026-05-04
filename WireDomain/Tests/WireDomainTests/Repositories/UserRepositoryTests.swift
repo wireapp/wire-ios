@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserRepositoryTests: XCTestCase {
 
@@ -32,7 +32,6 @@ final class UserRepositoryTests: XCTestCase {
     private var selfUsersAPI: MockSelfUserAPI!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
-    private var conversationsRepository: MockConversationRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -48,14 +47,12 @@ final class UserRepositoryTests: XCTestCase {
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
         conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
-        conversationsRepository = MockConversationRepositoryProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = UserRepository(
             usersAPI: usersAPI,
             selfUserAPI: selfUsersAPI,
             conversationLabelsRepository: conversationLabelsRepository,
-            conversationRepository: conversationsRepository,
             userLocalStore: userLocalStore
         )
     }
@@ -67,7 +64,6 @@ final class UserRepositoryTests: XCTestCase {
         userLocalStore = nil
         conversationLabelsRepository = nil
         sut = nil
-        conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -81,7 +77,7 @@ final class UserRepositoryTests: XCTestCase {
         await context.perform { [context] in
             // There is no user in the database.
             XCTAssertNil(ZMUser.fetch(
-                with: Scaffolding.user1.id.uuid,
+                with: Scaffolding.user1.id.id,
                 domain: Scaffolding.user1.id.domain,
                 in: context
             ))
@@ -89,7 +85,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireAPI.UserList(
+        usersAPI.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -110,12 +106,12 @@ final class UserRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             // Insert incomplete user in the database.
-            ZMUser.fetchOrCreate(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context)
+            ZMUser.fetchOrCreate(with: Scaffolding.user1.id.id, domain: Scaffolding.user1.id.domain, in: context)
         }
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireAPI.UserList(
+        usersAPI.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -217,20 +213,6 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.addSelfLegalHoldRequestUserIDClientIDLastPrekey_Invocations.count, 1)
     }
 
-    func testPushSelfSupportedProtocols_It_Invokes_Self_Users_API_Method() async throws {
-        // Given
-        selfUsersAPI.pushSupportedProtocols_MockMethod = { _ in () }
-        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [])
-
-        // When
-        try await sut.pushSelfSupportedProtocols([.proteus])
-
-        // Then
-        let expectedProtocols = Set([WireAPI.MessageProtocol.proteus])
-
-        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
-    }
-
     func testDeleteUserAccountForSelfUser_It_Invokes_Local_Store_Methods() async throws {
         // Mock
 
@@ -270,10 +252,7 @@ final class UserRepositoryTests: XCTestCase {
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
-
-        conversationsRepository
-            .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
-            }
+        userLocalStore.removeUserFromAllConversationsIdDomainDate_MockMethod = { _, _, _ in }
 
         // When
 
@@ -289,8 +268,8 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.markAccountAsDeletedFor_Invocations.count, 1)
 
         XCTAssertEqual(
-            conversationsRepository
-                .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count,
+            userLocalStore
+                .removeUserFromAllConversationsIdDomainDate_Invocations.count,
             1
         )
     }
@@ -384,7 +363,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let isSelfUser = try await sut.isSelfUser(
+        _ = try await sut.isSelfUser(
             id: .mockID1,
             domain: Scaffolding.domain
         )
@@ -424,20 +403,6 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
-    func testPullSelfUser() async throws {
-        // Mock
-        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
-        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
-
-        // When
-
-        try await sut.pullSelfUser()
-
-        // Then
-
-        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
-    }
-
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {
         // Given
 
@@ -462,7 +427,7 @@ final class UserRepositoryTests: XCTestCase {
         static let base64encodedString =
             "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
-        static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
+        static let qualifiedID = UserID(id: UUID(), domain: "example.com")
 
         static let conversationLabel1 = ConversationLabel(
             id: .mockID1,
@@ -495,22 +460,24 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let user1 = User(
-            id: QualifiedID(uuid: .mockID1, domain: domain),
+            id: QualifiedID(id: .mockID1, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
+            type: .regular,
             accentID: 1,
             assets: [],
             deleted: false,
             email: "john.doe@example.com",
             expiresAt: nil,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
         )
 
         static let selfUser = SelfUser(
-            id: qualifiedID.uuid,
+            id: qualifiedID.id,
             qualifiedID: qualifiedID,
             ssoID: nil,
             name: "username",
@@ -523,6 +490,7 @@ final class UserRepositoryTests: XCTestCase {
             deleted: false,
             email: "username@wire.com",
             expiresAt: .now,
+            app: nil,
             service: nil,
             supportedProtocols: [.mls]
         )
@@ -541,8 +509,7 @@ final class UserRepositoryTests: XCTestCase {
         static let pushToken = PushToken(
             deviceToken: Data(repeating: 0x41, count: 10),
             appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS_VOIP"
         )
 
     }

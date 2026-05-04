@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireLoggingSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -30,7 +31,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
     private var mockRouter: MockSettingsDebugReportRouterProtocol!
     private var mockShareFile: MockShareFileUseCaseProtocol!
     private var mockFetchShareableConversations: MockFetchShareableConversationsUseCaseProtocol!
-    private var mockLogsProvider: MockLogFilesProviding!
+    private var mockLogsProvider: LogFilesProvidingMock!
     private var mockFileMetaDataGenerator: MockFileMetaDataGeneratorProtocol!
 
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -43,7 +44,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
         mockRouter = MockSettingsDebugReportRouterProtocol()
         mockShareFile = MockShareFileUseCaseProtocol()
         mockFetchShareableConversations = MockFetchShareableConversationsUseCaseProtocol()
-        mockLogsProvider = MockLogFilesProviding()
+        mockLogsProvider = LogFilesProvidingMock()
         mockFileMetaDataGenerator = .init()
 
         sut = SettingsDebugReportViewModel(
@@ -90,8 +91,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
 
         // Set mock methods
         mockFetchShareableConversations.invoke_MockValue = [conversation]
-        mockLogsProvider.generateLogFilesZip_MockValue = mockURL
-        mockLogsProvider.clearLogsDirectory_MockMethod = {}
+        mockLogsProvider.generateLogFilesZipUrlReturnValue = mockURL
         mockFileMetaDataGenerator.metadataForFileAt_MockMethod = { url in
             XCTAssertEqual(url, mockURL)
             return mockMetadata
@@ -107,7 +107,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockFetchShareableConversations.invoke_Invocations.count, 1)
-        XCTAssertEqual(mockLogsProvider.generateLogFilesZip_Invocations.count, 1)
+        XCTAssertEqual(mockLogsProvider.generateLogFilesZipUrlCallsCount, 1)
         XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAt_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }

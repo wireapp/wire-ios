@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,118 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireData
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-/// A local store dedicated to user.
-/// The store uses the injected context to perform `CoreData` operations on user objects.
-public protocol UserLocalStoreProtocol {
-
-    /// Fetch self user from the local store
-
-    func fetchSelfUser() async -> ZMUser
-
-    /// Fetches a user locally
-    ///
-    /// - parameters
-    ///     - id: The ID of the user.
-    ///     - domain: The domain of the user.
-    /// - returns : A  local`ZMUser`.
-
-    func fetchUser(
-        id: UUID,
-        domain: String?
-    ) async throws -> ZMUser
-
-    /// Fetches or creates a user locally.
-    ///
-    /// - parameters:
-    ///     - id: The user id to fetch or create locally.
-    ///     - domain: The user domain when federated.
-
-    func fetchOrCreateUser(
-        id: UUID,
-        domain: String?
-    ) async -> ZMUser
-
-    /// Fetches or creates users locally.
-    ///
-    /// - parameters:
-    ///     - userIDs: The users id to fetch or create locally.
-    /// - returns: A list of users fetched or created locally.
-
-    func fetchOrCreateUsers(
-        userIDs: [(id: UUID, domain: String?)]
-    ) async -> Set<ZMUser>
-
-    /// Removes user push token from storage.
-
-    func deletePushToken()
-
-    /// Adds a legal hold request to self.
-    ///
-    /// - parameters:
-    ///     - userID: The user ID of the target legalhold subject.
-    ///     - clientID: The client ID of the legalhold device.
-    ///     - lastPrekey: The last prekey of the legalhold device.
-    ///
-    /// Legal hold is the ability to provide an auditable transcript of all communication
-    /// held by team members that are put under legal hold compliance (from a third-party),
-    /// achieved by collecting the content of such communication for later auditing.
-
-    func addSelfLegalHoldRequest(
-        userID: UUID,
-        clientID: String,
-        lastPrekey: WireDataModel.LegalHoldRequest.Prekey
-    ) async
-
-    /// Cancels a self user legal hold request.
-
-    func cancelSelfUserLegalholdRequest() async
-
-    /// Update read receipts flags for self user locally.
-
-    func updateSelfUserReadReceipts(
-        isReadReceiptsEnabled: Bool,
-        isReadReceiptsEnabledChangedRemotely: Bool
-    ) async
-
-    /// Fetches users qualified IDs locally.
-    /// - returns: A list of qualified IDs.
-
-    func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID]
-
-    /// Indicates whether the user is a self user.
-    /// - Parameters:
-    ///     - id: The ID of the user
-    ///     - domain: The domain of the user if any.
-    /// - returns: The user found locally and a flag indicating if this user is a self user.
-
-    func isSelfUser(
-        id: UUID,
-        domain: String?
-    ) async throws -> (user: ZMUser, isSelfUser: Bool)
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: Should be factored out
-    func postAccountDeletedNotification()
-
-    /// Marks a user account as deleted locally.
-    /// - parameters:
-    ///     - user: The user to mark the account deleted for.
-
-    func markAccountAsDeleted(for user: ZMUser) async
-
-    // TODO: [WPB-10727] Merge these two methods into a single method
-    func persistUser(userInfo: NewUserInfo) async
-    func updateUser(userUpdateInfo: UserUpdateInfo) async
-
-    /// Fetches all user IDs that have a one on one conversation
-    /// - returns: A list of users' qualified IDs.
-
-    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
-}
+import WireNetwork
 
 public final class UserLocalStore: UserLocalStoreProtocol {
 
@@ -138,16 +30,19 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let messageLocalStore: any MessageLocalStoreProtocol
     private let userDefaults: UserDefaults
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
+        messageLocalStore: any MessageLocalStoreProtocol,
         userDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.userDefaults = userDefaults
+        self.messageLocalStore = messageLocalStore
     }
 
     public func fetchSelfUser() async -> ZMUser {
@@ -192,13 +87,11 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
             request.predicate = predicate
 
-            return try context
+            let results = try context
                 .fetch(request)
+            return results
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        WireLogger.conversation.error(
-                            "Missing user's qualifiedID"
-                        )
                         return nil
                     }
                     return userID
@@ -207,9 +100,10 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
-        try await context.perform {
+        try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            let knownUsers = try self.context.fetch(fetchRequest)
+            fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+            let knownUsers = try context.fetch(fetchRequest)
             return knownUsers.compactMap(\.qualifiedID)
         }
     }
@@ -223,6 +117,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         await context.perform {
             selfUser.readReceiptsEnabled = isReadReceiptsEnabled
             selfUser.readReceiptsEnabledChangedRemotely = isReadReceiptsEnabledChangedRemotely
+        }
+    }
+
+    public func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.supportedProtocols = supportedProtocols
+            context.saveOrRollback()
         }
     }
 
@@ -244,6 +146,30 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             nil,
             forKey: DefaultsKeys.pushToken.rawValue
         )
+    }
+
+    public func name(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.name
+        }
+    }
+
+    public func teamName(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.teamName
+        }
+    }
+
+    public func id(
+        for user: ZMUser
+    ) async -> UUID {
+        await context.perform {
+            user.remoteIdentifier
+        }
     }
 
     public func addSelfLegalHoldRequest(
@@ -302,17 +228,116 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
+    public func updateSelfUserTrackingID(
+        trackingID: UUID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            guard conversation.isSelfConversation else {
+                return
+            }
+
+            ZMUser.selfUser(in: context).trackingID = trackingID
+        }
+    }
+
+    public func removeUserFromAllConversations(
+        id: UUID,
+        domain: String?,
+        date: Date
+    ) async {
+        let user = await context.perform { [context] in
+            ZMUser.fetchOrCreate(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+
+        let allConversations = await context.perform {
+            // swiftformat:disable:next redundantProperty
+            user.participantRoles.compactMap(\.conversation)
+        }
+
+        for conversation in allConversations {
+            let (
+                userTeam,
+                isTeamMember,
+                conversationTeam,
+                conversationID,
+                conversationDomain,
+                conversationType
+            ) = await context.perform {
+                (
+                    user.team,
+                    user.isTeamMember,
+                    conversation.team,
+                    conversation.remoteIdentifier as UUID,
+                    conversation.domain,
+                    conversation.conversationType
+                )
+            }
+
+            if conversationType == .group {
+                if isTeamMember, conversationTeam == userTeam {
+
+                    let systemMessageType: SystemMessageType = .teamMemberRemoved(
+                        member: (id, domain),
+                        date: date
+                    )
+
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
+
+                } else {
+
+                    let systemMessageType: SystemMessageType = .participantsRemoved(
+                        participants: [(id, domain)],
+                        sender: (id, domain),
+                        date: date
+                    )
+
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
+                }
+
+            } else if conversationType == .oneOnOne {
+
+                // insert User is no longer available system message
+                let systemMessageType: SystemMessageType = .userDeleted(sender: (id, domain))
+
+                await messageLocalStore.addSystemMessage(
+                    messageType: systemMessageType,
+                    conversationID: conversationID,
+                    conversationDomain: conversationDomain
+                )
+            }
+
+            await context.perform {
+                if conversationType == .oneOnOne, conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                    conversation.mlsStatus = .invalid
+                }
+                conversation.removeParticipantAndUpdateConversationState(
+                    user: user,
+                    initiatingUser: user
+                )
+            }
+        }
+    }
+
     public func persistUser(userInfo: NewUserInfo) async {
         let persistedUser = await fetchOrCreateUser(
             id: userInfo.userID.uuid,
             domain: userInfo.userID.domain
         )
 
-        await context.perform {
-            guard userInfo.deleted == false else {
-                return persistedUser.markAccountAsDeleted(at: Date())
-            }
-
+        await context.perform { [context] in
             persistedUser.name = userInfo.name
             persistedUser.handle = userInfo.handle
             persistedUser.teamIdentifier = userInfo.teamID
@@ -321,10 +346,23 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.previewProfileAssetIdentifier = userInfo.completeAssetKey
             persistedUser.emailAddress = userInfo.email
             persistedUser.expiresAt = userInfo.expiresAt
+            if let appDescription = userInfo.appDescription, let appCategory = userInfo.appCategory {
+                let appInfo = persistedUser.appInfo ?? WireData.AppInfo(context: context)
+                appInfo.appDescription = appDescription
+                appInfo.category = appCategory
+                persistedUser.appInfo = appInfo
+            }
             persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()
             persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
             persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]
             persistedUser.needsToBeUpdatedFromBackend = false
+            // `type` only exists in v12 or later
+            let fallbackType: TypeOfUser = persistedUser.serviceIdentifier != nil ? .bot : .regular
+            persistedUser.type = userInfo.type ?? fallbackType
+
+            if userInfo.isDeleted {
+                return persistedUser.markAccountAsDeleted(at: Date())
+            }
         }
     }
 
@@ -378,4 +416,36 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.isPendingMetadataRefresh = false
         }
     }
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        let selfUser = await fetchSelfUser()
+
+        return await context.perform {
+            (
+                id: selfUser.remoteIdentifier,
+                clientId: selfUser.selfClient()?.remoteIdentifier
+            )
+        }
+    }
+
+    public func fetchSelfUserAvailability() async -> Availability {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context).availability
+        }
+    }
+
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        await context.perform { [context] in
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)
+            user?.updateAvailability(availability)
+            context.saveOrRollback()
+        }
+    }
+
+    public func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context).supportedProtocols
+        }
+    }
+
 }

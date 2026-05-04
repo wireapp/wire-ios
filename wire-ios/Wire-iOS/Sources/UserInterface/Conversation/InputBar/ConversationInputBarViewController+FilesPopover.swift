@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ extension ConversationInputBarViewController {
                         .appendingPathComponent(sourceLocation.lastPathComponent)
 
                     try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
-                    self.uploadFile(at: destLocation)
+                    self.uploadFiles(at: [destLocation])
                 }
             }
 
@@ -56,7 +56,7 @@ extension ConversationInputBarViewController {
                 handler: plistHandler
             ))
 
-            let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
+            let size = UInt(userSession.maxUploadFileSize) + 1
             let humanReadableSize = size / 1024 / 1024
             alertController.addAction(uploadTestAlertAction(
                 size: size,
@@ -154,7 +154,6 @@ extension ConversationInputBarViewController {
 
     private func showFileUploadActionSheet(_ sender: IconButton) {
         mode = ConversationInputBarViewControllerMode.textInput
-        inputBar.textView.resignFirstResponder()
 
         let controller = createFileUploadActionSheet(sender: sender)
 
@@ -190,7 +189,7 @@ extension ConversationInputBarViewController {
                         let fileURL = dir.appendingPathComponent(fileName)
                         try? randomData.write(to: fileURL)
 
-                        self.uploadFile(at: fileURL)
+                        self.uploadFiles(at: [fileURL])
                     }
                 }
             })

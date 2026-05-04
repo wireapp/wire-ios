@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum ReadReceiptModeError: Error {
     case invalidOperation
@@ -42,16 +43,29 @@ public extension ZMConversation {
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<Void, Error>) -> Void
     ) {
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
         guard conversationType == .group else { return  completion(.failure(ReadReceiptModeError.invalidOperation)) }
         guard let conversationId = remoteIdentifier?.transportString()
         else { return completion(.failure(ReadReceiptModeError.noConversation)) }
 
+        let path: String
+        if apiVersion >= .v8 {
+            if domain == nil {
+                WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
+            }
+            guard let domain = domain ?? userSession.resolvedBackendMetadata.domain else {
+                return completion(.failure(ReadReceiptModeError.unknown))
+            }
+            path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
+        } else {
+            path = "/conversations/\(conversationId)/receipt-mode"
+        }
+
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
         let request = ZMTransportRequest(
-            path: "/conversations/\(conversationId)/receipt-mode",
+            path: path,
             method: .put,
             payload: payload,
             apiVersion: apiVersion.rawValue

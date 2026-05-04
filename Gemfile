@@ -1,15 +1,16 @@
 source 'https://rubygems.org'
 
-ruby File.read('.ruby-version').strip
+ruby file: ".ruby-version"
 
-gem 'fastlane'
+gem 'abbrev'
+gem 'fastlane', '2.232.2'
 gem 'git'
 gem 'httparty'
 gem 'xcode-install'
 gem 'mutex_m'
 gem 'danger'
 gem 'danger-xcode_summary'
-
+gem "nkf"
 gem 'rexml', '>=3.3.2'
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')

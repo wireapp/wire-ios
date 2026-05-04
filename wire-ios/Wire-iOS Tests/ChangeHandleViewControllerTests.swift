@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -93,8 +93,9 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         let sut = ChangeHandleViewController(
             state: state,
             useTypeIntrinsicSizeTableView: true,
-            federationEnabled: federationEnabled,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: federationEnabled,
+            userSession: UserSessionMock()
         )
         sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)

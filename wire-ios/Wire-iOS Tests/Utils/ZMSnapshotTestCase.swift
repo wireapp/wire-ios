@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,9 @@ class ZMSnapshotTestCase: XCTestCase {
 
     var documentsDirectory: URL?
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
         if UIDevice.current.systemVersion
@@ -51,34 +52,32 @@ class ZMSnapshotTestCase: XCTestCase {
         accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
-        do {
-            documentsDirectory = try FileManager.default.url(
-                for: .documentDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: true
-            )
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        documentsDirectory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
 
-        setupCoreDataStack()
+        try await setupCoreDataStack()
+
         if needsCaches {
             setUpCaches()
         }
     }
 
-    func setupCoreDataStack() {
+    @MainActor
+    func setupCoreDataStack() async throws {
         let account = Account(userName: "", userIdentifier: UUID())
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: documentsDirectory!,
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        coreDataStack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
+        try await coreDataStack.load()
         self.coreDataStack = coreDataStack
         uiMOC = coreDataStack.viewContext
     }

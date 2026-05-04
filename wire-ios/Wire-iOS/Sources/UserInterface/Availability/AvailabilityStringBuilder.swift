@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,12 +72,12 @@ enum AvailabilityStringBuilder {
         guard let textColor = color, let iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
-            leadingIcons: [icon].compactMap { $0 },
+            leadingIcons: [icon].compactMap(\.self),
             title: title,
             trailingIcons: [
                 isE2EICertified ? e2eiCertifiedShield : nil,
                 isProteusVerified ? proteusVerifiedShield : nil
-            ].compactMap { $0 },
+            ].compactMap(\.self),
             interactive: false,
             color: textColor
         )

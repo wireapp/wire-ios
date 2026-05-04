@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
-extension WireAPI.ConversationRole {
+extension WireNetwork.ConversationRole {
 
     func toDomainModel() -> TeamRoleInfo {
         .init(
@@ -29,7 +29,7 @@ extension WireAPI.ConversationRole {
 
 }
 
-extension WireAPI.TeamMember {
+extension WireNetwork.TeamMember {
 
     func toDomainModel() -> TeamMemberInfo {
         .init(
@@ -42,28 +42,32 @@ extension WireAPI.TeamMember {
 
 }
 
-private extension WireAPI.ConversationAction {
+private extension WireNetwork.ConversationAction {
 
     var name: String {
         switch self {
         case .addConversationMember:
             "add_conversation_member"
-        case .removeConversationMember:
-            "remove_conversation_member"
-        case .modifyConversationName:
-            "modify_conversation_name"
-        case .modifyConversationMessageTimer:
-            "modify_conversation_message_timer"
-        case .modifyConversationReceiptMode:
-            "modify_conversation_receipt_mode"
-        case .modifyConversationAccess:
-            "modify_conversation_access"
-        case .modifyOtherConversationMember:
-            "modify_other_conversation_member"
-        case .leaveConversation:
-            "leave_conversation"
         case .deleteConversation:
             "delete_conversation"
+        case .leaveConversation:
+            "leave_conversation"
+        case .modifyAddPermission:
+            "modify_add_permission"
+        case .modifyConversationAccess:
+            "modify_conversation_access"
+        case .modifyConversationHistory:
+            "modify_conversation_history"
+        case .removeConversationMember:
+            "remove_conversation_member"
+        case .modifyConversationMessageTimer:
+            "modify_conversation_message_timer"
+        case .modifyConversationName:
+            "modify_conversation_name"
+        case .modifyConversationReceiptMode:
+            "modify_conversation_receipt_mode"
+        case .modifyOtherConversationMember:
+            "modify_other_conversation_member"
         }
     }
 

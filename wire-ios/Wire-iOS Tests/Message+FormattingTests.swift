@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "text text {preview-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "text text")
@@ -70,7 +70,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "text text {giphy-preview-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "text text \(giphyURL)")
@@ -81,7 +81,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "{giphy-preview-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, giphyURL)
@@ -92,7 +92,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "text text {regular-url} {preview-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "text text \(regularURL)")
@@ -103,7 +103,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "text text {preview-url} {regular-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "text text \(previewURL) \(regularURL)")
@@ -114,7 +114,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "{preview-url} text text")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "\(previewURL) text text")
@@ -125,7 +125,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "{preview-url} {regular-url} text text")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "\(previewURL) \(regularURL) text text")
@@ -136,7 +136,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "{regular-url} {preview-url} text text")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "\(regularURL) \(previewURL) text text")
@@ -147,7 +147,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "{preview-url}")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "")
@@ -160,7 +160,7 @@ class Message_FormattingTests: XCTestCase {
         // text
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "hello:")
@@ -175,7 +175,7 @@ class Message_FormattingTests: XCTestCase {
 
         let mention = Mention(range: (textMessageData.messageText! as NSString).range(of: "@mention"), user: mockUser)
         textMessageData.mentions = [mention]
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "\(previewURL)@mention")
@@ -194,7 +194,7 @@ class Message_FormattingTests: XCTestCase {
 
         let mention = Mention(range: (textMessageData.messageText! as NSString).range(of: "@mention"), user: mockUser)
         textMessageData.mentions = [mention]
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, "@mention\(previewURL) lala")
@@ -215,7 +215,7 @@ class Message_FormattingTests: XCTestCase {
 
         let mention = Mention(range: NSRange(location: 57, length: 54), user: mockUser)
         textMessageData.mentions = [mention]
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(
@@ -233,7 +233,7 @@ class Message_FormattingTests: XCTestCase {
 
         let mention = Mention(range: NSRange(location: 19, length: 12), user: mockUser)
         textMessageData.mentions = [mention]
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(
@@ -247,7 +247,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = createTextMessageData(withMessageTemplate: "`:(`")
 
         // when
-        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
+        let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false, accentColor: .red)
 
         // then
         XCTAssertEqual(formattedText.string, ":(")

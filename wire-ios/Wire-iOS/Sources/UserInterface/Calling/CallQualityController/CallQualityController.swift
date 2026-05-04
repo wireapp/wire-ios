@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,13 +32,20 @@ class CallQualityController: NSObject {
     private let mainWindow: UIWindow
     private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(mainWindow: UIWindow, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
+    init(
+        mainWindow: UIWindow,
+        userSession: UserSession,
+        submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
+    ) {
         self.mainWindow = mainWindow
         self.submitCallQualitySurvey = submitCallQualitySurvey
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
-            self.token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        if let userSession = userSession as? ZMUserSession {
+            self.token = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            )
         }
     }
 

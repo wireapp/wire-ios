@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import XCTest
+
 @testable import WireRequestStrategy
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
@@ -31,7 +33,11 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         applicationStatus = MockApplicationStatus()
         applicationStatus.mockSynchronizationState = .online
-        sut = ImageV2DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
+        sut = ImageV2DownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: applicationStatus,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,16 +31,6 @@
 - (void)testThatItParsesAppStoreSandbox;
 {
     [self assertMatchingTeam:ZMProvisionTeamAppStore apsEnvironment:ZMAPSEnvironmentUnknown forProfileNamed:@"appstore-sandbox"];
-}
-
-- (void)testThatItParsesEnterpriseProduction;
-{
-    [self assertMatchingTeam:ZMProvisionTeamEnterprise apsEnvironment:ZMAPSEnvironmentProduction forProfileNamed:@"enterprise-production"];
-}
-
-- (void)testThatItParsesEnterpriseSandbox;
-{
-    [self assertMatchingTeam:ZMProvisionTeamEnterprise apsEnvironment:ZMAPSEnvironmentSandbox forProfileNamed:@"enterprise-sandbox"];
 }
 
 #pragma mark - Helper

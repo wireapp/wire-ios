@@ -2,7 +2,7 @@ name: SwiftFormat
 
 on:
   pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -13,29 +13,29 @@ concurrency:
 
 jobs:
   SwiftFormat:
-    runs-on: ubuntu-latest
-    if: >
-      github.event.action != 'edited' || (
-        github.event.changes.title == null &&
-        github.event.changes.body == null &&
-        github.event.changes.assignees == null &&
-        github.event.changes.reviewers == null &&
-        github.event.changes.labels == null
-      )
-    container:
-      image: ghcr.io/nicklockwood/swiftformat:0.54.5
+    runs-on: ubuntu-24.04
+    if: ${{ github.event.pull_request.draft != true && github.event_name != 'merge_group' }}
 
     steps:
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+
       - uses: actions/checkout@v4
-      - name: GitHub Action for SwiftFormat
-        run: >
-          swiftformat --lint
-          ./WirePlugins
-          ./WireAPI
-          ./WireAnalytics
-          ./WireDomain
-          ./WireFoundation
-          ./WireUI
-          ./scripts
-          --reporter github-actions-log
-          --config .swiftformat
+        if: ${{ steps.changes.outputs.swift == 'true' }}
+
+      - name: Install SwiftFormat 0.58.3
+        if: ${{ steps.changes.outputs.swift == 'true' }}
+        run: |
+          curl -L -o swiftformat.zip https://github.com/nicklockwood/SwiftFormat/releases/download/0.58.3/swiftformat_linux.zip
+          unzip swiftformat.zip -d swiftformat_bin
+          sudo mv swiftformat_bin/swiftformat_linux /usr/local/bin/swiftformat
+          chmod +x /usr/local/bin/swiftformat
+
+      - name: Run SwiftFormat
+        if: ${{ steps.changes.outputs.swift == 'true' }}
+        run: swiftformat --lint . --reporter github-actions-log --config .swiftformat

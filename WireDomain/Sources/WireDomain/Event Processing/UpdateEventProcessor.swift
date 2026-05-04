@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,38 +17,26 @@
 //
 
 import Foundation
-import WireAPI
+import WireLogging
+import WireNetwork
 
-// sourcery: AutoMockable
-/// Process update events.
-protocol UpdateEventProcessorProtocol {
-
-    /// Process an update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: An update event.
-
-    func processEvent(_ event: UpdateEvent) async throws
-
-}
-
-struct UpdateEventProcessor {
+struct UpdateEventProcessor: UpdateEventProcessorProtocol {
 
     let conversationEventProcessor: any ConversationEventProcessorProtocol
-    let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
+    let featureConfigEventProcessor: any FeatureConfigEventProcessorProtocol
     let federationEventProcessor: any FederationEventProcessorProtocol
     let userEventProcessor: any UserEventProcessorProtocol
     let teamEventProcessor: any TeamEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
+        WireLogger.eventProcessing.info("process event", attributes: [.eventType: event.name], .safePublic)
+
         switch event {
         case let .conversation(event):
             try await conversationEventProcessor.processEvent(event)
 
         case let .featureConfig(event):
-            try await featureconfigEventProcessor.processEvent(event)
+            await featureConfigEventProcessor.processEvent(event)
 
         case let .federation(event):
             try await federationEventProcessor.processEvent(event)
@@ -60,7 +48,7 @@ struct UpdateEventProcessor {
             try await teamEventProcessor.processEvent(event)
 
         case let .unknown(event):
-            print("can not process unknown event: \(event)")
+            WireLogger.eventProcessing.warn("can not process unknown event: \(event)")
         }
     }
 

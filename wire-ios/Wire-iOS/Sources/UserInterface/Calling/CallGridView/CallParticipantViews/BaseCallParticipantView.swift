@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class BaseCallParticipantView: OrientableView {
     let userDetailsView = CallParticipantDetailsView()
     var scalableView: ScalableView?
     var avatarView = UserImageView(size: .normal)
-    var userSession = ZMUserSession.shared()
+    private let userSession: UserSession
 
     private var borderLayer = CALayer()
 
@@ -90,13 +90,15 @@ class BaseCallParticipantView: OrientableView {
         isCovered: Bool,
         shouldShowActiveSpeakerFrame: Bool,
         shouldShowBorderWhenVideoIsStopped: Bool,
-        pinchToZoomRule: PinchToZoomRule
+        pinchToZoomRule: PinchToZoomRule,
+        userSession: UserSession
     ) {
         self.stream = stream
         self.isCovered = isCovered
         self.shouldShowActiveSpeakerFrame = shouldShowActiveSpeakerFrame
         self.shouldShowBorderWhenVideoIsStopped = shouldShowBorderWhenVideoIsStopped
         self.pinchToZoomRule = pinchToZoomRule
+        self.userSession = userSession
 
         super.init(frame: .zero)
 

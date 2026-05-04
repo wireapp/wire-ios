@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,9 +30,16 @@ public struct CoreDataStackHelper {
     }
 
     var uniquePath: String
+    let localDomain: String?
+    let isFederationEnabled: Bool
 
-    public init() {
+    public init(
+        localDomain: String? = "wire.com",
+        isFederationEnabled: Bool = false
+    ) {
         self.uniquePath = UUID().uuidString
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     public func createStack(inMemoryStore: Bool = true) async throws -> CoreDataStack {
@@ -46,18 +53,13 @@ public struct CoreDataStackHelper {
         let stack = CoreDataStack(
             account: account,
             applicationContainer: directory,
-            inMemoryStore: inMemoryStore
+            inMemoryStore: inMemoryStore,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            stack.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: stack)
-                }
-            }
-        }
+        try await stack.load()
+        return stack
     }
 
     public func cleanupDirectory() throws {

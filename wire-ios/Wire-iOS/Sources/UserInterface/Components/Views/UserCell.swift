@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
@@ -34,7 +35,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     private var userIsSelfUser = false
     private var isSelfUserPartOfATeam = false
-    private var userIsServiceUser = false
+    private var userIsAppOrBot = false
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -192,12 +193,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.accessibilityIdentifier = Locators.ConversationDetailsPage.userCellName.rawValue
         titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.accessibilityIdentifier = "user_cell.username"
+        subtitleLabel.accessibilityIdentifier = Locators.NewConversationPage.usernameCell.rawValue
 
         // avatar
         avatarImageView.userSession = ZMUserSession.shared()
@@ -351,7 +352,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
-        } else if userIsServiceUser {
+        } else if userIsAppOrBot {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -388,7 +389,7 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        userIsServiceUser = user.isServiceUser
+        userIsAppOrBot = user.isAppOrBot
 
         let subtitle: NSAttributedString? = if overrideSubtitle == nil {
             self.subtitle(for: user)
@@ -424,7 +425,7 @@ extension UserCell {
     ///     - overrideSubtitle: Provide a subtitle to override defaults.
     ///     - conversation: The related conversation.
     ///
-    /// - Note: Please consider to use configure(userStatus:[...]) to make refactorings easier in future.
+    /// - Note: Please consider to use configure(userStatus:[...]) to make refactoring easier in future.
     func configure(
         user: UserType,
         isE2EICertified: Bool = false,
@@ -450,15 +451,16 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isServiceUser, let service = user as? SearchServiceUser {
-            subtitle(forServiceUser: service)
+        if user.isAppOrBot, let appOrBot = user as? ZMSearchUser {
+            subtitle(for: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }
     }
 
-    private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
-        guard let summary = service.summary else { return nil }
+    private func subtitle(for searchUser: ZMSearchUser) -> NSAttributedString? {
+        guard let summary = searchUser.summary else { return nil }
         return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
+
 }

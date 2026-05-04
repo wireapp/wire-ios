@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,6 +80,7 @@ final class ProfileDetailsContentController: NSObject,
     // MARK: - Properties
 
     private var observerToken: Any?
+    private let userSession: UserSession
     private let userPropertyCellID = "UserPropertyCell"
     private let messageProtocolCellID = "MessageProtocolCell"
 
@@ -94,18 +95,20 @@ final class ProfileDetailsContentController: NSObject,
     init(
         user: UserType,
         viewer: UserType,
-        conversation: ZMConversation?
+        conversation: ZMConversation?,
+        userSession: UserSession
     ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
+        self.userSession = userSession
 
         self.isAdminState = conversation.map(user.isGroupAdmin) ?? false
 
         super.init()
         configureObservers()
         updateContent()
-        ZMUserSession.shared()?.perform {
+        userSession.perform {
             user.refreshRichProfile()
         }
     }
@@ -119,7 +122,7 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Starts observing changes in the user profile.
     private func configureObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
     }
@@ -260,7 +263,7 @@ final class ProfileDetailsContentController: NSObject,
                 for: indexPath
             ) as! IconToggleSubtitleCell
 
-            cell.configure(with: CellConfiguration.groupAdminToogle(get: {
+            cell.configure(with: CellConfiguration.groupAdminToggle(get: {
                 groupAdminEnabled
             }, set: { _, _ in
                 self.isAdminState.toggle()
@@ -297,7 +300,7 @@ final class ProfileDetailsContentController: NSObject,
                 style: .default,
                 reuseIdentifier: messageProtocolCellID
             )
-            cell.propertyName = "Message protocol"
+            cell.propertyName = L10n.Localizable.GroupDetails.MessageProtocol.title
             cell.propertyValue = messageProtocol.rawValue
             return cell
         }

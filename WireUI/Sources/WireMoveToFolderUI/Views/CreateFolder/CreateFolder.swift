@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,15 +28,18 @@ public struct CreateFolder: View {
     @ObservedObject private var viewModel: CreateFolderViewModel
     private let conversationName: String
     private let onFolderCreated: (Folder) -> Void
+    private let isContextMenuAllowed: Bool
 
     public init(
         viewModel: CreateFolderViewModel,
         conversationName: String,
-        onFolderCreated: @escaping (Folder) -> Void
+        onFolderCreated: @escaping (Folder) -> Void,
+        isContextMenuAllowed: Bool
     ) {
         self.viewModel = viewModel
         self.conversationName = conversationName
         self.onFolderCreated = onFolderCreated
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     public var body: some View {
@@ -85,11 +88,14 @@ public struct CreateFolder: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray, lineWidth: 1)
                 .frame(height: 48)
-            TextField(
-                localized("folder.creation.name.placeholder"),
-                text: $viewModel.name
+            ContextMenuControllableTextField(
+                text: $viewModel.name,
+                placeholder: localizedString("folder.creation.name.placeholder"),
+                isSecureTextEntry: false,
+                isContextMenuAllowed: isContextMenuAllowed
             )
             .padding(.horizontal, 8)
+            .frame(height: 48)
             .textFieldStyle(.plain)
             .autocorrectionDisabled()
             .accessibilityIdentifier("input.newfolder.name")
@@ -116,6 +122,10 @@ public struct CreateFolder: View {
         LocalizedStringKey(key)
     }
 
+    private func localizedString(_ key: String) -> String {
+        NSLocalizedString(key, comment: "")
+    }
+
     private func createFolder() {
         Task {
             do {
@@ -139,7 +149,8 @@ public struct CreateFolder: View {
             useCase: PreviewCreateFolderUseCase()
         ),
         conversationName: "iOS Team",
-        onFolderCreated: { _ in }
+        onFolderCreated: { _ in },
+        isContextMenuAllowed: true
     )
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,62 +17,67 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
-import WireRequestStrategy
+@preconcurrency import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
+
 @testable import WireSyncEngine
 
+@preconcurrency
 class CallingRequestStrategyTests: MessagingTest {
 
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
     var mockMessageSender: MockMessageSenderInterface!
-
-    override class func setUp() {
-        super.setUp()
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
 
     override func setUp() {
         super.setUp()
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
         mockMessageSender = MockMessageSenderInterface()
 
+        createSUT(localDomain: "wire.com", isFederationEnabled: false)
+        setupMockMessageSyncForMLSSuccessfully()
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockApplicationStatus = nil
+        mockFetchUserClientsUseCase = nil
+
+        super.tearDown()
+    }
+
+    func createSUT(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) {
         syncMOC.performAndWait {
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
             sut.callCenter = WireCallCenterV3Mock(
                 userId: .stub,
                 clientId: UUID().transportString(),
                 uiMOC: uiMOC,
                 flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock()
+                transport: WireCallCenterTransportMock(),
+                notificationCenter: .init(),
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
         }
-        setupMockMessageSyncForMLSSuccessfully()
-    }
-
-    override func tearDown() {
-        sut = nil
-        mockRegistrationDelegate = nil
-        mockApplicationStatus = nil
-        mockFetchUserClientsUseCase = nil
-        super.tearDown()
     }
 
     // MARK: - Call Config
@@ -270,9 +275,10 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.isFederationEnabled = true
+        createSUT(localDomain: "foo.com", isFederationEnabled: true)
 
         let (conversation, payload) = try syncMOC.performAndWait {
+            syncMOC.isFederationEnabled = true
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "foo.com"
@@ -411,22 +417,22 @@ class CallingRequestStrategyTests: MessagingTest {
             // Mock
             mockFetchUserClientsUseCase.mockReturnValueForFetchUserClients = Set([
                 QualifiedClientID(
-                    userID: avsClient1.avsIdentifier.identifier,
+                    userID: avsClient1.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient1.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient2.avsIdentifier.identifier,
+                    userID: avsClient2.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient2.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient3.avsIdentifier.identifier,
+                    userID: avsClient3.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient3.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient4.avsIdentifier.identifier,
+                    userID: avsClient4.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient4.clientId
                 )
@@ -491,16 +497,15 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Targeted Calling Messages
 
     func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() throws {
-        var sentMessage: GenericMessageEntity?
         let (conversationAVSID, user1, client1, user2, client2, targets) = try syncMOC.performAndWait { [self] in
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                localDomain: "wire.com",
+                isFederationEnabled: false
             )
             // Given
             let selfClient = createSelfClient()
@@ -535,12 +540,13 @@ class CallingRequestStrategyTests: MessagingTest {
             let avsClient2 = AVSClient(userId: user2.avsIdentifier, clientId: client2.remoteIdentifier!)
             let targets = [avsClient1, avsClient2]
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (conversationAVSID, user1, client1, user2, client2, targets)
+        }
+
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
         }
 
         // When we schedule the targeted message
@@ -584,7 +590,8 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC
+
+        let conversationAVSID = try await syncMOC
             .perform { [self] in
                 // Given
                 let selfClient = createSelfClient()
@@ -593,15 +600,15 @@ class CallingRequestStrategyTests: MessagingTest {
                 let user1 = ZMUser.insertNewObject(in: syncMOC)
                 user1.remoteIdentifier = .create()
 
-                let client1 = createClient(for: user1, connectedTo: selfClient)
-                let client2 = createClient(for: user1, connectedTo: selfClient)
+                createClient(for: user1, connectedTo: selfClient)
+                createClient(for: user1, connectedTo: selfClient)
 
                 // Another user with two clients connected to self
                 let user2 = ZMUser.insertNewObject(in: syncMOC)
                 user2.remoteIdentifier = .create()
 
-                let client3 = createClient(for: user2, connectedTo: selfClient)
-                let client4 = createClient(for: user2, connectedTo: selfClient)
+                createClient(for: user2, connectedTo: selfClient)
+                createClient(for: user2, connectedTo: selfClient)
 
                 // A conversation with both users and self
                 let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -614,8 +621,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
                 syncMOC.saveOrRollback()
 
-                let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
-                return (user1, user2, client1, client2, client3, client4, conversationAVSID)
+                return try XCTUnwrap(conversation.avsIdentifier)
             }
 
         var sentMessage: GenericMessageEntity?
@@ -653,16 +659,6 @@ class CallingRequestStrategyTests: MessagingTest {
         let client = UserClient.insertNewObject(in: syncMOC)
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
-
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
-            try! session.createClientSession(
-                client.sessionIdentifier!,
-                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
-            )
-        }
-
         return client
     }
 
@@ -677,46 +673,7 @@ class CallingRequestStrategyTests: MessagingTest {
         return try! JSONSerialization.data(withJSONObject: json, options: [])
     }
 
-    // MARK: - Event processing
-
-    func testThatItAsksCallCenterToMute_WhenReceivingRemoteMuteEvent() {
-        // GIVEN
-        let json = [
-            "src_userid": UUID.create().uuidString,
-            "src_clientid": "clientID",
-            "resp": false,
-            "type": "REMOTEMUTE"
-        ] as [String: Any]
-        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let content = String(decoding: data, as: UTF8.self)
-        let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
-        let text = try? message.serializedData().base64String()
-        let payload = [
-            "conversation": UUID().transportString(),
-            "data": [
-                "sender": UUID().transportString(),
-                "text": text
-            ],
-            "from": UUID().transportString(),
-            "time": Date().transportString(),
-            "type": "conversation.otr-message-add"
-        ] as [String: Any]
-
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
-
-        sut.callCenter?.isMuted = false
-
-        // WHEN
-        syncMOC.performAndWait {
-            sut.processEvents([updateEvent], liveEvents: false, prefetchResult: nil)
-        }
-
-        // THEN
-        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
-    }
-
     func test_ThatItHandlesMLSRejectMessage() throws {
-        var sentMessage: GenericMessageEntity?
         let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given
             createMLSSelfConversation()
@@ -743,16 +700,17 @@ class CallingRequestStrategyTests: MessagingTest {
 
             syncMOC.saveOrRollback()
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let mockMLSService = MockMLSServiceInterface()
 
             syncMOC.mlsService = mockMLSService
 
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
+        }
+
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
         }
 
         // Targeting one client

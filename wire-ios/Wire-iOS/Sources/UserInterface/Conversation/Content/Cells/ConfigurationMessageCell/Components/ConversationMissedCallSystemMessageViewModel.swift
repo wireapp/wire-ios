@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,28 +37,32 @@ struct ConversationMissedCallSystemMessageViewModel {
     func attributedTitle() -> NSAttributedString? {
         guard
             let systemMessageData = message.systemMessageData,
+            systemMessageData.systemMessageType == systemMessageType,
             let sender = message.senderUser,
             let labelFont = font,
-            let labelTextColor = textColor,
-            systemMessageData.systemMessageType == systemMessageType
+            let labelTextColor = textColor
         else {
             return nil
         }
 
         let numberOfCalls = systemMessageData.childMessages.count + 1
-        var detailKey = "content.system.call.missed-call"
+        typealias Call = L10n.Localizable.Content.System.Call
 
-        if message.conversationLike?.conversationType == .group {
-            detailKey.append(".groups")
+        let senderName = sender.name ?? ""
+
+        let finalText: String = if message.conversationLike?.conversationType == .group {
+            // SwiftGen does not support this localized string.
+            "content.system.call.missed-call.groups".localized(args: numberOfCalls, senderName)
+        } else {
+            L10n.Localizable.Content.System.Call.missedCall(numberOfCalls)
         }
 
-        let senderString = sender.name ?? ""
-        var title = detailKey.localized(args: numberOfCalls, senderString) && labelFont
-
-        if numberOfCalls > 1 {
-            title += " (\(numberOfCalls))" && labelFont
-        }
-
-        return title && labelTextColor
+        return NSAttributedString(
+            string: finalText,
+            attributes: [
+                .font: labelFont,
+                .foregroundColor: labelTextColor
+            ]
+        )
     }
 }

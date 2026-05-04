@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,19 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 /// @abstract The purpose of this subclass of UITextField is to give the possibility to edit the right-aligned text
 /// field
 /// with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
 /// can be used "as-is" without any additional configuration.
-class TailEditingTextField: UITextField {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
+class TailEditingTextField: ContextMenuControllableUITextField {
+    init(frame: CGRect) {
+        super.init(
+            frame: frame,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
         setup()
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ final class GuestsBarController: UIViewController {
     // MARK: Properties
 
     enum State: Equatable {
-        case visible(labelKey: String, identifier: String)
+        case visible(labelKey: String)
         case hidden
     }
 
@@ -144,13 +144,11 @@ final class GuestsBarController: UIViewController {
         switch state {
         case .hidden:
             label.text = nil
-            label.accessibilityIdentifier = nil
-        case let .visible(text, accessibilityIdentifier):
+        case let .visible(text):
             label.text = text
             label.font = FontSpec.mediumSemiboldFont.font!
             label.textColor = SemanticColors.Label.textDefaultWhite
             label.textAlignment = .center
-            label.accessibilityIdentifier = accessibilityIdentifier
         }
     }
 

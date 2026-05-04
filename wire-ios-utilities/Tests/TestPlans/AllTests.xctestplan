@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireUtilities.xcodeproj",
+      "identifier" : "3E88BD421B1F3EA300232589",
+      "name" : "WireUtilities-Tests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

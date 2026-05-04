@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ public extension ZMUser {
         // having two duplicates of that user, and we'd have a really hard time recovering from that.
         require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
 
-        let domain: String? = BackendInfo.isFederationEnabled ? domain : nil
+        let domain: String? = context.isFederationEnabled ? domain : nil
 
         if let user = fetch(with: remoteIdentifier, domain: domain, in: context) {
             return user

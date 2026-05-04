@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -26,26 +27,36 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+    let analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
-    @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        Task {
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
-            )
+        // analytics
+        let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
+        let analyticsEventTracker = analyticsEventTracker()
+        #if false // [WPB-15245] This event has temporarily been disabled.
+            analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #endif
+
+        // open profile
+        Task { @MainActor in
+            let rootViewController = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
@@ -83,33 +94,38 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .favorites)
             case .groups:
                 await mainCoordinator.showConversationList(conversationFilter: .groups)
+            case .channels:
+                await mainCoordinator.showConversationList(conversationFilter: .channels)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
+            case .unread:
+                await mainCoordinator.showConversationList(conversationFilter: .unread)
+            case .mentions:
+                await mainCoordinator.showConversationList(conversationFilter: .mentions)
+            case .replies:
+                await mainCoordinator.showConversationList(conversationFilter: .replies)
+            case .drafts:
+                await mainCoordinator.showConversationList(conversationFilter: .drafts)
             case .folders:
                 break // handled by `sidebarViewController(_:didTapFoldersAt:)`
             case .archive:
                 await mainCoordinator.showArchive()
             case .settings:
                 await mainCoordinator.showSettings()
+            case .meetings:
+                await mainCoordinator.showMeetings()
+            case .files:
+                await mainCoordinator.showFiles()
             }
-        }
-    }
-
-    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        Task {
-            let connectUI = UINavigationController(rootViewController: connectUIBuilder.build())
-            connectUI.modalPresentationStyle = .formSheet
-            await mainCoordinator.presentViewController(connectUI)
         }
     }
 
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
-        let url = WireURLs.shared.support
-        let browser = BrowserViewController(url: url)
-        browser.modalPresentationCapturesStatusBarAppearance = true
-        Task {
-            await mainCoordinator.presentViewController(browser)
+        if let browser = WireURLs.shared.support.browserControllerOrOpenExternally() {
+            Task {
+                await mainCoordinator.presentViewController(browser)
+            }
         }
     }
 }

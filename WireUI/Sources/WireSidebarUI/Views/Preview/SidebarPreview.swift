@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 @available(iOS 17.0, *)
 struct SidebarPreview: View {
@@ -32,7 +32,8 @@ struct SidebarPreview: View {
         availability: .away,
         isE2EICertified: true,
         isVerified: true,
-        isLegalHoldEnabled: true
+        isLegalHoldEnabled: true,
+        showNotificationsBadge: true
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
@@ -47,11 +48,13 @@ struct SidebarPreview: View {
                 SidebarView(
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
+                    showUnreadFilters: false,
+                    showMeetings: false,
+                    showFiles: false,
                     accountImageAction: {},
                     foldersAction: { _ in },
-                    connectAction: {},
                     supportAction: {},
-                    accountImageView: { _, _ in MockAccountImageView() },
+                    accountImageView: { _, _, _ in MockAccountImageView() },
                     legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)

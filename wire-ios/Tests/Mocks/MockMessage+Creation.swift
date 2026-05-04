@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import WireDataModel
+import GenericMessageProtocol
 import WireLinkPreview
+@testable import WireDataModel
 
 @testable import Wire
 
@@ -117,6 +118,7 @@ enum MockMessageFactory {
         conversation: Conversation? = nil,
         users numUsers: Int = 0,
         sender: UserType? = nil,
+        text: String? = nil,
         reason: ZMParticipantsRemovedReason = .none,
         domains: [String]? = nil
     ) -> (MockMessage?, MockSystemMessageData) {
@@ -127,6 +129,8 @@ enum MockMessageFactory {
             reason: reason,
             domains: domains
         )
+
+        mockSystemMessageData.text = text
 
         message.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
 
@@ -145,6 +149,7 @@ enum MockMessageFactory {
         users numUsers: Int = 0,
         clients numClients: Int = 0,
         sender: UserType? = nil,
+        text: String? = nil,
         reason: ZMParticipantsRemovedReason = .none,
         domains: [String]? = nil
     ) -> MockMessage? {
@@ -154,6 +159,7 @@ enum MockMessageFactory {
             conversation: conversation,
             users: numUsers,
             sender: sender,
+            text: text,
             reason: reason,
             domains: domains
         )
@@ -208,6 +214,61 @@ enum MockMessageFactory {
             .messageText = shouldIncludeRichMedia ?
             "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
         message.backingTextMessageData = textMessageData
+
+        return message
+    }
+
+    static func multipartMessage<T: MockMessage>(
+        withText text: String? = nil,
+        attachments: [Attachment],
+        sender: UserType? = nil,
+        conversation: Conversation? = nil
+    ) -> T {
+        let message: T = MockMessageFactory.messageTemplate(
+            sender: sender,
+            conversation: conversation
+        )
+
+        if let text {
+            let textMessageData = MockTextMessageData()
+            textMessageData.messageText = text
+            message.backingTextMessageData = textMessageData
+        }
+        let multipart = Multipart.with {
+            $0.attachments = attachments
+            if let text {
+                $0.text = Text.with { $0.content = text }
+            }
+        }
+        message.multipartMessageData = MultipartMessageData(multipart: multipart)
+
+        return message
+    }
+
+    static func textMessageWithLinkAttachment(
+        withText text: String? = "Just a random text message",
+        sender: UserType? = nil,
+        conversation: Conversation? = nil,
+        includingRichMedia shouldIncludeRichMedia: Bool = false
+    ) -> MockMessage {
+        let message: MockMessage = MockMessageFactory.messageTemplate(
+            sender: sender,
+            conversation: conversation
+        )
+
+        let textMessageData = MockTextMessageData()
+        textMessageData
+            .messageText = shouldIncludeRichMedia ?
+            "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
+        message.backingTextMessageData = textMessageData
+
+        message.linkAttachments = [LinkAttachment(
+            type: .youTubeVideo,
+            title: "Lagar mat med Fernando Di Luca",
+            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 5)
+        )]
 
         return message
     }

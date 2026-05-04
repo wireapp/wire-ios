@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         sut = AssetDeletionRequestStrategy(
             context: syncMOC,
             applicationStatus: mockApplicationStatus,
-            identifierProvider: mockIdentifierProvider
+            identifierProvider: mockIdentifierProvider,
+            localDomain: "wire.com"
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -117,7 +118,7 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
 extension AssetDeletionRequestStrategyTests {
     func testThatItCreatesARequestIfThereIsAnIdentifier(for apiVersion: APIVersion) {
         // Given
-        let domain = "example.domain.com"
+        let domain = "wire.com"
         BackendInfo.domain = domain
         let identifier = UUID.create().transportString()
         mockIdentifierProvider.nextIdentifier = identifier
@@ -131,7 +132,7 @@ extension AssetDeletionRequestStrategyTests {
             "/assets/v3/\(identifier)"
         case .v1:
             "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)

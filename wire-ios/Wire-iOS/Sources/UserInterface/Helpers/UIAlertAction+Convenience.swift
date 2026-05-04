@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,9 +48,7 @@ extension UIAlertAction {
             title: title,
             style: .default
         ) { [weak presenter] _ in
-            let browserViewController = BrowserViewController(url: url)
-            browserViewController.onDismiss = onDismiss
-            presenter?.present(browserViewController, animated: true)
+            url.open(from: presenter, onDismiss: onDismiss)
         }
     }
 
@@ -67,6 +65,18 @@ extension UIAlertAction {
         if let icon {
             let image = UIImage.imageForIcon(icon, size: 24, color: tintColor)
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
+        }
+    }
+
+    convenience init(
+        title: String?,
+        style: UIAlertAction.Style,
+        accessibilityIdentifier: String?,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        self.init(title: title, style: style, handler: handler)
+        if let accessibilityIdentifier {
+            setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
         }
     }
 }

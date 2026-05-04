@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
 import Foundation
 import WireAnalytics
+import WireFoundation
 
 // MARK: - EnableAnalyticsSharingUseCaseProtocol
 
@@ -28,6 +28,7 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
     /// Enable analytics tracking.
 
+    @MainActor
     func invoke() async throws
 
 }
@@ -39,6 +40,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     let service: any AnalyticsServiceProtocol
     let provider: any AnalyticsEventTrackerProvider
 
+    @MainActor
     func invoke() async throws {
         let user = try await provider.createAnalyticsUser()
         try await service.enableTracking()

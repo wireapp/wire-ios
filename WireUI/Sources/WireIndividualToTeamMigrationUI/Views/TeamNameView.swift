@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
+import WireReusableUIComponents
 
 struct TeamNameView: View {
 
@@ -29,28 +31,34 @@ struct TeamNameView: View {
     let actionCallback: (Action) -> Void
     @State private var teamName: String = ""
 
+    var validTeamName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(String.localized(key: "individualToTeam.teamName.body", bundle: .module))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
             Spacer()
                 .frame(height: 24)
-            Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module))
-                .wireTextStyle(.h4)
-            TextField(
-                String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
-                text: $teamName
+
+            LabeledTextField(
+                isMandatory: true,
+                placeholder: .localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
+                title: .localized(key: "individualToTeam.teamName.field.title", bundle: .module),
+                string: $teamName
             )
-            .textFieldStyle(.roundedBorder)
-            .wireTextStyle(.body1)
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.teamNameTextField.rawValue)
+
             Spacer()
 
             Button(
-                action: { actionCallback(.continue(teamName: teamName)) },
+                action: { actionCallback(.continue(teamName: validTeamName)) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
             .wireButtonStyle(.primary)
-            .disabled(teamName.isEmpty)
+            .disabled(validTeamName.isEmpty)
         }
     }
 }

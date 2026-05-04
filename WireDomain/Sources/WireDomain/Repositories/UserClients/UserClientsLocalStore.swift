@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,68 +19,40 @@
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-public protocol UserClientsLocalStoreProtocol {
-
-    /// Fetches or creates a client locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id to find or create locally.
-    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
-
-    func fetchOrCreateClient(
-        id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
-
-    /// Retrieves deleted self clients locally based on new self clients.
-    /// - parameter newClients: The new self user clients.
-    /// - returns: A list of deleted self clients.
-
-    func deletedSelfClients(
-        newClients: [String]
-    ) async -> [String]
-
-    /// Deletes client locally.
-    /// - parameter id: The client id.
-
-    func deleteClient(
-        id: String
-    ) async
-
-    /// Updates the user client informations locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id.
-    ///     - isNewClient: A flag indicating whether the user client is new.
-    ///     - remoteClient: The up-to-date user client info object.
-
-    func updateClient(
-        id: String,
-        isNewClient: Bool,
-        userClientInfo: UserClientInfo
-    ) async
-
-    /// Indicates whether self user clients are active MLS clients.
-    /// - returns: A flag indicating whether all self user clients are active MLS clients.
-
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
-}
-
-public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
+public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
-    private let userLocalStore: any UserLocalStoreProtocol
+    let context: NSManagedObjectContext
 
-    // MARK: - Object lifecycle
+    // MARK: - Methods
 
-    init(
-        context: NSManagedObjectContext,
-        userLocalStore: any UserLocalStoreProtocol
-    ) {
-        self.context = context
-        self.userLocalStore = userLocalStore
+    public func fetchSelfClient() async -> UserClient? {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.selfClient()
+        }
+    }
+
+    public func fetchSelfClientID() async -> String? {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.selfClient()?.remoteIdentifier
+        }
+    }
+
+    public func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> UserClient? {
+        await context.perform {
+            UserClient.fetchUserClient(
+                withRemoteId: id,
+                forUser: user,
+                createIfNeeded: createIfNeeded
+            )
+        }
     }
 
     public func fetchOrCreateClient(
@@ -103,10 +75,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func deletedSelfClients(
         newClients: [String]
     ) async -> [String] {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
 
-        return await context.perform {
-            selfUser.clients
+            return selfUser.clients
                 .compactMap(\.remoteIdentifier)
                 .filter {
                     !newClients.contains($0)
@@ -156,6 +128,8 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             localClient.activationDate = userClientInfo.activationDate
             localClient.lastActiveDate = userClientInfo.lastActiveDate
             localClient.remoteIdentifier = userClientInfo.id
+            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities
+                .contains(.consumableNotifications)
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser
@@ -172,37 +146,33 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             if !localClient.isSelfClient() {
                 localClient.mlsPublicKeys = .init(
                     ed25519: userClientInfo.mlsPublicKeys?.ed25519,
-                    ed448: userClientInfo.mlsPublicKeys?.ed448,
+                    ed448: nil, // not used
                     p256: userClientInfo.mlsPublicKeys?.p256,
                     p384: userClientInfo.mlsPublicKeys?.p384,
-                    p521: userClientInfo.mlsPublicKeys?.p512
+                    p521: userClientInfo.mlsPublicKeys?.p521
                 )
             }
 
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
+            guard let selfClient = selfUser.selfClient(), isNewClient else { return }
 
-            if selfClient != nil, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
+            if
+                localClient.remoteIdentifier != selfClient.remoteIdentifier,
+                let localClientActivationDate = localClient.activationDate,
+                let selfClientActivationDate = selfClient.activationDate,
+                localClientActivationDate.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
             }
 
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+            selfClient.addNewClientToIgnored(localClient)
+            selfClient.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
     }
 
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
 
-        return await context.perform {
-            selfUser.clients.all { userClient in
+            return selfUser.clients.all { userClient in
                 let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
 
                 let isRecentlyActive: Bool = {
@@ -223,6 +193,65 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
                 return hasMLSIdentity && isRecentlyActive
             }
+        }
+    }
+
+    public func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            client.discoveryDate = discoveryDate
+        }
+    }
+
+    public func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.addNewClientToIgnored(newClient)
+        }
+    }
+
+    public func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID? {
+        await context.perform {
+            client.proteusSessionID
+        }
+    }
+
+    public func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.decrementNumberOfRemainingProteusKeys()
+            selfClient.updateSecurityLevelAfterDiscovering([newClient])
+        }
+    }
+
+    public func invalidateSelfClient() async {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+
+            guard let selfClient = selfUser.selfClient() else {
+                return
+            }
+
+            selfClient.remoteIdentifier = nil
+            selfClient.resetLocallyModifiedKeys(selfClient.keysThatHaveLocalModifications)
+            selfClient.clearMLSPublicKeys()
+            context.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
+    }
+
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        await context.perform { [context] in
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.isConsumableNotificationsCapable == true
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -834,12 +834,26 @@ public final class FileAssetCache: NSObject {
         }
 
         let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .joined(separator: "_")
 
         return key.data(using: .utf8)?
             .zmSHA256Digest()
             .zmHexEncodedString()
+    }
+
+    // MARK: - General file caching
+
+    public func saveFile(at url: URL, key: String) async throws {
+        cache.storeAssetFromURL(url, key: key, movingOriginal: true, createdAt: Date())
+    }
+
+    public func deleteFile(forKey key: String) async throws {
+        cache.deleteAssetData(key)
+    }
+
+    public func fileURL(forKey key: String) -> URL? {
+        cache.assetURL(key)
     }
 
 }
@@ -855,12 +869,6 @@ public extension FileAssetCache {
         try tempCache.wipeCaches()
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-    guard let input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
 
 /// A file cache
@@ -931,17 +939,32 @@ private struct FileCache: Cache {
         }
     }
 
-    func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
-
+    func storeAssetFromURL(
+        _ fromUrl: URL,
+        key: String,
+        movingOriginal: Bool,
+        createdAt creationDate: Date = Date()
+    ) {
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
         let toUrl = URLForKey(key)
+
+        let destinationFolder = toUrl.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: destinationFolder.path) {
+            try? FileManager.default.createDirectory(at: destinationFolder, withIntermediateDirectories: true)
+        }
+
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
+        coordinator.coordinate(writingItemAt: toUrl, options: .forMoving, error: &error) { url in
             do {
-                try FileManager.default.copyItem(at: fromUrl, to: url)
+                if movingOriginal {
+                    try FileManager.default.moveItem(at: fromUrl, to: url)
+                } else {
+                    try FileManager.default.copyItem(at: fromUrl, to: url)
+                }
+
                 try FileManager.default.setAttributes(
                     [
                         .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
@@ -950,12 +973,12 @@ private struct FileCache: Cache {
                     ofItemAtPath: url.path
                 )
             } catch {
-                fatal("Failed to copy from \(url) to \(url), \(error)")
+                WireLogger.assets.error("Failed to copy from \(fromUrl) to \(url), \(error)")
             }
         }
 
         if let error {
-            WireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
+            WireLogger.assets.error("Failed to copy asset data from \(fromUrl) for key = \(key): \(error)")
         }
     }
 
@@ -994,8 +1017,13 @@ private struct FileCache: Cache {
     fileprivate func URLForKey(_ key: String) -> URL {
         guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
         var safeKey = key
-        for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
-            safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
+
+        /// see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+        /// however we allow the slash character `/` to be able to have directories in the key
+        let reservedCharacters = ":\\%\""
+
+        for character in reservedCharacters {
+            safeKey = safeKey.replacingOccurrences(of: "\(character)", with: "_")
         }
         return cacheFolderURL.appendingPathComponent(safeKey)
     }

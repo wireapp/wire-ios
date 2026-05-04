@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,23 +19,29 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
-final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let transferView = VideoMessageView(frame: .zero)
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
     private let restrictionView = VideoMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,28 +57,29 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = 12
+        let cornerRadius: CGFloat = ConversationMessageContainerView.bubbleCornerRadius
+
+        containerView.shape = .rounded(radius: cornerRadius)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
 
         transferView.delegate = self
         setup(transferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
         NSLayoutConstraint.activate([
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -137,16 +144,21 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationVideoMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var topMargin: Float = 8
-    var showEphemeralTimer: Bool = false
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
+    let isBubbleHasMaximumWidth: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -157,7 +169,8 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
 

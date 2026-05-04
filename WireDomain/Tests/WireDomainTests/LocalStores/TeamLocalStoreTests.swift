@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -276,6 +276,45 @@ final class TeamLocalStoreTests: XCTestCase {
 
             XCTAssertEqual(member.needsToBeUpdatedFromBackend, true)
             XCTAssertEqual(member.team, team)
+        }
+    }
+
+    func testCreateOrUpdateTeam_It_Creates_Team_Locally() async throws {
+
+        // Given
+
+        await context.perform { [context] in
+            let team = Team.fetch(with: Scaffolding.teamID, in: context)
+            XCTAssertNil(team)
+        }
+
+        // When
+
+        await sut.createOrUpdateTeam(
+            identifier: Scaffolding.teamID,
+            name: Scaffolding.teamName,
+            creator: Scaffolding.teamCreatorID,
+            icon: Scaffolding.logoID,
+            iconKey: Scaffolding.logoKey
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let team = try XCTUnwrap(
+                Team.fetch(with: Scaffolding.teamID, in: context)
+            )
+
+            let creator = try XCTUnwrap(
+                ZMUser.fetch(with: Scaffolding.teamCreatorID, in: context)
+            )
+
+            XCTAssertEqual(team.remoteIdentifier, Scaffolding.teamID)
+            XCTAssertEqual(team.name, Scaffolding.teamName)
+            XCTAssertEqual(team.creator, creator)
+            XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
+            XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
+
         }
     }
 

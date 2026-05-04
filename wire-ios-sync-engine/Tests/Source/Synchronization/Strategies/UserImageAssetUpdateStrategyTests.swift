@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,7 +74,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: self.syncMOC,
                 applicationStatus: mockApplicationStatus,
-                imageUploadStatus: updateStatus
+                imageUploadStatus: updateStatus,
+                localDomain: "wire.com",
+                isCloudDomain: false
             )
         }
 
@@ -164,6 +166,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: previewData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
         let completeData = Data("1111111".utf8)
@@ -171,6 +174,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: completeData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
 
@@ -316,8 +320,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) throws {
         // GIVEN
-        let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        let domain = "wire.com"
         let assetId = "foo-bar"
 
         let userObjectId = try syncMOC.performAndWait {
@@ -352,7 +355,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             "/assets/v3/\(assetId)"
         case .v1:
             "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 

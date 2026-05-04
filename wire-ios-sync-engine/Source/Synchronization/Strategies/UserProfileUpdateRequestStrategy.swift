@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     let userProfileUpdateStatus: UserProfileUpdateStatus
 
-    fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
+    fileprivate var passwordUpdateSync: ZMSingleRequestSync!
 
-    fileprivate var emailUpdateSync: ZMSingleRequestSync! = nil
+    fileprivate var emailUpdateSync: ZMSingleRequestSync!
 
-    fileprivate var handleCheckSync: ZMSingleRequestSync! = nil
+    fileprivate var handleCheckSync: ZMSingleRequestSync!
 
-    fileprivate var handleSetSync: ZMSingleRequestSync! = nil
+    fileprivate var handleSetSync: ZMSingleRequestSync!
 
-    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync! = nil
+    fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync!
 
     @available(
         *,
@@ -54,10 +54,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
         self.configuration = [
             .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
 
         self.passwordUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)

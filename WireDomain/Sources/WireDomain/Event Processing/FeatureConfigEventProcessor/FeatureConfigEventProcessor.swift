@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,31 +17,16 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// Process feature config update events.
-
-protocol FeatureConfigEventProcessorProtocol {
-
-    /// Process a feature config update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A feature config update event.
-
-    func processEvent(_ event: FeatureConfigEvent) async throws
-
-}
-
-struct FeatureConfigEventProcessor {
+struct FeatureConfigEventProcessor: FeatureConfigEventProcessorProtocol {
 
     let updateEventProcessor: any FeatureConfigUpdateEventProcessorProtocol
 
-    func processEvent(_ event: FeatureConfigEvent) async throws {
+    func processEvent(_ event: FeatureConfigEvent) async {
         switch event {
         case let .update(event):
-            try await updateEventProcessor.processEvent(event)
+            await updateEventProcessor.processEvent(event)
         }
     }
 

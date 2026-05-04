@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ extension ZMUserSession: SecurityClassificationProviding {
     // If federation is disabled we know that the user is from local backend, so we can fallback to local domain and
     // check if it is classified
     private func domain(for user: UserType) -> String? {
-        guard BackendInfo.isFederationEnabled else {
-            return user.domain ?? BackendInfo.domain
+        guard resolvedBackendMetadata.isFederationEnabled else {
+            return user.domain ?? resolvedBackendMetadata.domain
         }
         return user.domain
     }

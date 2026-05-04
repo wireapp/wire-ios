@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,16 +24,19 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
     var contextProvider: ContextProvider
     var transportSession: TransportSessionType
-    var eventProcessor: ConversationEventProcessorProtocol
+    var eventProcessor: LegacyConversationEventProcessorProtocol
+    let metadata: BackendMetadataProvider
 
     init(
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        eventProcessor: ConversationEventProcessorProtocol
+        eventProcessor: LegacyConversationEventProcessorProtocol,
+        metadata: BackendMetadataProvider
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
+        self.metadata = metadata
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
@@ -44,8 +47,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         case let .openConversation(id):
             handleOpenConversation(id: id, delegate: delegate)
 
-        case let .openUserProfile(id):
-            handleOpenUserProfile(id: id, delegate: delegate)
+        case let .openUserProfile(id, domain):
+            handleOpenUserProfile(id: id, domain: domain, delegate: delegate)
 
         default:
             delegate?.completedURLAction(urlAction)
@@ -62,7 +65,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             key: key,
             code: code,
             transportSession: transportSession,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak self] response in
             guard let self, let delegate else {
                 return
@@ -151,7 +155,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             password: password,
             transportSession: transportSession,
             eventProcessor: eventProcessor,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak self] response in
             guard let self else { return }
 
@@ -201,17 +206,17 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
     }
 
-    private func handleOpenUserProfile(id: UUID, delegate: PresentationDelegate?) {
+    private func handleOpenUserProfile(id: UUID, domain: String?, delegate: PresentationDelegate?) {
 
         let viewContext = contextProvider.viewContext
-
-        if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {
+        if let user = ZMUser.fetch(with: id, domain: domain, in: viewContext) {
             delegate?.showUserProfile(user: user)
         } else {
-            delegate?.showConnectionRequest(userId: id)
+            let currentUserDomain = ZMUser.selfUser(in: viewContext).domain ?? "wire.com"
+            delegate?.showConnectionRequest(qualifiedID: QualifiedID(uuid: id, domain: domain ?? currentUserDomain))
         }
 
-        delegate?.completedURLAction(.openUserProfile(id: id))
+        delegate?.completedURLAction(.openUserProfile(id: id, domain: domain))
 
     }
 
@@ -224,7 +229,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             return
         }
 
-        let service = ConversationService(context: contextProvider.syncContext)
+        let service = ConversationService(context: contextProvider.syncContext, localDomain: metadata.domain)
         let viewContext = contextProvider.viewContext
 
         service.syncConversation(qualifiedID: qualifiedID) {

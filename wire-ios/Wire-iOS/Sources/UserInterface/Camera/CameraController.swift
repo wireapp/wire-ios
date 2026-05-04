@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,8 +46,13 @@ final class CameraController {
     init?(camera: SettingsCamera) {
         guard !UIDevice.isSimulator else { return nil }
         self.currentCamera = camera
-        setupSession()
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
+
+        // `setupSession()` performs session configuration on a dedicated serial queue. This needs to happen after the
+        // `previewLayer` is created to avoid simultaneous session configuration across different threads as
+        // `AVCaptureVideoPreviewLayer` appears to configure the session internally on the main thread during init.
+        // Configuring the `AVCaptureSession` from multiple threads can lead to a deadlock.
+        setupSession()
     }
 
     // MARK: - Session Management
@@ -203,7 +208,7 @@ final class CameraController {
 
     /// Asynchronously attempts to capture a photo within the currently
     /// configured session. The result is passed into the given handler
-    /// callback.
+    /// callback. The format is hardcoded to `jpeg` with 90% quality.
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
 
         // For iPad split/slide over mode, the session is not running.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,10 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
             clientId: clientID,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 
@@ -72,7 +75,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .outgoing(degraded: false),
+            callState: .outgoing(isVideo: false, degraded: false),
             conversation: conversation,
             caller: selfUser,
             timestamp: nil,
@@ -108,7 +111,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: user,
             timestamp: nil,
@@ -143,7 +146,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: selfUser,
             timestamp: nil,
@@ -170,7 +173,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: user,
             timestamp: nil,

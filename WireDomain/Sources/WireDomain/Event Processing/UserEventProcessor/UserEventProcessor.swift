@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,9 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// Process user update events.
-
-protocol UserEventProcessorProtocol {
-
-    /// Process a user update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A user update event.
-
-    func processEvent(_ event: UserEvent) async throws
-
-}
-
-struct UserEventProcessor {
+struct UserEventProcessor: UserEventProcessorProtocol {
 
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
     let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol
@@ -51,7 +36,7 @@ struct UserEventProcessor {
     func processEvent(_ event: UserEvent) async throws {
         switch event {
         case let .clientAdd(event):
-            try await clientAddEventProcessor.processEvent(event)
+            await clientAddEventProcessor.processEvent(event)
 
         case let .clientRemove(event):
             try await clientRemoveEventProcessor.processEvent(event)
@@ -73,7 +58,7 @@ struct UserEventProcessor {
             try await legalholdEnableEventProcessor.processEvent(event)
 
         case let .legalholdRequest(event):
-            try await legalholdRequestEventProcessor.processEvent(event)
+            await legalholdRequestEventProcessor.processEvent(event)
 
         case let .propertiesSet(event):
             try await propertiesSetEventProcessor.processEvent(event)
@@ -85,7 +70,7 @@ struct UserEventProcessor {
             pushRemoveEventProcessor.processEvent()
 
         case let .update(event):
-            try await updateEventProcessor.processEvent(event)
+            await updateEventProcessor.processEvent(event)
         }
     }
 

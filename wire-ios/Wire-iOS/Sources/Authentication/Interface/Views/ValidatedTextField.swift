@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
@@ -112,7 +114,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             iconButton.isEnabled = true
         default:
             iconButton = IconButton(style: .circular, variant: .dark)
-            iconButton.accessibilityIdentifier = "ConfirmButton"
+            iconButton.accessibilityIdentifier = Locators.SetUsernamePage.confirmUsernameButton.rawValue
             iconButton.accessibilityLabel = L10n.Localizable.General.next
             iconButton.isEnabled = false
         }
@@ -138,7 +140,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         self.textFieldValidator = TextFieldValidator()
         self.kind = kind
 
-        var textFieldAttributes: Attributes = if setNewColors == false {
+        let textFieldAttributes: Attributes = if setNewColors == false {
             AccessoryTextField.Attributes(
                 textFont: ValidatedTextField.enteredTextFont,
                 textColor: UIColor.Team.textColor,
@@ -162,7 +164,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
         setupTextFieldProperties()
 
@@ -221,7 +224,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             textContentType = isTeam ? .organizationName : .name
         case .username:
             autocapitalizationType = .none
-            accessibilityIdentifier = "UsernameField"
+            accessibilityIdentifier = Locators.SetUsernamePage.usernameTextField.rawValue
             textContentType = .username
         case .unknown:
             keyboardType = .asciiCapable
@@ -229,7 +232,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         case let .passcode(rules, isNew):
             keyboardType = .asciiCapable
             isSecureTextEntry = true
-            accessibilityIdentifier = "PasscodeField"
+            accessibilityIdentifier = Locators.SetPasscodePage.passcodeField.rawValue
             autocapitalizationType = .none
             returnKeyType = isNew ? .default : .continue
             // Hack: disable auto fill passcode

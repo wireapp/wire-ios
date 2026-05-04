@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,9 @@ public extension String {
     }
 
     var base64EncodedBytes: [Byte]? {
-        base64EncodedData?.bytes
+        base64EncodedData.map { data in
+            [UInt8](data)
+        }
     }
 
     var base64EncodedString: String? {
@@ -41,7 +43,9 @@ public extension String {
     }
 
     var base64DecodedBytes: [Byte]? {
-        base64DecodedData?.bytes
+        base64DecodedData.map { data in
+            [UInt8](data)
+        }
     }
 
 }

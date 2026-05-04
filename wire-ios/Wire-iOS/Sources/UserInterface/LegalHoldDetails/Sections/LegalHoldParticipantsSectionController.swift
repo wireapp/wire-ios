@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,16 +56,18 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     fileprivate weak var collectionView: UICollectionView?
     private var viewModel: LegalHoldParticipantsSectionViewModel
     private let conversation: LegalHoldDetailsConversation
+    private let userSession: UserSession
     private var token: AnyObject?
 
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
-    init(conversation: LegalHoldDetailsConversation) {
+    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
         self.viewModel = conversation.createViewModel()
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             self.token = UserChangeInfo.add(userObserver: self, in: userSession)
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ final class CanvasViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        sut = CanvasViewController()
+        sut = CanvasViewController(userSession: UserSessionMock())
 
         sut.loadViewIfNeeded()
     }

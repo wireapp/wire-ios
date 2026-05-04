@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@ import XCTest
 final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
-        coreDataFixture = CoreDataFixture()
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
     }
 
     override func tearDown() {

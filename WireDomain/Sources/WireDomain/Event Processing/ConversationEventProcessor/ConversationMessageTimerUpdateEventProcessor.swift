@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
-
-/// Process conversation message timer update events.
-
-protocol ConversationMessageTimerUpdateEventProcessorProtocol {
-
-    /// Process a conversation message timer update event.
-    ///
-    /// - Parameter event: A conversation message timer update event.
-
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async
-
-}
+import WireNetwork
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
@@ -43,7 +31,7 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
         let timestamp = event.timestamp
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
@@ -53,15 +41,15 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
 
         if currentTimeout != timeout {
 
-            let messageType: MessageType = .messageTimerUpdate(
-                sender: (userID.uuid, userID.domain),
+            let messageType: SystemMessageType = .messageTimerUpdate(
+                sender: (userID.id, userID.domain),
                 date: timestamp,
                 timeoutValue: timeoutValue
             )
 
-            await messageLocalStore.addSystemMessageToConversation(
+            await messageLocalStore.addSystemMessage(
                 messageType: messageType,
-                conversationID: conversationID.uuid,
+                conversationID: conversationID.id,
                 conversationDomain: conversationID.domain
             )
         }

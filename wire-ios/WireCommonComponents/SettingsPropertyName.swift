@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case disableSendButton = "DisableSendButton"
 
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 
     // Profile
     case profileName = "ProfileName"
@@ -60,18 +61,16 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case pingSoundName = "PingSoundName"
 
     // Open In
-    case tweetOpeningOption = "TweetOpeningOption"
     case mapsOpeningOption = "MapsOpeningOption"
     case browserOpeningOption = "BrowserOpeningOption"
 
-    // Persoanl Information
+    // Personal Information
     // Analytics
     case disableAnalyticsSharing = "DisableAnalyticsSharing"
 
     // Debug
     case disableCallKit = "DisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
-    case callingProtocolStrategy = "CallingProtcolStrategy"
     case enableBatchCollections = "EnableBatchCollections"
 
     case lockApp
@@ -79,6 +78,8 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case readReceiptsEnabled
 
     case encryptMessagesAtRest
+
+    case conversationBackground
 
     public var changeNotificationName: String {
         description + "ChangeNotification"

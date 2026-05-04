@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ final class CallGridViewController: UIViewController {
         PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
     }
 
-    private var visibleClientsSharingVideo: [AVSClient] = []
+    private var visibleClientsSharingVideo: Set<AVSClientVideoStream> = []
     private var dataSource: [Stream] = []
     private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
     private let thumbnailViewController = PinnableThumbnailViewController()
@@ -66,6 +66,8 @@ final class CallGridViewController: UIViewController {
 
     private let mediaManager: AVSMediaManagerInterface
     private let voiceChannel: VoiceChannel
+    private let isFederationEnabled: Bool
+    private let userSession: UserSession
 
     // MARK: - Public Properties
 
@@ -108,13 +110,17 @@ final class CallGridViewController: UIViewController {
     init(
         voiceChannel: VoiceChannel,
         configuration: CallGridViewControllerInput,
-        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
 
         self.configuration = configuration
         self.mediaManager = mediaManager
         self.voiceChannel = voiceChannel
         self.networkQuality = voiceChannel.networkQuality
+        self.isFederationEnabled = isFederationEnabled
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
@@ -135,6 +141,11 @@ final class CallGridViewController: UIViewController {
         activityIndicator = .init(view: view)
         updateHint(for: .viewDidLoad)
         displayNetworkConditionViewIfNeeded(for: networkQuality)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
     }
 
     // MARK: - Setup
@@ -158,7 +169,7 @@ final class CallGridViewController: UIViewController {
         networkConditionView.accessibilityIdentifier = "network-conditions-indicator"
     }
 
-    func releadGridData() {
+    func reloadGridData() {
         gridView.reloadData()
     }
 
@@ -220,6 +231,7 @@ final class CallGridViewController: UIViewController {
         maximizedView = shouldMaximize ? view : nil
         view.isMaximized = shouldMaximize
         updateGrid(with: streams)
+        requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
         updateHint(for: .maximizationChanged(stream: view.stream, maximized: view.isMaximized))
     }
 
@@ -345,7 +357,8 @@ final class CallGridViewController: UIViewController {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule,
+                userSession: userSession
             )
         }
     }
@@ -418,14 +431,24 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
-        let clients = dataSource[startIndex ..< endIndex]
+        let clientsWithVideo = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
-            .map(\.streamId)
 
-        guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
+        let oneStreamDisplayedExcludingSelf = clientsWithVideo.count == 1
+        let clientStreams = clientsWithVideo
+            .map { client in
+                AVSClientVideoStream(
+                    client: client.streamId,
+                    quality: oneStreamDisplayedExcludingSelf ? .high : .low
+                )
+            }
 
-        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
-        visibleClientsSharingVideo = clients
+        let newVisibleClientsSharingVideo = Set(clientStreams)
+
+        guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
+        guard let delegate else { return }
+        delegate.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
+        visibleClientsSharingVideo = newVisibleClientsSharingVideo
     }
 
     // MARK: - Grid View Axis
@@ -542,7 +565,9 @@ extension CallGridViewController: UICollectionViewDataSource {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule,
+                isFederationEnabled: isFederationEnabled,
+                userSession: userSession
             )
             viewCache[streamId] = view
             return view

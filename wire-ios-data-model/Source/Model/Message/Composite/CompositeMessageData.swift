@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - CompositeMessageData protocol
 
@@ -54,29 +55,4 @@ public protocol ButtonMessageData {
     var state: ButtonMessageState { get }
     var isExpired: Bool { get }
     func touchAction()
-}
-
-public enum ButtonMessageState {
-    case unselected
-    case selected
-    case confirmed
-
-    init(from state: ButtonState.State?) {
-        guard let state else {
-            self = .unselected
-            return
-        }
-        self = ButtonMessageState(from: state)
-    }
-
-    init(from state: ButtonState.State) {
-        switch state {
-        case .unselected:
-            self = .unselected
-        case .selected:
-            self = .selected
-        case .confirmed:
-            self = .confirmed
-        }
-    }
 }

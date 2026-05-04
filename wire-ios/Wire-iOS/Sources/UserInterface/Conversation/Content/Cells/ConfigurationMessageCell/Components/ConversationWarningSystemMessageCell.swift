@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,28 +20,34 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationWarningSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
 
-    struct Configuration {
-        let topText: String
-        let bottomText: String
+    struct Configuration: Equatable {
+        let icon: UIImage?
+        let topText: NSAttributedString
+        let bottomText: NSAttributedString
     }
 
     private let encryptionLabel = DynamicFontLabel(
+        attributedText: NSAttributedString(string: ""),
         style: .subline1,
         color: LabelColors.textDefault
     )
     private let sensitiveInfoLabel = DynamicFontLabel(
+        attributedText: NSAttributedString(string: ""),
         style: .subline1,
         color: LabelColors.textDefault
     )
 
     func configure(with object: Configuration, animated: Bool) {
-        encryptionLabel.text = object.topText
-        sensitiveInfoLabel.text = object.bottomText
+        encryptionLabel.attributedText = object.topText
+        sensitiveInfoLabel.attributedText = object.bottomText
+        imageView.image = object.icon
     }
 
     override func configureSubviews() {
@@ -55,14 +61,19 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.image = .init(resource: .attention)
         imageView.tintColor = IconColors.backgroundDefault
     }
 
     override func configureConstraints() {
         super.configureConstraints()
-        encryptionLabel.fitIn(view: topContentView)
-        sensitiveInfoLabel.fitIn(view: bottomContentView)
+        let padding: CGFloat = 6.0
+
+        encryptionLabel.fitIn(view: topContentView, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: padding))
+        sensitiveInfoLabel.fitIn(
+            view: bottomContentView,
+            insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: padding)
+        )
+
         NSLayoutConstraint.activate([
             imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)
         ])

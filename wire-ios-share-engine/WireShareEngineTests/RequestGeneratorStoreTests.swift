@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     var mockStrategy: MockStrategy!
-    var sut: RequestGeneratorStore! = nil
+    var sut: RequestGeneratorStore!
 
     override func setUp() {
         super.setUp()
@@ -80,18 +80,14 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
             ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
         }))
 
-        sut = RequestGeneratorStore(strategies: [mockStrategy])
-        XCTAssertNotNil(sut.nextRequest())
-
-        // When
-        BackendInfo.apiVersion = nil
+        sut = RequestGeneratorStore(strategies: [mockStrategy], apiVersion: nil)
 
         // Then
         XCTAssertNil(sut.nextRequest())
     }
 
     func testThatItDoesNOTReturnARequestIfNoGeneratorsGiven() {
-        sut = RequestGeneratorStore(strategies: [])
+        sut = RequestGeneratorStore(strategies: [], apiVersion: .v0)
         XCTAssertNil(sut.nextRequest())
     }
 
@@ -105,7 +101,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
         mockStrategy.requestGenerators.append(generator)
 
-        sut = RequestGeneratorStore(strategies: [mockStrategy])
+        sut = RequestGeneratorStore(strategies: [mockStrategy], apiVersion: .v0)
 
         XCTAssertNil(sut.nextRequest())
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -126,7 +122,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
         mockStrategy.requestGenerators.append(generator)
 
-        sut = RequestGeneratorStore(strategies: [mockStrategy])
+        sut = RequestGeneratorStore(strategies: [mockStrategy], apiVersion: .v0)
 
         let request = sut.nextRequest()
         XCTAssertNotNil(request)
@@ -142,7 +138,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
             apiVersion: APIVersion.v0.rawValue
         )
         let strategy = MockRequestStrategy(request: sourceRequest)
-        sut = RequestGeneratorStore(strategies: [strategy])
+        sut = RequestGeneratorStore(strategies: [strategy], apiVersion: .v0)
 
         // When
         let request = sut.nextRequest()
@@ -174,7 +170,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
         mockStrategy.requestGenerators.append(generator)
 
-        sut = RequestGeneratorStore(strategies: [mockStrategy])
+        sut = RequestGeneratorStore(strategies: [mockStrategy], apiVersion: .v0)
 
         let request = sut.nextRequest()
         XCTAssertNotNil(request)
@@ -216,7 +212,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         mockStrategy.requestGenerators.append(generator)
         mockStrategy.requestGenerators.append(secondGenerator)
 
-        sut = RequestGeneratorStore(strategies: [mockStrategy])
+        sut = RequestGeneratorStore(strategies: [mockStrategy], apiVersion: .v0)
 
         let request = sut.nextRequest()
         XCTAssertNotNil(request)

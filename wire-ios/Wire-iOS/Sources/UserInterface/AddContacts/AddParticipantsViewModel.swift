@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,38 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
+    let isAppsFeatureEnabled: Bool
+    let areLegacyBotsAvailable: Bool
 
-    init(with context: AddParticipantsViewController.Context) {
+    init(
+        context: AddParticipantsViewController.Context,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
+    ) {
         self.context = context
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
     }
 
-    var botCanBeAdded: Bool {
+    var botCanBeAdded: Bool { // TODO: [WPB-20362] apps vs bots?
         switch context {
-        case .create: false
-        case let .add(conversation): conversation.botCanBeAdded
+        case .create:
+            return false
+        case let .add(conversation):
+            guard conversation.botCanBeAdded else { return false }
+
+            switch conversation.messageProtocol {
+            case .mls where isAppsFeatureEnabled:
+                return conversation.allowApps
+            case .proteus where areLegacyBotsAvailable:
+                return conversation.allowApps
+            default:
+                return false
+            }
         }
     }
 
@@ -80,7 +100,7 @@ struct AddParticipantsViewModel {
         case .add:
             let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
-            item.accessibilityIdentifier = "close"
+            item.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
             return item
         case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
@@ -91,7 +111,7 @@ struct AddParticipantsViewModel {
             )
             newItem.tintColor = UIColor.accent()
             newItem.accessibilityIdentifier = values.participants
-                .isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
+                .isEmpty ? Locators.SelectParticipantsPage.skip.rawValue : Locators.SelectParticipantsPage.done.rawValue
             return newItem
         }
     }

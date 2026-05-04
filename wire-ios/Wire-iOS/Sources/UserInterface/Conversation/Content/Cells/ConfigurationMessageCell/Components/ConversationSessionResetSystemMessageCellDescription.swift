@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,21 +23,18 @@ import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationSessionResetSystemMessageCellDescription>
 
     var message: ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
-    var topMargin: Float = 0
-    var isFullWidth: Bool = true
     var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: ConversationSystemMessageCell.Configuration
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)

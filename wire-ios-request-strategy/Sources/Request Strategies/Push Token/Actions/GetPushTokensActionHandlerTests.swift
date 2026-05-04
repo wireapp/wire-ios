@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,8 +81,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let payload = Payload(tokens: [
             token(clientID: "clientA", data: Data([0x01, 0x01, 0x01]), type: "APNS"),
             token(clientID: "clientB", data: Data([0x02, 0x02, 0x02]), type: "APNS_SANDBOX"),
-            token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_VOIP"),
-            token(clientID: "clientB", data: Data([0x04, 0x04, 0x04]), type: "APNS_VOIP_SANDBOX"),
+            token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_SANDBOX"),
             token(clientID: "clientA", data: Data([0x05, 0x05, 0x05]), type: "GCM")
         ])
 
@@ -95,18 +94,9 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let apns = PushToken(
             deviceToken: Data([0x01, 0x01, 0x01]),
             appIdentifier: "app",
-            transportType: "APNS",
-            tokenType: .standard
+            transportType: "APNS"
         )
         XCTAssertEqual(receivedTokens[0], apns)
-
-        let voIP = PushToken(
-            deviceToken: Data([0x03, 0x3, 0x03]),
-            appIdentifier: "app",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
-        )
-        XCTAssertEqual(receivedTokens[1], voIP)
     }
 
     func test_itHandlesResponse_200_MalformedResponse() throws {

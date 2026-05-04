@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
 
@@ -82,7 +82,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         userRepository.fetchUserIdDomain_MockValue = user
         conversationRepository.fetchConversationIdDomain_MockValue = conversation
         messageRepository
-            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_MockMethod = { _, _ in }
 
         // When
@@ -94,7 +94,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            messageRepository.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
         XCTAssertEqual(conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_Invocations.count, 1)
@@ -104,8 +104,8 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         static let id = UUID()
         static let domain = "domain.com"
         static let event = ConversationReceiptModeUpdateEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
+            conversationID: ConversationID(id: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             newReceiptMode: 1
         )
     }

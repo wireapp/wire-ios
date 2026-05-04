@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +30,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendFileMessageUseCase!
 
@@ -56,7 +57,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         mockConversation.appendFile_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         let fileMetadata = ZMFileMetadata(fileURL: URL(fileURLWithPath: "/path/to/file.pdf"), thumbnail: nil)
 
@@ -71,14 +72,14 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         let appendFileInvocation = try XCTUnwrap(mockConversation.appendFile_Invocations.first)
         XCTAssertEqual(appendFileInvocation.fileMetadata, fileMetadata)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .fileMessage,
             conversationType: .group,
             conversationSize: 0
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

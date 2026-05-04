@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public func fatal(
 ) -> Never {
 
     let output = NSString(
-        format: "ASSERT: [%s:%d] <%s> %s",
+        format: "ASSERT: [%s:%d] <%s> %@",
         "\(file)",
         Int32(line),
         "Swift assertion",
@@ -78,6 +78,15 @@ public enum AppBuild: UInt8 {
             false
         }
     }
+}
+
+/// Reports an error and terminates the application if the current build is an internal build
+public func fatalInternal(
+    _ message: String,
+    file: StaticString = #fileID,
+    line: UInt = #line
+) {
+    requireInternal(false, message, file: file, line: line)
 }
 
 /// Terminates the application if the condition is `false` and the current build is not an AppStore build

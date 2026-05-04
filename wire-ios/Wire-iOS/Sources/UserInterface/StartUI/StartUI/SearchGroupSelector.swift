@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 import WireDesign
 
 final class SearchGroupSelector: UIView {
@@ -36,8 +37,8 @@ final class SearchGroupSelector: UIView {
 
     // MARK: - Init
 
-    init() {
-        self.groups = SearchGroup.all
+    init(for messageProtocol: MessageProtocol) {
+        self.groups = SearchGroup.all(for: messageProtocol)
 
         let groupItems: [String] = groups.map(\.name)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum URLAction: Equatable {
 
     /// Connect to a service user (bot)
-    case connectBot(serviceUser: ServiceUserData)
+    case connectBot(providerID: UUID, serviceID: UUID)
 
-    /// The SSO login sucessfully completed
+    /// The SSO login successfully completed
     case companyLoginSuccess(userInfo: UserInfo)
 
     /// Start the SSO login flow
@@ -38,8 +39,8 @@ public enum URLAction: Equatable {
     /// Navigate to a conversation
     case openConversation(id: UUID)
 
-    /// The UI search for the user ID and open the profile view for connection request if not connected
-    case openUserProfile(id: UUID)
+    /// The UI search for the user ID and domain, and open the profile view for connection request if not connected
+    case openUserProfile(id: UUID, domain: String?)
 
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
@@ -95,10 +96,41 @@ extension URLAction {
 
         switch host {
         case URL.DeepLink.user:
-            if let lastComponent = url.pathComponents.last,
-               let uuid = UUID(uuidString: lastComponent) {
-                self = .openUserProfile(id: uuid)
-            } else {
+            /// The link is expected to be of the format  `wire://user/{domain}/{userID}`
+            /// and url.pathComponents are ["/", {domain}, {userID}]
+            ///
+            /// **Note:** to maintain backwards compatibility we should still support the legacy `wire://user/{userID}`
+            /// format and potentially `wire://user/{userID@domain}`
+
+            let components = url.pathComponents.dropFirst()
+
+            switch components.count {
+            // Legacy format wire://user/{userID}`
+            case 1:
+                let startComponent = components[components.startIndex]
+                if let qualifiedID = QualifiedID(rawValue: startComponent) {
+                    self = .openUserProfile(id: qualifiedID.uuid, domain: qualifiedID.domain)
+                } else if let uuid = UUID(uuidString: startComponent) {
+                    self = .openUserProfile(id: uuid, domain: nil)
+                } else {
+                    WireLogger.conversation.error("Invalid user profile deep link format")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+            // New format `wire://user/{domain}/{userID}`
+            case 2:
+                let userDomain = components[components.startIndex]
+                let userIDString = components[components.startIndex + 1]
+
+                guard let uuid = UUID(uuidString: userIDString) else {
+                    WireLogger.conversation.error("Invalid UUID in user profile deep link")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+                self = .openUserProfile(id: uuid, domain: userDomain)
+
+            default:
+                WireLogger.conversation.error("Invalid user profile deep link format")
                 throw DeepLinkRequestError.invalidUserLink
             }
 
@@ -137,7 +169,7 @@ extension URLAction {
                   let providerUUID = UUID(uuidString: provider) else {
                 throw DeepLinkRequestError.malformedLink
             }
-            self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
+            self = .connectBot(providerID: providerUUID, serviceID: serviceUUID)
 
         case URL.Host.accessBackend:
             guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
@@ -174,7 +206,9 @@ extension URLAction {
                     throw CompanyLoginError.invalidCookie
                 }
 
-                let userInfo = UserInfo(identifier: userID, cookieData: cookieData)
+                let cookies = HTTPCookie.cookies(from: cookieString, for: url)
+
+                let userInfo = UserInfo(identifier: userID, cookieData: cookieData, cookies: cookies)
                 self = .companyLoginSuccess(userInfo: userInfo)
 
             case URL.Path.failure:

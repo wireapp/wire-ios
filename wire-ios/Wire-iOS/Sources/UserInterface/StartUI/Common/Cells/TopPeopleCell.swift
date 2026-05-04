@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ final class TopPeopleCell: UICollectionViewCell {
         }
     }
 
+    var userSession: UserSession? {
+        get { badgeUserImageView.userSession }
+        set { badgeUserImageView.userSession = newValue }
+    }
+
     private let badgeUserImageView = BadgeUserImageView()
     private let conversationImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -88,7 +93,6 @@ final class TopPeopleCell: UICollectionViewCell {
 
         badgeUserImageView.removeFromSuperview()
         badgeUserImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
-        badgeUserImageView.userSession = ZMUserSession.shared()
         badgeUserImageView.isUserInteractionEnabled = false
         badgeUserImageView.wr_badgeIconSize = 16
         badgeUserImageView.accessibilityIdentifier = "TopPeopleAvatar"

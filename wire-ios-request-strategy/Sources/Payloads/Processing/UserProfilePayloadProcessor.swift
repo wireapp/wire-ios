@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@ protocol UserProfilePayloadProcessing {
 }
 
 final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
+
+    private let isFederationEnabled: Bool
+
+    init(isFederationEnabled: Bool) {
+        self.isFederationEnabled = isFederationEnabled
+    }
 
     /// Update all user entities with the data from the user profiles.
     ///
@@ -68,7 +74,7 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         for user: ZMUser,
         authoritative: Bool = true
     ) {
-        if let qualifiedID = payload.qualifiedID, BackendInfo.isFederationEnabled {
+        if let qualifiedID = payload.qualifiedID, isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)
 
@@ -111,6 +117,11 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
         if (payload.handle != nil || authoritative) && !user.isAccountDeleted {
             user.handle = payload.handle
+        }
+
+        if (payload.type != nil || authoritative) && !user.isAccountDeleted {
+            let fallbackType: TypeOfUser = payload.serviceID == nil ? .regular : .bot
+            user.type = payload.type.map(TypeOfUser.init) ?? fallbackType
         }
 
         if payload.managedBy != nil || authoritative {
@@ -185,4 +196,17 @@ private extension Payload.UserProfile.MessageProtocol {
         }
     }
 
+}
+
+private extension TypeOfUser {
+    init(_ type: Payload.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
 }

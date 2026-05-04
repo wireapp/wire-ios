@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ extension XCTestCase {
         matching value: UIView,
         width: CGFloat,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -80,6 +81,7 @@ extension XCTestCase {
         verify(
             matching: value,
             named: nameWithProperty,
+            record: record,
             file: file,
             testName: testName,
             line: line
@@ -159,6 +161,7 @@ extension XCTestCase {
     func verify(
         matching value: UIView,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -168,6 +171,7 @@ extension XCTestCase {
             matching: value,
             as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
             named: name,
+            record: record,
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
             testName: testName,
@@ -252,9 +256,10 @@ extension XCTestCase {
     // MARK: - verify a UIViewController with a set of widths. The SUT is created in the closure instead of reusing
 
     func verifyInAllPhoneWidths(
-        createSut: () -> UIView,
+        createSut: (CGFloat) -> UIView,
         snapshotBackgroundColor: UIColor? = nil,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -265,6 +270,7 @@ extension XCTestCase {
             snapshotBackgroundColor: snapshotBackgroundColor ??
                 (ColorScheme.default.variant == .light ? .white : .black),
             named: name,
+            record: record,
             file: file,
             testName: testName,
             line: line
@@ -275,6 +281,7 @@ extension XCTestCase {
         createSut: () -> UIViewController,
         snapshotBackgroundColor: UIColor? = nil,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -285,6 +292,7 @@ extension XCTestCase {
             snapshotBackgroundColor: snapshotBackgroundColor ??
                 (ColorScheme.default.variant == .light ? .white : .black),
             named: name,
+            record: record,
             file: file,
             testName: testName,
             line: line
@@ -292,10 +300,11 @@ extension XCTestCase {
     }
 
     func verifyInWidths(
-        createSut: () -> UIView,
+        createSut: (CGFloat) -> UIView,
         widths: Set<CGFloat>,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -307,6 +316,7 @@ extension XCTestCase {
                 width: width,
                 snapshotBackgroundColor: snapshotBackgroundColor,
                 named: name,
+                record: record,
                 file: file,
                 testName: testName,
                 line: line
@@ -319,6 +329,7 @@ extension XCTestCase {
         widths: Set<CGFloat>,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -338,15 +349,16 @@ extension XCTestCase {
     }
 
     func verifyInWidth(
-        createSut: () -> UIView,
+        createSut: (CGFloat) -> UIView,
         width: CGFloat,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
-        let sut = createSut()
+        let sut = createSut(width)
         let container = containerView(
             with: sut,
             snapshotBackgroundColor: snapshotBackgroundColor
@@ -363,6 +375,7 @@ extension XCTestCase {
             matching: container,
             width: width,
             named: name,
+            record: record,
             file: file,
             testName: testName,
             line: line
@@ -374,13 +387,14 @@ extension XCTestCase {
         width: CGFloat,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
 
         verifyInWidth(
-            createSut: {
+            createSut: { _ in
                 createSut().view
             },
             width: width,

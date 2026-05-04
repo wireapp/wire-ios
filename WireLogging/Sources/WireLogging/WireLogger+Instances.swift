@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,19 @@
 public extension WireLogger {
 
     static let apiMigration = WireLogger(tag: "api-migration")
+    static let appVersionMigration = WireLogger(tag: "app-version-migration")
     static let appState = WireLogger(tag: "AppState")
     static let appDelegate = WireLogger(tag: "AppDelegate")
     static let appLock = WireLogger(tag: "AppLock")
     static let assets = WireLogger(tag: "assets")
     static let authentication = WireLogger(tag: "authentication")
+    static let backend = WireLogger(tag: "backend")
+    static let backupExport = WireLogger(tag: "backup-export")
+    static let backupImport = WireLogger(tag: "backup-import")
     static let backgroundActivity = WireLogger(tag: "background-activity")
     static let badgeCount = WireLogger(tag: "badge-count")
-    static let backend = WireLogger(tag: "backend")
     static let calling = WireLogger(tag: "calling")
+    static let callkit = WireLogger(tag: "call-kit")
     static let conversation = WireLogger(tag: "conversation")
     static let coreCrypto = WireLogger(tag: "core-crypto")
     static let e2ei = WireLogger(tag: "end-to-end-identity")
@@ -44,6 +48,7 @@ public extension WireLogger {
     static let performance = WireLogger(tag: "performance")
     static let push = WireLogger(tag: "push")
     static let pushChannel = WireLogger(tag: "push-channel")
+    static let webSocket = WireLogger(tag: "websocket")
     static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
     static let sessionManager = WireLogger(tag: "SessionManager")
@@ -61,4 +66,6 @@ public extension WireLogger {
     static let analytics = WireLogger(tag: "analytics")
     static let supportedProtocols = WireLogger(tag: "supported-protocols")
     static let search = WireLogger(tag: "search")
+    static let wireDrive = WireLogger(tag: "wire-drive")
+    static let workAgent = WireLogger(tag: "work-agent")
 }

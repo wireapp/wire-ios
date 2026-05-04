@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,18 +39,26 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     let decoder: JSONDecoder = .defaultDecoder
 
-    private let eventProcessor: ConversationEventProcessorProtocol
+    private let eventProcessor: LegacyConversationEventProcessorProtocol
 
-    override convenience init(context: NSManagedObjectContext) {
+    convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             context: context,
-            eventProcessor: ConversationEventProcessor(context: context)
+            eventProcessor: ConversationEventProcessor(
+                context: context,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         )
     }
 
     init(
         context: NSManagedObjectContext,
-        eventProcessor: ConversationEventProcessorProtocol
+        eventProcessor: LegacyConversationEventProcessorProtocol
     ) {
         self.eventProcessor = eventProcessor
         super.init(context: context)
@@ -62,7 +70,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             v0Request(for: action)
         case .v1:
             v1Request(for: action)
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             v2Request(for: action, apiVersion: apiVersion)
         }
     }

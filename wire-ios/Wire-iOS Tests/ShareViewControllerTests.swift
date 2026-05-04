@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireLinkPreview
+import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
 
@@ -25,6 +26,10 @@ import XCTest
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
 extension MockShareViewControllerConversation: ShareDestination {
+    var avatarView: UIView? {
+        nil
+    }
+
     var showsGuestIcon: Bool {
         false
     }
@@ -165,7 +170,10 @@ final class ShareViewControllerTests: XCTestCase {
         sut = ShareViewController<MockShareViewControllerConversation, MockShareableMessage>(
             shareable: message,
             destinations: [groupConversation, oneToOneConversation],
-            showPreview: true, allowsMultipleSelection: allowsMultipleSelection
+            showPreview: true,
+            allowsMultipleSelection: allowsMultipleSelection,
+            userSession: UserSessionMock(),
+            mainCoordinator: MockMainCoordinator()
         )
     }
 
@@ -185,13 +193,13 @@ final class ShareViewControllerTests: XCTestCase {
 }
 
 final class MockShareableMessage: MockMessage, Shareable {
-    func previewView() -> UIView? {
+    func previewView(userSession: UserSession) -> UIView? {
         nil
     }
 
     typealias I = MockShareViewControllerConversation
 
-    func share(to: [some Any]) {
+    func share(to: [some Any], userSession: UserSession) {
         // no-op
     }
 }

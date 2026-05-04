@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = .init()
+        sut = MainTabBarController(showMeetings: false, showFiles: false)
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
@@ -134,6 +134,72 @@ final class MainTabBarControllerTests: XCTestCase {
         XCTAssertNil(weakSettings)
     }
 
+    @MainActor
+    func testFilesIsInstalled() throws {
+        // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
+        let filesUI = UIViewController()
+
+        // When
+        sut.filesUI = filesUI
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [filesUI])
+    }
+
+    @MainActor
+    func testFilesIsReleased() async throws {
+        // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
+        weak var weakSettings: UIViewController?
+        sut.filesUI = {
+            let settings = UIViewController()
+            weakSettings = settings
+            return settings
+        }()
+
+        // When
+        sut.filesUI = nil
+        await Task.yield()
+
+        // Then
+        XCTAssertNil(weakSettings)
+    }
+
+    @MainActor
+    func testMeetingsIsInstalled() throws {
+        // Given
+        sut = MainTabBarController(showMeetings: true, showFiles: false)
+        let meetingsUI = UIViewController()
+
+        // When
+        sut.meetingsUI = meetingsUI
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [meetingsUI])
+    }
+
+    @MainActor
+    func testMeetingsIsReleased() async throws {
+        // Given
+        sut = MainTabBarController(showMeetings: true, showFiles: false)
+        weak var weakMeetings: UIViewController?
+        sut.meetingsUI = {
+            let meetings = UIViewController()
+            weakMeetings = meetings
+            return meetings
+        }()
+
+        // When
+        sut.meetingsUI = nil
+        await Task.yield()
+
+        // Then
+        XCTAssertNil(weakMeetings)
+    }
+
     // MARK: - Snapshot Tests
 
     @MainActor
@@ -145,4 +211,25 @@ final class MainTabBarControllerTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut, named: "dark", testName: "dark")
     }
+
+    @MainActor
+    func testAppearanceWithFilesTab() {
+        let sut = MainTabBarControllerPreview(showFiles: true)
+        snapshotHelper
+            .verify(matching: sut, named: "light", testName: "tabBarWithFilesTabItem")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark", testName: "tabBarWithFilesTabItem")
+    }
+
+    @MainActor
+    func testAppearanceWithMeetingsTab() {
+        let sut = MainTabBarControllerPreview(showMeetings: true)
+        snapshotHelper
+            .verify(matching: sut, named: "light", testName: "tabBarWithMeetingsTabItem")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark", testName: "tabBarWithMeetingsTabItem")
+    }
+
 }

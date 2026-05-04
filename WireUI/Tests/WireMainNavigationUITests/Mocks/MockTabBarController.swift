@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,17 +25,21 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     typealias ConversationListUI = PreviewConversationListViewController
     typealias ArchiveUI = UIViewController
     typealias SettingsUI = UIViewController
+    typealias MeetingsUI = UIViewController
 
     typealias ConversationUI = MockConversationViewController<PreviewConversationModel>
     typealias SettingsContentUI = UIViewController
 
     typealias ConnectUI = UIViewController
+    typealias FilesUI = UIViewController
 
     var selectedContent: MainTabBarControllerContent = .conversations
 
     var conversationListUI: ConversationListUI?
     var archiveUI: ArchiveUI?
+    var meetingsUI: MeetingsUI?
     var settingsUI: SettingsUI?
+    var filesUI: FilesUI?
 
     var conversationUI: ConversationUI?
     var settingsContentUI: SettingsContentUI?
@@ -48,6 +52,10 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
         fatalError("mock method not implemented")
     }
 
+    func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
     func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
@@ -57,6 +65,10 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     }
 
     func setSettingsContentUI(_ settingsContentUI: SettingsContentUI?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 }

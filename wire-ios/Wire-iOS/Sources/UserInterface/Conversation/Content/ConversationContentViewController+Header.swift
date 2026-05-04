@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireSyncEngine
 
 extension ConversationContentViewController {
     func updateTableViewHeaderView() {
-        guard let userSession = ZMUserSession.shared(),
+        guard let userSession = userSession as? ZMUserSession,
               dataSource.hasOlderMessagesToLoad == false ||
               conversation.conversationType == .connection else {
             // Don't display the conversation header if the message window doesn't include the first message and it is

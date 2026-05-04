@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import AppAuth
 import Foundation
+import WireCommonComponents
 import WireLogging
 import WireRequestStrategy
 import WireSystem
@@ -112,13 +113,7 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
     @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
-        guard let userAgent = OIDExternalUserAgentIOS(
-            presenting: targetViewController(),
-            prefersEphemeralSession: true
-        ) else {
-            throw OAuthError.missingOIDExternalUserAgent
-        }
-
+        let userAgent = try userAgent()
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             self?.currentAuthorizationFlow = OIDAuthState.authState(
                 byPresenting: authorizationRequest,
@@ -143,7 +138,21 @@ class OAuthUseCase: OAuthUseCaseInterface {
                 }
             )
         }
+    }
 
+    private func userAgent() throws -> OIDExternalUserAgent {
+        if SecurityFlags.useEmbeddedIDPUserAgent.isEnabled {
+            return WebViewUserAgent(targetViewController: targetViewController())
+        } else {
+            guard let userAgent = OIDExternalUserAgentIOS(
+                presenting: targetViewController(),
+                prefersEphemeralSession: true
+            ) else {
+                throw OAuthError.missingOIDExternalUserAgent
+            }
+
+            return userAgent
+        }
     }
 }
 

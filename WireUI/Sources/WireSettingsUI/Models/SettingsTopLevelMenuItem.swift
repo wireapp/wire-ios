@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
+
 public enum SettingsTopLevelMenuItem: Sendable {
     case account
     case devices
@@ -24,4 +26,20 @@ public enum SettingsTopLevelMenuItem: Sendable {
     case support
     case about
     case developerOptions
+}
+
+// MARK: - Accessibility identifiers
+
+public extension SettingsTopLevelMenuItem {
+    var accessibilityID: String {
+        switch self {
+        case .account: Locators.SettingsPage.accountCell.rawValue
+        case .devices: "devicesCell"
+        case .options: Locators.SettingsPage.optionsCell.rawValue
+        case .advanced: "advancedCell"
+        case .support: "supportCell"
+        case .about: "aboutCell"
+        case .developerOptions: "developerOptionsCell"
+        }
+    }
 }

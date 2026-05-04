@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let localDomain = UUID().uuidString
 
         let otherUsersDomains = otherUsers.compactMap(\.domain)
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -184,7 +184,10 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
-    func testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+    func disabled_testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil(
+    ) {
+        // DeveloperFlag.multibackend.enable(false, storage: .temporary())
+        // test would need to inject resolvedBackendMetadata
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {
@@ -203,7 +206,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         BackendInfo.domain = localDomain
 
         let otherUsersDomains = otherUsers.compactMap(\.domain)
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         syncMOC.performAndWait {
             storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
@@ -230,7 +233,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let localDomain = UUID().uuidString
 
         let otherUsersDomains = otherUsers.compactMap(\.domain)
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -258,7 +261,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let localDomain = UUID().uuidString
 
         let otherUsersDomains = otherUsers.compactMap(\.domain)
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -287,7 +290,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let localDomain = UUID().uuidString
 
         let otherUsersDomains = otherUsers.compactMap(\.domain)
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain

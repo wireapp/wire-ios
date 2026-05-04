@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,19 +21,13 @@
 // It gets included by ios.xcconfig or ios-arm64Simulator.xcconfig
 //
 
-// Architectures
-//
-ARCHS[sdk=iphoneos*] = arm64
-
-SDKROOT = iphoneos
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator
-
 // Deployment
 //
-IPHONEOS_DEPLOYMENT_TARGET = 16.0
+IPHONEOS_DEPLOYMENT_TARGET = 17.0
 TARGETED_DEVICE_FAMILY = 1,2
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_VERSION = A
+EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64
 
 // Linking
 //

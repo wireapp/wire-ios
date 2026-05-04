@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 
 private enum UserProperty: CaseIterable {
@@ -128,6 +129,7 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
     var downstreamSync: ZMSingleRequestSync!
     fileprivate var propertiesToFetch: Set<UserProperty> = Set()
     fileprivate var fetchedProperty: UserProperty?
+    private let logger = WireLogger(tag: "user-properties")
 
     public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -248,29 +250,6 @@ extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {
     }
 }
 
-extension UserPropertyRequestStrategy: ZMEventConsumer {
-    static let UpdateEventKey = "key"
-    static let UpdateEventValue = "value"
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard event.type.isOne(of: [ZMUpdateEventType.userPropertiesSet, ZMUpdateEventType.userPropertiesDelete]),
-                  let keyChanged = event.payload[UserPropertyRequestStrategy.UpdateEventKey] as? String,
-                  let property = UserProperty(serverName: keyChanged) else {
-                continue
-            }
-
-            let value = event.payload[UserPropertyRequestStrategy.UpdateEventValue]
-
-            property.parseUpdate(
-                for: ZMUser.selfUser(in: managedObjectContext),
-                updateType: (.notificationStream, .init(eventType: event.type)),
-                payload: value
-            )
-        }
-    }
-}
-
 extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
 
     fileprivate func initializePropertiesToFetch() {
@@ -304,18 +283,33 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             return
         }
 
-        if response.result == .permanentError {
-            property.parseUpdate(
-                for: ZMUser.selfUser(in: managedObjectContext),
-                updateType: (.slowSync, .delete),
-                payload: nil
-            )
-        } else if response.result == .success, let payload = response.payload {
+        switch response.result {
+        case .success:
+            guard
+                let data = response.rawData,
+                let payload = try? JSONSerialization.jsonObject(
+                    with: data,
+                    options: .fragmentsAllowed
+                )
+            else {
+                logger.error("failed to parse user property (\(property.propertyName)) response")
+                return
+            }
+
             property.parseUpdate(
                 for: ZMUser.selfUser(in: managedObjectContext),
                 updateType: (.slowSync, .set),
                 payload: payload
             )
+        case .permanentError:
+            logger.error("failed to parse user property (\(property.propertyName)) response due to permanent error")
+            property.parseUpdate(
+                for: ZMUser.selfUser(in: managedObjectContext),
+                updateType: (.slowSync, .delete),
+                payload: nil
+            )
+        default:
+            logger.warn("unhandled user property (\(property.propertyName)) response: \(response.result)")
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@ public extension Bundle {
 
     var shortVersionString: String? {
         Bundle.main.infoForKey("CFBundleShortVersionString")
+    }
+
+    var appInternalName: String? {
+        guard let name = Bundle.main.infoForKey("WireInternalName"), !name.isEmpty else {
+            return nil
+        }
+        return name
     }
 
     static var appMainBundle: Bundle {

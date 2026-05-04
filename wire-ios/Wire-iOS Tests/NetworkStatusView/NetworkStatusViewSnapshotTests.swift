@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -24,6 +25,7 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
 
     private var sut: NetworkStatusView!
     private var mockContainer: MockNetworkStatusViewDelegate!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
@@ -34,9 +36,9 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
         mockContainer.didChangeHeightAnimatedState_MockMethod = { _, _, _ in }
 
         sut = NetworkStatusView()
-        sut.overrideUserInterfaceStyle = .light
         sut.backgroundColor = .clear
         sut.delegate = mockContainer
+        snapshotHelper = SnapshotHelper()
     }
 
     override func tearDown() {
@@ -49,15 +51,42 @@ final class NetworkStatusViewSnapshotTests: XCTestCase {
     func testOfflineExpandedState() {
         // GIVEN
         sut.state = .offlineExpanded
+
         // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
+        verifyViewInAllThemesAndWidths(sut)
     }
 
     func testOnlineSynchronizing() {
         // GIVEN
         sut.state = .onlineSynchronizing
         sut.layer.speed = 0 // freeze animations for deterministic tests
+
         // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
+        verifyViewInAllThemesAndWidths(sut)
+    }
+
+    // MARK: - Helper method
+
+    private func verifyViewInAllThemesAndWidths(
+        _ view: UIView,
+        testName: String = #function
+    ) {
+        let themes: [(style: UIUserInterfaceStyle, name: String)] = [
+            (.light, "LightTheme"),
+            (.dark, "DarkTheme")
+        ]
+
+        for theme in themes {
+            // Apply the style directly to the view because verifyInAllPhoneWidths
+            // is handling the snapshotting, not the chained snapshotHelper
+            view.overrideUserInterfaceStyle = theme.style
+            view.layoutIfNeeded()
+
+            verifyInAllPhoneWidths(
+                matching: view,
+                named: theme.name,
+                testName: testName
+            )
+        }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var linkPreviewHasImage: Bool = false
     var linkPreviewImageCacheKey: String?
     var mentions = [Mention]()
+    var multipartMessageData: WireDataModel.MultipartMessageData?
 
     var quote: ZMMessage? {
         get {
@@ -291,6 +292,8 @@ final class MockKnockMessageData: NSObject, ZMKnockMessageData {}
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
 
+    var name: String?
+
     var mockOriginalSize: CGSize = .zero
     var mockImageData = Data()
     var mockImageDataIdentifier = String()
@@ -370,7 +373,6 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var causedSecurityLevelDegradation: Bool = false
     var needsReadConfirmation: Bool = false
-    let objectIdentifier: String = UUID().uuidString
     var linkAttachments: [LinkAttachment]?
     var needsLinkAttachmentsUpdate: Bool = false
     var isSilenced: Bool = false
@@ -395,6 +397,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var locationMessageData: LocationMessageData? {
         backingLocationMessageData
     }
+
+    var multipartMessageData: MultipartMessageData?
 
     var textMessageData: TextMessageData? {
         backingTextMessageData

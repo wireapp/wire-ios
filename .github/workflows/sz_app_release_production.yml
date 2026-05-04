@@ -6,7 +6,7 @@ permissions:
 
 jobs:
   sz_production:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: echo
         run: |

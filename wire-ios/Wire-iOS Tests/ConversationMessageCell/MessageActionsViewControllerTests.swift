@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import XCTest
-
 @testable import Wire
+@testable import WireFoundation
 
 // MARK: - MessageActionsViewControllerTests
 
@@ -26,11 +27,16 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
+    var mockUserDefaults = UserDefaultsProtocolMock()
+
     override func setUp() {
         super.setUp()
 
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { _, _ in }
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     // MARK: - Unit Tests
@@ -42,7 +48,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
             responder: nil,
             message: message,
             context: .content,
-            view: UIView()
+            view: UIView(),
+            userDefaults: mockUserDefaults
         )
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(
@@ -61,7 +68,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
             responder: nil,
             message: message,
             context: .content,
-            view: UIView()
+            view: UIView(),
+            userDefaults: mockUserDefaults
         )
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(
@@ -80,7 +88,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
             responder: nil,
             message: message,
             context: .content,
-            view: UIView()
+            view: UIView(),
+            userDefaults: mockUserDefaults
         )
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(
@@ -148,21 +157,176 @@ final class MessageActionsViewControllerTests: XCTestCase {
         XCTAssertEqual(actionsTitles, ["Delete", "Cancel"])
     }
 
-    func actionsTitlesForMessage(message: MockMessage) -> [String] {
-        message.senderUser = MockUserType.createUser(name: "Bob")
+    func testMenuActionsForFileMessage_collapseOwnMessagesDisabled() {
+        // GIVEN
+        let message = MockMessageFactory.fileTransferMessage()
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertEqual(actionsTitles, ["Reply", "Details", "Download", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForFileMessage_collapseOwnMessagesEnabled() {
+        // GIVEN
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+
+        let message = MockMessageFactory.fileTransferMessage()
+
+        // WHEN
+        let (actionController, _) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        // need to toggle it twice because of logic that
+        // we only show collapse when user actually expanded at least once
+        actionController.isCollapsed?.toggle()
+        actionController.isCollapsed?.toggle()
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
+
+        // expand message
+
+        // THEN
+        XCTAssertEqual(
+            sut.titles,
+            ["Collapse", "Reply", "Details", "Download", "Delete", "Cancel"]
+        )
+    }
+
+    func testMenuActionsForImageMessage_collapseOwnMessagesEnabled_wasUncollapsedBefore() {
+        // GIVEN
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+
+        let message = MockMessageFactory.imageMessage()
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+        // WHEN
+        let (actionController, _) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
+
+        // expand message
+
+        // THEN
+        XCTAssertEqual(
+            sut.titles,
+            ["Copy", "Collapse", "Reply", "Details", "Save", "Delete", "Cancel"]
+        )
+    }
+
+    func testMenuActionsForFileMessage_fromOtherUser_hasNoCollapse() {
+        // GIVEN
+        let message = MockMessageFactory.fileTransferMessage()
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+
+        // WHEN
+        let (actionController, sut) = makeSut(
+            message: message,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        // THEN
+        XCTAssertEqual(sut.titles, ["Reply", "Details", "Download", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForTextMessageWithPreview_hasCollapse() {
+        // GIVEN
+        let message = MockMessageFactory.linkMessage()
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
+        // WHEN
+        let (actionController, sut) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        // THEN
+        XCTAssertTrue(sut.titles.contains("Collapse"))
+    }
+
+    func testMenuActionsForTextMessageWithLinkAttachments_hasCollapse() {
+        // GIVEN
+        let message = MockMessageFactory.textMessageWithLinkAttachment()
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
+        // WHEN
+        let (actionController, sut) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        // THEN
+        XCTAssertTrue(sut.titles.contains("Collapse"))
+    }
+
+    private func actionsTitlesForMessage(message: MockMessage) -> [String] {
+        makeSut(message: message).1.titles
+    }
+
+    private func makeSut(
+        message: MockMessage,
+        sender: MockUserType? = nil,
+        isCollapsed: Bool = false,
+        selfUserId: UUID? = nil
+    ) -> (ConversationMessageActionController, MessageActionsViewController) {
+        message.senderUser = sender ?? MockUserType.createUser(name: "Bob")
         let actionController = ConversationMessageActionController(
             responder: nil,
             message: message,
             context: .content,
-            view: UIView()
+            view: UIView(),
+            isCollapsed: isCollapsed,
+            selfUserId: selfUserId,
+            userDefaults: mockUserDefaults
         )
         let sut = MessageActionsViewController.controller(
             withActions: MessageAction.allCases,
             actionController: actionController
         )
 
-        return sut.actions.map { $0.title ?? "" }
+        return (actionController, sut)
     }
+
 }
 
 // MARK: - UIView extension
@@ -182,5 +346,11 @@ private extension UIView {
         }
 
         return false
+    }
+}
+
+extension MessageActionsViewController {
+    var titles: [String] {
+        actions.map { $0.title ?? "" }
     }
 }

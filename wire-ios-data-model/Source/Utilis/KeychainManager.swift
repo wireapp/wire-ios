@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ protocol KeychainItemProtocol {
 
     var id: String { get }
     var getQuery: [CFString: Any] { get }
-    func setQuery<T>(value: T) -> [CFString: Any]
+    func setQuery(value: some Any) -> [CFString: Any]
 
 }
 
@@ -64,9 +64,38 @@ public enum KeychainManager {
         }
     }
 
+    static func delete(query: CFDictionary) throws {
+        WireLogger.keychain.info("deleting item (query: \(query))")
+        let status = SecItemDelete(query)
+
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            WireLogger.keychain.error("deleting item (query: \(query)) failed: osstatus \(status)")
+            throw Error.failedToDeleteItemFromKeychain(status)
+        }
+    }
+
+    static func fetchAllItems(secClass: CFString) throws -> [[CFString: Any]] {
+        let query: [CFString: Any] = [
+            kSecClass: secClass,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecReturnAttributes: true,
+            kSecReturnRef: true
+        ]
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess, let items = result as? [[CFString: Any]] else {
+            WireLogger.keychain.error("fetching items (class: \(secClass)) failed: osstatus \(status)")
+            throw Error.failedToFetchItemBatch(status)
+        }
+
+        return items
+    }
+
     // MARK: - Key generation
 
-    static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
+    public static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
         let status = SecRandomCopyBytes(kSecRandomDefault, key.count, &key)
 
@@ -167,6 +196,7 @@ public extension KeychainManager {
         case failedToGenerateKey(OSStatus)
         case failedToGeneratePublicPrivateKey(underlyingError: Swift.Error?)
         case failedToCopyPublicKey
+        case failedToFetchItemBatch(OSStatus)
 
         public var errorDescription: String? {
             switch self {
@@ -187,6 +217,9 @@ public extension KeychainManager {
 
             case .failedToCopyPublicKey:
                 "failed to copy public key"
+
+            case let .failedToFetchItemBatch(status):
+                "failed to fetch item batch, OSStatus: \(status)"
             }
         }
 

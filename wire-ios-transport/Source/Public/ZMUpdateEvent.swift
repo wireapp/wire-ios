@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case conversationReceiptModeUpdate = 34
     case conversationMLSWelcome = 41
     case conversationMLSMessageAdd = 42
+    case conversationAddPermissionUpdate = 46
     case userConnection = 16
     case userNew = 17
     case userUpdate = 18
@@ -83,7 +84,7 @@ public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case federationDelete = 43
     case federationConnectionRemoved = 44
 
-    // Current max value: conversationProtocolUpdate = 45
+    // Current max value: conversationAddPermissionUpdate = 46
 }
 
 extension ZMUpdateEventType {
@@ -177,6 +178,8 @@ extension ZMUpdateEventType {
             "federation.delete"
         case .federationConnectionRemoved:
             "federation.connectionRemoved"
+        case .conversationAddPermissionUpdate:
+            "conversation.add-permission-update"
         }
     }
 

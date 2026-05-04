@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 //
 
 import Foundation
-import WireCryptobox
+import GenericMessageProtocol
+import WireCoreCrypto
 import WireLogging
 
 @objc
@@ -258,7 +259,7 @@ public extension ZMConversation {
 
     // MARK: - Messages
 
-    /// Creates a system message that inform that there are pontential lost messages, and that some users were added to
+    /// Creates a system message that inform that there are potential lost messages, and that some users were added to
     /// the conversation
     @objc
     func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
@@ -288,9 +289,13 @@ public extension ZMConversation {
     }
 
     /// Creates the message that warns user about the fact that decryption of incoming message is failed
-    @objc(appendDecryptionFailedSystemMessageAtTime:sender:client:errorCode:)
-    func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
-        let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType
+    func appendDecryptionFailedSystemMessage(
+        at date: Date?,
+        sender: ZMUser,
+        client: UserClient?,
+        error: ProteusError
+    ) {
+        let type = error == .RemoteIdentityChanged ? ZMSystemMessageType
             .decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
@@ -303,7 +308,10 @@ public extension ZMConversation {
         )
 
         systemMessage.senderClientID = client?.remoteIdentifier
-        systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
+
+        if case let .Other(code) = error {
+            systemMessage.decryptionErrorCode = NSNumber(value: code)
+        }
     }
 
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
@@ -587,7 +595,7 @@ extension ZMConversation {
             appendNewIsSecureSystemMessage(verified: userClients, for: users)
         case let .removedClients(userClients):
             let users = Set(userClients.keys)
-            let clients = Set(userClients.values.flatMap { $0 })
+            let clients = Set(userClients.values.flatMap(\.self))
             appendNewIsSecureSystemMessage(verified: clients, for: users)
         default:
             // no-op: the conversation is not secure in other cases
