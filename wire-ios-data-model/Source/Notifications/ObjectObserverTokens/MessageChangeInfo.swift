@@ -121,7 +121,7 @@ public final class MessageChangeInfo: ObjectChangeInfo {
     }
 
     public override var debugDescription: String {
-        "[" + [
+        [
             "deliveryStateChanged: \(deliveryStateChanged)",
             "reactionsChanged: \(reactionsChanged)",
             "confirmationsChanged: \(confirmationsChanged)",
@@ -137,7 +137,7 @@ public final class MessageChangeInfo: ObjectChangeInfo {
             "underlyingMessageChanged: \(underlyingMessageChanged)",
             "linkAttachmentsChanged: \(linkAttachmentsChanged)",
             "buttonStatesChanged: \(buttonStatesChanged)"
-        ].filter { $0.hasSuffix("true") }.joined(separator: ",\n") + "]"
+        ].joined(separator: ", ")
     }
 
     public var deliveryStateChanged: Bool {

@@ -18,9 +18,6 @@
 
 import CoreData
 import Foundation
-import os
-private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NotificationDispatcher")
-
 
 /// The `NotificationDispatcher` listens for changes to observable entities (e.g message, users, and conversations),
 /// extracts information about those changes (e.g which properties changed), and posts notifications about those
@@ -358,9 +355,6 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
 
     private func fireAllNotifications() {
         let detectedChanges = changeDetector.consumeChanges()
-        logger.info("fireAllNotifications: detectedChanges: \(detectedChanges.map { String(describing: type(of: $0)) })")
-        let messageChangeInfos = detectedChanges.compactMap { $0 as? MessageChangeInfo }
-        logger.info("messageChangeInfos: \(messageChangeInfos)")
         var changesByClass = [ClassIdentifier: [ObjectChangeInfo]]()
         let unreadMessages = unreadMessages
         self.unreadMessages = UnreadMessages()
