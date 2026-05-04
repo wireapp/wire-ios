@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,33 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 public enum Fixture {
+
+    public static let backendEnvironment = BackendEnvironment2(
+        title: "Mock backend",
+        environmentType: .default,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "www.mock.com")!,
+                websocketURL: URL(string: "www.mock.com")!,
+                blacklistURL: URL(string: "www.mock.com")!,
+                teamsURL: URL(string: "www.mock.com")!,
+                accountsURL: URL(string: "www.mock.com")!,
+                websiteURL: URL(string: "www.mock.com")!,
+                countlyURL: URL(string: "www.mock.com")!
+            ),
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
+    )
+
+    public static let backendMetadata = ResolvedBackendMetadata(
+        apiVersion: .v8,
+        domain: "mock.com",
+        isFederationEnabled: true
+    )
 
     public static let someCookie = HTTPCookie(properties: [
         .name: "some name",
@@ -34,5 +59,7 @@ public enum Fixture {
         type: "type",
         expirationDate: Date()
     )
+
+    public static let uuid = UUID()
 
 }

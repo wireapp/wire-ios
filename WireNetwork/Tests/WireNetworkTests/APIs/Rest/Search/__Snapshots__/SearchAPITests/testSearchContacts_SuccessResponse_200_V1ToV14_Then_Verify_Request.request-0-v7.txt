@@ -1,0 +1,2 @@
+curl \
+	"/v7/search/contacts?q=lorem%20ipsum&type=app"

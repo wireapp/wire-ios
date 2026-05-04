@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +90,9 @@ typedef NS_CLOSED_ENUM(NSInteger, ZMUserSessionErrorCode) {
     /// User's account pending verification
     ZMUserSessionErrorCodeAccountIsPendingVerification = 32,
     /// Migration has finished and the user should authenticate
-    ZMUserSessionErrorCodeNeedsAuthenticationAfterMigration = 33
+    ZMUserSessionErrorCodeNeedsAuthenticationAfterMigration = 33,
+    /// The user has sent too many requests in a given amount of time
+    ZMUserSessionErrorCodeTooManyRequests = 34
 } NS_SWIFT_NAME(UserSessionErrorCode);
 
 FOUNDATION_EXPORT NSString * const ZMClientsKey;
@@ -98,7 +100,6 @@ FOUNDATION_EXPORT NSString * const ZMClientsKey;
 FOUNDATION_EXPORT NSString * const ZMUserLoginCredentialsKey;
 FOUNDATION_EXPORT NSString * const ZMPhoneCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMEmailCredentialKey;
-FOUNDATION_EXPORT NSString * const ZMUserHasPasswordKey;
 FOUNDATION_EXPORT NSString * const ZMUserUsesCompanyLoginCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMAccountDeletedReasonKey;
 

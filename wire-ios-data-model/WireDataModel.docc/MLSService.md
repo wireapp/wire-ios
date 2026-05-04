@@ -40,7 +40,6 @@
 
 ### Pending propoals
 
-- ``commitPendingProposalsIfNeeded()``
 - ``commitPendingProposals(in:)``
 
 ### Key material
@@ -58,7 +57,6 @@
 
 ### Epoch
 
-- ``generateNewEpoch(groupID:)``
 - ``onEpochChanged()``
 - ``epochChanges()``
 

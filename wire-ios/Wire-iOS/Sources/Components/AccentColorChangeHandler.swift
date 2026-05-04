@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,26 +21,22 @@ import WireSyncEngine
 
 final class AccentColorChangeHandler: UserObserving {
 
-    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
+    typealias AccentColorChangeHandlerBlock = (_ newColor: ZMAccentColor?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
-    private var observer: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
     static func addObserver(
-        _ observer: NSObjectProtocol?,
         userSession: UserSession,
         handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock
     ) -> Self {
-        self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
+        self.init(handlerBlock: changeHandler, userSession: userSession)
     }
 
     init(
-        observer: NSObjectProtocol?,
         handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock,
         userSession: UserSession
     ) {
         self.handlerBlock = changeHandler
-        self.observer = observer
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
             self.userObserverToken = userSession.addUserObserver(self, for: selfUser)
@@ -49,7 +45,7 @@ final class AccentColorChangeHandler: UserObserving {
 
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
-            handlerBlock?(change.user.accentColor, observer)
+            handlerBlock?(change.user.zmAccentColor)
         }
     }
 }

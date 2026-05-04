@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,52 +25,45 @@ import WireReusableUIComponents
 
 protocol NoHistoryComponentDependency: Dependency {
 
+    var didReauthenticate: Bool { get }
     var howToChangeEmailURL: URL { get }
     var howToDeleteAccountURL: URL { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
-class NoHistoryComponent: Component<NoHistoryComponentDependency> {
+final class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
-    @MainActor
-    private func viewModel(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        didDetectDomainConflict: Bool,
-        howToChangeEmailURL: URL,
-        howToDeleteAccountURL: URL,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) -> NoHistoryViewModel {
-        NoHistoryViewModel(
-            userID: userID,
-            cookies: cookies,
-            accessToken: accessToken,
-            didDetectDomainConflict: didDetectDomainConflict,
-            howToChangeEmailURL: howToChangeEmailURL,
-            howToDeleteAccountURL: howToDeleteAccountURL,
-            onFlowCompletion: onFlowCompletion
-        )
+    private let authenticationResult: AuthenticationResult
+    private let didDetectDomainConflict: Bool
+
+    init(
+        parent: any Scope,
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) {
+        self.authenticationResult = authenticationResult
+        self.didDetectDomainConflict = didDetectDomainConflict
+        super.init(parent: parent)
     }
 
-    @MainActor
-    func view(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        didDetectDomainConflict: Bool,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) -> NoHistoryView {
-        NoHistoryView(
-            viewModel: viewModel(
-                userID: userID,
-                cookies: cookies,
-                accessToken: accessToken,
-                didDetectDomainConflict: didDetectDomainConflict,
-                howToChangeEmailURL: dependency.howToChangeEmailURL,
-                howToDeleteAccountURL: dependency.howToDeleteAccountURL,
-                onFlowCompletion: onFlowCompletion
-            )
+}
+
+extension NoHistoryComponent: NoHistoryFactory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: NoHistoryViewModel {
+        NoHistoryViewModel(
+            didReauthenticate: dependency.didReauthenticate,
+            didDetectDomainConflict: didDetectDomainConflict,
+            howToChangeEmailURL: dependency.howToChangeEmailURL,
+            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
+            onFlowCompletion: { [dependency, authenticationResult] in
+                dependency?.bridge.sendOutboundEvent(
+                    .userAuthenticated(authenticationResult, .unknown)
+                )
+            }
         )
     }
 

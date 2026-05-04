@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentCreatePasscodeModule(shouldInform: Bool) {
         let passcodeSetupViewController = PasscodeSetupViewController.createKeyboardAvoidingFullScreenView(
             context: shouldInform ? .forcedForTeam : .createPasscode,
+            userSession: userSession,
             delegate: view
         )
 

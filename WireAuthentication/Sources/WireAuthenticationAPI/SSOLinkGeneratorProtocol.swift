@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
-
-public protocol SSOLinkGeneratorProtocol {
+public protocol SSOLinkGeneratorProtocol: Sendable {
 
     /// Generates the URL for the SSO authentication screen.
     ///
@@ -33,5 +33,23 @@ public protocol SSOLinkGeneratorProtocol {
     /// Flushes the temporary SSO login token stored in the user defaults.
 
     func flushToken()
+
+}
+
+public protocol SSOLinkGeneratorFactory {
+
+    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol
+
+}
+
+public enum SSOLinkGeneratorFailure: Error {
+
+    /// The SSO code is invalid.
+
+    case invalidSSOCode
+
+    /// The SSO URL is invalid.
+
+    case invalidSSOURL
 
 }

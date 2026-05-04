@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 
 final class ReactionSectionViewController: UIViewController {
 
@@ -26,6 +27,8 @@ final class ReactionSectionViewController: UIViewController {
     private var sectionButtons = [ReactionCategoryButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
     private var ignoreSelectionUpdates = false
+
+    private let currentDevice = DeviceWrapper(device: .current)
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
@@ -59,13 +62,23 @@ final class ReactionSectionViewController: UIViewController {
         createButtons(types)
 
         setupViews()
-        createConstraints()
+        if currentDevice.userInterfaceIdiom == .phone {
+            createConstraints()
+        }
         view.addGestureRecognizer(panGestureRecognizer)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        guard currentDevice.userInterfaceIdiom == .pad else { return }
+
+        sectionButtons.forEach { $0.removeConstraints($0.constraints) }
+        createConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {

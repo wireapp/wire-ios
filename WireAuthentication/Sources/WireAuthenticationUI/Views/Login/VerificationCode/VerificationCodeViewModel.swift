@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,19 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
-    private static let numberOfDigits = 6
-    private let didDetectDomainConflict: Bool
+    package typealias Factory =
+        CreateAuthenticationResultUseCaseFactory &
+        LoginViaEmailUseCaseFactory &
+        RequestLoginVerificationCodeUseCaseFactory &
+        SubmitProxyCredentialsUseCaseFactory &
+        VerificationCodeFactory
+
+    // MARK: - View state
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
@@ -37,36 +44,46 @@ public final class VerificationCodeViewModel: ObservableObject {
     let password: String
     let numberOfDigits: Int
 
-    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
-    private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
-    private let router: any Router
-
-    package init(
-        email: String,
-        password: String,
-        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
-        router: any Router,
-        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
-        didDetectDomainConflict: Bool
-    ) {
-        precondition(numberOfDigits > 0)
-
-        self.email = email
-        self.password = password
-        self.loginViaEmailUseCase = loginViaEmailUseCase
-        self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
-        self.router = router
-        self.code = Array(repeating: "", count: numberOfDigits)
-        self.numberOfDigits = numberOfDigits
-        self.didDetectDomainConflict = didDetectDomainConflict
-    }
-
     var isConfirmButtonDisabled: Bool {
         code.contains { $0.isEmpty }
     }
 
-    func handleInputReturningFocus(_ newValue: String, at index: Int) -> Int? {
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+
+    private static let numberOfDigits = 6
+
+    private let proxyCredentials: ProxyCredentials?
+
+    // MARK: - Life cycle
+
+    package init(
+        factory: any Factory,
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?,
+        router: any Router,
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
+    ) {
+        precondition(numberOfDigits > 0)
+
+        self.factory = factory
+        self.email = email
+        self.password = password
+        self.proxyCredentials = proxyCredentials
+        self.router = router
+        self.code = Array(repeating: "", count: numberOfDigits)
+        self.numberOfDigits = numberOfDigits
+    }
+
+    // MARK: - Actions
+
+    func handleInputReturningFocus(
+        _ newValue: String,
+        at index: Int
+    ) -> Int? {
         if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
             code[index] = String(intValue)
         } else {
@@ -89,31 +106,34 @@ public final class VerificationCodeViewModel: ObservableObject {
     func confirm() async {
         isLoading = true
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, password, code] in
-            try await loginViaEmailUseCase.invoke(
+        do {
+            if let proxyCredentials {
+                try await submitProxyCredentials(proxyCredentials)
+            }
+
+            let verificationCode = code.joined()
+            let (cookies, accessToken) = try await logIn(verificationCode: verificationCode)
+
+            let emailCredentials = EmailCredentials(
                 email: email,
                 password: password,
-                verificationCode: code.joined()
+                verificationCode: verificationCode
             )
-        }
 
-        do {
-            let (cookies, token) = try await loginTask.value
-            router.presentSheet(
-                RootView.ModalDestination.noHistory(
-                    userID: token.userID,
-                    cookies: cookies,
-                    accessToken: token,
-                    didDetectDomainConflict: didDetectDomainConflict
-                )
+            let authenticationResult = try await createAuthenticationResult(
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
+            )
+
+            router.navigate(
+                to: VerificationCodeDestination.noHistory(authenticationResult: authenticationResult)
             )
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {
-            WireLogger.authentication.info("2FA login via email failed: \(error)")
+            WireLogger.authentication.error("2FA login via email failed: \(error)")
 
             switch error {
-            case LoginViaEmailUseCaseFailure.noInternet:
-                alert = .noInternet
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
                 alert = .invalid2FACode
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
@@ -121,74 +141,77 @@ public final class VerificationCodeViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
-                WireLogger.authentication.error("Unexpected error during 2FA login via email: \(error)")
-                alert = .unknownError
+                router.presentAlert(for: error)
             }
         }
 
         isLoading = false
     }
 
-    func resend() async {
+    func requestVerificationCode() async {
         isResending = true
 
-        let requestTask = Task.detached { [requestLoginVerificationCodeUseCase, email] in
-            try await requestLoginVerificationCodeUseCase.invoke(email: email)
-        }
-
         do {
-            try await requestTask.value
+            if let proxyCredentials {
+                try await submitProxyCredentials(proxyCredentials)
+            }
+
+            try await resendVerificationCode(email: email)
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
-            WireLogger.authentication.info("Resend 2FA login failed: \(error)")
+            WireLogger.authentication.error("Resend 2FA login failed: \(error)")
 
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
-                WireLogger.authentication.error("Unexpected invalid email when resending 2FA login code: \(error)")
-            case let RequestLoginVerificationCodeUseCaseFailure.unexpected(underlying) where underlying.isNoInternet:
-                alert = .noInternet
+
             default:
-                WireLogger.authentication.error("Unexpected error when resending 2FA login code: \(error)")
-                alert = .unknownError
+                router.presentAlert(for: error)
             }
         }
 
         isResending = false
     }
 
-}
+    // MARK: - Private
 
-private extension Error {
-    var isNoInternet: Bool {
-        guard let urlError = self as? URLError else { return false }
-
-        return urlError.code == .notConnectedToInternet || urlError.code == .networkConnectionLost
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) async throws {
+        let useCase = factory.submitProxyCredentialsUseCase()
+        try await useCase.invoke(proxyCredentials: proxyCredentials)
     }
-}
 
-// MARK: Alerts
+    private func logIn(verificationCode: String) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = try await factory.loginViaEmailUseCase()
+        return try await Task.detached { [email, password] in
+            try await useCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: verificationCode
+            )
+        }.value
+    }
 
-package extension VerificationCodeViewModel {
+    private func resendVerificationCode(email: String) async throws {
+        let useCase = try await factory.requestLoginVerificationCodeUseCase()
+        try await Task.detached {
+            try await useCase.invoke(email: email)
+        }.value
+    }
 
-    package struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
-        static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
-        static let invalidEmail = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
-        static let accountPendingActivation = Alert(
-            title: Title.accountPendingActivation,
-            message: Message.accountPendingActivation
-        )
-        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
-        static let unknownError = Alert(title: Title.general, message: Message.general)
+    private func createAuthenticationResult(
+        cookies: [HTTPCookie],
+        accessToken: AccessToken,
+        emailCredentials: EmailCredentials
+    ) async throws -> AuthenticationResult {
+        let useCase = factory.createAuthenticationResultUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                userID: accessToken.userID,
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
+            )
+        }.value
     }
 
 }

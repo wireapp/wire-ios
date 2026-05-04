@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to team related domain objects.
@@ -43,6 +43,22 @@ public protocol TeamRepositoryProtocol {
     /// - returns: The legalhold info.
 
     func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo
+
+    /// Creates or updates a team locally.
+    /// - Parameters
+    ///     - identifier: The team ID.
+    ///     - name: The team name.
+    ///     - creator: The team creator.
+    ///     - icon: The team icon.
+    ///     - iconKey: The team iconKey.
+
+    func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async
 
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.

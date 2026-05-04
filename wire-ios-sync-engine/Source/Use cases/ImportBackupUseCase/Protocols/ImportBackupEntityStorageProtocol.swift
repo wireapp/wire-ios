@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,13 +30,14 @@ public protocol ImportBackupEntityStorageProtocol: Sendable {
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup
     ) async throws -> URL
 
     func createContextProvider(
         account: Account,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?
+        dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws -> ContextProvider
 
 }

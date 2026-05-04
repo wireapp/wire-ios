@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,4 +41,6 @@ protocol AuthenticationCoordinatedViewController: AnyObject {
     ///
     /// - Parameter error: The error to present to the user.
     func displayError(_ error: Error)
+
+    func didRewindToThisView()
 }

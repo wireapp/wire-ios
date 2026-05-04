@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         mlsServiceMock = .init()
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
-        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
+        mlsServiceMock.processWelcomeMessageWelcomeMessageContext_MockValue = .random()
         mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = {}
 
         oneOnOneResolverMock = .init()
@@ -66,7 +66,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         sut = MLSEventProcessor(
             conversationService: conversationServiceMock,
-            staleKeyMaterialDetector: staleKeyMaterialDetectorMock
+            staleKeyMaterialDetector: staleKeyMaterialDetectorMock,
+            localDomain: "wire.com"
         )
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Testing
-import WireAPI
-import WireAPISupport
 import WireAuthenticationAPI
+import WireNetwork
+import WireNetworkSupport
 
 @testable import WireAuthenticationLogic
 
@@ -69,7 +69,7 @@ struct RequestLoginVerificationCodeUseCaseTests {
         }
     }
 
-    @Test("UseCase maps any other error to .unexpected")
+    @Test("UseCase forwards any other error")
     func mapUnexpectedError() async throws {
         // Given
         let mockAuthenticationAPI = MockAuthenticationAPI()
@@ -82,15 +82,10 @@ struct RequestLoginVerificationCodeUseCaseTests {
             try await sut.invoke(email: "email value")
             Issue.record("Error isn't thrown")
 
-        } catch RequestLoginVerificationCodeUseCaseFailure.unexpected(SomeError.some) {
-
-            // Then
-            // ok
-
         } catch {
 
-            Issue.record("Unexpected error: " + String(reflecting: error))
-
+            // Then
+            #expect(error is SomeError)
         }
     }
 

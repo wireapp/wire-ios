@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 "backup.export.action" = "Back Up Now";
-"backup.export.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
+"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
 
 "backup.import.action" = "Restore from Backup";
 "backup.import.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
@@ -25,8 +25,8 @@
 "exportBackup.title" = "Imposta una password";
 "exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";
 "exportBackup.button" = "Back Up Now";
-"exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
-"exportBackup.setBackupPassword.placeholder" = "Enter password";
+"exportBackup.setBackupPassword.title" = "Password (facoltativa)";
+"exportBackup.setBackupPassword.placeholder" = "Inserisci password";
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 
 "exportBackup.cancel.title" = "Annulla";
@@ -44,10 +44,9 @@
 "importBackup.overwriteConfirmation.title" = "File overwrites your history";
 "importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
 "importBackup.overwriteConfirmation.cancel" = "Annulla";
-"importBackup.overwriteConfirmation.proceed" = "Proceed";
+"importBackup.overwriteConfirmation.proceed" = "Procedi";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Your history is restored.";
 "importBackup.alert.genericError.title" = "Qualcosa è andato storto";
 "importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
@@ -55,13 +54,16 @@
 "importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
-"importBackup.enterPassword.title" = "Enter password";
+"importBackup.enterPassword.title" = "Inserisci password";
 "importBackup.enterPassword.description" = "This backup is password protected.";
 "importBackup.enterPassword.textField.title" = "Password";
-"importBackup.enterPassword.textField.placeholder" = "Enter password";
+"importBackup.enterPassword.textField.placeholder" = "Inserisci password";
 "importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
 "importBackup.enterPassword.button.title" = "Continua";
 
 "importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "Loading conversations…";

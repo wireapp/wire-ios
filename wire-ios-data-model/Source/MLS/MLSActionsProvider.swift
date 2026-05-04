@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,17 +43,7 @@ protocol MLSActionsProviderProtocol {
         ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
-    ) async throws -> [KeyPackage]
-
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
-
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
+    ) async throws -> [WireDataModel.KeyPackage]
 
     func fetchConversationGroupInfo(
         conversationId: UUID,
@@ -142,7 +132,7 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
-    ) async throws -> [KeyPackage] {
+    ) async throws -> [WireDataModel.KeyPackage] {
         var action = ClaimMLSKeyPackageAction(
             domain: domain,
             userId: userID,
@@ -150,23 +140,6 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             excludedSelfClientId: excludedSelfClientID
         )
 
-        return try await action.perform(in: context)
-    }
-
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent] {
-        var action = SendMLSMessageAction(message: message)
-        return try await action.perform(in: context)
-    }
-
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    )
-        async throws -> [ZMUpdateEvent] {
-        var action = SendCommitBundleAction(commitBundle: bundle)
         return try await action.perform(in: context)
     }
 

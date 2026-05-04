@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@ extension UITableViewCell {
 
     @objc
     func willDisplayCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
     @objc
     func didEndDisplayingCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
 }
@@ -38,9 +38,7 @@ final class ConversationMessageCellTableViewAdapter<
 >: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
-    let ephemeralCountdownView: EphemeralCountdownView
 
-    // TODO: [WPB-16380] delete if possible
     var cellDescription: C? {
         didSet {
             longPressGesture.isEnabled = cellDescription?.supportsActions == true
@@ -49,37 +47,14 @@ final class ConversationMessageCellTableViewAdapter<
         }
     }
 
-    var topMargin: CGFloat = 0 {
-        didSet {
-            top.constant = CGFloat(topMargin)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get {
-            cellDescription?.accessibilityIdentifier
-        }
-
-        set {
-            super.accessibilityIdentifier = newValue
-        }
-    }
-
-    override var accessibilityLabel: String? {
-        get {
-            cellDescription?.accessibilityLabel
-        }
-
-        set {
-            super.accessibilityLabel = newValue
-        }
-    }
-
     private var leading: NSLayoutConstraint!
     private var top: NSLayoutConstraint!
     private var trailing: NSLayoutConstraint!
     private var bottom: NSLayoutConstraint!
-    private var ephemeralTop: NSLayoutConstraint!
+
+    private var existingHorizontalConstraints: [NSLayoutConstraint] = []
+    private var ownMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+    private var othersMessagesHorizontalConstraints: [NSLayoutConstraint] = []
 
     private var longPressGesture: UILongPressGestureRecognizer!
     private var doubleTapGesture: UITapGestureRecognizer!
@@ -88,8 +63,6 @@ final class ConversationMessageCellTableViewAdapter<
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
-        self.ephemeralCountdownView = EphemeralCountdownView()
-        ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -99,32 +72,19 @@ final class ConversationMessageCellTableViewAdapter<
         isOpaque = false
 
         contentView.addSubview(cellView)
-        contentView.addSubview(ephemeralCountdownView)
 
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
-            equalTo: cellView.topAnchor,
-            constant: cellView.ephemeralTimerTopInset
-        )
 
-        let countdownViewLeftInset = conversationHorizontalMargins.left
+        self.existingHorizontalConstraints = [leading, trailing]
+
         NSLayoutConstraint.activate([
-            ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            ephemeralCountdownView.trailingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: countdownViewLeftInset
-            ),
-            ephemeralTop,
-            leading,
-            trailing,
             top,
             bottom
         ])
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
@@ -144,17 +104,95 @@ final class ConversationMessageCellTableViewAdapter<
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, topMargin: CGFloat) {
+    func configure(with object: C.View.Configuration) {
         cellView.configure(with: object, animated: false)
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
-        self.topMargin = topMargin
-        ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
-        ephemeralCountdownView.message = cellDescription?.message
+        cellView.accessibilityLabel = cellDescription?.accessibilityLabel
+        cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
+        top.constant = cellDescription?.topMargin ?? 0
+        bottom.constant = cellDescription?.bottomMargin ?? 0
+        configureChatBubbleConstraints()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
+    private func configureChatBubbleConstraints() {
+        // Deactivate all horizontal constraints before applying new ones.
+        NSLayoutConstraint.deactivate(
+            ownMessagesHorizontalConstraints +
+                othersMessagesHorizontalConstraints
+        )
+        let othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: isCellAlreadyAligned() ? 0 : conversationHorizontalMargins.left
+        )
+
+        if isBubbleHasMaximumWidth() {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        equalTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+
+        } else {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        greaterThanOrEqualTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    lessThanOrEqualTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+        }
+
+        if cellDescription?.shouldAlignMessageContentForBubbles == true {
+            if cellDescription?.message?.isSentBySelfUser == true {
+                // Right-align the bubble content
+                NSLayoutConstraint.activate(ownMessagesHorizontalConstraints)
+            } else {
+                // Left-align the bubble content
+                NSLayoutConstraint.activate(othersMessagesHorizontalConstraints)
+            }
+        } else {
+            setupExistingLayout()
+        }
+        setNeedsLayout()
+    }
+
+    private func isCellAlreadyAligned() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isCellAlreadyAligned
+    }
+
+    private func isBubbleHasMaximumWidth() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isBubbleHasMaximumWidth
+    }
+
+    private func setupExistingLayout() {
+        NSLayoutConstraint.activate(existingHorizontalConstraints)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -181,20 +219,7 @@ final class ConversationMessageCellTableViewAdapter<
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if
-            let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription {
-            for (index, cell) in cellView.conversationMessageCells.enumerated() {
-                let location = gestureRecognizer.location(in: cell)
-                if cell.bounds.contains(location) {
-                    let stackedCellDescription = cellDescription.cellDescriptions[index]
-                    if stackedCellDescription.supportsActions {
-                        stackedCellDescription.actionController?.performSingleTapAction()
-                    }
-                }
-            }
-
-        } else if cellDescription?.supportsActions == true {
+        if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -205,20 +230,7 @@ final class ConversationMessageCellTableViewAdapter<
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if
-            let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription {
-            for (index, cell) in cellView.conversationMessageCells.enumerated() {
-                let location = gestureRecognizer.location(in: cell)
-                if cell.bounds.contains(location) {
-                    let stackedCellDescription = cellDescription.cellDescriptions[index]
-                    if stackedCellDescription.supportsActions {
-                        stackedCellDescription.actionController?.performDoubleTapAction()
-                    }
-                }
-            }
-
-        } else if cellDescription?.supportsActions == true {
+        if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }
@@ -244,13 +256,11 @@ final class ConversationMessageCellTableViewAdapter<
     override func willDisplayCell() {
         cellDescription?.willDisplayCell()
         cellView.willDisplay()
-        ephemeralCountdownView.startCountDown()
     }
 
     override func didEndDisplayingCell() {
         cellDescription?.didEndDisplayingCell()
         cellView.didEndDisplaying()
-        ephemeralCountdownView.stopCountDown()
     }
 
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -304,11 +314,7 @@ extension UITableView {
         ) as Any as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
-        cell.configure(
-            with: description.configuration,
-            topMargin: description.topMargin
-        )
-        cell.cellView.cellDescription = description
+        cell.configure(with: description.configuration)
 
         return cell
     }

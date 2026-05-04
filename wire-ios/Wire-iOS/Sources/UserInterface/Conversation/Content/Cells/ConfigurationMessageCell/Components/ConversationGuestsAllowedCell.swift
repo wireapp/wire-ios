@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,6 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 16
-
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -42,8 +39,8 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     // MARK: initialization
 
-    init() {
-        self.configuration = View.Configuration()
+    init(isChannel: Bool) {
+        self.configuration = View.Configuration(isChannel: isChannel)
         self.actionController = nil
     }
 
@@ -59,9 +56,9 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Properties
 
-    typealias Configuration = Void
-
-    weak var cellDescription: GuestsAllowedCellDescription?
+    struct Configuration: Equatable {
+        let isChannel: Bool
+    }
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -95,12 +92,20 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
         addSubview(stackView)
         [titleLabel, inviteButton].forEach(stackView.addArrangedSubview)
         titleLabel.numberOfLines = 0
-        titleLabel.text = L10n.Localizable.Content.System.Conversation.Invite.title
         titleLabel.textColor = SemanticColors.Label.textDefault
         titleLabel.font = FontSpec.mediumFont.font!
 
-        inviteButton.setTitle(L10n.Localizable.Content.System.Conversation.Invite.button, for: .normal)
         inviteButton.addTarget(self, action: #selector(inviteButtonTapped), for: .touchUpInside)
+
+        configureTitles(isChannel: false)
+    }
+
+    private func configureTitles(isChannel: Bool) {
+        typealias System = L10n.Localizable.Content.System
+        titleLabel.text = isChannel ? System.Channel.Invite.title : System.Conversation.Invite.title
+
+        let buttonTitle = isChannel ? System.Channel.Invite.button : System.Conversation.Invite.button
+        inviteButton.setTitle(buttonTitle, for: .normal)
     }
 
     private func createConstraints() {
@@ -108,7 +113,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
@@ -116,7 +121,9 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Configuration and actions
 
-    func configure(with object: Configuration, animated: Bool) {}
+    func configure(with object: Configuration, animated: Bool) {
+        configureTitles(isChannel: object.isChannel)
+    }
 
     @objc
     private func inviteButtonTapped(_ sender: UIButton) {

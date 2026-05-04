@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,12 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         switch mainConversationFilter {
         case .favorites: self = .favorites
         case .groups: self = .groups
+        case .channels: self = .channels
         case .oneOnOne: self = .oneOnOne
+        case .unread: self = .unread
+        case .mentions: self = .mentions
+        case .replies: self = .replies
+        case .drafts: self = .drafts
         case let .folder(id, name): self = .folder(id: id, name: name)
         }
     }
@@ -48,7 +53,12 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         switch self {
         case .favorites: .favorites
         case .groups: .groups
+        case .channels: .channels
         case .oneOnOne: .oneOnOne
+        case .unread: .unread
+        case .mentions: .mentions
+        case .replies: .replies
+        case .drafts: .drafts
         case let .folder(id, name): .folder(id: id, name: name)
         }
     }

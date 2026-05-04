@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "Ні, дякую";
 "general.failure" = "Щось пішло не так";
 "general.failure.try_again" = "Будь ласка, спробуйте ще раз.";
-"general.service" = "Сервіс";
 "general.off" = "Вимк.";
 "general.on" = "Увімк.";
 "general.loading" = "Завантаження…";
@@ -48,6 +47,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "New conversation";
 "peoplepicker.search_placeholder" = "Пошук за іменем або ніком";
 "peoplepicker.header.top_people" = "Топ-контакти";
 "peoplepicker.button.create_conversation" = "Create Group";
@@ -60,6 +60,10 @@
 "peoplepicker.header.directory" = "Додати до контактів";
 "peoplepicker.header.federation" = "З'єднатися з іншим доменом";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Select Participants";
 "peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Пропустити";
@@ -67,15 +71,12 @@
 "peoplepicker.group.create" = "Створити";
 
 "peoplepicker.header.people" = "Люди";
-"peoplepicker.header.services" = "Сервіси";
-"peoplepicker.services.open_conversation.item" = "Відкрити розмову";
-"peoplepicker.services.add_service.button" = "Додати сервіс";
-"peoplepicker.services.add_service.error.title" = "Неможливо додати сервіс";
-"peoplepicker.services.add_service.error.default" = "Даний сервіс наразі недоступний";
-"peoplepicker.services.add_service.error.full" = "Розмова переповнена";
-
-"peoplepicker.title.create_conversation" = "Створити групу";
-"peoplepicker.title.add_to_conversation" = "Додати учасників";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Відкрити розмову";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Контактів немає.";
 
@@ -84,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Надіслати запрошення";
 "peoplepicker.no_matching_results.action.share_contacts" = "Поділитись контактами";
 "peoplepicker.no_matching_results.action.learn_more" = "Дізнатися більше";
-"peoplepicker.no_matching_results.action.manage_services" = "Керування сервісами";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Знайти людей в Wire по імені або @ніку";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Знаходьте людей в Wire по імені або @ніку\n\nЗнаходьте  людей з іншого домену,\nвикористовуючи формат @нік@ім'я_домену";
 "peoplepicker.no_matching_results.message.users_all_added" = "Всі вже тут.";
-"peoplepicker.no_matching_results.message.services" = "Нікого не знайдено.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Сервіси та помічники, які можуть поліпшити ваш робочий процес.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Сервіси та помічники, які можуть поліпшити ваш робочий процес. Щоб увімкнути їх, зверніться до адміністратора вашої команди.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "Запрошення надіслано";
 "peoplepicker.send_invitation.dialog.message" = "Воно дійсне протягом 2 тижнів. Надішліть нове запрошення, якщо термін дії цього закінчиться.";
@@ -99,13 +105,18 @@
 
 "peoplepicker.invite_team_members" = "Запросіть колег приєднатися до команди";
 "peoplepicker.quick-action.open-conversation" = "Вiдкрити";
-"peoplepicker.quick-action.admin-services" = "Керування сервісами";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративний домен наразі не доступний. [Дізнатися більше](%@)";
 
-"add_participants.alert.title" = "Розмова переповнена";
-"add_participants.alert.message.new_conversation" = "До розмови може приєднатися до %d учасників.";
-"add_participants.alert.message.existing_conversation" = "До розмови може приєднатися до %1$d учаснків. В даний час є місце тільки для %2$d учасників.";
+"add_participants.alert.title" = "The conversation is full";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Повернутись";
+"conversation.create.channel.next" = "Далі";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Пошук за іменем";
@@ -127,7 +138,12 @@
 "conversation_list.search_bar.placeholder" = "Search conversations";
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
+"conversation_list.search_bar.mentionsPlaceholder" = "Search conversations with mentions";
+"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
+"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -135,10 +151,15 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Вподобання";
 "conversation_list.filter.groups.title" = "Групи";
+"conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Видалити";
+"conversation_list.filter.unread.title" = "Unread";
+"conversation_list.filter.mentions.title" = "Mentions";
+"conversation_list.filter.replies.title" = "Replies";
+"conversation_list.filter.drafts.title" = "Drafts";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Приєднатись";
@@ -150,6 +171,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Welcome";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.";
+"conversation_list.empty_placeholder.channels.link" = "Learn more about channels";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
@@ -162,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.mentions.title" = "No mentions";
+"conversation_list.empty_state.replies.title" = "No replies";
+"conversation_list.empty_state.drafts.title" = "No drafts";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в Контактах";
@@ -229,11 +257,6 @@
 "list.archived_conversations" = "АРХІВ";
 "list.archived_conversations_close" = "Закрити архів";
 
-"list.section.groups" = "Групи";
-"list.section.contacts" = "Люди";
-"list.section.requests" = "Запити";
-"list.section.favorites" = "Вподобання";
-
 "conversation.voiceover.value.active" = "активне";
 "conversation.voiceover.value.disabled" = "вимкнене";
 
@@ -290,7 +313,6 @@
 "conversation.invite_more_people.button_title" = "Додати учасників";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Групова розмова без учасників";
 
 "conversation.input_bar.verified" = "Верифікований";
 "conversation.input_bar.placeholder" = "Напишіть повідомлення";
@@ -315,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "в Контактах";
 "conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Дізнатися більше";
 
 "conversation.input_bar.shortcut.send" = "Надіслати повідомлення";
 "conversation.input_bar.shortcut.newline" = "Вставити розрив рядка";
@@ -334,23 +364,28 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Дозволити присутність гостей";
 "conversation.create.guests.subtitle" = "Зробити цю розмову доступною для людей поза межами вашої команди.";
-"conversation.create.services.title" = "Дозволити сервіси";
-"conversation.create.services.subtitle" = "Зробити цю розмову доступною для сервісів.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Звіти про перегляд";
 "conversation.create.receipts.subtitle" = "Якщо ця опція увімкнена, учасники розмови можуть бачити, коли їхні повідомлення в цій розмові були переглянуті.";
 "conversation.create.mls.title" = "Protocol";
 "conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Скасувати";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Дізнатися більше";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Дізнатися більше";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Активний дзвінок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Ви не можете записувати аудіо під час дзвінка.";
@@ -360,15 +395,25 @@
 "conversation.alert.message_deleted" = "Повідомлення було видалене.";
 
 // Conversation banner
-"conversation.banner.guests" = "Гості";
-"conversation.banner.services" = "Сервіси";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ присутні";
-"conversation.banner.are_active" = "%@ активні";
-"conversation.banner.separator" = " та ";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Пошук";
+"conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Картинка";
@@ -453,9 +498,12 @@
 "content.system.other_removed_you" = "%@ видалив(-ла) вас";
 "content.system.you_removed_other" = "Ви видалили %@";
 
-"content.system.services.warning" = "Сервіси мають доступ до вмісту цієї розмови";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -528,10 +576,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@ видалив(-ла) ім'я розмови";
 "content.system.you_renamed_conv_to_nothing" = "Ви видалили ім'я розмови";
-"content.system.pending_message_timestamp" = "Надсилання…";
-"content.system.message_sent_timestamp" = "Надіслано";
-"content.system.message_delivered_timestamp" = "Доставлене";
-"content.system.message_read_timestamp" = "Переглянуто";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
@@ -576,8 +620,21 @@
 "content.system.message_timer_off" = "%@ вимкнув(-ла) таймер повідомлень";
 "content.system.message_timer_off-you" = "%@ вимкнув(-ла) таймер повідомлень";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
+
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
+"content.system.channel.with_name.title" = "%@ started the channel";
+"content.system.channel.with_name.title-you" = "%@ started the channel";
+
+"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
+"content.system.channel.invite.button" = "Copy Channel link";
+
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
+
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -588,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@ вимкнув(-ла) звіти про перегляд для всіх";
 
 "content.system.message_read_receipt_on_add_to_group" = "Звіти про перегляд увімкнені";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
+"content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
 
@@ -609,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
-"content.system.cannot_decrypt.reset_session" = "Виправити майбутні повідомлення";
 "content.system.cannot_decrypt.error_details" = "(Виправлена помилка: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.";
@@ -622,6 +685,10 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Це повідомлення не може бути показане. Можливо, ваша версія Wire вийшла із вжитку.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Завантаження…";
 "content.file.downloading" = "Скачування…";
@@ -638,8 +705,16 @@
 "content.message.delete" = "Видалити";
 "content.message.save" = "Зберегти";
 "content.message.resend" = "Надіслати ще раз";
+"content.message.edited" = "Відредаговано";
 
 "content.message.delete_ellipsis" = "Видалити…";
+
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Подобається";
 "content.message.unlike" = "Не подобається";
@@ -651,6 +726,7 @@
 "content.message.download" = "Завантажити";
 "content.message.details" = "Подробиці";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Відповісти";
@@ -669,6 +745,15 @@
 "content.reactions_list.likers" = "Сподобалося";
 
 "content.file.too_big" = "Ви можете надсилати файли до %@";
+
+"content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Скасувати";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -793,7 +878,7 @@
 
 "call.mls.degraded.alert.title" = "Conversation no longer verified";
 "call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
-"call.mls.degraded.alert.action.continue" = "Подзвонити все одно";
+"call.mls.degraded.alert.action.continue" = "Подзвонити все-одно";
 
 "call.mls.degraded.incoming.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?";
 "call.mls.degraded.incoming.alert.action.continue" = "Приєднатися все-одно";
@@ -841,22 +926,22 @@
 "participants.title" = "Подробиці";
 "participants.all.title" = "Люди";
 "participants.section.participants" = "Учасники (%d)";
-"participants.section.services" = "Сервіси (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Налаштування";
 "participants.footer.add_title" = "Додати учасників";
-"participants.section.name.footer" = "До цієї розмови може приєднатися до %1$d учасників.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Нема адміністраторів.";
 "participants.section.members.footer" = "Користувачі відсутні.";
 
-"profile.profile.group_admin_options.title" = "Адміністратор групи";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Додаткові дії";
 "meta.menu.rename" = "Перейменувати";
-"meta.menu.leave" = "Вийти з групи…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Архівувати";
 "meta.menu.unarchive" = "Розархівувати";
-"meta.menu.delete" = "Видалити групу…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "Очистити вміст…";
 "meta.menu.move_to_folder" = "Перемістити до…";
 "meta.menu.remove_from_folder" = "Видалити з \"%@\"";
@@ -911,8 +996,8 @@
 "profile.remove_dialog_title" = "Видалити?";
 "profile.remove_dialog_message" = "%@ більше не зможе надсилати або отримувати повідомлення в цій розмові.";
 "profile.remove_dialog_button_cancel" = "Скасувати";
-"profile.remove_dialog_button_remove" = "Видалити з групи…";
-"profile.remove_dialog_button_remove_confirm" = "Видалити з групи";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Заблокувати?";
@@ -967,14 +1052,14 @@
 "profile.read_receipts_disabled_memo.header" = "ВИ ВИМКНУЛИ ЗВІТИ ПРО ПЕРЕГЛЯД";
 "profile.read_receipts_memo.body" = "Якщо обидві сторони увімкнуть звіти про перегляд, ви зможете бачити, коли повідомлення були переглянуті.\n\nДану опцію можна змінити в налаштуваннях акаунта.";
 
-"profile.group_admin_status_memo.body" = "Коли це увімкнено, адміністратор може додавати або видаляти людей і послуги, оновлювати налаштування групи та змінювати роль учасника.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Інформація";
 
 // User Details
 "profile.details.title" = "Подробиці";
 "profile.details.guest" = "Гість";
-"profile.details.group_admin" = "Адміністратор групи";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "зовнішній";
 "profile.details.federated" = "Федеративна система";
 "profile.details.blocking_reason" = "Цей користувач заблокований через правовий захист. [ДІЗНАТИСЯ БІЛЬШЕ](%@)";
@@ -1009,27 +1094,37 @@
 "device.type.unknown" = "Невідомо";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Гості";
 "group_details.guest_options_cell.enabled" = "Увімк.";
 "group_details.guest_options_cell.disabled" = "Вимкнений";
-"group_details.services_options_cell.title" = "Сервіси";
-"group_details.services_options_cell.enabled" = "Увімк.";
-"group_details.services_options_cell.disabled" = "Вимк.";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Увімк.";
+"group_details.apps_options_cell.disabled" = "Вимкнений";
 "group_details.timeout_options_cell.title" = "Тимчасові повідомленяя";
 "group_details.notification_options_cell.title" = "Сповіщення";
 "group_details.notification_options_cell.description" = "Ви можете отримувати нотифікації про всі події (включаючи аудіо- і відеодзвінки), або тільки тоді, коли хтось згадує вас або відповідає на одне з ваших повідомлень.";
 "group_details.receipt_options_cell.title" = "Звіти про перегляд";
 "group_details.receipt_options_cell.description" = "Якщо ця опція увімкнена, учасники розмови можуть бачити, коли їхні повідомлення в цій розмові були переглянуті.";
+"group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.subtitle" = "Увімк.";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Адміністратори групи";
-"group_details.conversation_members_header.title" = "Учасники групи";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
@@ -1102,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Створити команду";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Керування командою";
-"self.settings.add_team_or_account.title" = "Додати акаунт";
 "self.settings.add_account.title" = "Додати акаунт";
 
 "self.settings.add_account.error.title" = "Три акаунти вже активні";
@@ -1138,6 +1233,7 @@
 "self.settings.account_details.remove_device.password.error" = "Невірний пароль";
 
 "self.settings.account_appearance_group.title" = "Оформлення";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Політики конфіденційності";
 "self.settings.enable_read_receipts.title" = "Надсилати звіти про перегляд";
@@ -1156,6 +1252,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Особисті дані";
 
@@ -1176,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "Вийти";
 "self.settings.account_details.log_out.alert.message" = "Ваше повідомлення буде стерто з цього пристрою.";
 "self.settings.account_details.log_out.alert.password" = "Пароль";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Вийти";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Статистика використання та збоїв";
@@ -1260,13 +1361,8 @@
 // Open in
 "self.settings.external_apps.header" = "Відкрити за допомогою";
 
-"self.settings.link_options.twitter.title" = "Твіти";
 "self.settings.link_options.maps.title" = "Місця";
 "self.settings.link_options.browser.title" = "Браузер";
-
-"open_link.twitter.option.default" = "Браузер / Твітер";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Карти";
 "open_link.maps.option.google" = "Карти Google";
@@ -1288,7 +1384,6 @@
 "self.settings.developer_options.title" = "Налаштування розробника";
 "self.settings.developer_options.loggin.title" = "Налаштування";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "Ведення журналу APNS";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Налаштування";
@@ -1311,6 +1406,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "Генерувати попередній перегляд для посилань";
 "self.settings.privacy_security.disable_link_previews.footer" = "Дана опція не впливає на попередній перегляд лінків від інших людей.";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Пристрої";
 
@@ -1357,7 +1455,6 @@
 
 "self.settings.conversations.title" = "Історія";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Помилка";
 "self.settings.history_backup.set_email.title" = "Встановіть адресу електронної пошти та пароль.";
 "self.settings.history_backup.set_email.message" = "Ви повинні мати адресу електронної пошти та пароль для того, щоб створити резервну копію історії розмов. Ви можете додати їх на сторінці Акаунт в налаштуваннях.";
 
@@ -1466,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Дізнайтеся більше про гостьові лінки";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Дозволити сервіси";
-"services_options.allow_services.subtitle" = "Зробити цю розмову доступною для сервісів.";
-"services_options.remove_services.message" = "Поточні сервіси будуть вилучені з розмови. Нові сервіси не матимуть доступу до неї.";
-"services_options.remove_services.action" = "Видалити";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Видалити";
 
 
 // Registration
@@ -1574,6 +1671,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";
@@ -1647,22 +1745,12 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Даний акаунт був заблокований.";
 "error.user.account_limit_reached" = "Ви не можете додати більше трьох акаунтів.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Не вдалося оновити ваш пароль.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Забагато учасників для здійснення дзвінка";
 "error.group_call.too_many_members_in_conversation" = "Дзвінки можливі в розмовах до %d людей.";
 "error.group_call.too_many_participants_in_the_call.title" = "Забагато людей в дзвінку";
 "error.group_call.too_many_participants_in_the_call" = "Тут залишилось місце тільки для %d учасників(-а).";
-"error.call.gsm_ongoing.title" = "Стільниковий дзвінок";
-"error.call.gsm_ongoing" = "Будь ласка, завершіть стільниковий дзвінок перед тим, як дзвонити з Wire.";
-"error.call.general.title" = "Помилка дзвінка";
-"error.call.general" = "Будь ласка, спробуйте подзвонити знову через кілька хвилин.";
-"error.call.slow_connection.title" = "Повільне з'єднання";
-"error.call.slow_connection" = "Можуть виникнути проблеми під час дзвінка";
-"error.call.slow_connection.call_anyway" = "Подзвонити все одно";
 
 "error.invite.no_email_provider" = "Будь ласка, налаштуйте ваш поштовий клієнт, щоб надсилати запрошення через email";
 "error.invite.no_messaging_provider" = "Будь ласка, налаштуйте службу надсилання SMS, щоб запрошувати людей через SMS";
@@ -1726,8 +1814,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Тимчасові повідомлення тепер є обов'язковими. Нові повідомлення будуть видалятися автоматично після %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Генерація гостьових лінків вимкнена для всіх адміністраторів групи.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Генерація гостьових лінків увімкнена для всіх адміністраторів групи.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
@@ -1773,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Продовжити";
 "databaseloadingfailure.alert.retry" = "Retry";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Server version not supported";
-"backend_not_supported.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · через giphy.com";
 "giphy.conversation.random_message" = "через giphy.com";
@@ -1802,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "Шукайте текстові повідомлення";
 "collections.search.no_items" = "Нічого не знайдено";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
@@ -1859,6 +1947,7 @@
 "url_action.confirm" = "Підтвердити";
 "url_action.title" = "Підтвердження дії з URL";
 "url_action.connect_to_bot.message" = "Чи Ви хотіли б ви додати бота до контактів?";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -2092,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
+"account_blocked.generic_error.alert.title" = "Щось пішло не так";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
+"account_blocked.generic_error.alert.retry" = "Retry";

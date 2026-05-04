@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
+import WireDomain
 
 enum UserClientRequestError: Error {
     case noPreKeys
@@ -47,6 +47,20 @@ extension UserClientRequestFactory {
         let preKeysPayloadData = payloadForPreKeys(prekeys)
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
+        var capabilities = ["legalhold-implicit-consent"]
+
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+
+        if isConsumableNotificationsEnabled, apiVersion >= .v9 {
+            capabilities.append("consumable-notifications")
+        }
+
         var payload: [String: Any] = [
             "type": client.type.rawValue,
             "label": client.label ?? "",
@@ -54,7 +68,7 @@ extension UserClientRequestFactory {
             "class": (client.deviceClass?.rawValue ?? DeviceClass.phone.rawValue),
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,
-
+            "capabilities": capabilities,
             "cookie": cookieLabel
         ]
 
@@ -122,6 +136,7 @@ extension UserClientRequestFactory {
         }
 
         let preKeysPayloadData = payloadForPreKeys(prekeys)
+
         let payload: [String: Any] = [
             "prekeys": preKeysPayloadData
         ]
@@ -169,9 +184,25 @@ extension UserClientRequestFactory {
         guard let remoteIdentifier = client.remoteIdentifier else {
             throw UserClientRequestError.clientNotRegistered
         }
-        let payload: [String: Any] = [
-            "capabilities": ["legalhold-implicit-consent"]
+        // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
+
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+
+        var capabilities = ["legalhold-implicit-consent"]
+        if isConsumableNotificationsEnabled {
+            capabilities.append("consumable-notifications")
+        }
+
+        var payload: [String: Any] = [
+            "capabilities": capabilities
         ]
+
         let request = ZMTransportRequest(
             path: "/clients/\(remoteIdentifier)",
             method: .put,

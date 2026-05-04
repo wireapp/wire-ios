@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@ final class MockRouter: Router {
 
     public var navigate_Invocations: [any Hashable] = []
     public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [RootViewModel.Alert] = []
+    public var alert_Invocations: [Alert] = []
+    public var dismissSheet_InvocationCount = 0
 
     func popToRoot() {}
+
+    func pop() {}
 
     func navigate(to destination: some Hashable) {
         navigate_Invocations.append(destination)
@@ -34,8 +37,12 @@ final class MockRouter: Router {
         modalPresent_Invocations.append(modalDestination)
     }
 
-    func presentAlert(_ alert: RootViewModel.Alert) {
+    func presentAlert(_ alert: Alert) {
         alert_Invocations.append(alert)
+    }
+
+    func dismissSheet() {
+        dismissSheet_InvocationCount += 1
     }
 
 }

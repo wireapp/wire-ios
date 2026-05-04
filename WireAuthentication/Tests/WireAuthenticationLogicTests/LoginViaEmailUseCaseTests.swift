@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
@@ -45,7 +45,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
 
     func testInvoke_whenSuccess() async throws {
         // given
-        let accessToken = WireAPI.AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
+        let accessToken = WireNetwork.AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
         mockAuthenticationAPI
             .loginEmailPasswordVerificationCodeLabel_MockValue = ([Fixture.someCookie], accessToken)
 
@@ -70,7 +70,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
         XCTAssertEqual(invocations[0].verificationCode, "code")
     }
 
-    func testInvoke_whenFailure() async throws {
+    func testInvoke_whenLoginViaEmailUseCaseFailure() async throws {
         // given
         let testCases: [(underlyingError: any Error, expected: LoginViaEmailUseCaseFailure)] = [
             (underlyingError: AuthenticationAPIError.invalidCredentials, expected: .invalidCredentials),
@@ -83,16 +83,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
                 expected: .twoFactorAuthenticationFailed
             ),
             (underlyingError: AuthenticationAPIError.accountPendingActivation, expected: .accountPendingActivation),
-            (underlyingError: AuthenticationAPIError.accountSuspended, expected: .accountSuspended),
-            (underlyingError: URLError(.notConnectedToInternet), expected: .noInternet),
-            (underlyingError: URLError(.networkConnectionLost), expected: .noInternet),
-            (underlyingError: AuthenticationAPIError.unsupportedEndpointForAPIVersion, expected: .other),
-            (underlyingError: AuthenticationAPIError.invalidDomain, expected: .other),
-            (underlyingError: AuthenticationAPIError.invalidRequestBody, expected: .other),
-            (underlyingError: AuthenticationAPIError.invalidResponse, expected: .other),
-            (underlyingError: AuthenticationAPIError.configNotFound, expected: .other),
-            (underlyingError: AuthenticationAPIError.domainNotFound, expected: .other),
-            (underlyingError: URLError(.badServerResponse), expected: .other)
+            (underlyingError: AuthenticationAPIError.accountSuspended, expected: .accountSuspended)
         ]
 
         for testCase in testCases {
@@ -102,6 +93,16 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
             await XCTAssertThrowsErrorAsync(testCase.expected) { [self] in
                 _ = try await sut.invoke(email: "email", password: "password", verificationCode: "code")
             }
+        }
+    }
+
+    func testInvoke_otherFailure() async throws {
+        // given
+        mockAuthenticationAPI.loginEmailPasswordVerificationCodeLabel_MockError = URLError(.notConnectedToInternet)
+
+        // when, then
+        await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
+            _ = try await sut.invoke(email: "email", password: "password", verificationCode: "code")
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,9 +27,18 @@ public struct TrustData: Decodable {
 
         public let rule: Rule
         public let value: String
+
+        public init(
+            rule: Rule,
+            value: String
+        ) {
+            self.rule = rule
+            self.value = value
+        }
     }
 
     public let certificateKey: SecKey
+    public let rawCertificateKey: Data
     public let hosts: [Host]
 
     enum CodingKeys: String, CodingKey {
@@ -39,26 +48,61 @@ public struct TrustData: Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let certificateKeyData = try container.decode(Data.self, forKey: .certificateKey)
+        let rawCertificateKey = try container.decode(Data.self, forKey: .certificateKey)
+        let hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
 
-        guard let certificate = SecCertificateCreateWithData(nil, certificateKeyData as CFData) else {
+        do {
+            try self.init(
+                rawCertificateKey: rawCertificateKey,
+                hosts: hosts
+            )
+        } catch Failure.invalidCertificateKeyData {
             throw DecodingError.dataCorruptedError(
                 forKey: CodingKeys.certificateKey,
                 in: container,
                 debugDescription: "Error decoding certificate for pinned key"
             )
-        }
-
-        guard let certificateKey = SecCertificateCopyKey(certificate) else {
+        } catch Failure.invalidCertificateKey {
             throw DecodingError.dataCorruptedError(
                 forKey: CodingKeys.certificateKey,
                 in: container,
                 debugDescription: "Error extracting pinned key from certificate"
             )
         }
-        self.certificateKey = certificateKey
-        self.hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
     }
+
+    public init(
+        certificateKey: SecKey,
+        rawCertificateKey: Data,
+        hosts: [Host]
+    ) {
+        self.certificateKey = certificateKey
+        self.rawCertificateKey = rawCertificateKey
+        self.hosts = hosts
+    }
+
+    public init(
+        rawCertificateKey: Data,
+        hosts: [Host]
+    ) throws {
+        guard let certificate = SecCertificateCreateWithData(nil, rawCertificateKey as CFData) else {
+            throw Failure.invalidCertificateKeyData
+        }
+
+        guard let certificateKey = SecCertificateCopyKey(certificate) else {
+            throw Failure.invalidCertificateKey
+        }
+
+        self.certificateKey = certificateKey
+        self.rawCertificateKey = rawCertificateKey
+        self.hosts = hosts
+    }
+
+    public enum Failure: Error {
+        case invalidCertificateKeyData
+        case invalidCertificateKey
+    }
+
 }
 
 extension TrustData {

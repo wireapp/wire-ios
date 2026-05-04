@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,9 +65,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     var cookieStorage: ZMPersistentCookieStorage!
 
-    var spyKeyStore: SpyUserClientKeyStore!
     var proteusService: MockProteusServiceInterface!
-    var proteusProvider: MockProteusProvider!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var postLoginAuthenticationObserverToken: Any?
@@ -76,16 +74,9 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
         super.setUp()
 
         syncMOC.performGroupedAndWait {
-            let spyKeyStore = SpyUserClientKeyStore(
-                accountDirectory: self.accountDirectory,
-                applicationContainer: self.sharedContainerURL
-            )
-            self.spyKeyStore = spyKeyStore
-            self.proteusService = MockProteusServiceInterface()
-            self.proteusProvider = MockProteusProvider(
-                mockProteusService: self.proteusService,
-                mockKeyStore: spyKeyStore
-            )
+
+            self.setupProteusService()
+
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
             self.cookieStorage = ZMPersistentCookieStorage(
                 forServerName: "myServer",
@@ -96,7 +87,9 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
                 cookieProvider: self.cookieStorage,
-                coreCryptoProvider: self.coreCryptoProvider
+                coreCryptoProvider: self.coreCryptoProvider,
+                localDomain: "wire.com",
+                isBackendMLSEnabled: false
             )
             self.clientRegistrationStatus.registrationStatusDelegate = self.mockClientRegistrationStatusDelegate
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
@@ -104,7 +97,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 clientRegistrationStatus: self.clientRegistrationStatus,
                 clientUpdateStatus: self.clientUpdateStatus,
                 context: self.syncMOC,
-                proteusProvider: self.proteusProvider
+                proteusService: self.proteusService
             )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
@@ -114,17 +107,30 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectory)
-
         clientRegistrationStatus = nil
         mockClientRegistrationStatusDelegate = nil
         clientUpdateStatus = nil
-        spyKeyStore = nil
         sut.tearDown()
         sut = nil
         postLoginAuthenticationObserverToken = nil
         super.tearDown()
     }
+
+    private func setupProteusService() {
+        proteusService = MockProteusServiceInterface()
+        proteusService.generatePrekeysStartCount_MockMethod = { start, count async throws in
+            var prekeys = [IdPrekeyTuple]()
+
+            for index in start ... (start + count) {
+                prekeys.append((index, "prekey-\(index)"))
+            }
+
+            return prekeys
+        }
+        proteusService.lastPrekey_MockValue = "last-resort-prekey"
+        proteusService.underlyingLastPrekeyID = UInt16.max
+    }
+
 }
 
 // MARK: Inserting
@@ -388,11 +394,9 @@ extension UserClientRequestStrategyTests {
                 code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
                 userInfo: [
                     ZMEmailCredentialKey: emailAddress,
-                    ZMUserHasPasswordKey: true,
                     ZMUserUsesCompanyLoginCredentialKey: false,
                     ZMUserLoginCredentialsKey: LoginCredentials(
                         emailAddress: emailAddress,
-                        hasPassword: true,
                         usesCompanyLogin: false
                     )
                 ]
@@ -623,7 +627,7 @@ extension UserClientRequestStrategyTests {
 
 extension UserClientRequestStrategyTests {
 
-    func  payloadForClients() -> ZMTransportData {
+    func payloadForClients() -> ZMTransportData {
         let payload = [
             [
                 "id": UUID.create().transportString(),
@@ -917,6 +921,88 @@ extension UserClientRequestStrategyTests {
             XCTAssertFalse(existingClient.needsToUploadMLSPublicKeys)
             XCTAssertFalse(existingClient.hasLocalModifications(forKey: UserClient.needsToUploadMLSPublicKeysKey))
         }
+    }
+
+    func test_It_Calls_DidRegisterMLSClient_For_Self_Client() {
+        var existingClient: UserClient!
+
+        syncMOC.performGroupedBlock {
+            // Given
+            self.clientRegistrationStatus.mockPhase = .registered
+
+            existingClient = self.createSelfClient()
+            self.syncMOC.saveOrRollback()
+            let existingClientSet: Set<NSManagedObject> = [existingClient]
+
+            // When
+            existingClient.needsToUploadMLSPublicKeys = true
+            existingClient.setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
+
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange(existingClientSet)
+            }
+
+            let request = self.sut.nextRequest(for: .v1)
+
+            // Then
+            XCTAssertNotNil(request)
+
+            // And when
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            )
+
+            request?.complete(with: response)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(clientRegistrationStatus.didRegisterMLSClient, true)
+    }
+
+    func test_It_Does_Not_Call_DidRegisterMLSClient_For_Not_Self_Client() {
+        var existingClient: UserClient!
+
+        syncMOC.performGroupedBlock {
+            // Given
+            self.clientRegistrationStatus.mockPhase = .registered
+
+            existingClient = self.createClient(for: .selfUser(in: self.syncMOC))
+            self.syncMOC.saveOrRollback()
+            let existingClientSet: Set<NSManagedObject> = [existingClient]
+
+            // When
+            existingClient.needsToUploadMLSPublicKeys = true
+            existingClient.setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
+
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange(existingClientSet)
+            }
+
+            let request = self.sut.nextRequest(for: .v1)
+
+            // Then
+            XCTAssertNotNil(request)
+
+            // And when
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            )
+
+            request?.complete(with: response)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(clientRegistrationStatus.didRegisterMLSClient, false)
     }
 
 }

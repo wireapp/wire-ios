@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 @property (nonatomic, readonly, nullable) NSSet *ignoredKeys;
 
 /// Returns a predicate that will match objects which need additional data from the backend.
-+ (nullable NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;
++ (NSPredicate * _Nonnull)predicateForNeedingToBeUpdatedFromBackend;
 
 /// Returns a predicate that will match objects that have local modifications that need to be pushed to the backend
 + (nullable NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;

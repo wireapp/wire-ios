@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,6 +92,9 @@ final class MessageActionsViewController: UIAlertController {
         }
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {
             newAction.setValue(image, forKey: "image")
+        }
+        if let image = action.image {
+            newAction.setValue(image.withTintColor(SemanticColors.Icon.foregroundDefaultBlack), forKey: "image")
         }
         newAction.setValue(CATextLayerAlignmentMode.right, forKey: "titleTextAlignment")
         addAction(newAction)

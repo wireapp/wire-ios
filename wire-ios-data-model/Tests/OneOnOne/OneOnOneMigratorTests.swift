@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
     private var syncContext: NSManagedObjectContext!
-
+    private let localDomain = "local.domain"
     private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() async throws {
@@ -38,6 +38,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         syncContext = coreDataStack.syncContext
 
         mockMLSService = MockMLSServiceInterface()
+        mockMLSService.underlyingLocalDomain = localDomain
     }
 
     override func tearDown() async throws {
@@ -58,6 +59,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
+        var conversationID: QualifiedID?
 
         let mlsConversation = await syncContext.perform { [self] in
             let user = ZMUser.insertNewObject(in: syncContext)
@@ -66,13 +68,15 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             let mlsConversation = createMLSConversation(with: mlsGroupID, in: syncContext)
             mlsConversation.oneOnOneUser = user
+            mlsConversation.domain = localDomain
+            conversationID = mlsConversation.qualifiedID
 
             return mlsConversation
         }
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((try XCTUnwrap(conversationID), mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -109,10 +113,15 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupEpoch: 0,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
+        mockMLSService.underlyingLocalDomain = mlsConversationID.domain
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, removalKeys)),
+            result: .success((mlsConversationID, mlsGroupID, removalKeys)),
             context: syncContext.notificationContext
         )
 
@@ -160,10 +169,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupEpoch: 1,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -203,10 +216,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupID: mlsGroupID,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -232,7 +249,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -255,6 +275,8 @@ final class OneOnOneMigratorTests: XCTestCase {
             let systemMessage = try XCTUnwrap(mlsMessages[3] as? ZMSystemMessage)
             XCTAssertEqual(systemMessage.systemMessageType, .mlsMigrationFinalized)
 
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             XCTAssertNil(proteusConversation.lastMessage)
         }
         withExtendedLifetime(handler) {}
@@ -276,6 +298,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             mlsGroupID: mlsGroupID,
             in: syncContext
         )
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
 
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
@@ -294,7 +320,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -320,7 +346,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -335,7 +364,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try duplicateProteusConversation.appendKnock()
             message.updateServerTimestamp(with: 11)
 
-            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try duplicateProteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 12)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -354,6 +386,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             let expectedMessagesCount = 7
             if mlsMessages.count == expectedMessagesCount {
@@ -393,6 +427,11 @@ final class OneOnOneMigratorTests: XCTestCase {
             in: syncContext
         )
 
+        let id = await syncContext.perform {
+            mlsConversation.qualifiedID
+        }
+        let mlsConversationID = try XCTUnwrap(id)
+
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
             modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
@@ -423,7 +462,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((mlsConversationID, mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -449,7 +488,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -464,7 +506,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try duplicateProteusConversation.appendKnock()
             message.updateServerTimestamp(with: 11)
 
-            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try duplicateProteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 12)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -501,6 +546,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             let expectedMessagesCount = 10
             if mlsMessages.count == expectedMessagesCount {
@@ -520,6 +567,22 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertNil(proteusConversation.lastMessage)
         }
         withExtendedLifetime(handler) {}
+    }
+
+    private func assertDates(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
+        XCTAssertEqual(mlsConversation.lastServerTimeStamp, proteusConversation.lastServerTimeStamp)
+        XCTAssertEqual(mlsConversation.lastReadServerTimeStamp, proteusConversation.lastReadServerTimeStamp)
+        XCTAssertEqual(
+            mlsConversation.pendingLastReadServerTimestamp,
+            proteusConversation.pendingLastReadServerTimestamp
+        )
+        XCTAssertEqual(
+            mlsConversation.previousLastReadServerTimestamp,
+            proteusConversation.previousLastReadServerTimestamp
+        )
+        XCTAssertEqual(mlsConversation.clearedTimeStamp, proteusConversation.clearedTimeStamp)
+        XCTAssertEqual(mlsConversation.archivedChangedTimestamp, proteusConversation.archivedChangedTimestamp)
+        XCTAssertEqual(mlsConversation.silencedChangedTimestamp, proteusConversation.silencedChangedTimestamp)
     }
 
     // MARK: - Core Data Objects
@@ -572,7 +635,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .connection
         conversation.remoteIdentifier = .create()
-        conversation.domain = "local@domain.com"
+        conversation.domain = localDomain
         conversation.oneOnOneUser = connection.to
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -609,7 +672,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
-        mlsConversation.domain = "local@domain.com"
+        mlsConversation.domain = localDomain
         mlsConversation.mlsGroupID = identifier
         mlsConversation.messageProtocol = .mls
         mlsConversation.conversationType = .oneOnOne

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,123 +17,157 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireNetwork
 import WireReusableUIComponents
 
-package protocol LoginViaEmailBuilder {
+package protocol LoginViaEmailFactory {
+
+    @MainActor var viewModel: LoginViaEmailViewModel { get }
 
     @MainActor
-    func loginViaEmailView(
+    func verifyLoginView(
         email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailView
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeView
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+
+    @MainActor
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView
 
 }
 
 package struct LoginViaEmailView: View {
 
-    package typealias Factory = VerificationCodeBuilder
+    @StateObject private var viewModel: LoginViaEmailViewModel
 
-    @StateObject var viewModel: LoginViaEmailViewModel
-
-    let factory: any VerificationCodeBuilder
+    private typealias Strings = L10n.Localizable
 
     package init(
-        viewModel: LoginViaEmailViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                emailField
-                passwordField
-                submitButton
-                forgotPasswordButton
-                if viewModel.canCreateAccount {
-                    createAccount
+                if viewModel.areProxyCredentialsRequired {
+                    if viewModel.isOnPremiseBackend {
+                        welcomeMessage
+                    }
+                    emailField
+                    passwordField
+                    forgotPasswordButton
+                    proxyCredentials
+                    submitButton
+                } else {
+                    if viewModel.isOnPremiseBackend {
+                        welcomeMessage
+                    }
+                    emailField
+                    passwordField
+                    submitButton
+                    forgotPasswordButton
+                    if viewModel.canCreateAccount {
+                        createAccount
+                    }
                 }
             }
-            .navigationTitle(L10n.CloudUserLogin.title)
+            .navigationTitle(Strings.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
             .padding(32)
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
             .background(ColorTheme.Backgrounds.surface.color)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-            )
         }
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .verifyLogin(email, password):
-                factory.verificationCodeView(
-                    email: email,
-                    password: password,
-                    didDetectDomainConflict: viewModel.didDetectDomainConflict
-                )
-            }
-        }
-        .presentationDetents([.medium, .large])
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
+        .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
 
+    @ViewBuilder
+    func destinationView(_ destination: LoginViaEmailDestination) -> some View {
+        switch destination {
+        case let .verifyLogin(email, password, proxyCredentials):
+            viewModel.factory
+                .verifyLoginView(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+        case let .noHistory(authenticationResult):
+            viewModel.factory.noHistoryView(result: authenticationResult)
+        case .createPersonalAccount:
+            viewModel.factory
+                .personalAccountCreationView(
+                    teamAccountCreationLink: viewModel.teamAccountCreationLink
+                )
+        }
+    }
+
+    @ViewBuilder private var welcomeMessage: some View {
+        OnPremHeaderView(environment: viewModel.environment)
+    }
+
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
-            placeholder: nil,
-            title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
+            title: Strings.CloudUserLogin.InputEmail.title,
+            string: $viewModel.email,
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .disabled(true)
+        .autocorrectionDisabled()
+        .disabled(viewModel.isEmailPrefilled)
     }
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
             password: $viewModel.password,
-            placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-            title: L10n.CloudUserLogin.InputPassword.title,
-            passwordRules: viewModel.localizedPasswordRules,
-            isValidPassword: { _ in viewModel.isPasswordValid }
+            placeholder: Strings.CloudUserLogin.InputPassword.placeholder,
+            title: Strings.CloudUserLogin.InputPassword.title,
+            passwordRules: "",
+            isValidPassword: viewModel.isPasswordValid
         )
+        .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
     }
 
     @ViewBuilder private var submitButton: some View {
-        Button(
-            action: { Task { await viewModel.submitPassword() } },
-            label: {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-
-                    Text(L10n.CloudUserLogin.submit)
-                        .lineLimit(nil)
-                }
+        Button(action: {
+            Task {
+                await viewModel.submitCredentials()
             }
-        )
+        }, label: {
+            Text(Strings.CloudUserLogin.submit)
+                .lineLimit(nil)
+        })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
+        .disabled(!viewModel.canSubmitCredentials)
+        .accessibilityIdentifier(Locators.LoginPage.nextButton.rawValue)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
         Button(action: {
             viewModel.recoverPassword()
         }, label: {
-            Text(L10n.CloudUserLogin.forgotPassword)
+            Text(Strings.CloudUserLogin.forgotPassword)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
@@ -143,16 +177,16 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
-            Text(L10n.CreatePersonalAccount.title)
+            Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(L10n.CreatePersonalAccount.button)
+                Text(Strings.CreateAccount.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
@@ -163,34 +197,68 @@ package struct LoginViaEmailView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .cornerRadius(12)
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+        }
+        .accessibilityIdentifier(Locators.LoginPage.createAccountLink.rawValue)
+    }
+
+    @ViewBuilder private var proxyCredentials: some View {
+        Spacer()
+        VStack(spacing: 14) {
+            Text(Strings.ProxyCredentials.title)
+                .multilineTextAlignment(.center)
+                .font(for: .h2)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let proxyServer = viewModel.proxyServer {
+                Text(Strings.ProxyCredentials.message(proxyServer))
+                    .multilineTextAlignment(.center)
+                    .font(for: .body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-        }
-    }
 
-    enum Destination: Hashable {
-
-        case verifyLogin(email: String, password: String)
-
-    }
-
-}
-
-#Preview() {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(
-                email: "foo@bar.com",
-                canCreateAccount: false,
-                didDetectDomainConflict: false
+            LabeledTextField(
+                placeholder: "jane@example.com",
+                title: Strings.ProxyCredentials.InputEmail.title,
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
+            .autocorrectionDisabled()
+
+            PasswordField(
+                password: $viewModel.proxyPassword,
+                placeholder: Strings.CloudUserLogin.InputPassword.placeholder,
+                title: Strings.CloudUserLogin.InputPassword.title,
+                passwordRules: "",
+                isValidPassword: viewModel.isPasswordValid
+            )
+            Spacer()
         }
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
+        switch sheet {
+        case let .teamAccountCreation(teamAccountCreationLink):
+            SafariBrowserView(url: teamAccountCreationLink)
+                .ignoresSafeArea()
+        case .accountTypeSelection:
+            AccountTypeSelectionView(
+                onTeamAccountCreation: viewModel.handleTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
+            )
+            // TODO: [WPB-18672] The account type selection is presented full-screen, not like the rest of the auth UI
+            // try to use .universalSheet(...) if possible
+        }
+    }
+
+    private func onSheetDismiss() {
+        viewModel.onSheetDismissAction?()
+    }
+
 }

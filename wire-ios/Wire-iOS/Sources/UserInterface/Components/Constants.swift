@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,6 @@ import WireDesign
 
 enum Constants {
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-}
-
-extension CGFloat {
-    enum ConversationButtonMessageCell {
-        static let verticalInset: CGFloat = 8
-    }
 }
 
 extension StyleKitIcon.Size {

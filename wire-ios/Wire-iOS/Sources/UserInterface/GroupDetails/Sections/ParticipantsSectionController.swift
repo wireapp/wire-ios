@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ private struct ParticipantsSectionViewModel {
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
-    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
+    var sectionAccessibilityIdentifier = "label.groupdetails.participants"
 
     var sectionTitle: String? {
         typealias GroupDetails = L10n.Localizable.GroupDetails
@@ -235,7 +235,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     }
 
     override var sectionAccessibilityIdentifier: String {
-        viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccessibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

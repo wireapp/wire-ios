@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -152,8 +152,32 @@ extension UIImage {
 extension UIImage {
 
     func resize(for size: StyleKitIcon.Size) -> UIImage {
-        UIGraphicsImageRenderer(size: size.cgSize).image { _ in
-            draw(in: CGRect(origin: .zero, size: size.cgSize))
+        resize(size: size.cgSize)
+    }
+
+    func resize(size: CGSize) -> UIImage {
+        UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    func resizeMaintainingAspectRatio(targetSize: CGSize) -> UIImage? {
+        guard size.width > 0, size.height > 0 else { return nil }
+
+        let originalSize = size
+        let scaleFactor = min(targetSize.width / originalSize.width, targetSize.height / originalSize.height)
+
+        if scaleFactor.isNaN || scaleFactor.isInfinite { return nil }
+
+        let newSize = CGSize(width: originalSize.width * scaleFactor, height: originalSize.height * scaleFactor)
+        let origin = CGPoint(
+            x: (targetSize.width - newSize.width) / 2,
+            y: (targetSize.height - newSize.height) / 2
+        )
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            draw(in: CGRect(origin: origin, size: newSize))
         }
     }
 }

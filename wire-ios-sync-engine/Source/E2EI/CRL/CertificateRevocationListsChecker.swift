@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireLogging
 
 // sourcery: AutoMockable
@@ -36,7 +37,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -130,7 +131,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
-                let registration = try await coreCrypto.perform {
+                let registration = try await coreCrypto.transaction {
                     try await $0.e2eiRegisterCrl(crlDp: distributionPoint.absoluteString, crlDer: crlData)
                 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,22 +22,20 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
 @interface MockReachability ()
 @property (nonatomic) BOOL isReachable;
-@property (nonatomic) BOOL isMobile;
 @end
 
 @implementation MockReachability
 
 - (instancetype)init
 {
-    return [self initWithReachability:YES isMobileConnection:YES];
+    return [self initWithReachability:YES];
 }
 
-- (instancetype)initWithReachability:(BOOL)isReachable isMobileConnection:(BOOL)isMobileConnection
+- (instancetype)initWithReachability:(BOOL)isReachable
 {
     self = [super init];
     if (self) {
         self.isReachable = isReachable;
-        self.isMobile = isMobileConnection;
     }
     return self;
 }
@@ -52,14 +50,6 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
 -(BOOL)oldMayBeReachable{
     return self.isReachable;
-}
-
--(BOOL)isMobileConnection{
-    return self.isMobile;
-}
-
--(BOOL)oldIsMobileConnection{
-    return self.isMobile;
 }
 
 -(id)addReachabilityObserver:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)queue{

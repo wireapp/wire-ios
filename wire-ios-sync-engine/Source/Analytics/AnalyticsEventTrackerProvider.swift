@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import Foundation
 import WireAnalytics
+import WireFoundation
 
 protocol AnalyticsEventTrackerProvider: AnyObject {
 
-    var analyticsEventTracker: (any AnalyticsEventTracker)? { get }
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?)
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)? { get }
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?)
     func createAnalyticsUser() async throws -> AnalyticsUser
 
 }

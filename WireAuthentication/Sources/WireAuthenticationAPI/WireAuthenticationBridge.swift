@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,81 +16,56 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 
 /// A object that facilitates intermodule communication, both **inbound**
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public struct WireAuthenticationBridge {
+public final class WireAuthenticationBridge {
 
-    public let onFlowCompletion: (AuthenticationResult) -> Void
-    private let onRegisterAccount: () -> Void
-    private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
-    private let onSSOFailure: () -> Void
+    private let inboundSubject = PassthroughSubject<InboundEvent, Never>()
+    private let outboundSubject = PassthroughSubject<OutboundEvent, Never>()
 
-    public init(
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void,
-        onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
-        onSSOFailure: @escaping () -> Void
-    ) {
-        self.onFlowCompletion = onFlowCompletion
-        self.onRegisterAccount = onRegisterAccount
-        self.onSSOSuccess = onSSOSuccess
-        self.onSSOFailure = onSSOFailure
+    public var inboundEvents: AnyPublisher<InboundEvent, Never> {
+        inboundSubject.eraseToAnyPublisher()
     }
 
-    // MARK: - Methods are called within the module, but their implementations exist outside of it.
-
-    /// Completes the authentication flow with the given result.
-
-    public func completeFlow(_ result: AuthenticationResult) {
-        onFlowCompletion(result)
+    public var outboundEvents: AnyPublisher<OutboundEvent, Never> {
+        outboundSubject.eraseToAnyPublisher()
     }
 
-    /// Initiates the account registration process.
+    public init() {}
 
-    public func registerAccount() {
-        onRegisterAccount()
+    public func sendOutboundEvent(_ event: OutboundEvent) {
+        outboundSubject.send(event)
     }
 
-    // MARK: - Methods are implemented inside the module and are meant to be invoked externally.
-
-    /// Completes the SSO process successfully.
-
-    public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        onSSOSuccess(userID, cookies)
+    public func sendInboundEvent(_ event: InboundEvent) {
+        inboundSubject.send(event)
     }
 
-    /// Handles the failure of the SSO process.
+    /// Events originating within the feature module and
+    /// communicated outside.
 
-    public func completeSSOFailure() {
-        onSSOFailure()
+    public enum OutboundEvent {
+
+        case userAuthenticated(AuthenticationResult, RegistrationAnalyticsTrackingConsent)
+        case exitFlowRequested
+        case logoutRequested(deleteData: Bool)
+
     }
 
-}
+    /// Events originating outside the feature module and
+    /// communicated inside.
 
-/// The result of an authentication flow.
+    public enum InboundEvent {
 
-public struct AuthenticationResult: Equatable {
+        case didRewindToThisView
+        case backendSwitchRequested(configURL: URL)
+        case updateAnotherAccountExistence(newValue: Bool)
 
-    /// The user id of whom the token belongs.
-
-    let userID: UUID
-
-    /// The authentication cookies.
-
-    let cookies: [HTTPCookie]
-
-    /// A token used to make authenticated requests to the backend if available.
-
-    let accessToken: AccessToken?
-
-    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
     }
 
 }

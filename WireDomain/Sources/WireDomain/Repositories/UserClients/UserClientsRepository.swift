@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
@@ -60,7 +60,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
         await userClientsLocalStore.fetchOrCreateClient(
             id: id
         )
@@ -72,6 +72,10 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         await userClientsLocalStore.deleteClient(id: id)
     }
 
+    public func invalidateSelfClient() async {
+        await userClientsLocalStore.invalidateSelfClient()
+    }
+
     public func pullSelfClients() async throws {
         let remoteSelfClients = try await userClientsAPI.getSelfClients()
 
@@ -80,7 +84,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
                 id: remoteSelfClient.id
             )
 
-            try await updateClient(
+            await updateClient(
                 id: remoteSelfClient.id,
                 from: remoteSelfClient,
                 isNewClient: localUserClient.isNew
@@ -98,9 +102,9 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws {
+    ) async {
         await userClientsLocalStore.updateClient(
             id: id,
             isNewClient: isNewClient,

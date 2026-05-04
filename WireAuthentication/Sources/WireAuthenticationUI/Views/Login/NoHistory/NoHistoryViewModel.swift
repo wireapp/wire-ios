@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,51 +30,69 @@ package final class NoHistoryViewModel: ObservableObject {
         case cloudAccountAlreadyRegistered
     }
 
+    // MARK: - View state
+
+    let didReauthenticate: Bool
+
+    @Published var isLoading = false
     @Published var alert: Alert?
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
+    // MARK: - Dependencies
+
+    private let didDetectDomainConflict: Bool
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
-    private let accessToken: AccessToken?
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onFlowCompletion: () -> Void
 
-    let didDetectDomainConflict: Bool
+    /// Tracks if the user has already acknowledged the alert.
+    private var didConfirmAlert = false
+
+    // MARK: - Life cycle
 
     package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
+        didReauthenticate: Bool,
         didDetectDomainConflict: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        onFlowCompletion: @escaping () -> Void
     ) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
+        self.didReauthenticate = didReauthenticate
         self.didDetectDomainConflict = didDetectDomainConflict
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion
     }
 
+    // MARK: Actions
+
     func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
+        onFlowCompletion()
+
+        // For now, the flow will continue outside this module and operations
+        // may happen while we still see this view. Show the loading indicator
+        // so the user will know something is happening.
+        isLoading = true
     }
 
     func onAppear() {
-        if didDetectDomainConflict {
+        if didDetectDomainConflict, !didConfirmAlert {
             alert = .cloudAccountAlreadyRegistered
         }
     }
 
     func howToChangeEmail() {
+        didConfirmAlert = false
         UIApplication.shared.open(howToChangeEmailURL)
     }
 
     func howToDeleteAccount() {
+        didConfirmAlert = false
         UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
+    func confirmAlert() {
+        didConfirmAlert = true
+        alert = nil
     }
 
 }

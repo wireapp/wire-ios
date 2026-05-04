@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -122,4 +122,33 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         }
     }
 
+}
+
+struct LabelUpdate: Codable, Equatable {
+    let id: UUID
+    let type: Int16
+    let name: String?
+    let conversations: [UUID]
+
+    init(id: UUID, type: Int16, name: String?, conversations: [UUID]) {
+        self.id = id
+        self.type = type
+        self.name = name
+        self.conversations = conversations
+    }
+
+    init?(_ label: Label) {
+        guard let remoteIdentifier = label.remoteIdentifier else { return nil }
+
+        self = .init(
+            id: remoteIdentifier,
+            type: label.kind.rawValue,
+            name: label.name,
+            conversations: label.conversations.compactMap(\.remoteIdentifier)
+        )
+    }
+}
+
+struct LabelPayload: Codable, Equatable {
+    var labels: [LabelUpdate]
 }

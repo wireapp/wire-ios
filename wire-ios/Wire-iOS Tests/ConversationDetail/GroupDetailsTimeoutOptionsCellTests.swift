@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,6 +79,26 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
     func testThatItDisplaysCell_WithTimeout_Dark() {
         // GIVEN & WHEN
         updateTimeout(300)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: cell)
+    }
+
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Light() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
+
+        // THEN
+        snapshotHelper.verify(matching: cell)
+    }
+
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Dark() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
 
         // THEN
         snapshotHelper

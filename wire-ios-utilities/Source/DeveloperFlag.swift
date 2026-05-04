@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,31 +22,41 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
-    case forceDatabaseLoadingFailure
-    case ignoreIncomingEvents
+    case channelsHistory
+    case chatBubbles
+    case consumableNotifications
+    case createLegacyBackups
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
+    case disablePushChannelBatching
     case forceCRLExpiryAfterOneMinute
-    case newInitialSync
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case newRegistration
+    case showCreateMLSGroupToggle
+    case showUnreadConversationsFilter
+    case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireCellsAttachmentsPreviews
-    case wireChannels
+    case wireMeetings
+    case lowKeyPackageCount
+    case enabledCCDebugLogs
 
     public var description: String {
         switch self {
+        case .createLegacyBackups:
+            "Don't use the cross-platform library when creating backups."
+
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             "Turn on to force database loading failure in the process of database migration"
 
         case .ignoreIncomingEvents:
             "Turn on to ignore incoming update events"
+
+        case .skipMLSMessagesDecryption:
+            "Turn on to skip MLS message decryption"
 
         case .debugDuplicateObjects:
             "Turn on to have actions to insert duplicate users, conversations, teams"
@@ -57,17 +67,35 @@ public enum DeveloperFlag: String, CaseIterable {
         case .forceCRLExpiryAfterOneMinute:
             "Turn on to force CRLs to expire after 1 minute"
 
-        case .newInitialSync:
-            "Use the new and improved 'Initial Sync™' (formerly slow sync)"
-
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
 
-        case .wireCellsAttachmentsPreviews:
-            "Use the new WireCells previews for conversations attachments"
+        case .disablePushChannelBatching:
+            "Turn on to disable batching while app is live"
 
-        case .wireChannels:
-            "Use the new WireChannels features"
+        case .newRegistration:
+            "Turn on to use the new registration flow"
+
+        case .showUnreadConversationsFilter:
+            "Turn on to show the new conversation filter options"
+
+        case .channelsHistory:
+            "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
+
+        case .consumableNotifications:
+            "Turn on to enable consumable notifications"
+
+        case .wireMeetings:
+            "Turn on to enable Wire meetings"
+
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
+
+        case .enabledCCDebugLogs:
+            "Turn on to enable Core Crypto debug logs"
         }
     }
 
@@ -94,14 +122,16 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    var bundleKey: String? {
+    private var bundleKey: String? {
         switch self {
-        case .proteusViaCoreCrypto:
-            "ProteusByCoreCryptoEnabled"
+        case .createLegacyBackups:
+            "CreateLegacyBackupsEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
         default:
             nil
         }

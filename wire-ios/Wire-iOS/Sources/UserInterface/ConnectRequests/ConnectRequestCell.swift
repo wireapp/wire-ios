@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,37 +26,33 @@ final class ConnectRequestCell: UITableViewCell {
 
     private var connectRequestViewController: IncomingConnectionViewController?
 
-    var user: UserType! {
-        didSet {
-            guard let user else { return }
+    func configure(user: UserType, userSession: UserSession) {
+        connectRequestViewController?.view.removeFromSuperview()
 
-            connectRequestViewController?.view.removeFromSuperview()
+        let incomingConnectionViewController = IncomingConnectionViewController(
+            userSession: userSession,
+            user: user
+        )
 
-            let incomingConnectionViewController = IncomingConnectionViewController(
-                userSession: ZMUserSession.shared(),
-                user: user
-            )
-
-            incomingConnectionViewController.onAction = { [weak self] action in
-                switch action {
-                case .accept:
-                    self?.acceptBlock?()
-                case .ignore:
-                    self?.ignoreBlock?()
-                }
+        incomingConnectionViewController.onAction = { [weak self] action in
+            switch action {
+            case .accept:
+                self?.acceptBlock?()
+            case .ignore:
+                self?.ignoreBlock?()
             }
-
-            let view = incomingConnectionViewController.view!
-
-            contentView.addSubview(view)
-
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-            view.fitIn(view: contentView)
-            view.widthAnchor.constraint(lessThanOrEqualToConstant: 420).isActive = true
-
-            connectRequestViewController = incomingConnectionViewController
         }
+
+        let view = incomingConnectionViewController.view!
+
+        contentView.addSubview(view)
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        view.fitIn(view: contentView)
+        view.widthAnchor.constraint(lessThanOrEqualToConstant: 420).isActive = true
+
+        connectRequestViewController = incomingConnectionViewController
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

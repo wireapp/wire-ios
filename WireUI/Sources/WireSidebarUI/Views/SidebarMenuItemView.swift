@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct SidebarMenuItemView<TitleView: View>: View {
 
@@ -27,18 +28,15 @@ struct SidebarMenuItemView<TitleView: View>: View {
     // MARK: - Properties
 
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     @Environment(\.sidebarMenuItemTitleForegroundColor) private var titleForegroundColor
     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
     @Environment(\.sidebarMenuItemIsSelectedTitleForegroundColor) private var isSelectedTitleForegroundColor
 
-    private var accentColor: UIColor {
-        wireAccentColorMapping?.uiColor(for: wireAccentColor) ?? .systemGray
-    }
-
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
+    /// The `systemName` of the highlighted icon if set, otherwise `icon` will be appended with ".fill".
+    private(set) var iconHighlighted: String?
     private(set) var iconSize: CGSize?
 
     /// If `true` an icon will be shown at the trailing side of the title.
@@ -61,9 +59,8 @@ struct SidebarMenuItemView<TitleView: View>: View {
                     title()
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
-                    let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
-                    let icon = Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
+                    let icon = Image(systemName: iconSystemName())
+                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(wireAccentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -84,11 +81,21 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
-            .background(Color(isHighlighted ? accentColor : .clear))
+            .background(isHighlighted ? Color(wireAccentColor) : .clear)
             .cornerRadius(backgroundCornerRadius)
             .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+    }
+
+    private func iconSystemName() -> String {
+        if !isHighlighted {
+            icon
+        } else if let iconHighlighted {
+            iconHighlighted
+        } else {
+            icon + ".fill"
+        }
     }
 }
 
