@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable {
 
@@ -26,14 +26,14 @@ struct StorableConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable
     private let timestamp: Date
     private let newTimer: Int64?
 
-    init(_ value: WireAPI.ConversationMessageTimerUpdateEvent) {
+    init(_ value: WireNetwork.ConversationMessageTimerUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
         self.newTimer = value.newTimer
     }
 
-    func toAPIModel() -> WireAPI.ConversationMessageTimerUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationMessageTimerUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

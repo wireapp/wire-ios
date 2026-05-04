@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
 /// The context that caused the user to not have a complete history.
@@ -38,7 +39,12 @@ indirect enum AuthenticationFlowStep: Equatable {
     case wireAuthenticationModule
     // Legacy authentication flow
     case landingScreen
-    case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
+    case reauthenticate(
+        credentials: LoginCredentials?,
+        environment: BackendEnvironment2?,
+        numberOfAccounts: Int,
+        isSignedOut: Bool
+    )
 
     // Sign-In
     case provideCredentials(AuthenticationPrefilledCredentials?)
@@ -114,7 +120,7 @@ indirect enum AuthenticationFlowStep: Equatable {
 extension AuthenticationFlowStep: CustomStringConvertible {
 
     // Don't include any of the associated values as they may be
-    // sensitve and it's know everywhere we log steps.
+    // sensitive and it's know everywhere we log steps.
 
     var description: String {
         switch self {

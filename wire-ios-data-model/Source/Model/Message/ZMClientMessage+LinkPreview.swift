@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLinkPreview
 
 public extension ZMClientMessage {
@@ -228,12 +229,12 @@ extension ZMClientMessage: ZMImageOwner {
             return
         }
 
-        let imageMetaData = WireProtos.Asset.ImageMetaData(
+        let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData(
             width: Int32(properties?.size.width ?? 0),
             height: Int32(properties?.size.height ?? 0)
         )
 
-        let original = WireProtos.Asset.Original(
+        let original = GenericMessageProtocol.Asset.Original(
             withSize: UInt64(imageData.count),
             mimeType: properties?.mimeType ?? "",
             name: nil,
@@ -249,7 +250,7 @@ extension ZMClientMessage: ZMImageOwner {
         if let genericMessage = underlyingMessage, let textMessageData {
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
-                $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
+                $0.mentions = textMessageData.mentions.compactMap { GenericMessageProtocol.Mention.createMention($0) }
                 $0.linkPreview = [linkPreview]
             }
 

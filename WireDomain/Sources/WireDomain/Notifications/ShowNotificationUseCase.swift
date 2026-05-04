@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,14 +64,14 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
                     WireLogger.calling.info(
                         "Detected a call event",
-                        attributes: .newNSE
+                        attributes: .newNSE, .safePublic
                     )
 
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
-                        "failed to wake up main app: \(error.localizedDescription)",
-                        attributes: .newNSE
+                        "failed to wake up main app: \(String(describing: error))",
+                        attributes: .newNSE, .safePublic
                     )
                 }
             }
@@ -102,7 +102,7 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
         WireLogger.notifications.info(
             "Showing notification to the user",
-            attributes: .newNSE
+            attributes: .newNSE, .safePublic
         )
 
         // Displays the notification to the user

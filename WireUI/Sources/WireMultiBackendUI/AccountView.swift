@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,12 @@ struct AccountView: View {
     let account: AccountUIModel
 
     var body: some View {
+        let details = [
+            account.handle.map { "@\($0)" },
+            account.teamName,
+            account.backendName
+        ].compactMap(\.self)
+
         HStack {
             HStack(spacing: 22) {
 
@@ -33,23 +39,17 @@ struct AccountView: View {
                     source: account.avatarSource,
                     availability: nil,
                     showNotificationsBadge: false
-                ).frame(width: 28, height: 28)
+                )
+                .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
-                        .font(Font.textStyle(.body2))
+                        .font(for: .body2)
                         .bold()
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
-                    DotSeparatedTextView(
-                        items: [
-                            account.handle,
-                            account.teamName,
-                            account.backendName
-                        ].compactMap(\.self)
-                    )
-
+                    DotSeparatedTextView(items: details)
                 }
                 .padding(.vertical, 4)
             }
@@ -61,6 +61,10 @@ struct AccountView: View {
                 .scaledToFill()
                 .frame(width: 16, height: 16)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(([account.name] + details).joined(separator: ","))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(L10n.Accessibility.Account.hint)
         .contentShape(Rectangle())
         .onTapGesture {
             account.action()
@@ -73,14 +77,16 @@ private struct DotSeparatedTextView: View {
     let items: [String]
 
     var body: some View {
-        let combinedText = items.joined(separator: " • ")
+        let combinedText = items
+            .joined(separator: " • ")
         Text(combinedText)
             .lineLimit(nil)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
-            .font(Font.textStyle(.subline1))
+            .font(for: .subline1)
             .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
     }
+
 }
 
 #Preview {
@@ -89,7 +95,7 @@ private struct DotSeparatedTextView: View {
             account: AccountUIModel(
                 avatarSource: .image(.close),
                 name: "Deniz Agha",
-                handle: "@username",
+                handle: "username",
                 teamName: "team name",
                 backendName: "backend ",
                 action: {}
@@ -99,12 +105,11 @@ private struct DotSeparatedTextView: View {
             account: AccountUIModel(
                 avatarSource: .text("DS"),
                 name: "Deniz Agha",
-                handle: "@username",
+                handle: "username",
                 teamName: "team name",
                 backendName: "backend name long long long long long ",
                 action: {}
             )
         )
-
     }
 }

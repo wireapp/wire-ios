@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireLogging
+import WireNetwork
 
 /// An extension that encapsulates storage operations related to conversation group (user, role, members).
 
@@ -26,10 +27,10 @@ extension ConversationLocalStore {
     // MARK: - User & Role
 
     func fetchUserAndRole(
-        from conversationMember: Conversation.Members.Member,
+        from conversationMember: Conversation.Members.Member?,
         for localConversation: ZMConversation
     ) -> (user: ZMUser, role: Role?)? {
-        guard let userID = conversationMember.id ?? conversationMember.qualifiedID?.uuid else {
+        guard let conversationMember, let userID = conversationMember.id ?? conversationMember.qualifiedID?.uuid else {
             return nil
         }
 
@@ -95,11 +96,20 @@ extension ConversationLocalStore {
     func linkOneOnOneUserIfNeeded(
         for localConversation: ZMConversation
     ) {
-        guard
-            localConversation.conversationType == .oneOnOne,
-            let otherUser = localConversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+
+        guard localConversation.conversationType == .oneOnOne else {
+            return
+        }
+
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            localConversation.isForcedReadOnly = true
+            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                localConversation.mlsStatus = .invalid
+            }
+            return
+        }
+
+        guard otherUser.oneOnOneConversation == nil else {
             return
         }
 

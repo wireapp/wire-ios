@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ public struct InitialSync: InitialSyncProtocol {
     private let oneOnOneResolver: any OneOnOneResolverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
 
-    private let logger = WireLogger(tag: "initial-sync")
+    private let logger = WireLogger.sync
 
     public init(
         pullLastUpdateEventIDSync: any PullLastUpdateEventIDSyncProtocol,
@@ -47,7 +47,7 @@ public struct InitialSync: InitialSyncProtocol {
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
         try await logger.measureTime(
             label: "new initial sync",
-            attributes: .syncAttributes(initialSync: true)
+            attributes: .initialSync
         ) {
             if !skipPullingLastUpdateEventID {
                 try await pullLastUpdateEventID()
@@ -63,7 +63,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.pullLastEventID))
@@ -90,7 +90,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.pushSupportedProtocols))
@@ -106,7 +106,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.resolveOneOnOneConversations))

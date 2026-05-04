@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import WireUtilities
 // sourcery: AutoMockable
 protocol TrackingInterface {
 
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool
     var isAnalyticsTrackingEnabled: Bool { get }
     func requestAnalyticsConsent() async throws -> Bool
     func disableAnalytics() throws
@@ -149,7 +150,8 @@ final class SettingsPropertyFactory {
         case .handle:
             return getOnlyProperty(
                 propertyName: propertyName,
-                value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled)
+                value: selfUser?
+                    .handleDisplayString(withDomain: userSession?.resolvedBackendMetadata.isFederationEnabled ?? false)
             )
 
         case .team:

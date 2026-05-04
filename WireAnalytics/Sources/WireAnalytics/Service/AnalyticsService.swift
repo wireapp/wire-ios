@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,8 +74,13 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly != nil
     }
 
+    public var currentDeviceID: String? {
+        countly?.deviceID()
+    }
+
     /// Start sending analytics data.
 
+    @MainActor
     public func enableTracking() {
 
         logger.debug("enabling tracking")
@@ -158,9 +163,9 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ) throws {
         guard let countly else { return }
 
-        if let id = user?.analyticsIdentifier {
+        if let id = user?.trackingID {
             countly.changeDeviceID(
-                id,
+                id.uuidString.lowercased(),
                 mergeData: mergeData
             )
         }

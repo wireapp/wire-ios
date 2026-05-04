@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,4 +77,13 @@ public extension StoredUpdateEventEnvelope {
         return request
     }
 
+    static func fetchRequest(sortIndices: [Int64]) -> NSFetchRequest<StoredUpdateEventEnvelope> {
+        let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
+        request.predicate = NSPredicate(
+            format: "%K IN %@",
+            #keyPath(StoredUpdateEventEnvelope.sortIndex),
+            sortIndices
+        )
+        return request
+    }
 }

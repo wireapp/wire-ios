@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,27 +20,31 @@ import Combine
 import SwiftUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 
 @MainActor
 package class AccountSwitcherModalViewModel: ObservableObject {
 
-    @Published var otherAccounts: [AccountUIModel]
+    @Published var accounts: [AccountUIModel]
 
     private let router: any Router
     private var cancellables = Set<AnyCancellable>()
+    private let defaultEnvironment: BackendEnvironment2
 
     package init(
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        router: any Router
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        router: any Router,
+        defaultEnvironment: BackendEnvironment2
     ) {
-        self.otherAccounts = otherAccountsPublisher.value
+        self.accounts = accountsPublisher.value
         self.router = router
-        otherAccountsPublisher.publisher.sink { [weak self] accounts in
-            self?.otherAccounts = accounts
+        self.defaultEnvironment = defaultEnvironment
+        accountsPublisher.sink { [weak self] accounts in
+            self?.accounts = accounts
         }.store(in: &cancellables)
     }
 
     func onCloseButtonTapped() {
-        router.pop()
+        router.presentSheet(.authFlow(environment: defaultEnvironment))
     }
 }

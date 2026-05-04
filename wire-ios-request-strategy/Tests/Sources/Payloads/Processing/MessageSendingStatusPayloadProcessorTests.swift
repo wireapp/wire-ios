@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,20 +112,20 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async {
+    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async throws {
         // given
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
+        var userClient: UserClient!
 
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
-            let userClient = UserClient.fetchUserClient(
+            userClient = UserClient.fetchUserClient(
                 withRemoteId: clientID,
                 forUser: self.otherUser,
                 createIfNeeded: true
             )!
-            self.establishSessionFromSelf(to: userClient)
             let missing: Payload.ClientListByQualifiedUserID =
                 [
                     self.domain:
@@ -140,6 +140,8 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
                 failedToConfirm: [:]
             )
         }
+
+        try await proteusClientSimulator.establishSessionFromSelf(to: userClient)
 
         // when
         await sut.updateClientsChanges(

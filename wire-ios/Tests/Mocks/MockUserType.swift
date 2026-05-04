@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 import WireDataModel
 import WireFoundation
 
@@ -68,6 +69,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canModifyNotificationSettingsInConversation = false
     var canModifyGuestsAccessControlSettings = false
     var canModifyChannelAccessLevelSettings = false
+    var canModifyChannelHistorySettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
     var isPendingMetadataRefresh = false
@@ -125,10 +127,13 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var isSelfUser: Bool = false
 
-    var mockedIsServiceUser: Bool = false
-    var isServiceUser: Bool {
-        mockedIsServiceUser
-    }
+    var mockedIsApp = false
+    var isApp: Bool { mockedIsApp }
+
+    var mockedIsBot = false
+    var isBot: Bool { mockedIsBot }
+
+    var isAppOrBot: Bool { isApp || isBot }
 
     var isVerified: Bool = false
 
@@ -202,6 +207,17 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var canManageTeam: Bool = false
 
+    // MARK: - App specific
+
+    var appInfo: AppInfo?
+
+    // MARK: - Bot specific
+
+    var providerIdentifier: String?
+    var serviceIdentifier: String?
+
+    // MARK: - Methods
+
     func canLeave(_ conversation: ZMConversation) -> Bool {
         canLeaveConversation
     }
@@ -266,6 +282,10 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
         canModifyChannelAccessLevelSettings
+    }
+
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool {
+        canModifyChannelHistorySettings
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {

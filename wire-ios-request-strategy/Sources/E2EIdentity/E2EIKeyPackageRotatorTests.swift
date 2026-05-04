@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
 
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var sut: E2EIKeyPackageRotator!
 
     override func setUp() {
@@ -35,14 +35,14 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
 
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        mockFeatureRepository = .init()
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockLegacyFeatureRepository = .init()
 
         sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
             context: syncMOC,
             onNewCRLsDistributionPointsSubject: .init(),
-            featureRepository: mockFeatureRepository
+            featureRepository: mockLegacyFeatureRepository
         )
     }
 

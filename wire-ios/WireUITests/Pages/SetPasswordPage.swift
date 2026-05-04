@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,40 +16,51 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetPasswordPage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = passwordField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Registration page not loaded - can't find next button")
-    }
-
-    var acceptButton: XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
-    }
-
-    var passwordNextButton: XCUIElement {
-        let elementsQuery = passwordField.buttons.matching(identifier: "RevealButton")
-        return elementsQuery.firstMatch
+    override var pageMainElement: XCUIElement {
+        passwordField
     }
 
     var passwordField: XCUIElement {
-        let elementsQuery = app.otherElements.secureTextFields.matching(identifier: "PasswordField")
-        return elementsQuery.firstMatch
+        app.secureTextFields[Locators.SetPasswordPage.passwordInputField.rawValue]
     }
 
-    func setPassword(_ password: String) -> SetPasswordPage {
+    var backupNowButton: XCUIElement {
+        app.descendants(matching: .button)[Locators.SetPasswordPage.backUpNowButton.rawValue]
+    }
+
+    var continueButton: XCUIElement {
+        app.buttons[Locators.SetPasswordPage.continueButton.rawValue]
+    }
+
+    var historyRestoredAlert: XCUIElement {
+        app.alerts[Locators.SetPasswordPage.historyRestoredAlert.rawValue]
+    }
+
+    var OKButtonOnAlert: XCUIElement {
+        app.buttons[Locators.SetPasswordPage.ok.rawValue]
+    }
+
+    func enterBackupPasswordAndBackup(_ password: String) throws -> CreatingBackupPage {
         passwordField.tap()
         passwordField.typeText(password)
-        passwordNextButton.tap()
+        backupNowButton.tap()
+        return try CreatingBackupPage()
+    }
+
+    func enterBackupPasswordAndRestore(_ password: String) throws -> SetPasswordPage {
+        passwordField.tap()
+        passwordField.typeText(password)
+        continueButton.tap()
         return self
     }
 
-    func acceptPopup() -> SetUsernamePage {
-        let button = app.otherElements.buttons.firstMatch
-        button.tap()
-        return SetUsernamePage()
+    func acceptHistoryrestoredAlert() throws -> BackupOrRestorePage {
+        OKButtonOnAlert.tap()
+        return try BackupOrRestorePage()
     }
 }

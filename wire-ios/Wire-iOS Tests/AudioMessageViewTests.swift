@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,9 @@ final class AudioMessageViewTests: XCTestCase {
         coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: UUID()),
             applicationContainer: URL.documentsDirectory,
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 

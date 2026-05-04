@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ extension ZMConversation: ObjectInSnapshot {
             ZMConversation.mlsVerificationStatusKey,
             #keyPath(ZMConversation.isDeletedRemotely),
             ZMConversation.messageProtocolKey,
-            #keyPath(ZMConversation.oneOnOneUser)
+            #keyPath(ZMConversation.oneOnOneUser),
+            #keyPath(ZMConversation.draftMessageData)
         ]
     }
 
@@ -151,7 +152,7 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
             changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
-    public var allowServicesChanged: Bool {
+    public var allowAppsChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
@@ -186,6 +187,10 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
 
     public var oneOnOneUserChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.oneOnOneUser))
+    }
+
+    public var draftMessageChanged: Bool {
+        changedKeysContain(keys: #keyPath(ZMConversation.draftMessageData))
     }
 
     public var conversation: ZMConversation {

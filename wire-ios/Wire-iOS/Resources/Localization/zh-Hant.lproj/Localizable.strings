@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "不了，謝謝";
 "general.failure" = "出了點問題";
 "general.failure.try_again" = "請再試一次。";
-"general.service" = "服務";
 "general.off" = "關閉";
 "general.on" = "開啟";
 "general.loading" = "載入中...";
@@ -61,6 +60,10 @@
 "peoplepicker.header.directory" = "加為連絡人";
 "peoplepicker.header.federation" = "連接其他網域";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Select Participants";
 "peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "略過";
@@ -68,12 +71,12 @@
 "peoplepicker.group.create" = "建立";
 
 "peoplepicker.header.people" = "聯絡人";
-"peoplepicker.header.services" = "服務";
-"peoplepicker.services.open_conversation.item" = "開啟對話";
-"peoplepicker.services.add_service.button" = "新增服務";
-"peoplepicker.services.add_service.error.title" = "無法加入服務";
-"peoplepicker.services.add_service.error.default" = "服務暫時無法使用";
-"peoplepicker.services.add_service.error.full" = "對話人數已達上限";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "開啟對話";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "沒有連絡人。";
 
@@ -82,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "發送邀請";
 "peoplepicker.no_matching_results.action.share_contacts" = "分享通訊錄";
 "peoplepicker.no_matching_results.action.learn_more" = "瞭解詳情";
-"peoplepicker.no_matching_results.action.manage_services" = "管理服務";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "依照使用者名稱或@別名在Wire尋找";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "依照使用者名稱或@別名在Wire尋找\n依照使用者名稱或@別名@網域在其它網域尋找";
 "peoplepicker.no_matching_results.message.users_all_added" = "大家都已加入";
-"peoplepicker.no_matching_results.message.services" = "沒有結果。";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "服務可改善你的工作流程。";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "服務可改善你的工作流程。如要啟用它們，請詢問您的管理員。";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_apps_added.title" = "Your team hasn’t added apps yet";
+"peoplepicker.no_apps_added.ask_admin_message" = "Apps are helpers that can improve your workflow. To use them, ask your team admin.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.";
+"peoplepicker.app_details.created_by" = "Created by %@";
+"peoplepicker.app_details.description" = "Description";
 
 "peoplepicker.send_invitation.dialog.title" = "已送出邀請";
 "peoplepicker.send_invitation.dialog.message" = "連結兩週內有效。如逾期請重新發送。";
@@ -97,11 +105,11 @@
 
 "peoplepicker.invite_team_members" = "邀請其他人加入團隊";
 "peoplepicker.quick-action.open-conversation" = "開啟";
-"peoplepicker.quick-action.admin-services" = "管理服務";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
 
-"add_participants.alert.title" = "對話人數已達上限";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -132,6 +140,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
+"conversation_list.search_bar.mentionsPlaceholder" = "Search conversations with mentions";
+"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
+"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -144,6 +156,10 @@
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "移除";
+"conversation_list.filter.unread.title" = "Unread";
+"conversation_list.filter.mentions.title" = "Mentions";
+"conversation_list.filter.replies.title" = "Replies";
+"conversation_list.filter.drafts.title" = "Drafts";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "加入";
@@ -169,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.mentions.title" = "No mentions";
+"conversation_list.empty_state.replies.title" = "No replies";
+"conversation_list.empty_state.drafts.title" = "No drafts";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在聯絡人中";
@@ -316,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "在聯絡人中";
 "conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "瞭解詳情";
 
 "conversation.input_bar.shortcut.send" = "發送訊息";
 "conversation.input_bar.shortcut.newline" = "換行";
@@ -335,8 +364,10 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "允許訪客";
 "conversation.create.guests.subtitle" = "開放這個對話與團隊以外的訪客。";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
 "conversation.create.mls.title" = "Protocol";
@@ -352,6 +383,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "瞭解詳情";
 
 "conversation.input_bar.ongoing_call_alert.title" = "通話中";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通話時不能錄製語音訊息。";
@@ -361,16 +395,25 @@
 "conversation.alert.message_deleted" = "此訊息已刪除。";
 
 // Conversation banner
-"conversation.banner.guests" = "訪客";
-"conversation.banner.services" = "服務";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = "和";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "搜索";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "圖片";
@@ -455,9 +498,12 @@
 "content.system.other_removed_you" = "%@移除了您";
 "content.system.you_removed_other" = "您移除了%@";
 
-"content.system.services.warning" = "服務可以存取這個對話內容";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -574,6 +620,8 @@
 "content.system.message_timer_off" = "%@關閉了訊息時限";
 "content.system.message_timer_off-you" = "%@關閉了訊息時限";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
+
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
@@ -586,6 +634,8 @@
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
 
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@為大家打開了讀取回條";
@@ -595,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@為大家關閉了讀取回條";
 
 "content.system.message_read_receipt_on_add_to_group" = "傳送讀取已啓用";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
+"content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
 
@@ -616,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
-"content.system.cannot_decrypt.reset_session" = "修正將來的信息";
 "content.system.cannot_decrypt.error_details" = "(Fixed error: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.";
@@ -629,6 +685,10 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "無法顯示此消息。可能因為您使用舊版本的Wire。";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "正在上傳...";
 "content.file.downloading" = "正在下載...";
@@ -685,6 +745,15 @@
 "content.reactions_list.likers" = "讚好";
 
 "content.file.too_big" = "您可以發送最大%@的檔案。";
+
+"content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "取消";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -857,7 +926,7 @@
 "participants.title" = "詳細資訊";
 "participants.all.title" = "聯絡人";
 "participants.section.participants" = "參與者(%d)";
-"participants.section.services" = "服務 (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "選項";
 "participants.footer.add_title" = "加入參與者";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -983,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "您已停用讀取回條";
 "profile.read_receipts_memo.body" = "如果雙方都打開讀取回條，則可以查看何時讀取信息。您可以在帳戶設置中更改此選項。";
 
-"profile.group_admin_status_memo.body" = "開啓該選項後，管理員可以添加或移除用戶或服務，更新群組設定，變更參與者角色。";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "資訊";
 
@@ -1025,21 +1094,26 @@
 "device.type.unknown" = "未知";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "訪客";
 "group_details.guest_options_cell.enabled" = "開啟";
 "group_details.guest_options_cell.disabled" = "關閉";
-"group_details.services_options_cell.title" = "服務";
-"group_details.services_options_cell.enabled" = "開啟";
-"group_details.services_options_cell.disabled" = "關閉";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "開啟";
+"group_details.apps_options_cell.disabled" = "關閉";
 "group_details.timeout_options_cell.title" = "自動刪除訊息";
 "group_details.notification_options_cell.title" = "通知";
 "group_details.notification_options_cell.description" = "您可以收到有關所有內容 (包括音訊和視頻通話) 的通知, 或者僅當有人提及您或回復您的訊息時才會收到通知。";
 "group_details.receipt_options_cell.title" = "讀取回條";
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.subtitle" = "開啟";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1123,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "建立團隊";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "管理團隊";
-"self.settings.add_team_or_account.title" = "新增帳號";
 "self.settings.add_account.title" = "新增帳號";
 
 "self.settings.add_account.error.title" = "已啓動三個賬號";
@@ -1199,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "登出";
 "self.settings.account_details.log_out.alert.message" = "在此設備上，您信息歷史記錄將被刪除。";
 "self.settings.account_details.log_out.alert.password" = "密碼";
+"self.settings.account_details.log_out.erase_data.alert.title" = "登出";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "使用資料和崩潰報告";
@@ -1377,7 +1455,6 @@
 
 "self.settings.conversations.title" = "歷史";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "錯誤";
 "self.settings.history_backup.set_email.title" = "設定電子郵件信箱和密碼。";
 "self.settings.history_backup.set_email.message" = "您需要電子郵件和密碼才能備份您的對話歷史記錄。您可以在「設置」的「帳戶」分頁中設定。";
 
@@ -1486,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "移除";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "移除";
 
 
 // Registration
@@ -1784,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "繼續";
 "databaseloadingfailure.alert.retry" = "Retry";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Server version not supported";
-"backend_not_supported.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · 來自giphy.com";
 "giphy.conversation.random_message" = "來自giphy.com";
@@ -1813,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "搜尋訊息中的文字";
 "collections.search.no_items" = "沒有找到";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
@@ -1870,6 +1947,7 @@
 "url_action.confirm" = "確認";
 "url_action.title" = "確認 URL 動作";
 "url_action.connect_to_bot.message" = "你想要連接到Bot嗎？";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "url_action.switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -2103,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
+"account_blocked.generic_error.alert.title" = "出了點問題";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
+"account_blocked.generic_error.alert.retry" = "Retry";

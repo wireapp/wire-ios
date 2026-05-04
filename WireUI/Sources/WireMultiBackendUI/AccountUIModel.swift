@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public struct AccountUIModel: Identifiable {
 
     let avatarSource: AccountImageSource
     let name: String
-    let handle: String
+    let handle: String?
     let teamName: String?
     let backendName: String?
     let action: () -> Void
@@ -33,7 +33,7 @@ public struct AccountUIModel: Identifiable {
     public init(
         avatarSource: AccountImageSource,
         name: String,
-        handle: String,
+        handle: String?,
         teamName: String?,
         backendName: String?,
         action: @escaping () -> Void

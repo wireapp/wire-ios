@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ struct DeveloperDebugActionsView: View {
         List(viewModel.debugItems) { debugItem in
             switch debugItem {
             case let .button(buttonItem):
-                Button(action: buttonItem.action) {
+                Button(hapticFeedbackStyle: .success, action: buttonItem.action) {
                     Text(buttonItem.title)
                 }
             case let .toggle(toggleItem):
@@ -38,6 +38,9 @@ struct DeveloperDebugActionsView: View {
             }
         }
         .sheet(item: $viewModel.mlsGroupSearchItem, content: mlsGroupSearchView)
+        .sheet(isPresented: $viewModel.isAppVersionInputPresented) {
+            appVersionInputView
+        }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
     }
@@ -83,10 +86,23 @@ struct DeveloperDebugActionsView: View {
             await viewModel.findConversations(with: userInput.trim())
         }
     }
+
+    @ViewBuilder private var appVersionInputView: some View {
+        TextField(
+            "Enter app version, like 1.2.3",
+            text: $userInput
+        )
+        .textFieldStyle(.roundedBorder)
+        .onSubmit {
+            viewModel.setLastCompletedAppVersionMigration(version: userInput)
+        }
+        .padding()
+        .presentationDetents([.height(200)])
+    }
 }
 
 // MARK: - Previews
 
 #Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
+    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(userSession: nil, selfClient: nil))
 }

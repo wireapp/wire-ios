@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,16 +55,15 @@
     return entity;
 }
 
-- (void)fetchObjectsForChangeTrackers
-{
-    NSArray *fetchRequests = [self.changeTrackers mapWithBlock:^id(id tracker) {
+- (void)fetchObjectsForChangeTrackers:(NSArray*)trackers {
+    NSArray *fetchRequests = [trackers mapWithBlock:^id(id tracker) {
         return [tracker fetchRequestForTrackedObjects];
     }];
     
     NSMapTable *entityToRequestMap = [self sortFetchRequestsByEntity:fetchRequests];
     NSMapTable *entityToResultsMap = [self executeMappedFetchRequests:entityToRequestMap];
     
-    for (id <ZMContextChangeTracker> tracker in self.changeTrackers) {
+    for (id <ZMContextChangeTracker> tracker in trackers) {
         NSFetchRequest *request = [tracker fetchRequestForTrackedObjects];
         if (request == nil) {
             continue;
@@ -82,6 +81,20 @@
             [tracker addTrackedObjects:objectsToUpdate];
         }
     }
+}
+
+- (void)fetchObjectsForChangeTrackers
+{
+    [self fetchObjectsForChangeTrackers:self.changeTrackers];
+}
+
+- (void)addChangeTrackers:(NSArray *)changeTrackers
+{
+    [self fetchObjectsForChangeTrackers:changeTrackers];
+    
+    NSMutableArray* allTrackers = changeTrackers.mutableCopy;
+    [allTrackers addObjectsFromArray:changeTrackers];
+    self.changeTrackers = allTrackers;
 }
 
 - (NSMapTable *)sortFetchRequestsByEntity:(NSArray *)fetchRequests;

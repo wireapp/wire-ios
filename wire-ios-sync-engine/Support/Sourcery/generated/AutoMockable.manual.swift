@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,14 @@
 //
 
 public import Foundation
+public import WireDomain
 public import WireFoundation
 
 import WireAnalytics
 
 @testable import WireSyncEngine
+
+public typealias UserType = WireDataModel.UserType
 
 public class MockMessageSenderInterface: MessageSenderInterface {
 
@@ -177,21 +180,21 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
     // MARK: - appendImage
 
-    public var appendImage_Invocations: [(imageData: Data, nonce: UUID)] = []
+    public var appendImage_Invocations: [(image: SendableImage, nonce: UUID)] = []
     public var appendImage_MockError: Error?
-    public var appendImage_MockMethod: ((Data, UUID) throws -> any ZMConversationMessage)?
+    public var appendImage_MockMethod: ((SendableImage, UUID) throws -> any ZMConversationMessage)?
     public var appendImage_MockValue: (any ZMConversationMessage)?
 
     @discardableResult
-    public func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage {
-        appendImage_Invocations.append((imageData: imageData, nonce: nonce))
+    public func appendImage(_ image: SendableImage, nonce: UUID) throws -> any ZMConversationMessage {
+        appendImage_Invocations.append((image: image, nonce: nonce))
 
         if let error = appendImage_MockError {
             throw error
         }
 
         if let mock = appendImage_MockMethod {
-            return try mock(imageData, nonce)
+            return try mock(image, nonce)
         } else if let mock = appendImage_MockValue {
             return mock
         } else {
@@ -249,6 +252,18 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 }
 
 public class MockUserSession: UserSession {
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel.OneOnOneConversationResolution {
+        return .noAction
+    }
+    
+    public var isBuildBlacklisted = false
+    public var resolvedBackendMetadata = BackendMetadataProvider(
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
+    )
+    public var isBackendMLSEnabled: Bool = false
 
     // MARK: - Life cycle
 
@@ -495,6 +510,12 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
+    public var isWireDriveEnabled: Bool = false
+    
+    public var wireDriveBackendURL: URL? = nil
+
+    public var isEnterpriseUser: Bool = false
+    
     // MARK: - mlsGroupVerification
 
     public var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
@@ -592,6 +613,15 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingSearchUsersCache: SearchUsersCache!
+
+    // MARK: - fileAssetCache
+
+    public var fileAssetCache: FileAssetCache {
+        get { return underlyingFileAssetCache }
+        set(value) { underlyingFileAssetCache = value }
+    }
+
+    public var underlyingFileAssetCache: FileAssetCache!
 
     // MARK: - unlockDatabase
 
@@ -1051,7 +1081,7 @@ public class MockUserSession: UserSession {
     public var makeConversationSecureGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
     public var makeConversationSecureGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
         makeConversationSecureGuestLinkUseCase_Invocations.append(())
 
         if let mock = makeConversationSecureGuestLinkUseCase_MockMethod {
@@ -1063,21 +1093,21 @@ public class MockUserSession: UserSession {
         }
     }
 
-    // MARK: - makeSetConversationGuestsAndServicesUseCase
+    // MARK: - makeSetConversationGuestsAndAppsUseCase
 
-    public var makeSetConversationGuestsAndServicesUseCase_Invocations: [Void] = []
-    public var makeSetConversationGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
-    public var makeSetConversationGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
+    public var makeSetConversationGuestsAndAppsUseCase_Invocations: [Void] = []
+    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol?)?
+    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol??
 
-    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        makeSetConversationGuestsAndServicesUseCase_Invocations.append(())
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
+        makeSetConversationGuestsAndAppsUseCase_Invocations.append(())
 
-        if let mock = makeSetConversationGuestsAndServicesUseCase_MockMethod {
+        if let mock = makeSetConversationGuestsAndAppsUseCase_MockMethod {
             return mock()
-        } else if let mock = makeSetConversationGuestsAndServicesUseCase_MockValue {
+        } else if let mock = makeSetConversationGuestsAndAppsUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeSetConversationGuestsAndServicesUseCase`")
+            fatalError("no mock for `makeSetConversationGuestsAndAppsUseCase`")
         }
     }
 
@@ -1096,6 +1126,24 @@ public class MockUserSession: UserSession {
             return mock
         } else {
             fatalError("no mock for `makeAppendTextMessageUseCase`")
+        }
+    }
+
+    // MARK: - makeAppendMultipartMessageUseCase
+
+    public var makeAppendMultipartMessageUseCase_Invocations: [Void] = []
+    public var makeAppendMultipartMessageUseCase_MockMethod: (() -> any AppendMultipartMessageUseCaseProtocol)?
+    public var makeAppendMultipartMessageUseCase_MockValue: (any AppendMultipartMessageUseCaseProtocol)?
+
+    public func makeAppendMultipartMessageUseCase() -> any AppendMultipartMessageUseCaseProtocol {
+        makeAppendMultipartMessageUseCase_Invocations.append(())
+
+        if let mock = makeAppendMultipartMessageUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeAppendMultipartMessageUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAppendMultipartMessageUseCase`")
         }
     }
 
@@ -1138,10 +1186,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeAppendLocationMessageUseCase
 
     public var makeAppendLocationMessageUseCase_Invocations: [Void] = []
-    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessagekUseCaseProtocol)?
-    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessagekUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessageUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessageUseCaseProtocol)?
 
-    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         makeAppendLocationMessageUseCase_Invocations.append(())
 
         if let mock = makeAppendLocationMessageUseCase_MockMethod {
@@ -1246,10 +1294,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSearchUsersUseCase
 
     public var makeSearchUsersUseCase_Invocations: [Void] = []
-    public var makeSearchUsersUseCase_MockMethod: (() -> SearchUsersUseCaseProtocol)?
-    public var makeSearchUsersUseCase_MockValue: SearchUsersUseCaseProtocol?
+    public var makeSearchUsersUseCase_MockMethod: (() -> (any SearchUsersUseCaseProtocol)?)?
+    public var makeSearchUsersUseCase_MockValue: (any SearchUsersUseCaseProtocol)??
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    public func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         makeSearchUsersUseCase_Invocations.append(())
 
         if let mock = makeSearchUsersUseCase_MockMethod {
@@ -1296,4 +1344,8 @@ public class MockUserSession: UserSession {
             fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
         }
     }
+
+    // MARK: - ClientSessionComponent
+
+    public var clientSessionComponent: ClientSessionComponent?
 }

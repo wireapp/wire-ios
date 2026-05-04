@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,10 @@ public enum ConversationListType {
     case groups
     case channels
     case favorites
+    case unread
+    case mentions
+    case replies
+    case drafts
     case folder(_ folder: LabelType)
 }
 
@@ -89,6 +93,14 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return channelConversations.items
         case .favorites:
             return favoriteConversations.items
+        case .unread:
+            return unreadConversations.items
+        case .mentions:
+            return mentionedConversations.items
+        case .replies:
+            return repliedConversations.items
+        case .drafts:
+            return draftConversations.items
         case let .folder(label):
             // swiftlint:disable:next todo_requires_jira_link
             guard let objectID = (label as? Label)?.objectID else { return [] } // TODO: jacob make optional?
@@ -169,6 +181,14 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
             [.unarchived]
         } else if changeInfo.conversationList === directory.favoriteConversations {
             [.favorites]
+        } else if changeInfo.conversationList === directory.unreadConversations {
+            [.unread]
+        } else if changeInfo.conversationList === directory.mentionedConversations {
+            [.mentions]
+        } else if changeInfo.conversationList === directory.repliedConversations {
+            [.replies]
+        } else if changeInfo.conversationList === directory.draftConversations {
+            [.drafts]
         } else if let label = changeInfo.conversationList.label, label.kind == .folder {
             [.folder(label)]
         } else {

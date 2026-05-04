@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
@@ -25,24 +26,8 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
 
     var mockDependencies = MockDependencies()
 
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory {
-        fatalError()
-    }
-
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        fatalError()
-    }
-
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        fatalError()
-    }
-
     var email: String?
-    var backendInfo: BackendInfo
+    var environment: BackendEnvironment2
     var canCreateAccount: Bool
     var didDetectDomainConflict: Bool
 
@@ -51,11 +36,22 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
-            backendInfo: backendInfo,
+            environment: environment,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: {}
+            didDetectDomainConflict: didDetectDomainConflict
         )
+    }
+
+    func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
+        fatalError()
+    }
+
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
+    }
+
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
+        fatalError()
     }
 
     @MainActor

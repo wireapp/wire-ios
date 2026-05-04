@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,15 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 package enum RootViewSheet: Identifiable, Hashable {
 
     public var id: Self { self }
 
-    case authFlow(backendInfo: BackendInfo)
+    case authFlow(environment: BackendEnvironment2)
+    case reauthFlow(email: String)
+    case reauthSSO
+    case accountSwitcher
 
 }

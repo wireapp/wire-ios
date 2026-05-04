@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Combine
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -29,20 +29,19 @@ import WireFoundation
 
 final class RootComponent: BootstrapComponent {
 
-    public let backendInfo: BackendInfo
+    public let environment: BackendEnvironment2
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
     public let privacyPolicyURL: URL
+    public let termsOfUseURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
-    public let existsAnotherAccount: Bool
-    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
-    public let useLegacyRegistrationFlow: Bool
-    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
+    public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -54,49 +53,53 @@ final class RootComponent: BootstrapComponent {
         viewModel
     }
 
+    private let authenticationType: AuthenticationType
+
     init(
-        backendInfo: BackendInfo,
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
-        self.backendInfo = backendInfo
+        self.authenticationType = authenticationType
+        self.environment = environment
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-        self.otherAccountsPublisher = otherAccountsPublisher
-        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
+        self.accountsPublisher = accountsPublisher
+        self.registrationAnalyticsTracker = registrationAnalyticsTracker
     }
 
     // MARK: - Children
 
-    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
+    func determineAuthMethodComponent(environment: BackendEnvironment2) -> DetermineAuthMethodComponent {
         let networkStack = NetworkStack(
-            backendInfo: backendInfo,
+            backendEnvironment: environment,
             minTLSVersion: minTLSVersion,
-            preferredAPIVersion: preferredAPIVersion
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
         )
 
         return DetermineAuthMethodComponent(
             parent: self,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
@@ -111,20 +114,51 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo
+                environment: environment,
+                authenticationType: authenticationType,
+                hasOtherAccountsProvider: { [accountsPublisher] in
+                    !accountsPublisher.value.isEmpty
+                }
             )
         }
     }
 
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
-        determineAuthMethodComponent(backendInfo: backendInfo)
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(environment: environment)
+    }
+
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaEmailComponent(
+            parent: self,
+            email: email,
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaSSOComponent(
+            parent: self,
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
+        )
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        accountSwitcherComponent()
-    }
-
-    func accountSwitcherComponent() -> AccountSwitcherComponent {
         AccountSwitcherComponent(parent: self)
     }
 

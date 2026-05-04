@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMemberUpdateEvent: Equatable, Codable, Sendable {
 
@@ -26,7 +26,7 @@ struct StorableConversationMemberUpdateEvent: Equatable, Codable, Sendable {
     private let timestamp: Date
     private let memberChange: StorableConversationMemberChange
 
-    init(_ value: WireAPI.ConversationMemberUpdateEvent) {
+    init(_ value: WireNetwork.ConversationMemberUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
@@ -40,12 +40,12 @@ struct StorableConversationMemberUpdateEvent: Equatable, Codable, Sendable {
         )
     }
 
-    func toAPIModel() -> WireAPI.ConversationMemberUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationMemberUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
             timestamp: timestamp,
-            memberChange: WireAPI.ConversationMemberChange(
+            memberChange: WireNetwork.ConversationMemberChange(
                 id: memberChange.id.toAPIModel(),
                 newRoleName: memberChange.newRoleName,
                 newMuteStatus: memberChange.newMuteStatus,

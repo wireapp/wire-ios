@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ final class AnalyticsServiceTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.analyticsIdentifier)
+        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID.uuidString.lowercased())
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, false)
 
         // Then the user details were set.
@@ -219,7 +219,7 @@ final class AnalyticsServiceTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.analyticsIdentifier)
+        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID.uuidString.lowercased())
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, true)
 
         // Then the user details were set.
@@ -297,10 +297,10 @@ private enum Scaffolding {
         host: URL(string: "www.example.com")!
     )
 
-    static let user = AnalyticsUser(analyticsIdentifier: "user1")
+    static let user = AnalyticsUser(trackingID: UUID())
 
     static let userWithTeam = AnalyticsUser(
-        analyticsIdentifier: "user2",
+        trackingID: UUID(),
         teamInfo: TeamInfo(
             id: "teamID",
             role: "admin",

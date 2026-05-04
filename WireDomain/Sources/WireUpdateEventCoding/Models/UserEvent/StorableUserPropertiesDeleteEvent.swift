@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserPropertiesDeleteEvent: Equatable, Codable, Sendable {
 
     private let key: String
 
-    init(_ value: WireAPI.UserPropertiesDeleteEvent) {
+    init(_ value: WireNetwork.UserPropertiesDeleteEvent) {
         self.key = value.key
     }
 
-    func toAPIModel() -> WireAPI.UserPropertiesDeleteEvent {
+    func toAPIModel() -> WireNetwork.UserPropertiesDeleteEvent {
         .init(key: key)
     }
 

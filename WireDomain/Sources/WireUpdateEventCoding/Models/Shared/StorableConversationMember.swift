@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMember: Equatable, Codable, Sendable {
 
@@ -34,7 +34,7 @@ struct StorableConversationMember: Equatable, Codable, Sendable {
     private let mutedStatus: Int?
     private let mutedReference: Date?
 
-    init(_ value: WireAPI.Conversation.Member) {
+    init(_ value: WireNetwork.Conversation.Member) {
         self.qualifiedID = value.qualifiedID.map { StorableQualifiedID($0) }
         self.id = value.id
         self.qualifiedTarget = value.qualifiedTarget.map { StorableQualifiedID($0) }
@@ -49,14 +49,14 @@ struct StorableConversationMember: Equatable, Codable, Sendable {
         self.mutedReference = value.mutedReference
     }
 
-    func toAPIModel() -> WireAPI.Conversation.Member {
+    func toAPIModel() -> WireNetwork.Conversation.Member {
         .init(
             qualifiedID: qualifiedID?.toAPIModel(),
             id: id,
             qualifiedTarget: qualifiedTarget?.toAPIModel(),
             target: target,
             conversationRole: conversationRole,
-            service: service.map { WireAPI.Service(id: $0.id, provider: $0.provider) },
+            service: service.map { WireNetwork.Service(id: $0.id, provider: $0.provider) },
             archived: archived,
             archivedReference: archivedReference,
             hidden: hidden,

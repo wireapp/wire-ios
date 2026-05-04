@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let collectionView = ReactionsCollectionView()
     private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
     private let searchBar = UISearchBar()
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
     private let selectedReactions: Set<Emoji.ID>
 
     private var deleting = false
@@ -49,6 +50,11 @@ final class CompleteReactionPickerViewController: UIViewController {
         sectionViewController.sectionDelegate = self
         setupViews()
         createConstraints()
+
+        self.clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
 
         NotificationCenter.default.addObserver(
             self,

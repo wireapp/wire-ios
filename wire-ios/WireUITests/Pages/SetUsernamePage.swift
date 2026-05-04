@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,29 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetUsernamePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = usernameField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Registration page not loaded - can't find next button")
+    override var pageMainElement: XCUIElement {
+        usernameField
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.textFields.matching(identifier: "UsernameField")
-        return elementsQuery.firstMatch
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
     }
 
-    var usernameConfirmButton: XCUIElement {
-        let elementsQuery = usernameField.buttons
-        return elementsQuery.firstMatch
+    var confirmUsernameButton: XCUIElement {
+        app.descendants(matching: .button)[Locators.SetUsernamePage.confirmUsernameButton.rawValue].firstMatch
     }
 
-    func setUsername(_ username: String) -> ConversationsPage {
-        usernameField.tap()
+    func setUsername(_ username: String) throws -> ConversationsPage {
+        XCTAssertTrue(usernameField.waitForExistence(timeout: 3), "Username field not found")
+
+        let predicate = NSPredicate(format: "exists == true AND hittable == true")
+        let element = XCTNSPredicateExpectation(predicate: predicate, object: usernameField)
+        XCTAssertEqual(
+            XCTWaiter().wait(for: [element], timeout: 3),
+            .completed,
+            "Username field not ready due to animation to type"
+        )
+
+        try usernameField.tapIfKeyboardNotFocused()
+        _ = app.keyboards.firstMatch.waitForExistence(timeout: 2)
         usernameField.typeText(username)
-        usernameConfirmButton.tap()
-        return ConversationsPage()
+        confirmUsernameButton.tap()
+        return try ConversationsPage()
     }
 }

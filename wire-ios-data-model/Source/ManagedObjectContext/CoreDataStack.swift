@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireData
 import WireLogging
 import WireSystem
 import WireUtilities
@@ -39,7 +40,7 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-@objc
+@objc(ZMContextProvider)
 public protocol ContextProvider {
 
     var account: Account { get }
@@ -47,8 +48,8 @@ public protocol ContextProvider {
     var viewContext: NSManagedObjectContext { get }
     func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
-    var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -105,14 +106,18 @@ public extension NSURL {
 
 // sourcery: AutoMockable
 public protocol CoreDataStackProtocol: ContextProvider {
+
     var storesExists: Bool { get }
     var needsMigration: Bool { get }
 
-    func loadStores(completionHandler: @escaping (Error?) -> Void)
+    func load() async throws
+
+    func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol)
+
 }
 
-@objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol {
+@objc @objcMembers
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
@@ -120,19 +125,37 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         messagesContainer.viewContext
     }
 
+    private var earMessageEncryptionService: EARMessageEncryptionServiceProtocol?
+
     public func newBackgroundContext() -> NSManagedObjectContext {
         #if DEBUG
-            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+            let context = newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
         #else
-            return messagesContainer.newBackgroundContext()
+            let context = messagesContainer.newBackgroundContext()
         #endif
+
+        // Set the EARMessageEncryptionService on the new background context
+        context.performAndWait {
+            context.earMessageEncryptionService = earMessageEncryptionService
+        }
+
+        return context
     }
 
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    public func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol) {
+        earMessageEncryptionService = service
+    }
 
-    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    private var _syncContext: NSManagedObjectContext!
+    private var _eventContext: NSManagedObjectContext!
 
-    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
+    public var syncContext: NSManagedObjectContext {
+        _syncContext
+    }
+
+    public var eventContext: NSManagedObjectContext {
+        _eventContext
+    }
 
     public let accountContainer: URL
     public let applicationContainer: URL
@@ -148,13 +171,18 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
+
     // MARK: - Initialization
 
     public init(
         account: Account,
         applicationContainer: URL,
         inMemoryStore: Bool = false,
-        dispatchGroup: ZMSDispatchGroup? = nil
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
 
         ExtendedSecureUnarchiveFromData.register()
@@ -162,6 +190,8 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         self.applicationContainer = applicationContainer
         self.account = account
         self.dispatchGroup = dispatchGroup
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
 
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: account.userIdentifier,
@@ -170,8 +200,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         self.accountContainer = accountDirectory
 
-        let eventContainer = PersistentContainer(name: "ZMEventModel")
-        let messagesContainer = PersistentContainer(name: "zmessaging")
+        let eventContainer = PersistentContainer(
+            name: "ZMEventModel",
+            managedObjectModel: CoreDataStack.loadEventsModel()
+        )
+        let messagesContainer = PersistentContainer(
+            name: "zmessaging",
+            managedObjectModel: CoreDataStack.loadMessagingModel()
+        )
 
         let description: NSPersistentStoreDescription
         let eventStoreDescription: NSPersistentStoreDescription
@@ -221,6 +257,8 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         close()
     }
 
+    // MARK: - Close
+
     public func close() {
         guard !hasBeenClosed  else {
             return
@@ -229,9 +267,15 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         defer { hasBeenClosed = true }
 
         viewContext.tearDown()
-        syncContext.tearDown()
-        searchContext.tearDown()
-        eventContext.tearDown()
+
+        // Only tear down contexts if they were initialized
+        if _syncContext != nil {
+            syncContext.tearDown()
+        }
+        if _eventContext != nil {
+            eventContext.tearDown()
+        }
+
         closeStores()
     }
 
@@ -251,167 +295,85 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         }
     }
 
-    public func setup(
-        onStartMigration: () -> Void,
-        onFailure: @escaping (Error) -> Void,
-        onCompletion: @escaping (CoreDataStack) -> Void
-    ) {
-        if needsMigration {
-            onStartMigration()
+    // MARK: - Load
+
+    @MainActor
+    public func load() async throws {
+        if needsMessagingStoreMigration() {
+            try migrateMessagingStore()
         }
-        DispatchQueue.global(qos: .userInitiated).async {
-            if self.needsMessagingStoreMigration() {
-                let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
-                    "[setup] start migration of core data messaging store!",
-                    attributes: .safePublic
-                )
 
-                do {
-                    try self.migrateMessagingStore()
-                    WireLogger.localStorage.info(
-                        "[setup] finished migration of core data messaging store!",
-                        attributes: .safePublic
-                    )
-                } catch {
-                    let logMessage =
-                        "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
-
-                    DispatchQueue.main.async {
-                        onFailure(error)
-                    }
-                    return
-                }
-                if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
-                        "time spent in migration only: \(tp.elapsedTime)",
-                        attributes: .safePublic
-                    )
-                }
-            }
-
-            if self.needsEventStoreMigration() {
-                let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
-                    "[setup] start migration of core data event store!",
-                    attributes: .safePublic
-                )
-
-                do {
-                    try self.migrateEventStore()
-                    WireLogger.localStorage.info(
-                        "[setup] finished migration of core data event store!",
-                        attributes: .safePublic
-                    )
-                } catch {
-                    let logMessage = "[setup] failed migration of core data event store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
-
-                    DispatchQueue.main.async {
-                        onFailure(error)
-                    }
-                    return
-                }
-                if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
-                        "time spent in migration only: \(tp.elapsedTime)",
-                        attributes: .safePublic
-                    )
-                }
-            }
-
-            DispatchQueue.main.async {
-                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
-                self.loadStores { error in
-                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
-                        // flip off the flag in order not to be stuck in failure
-                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
-                        flag.isOn = false
-                        onFailure(CoreDataStackError.simulateDatabaseLoadingFailure)
-                        return
-                    }
-
-                    if let error {
-                        onFailure(error)
-                        return
-                    }
-                    onCompletion(self)
-                }
-            }
+        if needsEventStoreMigration() {
+            try migrateEventStore()
         }
+
+        try await loadMessagesStore()
+        try await loadEventStore()
     }
 
-    public func loadStores(completionHandler: @escaping (Error?) -> Void) {
-
-        let dispatchGroup = DispatchGroup()
-        var loadingStoreError: Error?
-
-        dispatchGroup.enter()
-        loadMessagesStore { error in
-            if let error {
-                WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
-            }
-            loadingStoreError = loadingStoreError ?? error
-            dispatchGroup.leave()
-        }
-
-        dispatchGroup.enter()
-        loadEventStore { error in
-            if let error {
-                WireLogger.localStorage.error("failed to load event store: \(error)")
-            }
-            loadingStoreError = loadingStoreError ?? error
-            dispatchGroup.leave()
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            completionHandler(loadingStoreError)
-        }
-    }
-
-    func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
+    func loadMessagesStore() async throws {
         do {
+            WireLogger.localStorage.info(
+                "loading message store",
+                attributes: .safePublic
+            )
+
             try createStoreDirectory(for: messagesContainer)
-        } catch {
-            completionHandler(error)
-            return
-        }
-
-        messagesContainer.loadPersistentStores { _, error in
-
-            guard error == nil else {
-                completionHandler(error)
-                return
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                messagesContainer.loadPersistentStores { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
             }
 
-            self.configureContextReferences()
-            self.configureViewContext(self.viewContext)
-            self.configureSyncContext(self.syncContext)
-            self.configureSearchContext(self.searchContext)
+            // Initialize syncContext before configuration
+            _syncContext = messagesContainer.newBackgroundContext()
 
-            completionHandler(nil)
+            await configureViewContext(viewContext)
+            await configureSyncContext(_syncContext)
+            await configureContextReferences()
+
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to load message store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
         }
     }
 
-    func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
+    func loadEventStore() async throws {
         do {
+            WireLogger.localStorage.info(
+                "loading event store",
+                attributes: .safePublic
+            )
+
             try createStoreDirectory(for: eventsContainer)
-        } catch {
-            completionHandler(error)
-            return
-        }
-
-        eventsContainer.loadPersistentStores { _, error in
-
-            guard error == nil else {
-                completionHandler(error)
-                return
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                eventsContainer.loadPersistentStores { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
             }
 
-            self.configureEventContext(self.eventContext)
+            // Initialize eventContext before configuration
+            _eventContext = eventsContainer.newBackgroundContext()
 
-            completionHandler(nil)
+            await configureEventContext(_eventContext)
+
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to load event store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
         }
     }
 
@@ -436,79 +398,54 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
     // MARK: - Configure Contexts
 
-    func configureViewContext(_ context: NSManagedObjectContext) {
+    func configureViewContext(_ context: NSManagedObjectContext) async {
         context.markAsUIContext()
-        context.createDispatchGroups()
-        dispatchGroup.map(context.addGroup(_:))
-        context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
-        ZMUser.selfUser(in: context)
-        Label.fetchOrCreateFavoriteLabel(in: context, create: true)
-    }
-
-    func configureContextReferences() {
-        viewContext.performAndWait {
-            viewContext.zm_sync = syncContext
-        }
-        syncContext.performAndWait {
-            syncContext.zm_userInterface = viewContext
-        }
-    }
-
-    func configureSyncContext(_ context: NSManagedObjectContext) {
-        context.markAsSyncContext()
-        context.performAndWait {
+        await context.perform {
+            context.localDomain = self.localDomain
+            context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            self.dispatchGroup.map(context.addGroup(_:))
+            context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
+            ZMUser.selfUser(in: context)
+            Label.fetchOrCreateFavoriteLabel(in: context, create: true)
+        }
+    }
+
+    func configureContextReferences() async {
+        await viewContext.perform {
+            self.viewContext.zm_sync = self.syncContext
+        }
+        await syncContext.perform {
+            self.syncContext.zm_userInterface = self.viewContext
+        }
+    }
+
+    func configureSyncContext(_ context: NSManagedObjectContext) async {
+        await context.perform {
+            // Mark as sync context directly (already on context's queue)
+            context.markAsSyncContext()
+
+            context.localDomain = self.localDomain
+            context.isFederationEnabled = self.isFederationEnabled
+            context.createDispatchGroups()
+            self.dispatchGroup.map(context.addGroup(_:))
             context.setupLocalCachedSessionAndSelfUser()
 
-            context.accountDirectoryURL = accountContainer
-            context.applicationContainerURL = applicationContainer
-
-            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-                context.setupUserKeyStore(
-                    accountDirectory: accountContainer,
-                    applicationContainer: applicationContainer
-                )
-            }
+            context.accountDirectoryURL = self.accountContainer
+            context.applicationContainerURL = self.applicationContainer
 
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
-            FeatureRepository(context: context).createDefaultConfigsIfNeeded()
-        }
-
-        // this will be done async, not to block the UI thread, but
-        // enqueued on the syncMOC anyway, so it will execute before
-        // any other block of code has a chance to use it
-        context.performGroupedBlock {
-            context.applyPersistedDataPatchesForCurrentVersion()
+            LegacyFeatureRepository(context: context).createDefaultConfigsIfNeeded()
         }
     }
 
-    func configureSearchContext(_ context: NSManagedObjectContext) {
-        context.markAsSearch()
-        context.performAndWait {
+    func configureEventContext(_ context: NSManagedObjectContext) async {
+        await context.perform {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
-            context.setupLocalCachedSessionAndSelfUser()
-            context.undoManager = nil
-            context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
-
+            self.dispatchGroup.map(context.addGroup(_:))
         }
-    }
-
-    func configureEventContext(_ context: NSManagedObjectContext) {
-        context.performAndWait {
-            context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
-        }
-    }
-
-    public func linkContexts() {
-        syncContext.performGroupedAndWait {
-            self.syncContext.zm_userInterface = self.viewContext
-        }
-        viewContext.zm_sync = syncContext
     }
 
     // MARK: - Static Helpers
@@ -520,7 +457,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadMessagingModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL
@@ -533,7 +470,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadEventsModel() -> NSManagedObjectModel {
-        let modelBundle = WireDataModelBundle.bundle
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL
@@ -548,33 +485,81 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     // MARK: - Migration
 
     public func needsMessagingStoreMigration() -> Bool {
-        guard let storeURL = messagesContainer.storeURL else {
-            return false
-        }
+        guard let storeURL = messagesContainer.storeURL else { return false }
         return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateMessagingStore() throws {
+        WireLogger.localStorage.info(
+            "migrating messaging store",
+            attributes: .safePublic
+        )
+
+        let startDate = Date()
+
         guard let storeURL = messagesContainer.storeURL else {
+            WireLogger.localStorage.critical(
+                "failed to migrate messaging store: missing store URL",
+                attributes: .safePublic
+            )
             throw CoreDataMigratorError.missingStoreURL
         }
 
-        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+        do {
+            try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+            let duration = (startDate ..< .now).formatted(
+                Date.ComponentsFormatStyle(style: .narrow)
+            )
+            WireLogger.localStorage.info(
+                "message store migration completed in \(duration)",
+                attributes: .safePublic
+            )
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to migrate messaging store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
+        }
     }
 
     public func needsEventStoreMigration() -> Bool {
-        guard let storeURL = eventsContainer.storeURL else {
-            return false
-        }
+        guard let storeURL = eventsContainer.storeURL else { return false }
         return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateEventStore() throws {
+        WireLogger.localStorage.info(
+            "migrating event store",
+            attributes: .safePublic
+        )
+
+        let startDate = Date()
+
         guard let storeURL = eventsContainer.storeURL else {
+            WireLogger.localStorage.critical(
+                "failed to migrate event store: missing store URL",
+                attributes: .safePublic
+            )
             throw CoreDataMigratorError.missingStoreURL
         }
 
-        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+        do {
+            try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+            let duration = (startDate ..< .now).formatted(
+                Date.ComponentsFormatStyle(style: .narrow)
+            )
+            WireLogger.localStorage.info(
+                "event store migration completed in \(duration)",
+                attributes: .safePublic
+            )
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to migrate event store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
+        }
     }
 
 }

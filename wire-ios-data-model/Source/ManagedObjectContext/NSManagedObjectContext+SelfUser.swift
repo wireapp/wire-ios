@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
+import Foundation
 
 extension NSManagedObjectContext {
 
     // This function setup the user info on the context, the session and self user must be initialised before end.
     func setupLocalCachedSessionAndSelfUser() {
-        let request = Session.sortedFetchRequest()
+        let request = ZMSession.sortedFetchRequest()
 
-        guard let session = fetchOrAssert(request: request).first as? Session else { return }
+        guard let session = fetchOrAssert(request: request).first as? ZMSession else { return }
 
         userInfo[SessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)

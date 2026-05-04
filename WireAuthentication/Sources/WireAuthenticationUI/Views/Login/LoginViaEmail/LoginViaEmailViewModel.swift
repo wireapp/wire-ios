@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Foundation
 import UIKit
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 
 @MainActor
@@ -43,17 +44,18 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: LoginViaEmailSheet?
+    @Published var onSheetDismissAction: (() -> Void)?
 
-    let backendInfo: BackendInfo
+    let environment: BackendEnvironment2
     let isEmailPrefilled: Bool
     let canCreateAccount: Bool
 
     var areProxyCredentialsRequired: Bool {
-        backendInfo.backendConfig.proxySettings?.needsAuthentication == true
+        environment.config.proxyConfig?.needsAuthentication == true
     }
 
-    var proxyServer: String {
-        backendInfo.backendConfig.endpoints.backendURL.absoluteString
+    var proxyServer: String? {
+        environment.config.proxyConfig?.host
     }
 
     func isPasswordValid(_ password: String) -> Bool {
@@ -61,7 +63,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .default
+        environment.environmentType != .default
     }
 
     var canSubmitCredentials: Bool {
@@ -73,7 +75,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     lazy var teamAccountCreationLink: URL? = {
-        let teamsURL = backendInfo.backendConfig.endpoints.teamsURL
+        let teamsURL = environment.config.endpoints.teamsURL
         guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
             WireLogger.authentication
                 .warn("Unable to generate team account creation link. Invalid teamsURL: \(teamsURL.absoluteString)")
@@ -94,9 +96,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    /// This property is used for presenting the legacy registration flow.
-    /// If `nil` the new registration flow is presented.
-    private let onCreateAccount: (() -> Void)?
     private let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
@@ -105,19 +104,17 @@ package final class LoginViaEmailViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         email: String?,
-        backendInfo: BackendInfo,
+        environment: BackendEnvironment2,
         canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        onCreateAccount: (() -> Void)?
+        didDetectDomainConflict: Bool
     ) {
         self.factory = factory
         self.router = router
         self.email = email ?? ""
-        self.backendInfo = backendInfo
+        self.environment = environment
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.isEmailPrefilled = email != nil
-        self.onCreateAccount = onCreateAccount
     }
 
     // MARK: - Actions
@@ -130,7 +127,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             if let proxyCredentials {
-                try submitProxyCredentials(proxyCredentials)
+                try await submitProxyCredentials(proxyCredentials)
             }
 
             let (cookies, accessToken) = try await logIn(
@@ -185,25 +182,37 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     func recoverPassword() {
         UIApplication.shared.open(
-            backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+            environment.config.endpoints.accountsURL.appendingPathComponent("forgot")
         )
     }
 
     func createAccount() {
-        // legacy flow
-        if let onCreateAccount {
-            return onCreateAccount()
+        router.navigate(
+            to: LoginViaEmailDestination.createPersonalAccount
+        )
+    }
+
+    func handleTeamAccountCreation() {
+        onSheetDismissAction = { [weak self] in
+            guard let self else { return }
+            onSheetDismissAction = nil
+
+            if let teamAccountCreationLink {
+                modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
+            }
         }
-
-        // new flow
-        modalDestination = .accountTypeSelection
     }
 
-    func handleOnTeamAccountCreation() {
-        modalDestination = .teamAccountCreation
-    }
+    func handlePersonalAccountCreation() {
+        onSheetDismissAction = { [weak self] in
+            guard let self else { return }
+            onSheetDismissAction = nil
 
-    func handleoOnPersonalAccountCreation() {}
+            router.navigate(
+                to: LoginViaEmailDestination.createPersonalAccount
+            )
+        }
+    }
 
     // MARK: - Private
 
@@ -230,9 +239,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
         return isUsernameValid && isPasswordValid
     }
 
-    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) async throws {
         let useCase = factory.submitProxyCredentialsUseCase()
-        try useCase.invoke(proxyCredentials: proxyCredentials)
+        try await useCase.invoke(proxyCredentials: proxyCredentials)
     }
 
     private func logIn(

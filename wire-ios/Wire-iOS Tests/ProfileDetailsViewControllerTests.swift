@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1225,7 +1225,8 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         let controller = ProfileDetailsContentController(
             user: user,
             viewer: viewer,
-            conversation: conversation.convertToRegularConversation()
+            conversation: conversation.convertToRegularConversation(),
+            userSession: UserSessionMock()
         )
 
         XCTAssertEqual(controller.contents, expectedContents, file: file, line: line)

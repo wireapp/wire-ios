@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ protocol SketchColorPickerControllerDelegate: AnyObject {
 final class SketchColorPickerController: UIViewController {
 
     /// Used only as fallback in case no brush width is set
-    private let SketchColorPickerDefaultBrushWidth: CGFloat = 6
+    private let SketchColorPickerDefaultBrushWidth: CGFloat = 8
 
     weak var delegate: SketchColorPickerControllerDelegate?
     var sketchColors: [SketchColor] = [] {
@@ -52,7 +52,7 @@ final class SketchColorPickerController: UIViewController {
         }
     }
 
-    private var brushWidths: [CGFloat] = [6, 12, 18] {
+    private var brushWidths: [CGFloat] = [8, 10, 13] {
         didSet {
             if brushWidths == oldValue {
                 return
