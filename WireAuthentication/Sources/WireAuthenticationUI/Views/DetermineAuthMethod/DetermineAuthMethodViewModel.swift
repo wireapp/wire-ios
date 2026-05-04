@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let bridge: WireAuthenticationBridge
     package let environment: BackendEnvironment2
     private var cancellable: AnyCancellable?
-    private let isMultibackendEnabled: Bool
 
     // MARK: - Life cycle
 
@@ -68,7 +67,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false,
-        isMultibackendEnabled: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -77,7 +75,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
-        self.isMultibackendEnabled = isMultibackendEnabled
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -206,11 +203,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
-        guard isMultibackendEnabled || !existsAnotherAccount else {
-            alert = .switchBackendFailed
-            return
-        }
-
         do {
             let useCase = factory.fetchBackendConfigUseCase()
             let environment = try await Task.detached {

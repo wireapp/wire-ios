@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct CompletionView: View {
 
@@ -47,6 +48,7 @@ struct CompletionView: View {
                 action: { actionCallback(.goBack) },
                 label: { Text(String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.backToWireButton.rawValue)
             .wireButtonStyle(.secondary)
 
             Button(

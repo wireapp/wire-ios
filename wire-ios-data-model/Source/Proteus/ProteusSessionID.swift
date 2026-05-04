@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ public struct ProteusSessionID: Hashable, Equatable {
 extension ProteusSessionID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
+        "<\(domain)>_<\(userID)>_<\(clientID)>"
     }
 
 }

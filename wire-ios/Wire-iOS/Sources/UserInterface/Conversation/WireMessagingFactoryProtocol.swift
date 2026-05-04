@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,27 +27,28 @@ import WireMessagingUI
 // sourcery: AutoMockable
 protocol WireMessagingFactoryProtocol {
 
-    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol
-    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol
-    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol
-    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol
-    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
-    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
-    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
+    func makeUploadDraftUseCase(cellName: String) -> WireDriveUploadDraftUseCaseProtocol
+    func makeObserveDraftsUseCase(cellName: String) -> WireDriveObserveDraftsUseCaseProtocol
+    func makePublishDraftsUseCase(cellName: String) -> WireDrivePublishDraftsUseCaseProtocol
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireDriveClearPublishedDraftsUseCaseProtocol
+    func makeDeleteDraftUseCase(cellName: String) -> WireDriveDeleteDraftUseCaseProtocol
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireDriveRetryUploadDraftUseCaseProtocol
+    func makeDeleteNodesUseCase() -> WireDriveDeleteNodesUseCaseProtocol
+    func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol
+
     @MainActor
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        accentColor: WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
+    func makeFilesBrowserView(
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
+
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
@@ -67,8 +68,9 @@ protocol ConversationCellProviderProtocol {
 
 }
 
-extension WireMessagingFactory: WireMessagingFactoryProtocol {
+extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
+    @MainActor
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol {

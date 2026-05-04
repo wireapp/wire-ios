@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum BlockResult {
     case block(isBlocked: Bool)
@@ -37,7 +38,14 @@ enum BlockResult {
     }
 
     func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        if case .block = self {
+            action.setValue(
+                Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
+        }
+        return action
     }
 
     static func title(for user: UserType) -> String? {

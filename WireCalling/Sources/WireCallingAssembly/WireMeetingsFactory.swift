@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,10 +26,12 @@ public import WireReusableUIComponents
 
 public struct WireMeetingsFactory {
     private let passwordValidator: any PasswordValidator
+    private let isContextMenuAllowed: Bool
 
     @MainActor
-    public init(passwordValidator: any PasswordValidator) {
+    public init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
         self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 }
 
@@ -47,7 +49,8 @@ public extension WireMeetingsFactory {
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
             ),
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

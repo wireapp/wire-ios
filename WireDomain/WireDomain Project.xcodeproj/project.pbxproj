@@ -13,10 +13,12 @@
 		34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B22E01C206004D5DD5 /* WireNetwork */; };
 		34F8CA9A2E02C003000FE4E0 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA992E02C003000FE4E0 /* WireNetworkSupport */; };
 		34F8CA9C2E02C012000FE4E0 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA9B2E02C012000FE4E0 /* WireNetwork */; };
+		590386C32F6BE9960089C9E4 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = 590386C22F6BE9960089C9E4 /* WireData */; };
 		5904B1B32D31582700E866D1 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
 		591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */; };
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
 		59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59202AD12D54D3D500143413 /* WireDomainPackage */; };
+		595B05F02F8900D5009973C7 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 595B05EF2F8900D5009973C7 /* WireUtilitiesPackage */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
@@ -114,6 +116,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
+				595B05F02F8900D5009973C7 /* WireUtilitiesPackage in Frameworks */,
+				590386C32F6BE9960089C9E4 /* WireData in Frameworks */,
 				34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */,
 				CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */,
 				C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */,
@@ -254,6 +258,8 @@
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 				CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */,
 				34DC44B22E01C206004D5DD5 /* WireNetwork */,
+				595B05EF2F8900D5009973C7 /* WireUtilitiesPackage */,
+				590386C22F6BE9960089C9E4 /* WireData */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -506,6 +512,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -543,6 +550,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -617,7 +625,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -678,7 +686,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -707,6 +715,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -746,6 +755,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -776,6 +786,7 @@
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_NAME).TestSetup";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -797,6 +808,7 @@
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_NAME).TestSetup";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -826,7 +838,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -860,7 +872,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -956,9 +968,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
 		};
+		590386C22F6BE9960089C9E4 /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
+		};
 		59202AD12D54D3D500143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
+		};
+		595B05EF2F8900D5009973C7 /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
 		};
 		598D042C2C89C63100B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;

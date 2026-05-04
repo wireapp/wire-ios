@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class NewConversationPage: PageModel {
@@ -25,7 +26,11 @@ class NewConversationPage: PageModel {
     }
 
     var newGroupButton: XCUIElement {
-        app.descendants(matching: .any)["New group"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.createNewGroupButton.rawValue].firstMatch
+    }
+
+    var newChannelButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.NewConversationPage.createNewChannelButton.rawValue].firstMatch
     }
 
     func tapNewGroupButton() throws -> CreateGroupPage {
@@ -33,16 +38,21 @@ class NewConversationPage: PageModel {
         return try CreateGroupPage()
     }
 
+    func tapNewChannelButton() throws -> CreateChannelPage {
+        newChannelButton.tap()
+        return try CreateChannelPage()
+    }
+
     var searchByNameOrUsernameSearchBox: XCUIElement {
-        app.descendants(matching: .any)["Search by name or username"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.searchByNameOrUsername.rawValue].firstMatch
     }
 
     var cancelButtonOnSearchedUserPage: XCUIElement {
-        app.buttons["Cancel"]
+        app.buttons[Locators.NewConversationPage.cancelUserSearch.rawValue]
     }
 
     var cancelButtonOnNewConversation: XCUIElement {
-        app.buttons["cancel"]
+        app.buttons[Locators.NewConversationPage.cancel.rawValue]
     }
 
     func tapSearchBox() -> NewConversationPage {
@@ -51,7 +61,19 @@ class NewConversationPage: PageModel {
     }
 
     var searchedUserCell: XCUIElement {
-        app.descendants(matching: .any)["user_cell.username"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.usernameCell.rawValue].firstMatch
+    }
+
+    func searchedUserCell(handle: String) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(identifier: Locators.NewConversationPage.usernameCell.rawValue)
+            .matching(NSPredicate(format: "label CONTAINS %@", handle))
+            .firstMatch
+    }
+
+    func tapSearchedUserCell(handle: String) throws -> UserDetailsPage {
+        searchedUserCell(handle: handle).waitAndTap()
+        return try UserDetailsPage()
     }
 
     func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {
@@ -64,6 +86,7 @@ class NewConversationPage: PageModel {
         return try UserDetailsPage()
     }
 
+    @discardableResult
     func closeNewConversationPage() throws -> ConversationsPage {
         cancelButtonOnSearchedUserPage.tap()
         cancelButtonOnNewConversation.tap()

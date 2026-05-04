@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -164,6 +164,10 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: nil)
     }
 
+    func getSSOCode(forEmail email: String) async throws -> UUID {
+        throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // Move to separate api
     func getSSOCode() async throws -> UUID? {
         let path = "/sso/settings"
@@ -271,11 +275,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (_, response) = try await networkService.executeRequest(request)
 
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+            .parse(code: response.statusCode, data: nil)
     }
 
     func requestEmailVerificationCode(for email: String) async throws {
@@ -480,13 +485,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         return apiResponse.qualifiedID
     }
 
-    func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String {
+    func getInvitationCode(teamID: UUID, invitationID: UUID, basicAuth: String) async throws -> String {
         let path = "/i/teams/invitation-code?team=\(teamID)&invitation_id=\(invitationID)"
-        let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
-            .addingHeader(field: "Authorization", value: "Basic \(auth)")
+            .addingHeader(field: "Authorization", value: "Basic \(basicAuth)")
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)

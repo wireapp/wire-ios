@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class OnMyiPhonePage: PageModel {
@@ -25,23 +26,15 @@ class OnMyiPhonePage: PageModel {
     }
 
     var onMyiPhonePageLabel: XCUIElement {
-        app.staticTexts["On My iPhone"]
+        app.staticTexts[Locators.OnMyiPhonePage.onMyiPhoneLabel.rawValue]
     }
 
     var saveButton: XCUIElement {
-        app.buttons["Save"]
+        app.buttons[Locators.OnMyiPhonePage.save.rawValue]
     }
 
     var searchField: XCUIElement {
-        app.searchFields["Search"]
-    }
-
-    var moreButton: XCUIElement {
-        app.buttons["More"]
-    }
-
-    var sortByDateButton: XCUIElement {
-        app.buttons["Date"]
+        app.searchFields[Locators.OnMyiPhonePage.search.rawValue]
     }
 
     var backupFile: (String) -> XCUIElement {
@@ -57,8 +50,6 @@ class OnMyiPhonePage: PageModel {
     }
 
     func selectBackupFile(withName name: String) throws -> SetPasswordPage {
-        moreButton.tap()
-        sortByDateButton.tap()
         backupFile(name).tap()
         return try SetPasswordPage()
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -127,6 +127,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
             legalholdStatus: legalholdStatus.toAPIModel()

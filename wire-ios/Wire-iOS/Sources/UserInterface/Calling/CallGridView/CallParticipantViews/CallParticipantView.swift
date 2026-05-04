@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,8 @@ final class CallParticipantView: BaseCallParticipantView {
         shouldShowActiveSpeakerFrame: Bool,
         shouldShowBorderWhenVideoIsStopped: Bool,
         pinchToZoomRule: PinchToZoomRule,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         self.isFederationEnabled = isFederationEnabled
         super.init(
@@ -61,7 +62,8 @@ final class CallParticipantView: BaseCallParticipantView {
             isCovered: isCovered,
             shouldShowActiveSpeakerFrame: shouldShowActiveSpeakerFrame,
             shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-            pinchToZoomRule: pinchToZoomRule
+            pinchToZoomRule: pinchToZoomRule,
+            userSession: userSession
         )
 
         updateState()

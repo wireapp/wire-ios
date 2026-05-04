@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,15 @@
 //
 
 import WireCoreCrypto
+
+public extension MockCoreCryptoProtocol {
+
+    func mockTransaction(context: CoreCryptoContextProtocol) {
+        transaction_MockMethod = { block in
+            try await block(context)
+        }
+    }
+}
 
 public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
@@ -59,7 +68,7 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
     // MARK: - transaction<Result>
 
     public typealias transaction_MethodType<Result> =
-        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Void
+        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Result
 
     public var transaction_Invocations: [
         (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws

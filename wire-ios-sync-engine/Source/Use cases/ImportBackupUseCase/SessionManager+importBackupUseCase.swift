@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 public import Foundation
 
 import WireFoundation
+import WireLogging
 import WireUtilitiesPackage
 
 public extension SessionManager {
@@ -60,8 +61,14 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
             sessionManager.select(account, completion: { continuation.resume(returning: $0) })
         }
         guard let userSession else { return }
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            userSession.syncStatus.forceSlowSync()
+        do {
+            try await userSession.syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error(
+                "error performing slow sync: \(String(describing: error))",
+                attributes: .initialSync,
+                .safePublic
+            )
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ public final class ConversationChannelIconFactory {
     public init() {}
 
     @MainActor
-    public func create(conversationID: String) -> some View {
-        ConversationChannelIcon(asset: mapper.palette(for: conversationID))
+    public func create(conversationID: String, isPrivateChannel: Bool) -> some View {
+        ConversationChannelIcon(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
     }
 
     @MainActor

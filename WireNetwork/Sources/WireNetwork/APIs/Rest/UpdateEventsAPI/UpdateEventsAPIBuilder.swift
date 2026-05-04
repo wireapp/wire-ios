@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,10 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV12(apiService: apiService)
         case .v13:
             UpdateEventsAPIV13(apiService: apiService)
+        case .v14:
+            UpdateEventsAPIV14(apiService: apiService)
+        case .v15:
+            UpdateEventsAPIV15(apiService: apiService)
         }
     }
 

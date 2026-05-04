@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingDomain
+import WireNetwork
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
@@ -32,32 +34,39 @@ enum UserDetailViewControllerFactory {
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
     /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
-        user: UserType,
+        user: WireDataModel.UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
-        if user.isApp, let serviceUser = user as? ServiceUser {
+        if user.isAppOrBot {
+
             return ServiceDetailViewController(
-                serviceUser: serviceUser,
-                actionType: .removeService(conversation),
-                userSession: userSession
+                user: user,
+                actionType: .removeParticipant(conversation),
+                userSession: userSession,
+                usersAPI: userSession.clientSessionComponent?.usersAPI,
+                completion: { _ in }
             )
 
         } else {
+
             let profileViewController = ProfileViewController(
                 user: user,
                 viewer: userSession.selfUser,
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = profileViewControllerDelegate
             return profileViewController
+
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ public struct ValidationTextField: View {
                     .font(for: .body1)
                     .frame(height: fieldHeight)
                     .focused($isFocusedState)
-                    .onChange(of: $isFocusedState.wrappedValue) { newValue in
+                    .onChange(of: $isFocusedState.wrappedValue) { _, newValue in
                         isFocused = newValue
                     }
-                    .onChange(of: isFocused) { newValue in
+                    .onChange(of: isFocused) { _, newValue in
                         $isFocusedState.wrappedValue = newValue
                     }
                     .onAppear {
@@ -82,6 +82,7 @@ public struct ValidationTextField: View {
                         .frame(width: 16, height: 16)
                         .padding(16)
                 })
+                .accessibilityLabel(L10n.ValidationTextField.removeEntry)
             }
             .padding(.leading, 16)
             .frame(height: fieldHeight)
@@ -92,6 +93,10 @@ public struct ValidationTextField: View {
                         lineWidth: 1
                     )
             )
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+            }
 
             if shouldShowErrorMessage, let errorMessage {
                 Text(errorMessage)
@@ -142,12 +147,20 @@ private struct ValidationTextField_PreviewView: View {
     @StateObject var viewModel: ValidationTextField_PreviewViewModel
 
     var body: some View {
-        ValidationTextField(
-            title: "Username",
-            placeholder: "Enter username",
-            textInput: $viewModel.text,
-            errorMessage: $viewModel.errorMessage
-        ).padding()
+        VStack {
+            ValidationTextField(
+                title: "Username",
+                placeholder: "Enter username",
+                textInput: $viewModel.text,
+                errorMessage: $viewModel.errorMessage
+            )
+        }
+        .padding()
+        .frame(maxHeight: .infinity)
+        .background {
+            ColorTheme.Backgrounds.background.color
+                .ignoresSafeArea(.all)
+        }
     }
 }
 

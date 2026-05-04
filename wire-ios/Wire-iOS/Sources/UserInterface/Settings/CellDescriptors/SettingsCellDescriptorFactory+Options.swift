@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
-            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
-            !isSimpleChatBubbleEnabled ? collapseSelfMessageSection : nil
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
+            // temporarily hiding this section because it conflicts with chat bubbles.
+            // https://wearezeta.atlassian.net/browse/WPB-18939
+//            collapseSelfMessageSection
         ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(
@@ -51,7 +53,8 @@ extension SettingsCellDescriptorFactory {
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .options,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -204,7 +207,8 @@ extension SettingsCellDescriptorFactory {
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
         let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
@@ -256,7 +260,8 @@ extension SettingsCellDescriptorFactory {
 
     static func darkThemeGroup(
         for property: SettingsProperty,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
@@ -281,7 +286,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -314,7 +320,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -342,7 +349,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

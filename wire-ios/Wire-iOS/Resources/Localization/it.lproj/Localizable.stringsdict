@@ -312,9 +312,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Chiamata persa da %2$@</string>
+        <string>Missed call from %2$@</string>
         <key>other</key>
-        <string>Chiamate perse da %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

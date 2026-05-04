@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class WebViewPage: PageModel {
@@ -27,7 +28,7 @@ class WebViewPage: PageModel {
     private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
 
     var webViewLabel: XCUIElement {
-        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
+        Self.safariApp.webViews.firstMatch.staticTexts[Locators.WebViewPage.resetPassword.rawValue]
     }
 
     @discardableResult

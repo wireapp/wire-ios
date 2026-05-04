@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,14 +39,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         }
     }
 
-    private let button = SpinnerButton.alarmButton()
+    private let button = {
+        let button = SpinnerButton.alarmButton()
+        button.textTransform = .none
+        return button
+    }()
+
     private var buttonAction: Completion?
 
     private let errorLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
         label.textColor = UIColor.AlarmButton.alarmRed
-
         return label
     }()
 

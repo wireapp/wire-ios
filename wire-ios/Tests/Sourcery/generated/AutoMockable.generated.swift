@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -276,11 +276,11 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() async -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var build_MockMethod: (() async -> UIViewController?)?
+    var build_MockValue: UIViewController??
 
     @MainActor
-    func build() async -> UIViewController {
+    func build() async -> UIViewController? {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
@@ -1342,17 +1342,17 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - transitionToListAndEnqueue
 
-    var transitionToListAndEnqueueLeftViewControllerRevealed_Invocations: [(leftViewControllerRevealed: Bool, block: () -> Void)] = []
-    var transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod: ((Bool, @escaping () -> Void) -> Void)?
+    var transitionToListAndEnqueue_Invocations: [() -> Void] = []
+    var transitionToListAndEnqueue_MockMethod: ((@escaping () -> Void) -> Void)?
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void) {
-        transitionToListAndEnqueueLeftViewControllerRevealed_Invocations.append((leftViewControllerRevealed: leftViewControllerRevealed, block: block))
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
+        transitionToListAndEnqueue_Invocations.append(block)
 
-        guard let mock = transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod else {
-            fatalError("no mock for `transitionToListAndEnqueueLeftViewControllerRevealed`")
+        guard let mock = transitionToListAndEnqueue_MockMethod else {
+            fatalError("no mock for `transitionToListAndEnqueue`")
         }
 
-        mock(leftViewControllerRevealed, block)
+        mock(block)
     }
 
     // MARK: - setConversationTransitionClosure
@@ -1734,10 +1734,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeUploadDraftUseCase
 
     var makeUploadDraftUseCaseCellName_Invocations: [String] = []
-    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsUploadDraftUseCaseProtocol)?
-    var makeUploadDraftUseCaseCellName_MockValue: WireCellsUploadDraftUseCaseProtocol?
+    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveUploadDraftUseCaseProtocol)?
+    var makeUploadDraftUseCaseCellName_MockValue: WireDriveUploadDraftUseCaseProtocol?
 
-    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol {
+    func makeUploadDraftUseCase(cellName: String) -> WireDriveUploadDraftUseCaseProtocol {
         makeUploadDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeUploadDraftUseCaseCellName_MockMethod {
@@ -1752,10 +1752,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeObserveDraftsUseCase
 
     var makeObserveDraftsUseCaseCellName_Invocations: [String] = []
-    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsObserveDraftsUseCaseProtocol)?
-    var makeObserveDraftsUseCaseCellName_MockValue: WireCellsObserveDraftsUseCaseProtocol?
+    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveObserveDraftsUseCaseProtocol)?
+    var makeObserveDraftsUseCaseCellName_MockValue: WireDriveObserveDraftsUseCaseProtocol?
 
-    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol {
+    func makeObserveDraftsUseCase(cellName: String) -> WireDriveObserveDraftsUseCaseProtocol {
         makeObserveDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeObserveDraftsUseCaseCellName_MockMethod {
@@ -1770,10 +1770,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makePublishDraftsUseCase
 
     var makePublishDraftsUseCaseCellName_Invocations: [String] = []
-    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsPublishDraftsUseCaseProtocol)?
-    var makePublishDraftsUseCaseCellName_MockValue: WireCellsPublishDraftsUseCaseProtocol?
+    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireDrivePublishDraftsUseCaseProtocol)?
+    var makePublishDraftsUseCaseCellName_MockValue: WireDrivePublishDraftsUseCaseProtocol?
 
-    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol {
+    func makePublishDraftsUseCase(cellName: String) -> WireDrivePublishDraftsUseCaseProtocol {
         makePublishDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makePublishDraftsUseCaseCellName_MockMethod {
@@ -1788,10 +1788,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeClearPublishedDraftsUseCase
 
     var makeClearPublishedDraftsUseCaseCellName_Invocations: [String] = []
-    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsClearPublishedDraftsUseCaseProtocol)?
-    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireCellsClearPublishedDraftsUseCaseProtocol?
+    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveClearPublishedDraftsUseCaseProtocol)?
+    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireDriveClearPublishedDraftsUseCaseProtocol?
 
-    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol {
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireDriveClearPublishedDraftsUseCaseProtocol {
         makeClearPublishedDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeClearPublishedDraftsUseCaseCellName_MockMethod {
@@ -1806,10 +1806,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeDeleteDraftUseCase
 
     var makeDeleteDraftUseCaseCellName_Invocations: [String] = []
-    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireCellsDeleteDraftUseCaseProtocol)?
-    var makeDeleteDraftUseCaseCellName_MockValue: WireCellsDeleteDraftUseCaseProtocol?
+    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireDriveDeleteDraftUseCaseProtocol)?
+    var makeDeleteDraftUseCaseCellName_MockValue: WireDriveDeleteDraftUseCaseProtocol?
 
-    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol {
+    func makeDeleteDraftUseCase(cellName: String) -> WireDriveDeleteDraftUseCaseProtocol {
         makeDeleteDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeDeleteDraftUseCaseCellName_MockMethod {
@@ -1824,10 +1824,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeRetryUploadDraftUseCase
 
     var makeRetryUploadDraftUseCaseCellName_Invocations: [String] = []
-    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsRetryUploadDraftUseCaseProtocol)?
-    var makeRetryUploadDraftUseCaseCellName_MockValue: WireCellsRetryUploadDraftUseCaseProtocol?
+    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveRetryUploadDraftUseCaseProtocol)?
+    var makeRetryUploadDraftUseCaseCellName_MockValue: WireDriveRetryUploadDraftUseCaseProtocol?
 
-    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol {
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireDriveRetryUploadDraftUseCaseProtocol {
         makeRetryUploadDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeRetryUploadDraftUseCaseCellName_MockMethod {
@@ -1842,10 +1842,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeDeleteNodesUseCase
 
     var makeDeleteNodesUseCase_Invocations: [Void] = []
-    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
-    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireDriveDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireDriveDeleteNodesUseCaseProtocol?
 
-    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
+    func makeDeleteNodesUseCase() -> WireDriveDeleteNodesUseCaseProtocol {
         makeDeleteNodesUseCase_Invocations.append(())
 
         if let mock = makeDeleteNodesUseCase_MockMethod {
@@ -1857,60 +1857,77 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
-    // MARK: - makeFilesView
+    // MARK: - makeFetchNodeUseCase
 
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor)] = []
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod: ((String, Bool, WireAccentColor) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue: UIViewController?
+    var makeFetchNodeUseCase_Invocations: [Void] = []
+    var makeFetchNodeUseCase_MockMethod: (() -> WireDriveFetchNodeUseCaseProtocol)?
+    var makeFetchNodeUseCase_MockValue: WireDriveFetchNodeUseCaseProtocol?
 
-    @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColor: accentColor))
+    func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol {
+        makeFetchNodeUseCase_Invocations.append(())
 
-        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod {
-            return mock(cellName, isCellsStatePending, accentColor)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue {
+        if let mock = makeFetchNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchNodeUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColor`")
+            fatalError("no mock for `makeFetchNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFetchCachedNodeUseCase
+
+    var makeFetchCachedNodeUseCase_Invocations: [Void] = []
+    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireDriveFetchCachedNodeUseCaseProtocol)?
+    var makeFetchCachedNodeUseCase_MockValue: WireDriveFetchCachedNodeUseCaseProtocol?
+
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol {
+        makeFetchCachedNodeUseCase_Invocations.append(())
+
+        if let mock = makeFetchCachedNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchCachedNodeUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFetchCachedNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFilesView
+
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod: ((String, Bool, @escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColorProvider: accentColorProvider))
+
+        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod {
+            return mock(cellName, isCellsStatePending, accentColorProvider)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColorProvider`")
         }
     }
 
     // MARK: - makeFilesBrowserView
 
-    var makeFilesBrowserView_Invocations: [Void] = []
-    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
-    var makeFilesBrowserView_MockValue: UIViewController?
+    var makeFilesBrowserViewAccentColorProvider_Invocations: [() -> WireAccentColor] = []
+    var makeFilesBrowserViewAccentColorProvider_MockMethod: ((@escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesBrowserViewAccentColorProvider_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController {
-        makeFilesBrowserView_Invocations.append(())
+    func makeFilesBrowserView(accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesBrowserViewAccentColorProvider_Invocations.append(accentColorProvider)
 
-        if let mock = makeFilesBrowserView_MockMethod {
-            return mock()
-        } else if let mock = makeFilesBrowserView_MockValue {
+        if let mock = makeFilesBrowserViewAccentColorProvider_MockMethod {
+            return mock(accentColorProvider)
+        } else if let mock = makeFilesBrowserViewAccentColorProvider_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesBrowserView`")
-        }
-    }
-
-    // MARK: - makeAttachmentsPreviewView
-
-    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
-
-    @MainActor
-    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
-        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
-
-        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
-            return mock(attachments, alignment)
-        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
+            fatalError("no mock for `makeFilesBrowserViewAccentColorProvider`")
         }
     }
 

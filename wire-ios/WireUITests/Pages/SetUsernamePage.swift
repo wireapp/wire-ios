@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetUsernamePage: PageModel {
@@ -25,11 +26,11 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .textField)["UsernameField"].firstMatch
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
     }
 
     var confirmUsernameButton: XCUIElement {
-        app.descendants(matching: .button)["ConfirmButton"].firstMatch
+        app.descendants(matching: .button)[Locators.SetUsernamePage.confirmUsernameButton.rawValue].firstMatch
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {

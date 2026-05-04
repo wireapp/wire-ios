@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 package import WireMessagingDomain
 
 package struct ConversationTypePicker: View {
@@ -114,6 +115,7 @@ package struct ConversationTypePicker: View {
                 chevronView()
             }
         })
+        .accessibilityIdentifier(Locators.NewConversationPage.createNewChannelButton.rawValue)
     }
 
     func groupItem() -> some View {
@@ -129,6 +131,7 @@ package struct ConversationTypePicker: View {
                 chevronView()
             }
         })
+        .accessibilityIdentifier(Locators.NewConversationPage.createNewGroupButton.rawValue)
     }
 
     func iconView(for imageName: String) -> some View {

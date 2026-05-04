@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,13 +72,13 @@ extension ZMConversation: InputBarConversation {
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
         let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
-        return feature.status == .disabled || isCellsEnabled
+        return feature.status == .disabled || isWireDriveEnabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
         let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
-        return feature.config.enforcedTimeoutSeconds > 0 && !isCellsEnabled
+        return feature.config.enforcedTimeoutSeconds > 0 && !isWireDriveEnabled
     }
 
     var participants: [UserType] {

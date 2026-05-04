@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,6 +79,7 @@ final class InfoBannerViewSnapshotTests: XCTestCase {
             title: "Enjoy benefits of a team",
             button: .init(
                 title: "Call to action",
+                accessibilityIdentifier: "",
                 action: {}
             )
         )
@@ -103,6 +104,7 @@ final class InfoBannerViewSnapshotTests: XCTestCase {
             message: "Explore extra features for free with the same level of security.",
             button: .init(
                 title: "Call to action",
+                accessibilityIdentifier: "",
                 action: {}
             )
         )
@@ -127,6 +129,7 @@ final class InfoBannerViewSnapshotTests: XCTestCase {
             message: "Explore extra features for free with the same level of security.",
             button: .init(
                 title: "Call to action",
+                accessibilityIdentifier: "",
                 action: {}
             )
         )
@@ -151,6 +154,7 @@ final class InfoBannerViewSnapshotTests: XCTestCase {
             message: "Explore extra features for free with the same level of security.",
             button: .init(
                 title: "Call to action",
+                accessibilityIdentifier: "",
                 action: {}
             )
         )

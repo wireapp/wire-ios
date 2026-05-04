@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,9 +44,18 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
     private var sut: CoreCryptoConfigProvider!
     private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
+    private var sharedContainerURL: URL!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        sharedContainerURL = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+
         mockCoreCryptoKeyProvider =
             MockCoreCryptoKeyProvider(
                 coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager,
@@ -59,6 +68,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     override func tearDown() {
         mockCoreCryptoKeyProvider = nil
+        sharedContainerURL = nil
         super.tearDown()
     }
 
@@ -66,7 +76,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     func test_itReturnsInitialCoreCryptoConfiguration() async throws {
         // GIVEN
-        let selfUserID: UUID = syncMOC.performAndWait {
+        let selfUserID: UUID = syncMOC.performAndWait { [syncMOC] in
             let user = ZMUser.selfUser(in: syncMOC)
             user.remoteIdentifier = UUID.create()
             return user.remoteIdentifier
@@ -80,7 +90,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
         // WHEN
         let configuration = try await sut.createInitialConfiguration(
-            sharedContainerURL: OtrBaseTest.sharedContainerURL,
+            sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             allowKeyCreation: true
         )
@@ -92,7 +102,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     func test_itThrows_FailedToGetCoreCryptoKey() async {
         // GIVEN
-        let selfUserID: UUID = syncMOC.performAndWait {
+        let selfUserID: UUID = syncMOC.performAndWait { [syncMOC] in
             let user = ZMUser.selfUser(in: syncMOC)
             user.remoteIdentifier = UUID.create()
             return user.remoteIdentifier
@@ -107,7 +117,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
         await assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
             // WHEN
             _ = try await sut.createInitialConfiguration(
-                sharedContainerURL: OtrBaseTest.sharedContainerURL,
+                sharedContainerURL: sharedContainerURL,
                 userID: selfUserID,
                 allowKeyCreation: true
             )
@@ -119,7 +129,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     private func expectedPath(_ selfUserId: UUID) -> String {
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: selfUserId,
-            applicationContainer: OtrBaseTest.sharedContainerURL
+            applicationContainer: sharedContainerURL
         )
         return accountDirectory.appendingPathComponent("corecrypto").path
     }

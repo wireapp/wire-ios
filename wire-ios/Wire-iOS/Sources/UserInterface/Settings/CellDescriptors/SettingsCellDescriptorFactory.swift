@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCoordinator: AnySettingsCoordinator
-    let isSimpleChatBubbleEnabled: Bool
     let localDomain: String?
     let isFederationEnabled: Bool
+    let userSession: UserSession
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {
@@ -53,7 +53,8 @@ struct SettingsCellDescriptorFactory {
             style: .plain,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -155,7 +156,8 @@ struct SettingsCellDescriptorFactory {
             icon: .gear,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -165,10 +167,13 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
-            presentationAction: { () -> (UIViewController?) in
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
+                guard let userSession else { return nil }
                 return ClientListViewController(
                     clientsList: .none,
-                    credentials: .none,
+                    selfClient: userSession.selfUserClient,
+                    userSession: userSession,
+                    contextProvider: userSession.contextProvider,
                     detailedView: true
                 )
             },
@@ -239,7 +244,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: previewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -286,7 +292,8 @@ struct SettingsCellDescriptorFactory {
             icon: .settingsSupport,
             accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
             settingsTopLevelMenuItem: .support,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -339,7 +346,8 @@ struct SettingsCellDescriptorFactory {
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
             settingsTopLevelMenuItem: .about,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

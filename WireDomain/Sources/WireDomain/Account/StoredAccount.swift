@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,12 +50,10 @@ struct StoredAccount: Codable {
 struct StoredLoginCredentials: Codable {
 
     var emailAddress: String?
-    var hasPassword: Bool
     var usesCompanyLogin: Bool
 
     init(_ loginCredentials: LoginCredentials) {
         self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
         self.usesCompanyLogin = loginCredentials.usesCompanyLogin
     }
 
@@ -86,7 +84,6 @@ extension LoginCredentials {
     convenience init(_ loginCredentials: StoredLoginCredentials) {
         self.init(
             emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
             usesCompanyLogin: loginCredentials.usesCompanyLogin
         )
     }

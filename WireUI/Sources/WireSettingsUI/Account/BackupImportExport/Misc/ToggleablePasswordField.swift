@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 struct ToggleablePasswordField: View {
@@ -80,12 +81,11 @@ struct ToggleablePasswordField: View {
             placeholder: placeholder,
             isSecureTextEntry: false,
             placeholderColor: placeholderColor,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
-        .autocapitalization(.none)
         .focused($focusedField, equals: .textField)
-        .accessibilityIdentifier("password input")
+        .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
 
     @ViewBuilder private var secureField: some View {
@@ -94,11 +94,11 @@ struct ToggleablePasswordField: View {
             placeholder: placeholder,
             isSecureTextEntry: true,
             placeholderColor: placeholderColor,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: isContextMenuAllowed,
+            textContentType: .password
         )
-        .textContentType(.password)
         .focused($focusedField, equals: .secureField)
-        .accessibilityIdentifier("password input")
+        .accessibilityIdentifier(Locators.SetPasswordPage.passwordInputField.rawValue)
     }
 
     private var toggleButtonAccessibilityLabel: String {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ public struct InfoBannerView: View {
                     Text(button.title)
                         .lineLimit(.none)
                 }
-                .wireButtonStyle(.tertiary)
                 .accessibilityIdentifier(button.accessibilityIdentifier)
+                .wireButtonStyle(.tertiary)
             }
         }
         .padding(8)
@@ -74,7 +74,6 @@ public struct InfoBannerView: View {
                 .stroke(Color(ColorTheme.Base.primary(wireAccentColor)))
         )
         .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Nested Components

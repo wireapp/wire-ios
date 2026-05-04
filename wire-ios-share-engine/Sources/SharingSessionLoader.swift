@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ public struct SharingSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        guard !shouldEnableSyncV2(metadata: metadata) else {
+        guard journal[.isSyncV2Enabled] else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
@@ -246,14 +246,7 @@ public struct SharingSessionLoader {
             api: api
         )
 
-        return await useCase.invoke()
-    }
-
-    // TODO: [WPB-17732] de-duplicate when implementing NSE
-    private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     private func makeSharingSession(
@@ -324,17 +317,14 @@ public struct SharingSessionLoader {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
         let contextStorage = LAContextStorage()
-        let earService = EARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
@@ -344,7 +334,6 @@ public struct SharingSessionLoader {
             accountDirectory: userAccountDataURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain
@@ -386,10 +375,12 @@ public struct SharingSessionLoader {
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: [:] // not relevant
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
@@ -413,7 +404,6 @@ public struct SharingSessionLoader {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: nil,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,

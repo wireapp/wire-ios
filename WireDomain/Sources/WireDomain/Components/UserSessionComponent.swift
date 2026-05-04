@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,10 +38,13 @@ public final class UserSessionComponent {
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
+    private let earService: any EARServiceInterface
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
+
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     public init(
         currentBuildNumber: String,
@@ -56,10 +59,12 @@ public final class UserSessionComponent {
         sharedContainerURL: URL?,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
+        earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        coreCryptoProvider: any CoreCryptoProviderProtocol
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
@@ -72,11 +77,13 @@ public final class UserSessionComponent {
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
+        self.earService = earService
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
         self.coreCryptoProvider = coreCryptoProvider
         self.sharedContainerURL = sharedContainerURL
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     private let cookieStorage: any CookieStorageProtocol
@@ -99,11 +106,13 @@ public final class UserSessionComponent {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: syncContext,
             eventContext: eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            completionHandlers: completionHandlers
+            completionHandlers: completionHandlers,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ public extension ZMConversation {
     internal class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         [
             "participantRoles.user.isApp",
+            "participantRoles.user.isBot",
             "participantRoles.user.hasTeam",
             "participantRoles.user.isExternalPartner"
         ]
@@ -55,17 +56,12 @@ public extension ZMConversation {
 
     /// The state of external participants in the conversation.
     var externalParticipantsState: ExternalParticipantsState {
-        // Exception 1) We don't consider guests/apps as external participants in 1:1 conversations
+        // External-participant states are only reported for group conversations.
         guard conversationType == .group else { return [] }
 
-        // Exception 2) If there is only one user in the group and it's an app, we don't consider it as external
         let participants = Set(localParticipants)
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
-
-        if otherUsers.count == 1, otherUsers.first!.isApp {
-            return []
-        }
 
         // Calculate the external participants state
         let canDisplayGuests = selfUser.isTeamMember
@@ -75,7 +71,7 @@ public extension ZMConversation {
         for user in otherUsers {
             if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
-            } else if user.isApp {
+            } else if user.isAppOrBot {
                 state.insert(.visibleApps)
             } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
@@ -98,7 +94,7 @@ public extension ZMConversation {
     /// Returns whether apps are present, regardless of the display rules.
 
     var areAppsPresent: Bool {
-        localParticipants.any(\.isApp)
+        localParticipants.any(\.isAppOrBot)
     }
 
     /// Returns whether guests are present, regardless of the display rules.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,7 +109,8 @@ extension Permissions: Hashable {
 /// specific users.
 ///
 @objc
-public enum TeamRole: Int {
+public enum TeamRole: Int, CustomStringConvertible {
+
     case none
     case partner
     case member
@@ -152,6 +153,22 @@ public enum TeamRole: Int {
     public func hasPermissions(_ permissions: Permissions) -> Bool {
         self.permissions.isSuperset(of: permissions)
     }
+
+    public var description: String {
+        switch self {
+        case .none:
+            "none"
+        case .partner:
+            "partner"
+        case .member:
+            "member"
+        case .admin:
+            "admin"
+        case .owner:
+            "owner"
+        }
+    }
+
 }
 
 public extension Member {
@@ -160,4 +177,5 @@ public extension Member {
     func setTeamRole(_ role: TeamRole) {
         permissions = role.permissions
     }
+
 }

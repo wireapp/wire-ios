@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,11 +49,13 @@ final class CreateInstantMeetingViewModel: ObservableObject {
     }
 
     private let passwordValidator: any PasswordValidator
+    private(set) var isContextMenuAllowed: Bool
 
     // MARK: - Initialization
 
-    init(passwordValidator: any PasswordValidator) {
+    init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
         self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface

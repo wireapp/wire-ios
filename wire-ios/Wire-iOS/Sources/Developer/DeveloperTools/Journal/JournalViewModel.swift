@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@ import WireSyncEngine
 final class JournalViewModel: ObservableObject {
     var sections: [DeveloperToolsViewModel.Section]
 
-    init(userId: UUID, storage: UserDefaults = .shared()) {
+    private let userSession: ZMUserSession?
+
+    init(userId: UUID, userSession: UserSession?, storage: UserDefaults = .shared()) {
+        self.userSession = userSession as? ZMUserSession
         let journal = Journal(
             userID: userId,
             storage: storage
@@ -60,7 +63,7 @@ final class JournalViewModel: ObservableObject {
     }
 
     func groupNames(groupIDs: Set<String>) -> [(name: String, groupID: String)] {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+        guard let context = userSession?.managedObjectContext else {
             return []
         }
         let mlsConversations = ZMConversation.fetchMLSConversations(in: context).filter {

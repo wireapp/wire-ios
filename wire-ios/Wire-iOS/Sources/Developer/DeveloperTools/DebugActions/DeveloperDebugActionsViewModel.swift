@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,8 +52,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
     @Published var isAppVersionInputPresented = false
 
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
-
+    private let userSession: ZMUserSession?
     private let selfClient: UserClient?
     private let onDismiss: (() -> Void)?
 
@@ -62,9 +61,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: - Initialize
 
     init(
+        userSession: UserSession?,
         selfClient: UserClient?,
         onDismiss: (() -> Void)? = nil
     ) {
+        self.userSession = userSession as? ZMUserSession
         self.selfClient = selfClient
         self.onDismiss = onDismiss
 
@@ -87,6 +88,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
+            .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
             .init(title: "Logout", action: logout)
 
         ]
@@ -195,8 +197,38 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     }
 
+    private func initiateRepairRemovalKeys() {
+        guard let useCase = userSession?.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+            WireLogger.mls.warn(
+                "unable to manually trigger to initiate repair removal keys because the usecase is not available",
+                attributes: .safePublic
+            )
+            return
+        }
+
+        Task { @MainActor in
+            WireLogger.mls.info(
+                "manual trigger to initiate repair removal keys",
+                attributes: .safePublic
+            )
+            do {
+                let result = try await useCase.invoke()
+                WireLogger.mls.info(
+                    "manual trigger to initiate repair removal keys compete. Repaired initiated for \(result.conversationsRepaired)/\(result.faultyConversationsFound) affected conversations.",
+                    attributes: .safePublic
+                )
+            } catch {
+                WireLogger.mls.error(
+                    "manual trigger to repair removal keys failed: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+            }
+        }
+    }
+
     func logout() {
-        LogOutHelper(showLoading: {}, hideLoading: {}).logout()
+        guard let userSession else { return }
+        LogOutHelper(userSession: userSession, showLoading: {}, hideLoading: {}).logout()
     }
 
     private func simulateAccessTokenFailure() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
@@ -51,6 +52,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The availability of the user
     var availability: Availability { get set }
 
+    /// If the user is part of a team this property returns the team's remote identifier.
+    var teamIdentifier: UUID? { get }
+
     /// Team membership for this user.
     /// This property is `nil` even for users, who are part of a
     /// team, but not the same team as the self user.
@@ -72,9 +76,15 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The role (and permissions) e.g. partner, member, admin, owner
     var teamRole: TeamRole { get }
 
-    /// Whether this is an app/bot/service user.
+    /// Whether this is an app (new-style MLS service).
 
     var isApp: Bool { get }
+
+    /// Whether this is a bot (old-style service).
+
+    var isBot: Bool { get }
+
+    var isAppOrBot: Bool { get }
 
     /// Whether this uses uses SSO.
     var usesCompanyLogin: Bool { get }
@@ -126,6 +136,13 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
+
+    // these properties are used for apps
+    var appInfo: AppInfo? { get }
+
+    // these properties are used for legacy services (bots)
+    var providerIdentifier: String? { get }
+    var serviceIdentifier: String? { get }
 
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()

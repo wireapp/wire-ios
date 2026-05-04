@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -733,9 +733,17 @@ extension WireCallCenterV3 {
 
                 Task {
                     do {
-                        try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                        // Generate and set the conference information for the subgroup
+                        let conferenceInfo = try await mlsService.generateConferenceInfo(
+                            parentGroupID: groupIDs.parent,
+                            subconversationGroupID: groupIDs.subconversation
+                        )
+                        self.avsWrapper.setMLSConferenceInfo(
+                            conversationId: conversationID,
+                            info: conferenceInfo
+                        )
                     } catch {
-                        Self.logger.error("failed to generate new epoch: \(String(reflecting: error))")
+                        Self.logger.error("failed to generate conference info: \(String(reflecting: error))")
                     }
                 }
             }
@@ -746,7 +754,7 @@ extension WireCallCenterV3 {
 extension AVSIdentifier: @retroactive SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        "\(identifier.safeForLoggingDescription) - \(String(describing: domain?.readableHash))"
+        "\(identifier) - \(String(describing: domain ?? "<nil>"))"
     }
 
 }

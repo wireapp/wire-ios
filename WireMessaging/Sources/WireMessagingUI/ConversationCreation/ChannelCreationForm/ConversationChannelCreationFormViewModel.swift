@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 public import Foundation
 public import Combine
+public import WireMessagingDomain
+
 import SwiftUI
 import WireFoundation
-public import WireMessagingDomain
 
 public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
@@ -77,6 +78,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var showUpgradeBanner: Bool = false
+    @Published private(set) var areAppsSupported: Bool
     @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
@@ -84,7 +86,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
-    let isWireCellsEnabled: Bool
+    let isWireDriveEnabled: Bool
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
     private let isUserPremium: Bool
     private var subscriptions = Set<AnyCancellable>()
@@ -92,14 +94,15 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     public init(
         channelName: String,
         // Channel access is always hard coded to private for now.
-        channelAccess: ChannelAccessOption = .private,
-        channelInvitePolicy: ChannelInvitePolicyOption = .admins,
-        channelHistoryOption: ChannelHistoryOption = .off,
-        appsAllowed: Bool = true,
-        guestsAllowed: Bool = true,
-        readReceiptsEnabled: Bool = true,
+        // channelAccess: ChannelAccessOption = .private,
+        channelInvitePolicy: ChannelInvitePolicyOption,
+        channelHistoryOption: ChannelHistoryOption,
+        areAppsSupported: Bool,
+        appsAllowed: Bool,
+        guestsAllowed: Bool,
+        readReceiptsEnabled: Bool,
         isUserPremium: Bool,
-        isWireCellsEnabled: Bool,
+        isWireDriveEnabled: Bool,
         teamsURL: URL,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
@@ -107,14 +110,15 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
         self.isFormValid = Self.validateForm(channelName: channelName)
         self.channelName = channelName
-        self.channelAccess = channelAccess
+        self.channelAccess = .private // channelAccess
         self.channelInvitePolicy = channelInvitePolicy
         self.channelHistoryOption = channelHistoryOption
-        self.appsAllowed = appsAllowed
+        self.areAppsSupported = areAppsSupported
+        self.appsAllowed = appsAllowed && areAppsSupported
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
-        self.isWireCellsEnabled = isWireCellsEnabled
+        self.isWireDriveEnabled = isWireDriveEnabled
         self.teamsURL = teamsURL
         self.onFormValidityUpdate = onFormValidityUpdate
 

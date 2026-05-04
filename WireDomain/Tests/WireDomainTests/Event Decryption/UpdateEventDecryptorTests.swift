@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
             mlsService: mlsService,
             messageLocalStore: messageLocalStore
         )
-        mlsService.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
@@ -200,11 +199,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
                 .user(.pushRemove)
             ]
         )
-
-        // Hack to allow `commitPendingProposalsIfNeeded` to complete :(
-        await Task(priority: .low) { await Task.yield() }.value
-
-        XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
     func testWhenWrongEpochErrorIsThrown() async throws {

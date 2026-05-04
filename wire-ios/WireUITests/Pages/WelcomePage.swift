@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,13 +34,19 @@ class WelcomePage: PageModel {
     }
 
     var setBackendLabel: XCUIElement {
-        app.descendants(matching: .any)["onPremInfoButton"]
+        app.descendants(matching: .any)[Locators.WelcomePage.onPremInfoButton.rawValue]
     }
 
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {
         try typeEmailOrSSO(input)
-        nextButton.tap()
+        nextButton.waitAndTap()
         return try LoginPage()
+    }
+
+    func enterSSOCode(_ code: String) throws -> OktaLoginPage {
+        try typeEmailOrSSO(code)
+        nextButton.waitAndTap()
+        return try OktaLoginPage()
     }
 
     @discardableResult

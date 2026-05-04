@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ enum AppState: Equatable {
     case headless
     case locked(UserSession)
     case authenticated(UserSession)
-    case unauthenticated(environment: BackendEnvironment2?, error: NSError?)
+    case unauthenticated(accountID: UUID?, environment: BackendEnvironment2?, error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
     case certificateEnrollmentRequired
@@ -43,8 +43,9 @@ enum AppState: Equatable {
             true
         case (.authenticated, .authenticated):
             true
-        case let (.unauthenticated(env1, error1), .unauthenticated(env2, error2)):
-            env1 == env2 &&
+        case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
+            id1 == id2 &&
+                env1 == env2 &&
                 error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             reason1 == reason2
@@ -78,7 +79,7 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated: \(error.debugDescription)"
         case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
@@ -109,7 +110,7 @@ extension AppState: SafeForLoggingStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated \(error?.localizedDescription ?? "<nil>")"
         case let .blacklisted(reason):
             "blacklisted \(reason)"
@@ -178,6 +179,8 @@ final class AppStateCalculator {
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        let appState = validAppState(from: appState)
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -189,14 +192,6 @@ final class AppStateCalculator {
             return
         }
 
-        if !DeveloperFlag.multibackend.isOn {
-            // If app has been blacklisted due to api version, ignore new state.
-            if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-                completion?()
-                return
-            }
-        }
-
         self.appState = appState
         pendingAppState = nil
 
@@ -206,6 +201,15 @@ final class AppStateCalculator {
         )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
+        }
+    }
+
+    private func validAppState(from appState: AppState) -> AppState {
+        switch appState {
+        case let .authenticated(session) where session.isBuildBlacklisted:
+            .blacklisted(reason: .appVersionBlacklisted)
+        default:
+            appState
         }
     }
 }
@@ -249,12 +253,17 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
         transition(
-            to: .unauthenticated(environment: environment, error: error as NSError?),
+            to: .unauthenticated(
+                accountID: accountID,
+                environment: environment,
+                error: error as NSError?
+            ),
             completion: userSessionCanBeTornDown
         )
     }
@@ -325,9 +334,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
-        if session.isBuildBlacklisted {
-            transition(to: .blacklisted(reason: .appVersionBlacklisted))
-        } else if session.isLocked {
+        if session.isLocked {
             transition(to: .locked(session))
         } else {
             transition(to: .authenticated(session))
@@ -339,7 +346,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -348,7 +355,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 

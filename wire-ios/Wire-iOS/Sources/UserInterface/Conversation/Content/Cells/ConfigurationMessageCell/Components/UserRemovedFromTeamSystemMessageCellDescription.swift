@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class UserRemovedFromTeamSystemMessageCellDescription: ConversationMessageCellDescription {
 
@@ -37,7 +38,7 @@ final class UserRemovedFromTeamSystemMessageCellDescription: ConversationMessage
 
     let containsHighlightableContent: Bool = false
 
-    let accessibilityIdentifier: String? = nil
+    let accessibilityIdentifier: String?
     let accessibilityLabel: String?
 
     init() {
@@ -53,6 +54,7 @@ final class UserRemovedFromTeamSystemMessageCellDescription: ConversationMessage
         )
 
         self.accessibilityLabel = title.string
+        self.accessibilityIdentifier = Locators.ConversationsPage.userRemovedSystemMessage.rawValue
         self.actionController = nil
     }
 

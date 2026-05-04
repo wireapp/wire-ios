@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,17 +39,12 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            guard
-                let userSession = await withSession(for: account),
-                let conversation = ZMConversation.fetch(
-                    with: handle.conversationID,
-                    in: userSession.managedObjectContext
-                )
-            else {
-                return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+            do {
+                let conversation = try await fetchConversation(id: handle.conversationID, account: account)
+                completionHandler(.success(conversation))
+            } catch {
+                completionHandler(.failure(error))
             }
-
-            completionHandler(.success(conversation))
         }
     }
 
@@ -64,20 +59,34 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            guard
-                let userSession = await withSession(for: account),
-                let conversation = ZMConversation.fetch(
-                    with: handle.conversationID,
-                    in: userSession.managedObjectContext
-                )
-            else {
-                return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+            do {
+                let userSession = try await withSession(for: account)
+                let conversation = try await fetchConversation(id: handle.conversationID, account: account)
+                await requestCallConfigIfNeeded(for: userSession)
+                await userSession.processPendingCallEvents(only: false)
+
+                WireLogger.calling.info("did process call events, returning conversation...")
+                completionHandler(.success(conversation))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+
+    /// Proactively requests call config for a background session.
+    /// This ensures the session has fresh call configuration when handling incoming calls.
+    /// - Parameter session: The user session to request config for
+    private func requestCallConfigIfNeeded(for session: ZMUserSession) async {
+        guard session != activeUserSession else { return }
+
+        session.managedObjectContext.performGroupedBlock {
+            guard let callCenter = session.callCenter else {
+                WireLogger.calling.warn("Cannot request call config: callCenter not available")
+                return
             }
 
-            await userSession.processPendingCallEvents()
-
-            WireLogger.calling.info("did process call events, returning conversation...")
-            completionHandler(.success(conversation))
+            WireLogger.calling.info("Proactively requesting call config for background session.")
+            callCenter.requestCallConfig()
         }
     }
 
@@ -87,6 +96,34 @@ extension SessionManager: CallKitManagerDelegate {
                 userSession.callCenter?.endAllCalls()
             }
         }
+    }
+
+    func didEndAllCalls() {
+        guard UIApplication.shared.applicationState == .background else {
+            return
+        }
+
+        WireLogger.calling.info(
+            "all calls ended in background, suspending all syncs",
+            attributes: .safePublic
+        )
+        Task {
+            for userSession in backgroundUserSessions.values {
+                await userSession.syncAgent?.suspend()
+            }
+        }
+    }
+
+    // MARK: - Private helpers
+
+    @MainActor
+    private func fetchConversation(id: UUID, account: Account) async throws -> ZMConversation {
+        let userSession = try await withSession(for: account)
+        guard let conversation = ZMConversation.fetch(with: id, in: userSession.managedObjectContext) else {
+            throw ConversationLookupError.conversationDoesNotExist
+        }
+
+        return conversation
     }
 
 }

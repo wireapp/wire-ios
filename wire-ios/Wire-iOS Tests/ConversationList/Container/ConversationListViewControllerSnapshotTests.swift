@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireDesign
+import WireMessagingDomainSupport
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -60,6 +61,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             managedObjectContext: coreDataStack.viewContext,
             description: "all conversations"
         )
+        userSession.networkState = .online
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
@@ -72,6 +74,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         zClientViewController = ZClientViewController(
             account: coreDataStack.account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: coreDataStack),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil,
@@ -87,6 +90,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
             folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
                 conversationDirectory: userSession.conversationDirectory,
@@ -552,7 +556,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testForShowingFilesTabWhenWireCellsEnabled() async {
+    func testForShowingFilesTabWhenWireDriveEnabled() async {
         // GIVEN
         userSession.mockConversationDirectory.mockUnarchivedConversations = []
 

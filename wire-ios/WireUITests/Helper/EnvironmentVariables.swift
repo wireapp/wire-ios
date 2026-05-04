@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,18 +24,35 @@ struct EnvironmentVariables {
         case missingInbucketUsername
         case missingInbucketPassword
         case missingDeepLinkURL
+        case missingCallingServiceURL
+        case missingCallingServiceUsername
+        case missingCallingServicePassword
+        case missingCallingBackend
+        case missingCallingInstanceTypeName
+        case missingCallingInstanceTypeVersion
+        case missingOktaApiKey
     }
 
     private let stagingBackendURL: URL
     private let antaBackendURL: URL
+    private let bellaBackendURL: URL
 
     private let stagingInbucketURL: URL
     private let antaInbucketURL: URL
+    private let bellaInbucketURL: URL
 
     let antaDeepLinkURL: URL
+    let bellaDeepLinkURL: URL
 
     let inbucketUsername: String
     let inbucketPassword: String
+    let callingServiceURL: URL
+    let callingServiceUsername: String
+    let callingServicePassword: String
+    let callingBackend: String
+    let callingInstanceTypeName: String
+    let callingInstanceTypeVersion: String
+    let oktaApiKey: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -54,16 +71,42 @@ struct EnvironmentVariables {
 
         guard let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"],
               !inbucketPassword.isEmpty else {
-            throw Failure.missingInbucketUsername
+            throw Failure.missingInbucketPassword
+        }
+
+        guard let callingServiceURLString = ProcessInfo.processInfo.environment["CALLINGSERVICE_URL"],
+              !callingServiceURLString.isEmpty else {
+            throw Failure.missingCallingServiceURL
+        }
+
+        guard let callingServiceUsername = ProcessInfo.processInfo.environment["CALLINGSERVICE_USERNAME"],
+              !callingServiceUsername.isEmpty else {
+            throw Failure.missingCallingServiceUsername
+        }
+
+        guard let callingServicePassword = ProcessInfo.processInfo.environment["CALLINGSERVICE_PASSWORD"],
+              !callingServicePassword.isEmpty else {
+            throw Failure.missingCallingServicePassword
         }
 
         guard let antaDeeplinkURL = ProcessInfo.processInfo.environment["ANTA_DEEPLINK_URL"],
               !antaDeeplinkURL.isEmpty else {
             throw Failure.missingDeepLinkURL
+
+        }
+        guard let bellaDeeplinkURL = ProcessInfo.processInfo.environment["BELLA_DEEPLINK_URL"],
+              !bellaDeeplinkURL.isEmpty else {
+            throw Failure.missingDeepLinkURL
+
         }
 
         guard let antaInbucketURL = ProcessInfo.processInfo.environment["ANTA_INBUCKET_URL"],
               !antaInbucketURL.isEmpty else {
+            throw Failure.missingInbucketURL
+        }
+
+        guard let bellaInbucketURL = ProcessInfo.processInfo.environment["BELLA_INBUCKET_URL"],
+              !bellaInbucketURL.isEmpty else {
             throw Failure.missingInbucketURL
         }
 
@@ -72,13 +115,48 @@ struct EnvironmentVariables {
             throw Failure.missingBackendURL
         }
 
+        guard let backendURLBellaString = ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"],
+              !backendURLBellaString.isEmpty else {
+            throw Failure.missingBackendURL
+        }
+
+        guard let callingBackend = ProcessInfo.processInfo.environment["PREDEFINED_BACKEND"],
+              !callingBackend.isEmpty else {
+            throw Failure.missingCallingBackend
+        }
+
+        guard let callingInstanceTypeName = ProcessInfo.processInfo.environment["CALLING_INSTANCE_TYPE_NAME"],
+              !callingInstanceTypeName.isEmpty else {
+            throw Failure.missingCallingInstanceTypeName
+        }
+
+        guard let callingInstanceTypeVersion = ProcessInfo.processInfo.environment["CALLING_INSTANCE_TYPE_VERSION"],
+              !callingInstanceTypeVersion.isEmpty else {
+            throw Failure.missingCallingInstanceTypeVersion
+        }
+
+        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
+              !oktaApiKey.isEmpty else {
+            throw Failure.missingOktaApiKey
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
+        self.callingServiceUsername = callingServiceUsername
+        self.callingServicePassword = callingServicePassword
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
+        self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
+        self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
+        self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
+        self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
+        self.callingBackend = callingBackend
+        self.callingInstanceTypeName = callingInstanceTypeName
+        self.callingInstanceTypeVersion = callingInstanceTypeVersion
+        self.oktaApiKey = oktaApiKey
     }
 
     var inbucketURL: URL {
@@ -87,6 +165,8 @@ struct EnvironmentVariables {
             antaInbucketURL
         case .staging:
             stagingInbucketURL
+        case .bella:
+            bellaInbucketURL
         }
     }
 
@@ -96,6 +176,8 @@ struct EnvironmentVariables {
             antaBackendURL
         case .staging:
             stagingBackendURL
+        case .bella:
+            bellaBackendURL
         }
     }
 
@@ -103,6 +185,8 @@ struct EnvironmentVariables {
         switch target {
         case .anta:
             antaDeepLinkURL
+        case .bella:
+            bellaDeepLinkURL
         case .staging:
             fatalError("Not implemented yet")
         }

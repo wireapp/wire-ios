@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,12 +129,11 @@ package struct ReloginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            string: .constant(viewModel.email),
+            keyboardType: .emailAddress,
+            textContentType: .username
         )
-        .autocapitalization(.none)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
         .disabled(true)
     }
 
@@ -194,12 +193,11 @@ package struct ReloginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: Strings.ProxyCredentials.InputEmail.title,
-                string: $viewModel.proxyUsername
+                string: $viewModel.proxyUsername,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,

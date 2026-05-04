@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,7 @@ final class AppRootRouter {
 
     // MARK: - Initialization
 
+    @MainActor
     init(
         defaultEnvironment: BackendEnvironment2,
         mainWindow: UIWindow,
@@ -104,10 +105,10 @@ final class AppRootRouter {
 
     // MARK: - Public implementation
 
+    @MainActor
     func start(launchOptions: LaunchOptions) {
         lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
-        sessionManager.resolveAPIVersion()
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
@@ -116,6 +117,7 @@ final class AppRootRouter {
 
     // MARK: - Private implementation
 
+    @MainActor
     private func replaceRootViewController(
         by viewController: UIViewController,
         completion: @escaping () -> Void
@@ -130,24 +132,29 @@ final class AppRootRouter {
         )
     }
 
+    @MainActor
     private func setupAppStateCalculator() {
         appStateCalculator.delegate = self
     }
 
+    @MainActor
     private func setupURLActionRouter() {
         urlActionRouter.delegate = self
     }
 
+    @MainActor
     private func setupNotifications() {
         setupApplicationNotifications()
         setupContentSizeCategoryNotifications()
         setupAudioPermissionsNotifications()
     }
 
+    @MainActor
     private func createLifeCycleObserverTokens() {
         sessionManagerLifeCycleObserver.createLifeCycleObserverTokens()
     }
 
+    @MainActor
     private func setCallingSettings() {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
@@ -226,10 +233,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case let .unauthenticated(environment, error):
+        case let .unauthenticated(accountID, environment, error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(
+                accountID: accountID,
                 environment: environment,
                 error: error,
                 completion: completion
@@ -251,9 +259,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showAppLock(userSession: userSession, completion: completion)
         case let .syncFailure(error, onRetry):
             presentSyncErrorAlert(error: error, onRetry: onRetry)
+            appStateTransitionGroup.leave()
         }
     }
 
+    @MainActor
     private func presentSyncErrorAlert(
         error: any Error,
         onRetry: @escaping () -> Void
@@ -268,9 +278,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.Content.System.FailedtosendMessage.retry, // reusing retry string
                 style: .default
-            ) { [weak self] _ in
+            ) { _ in
                 onRetry()
-                self?.appStateTransitionGroup.leave()
             }
         )
 
@@ -278,14 +287,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             UIAlertAction(
                 title: L10n.Localizable.General.cancel,
                 style: .destructive
-            ) { [weak self] _ in
-                self?.appStateTransitionGroup.leave()
-            }
+            ) { _ in }
         )
 
         rootViewController.present(alert, animated: true)
     }
 
+    @MainActor
     private func resetAuthenticationCoordinatorIfNeeded(for state: AppState) {
         switch state {
         case .authenticated:
@@ -304,12 +312,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         }
     }
 
+    @MainActor
     func executeAuthenticatedBlocks() {
         while !authenticatedBlocks.isEmpty {
             authenticatedBlocks.removeFirst()()
         }
     }
 
+    @MainActor
     func reload() {
         enqueueTransition(to: .headless)
         enqueueTransition(to: appStateCalculator.appState)
@@ -325,6 +335,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         }
     }
 
+    @MainActor
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: reason.blockerViewControllerContext,
@@ -333,6 +344,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
+    @MainActor
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .jailbroken,
@@ -341,6 +353,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
+    @MainActor
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .pendingCertificateEnroll,
@@ -349,6 +362,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
+    @MainActor
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .databaseFailure,
@@ -358,6 +372,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
+    @MainActor
     private func showLaunchScreen(isLoading: Bool = false, completion: @escaping () -> Void) {
         let launchViewController = LaunchImageViewController()
 
@@ -367,7 +382,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: launchViewController, completion: completion)
     }
 
+    @MainActor
     private func showUnauthenticatedFlow(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: NSError?,
         completion: @escaping () -> Void
@@ -392,12 +409,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         authenticationCoordinator?.tearDown()
 
+        var session: ZMUserSession?
+        if let accountID {
+            session = sessionManager.backgroundUserSessions[accountID]
+        }
+        let statusProvider = AuthenticationStatusProvider(sharedUserSession: session)
+
         authenticationCoordinator = AuthenticationCoordinator(
             defaultEnvironment: defaultEnvironment,
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
-            statusProvider: AuthenticationStatusProvider()
+            statusProvider: statusProvider
         )
 
         guard let authenticationCoordinator else {
@@ -434,10 +457,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
     }
 
+    @MainActor
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
         replaceRootViewController(by: AppLockModule.build(userSession: userSession), completion: completion)
     }
 
+    @MainActor
     private func retryStart(completion: @escaping () -> Void) {
         guard let launchOptions = lastLaunchOptions else { return }
         completion()
@@ -450,12 +475,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     // MARK: - Helpers
 
+    @MainActor
     private func configureUnauthenticatedAppearance() {
         mainWindow.tintColor = UIColor.Wire.primaryLabel
         ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self])
             .tintColor = UIColor.Team.activeButton
     }
 
+    @MainActor
     private func configureAuthenticatedAppearance() {
         mainWindow.tintColor = .accent()
         UIColor.setAccentOverride(nil)
@@ -497,6 +524,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 }
 
 extension AppRootRouter {
+    @MainActor
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()
         configureSelfUserProviderIfNeeded(for: appState)
@@ -505,7 +533,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
@@ -544,6 +572,7 @@ extension AppRootRouter {
         }
     }
 
+    @MainActor
     private func configureSelfUserProviderIfNeeded(for appState: AppState) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               appDelegate.shouldConfigureSelfUserProvider else { return }
@@ -553,6 +582,7 @@ extension AppRootRouter {
         }
     }
 
+    @MainActor
     private func configureColorScheme() {
         let colorScheme = ColorScheme.default
         colorScheme.accentColor = .accent()
@@ -647,7 +677,6 @@ extension AppRootRouter: ApplicationStateObserving {
 
     func applicationWillEnterForeground() {
         updateOverlayWindowFrame()
-        sessionManager.resolveAPIVersion()
     }
 
     func updateOverlayWindowFrame(size: CGSize? = nil) {

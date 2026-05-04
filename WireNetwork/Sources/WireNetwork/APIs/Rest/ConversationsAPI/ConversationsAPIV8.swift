@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ class ConversationsAPIV8: ConversationsAPIV7 {
                 .failure(
                     code: .forbidden,
                     label: "action-denied",
-                    error: ConversationsAPIError.insufficienAuthorization
+                    error: ConversationsAPIError.insufficientAuthorization
                 )
                 .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
                 .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)

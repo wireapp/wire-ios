@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,46 +23,51 @@ public extension ZMConversation {
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
     ///
     /// - Parameters:
-    ///     - remoteIdentifier: UUID assigned to the conversation.
-    ///     - domain: domain assigned to the conversation.
-    ///     - context: `NSManagedObjectContext` on which to fetch or create the conversation.
+    ///   - remoteIdentifier: UUID assigned to the conversation.
+    ///   - domain: domain assigned to the conversation.
+    ///   - context: `NSManagedObjectContext` on which to fetch or create the conversation.
     ///                NOTE that this **must** be the sync context.
-
+    ///   - setNeedsToBeUpdatedFromBackend: Set to true if it needs to sync with backend
+    /// - Returns: a ZMConversation
     @objc
     static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        setNeedsToBeUpdatedFromBackend: Bool = true
     ) -> ZMConversation {
         var created = false
         return fetchOrCreate(
             with: remoteIdentifier,
             domain: domain,
             in: context,
-            created: &created
+            created: &created,
+            setNeedsToBeUpdatedFromBackend: setNeedsToBeUpdatedFromBackend
         )
     }
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
     ///
     /// - Parameters:
-    ///     - remoteIdentifier: UUID assigned to the conversation.
-    ///     - domain: domain assigned to the conversation.
-    ///     - context: `NSManagedObjectContext` on which to fetch or create the conversation.
+    ///   - remoteIdentifier: UUID assigned to the conversation.
+    ///   - domain: domain assigned to the conversation.
+    ///   - context: `NSManagedObjectContext` on which to fetch or create the conversation.
     ///                NOTE that this **must** be the sync context.
-    ///     - created: Will be set `true` if a new user was created.
+    ///   - created: Will be set `true` if a new user was created.
+    ///   - setNeedsToBeUpdatedFromBackend: Set to true if it needs to sync with backend
 
     @objc
     static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext,
-        created: UnsafeMutablePointer<Bool>
+        created: UnsafeMutablePointer<Bool>,
+        setNeedsToBeUpdatedFromBackend: Bool = true
     ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
-        // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
-        // having two duplicates of that user, and we'd have a really hard time recovering from that.
-        require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
+        // where the UI and sync contexts could both insert the same conversation (same UUID) and we'd end up
+        // having two duplicates of that conversation, and we'd have a really hard time recovering from that.
+        require(context.zm_isSyncContext, "Conversations are only allowed to be created on sync context")
         let domain: String? = context.isFederationEnabled ? domain : nil
 
         if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
@@ -72,7 +77,7 @@ public extension ZMConversation {
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.remoteIdentifier = remoteIdentifier
             conversation.domain = if let domain, !domain.isEmpty { domain } else { .none }
-            conversation.needsToBeUpdatedFromBackend = true
+            conversation.needsToBeUpdatedFromBackend = setNeedsToBeUpdatedFromBackend
             return conversation
         }
     }

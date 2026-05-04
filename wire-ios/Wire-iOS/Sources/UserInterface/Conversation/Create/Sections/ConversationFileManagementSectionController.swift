@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ extension ConversationCreateFileManagementSectionController {
 
         addAttributedText(to: sectionFooter)
 
-//        sectionFooter.linkTextView.isHidden = false
+        sectionFooter.linkTextView.isHidden = false
 
         return sectionFooter
     }
@@ -76,25 +76,25 @@ extension ConversationCreateFileManagementSectionController {
     private func addAttributedText(
         to footer: SectionFooter
     ) {
-        let fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
+        var fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
+        let learnMore = L10n.Localizable.Conversation.Create.FileManagement.learnMore
+        fullText += " " + learnMore
         let attributedText = NSMutableAttributedString(string: fullText)
+        let supportLink = "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations"
 
-        // TODO: [WPB-20191] "Learn more" not shown until we get the proper URL, uncomment code below and replace `https://wire.com` by proper link.
-//        guard let learnMoreRange = fullText.range(of: "Learn more", options: .caseInsensitive) else {
-//            assertionFailure(
-//                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
-//            )
-//            return
-//        }
-//
-//        let linkRange = NSRange(learnMoreRange, in: fullText)
-//        let fullRange = NSRange(location: 0, length: fullText.count)
-//        attributedText
-//            .addAttribute(.link, value: "https://wire.com", range: linkRange) // TODO: [WPB-16736] URL to be defined
-//        attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
-//        attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
+        guard let learnMoreRange = fullText.range(of: learnMore, options: .caseInsensitive) else {
+            assertionFailure(
+                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
+            )
+            return
+        }
 
-        // footer.linkTextView.attributedText = attributedText
-        footer.titleLabel.text = fullText
+        let linkRange = NSRange(learnMoreRange, in: fullText)
+        let fullRange = NSRange(location: 0, length: fullText.count)
+        attributedText.addAttribute(.link, value: supportLink, range: linkRange)
+        attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
+        attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
+
+        footer.linkTextView.attributedText = attributedText
     }
 }

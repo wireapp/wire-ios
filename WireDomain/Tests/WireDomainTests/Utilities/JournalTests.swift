@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class JournalStoreTests {
     @Test("Values contain all declared values")
     func values() {
         // Given
-        let exhaustiveKeysCount = 10
+        let exhaustiveKeysCount = 11
         sut[.isSyncV2Enabled] = true
 
         // When

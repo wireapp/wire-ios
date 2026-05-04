@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireDataModel
 import WireNetwork
 
 // sourcery: AutoMockable
@@ -48,7 +49,8 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
     /// Persists an event envelopes locally.
@@ -58,15 +60,19 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
+    /// - parameter privateKeys: The private keys to use for decryption (if needed).
     /// - returns: A list of decoded event envelopes and their related object IDs.
 
     func fetchStoredEventEnvelopes(
-        limit: UInt
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
     ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.

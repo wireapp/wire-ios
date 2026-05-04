@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ struct FlowLayout: Layout {
 
     private func layout(subviews: Subviews, containerWidth: CGFloat) -> (items: [CGRect], size: CGSize) {
         let sizes = subviews.map { subview in
-            let size = subview.sizeThatFits(.unspecified)
+            let size = subview.sizeThatFits(ProposedViewSize(width: containerWidth, height: nil))
             return CGSize(width: min(size.width, containerWidth), height: size.height)
         }
 

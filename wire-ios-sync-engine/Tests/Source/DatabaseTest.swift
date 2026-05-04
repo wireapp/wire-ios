@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,10 +38,6 @@ class DatabaseTest: ZMTBaseTest {
 
     var syncMOC: NSManagedObjectContext {
         coreDataStack!.syncContext
-    }
-
-    var searchMOC: NSManagedObjectContext {
-        coreDataStack!.searchContext
     }
 
     var sharedContainerURL: URL? {
@@ -117,7 +113,7 @@ class DatabaseTest: ZMTBaseTest {
 
     func performPretendingUIMocIsSyncMoc(_ block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()

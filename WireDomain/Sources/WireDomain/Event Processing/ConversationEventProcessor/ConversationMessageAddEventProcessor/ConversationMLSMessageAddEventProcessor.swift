@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,8 +42,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let decryptedMessages = event.decryptedMessages
 
         guard !decryptedMessages.isEmpty else {
-            return WireLogger.proteus.warn(
-                "failed to add MLS message: there are no decrypted messages to process"
+            return WireLogger.mls.info(
+                "no decrypted messages to process, it should be a handshake message: commit or proposal",
+                attributes: [.conversationId: event.conversationID.id.safeForLoggingDescription]
             )
         }
 

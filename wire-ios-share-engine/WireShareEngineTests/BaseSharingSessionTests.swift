@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,6 @@ class BaseTest: ZMTBaseTest {
     var applicationStatusDirectory: ApplicationStatusDirectory!
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
@@ -147,9 +146,6 @@ class BaseTest: ZMTBaseTest {
             context.saveOrRollback()
         }
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
@@ -173,7 +169,6 @@ class BaseTest: ZMTBaseTest {
         applicationStatusDirectory = nil
         operationLoop = nil
         strategyFactory = nil
-        mockCryptoboxMigrationManager = nil
         mockEARService = nil
         mockProteusService = nil
         mockMLSDecryptionService = nil
@@ -181,9 +176,10 @@ class BaseTest: ZMTBaseTest {
     }
 
     func createSharingSession() async throws -> SharingSession {
-        let earService = EARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
@@ -198,7 +194,6 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,

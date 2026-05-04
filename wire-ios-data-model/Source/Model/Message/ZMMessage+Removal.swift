@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public extension ZMMessage {
 
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
 
-        let possibleMatches = try! managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
+        let possibleMatches = try? managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
         let confirmationReceipts = possibleMatches?.filter { candidateConfirmationReceipt in
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
                 return false

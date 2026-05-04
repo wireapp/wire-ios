@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 enum ConversationActionType {
 
@@ -105,8 +106,8 @@ final class ParticipantsCellViewModel {
         guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
 
         let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areAppsPresent
-        let appAdded = users.any(\.isApp)
-        return selfAddedToServiceConversation || appAdded
+        let appOrBotAdded = users.any(\.isAppOrBot)
+        return selfAddedToServiceConversation || appOrBotAdded
     }
 
     /// Users displayed in the system message, up to 17 when not collapsed
@@ -252,6 +253,15 @@ final class ParticipantsCellViewModel {
             )
         } else {
             return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, isChannel: isChannel)
+        }
+    }
+
+    var accessibilityIdentifier: String? {
+        switch action {
+        case .left:
+            Locators.ConversationsPage.useLeftSystemMessage.rawValue
+        default:
+            nil
         }
     }
 

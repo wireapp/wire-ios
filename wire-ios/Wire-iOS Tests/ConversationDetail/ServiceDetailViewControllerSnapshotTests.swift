@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireData
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
@@ -24,35 +26,43 @@ import XCTest
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     private var sut: ServiceDetailViewController!
-    private var serviceUser: MockServiceUserType!
+    private var bot: MockUserType!
+    private var app: ZMUser!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
+    private var mockUsersAPI: MockUsersAPI!
     private var snapshotHelper: SnapshotHelper!
 
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+
         snapshotHelper = SnapshotHelper()
-        serviceUser = .createServiceUser(name: "AppUser")
+        bot = .createBot(name: "AppUser")
+        app = createApp(name: "AppUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
+        mockUsersAPI = .init()
     }
 
     override func tearDown() {
+        mockUsersAPI = nil
         snapshotHelper = nil
         sut = nil
-        serviceUser = nil
+        bot = nil
         groupConversation = nil
         mockSelfUser = nil
 
         super.tearDown()
     }
 
-    func createSut() {
+    func createSut(user: any UserType) {
         sut = ServiceDetailViewController(
-            serviceUser: serviceUser,
-            actionType: .removeService(groupConversation),
-            userSession: UserSessionMock(mockUser: mockSelfUser)
+            user: user,
+            actionType: .removeParticipant(groupConversation),
+            userSession: UserSessionMock(mockUser: mockSelfUser),
+            usersAPI: mockUsersAPI,
+            completion: { _ in }
         )
     }
 
@@ -60,7 +70,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         teamTest {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             mockSelfUser.canRemoveService = true
-            createSut()
+            createSut(user: bot)
             let navigationController = sut.wrapInNavigationController()
             snapshotHelper.verify(matching: navigationController)
         }
@@ -70,8 +80,32 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         teamTest {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             mockSelfUser.canRemoveService = false
-            createSut()
+            createSut(user: bot)
             snapshotHelper.verify(matching: sut)
         }
     }
+
+    @MainActor
+    func testDisplayingApp() async {
+        teamTest {
+            groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
+            mockSelfUser.canRemoveService = true
+            app.teamIdentifier = team?.remoteIdentifier
+            let appInfo = WireData.AppInfo(context: team!.managedObjectContext!)
+            appInfo.appDescription = "Lorem Ipsum Dolor Sit Amet"
+            appInfo.category = "Some Category"
+            app.appInfo = appInfo
+            let membership = Member(context: groupConversation.managedObjectContext!)
+            membership.user = app
+            membership.team = team
+            createSut(user: app)
+        }
+        mockUsersAPI.getUserFor_MockMethod = { _ in
+            try? await Task.sleep(for: .seconds(999))
+            fatalError("should never execute this")
+        }
+        let navigationController = sut.wrapInNavigationController()
+        snapshotHelper.verify(matching: navigationController)
+    }
+
 }

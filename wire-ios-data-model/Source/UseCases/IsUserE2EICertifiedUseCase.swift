@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,9 +70,9 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let userIdentities = try await coreCrypto.perform { coreCrypto in
+        let userIdentities = try await coreCrypto.transaction { context in
             // get MLS group members
-            let allUserIdentities = try await coreCrypto.getUserIdentities(
+            let allUserIdentities = try await context.getUserIdentities(
                 conversationId: mlsGroupID.conversationId,
                 userIds: [userID]
             )

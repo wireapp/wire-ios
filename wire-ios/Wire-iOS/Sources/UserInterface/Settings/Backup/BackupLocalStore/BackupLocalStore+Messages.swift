@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -512,6 +512,10 @@ extension BackupLocalStore {
             }
 
             message.visibleInConversation = conversation
+            if let messageServerTimestamp = message.serverTimestamp {
+                conversation.updateLastModified(messageServerTimestamp)
+            }
+
             message.markAsSent()
         } catch {
             throw RehydrationFailure.failedToSetGenericMessage(error: error)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,13 +45,23 @@ extension ConversationInputBarViewController {
     /// Upload files at the given `urls`.
     ///
     /// - parameter urls: The URLs of the files to upload.
-    /// - note: If wire cells is enabled, each file will be uploaded separately. If wire cells is disabled and there are
+    /// - note: If wire drive is enabled, each file will be uploaded separately. If wire drive is disabled and there are
     /// multiple files, these will be zipped and then uploaded.
 
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
+        let charactersToReplace = uploadDraftUseCase.charactersToReplace
+
+        if urls.contains(where: { $0.lastPathComponent.contains(where: { charactersToReplace.contains($0) }) }) {
+            showAlertForFileNeedsRename(urls: urls)
+        } else {
+            continueUploadFiles(at: urls)
+        }
+    }
+
+    private func continueUploadFiles(at urls: [URL]) {
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             for url in urls {
                 Task.detached { [uploadDraftUseCase] in
                     // We don't care about the result of the operation here as we will be observing changes.
@@ -152,6 +162,35 @@ extension ConversationInputBarViewController {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
+
+        present(alert, animated: true)
+    }
+
+    private func showAlertForFileNeedsRename(urls: [URL]) {
+        let characters = uploadDraftUseCase.charactersToReplace.map(String.init)
+        let formattedCharacters = characters.dropLast().joined(separator: " ")
+        let lastCharacter = characters.last ?? ""
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.Content.UploadedFileNeedsRename.title,
+            message: L10n.Localizable.Content.UploadedFileNeedsRename.message(formattedCharacters, lastCharacter),
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Content.UploadedFileNeedsRename.cancelButton,
+                style: .cancel
+            )
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Content.UploadedFileNeedsRename.confirmButton,
+                style: .default,
+                handler: { [weak self] _ in
+                    self?.continueUploadFiles(at: urls)
+                }
+            )
+        )
 
         present(alert, animated: true)
     }

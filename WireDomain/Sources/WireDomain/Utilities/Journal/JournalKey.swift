@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,13 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether a resources sync needs to be performed
+
+    static let isResourcesSyncRequired = Self(
+        "isResourcesSyncRequired",
+        defaultValue: false
+    )
+
     /// Whether all conversations should be pulled from the backend.
 
     static let isConversationSyncRequired = Self(
@@ -101,6 +108,21 @@ public extension JournalKey where Value == Bool {
     static let isFederationMigrationRequired = Self(
         "isFederationMigrationRequired",
         defaultValue: false
+    )
+
+    /// Whether faulty MLS removal keys need to be repaired.
+
+    static let isRepairFaultyMLSRemovalKeysRequired = Self(
+        "isRepairFaultyMLSRemovalKeysRequired",
+        defaultValue: false
+    )
+
+    /// Whether the default backend environment (if used by
+    /// the self user) needs to be refreshed and persisted.
+
+    static let isDefaultEnvironmentRefreshRequired = Self(
+        "isDefaultEnvironmentRefreshRequired",
+        defaultValue: true
     )
 
 }

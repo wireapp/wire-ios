@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,11 @@ public enum AuthenticationAPIError: Error {
     /// Thrown by `requestVerificationCode(for:)`.
 
     case invalidEmail
+
+    /// Thrown by `getSSOCode(forEmail:)` when no SSO code exists for the given email
+    /// or the SSO feature is disabled.
+
+    case ssoCodeNotFound
 
 }
 
@@ -132,6 +137,8 @@ extension AuthenticationAPIError: Equatable {
             lhsMessage == rhsMessage && lhsRetyAfter == rhsRetyAfter
 
         case (.invalidEmail, .invalidEmail): true
+
+        case (.ssoCodeNotFound, .ssoCodeNotFound): true
 
         default: false
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -344,7 +344,8 @@ extension CompanyLoginController {
                     }
                 }
             case let .failure(error):
-                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
+                // note this code should be removed (not used)
+                if case .maxNumberAccountsReached = error as? SessionManager.SwitchBackendError {
                     presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
                     presentCompanyLoginAlert(error: .domainNotRegistered)

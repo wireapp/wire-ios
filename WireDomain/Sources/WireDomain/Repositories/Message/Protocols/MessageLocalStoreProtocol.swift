@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -206,6 +206,8 @@ public protocol MessageLocalStoreProtocol {
     ///     - referenceMessageID: The id of the parent message.
     ///     - conversation: The related conversation.
     ///     - senderID: The message sender id.
+    ///     - ensureSenderIsSelfUser: If `true` `senderID` is compared to the self user's id and if they don't match,
+    /// the update is skipped.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
 
@@ -213,7 +215,8 @@ public protocol MessageLocalStoreProtocol {
         buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
-        senderID: UUID
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async
 
     /// Edits a previously sent message.

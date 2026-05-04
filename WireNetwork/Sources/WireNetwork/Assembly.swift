@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,13 +52,11 @@ public final class Assembly {
         authenticationManager: authenticationManager
     )
 
-    public lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
-        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
-    }()
+    public lazy var apiNetworkService = NetworkService(
+        baseURL: backendEnvironment.url,
+        urlSessionConfiguration: urlSessionConfigurationFactory.makeRESTAPISessionConfiguration(),
+        serverTrustValidator: serverTrustValidator
+    )
 
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,

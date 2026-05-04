@@ -1145,21 +1145,7 @@ internal enum L10n {
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
-    /// *  Wire
-    ///  *  Copyright (C) 2025 Wire Swiss GmbH
-    ///  *
-    ///  *  This program is free software: you can redistribute it and/or modify
-    ///  *  it under the terms of the GNU General Public License as published by
-    ///  *  the Free Software Foundation, either version 3 of the License, or
-    ///  *  (at your option) any later version.
-    ///  *
-    ///  *  This program is distributed in the hope that it will be useful,
-    ///  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ///  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    ///  *  GNU General Public License for more details.
-    ///  *
-    ///  *  You should have received a copy of the GNU General Public License
-    ///  *  along with this program. If not, see http://www.gnu.org/licenses/.
+    /// Allow Wire to access your contacts to connect you with others. We anonymize all information before uploading it to our server and do not share it with anyone else.
     internal static let nsContactsUsageDescription = L10n.tr("InfoPlist", "NSContactsUsageDescription", fallback: "Allow Wire to access your contacts to connect you with others. We anonymize all information before uploading it to our server and do not share it with anyone else.")
     /// Is shown to the user when app is locked with AppLock feature on the phone that supports Face ID
     internal static let nsFaceIDUsageDescription = L10n.tr("InfoPlist", "NSFaceIDUsageDescription", fallback: "In order to authenticate in the app allow Wire to access the Face ID feature.")
@@ -1345,14 +1331,6 @@ internal enum L10n {
           /// No status set
           internal static let title = L10n.tr("Localizable", "availability.reminder.none.title", fallback: "No status set")
         }
-      }
-    }
-    internal enum BackendNotSupported {
-      internal enum Alert {
-        /// The server version is not supported by this app. Please contact your system administrator.
-        internal static let message = L10n.tr("Localizable", "backend_not_supported.alert.message", fallback: "The server version is not supported by this app. Please contact your system administrator.")
-        /// Server version not supported
-        internal static let title = L10n.tr("Localizable", "backend_not_supported.alert.title", fallback: "Server version not supported")
       }
     }
     internal enum ButtonMessageCell {
@@ -1675,6 +1653,16 @@ internal enum L10n {
           /// Links
           internal static let title = L10n.tr("Localizable", "collections.section.links.title", fallback: "Links")
         }
+        internal enum SearchFiles {
+          /// Search Files
+          internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search Files")
+          internal enum Alert {
+            /// Find any file or folder in this conversation.
+            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find any file or folder in this conversation.")
+            /// Shared Drive
+            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "Shared Drive")
+          }
+        }
         internal enum Videos {
           /// Videos
           internal static let title = L10n.tr("Localizable", "collections.section.videos.title", fallback: "Videos")
@@ -1899,6 +1887,14 @@ internal enum L10n {
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
+          internal enum Files {
+            /// %@ files
+            internal static func count(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.message.reply.files.count", String(describing: p1), fallback: "%@ files")
+            }
+            /// File not available
+            internal static let notAvailable = L10n.tr("Localizable", "content.message.reply.files.notAvailable", fallback: "File not available")
+          }
           internal enum OriginalTimestamp {
             /// Original message from %@
             internal static func date(_ p1: Any) -> String {
@@ -2031,8 +2027,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
-        /// Self-deleting messages are off for conversations with Cells
-        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are off for conversations with Cells")
+        /// Self-deleting messages are off
+        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are off")
         /// You haven’t used this device for a while. Some messages may not appear here.
         internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
@@ -2164,8 +2160,6 @@ internal enum L10n {
           internal static func other(_ p1: Any) -> String {
             return L10n.tr("Localizable", "content.system.cannot_decrypt.other", String(describing: p1), fallback: "A message from %@ could not be decrypted.")
           }
-          /// Fix future messages
-          internal static let resetSession = L10n.tr("Localizable", "content.system.cannot_decrypt.reset_session", fallback: "Fix future messages")
           /// A message from you could not be decrypted.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt.self", fallback: "A message from you could not be decrypted.")
         }
@@ -2360,8 +2354,8 @@ internal enum L10n {
           }
         }
         internal enum FileCollaboration {
-          /// File collaboration (Cells) is on
-          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "File collaboration (Cells) is on")
+          /// Shared Drive is on
+          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "Shared Drive is on")
         }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
@@ -2520,13 +2514,26 @@ internal enum L10n {
           internal static let body = L10n.tr("Localizable", "content.system.unknown_message_received.body", fallback: "You have received a message that can't be displayed. You may be using an older version of Wire.")
         }
       }
+      internal enum UploadedFileNeedsRename {
+        /// Cancel
+        internal static let cancelButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.cancelButton", fallback: "Cancel")
+        /// Replace
+        internal static let confirmButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.confirmButton", fallback: "Replace")
+        /// You can't use the characters %@ and %@.
+        /// Replace them automatically or rename the file manually.
+        internal static func message(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.uploaded_file_needs_rename.message", String(describing: p1), String(describing: p2), fallback: "You can't use the characters %@ and %@.\nReplace them automatically or rename the file manually.")
+        }
+        /// Replace incompatible characters
+        internal static let title = L10n.tr("Localizable", "content.uploaded_file_needs_rename.title", fallback: "Replace incompatible characters")
+      }
     }
     internal enum Conversation {
       internal enum Action {
         /// Conversation Details
         internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
-        /// Files
-        internal static let files = L10n.tr("Localizable", "conversation.action.files", fallback: "Files")
+        /// Shared Drive
+        internal static let files = L10n.tr("Localizable", "conversation.action.files", fallback: "Shared Drive")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }
@@ -2583,6 +2590,34 @@ internal enum L10n {
         internal static let inAddressBook = L10n.tr("Localizable", "conversation.connection_view.in_address_book", fallback: "in Contacts")
         /// Please still be careful with who you share sensitive information.
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
+        internal enum Welcome {
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "conversation.connection_view.welcome.learn_more", fallback: "Learn more")
+          internal enum Message {
+            /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireCells = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_cells", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this channel is only accessible to you and other participants.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireChannel = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_channel", fallback: "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this conversation is only accessible to you and other participants.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireGroup = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_group", fallback: "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this conversation is only accessible to you and your contact.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireOneOnOne = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_one_on_one", fallback: "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.")
+          }
+          internal enum Title {
+            /// Communication in Wire is always end-to-end encrypted.
+            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.title.wire", fallback: "Communication in Wire is always end-to-end encrypted.")
+            /// Communication in Wire is always secured.
+            internal static let wireCells = L10n.tr("Localizable", "conversation.connection_view.welcome.title.wire_cells", fallback: "Communication in Wire is always secured.")
+          }
+        }
         internal enum WireCells {
           /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
           internal static let encryptionInfo = L10n.tr("Localizable", "conversation.connection_view.wire_cells.encryption_info", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.")
@@ -2610,10 +2645,12 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
         }
         internal enum FileManagement {
-          /// Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.")
-          /// File collaboration
-          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "File collaboration")
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "conversation.create.file_management.learnMore", fallback: "Learn more")
+          /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.")
+          /// Shared Drive
+          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "Shared Drive")
         }
         internal enum GroupName {
           /// Group name
@@ -3853,8 +3890,8 @@ internal enum L10n {
         internal static let footer = L10n.tr("Localizable", "group_details.file_collaboration_cell.footer", fallback: "Permanently on for this conversation")
         /// On
         internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
-        /// File collaboration (Cells)
-        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "File collaboration (Cells)")
+        /// Shared Drive
+        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "Shared Drive")
       }
       internal enum GuestOptionsCell {
         /// Off
@@ -3889,8 +3926,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "group_details.timeout_options_cell.title", fallback: "Self-deleting messages")
       }
       internal enum TimeoutOptionsDisabled {
-        /// The feature is not available for conversations with Cells.
-        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with Cells.")
+        /// The feature is not available for conversations with a shared Drive.
+        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with a shared Drive.")
       }
     }
     internal enum GuestRoom {
@@ -4730,6 +4767,14 @@ internal enum L10n {
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
       internal static let searchPlaceholder = L10n.tr("Localizable", "peoplepicker.search_placeholder", fallback: "Search by name or username")
+      internal enum AppDetails {
+        /// Created by %@
+        internal static func createdBy(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "peoplepicker.app_details.created_by", String(describing: p1), fallback: "Created by %@")
+        }
+        /// Description
+        internal static let description = L10n.tr("Localizable", "peoplepicker.app_details.description", fallback: "Description")
+      }
       internal enum Apps {
         internal enum AddApp {
           /// Add app
@@ -4803,6 +4848,14 @@ internal enum L10n {
       internal enum NavigationHeader {
         /// New conversation
         internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
+      internal enum NoAppsAdded {
+        /// Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.
+        internal static let addInTmMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.add_in_tm_message", fallback: "Apps are helpers that can improve your workflow. As a team admin, you can add them in team management.")
+        /// Apps are helpers that can improve your workflow. To use them, ask your team admin.
+        internal static let askAdminMessage = L10n.tr("Localizable", "peoplepicker.no_apps_added.ask_admin_message", fallback: "Apps are helpers that can improve your workflow. To use them, ask your team admin.")
+        /// Your team hasn’t added apps yet
+        internal static let title = L10n.tr("Localizable", "peoplepicker.no_apps_added.title", fallback: "Your team hasn’t added apps yet")
       }
       internal enum NoMatchingResults {
         internal enum Action {
@@ -6367,6 +6420,10 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "url_action.switch_backend_confirmation.title", fallback: "Redirect to an on-premises backend?")
         /// Website URL:
         internal static let websiteUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.website_url", fallback: "Website URL:")
+      }
+      internal enum UserProfileQrFeatureFlag {
+        /// Using profile links or QR codes is not allowed in your team. Contact your admin
+        internal static let message = L10n.tr("Localizable", "url_action.user_profile_qr_feature_flag.message", fallback: "Using profile links or QR codes is not allowed in your team. Contact your admin")
       }
     }
     internal enum UserCell {

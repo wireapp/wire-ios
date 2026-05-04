@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -57,6 +59,7 @@ final class ProfileViewController: UIViewController {
     private var tabsController: TabBarController?
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     // MARK: - init
 
@@ -65,10 +68,10 @@ final class ProfileViewController: UIViewController {
         viewer: UserType,
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext = if let context {
             context
@@ -89,7 +92,7 @@ final class ProfileViewController: UIViewController {
             conversation: conversation,
             viewer: viewer,
             context: profileViewControllerContext,
-            classificationProvider: classificationProvider,
+            classificationProvider: userSession as? SecurityClassificationProviding,
             userSession: userSession,
             profileActionsFactory: profileActionsFactory
         )
@@ -97,7 +100,8 @@ final class ProfileViewController: UIViewController {
         self.init(
             viewModel: viewModel,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
     }
@@ -105,11 +109,13 @@ final class ProfileViewController: UIViewController {
     required init(
         viewModel: some ProfileViewControllerViewModeling,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -140,15 +146,26 @@ final class ProfileViewController: UIViewController {
 
     private func bringUpConversationCreationFlow() {
         Task {
-            let controller = await ConversationCreationController(
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
+            let controller = ConversationCreationController(
                 preSelectedParticipants: viewModel.userSet,
-                userSession: viewModel.userSession
+                userSession: viewModel.userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             controller.delegate = self
 
             let wrappedController = controller.wrapInNavigationController()
             wrappedController.modalPresentationStyle = .formSheet
-            present(wrappedController, animated: true)
+            if presentedViewController != nil {
+                dismiss(animated: true) {
+                    self.present(wrappedController, animated: true)
+                }
+            } else {
+                present(wrappedController, animated: true)
+            }
         }
     }
 
@@ -415,7 +432,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             user: user,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -484,6 +502,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
                 }
             }
         }
+        removeAction.setValue(
+            Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue,
+            forKey: "accessibilityIdentifier"
+        )
 
         controller.addAction(removeAction)
         controller.addAction(.cancel())
@@ -588,9 +610,11 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            let closeButton = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
+            closeButton.accessibilityIdentifier = Locators.UserDetailsPage.close.rawValue
+            navigationItem.rightBarButtonItem = closeButton
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {
             navigationItem.rightBarButtonItem = legalHoldItem

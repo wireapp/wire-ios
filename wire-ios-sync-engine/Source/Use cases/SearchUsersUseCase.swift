@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 import WireUtilities
 
-// sourcery: AutoMockable
-public protocol SearchUsersUseCaseProtocol {
-    func invoke(
-        query: String,
-        options: SearchOptions,
-        messageProtocol: WireDataModel.MessageProtocol?
-    ) async throws -> SearchResult
-}
-
-public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
+public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -62,14 +53,14 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         messageProtocol: MessageProtocol?
-    ) async throws -> SearchResult {
+    ) async -> SearchResult {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
         await searchDirectory.updateIncompleteMetadataIfNeeded()
 
-        let (selfDomain, team) = await context.perform {
-            let selfUser = ZMUser.selfUser(in: self.context)
+        let (selfDomain, team) = await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return (selfUser.domain, selfUser.membership?.team)
         }
 
@@ -81,23 +72,14 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
             team: team
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            guard !Task.isCancelled else {
-                continuation.resume(throwing: CancellationError())
-                self.activeSearchTask = nil
-                return
+        let task = searchDirectory.createSearchTask(with: request)
+        activeSearchTask = task
+        defer {
+            if activeSearchTask === task {
+                activeSearchTask = nil
             }
-
-            let task = searchDirectory.perform(request)
-            task.addResultHandler { result, isCompleted in
-                if isCompleted {
-                    continuation.resume(returning: result)
-                    self.activeSearchTask = nil
-                }
-            }
-            task.start()
-            activeSearchTask = task
         }
+        return await task.start()
     }
 
     // MARK: - Private methods

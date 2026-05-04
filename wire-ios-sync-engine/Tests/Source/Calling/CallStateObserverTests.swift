@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -493,33 +493,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // then
         XCTAssertEqual(notificationCenter.scheduledRequests.count, 0)
-    }
-
-    func testThatClearedConversationsGetsUnarchivedForIncomingCalls() {
-        // given
-        syncMOC.performGroupedBlock {
-            self.conversation.lastServerTimeStamp = Date()
-            try! self.conversation.appendText(content: "test")
-            self.conversation.clearMessageHistory()
-            XCTAssert(self.conversation.isArchived)
-            XCTAssertNotNil(self.conversation.clearedTimeStamp)
-            self.syncMOC.saveOrRollback()
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        sut.callCenterDidChange(
-            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
-            conversation: conversationUI,
-            caller: senderUI,
-            timestamp: nil,
-            previousCallState: nil
-        )
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.refreshAllObjects()
-
-        // then
-        XCTAssertFalse(conversationUI.isArchived)
     }
 
     func testThatArchivedConversationsGetsUnarchivedForIncomingCalls() {
