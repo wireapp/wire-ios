@@ -109,7 +109,8 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
                 : (creator.isSelfUser
                     ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName)
                     : L10n.Localizable.Content.System.Conversation.WithName.title(senderName))
-            let text = headingText.attributedString && font
+            let capitalizedHeading = headingText.prefix(1).uppercased() + headingText.dropFirst()
+            let text = capitalizedHeading.attributedString && font
             let title = name.attributedString && largeFont
             heading = [text, title].joined(separator: "\n".attributedString) && textColor && .lineSpacing(4)
         } else {

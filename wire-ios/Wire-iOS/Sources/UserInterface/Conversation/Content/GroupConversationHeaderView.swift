@@ -71,7 +71,9 @@ final class GroupConversationHeaderView: UIView {
     }
 
     private func populate(conversation: ZMConversation, selfUser: any UserType) {
-        stackView.addArrangedSubview(makeGuestWarningBanner())
+        let bannerView = makeGuestWarningBanner()
+        stackView.addArrangedSubview(bannerView)
+        stackView.setCustomSpacing(16, after: bannerView)
 
         let startedCell = ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>()
         startedCell.configure(
