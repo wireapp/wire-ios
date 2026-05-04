@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,34 @@
 //
 
 import WireDataModelSupport
+import WireDomain
+import WireLoggingSupport
 import XCTest
+
+@testable import WireLogging
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
-    func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
+    @MainActor
+    func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() async throws {
         // given
         let userId = NSUUID.create()!
 
-        mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: userId,
             useCache: true
         )
-        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        let coreDataStack = createCoreDataStack()
+        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        let coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        coreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+        let coreDataStack = try await createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
             self.setupSelfClient(inMoc: coreDataStack.syncContext)
         }
@@ -44,15 +54,21 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         mockContextStore.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
+        let journal = Journal(
+            userID: coreDataStack.account.userIdentifier,
+            storage: UserDefaults.temporary()
+        )
+        let logFilesProvider = LogFilesProvidingMock()
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: "00000",
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "00000",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStore,
             earService: mockEARService,
@@ -62,27 +78,26 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: transportSession,
             userId: userId,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            journal: journal,
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: [:]
         )
         let testSession = builder.build()
         testSession.setup(
-            eventProcessor: nil,
+            apiVersion: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
             configuration: configuration,
             isDeveloperModeEnabled: false
         )
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
-        XCTAssertEqual(mockPushChannel.keepOpen, true)
-        coreDataStack.syncContext.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
-        }
         testSession.tearDown()
     }
 }

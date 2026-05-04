@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,5 +58,38 @@ final class SidebarViewControllerSnapshotTests: XCTestCase {
                     named: "\(contentSizeCategory)"
                 )
         }
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testFilesItemUIFontDarkUserInterfaceStyle() {
+        let sut = SidebarViewControllerPreview(showFiles: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testFilesItemUIFontContentSize() {
+        let sut = SidebarViewControllerPreview(showFiles: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        sut.traitOverrides.preferredContentSizeCategory = .extraSmall
+        snapshotHelper
+            .verify(
+                matching: sut,
+                named: "\(UIContentSizeCategory.extraSmall)"
+            )
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testMeetingsItemUIFontDarkUserInterfaceStyle() {
+        let sut = SidebarViewControllerPreview(showMeetings: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 }

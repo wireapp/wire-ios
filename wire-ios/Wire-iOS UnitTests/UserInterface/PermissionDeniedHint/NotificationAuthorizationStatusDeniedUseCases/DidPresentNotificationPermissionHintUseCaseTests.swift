@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ import XCTest
 
 final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var userDefaults: UserDefaults!
-    private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
+    private var sut: DidPresentNotificationPermissionHintUseCase<CurrentDateProvidingMock>!
 
     override func setUp() {
         mockDateProvider = .init()
@@ -42,6 +42,7 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
+    // TODO: [WPB-17397] re-enable
     func testDateIsStored() throws {
 
         // When

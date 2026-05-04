@@ -38,6 +38,7 @@
       }
     },
     {
+      "parallelizable" : false,
       "skippedTests" : [
         "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
         "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",

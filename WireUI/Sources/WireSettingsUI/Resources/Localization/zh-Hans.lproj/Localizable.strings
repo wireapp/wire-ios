@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,51 +17,53 @@
 //
 
 "backup.export.action" = "立即备份";
-"backup.export.description" = "创建备份以保存您的对话历史记录。如果您丢失了计算机或更换了新计算机，您可以使用该备份来恢复历史记录。备份文件不受 Wire 端到端加密保护，因此请将其存储在安全的地方。";
+"backup.export.description" = "创建备份以保存您的对话历史记录。这样，如果您丢失设备或更换了新设备，就可以恢复历史记录。备份文件并非端到端加密。请妥善保管。";
 
 "backup.import.action" = "从备份还原";
 "backup.import.description" = "此设备上的现有历史记录将被保留，并将由新备份补全。您可以从所有设备和不同平台恢复历史记录，但不能从其他账户恢复。";
 
 "exportBackup.title" = "设置密码";
-"exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";
+"exportBackup.description" = "备份将被压缩。如果您使用密码，Wire 还会加密备份文件。请务必将密码存储在安全的地方。";
 "exportBackup.button" = "立即备份";
-"exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
+"exportBackup.setBackupPassword.title" = "密码（可选）";
 "exportBackup.setBackupPassword.placeholder" = "键入密码";
-"exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"exportBackup.setBackupPassword.rules" = "至少使用 8 个字符，包含一个小写字母、一个大写字母、一个数字和一个特殊字符。";
 
 "exportBackup.cancel.title" = "取消";
 "exportBackup.errorAlert.title" = "好像出了点问题。";
-"exportBackup.errorAlert.message" = "The backup could not be created. Please try again or contact Wire support.";
+"exportBackup.errorAlert.message" = "无法创建备份。请重试或联系 Wire 支持。";
 "exportBackup.errorAlert.ok" = "好";
 
-"exportBackup.creatingBackup.title" = "Creating Backup";
-"exportBackup.creatingBackup.saving" = "Saving conversation history…";
-"exportBackup.creatingBackup.success" = "Backup successfully created.";
-"exportBackup.creatingBackup.saveButton.title" = "Save File";
+"exportBackup.creatingBackup.title" = "创建备份";
+"exportBackup.creatingBackup.saving" = "正在保存对话历史记录…";
+"exportBackup.creatingBackup.success" = "备份已成功创建。";
+"exportBackup.creatingBackup.saveButton.title" = "保存文件";
 
 "importBackup.cancel.title" = "取消";
 
-"importBackup.overwriteConfirmation.title" = "File overwrites your history";
-"importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
+"importBackup.overwriteConfirmation.title" = "文件会覆盖您的历史记录";
+"importBackup.overwriteConfirmation.message" = "备份内容将替换此设备上的当前对话历史记录。";
 "importBackup.overwriteConfirmation.cancel" = "取消";
 "importBackup.overwriteConfirmation.proceed" = "继续";
 
 "importBackup.alert.ok" = "好";
-"importBackup.alert.success.title" = "Success";
-"importBackup.alert.success.message" = "Your history is restored.";
+"importBackup.alert.success.message" = "您的历史记录已恢复。";
 "importBackup.alert.genericError.title" = "好像出了点问题。";
-"importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
-"importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
-"importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
-"importBackup.alert.wrongFileError.title" = "Wrong backup file";
-"importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+"importBackup.alert.genericError.message" = "无法恢复您的历史记录。请重试或联系 Wire 顾客支持。";
+"importBackup.alert.incompatibleBackupError.title" = "不兼容的备份";
+"importBackup.alert.incompatibleBackupError.message" = "此备份由较新或过时的 Wire 版本创建，无法在此处恢复。";
+"importBackup.alert.wrongFileError.title" = "错误的备份文件";
+"importBackup.alert.wrongFileError.message" = "您无法从其他账户恢复历史记录。";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "键入密码";
-"importBackup.enterPassword.description" = "This backup is password protected.";
+"importBackup.enterPassword.description" = "此备份受密码保护。";
 "importBackup.enterPassword.textField.title" = "密码";
 "importBackup.enterPassword.textField.placeholder" = "键入密码";
-"importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
+"importBackup.enterPassword.wrongPassword" = "密码错误。请验证您的输入并重试";
 "importBackup.enterPassword.button.title" = "继续";
 
-"importBackup.restoringHistory.title" = "Restoring history…";
-"importBackup.restoringHistory.message" = "Loading conversations…";
+"importBackup.restoringHistory.title" = "恢复历史记录中…";
+"importBackup.loadingBackup.message" = "Loading backup…";
+"importBackup.restoringHistory.message" = "加载对话中…";

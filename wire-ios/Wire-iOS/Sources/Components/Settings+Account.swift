@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,13 +62,13 @@ extension Settings {
         defaults.setValue(accountPayload, forKey: account.userDefaultsKey())
     }
 
-    func lastViewedConversation(for account: Account) -> ZMConversation? {
+    func lastViewedConversation(for account: Account, in session: UserSession) -> ZMConversation? {
         guard let conversationID: String = value(for: .lastViewedConversation, in: account) else {
             return nil
         }
 
         let conversationURI = URL(string: conversationID)
-        let session = ZMUserSession.shared()
+        let session = session as? ZMUserSession
         let objectID = ZMManagedObject.objectID(forURIRepresentation: conversationURI, inUserSession: session)
         return ZMConversation.existingObject(with: objectID, inUserSession: session)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,11 +64,35 @@ extension ConversationListViewController {
                 showArrow: false
             )
         case .oneOnOne:
-            let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
+            let domain = listContentController.listViewModel.userSession.selfUser.domain ?? ""
             return EmptyPlaceholder(
                 subheadline: Strings.Oneonone.subheadline(domain).attributedString,
                 showArrow: !isIPadRegular(),
                 showButton: isIPadRegular()
+            )
+        case .unread:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Unread.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
+                showArrow: false
+            )
+        case .mentions:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Mentions.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
+                showArrow: false
+            )
+        case .replies:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Replies.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
+                showArrow: false
+            )
+        case .drafts:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Drafts.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
+                showArrow: false
             )
         case .folder:
             // FIXME: [WPB-13905] Disallow this state

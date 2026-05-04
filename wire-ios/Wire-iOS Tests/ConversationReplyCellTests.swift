@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -501,7 +501,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     // MARK: - Helpers
 
     private func makeCell(for message: ZMConversationMessage?) -> ConversationReplyCell {
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
         let cell = ConversationReplyCell()
         cell.configure(with: cellDescription.configuration, animated: false)
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))

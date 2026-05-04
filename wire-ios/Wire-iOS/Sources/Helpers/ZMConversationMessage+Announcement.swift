@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 extension ZMConversationMessage {
 
@@ -34,7 +35,11 @@ extension ZMConversationMessage {
         if isKnock {
             return ConversationAnnouncement.Ping.description(senderName)
         } else if isText, let textMessageData {
-            let messageText = NSAttributedString.format(message: textMessageData, isObfuscated: isObfuscated)
+            let messageText = NSAttributedString.format(
+                message: textMessageData,
+                isObfuscated: isObfuscated,
+                accentColor: .default
+            )
             return "\(ConversationAnnouncement.Text.description(senderName)), \(messageText.string)"
         } else if isImage {
             return ConversationAnnouncement.Picture.description(senderName)
@@ -47,7 +52,12 @@ extension ZMConversationMessage {
         } else if isFile {
             return ConversationAnnouncement.File.description(filename ?? "", senderName)
         } else if isSystem, let cellDescription = ConversationSystemMessageCellDescription.cells(
-            for: self, isCollapsed: true, buttonAction: nil
+            for: self,
+            isCollapsed: true,
+            buttonAction: nil,
+            selfUser: ZMUserSession.shared()!.selfUser,
+            accentColor: ZMAccentColor.default.accentColor.uiColor,
+            userSession: ZMUserSession.shared()!
         ).first {
             return cellDescription.cellAccessibilityLabel
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,28 +17,29 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireDomain
 import WireFoundation
+import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
+@available(*, deprecated, message: "See UserSessionLoader instead.")
 struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
-    private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
-    private var appVersion: String?
+    private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
+    private var currentAppVersion: String?
+    private var currentBuildNumber: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
     private var contextStorage: (any LAContextStorable)?
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
-    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
     private var dependencies: UserSessionDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
@@ -50,10 +51,14 @@ struct ZMUserSessionBuilder {
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
+    private var sharedContainerURL: URL?
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
     private var minTLSVersion: String?
-    private var apiVersion: WireAPI.APIVersion?
+    private var apiVersion: WireNetwork.APIVersion?
+    private var journal: Journal?
+    private var logFilesProvider: LogFilesProviding?
+    private var faultyMLSRemovalKeysByDomain: [String: [String]]?
 
     // MARK: - Initialize
 
@@ -63,15 +68,14 @@ struct ZMUserSessionBuilder {
 
     func build() -> ZMUserSession {
         guard
-            let apiServiceFactory,
-            let appVersion,
+            let currentAppVersion,
+            let currentBuildNumber,
             let appLock,
             let application,
             let applicationStatusDirectory,
             let contextStorage,
             let coreCryptoProvider,
             let coreDataStack,
-            let cryptoboxMigrationManager,
             let e2eiActivationDateRepository,
             let dependencies,
             let earService,
@@ -83,28 +87,79 @@ struct ZMUserSessionBuilder {
             let proteusToMLSMigrationCoordinator,
             let recurringActionService,
             let sharedUserDefaults,
+            let sharedContainerURL,
             let transportSession,
             let userId,
             let wireAPIBackendEnvironment,
-            let apiVersion
+            let apiVersion,
+            let journal,
+            let logFilesProvider
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
+        let keychain = WireFoundation.Keychain()
+        let cookieStorage = CookieStorage(
+            userID: userId,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: keychain
+        )
+
+        let serverTrustValidator = ServerTrustValidator(
+            pinnedKeys: wireAPIBackendEnvironment.pinnedKeys,
+            currentDateProvider: .system
+        )
+
+        let urlSessionConfigurationFactory = URLSessionConfigurationFactory(
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            proxySettings: wireAPIBackendEnvironment.proxySettings
+        )
+
+        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        let restNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.url,
+            urlSessionConfiguration: restConfig,
+            serverTrustValidator: serverTrustValidator
+        )
+
+        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
+        let webSocketNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.webSocketURL,
+            urlSessionConfiguration: webSocketConfig,
+            serverTrustValidator: serverTrustValidator
+        )
+
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
+        let blacklistNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.blacklistURL,
+            urlSessionConfiguration: blacklistConfig,
+            serverTrustValidator: serverTrustValidator
+        )
+
+        let backendMetadata = ResolvedBackendMetadata(
+            apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
+            domain: BackendInfo.domain!,
+            isFederationEnabled: BackendInfo.isFederationEnabled
+        )
+
         return ZMUserSession(
             userId: userId,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
+            backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
-            apiServiceFactory: apiServiceFactory,
             application: application,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: sharedContainerURL,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
             lastEventIDRepository: lastEventIDRepository,
@@ -114,44 +169,42 @@ struct ZMUserSessionBuilder {
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
             dependencies: dependencies,
-            backendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: apiVersion
+            journal: journal,
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
         )
     }
 
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
-        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
-        appVersion: String,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         application: any ZMApplication,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
-        earService: (any EARServiceInterface)?,
+        earService: any EARServiceInterface,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL,
         transportSession: any TransportSessionType,
         userId: UUID,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        journal: Journal,
+        logFilesProvider: LogFilesProviding,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         // reused dependencies
 
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: userId,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
-        )
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -172,23 +225,14 @@ struct ZMUserSessionBuilder {
             cookieStorage: transportSession.cookieStorage,
             requestCancellation: transportSession,
             application: application,
-            lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: BackendInfo.domain,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
-        )
-        let earService = earService ?? EARService(
-            accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
-            ],
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,
@@ -198,16 +242,15 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            // TODO: [WPB-15440] when integrating new quick sync, we'll need to pass the sync agent here.
-            syncStatus: applicationStatusDirectory.syncStatus,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: BackendInfo.domain ?? "unused" // unused
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: userId
+            userID: userId,
+            apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
             storage: sharedUserDefaults,
@@ -216,21 +259,20 @@ struct ZMUserSessionBuilder {
 
         if
             let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
             self.apiVersion = apiVersion
         }
 
         // setup builder
 
-        self.apiServiceFactory = apiServiceFactory
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
         self.application = application
         self.applicationStatusDirectory = applicationStatusDirectory
         self.contextStorage = contextStorage
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
@@ -242,10 +284,14 @@ struct ZMUserSessionBuilder {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
+        self.sharedContainerURL = sharedContainerURL
         self.transportSession = transportSession
         self.userId = userId
         self.minTLSVersion = minTLSVersion
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
+        self.journal = journal
+        self.logFilesProvider = logFilesProvider
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     // MARK: UserSesssionDependencies

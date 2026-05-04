@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import Intents
 import OCMock
 import WireDataModel
 
+import WireMockTransport
 @testable import WireSyncEngine
 
 class MockCallKitProvider: CXProvider {
@@ -199,6 +200,11 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         hasEndedAllCalls = true
     }
 
+    var invokeDidEndAllCalls: Bool = false
+    func didEndAllCalls() {
+        invokeDidEndAllCalls = true
+    }
+
 }
 
 class CallKitManagerTest: DatabaseTest {
@@ -260,7 +266,9 @@ class CallKitManagerTest: DatabaseTest {
             uiMOC: uiMOC,
             flowManager: flowManager,
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         mockCallKitManagerDelegate = MockCallKitManagerDelegate()
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
@@ -268,7 +276,6 @@ class CallKitManagerTest: DatabaseTest {
         sut = CallKitManager(
             isEnabled: true,
             application: ApplicationMock(),
-            requiredPushTokenType: .standard,
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,
@@ -314,7 +321,6 @@ class CallKitManagerTest: DatabaseTest {
         sut = CallKitManager(
             isEnabled: true,
             application: ApplicationMock(),
-            requiredPushTokenType: .standard,
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireNetwork
 import WireReusableUIComponents
 
 package protocol DetermineAuthMethodFactory {
@@ -26,20 +28,29 @@ package protocol DetermineAuthMethodFactory {
     @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
     @MainActor
-    func loginViaEmailFactory(
+    func loginView(
         email: String?,
-        canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> any LoginViaEmailFactory
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+
 }
 
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
+
+    private typealias Strings = L10n.Localizable.Authentication
 
     package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
@@ -68,7 +79,7 @@ package struct DetermineAuthMethodView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
+                Button(Strings.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
         .navigationDestination(for: DetermineAuthMethodDestination.self) {
@@ -86,28 +97,21 @@ package struct DetermineAuthMethodView: View {
     // MARK: - Views
 
     @ViewBuilder private var header: some View {
-        HStack {
-            Spacer()
-                .frame(maxWidth: .infinity)
+        Group {
             if viewModel.isOnPremiseBackend {
-                OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                OnPremHeaderView(environment: viewModel.environment)
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Logo()
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                Logo().frame(width: 164, height: 95)
             }
-
-            Spacer()
-                .frame(maxWidth: .infinity)
         }
+        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
     }
 
     @ViewBuilder private var message: some View {
-        Text(L10n.Authentication.Identity.Input.body)
-            .multilineTextAlignment(.leading)
-            .wireTextStyle(.body1)
+        Text(Strings.Identity.Input.body)
+            .multilineTextAlignment(.center)
+            .font(for: .body1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.trailing)
@@ -117,16 +121,16 @@ package struct DetermineAuthMethodView: View {
         VStack(alignment: .leading, spacing: 8) {
             LabeledTextField(
                 isMandatory: false,
-                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                title: L10n.Authentication.Identity.Input.Field.title,
-                string: $viewModel.emailOrSSOCode
+                placeholder: Strings.Identity.Input.Field.placeholder,
+                title: Strings.Identity.Input.Field.title,
+                string: $viewModel.emailOrSSOCode,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
-            .autocapitalization(.none)
             .autocorrectionDisabled()
-            .textContentType(.username)
-            .keyboardType(.emailAddress)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(Locators.WelcomePage.emailTextField.rawValue)
         }
     }
 
@@ -141,12 +145,13 @@ package struct DetermineAuthMethodView: View {
                     ProgressView()
                 }
 
-                Text(L10n.Authentication.Identity.Input.submit)
+                Text(Strings.Identity.Input.submit)
                     .lineLimit(nil)
             }
         })
         .wireButtonStyle(.primary)
         .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+        .accessibilityIdentifier(Locators.WelcomePage.nextButton.rawValue)
     }
 
     @ViewBuilder private var dismissButton: some View {
@@ -162,30 +167,26 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
         switch destination {
-        case let .login(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: false,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
+        case let .login(email, didDetectDomainConflict, environment):
+            viewModel.factory
+                .loginView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    environment: environment
+                )
         case let .loginOrRegister(
             email,
             didDetectDomainConflict,
-            backendInfo
+            environment
         ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: true,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
+            viewModel.factory
+                .loginOrRegisterView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    environment: environment
+                )
         case let .noHistory(authenticationResult):
-            NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
+            viewModel.factory.noHistoryView(result: authenticationResult)
         }
     }
 
@@ -194,14 +195,14 @@ package struct DetermineAuthMethodView: View {
         switch sheet {
         case let .switchBackendConfirmation(
             email,
-            backendInfo
+            environment
         ):
-            SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+            SwitchBackendConfirmation(environment: environment) { didConfirm in
                 guard didConfirm else { return }
                 Task {
                     await viewModel.switchBackend(
                         email: email,
-                        backendInfo: backendInfo
+                        environment: environment
                     )
                 }
             }

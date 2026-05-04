@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,14 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
 import WireFoundation
+import WireNetwork
 import WireReusableUIComponentsSupport
 import WireTestingPackage
 import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
+final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     private var router: MockRouter!
     private var sut: LoginViaEmailViewModel!
@@ -53,10 +54,9 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendInfo: MockDependencies().backendInfo,
+            environment: MockDependencies().backendEnvironment,
             canCreateAccount: true,
-            didDetectDomainConflict: false,
-            onCreateAccount: { [self] in onCreateAccountCalled = true }
+            didDetectDomainConflict: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -92,20 +92,27 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockValidateEmailUseCase
     }
 
-    var viewModel: WireAuthenticationUI.LoginViaEmailViewModel {
+    var viewModel: LoginViaEmailViewModel {
         fatalError("not needed here")
     }
 
     func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
-    ) -> any WireAuthenticationUI.VerificationCodeFactory {
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory {
         fatalError("not needed here")
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
-        .NoHistoryFactory {
+    func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
+        fatalError()
+    }
+
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
+    }
+
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
         fatalError("not needed here")
     }
 
@@ -126,7 +133,9 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock
@@ -162,7 +171,9 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock

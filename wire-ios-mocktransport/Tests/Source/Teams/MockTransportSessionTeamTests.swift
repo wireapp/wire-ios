@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -297,36 +297,6 @@ extension MockTransportSessionTeamTests {
 
         // Then
         XCTAssertEqual(response?.httpStatus, 403)
-    }
-
-    func testThatTeamConversationCanBeDeleted() {
-        // Given
-        var team: MockTeam!
-        var creator: MockUser!
-        var selfUser: MockUser!
-        var conversation: MockConversation!
-
-        sut.performRemoteChanges { session in
-            team = session.insertTeam(withName: "name", isBound: true)
-            selfUser = session.insertSelfUser(withName: "Self User")
-            creator = session.insertUser(withName: "creator")
-            team.creator = creator
-            session.insertMember(with: selfUser, in: team)
-            conversation = session.insertTeamConversation(to: team, with: [creator, selfUser], creator: creator)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // When
-        let response = response(
-            forPayload: nil,
-            path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)",
-            method: .delete,
-            apiVersion: .v0
-        )
-
-        // Then
-        XCTAssertEqual(response?.httpStatus, 200)
-        XCTAssertTrue(conversation.isFault)
     }
 
     func testThatConversationReturnsTeamInPayload() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 
 protocol GroupDetailsFooterViewDelegate: AnyObject {
     func footerView(_ view: GroupDetailsFooterView, shouldPerformAction action: GroupDetailsFooterView.Action)
@@ -44,9 +45,9 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     override func setupButtons() {
         leftIcon = .plus
         leftButton.setTitle(L10n.Localizable.Participants.Footer.addTitle, for: .normal)
-        leftButton.accessibilityIdentifier = "OtherUserMetaControllerLeftButton"
+        leftButton.accessibilityIdentifier = Locators.ConversationDetailsPage.addParticipantsButton.rawValue
         rightIcon = .ellipsis
-        rightButton.accessibilityIdentifier = "OtherUserMetaControllerRightButton"
+        rightButton.accessibilityIdentifier = Locators.ConversationDetailsPage.moreOptionsButton.rawValue
         rightButton.accessibilityLabel = L10n.Accessibility.ConversationDetails.MoreButton.description
     }
 

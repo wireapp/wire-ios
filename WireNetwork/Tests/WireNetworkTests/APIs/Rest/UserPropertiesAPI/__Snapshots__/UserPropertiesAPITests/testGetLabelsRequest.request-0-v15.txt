@@ -1,0 +1,2 @@
+curl \
+	"/v15/properties/labels"

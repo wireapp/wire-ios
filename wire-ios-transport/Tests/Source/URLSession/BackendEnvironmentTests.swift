@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@ class BackendEnvironmentTests: XCTestCase {
     var backendBundle: Bundle!
     var defaultsProd: UserDefaults!
     var defaultsCustom: UserDefaults!
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUpWithError() throws {
 
-        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
 
         continueAfterFailure = false
@@ -46,7 +46,7 @@ class BackendEnvironmentTests: XCTestCase {
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
         defaultsCustom = UserDefaults(suiteName: "custom")
-        EnvironmentType.production.save(in: defaultsProd)
+        EnvironmentType.default.save(in: defaultsProd)
         EnvironmentType.custom(url: URL(string: "https://custom.backend.com")!).save(in: defaultsCustom)
 
         continueAfterFailure = true

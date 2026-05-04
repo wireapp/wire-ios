@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import WireDesign
 
 struct ImportProgressView: View {
 
-    var progressValue = Float()
+    var isLoadingFile = false
+    var progressValues = (current: 0, total: 0)
     var cancelAction: () -> Void
 
     private typealias Strings = L10n.Localizable.ImportBackup
@@ -46,6 +47,37 @@ struct ImportProgressView: View {
     }
 
     @ViewBuilder private var progressView: some View {
+        if isLoadingFile {
+            loadingFileView
+        } else {
+            loadingConversationsView
+        }
+    }
+
+    @ViewBuilder private var loadingFileView: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Text(Strings.LoadingBackup.message)
+                Spacer()
+            }
+            .padding(.bottom)
+
+            ProgressView()
+                .scaleEffect(1.5)
+
+            Spacer()
+        }
+        .padding()
+    }
+
+    @ViewBuilder private var loadingConversationsView: some View {
+        let progressValue = if progressValues.current == 0 || progressValues.total == 0 {
+            Float()
+        } else {
+            Float(progressValues.current) / Float(progressValues.total)
+        }
+
         VStack {
             Spacer()
             HStack {
@@ -53,19 +85,25 @@ struct ImportProgressView: View {
                 Spacer()
             }
             .padding(.bottom)
+
             HStack {
                 Spacer()
-                Text("\(Int(progressValue * 100))%")
+                Text(progressValue.formatted(.percent.precision(.fractionLength(0))))
                     .font(.caption2)
                 Spacer()
             }
             ProgressView(value: progressValue)
+
             Spacer()
         }
         .padding()
     }
 }
 
-#Preview {
-    ImportProgressPreview()
+#Preview("Loading file") {
+    ImportProgressPreview(isLoadingFile: true)
+}
+
+#Preview("Loading conversations") {
+    ImportProgressPreview(isLoadingFile: false)
 }

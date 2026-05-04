@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,42 @@
 "authentication.identity.input.submit" = "继续";
 
 "cloud_user_login.title" = "键入密码来登录";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "电邮箱地址";
 "cloud_user_login.input_email.placeholder" = "输入电子邮箱";
 "cloud_user_login.input_password.title" = "密码";
 "cloud_user_login.input_password.placeholder" = "键入密码";
 "cloud_user_login.submit" = "继续";
 "cloud_user_login.forgot_password" = "忘记密码？";
-"create_personal_account.title" = "还没有 Wire 账户？";
-"create_personal_account.button" = "创建个人账户";
+
+"login.sso.title" = "登录";
+"login.sso.expiration_message" = "您的工作阶段已过期。请使用您的企业帐户登录以继续。";
+"login.sso.input_code.title" = "SSO 访问代码";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "企业登录";
+
+"logout.button.title" = "登出";
+"logout.alert.title" = "登出";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "取消";
+
+"create_account_or_team.title" = "还没有 Wire 账户？";
+"create_account_or_team.button" = "创建账户或团队";
+"create_account.button" = "创建账户";
+
+"account_type_selector.title" = "您将如何使用 Wire？";
+"account_type_selector.option_team.title" = "用于协作";
+"account_type_selector.option_team.subtitle" = "与您的团队安全合作。";
+"account_type_selector.option_team.feature0" = "通过一个应用与同事沟通并共享文档";
+"account_type_selector.option_team.feature1" = "免费开始，随时升级";
+"account_type_selector.option_team.button" = "创建团队";
+"account_type_selector.option_personal.title" = "供私人使用";
+"account_type_selector.option_personal.subtitle" = "与亲朋好友畅聊。";
+"account_type_selector.option_personal.feature0" = "发送消息和分享图片";
+"account_type_selector.option_personal.feature1" = "始终免费";
+"account_type_selector.option_personal.button" = "创建个人账户";
 
 "on_prem_user_login.title" = "欢迎来到 %@ 的 Wire 企业版！";
 "on_prem_user_login.message" = "键入密码来登录";
@@ -53,50 +81,105 @@
 "switch_backend_confirmation.teams_url" = "团队 URL：";
 "switch_backend_confirmation.accounts_url" = "账户 URL：";
 "switch_backend_confirmation.website_url" = "网站 URL：";
-"switch_backend_confirmation.countly_url" = "Countly URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL：";
 "switch_backend_confirmation.proceed" = "继续";
 "switch_backend_confirmation.cancel" = "取消";
-"switch_backend_confirmation.show_details" = "Show details";
+"switch_backend_confirmation.show_details" = "显示详情";
 "switch_backend.error.title.logged_in" = "无法切换服务器";
 "switch_backend.error.message.logged_in" = "您已经登录。若要切换到这个服务器，请登出所有账户并重试。";
 
 "verification_code.title" = "您有新邮件";
 "verification_code.message" = "输入我们发送到 %@ 的验证码";
 "verification_code.confirm" = "确认";
-"verification_code.resend_code" = "Resend Code";
+"verification_code.resend_code" = "重新发送代码";
 
 "authentication.no_history.title" = "这是您第一次在此设备使用Wire。";
 "authentication.no_history.message" = "基于隐私考虑，您的历史聊天记录将不会被显示。";
+"authentication.missing_history.title" = "您曾在此设备使用过Wire。";
+"authentication.missing_history.message" = "这段期间发送的信息将不会显示出来。";
 "authentication.no_history.confirm" = "好";
 
-"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.no_internet" = "无网络连接";
 "authentication.error.title.general" = "好像出了点问题。";
-"authentication.error.title.sso_login_failed" = "Login with SSO failed";
+"authentication.error.title.sso_login_failed" = "使用 SSO 登录失败";
 "authentication.error.title.invalid_credentials" = "无效信息";
-"authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
-"authentication.error.title.account_pending_activation" = "Pending activation";
-"authentication.error.title.account_suspended" = "Unauthorized";
-"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
+"authentication.error.title.invalid_invalid_2FA_code" = "验证码无效";
+"authentication.error.title.account_pending_activation" = "等待激活";
+"authentication.error.title.account_suspended" = "未经授权";
+"authentication.error.title.incorrect_sso_code" = "SSO 代码无效";
 
 "authentication.error.message.no_internet" = "您的网络好像有些问题，请稍候再试。";
-"authentication.error.message.general" = "Please retry later.";
-"authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
-"authentication.error.message.invalid_credentials" = "这些帐户凭据不正确。请验证您的详细信息并重试。";
+"authentication.error.message.general" = "请稍后重试。";
+"authentication.error.message.sso_login_failed" = "请联系您的团队管理员了解详细信息。";
+"authentication.error.message.invalid_credentials" = "这些账户凭据不正确。请验证您的详细信息并重试。";
 "authentication.error.message.invalid_invalid_2FA_code" = "请输入有效的验证码。";
-"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
+"authentication.error.message.account_pending_activation" = "请先接受您的团队的邀请，然后按照步骤创建您的账户。";
 "authentication.error.message.account_suspended" = "此账户不再被授权登录";
 "authentication.error.message.incorrect_sso_code" = "请验证您的公司SSO访问代码并重试。";
 
 "authentication.error.confirm" = "好";
 
-"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
-"authentication.error.how_to_change_email" = "How to change email address";
-"authentication.error.how_to_delete_account" = "How to delete a private account";
+"authentication.error.title.email_already_in_use" = "本地后端认领的电子邮箱";
+"authentication.error.message.email_already_in_use" = "此邮箱的域名属于本地后端。请在账户设置中更改您的邮箱地址或删除您的账户。如果您是团队成员，请联系您的团队管理员。";
+"authentication.error.how_to_change_email" = "如何更改电子邮件地址";
+"authentication.error.how_to_delete_account" = "如何删除私人账户";
 
 "obsolete_client.alert.title" = "必要更新";
-"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
+"obsolete_client.alert.message" = "您错过了新功能。\n请在 App Store 获取最新版本的 Wire。";
 "obsolete_client.alert.ok_button" = "到App Store";
+"obsolete_client.alert.switch_accounts" = "切换账户";
+
+"obsolete_client_multibackend.alert.title" = "需要更新";
+"obsolete_client_multibackend.alert.message" = "您将错过新功能。\n请获取最新版本的 Wire，以便继续通过此账户使用该应用。";
+
+"obsolete.alert.update_button" = "更新";
+"obsolete.alert.switch_accounts" = "切换账户";
+"obsolete.alert.logout" = "登出";
+"obsolete.alert.cancel" = "取消";
+"obsolete.alert.ok" = "好";
 
 "obsolete_backend.alert.title" = "不支持服务器版本";
 "obsolete_backend.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
+"obsolete_backend_multibackend.alert.message" = "您的 Wire 服务器需要更新。请通知您的系统管理员。";
+
+// Registration
+
+"create_personal_account.title" = "创建个人账户";
+"create_personal_account.continue" = "继续";
+"create_personal_account.share_data_usage" = "我同意分享匿名使用数据。所有详情请参阅我们的[隐私政策](%@)（可选）";
+"create_personal_account.looking_for_collaboration" = "寻求团队协作？";
+"create_personal_account.create_team" = "创建团队";
+"create_personal_account.input_name.title" = "名称";
+"create_personal_account.input_name.placeholder" = "输入您的姓名";
+"create_personal_account.input_email.title" = "电邮箱地址";
+"create_personal_account.input_email.placeholder" = "输入您的电子邮件";
+"create_personal_account.input_password.title" = "密码";
+"create_personal_account.input_password.placeholder" = "输入密码";
+"create_personal_account.input_confirm_password.placeholder" = "确认密码";
+"create_personal_account.input_confirm_password.error" = "密码不匹配";
+"create_personal_account.confirmation_alert.title" = "使用条款";
+"create_personal_account.confirmation_alert.message" = "请接受我们的服务条款以继续。";
+"create_personal_account.confirmation_alert.accept" = "接听";
+"create_personal_account.confirmation_alert.view" = "查看";
+"create_personal_account.confirmation_alert.cancel" = "取消";
+"create_personal_account.verification_code.resend_code" = "重新发送代码";
+"create_personal_account.verification_code.confirm" = "确认";
+"create_personal_account.verification_code.message" = "输入我们发送到 %@ 的验证码";
+
+"create_personal_account.error.title.email-exists" = "帐户已存在";
+"create_personal_account.error.message.email-exists" = "您用于注册的电子邮件地址已经链接到一个账户。\n\n请使用其他电子邮件地址，或者如果您拥有此账户，请尝试登录。";
+"create_personal_account.error.title.invalid-email" = "信息无效";
+"create_personal_account.error.message.invalid-email" = "请输入有效格式的电子邮件。";
+"create_personal_account.error.title.blacklisted-email" = "信息无效";
+"create_personal_account.error.message.blacklisted-email" = "您的电子邮件被认定为不可信，例如，由于垃圾邮件过滤器拒绝。";
+"create_personal_account.error.title.domain-blocked" = "信息无效";
+"create_personal_account.error.message.domain-blocked" = "您无法创建此账户，因为您的电子邮件域被有意屏蔽。";
+"create_personal_account.error.title.invalid-code" = "信息无效";
+"create_personal_account.error.message.invalid-code" = "代码无效，或已超出最大尝试次数。请重试，或请求其他代码";
+"create_personal_account.error.title.too-many-team-members" = "信息无效";
+"create_personal_account.error.message.too-many-team-members" = "该团队已达到其成员上限。";
+"create_personal_account.error.title.user-creation-restricted" = "信息无效";
+"create_personal_account.error.message.user-creation-restricted" = "此应用程序版本不允许创建个人账户。";
+
+"switching_accounts.title" = "切换账户";
+"switching_accounts.subtitle" = "在此设备上选择其他账户：";

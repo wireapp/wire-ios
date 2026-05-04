@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,20 @@
 "sidebar.conversation_filter.all.title" = "Tutto";
 "sidebar.conversation_filter.favorites.title" = "Preferiti";
 "sidebar.conversation_filter.groups.title" = "Gruppi";
-"sidebar.conversation_filter.channels.title" = "Channels";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
-"sidebar.conversation_filter.folders.title" = "Folders";
+"sidebar.conversation_filter.channels.title" = "Canali";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "Conversazioni 1:1";
+"sidebar.conversation_filter.unread.title" = "Non letti";
+"sidebar.conversation_filter.mentions.title" = "Menzioni";
+"sidebar.conversation_filter.replies.title" = "Risposte";
+"sidebar.conversation_filter.drafts.title" = "Bozze";
+"sidebar.conversation_filter.folders.title" = "Cartelle";
 "sidebar.conversation_filter.archived.title" = "Archivia";
+
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
+"sidebar.files.title" = "Allegati";
+"sidebar.files.all_files.title" = "Tutto";
 
 "sidebar.contacts.title" = "Contatti";
 "sidebar.contacts.connect.title" = "Connetti";

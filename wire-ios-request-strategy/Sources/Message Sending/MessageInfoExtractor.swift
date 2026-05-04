@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 enum MessageInfoExtractorError: Error {
@@ -110,7 +111,7 @@ struct MessageInfoExtractor {
             selfDomain: selfDomain,
             selfClientID: selfClientID
         )
-        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap { $0 } }
+        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap(\.self) }
 
         return MessageInfo(
             genericMessage: message,
@@ -142,7 +143,7 @@ struct MessageInfoExtractor {
 
         // get the list of clients
         let clients = await listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
-        let userClients = await context.perform { recipients.map { $1 }.flatMap { $0 } }
+        let userClients = await context.perform { recipients.map { $1 }.flatMap(\.self) }
         return MessageInfo(
             genericMessage: message,
             listClients: clients,

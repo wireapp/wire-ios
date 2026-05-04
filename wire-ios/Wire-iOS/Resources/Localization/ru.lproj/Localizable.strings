@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 "general.decline" = "Нет, спасибо";
 "general.failure" = "Что-то пошло не так";
 "general.failure.try_again" = "Пожалуйста, попробуйте еще раз.";
-"general.service" = "Сервис";
 "general.off" = "Откл.";
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
@@ -61,6 +60,10 @@
 "peoplepicker.header.directory" = "Связаться";
 "peoplepicker.header.federation" = "Подключиться к другому домену";
 
+"peoplepicker.upgrade_banner.headline" = "Каналы доступны для членов команды.";
+"peoplepicker.upgrade_banner.subheadline" = "Создайте команду и начните взаимодействовать бесплатно!";
+"peoplepicker.upgrade_banner.button.title" = "Создать команду Wire";
+
 "peoplepicker.group.title.singular" = "Выбрать участников";
 "peoplepicker.group.title.plural" = "Выбрать участников (%d)";
 "peoplepicker.group.skip" = "Пропустить";
@@ -68,12 +71,12 @@
 "peoplepicker.group.create" = "Создать";
 
 "peoplepicker.header.people" = "Контакты";
-"peoplepicker.header.services" = "Сервисы";
-"peoplepicker.services.open_conversation.item" = "Открыть беседу";
-"peoplepicker.services.add_service.button" = "Добавить сервис";
-"peoplepicker.services.add_service.error.title" = "Не удается добавить сервис";
-"peoplepicker.services.add_service.error.default" = "В данный момент сервис недоступен";
-"peoplepicker.services.add_service.error.full" = "Беседа переполнена";
+"peoplepicker.header.apps" = "Приложения";
+"peoplepicker.apps.open_conversation.item" = "Открыть беседу";
+"peoplepicker.apps.add_app.button" = "Добавить приложение";
+"peoplepicker.apps.add_app.error.title" = "Не удается добавить приложение";
+"peoplepicker.apps.add_app.error.default" = "В данный момент приложение недоступно";
+"peoplepicker.apps.add_app.error.full" = "Беседа переполнена";
 
 "peoplepicker.no_contacts_title" = "Нет контактов.";
 
@@ -82,14 +85,19 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Отправить приглашение";
 "peoplepicker.no_matching_results.action.share_contacts" = "Обмен контактами";
 "peoplepicker.no_matching_results.action.learn_more" = "Подробнее";
-"peoplepicker.no_matching_results.action.manage_services" = "Управление сервисами";
+"peoplepicker.no_matching_results.action.manage_apps" = "Управление приложениями";
 
 "peoplepicker.no_matching_results.message.users" = "Найти пользователей в Wire, используя имя или @псевдоним";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Найти пользователей в Wire, используя имя или @псевдоним\n\nНайти пользователей в другом домене, используя @псевдоним@домен";
 "peoplepicker.no_matching_results.message.users_all_added" = "Все пользователи добавлены.";
-"peoplepicker.no_matching_results.message.services" = "Нет результатов";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Сервисы - это помощники, которые могут улучшить ваш рабочий процесс.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Сервисы - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы включить их, обратитесь к администратору.";
+"peoplepicker.no_matching_results.message.apps" = "Ничего не найдено.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы включить их, обратитесь к администратору.";
+"peoplepicker.no_apps_added.title" = "Ваша команда еще не добавила приложения";
+"peoplepicker.no_apps_added.ask_admin_message" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы воспользоваться ими, обратитесь к администратору вашей команды.";
+"peoplepicker.no_apps_added.add_in_tm_message" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Как администратор команды, вы можете добавить их в управлении командой.";
+"peoplepicker.app_details.created_by" = "Создано %@";
+"peoplepicker.app_details.description" = "Описание";
 
 "peoplepicker.send_invitation.dialog.title" = "Приглашение отправлено";
 "peoplepicker.send_invitation.dialog.message" = "Оно будет актуально в течение 2 недель. Вы можете отправить новое приглашение, если срок этого истечет.";
@@ -97,13 +105,13 @@
 
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
-"peoplepicker.quick-action.admin-services" = "Управление сервисами";
+"peoplepicker.quick-action.admin-apps" = "Управление приложениями";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
 "add_participants.alert.title" = "Беседа переполнена";
-"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
-"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
+"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %@ человек. На текущий момент в комнате есть места еще для %@.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
@@ -132,6 +140,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
 "conversation_list.search_bar.channelsPlaceholder" = "Поиск каналов";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
+"conversation_list.search_bar.unreadPlaceholder" = "Поиск непрочитанных бесед";
+"conversation_list.search_bar.mentionsPlaceholder" = "Поиск бесед с упоминаниями";
+"conversation_list.search_bar.repliesPlaceholder" = "Поиск бесед с ответами";
+"conversation_list.search_bar.draftsPlaceholder" = "Поиск бесед с черновиками";
 "conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
 
 
@@ -144,6 +156,10 @@
 "conversation_list.filter.folders.title" = "Папки";
 "conversation_list.filter_label.text" = "Отфильтровано по %@";
 "conversation_list.filter.remove_button.title" = "Удалить";
+"conversation_list.filter.unread.title" = "Непрочитано";
+"conversation_list.filter.mentions.title" = "Упоминания";
+"conversation_list.filter.replies.title" = "Ответы";
+"conversation_list.filter.drafts.title" = "Черновики";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Присоединиться";
@@ -169,6 +185,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
 "conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
 "conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
+"conversation_list.empty_state.unread.title" = "Нет непрочитанных бесед";
+"conversation_list.empty_state.mentions.title" = "Нет упоминаний";
+"conversation_list.empty_state.replies.title" = "Нет ответов";
+"conversation_list.empty_state.drafts.title" = "Нет черновиков";
+"conversation_list.empty_state.up_to_date.subtitle" = "Все ваши беседы актуальны";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -316,7 +337,15 @@
 
 "conversation.connection_view.in_address_book" = "в контактах";
 "conversation.connection_view.encryption_info" = "Общение в Wire всегда защищено сквозным шифрованием. Отправляемые и получаемые сообщения доступны только вам и вашему собеседнику.";
+"conversation.connection_view.wire_cells.encryption_info" = "Сообщения и звонки всегда зашифрованы сквозным шифрованием, при этом файлы и папки защищены в состоянии передачи и зашифрованы в состоянии покоя.";
 "conversation.connection_view.sensitive_information_warning" = "Пожалуйста, будьте осторожны со всеми с кем делитесь конфиденциальной информацией.";
+"conversation.connection_view.welcome.title.wire" = "Коммуникации в Wire всегда зашифрованы сквозным шифрованием.";
+"conversation.connection_view.welcome.title.wire_cells" = "Коммуникации в Wire всегда защищены.";
+"conversation.connection_view.welcome.message.wire_channel" = "Все, что вы отправляете и получаете на этом канале, доступно только вам и другим участникам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.message.wire_group" = "Все, что вы отправляете и получаете в этой беседе, доступно только вам и другим участникам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Все, что вы отправляете и получаете в этой беседе, доступно только вам и вашим контактам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.message.wire_cells" = "Сообщения и звонки всегда защищены сквозным шифрованием, а файлы и папки защищены во время передачи и зашифрованы в состоянии покоя.\n\nПожалуйста, будьте осторожны при передаче конфиденциальной информации.";
+"conversation.connection_view.welcome.learn_more" = "Подробнее";
 
 "conversation.input_bar.shortcut.send" = "Отправить сообщение";
 "conversation.input_bar.shortcut.newline" = "Вставить разрыв строки";
@@ -335,15 +364,17 @@
 "conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
-"conversation.create.services.title" = "Разрешить сервисы";
-"conversation.create.services.subtitle" = "Открыть эту беседу для сервисов.";
+"conversation.create.apps.title" = "Разрешить приложения";
+"conversation.create.apps.subtitle" = "Открыть эту беседу для приложений.";
+"conversation.create.apps_disabled.title" = "Ваша команда еще не использует приложения";
+"conversation.create.apps_disabled.message" = "Для улучшения рабочего процесса с приложениями, вашей команде требуется настройка. Пожалуйста, свяжитесь с администратором вашей команды.";
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
-"conversation.create.non_federating_domains_error.title" = "Разговор не может быть создан";
+"conversation.create.non_federating_domains_error.title" = "Беседа не может быть создана";
 "conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
@@ -352,6 +383,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (по умолчанию)";
+"conversation.create.file_management.title" = "Общий диск";
+"conversation.create.file_management.subtitle" = "Разрешить участникам управлять своими документами и медиа файлами в общем диске. Это действие не может быть отменено.";
+"conversation.create.file_management.learnMore" = "Подробнее";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -361,16 +395,25 @@
 "conversation.alert.message_deleted" = "Сообщение удалено.";
 
 // Conversation banner
-"conversation.banner.guests" = "Гости";
-"conversation.banner.services" = "Сервисы";
-"conversation.banner.externals" = "Внешние";
-"conversation.banner.remotes" = "Федеративные пользователи";
-"conversation.banner.are_present" = "%@ присутствуют";
-"conversation.banner.are_active" = "%@ активны";
-"conversation.banner.separator" = " и ";
+"conversation.banner.remotes_externals_guests_apps_present" = "Присутствуют федеративные пользователи, внешние пользователи, гости и приложения";
+"conversation.banner.remotes_externals_guests_present" = "Присутствуют федеративные пользователи, внешние пользователи и гости";
+"conversation.banner.remotes_externals_apps_present" = "Присутствуют федеративные пользователи, внешние пользователи и приложения";
+"conversation.banner.remotes_guests_apps_present" = "Присутствуют федеративные пользователи, гости и приложения";
+"conversation.banner.externals_guests_apps_present" = "Присутствуют внешние участники, гости и приложения";
+"conversation.banner.remotes_externals_present" = "Присутствуют федеративные и внешние пользователи";
+"conversation.banner.remotes_guests_present" = "Присутствуют федеративные пользователи и гости";
+"conversation.banner.remotes_apps_present" = "Присутствуют федеративные пользователи и приложения";
+"conversation.banner.externals_guests_present" = "Присутствуют внешние участники и гости";
+"conversation.banner.externals_apps_present" = "Присутствуют внешние участники и приложения";
+"conversation.banner.guests_apps_present" = "Присутствуют гости и приложения";
+"conversation.banner.remotes_present" = "Присутствуют федеративные пользователи";
+"conversation.banner.externals_present" = "Присутствуют внешние участники";
+"conversation.banner.guests_present" = "Присутствуют гости";
+"conversation.banner.apps_active" = "Приложения активны";
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
+"conversation.action.files" = "Общий диск";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -455,9 +498,12 @@
 "content.system.other_removed_you" = "%@ удалил вас";
 "content.system.you_removed_other" = "Вы удалили %@";
 
-"content.system.services.warning" = "Сервисы имеют доступ к контенту этой беседы";
+"content.system.apps.warning" = "Приложения имеют доступ к контенту этой беседы";
 
 "content.system.missing_messages" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
+"content.system.message_more_history_available" = "Загрузка истории бесед...";
+"content.system.message_no_more_history_available" = "Вы попали в топ 🥳\nВы видите все доступные сообщения.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %@.";
 
@@ -574,6 +620,8 @@
 "content.system.message_timer_off" = "%@ отключил(-а) таймер сообщения";
 "content.system.message_timer_off-you" = "%@ отключил таймер сообщения";
 
+"content.system.message_timer_unavailable" = "Самоудаляющиеся сообщения отключены";
+
 "content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
 "content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
 
@@ -586,6 +634,8 @@
 "content.system.channel.guest.joined" = "%@ присоединился к каналу";
 "content.system.channel.guest.you_joined" = "Вы присоединились к каналу";
 
+"content.system.file_collaboration.enabled" = "Общий диск включен";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ включил(-а) отчеты о прочтении для всех";
@@ -595,6 +645,13 @@
 "content.system.message_read_receipt_off-you" = "%@ отключили отчеты о прочтении для всех";
 
 "content.system.message_read_receipt_on_add_to_group" = "Отчеты о прочтении включены";
+
+// history depth
+"content.system.message_history_depth_initially_set_days" = "Новые участники могут видеть сообщения за последние %@ дн.";
+"content.system.message_history_depth_initially_set_weeks" = "Новые участники могут видеть сообщения за последние %@ нед.";
+"content.system.message_history_depth_modified_days" = "%@ установил историю бесед на %@ дн.";
+"content.system.message_history_depth_modified_weeks" = "%@ установил историю бесед на %@ нед.";
+"content.system.message_history_depth_modified_disabled" = "%@ отключил историю бесед";
 
 // legal hold
 
@@ -616,7 +673,6 @@
 
 "content.system.cannot_decrypt.self" = "Не удалось расшифровать ваше сообщение.";
 "content.system.cannot_decrypt.other" = "Не удалось расшифровать сообщение от %@.";
-"content.system.cannot_decrypt.reset_session" = "Исправить будущие сообщения";
 "content.system.cannot_decrypt.error_details" = "(Исправлена ошибка: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Теперь вы можете расшифровывать свои сообщения. Чтобы восстановить утраченные сообщения, вы должны отправить их повторно.";
@@ -629,6 +685,10 @@
 "content.system.session_reset.self" = "Вам не смогли расшифровать некоторые из ваших сообщений, но проблема была решена. Это затронуло все беседы.";
 
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
+"content.system.unknown_message_received.body" = "Вы получили сообщение, которое не может быть показано. Возможно, вы используете старую версию Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "Этот пользователь больше не доступен";
 
 "content.file.uploading" = "Отправка…";
 "content.file.downloading" = "Загрузка…";
@@ -654,6 +714,7 @@
 "content.collapsed.video.title" = "Вы отправили видео";
 "content.collapsed.audio.title" = "Вы отправили аудиосообщение";
 "content.collapsed.location.title" = "Вы отправили свое местоположение";
+"content.collapsed.link.title" = "Вы отправили ссылку";
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
@@ -662,7 +723,7 @@
 "content.message.open" = "Открыть";
 "content.message.sign" = "Подписать";
 "content.message.copy" = "Скопировать";
-"content.message.download" = "Загрузить";
+"content.message.download" = "Скачать";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
 "content.message.collapse" = "Свернуть";
@@ -684,6 +745,15 @@
 "content.reactions_list.likers" = "Понравилось";
 
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
+
+"content.message.reply.files.count" = "%@ файлов";
+"content.message.reply.files.notAvailable" = "Файл недоступен";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Заменить несовместимые символы";
+"content.uploaded_file_needs_rename.message" = "Вы не можете использовать символы %@ и %@.\n\\Замените их автоматически или переименуйте файл вручную.";
+"content.uploaded_file_needs_rename.confirmButton" = "Заменить";
+"content.uploaded_file_needs_rename.cancelButton" = "Отмена";
 
 // Reactions
 "content.reactions.title" = "Выбрать реакцию";
@@ -856,10 +926,10 @@
 "participants.title" = "Детали";
 "participants.all.title" = "Контакты";
 "participants.section.participants" = "Участники (%d)";
-"participants.section.services" = "Сервисы (%d)";
+"participants.section.apps" = "Приложения (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
-"participants.section.name.footer" = "К беседе могут присоединиться до %1$d участников.";
+"participants.section.name.footer" = "К беседе могут присоединиться до %@ участников.";
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
@@ -982,7 +1052,7 @@
 "profile.read_receipts_disabled_memo.header" = "У ВАС ОТКЛЮЧЕНЫ ОТЧЕТЫ О ПРОЧТЕНИИ";
 "profile.read_receipts_memo.body" = "Если обе стороны включат отчеты о прочтении, вы сможете видеть когда были прочитаны ваши сообщения.\n\nЭтот параметр можно изменить в настройках вашего аккаунта.";
 
-"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и сервисы, обновлять настройки групп, а также изменять роли участников.";
+"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и приложения, обновлять настройки групп, а также изменять роли участников.";
 
 "profile.extended_metadata.header" = "Информация";
 
@@ -1024,21 +1094,26 @@
 "device.type.unknown" = "Неизвестное";
 
 // Bot
-"participants.services.remove_integration.button" = "Удалить сервис";
+"participants.apps.remove_integration.button" = "Удалить приложение";
 
 // Group details
 "group_details.guest_options_cell.title" = "Гости";
 "group_details.guest_options_cell.enabled" = "Вкл.";
 "group_details.guest_options_cell.disabled" = "Выкл.";
-"group_details.services_options_cell.title" = "Сервисы";
-"group_details.services_options_cell.enabled" = "Вкл.";
-"group_details.services_options_cell.disabled" = "Откл.";
+"group_details.apps_options_cell.title" = "Приложения";
+"group_details.apps_options_cell.enabled" = "Вкл.";
+"group_details.apps_options_cell.disabled" = "Откл.";
 "group_details.timeout_options_cell.title" = "Самоудаляющиеся сообщения";
 "group_details.notification_options_cell.title" = "Уведомления";
 "group_details.notification_options_cell.description" = "Вы можете получать уведомления обо всем (включая аудио- и видеовызовы) или только когда кто-то упоминает вас или отвечает на одно из ваших сообщений.";
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "group_details.access_options_cell.title" = "";
+"group_details.channel_history_options_cell.title" = "История беседы";
+"group_details.file_collaboration_cell.title" = "Общий диск";
+"group_details.file_collaboration_cell.subtitle" = "Вкл.";
+"group_details.file_collaboration_cell.footer" = "Постоянно для этой беседы";
+"group_details.timeout_options_disabled.footer" = "Функция недоступна для бесед с общим диском.";
 
 "group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";
@@ -1122,8 +1197,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Создать команду";
+"self.settings.add_account_or_team.title" = "Добавить аккаунт или команду";
 "self.settings.manage_team.title" = "Управлять командой";
-"self.settings.add_team_or_account.title" = "Добавить аккаунт";
 "self.settings.add_account.title" = "Добавить аккаунт";
 
 "self.settings.add_account.error.title" = "Активны три аккаунта";
@@ -1158,6 +1233,7 @@
 "self.settings.account_details.remove_device.password.error" = "Неверный пароль";
 
 "self.settings.account_appearance_group.title" = "Внешний вид";
+"self.settings.account_appearance_group.footer" = "Когда эта функция включена, фон ваших бесед будет соответствовать цвету вашего профиля, а также светлой или темной теме.";
 
 "self.settings.privacy_section_group.title" = "Конфиденциальность";
 "self.settings.enable_read_receipts.title" = "Отправлять отчеты о прочтении";
@@ -1176,6 +1252,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Янтарный";
 "self.settings.account_picture_group.accent_color.turquoise" = "Бирюзовый";
 "self.settings.account_picture_group.accent_color.purple" = "Фиолетовый";
+"self.settings.account_picture_group.background.title" = "Цвет фона беседы";
 
 "self.settings.account_personal_information_group.title" = "Личные данные";
 
@@ -1196,6 +1273,10 @@
 "self.settings.account_details.log_out.alert.title" = "Выйти";
 "self.settings.account_details.log_out.alert.message" = "История сообщений будет удалена с этого устройства.";
 "self.settings.account_details.log_out.alert.password" = "Пароль";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Выйти";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Удалить всю личную информацию и беседы на этом устройстве?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Выйти и очистить данные";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Выйти и сохранить данные";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Отчеты об использовании и сбоях";
@@ -1280,13 +1361,8 @@
 // Open in
 "self.settings.external_apps.header" = "Открыть с помощью";
 
-"self.settings.link_options.twitter.title" = "Твиты";
 "self.settings.link_options.maps.title" = "Местоположения";
 "self.settings.link_options.browser.title" = "Браузер";
-
-"open_link.twitter.option.default" = "Браузер / Твиттер";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Карты";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1384,6 @@
 "self.settings.developer_options.title" = "Опции для разработчиков";
 "self.settings.developer_options.loggin.title" = "Настройки";
 "self.settings.developer_options.database_statistics.title" = "Статистика базы данных";
-"self.settings.apns_logging.title" = "APNS журналирование";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Настройки";
@@ -1333,7 +1408,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются после трех строк.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
@@ -1380,7 +1455,6 @@
 
 "self.settings.conversations.title" = "История";
 "self.settings.history_backup.title" = "Резервное копирование или восстановление";
-"self.settings.history_backup.error.title" = "Ошибка";
 "self.settings.history_backup.set_email.title" = "Настройте email и пароль.";
 "self.settings.history_backup.set_email.message" = "Для создания резервной копии истории бесед вам потребуется email и пароль. Вы можете сделать это в настройках учетной записи.";
 
@@ -1489,12 +1563,12 @@
 "join.group.conversation.alert.joinAction.title" = "Присоединиться к беседе";
 "join.group.conversation.alert.learnMoreAction.title" = "Узнать больше о гостевых ссылках";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Разрешить сервисы";
-"services_options.allow_services.subtitle" = "Открыть эту беседу для сервисов.";
-"services_options.remove_services.message" = "Текущие сервисы будут удалены из беседы. Новые сервисы допущены не будут.";
-"services_options.remove_services.action" = "Удалить";
+"apps_options.allow_apps.title" = "Разрешить приложения";
+"apps_options.allow_apps.subtitle" = "Открыть эту беседу для приложений.";
+"apps_options.remove_apps.message" = "Все приложения будут удалены из разговора. Новые приложения допущены не будут.";
+"apps_options.remove_apps.action" = "Удалить";
 
 
 // Registration
@@ -1597,6 +1671,7 @@
 "enroll_e2ei_certificate.subtitle" = "Сертификат активен, а устройство верифицировано.";
 "enroll_e2ei_certificate.certificate_details_button" = "Сведения о сертификате";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "URL провайдера идентификации";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Сертификат обновлен";
@@ -1786,10 +1861,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
 "databaseloadingfailure.alert.retry" = "Повторить";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Версия сервера не поддерживается";
-"backend_not_supported.alert.message" = "Версия сервера не поддерживается этим приложением.  Пожалуйста, обратитесь к системному администратору.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · через giphy.com";
 "giphy.conversation.random_message" = "через giphy.com";
@@ -1815,6 +1886,10 @@
 
 "collections.search.field.placeholder" = "Поиск текстовых сообщений";
 "collections.search.no_items" = "Нет результатов";
+
+"collections.section.searchFiles.description" = "Поиск файлов";
+"collections.section.searchFiles.alert.title" = "Общий диск";
+"collections.section.searchFiles.alert.message" = "Найди любой файл или папку в этой беседе";
 
 
 
@@ -1872,6 +1947,7 @@
 "url_action.confirm" = "Подтвердить";
 "url_action.title" = "Подтвердить действие по URL";
 "url_action.connect_to_bot.message" = "Вы хотите подключиться к боту?";
+"url_action.user_profile_qr_feature_flag.message" = "Использование ссылок на профили или QR-кодов в вашей команде запрещено. Обратитесь к администратору.";
 
 "url_action.switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
 "url_action.switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
@@ -2105,3 +2181,11 @@
 "device.details.section.mls.thumbprint" = "Отпечаток MLS: %@";
 "device.details.certificate_details.title" = "Сведения о сертификате";
 "device.details.certificate_details.copy_to_clipboard" = "Скопировать в буфер обмена";
+
+"account_blocked.network_error.alert.title" = "Проблема с сетью";
+"account_blocked.network_error.alert.message" = "Проверьте подключение к интернету и повторите попытку.";
+"account_blocked.generic_error.alert.title" = "Что-то пошло не так";
+"account_blocked.generic_error.alert.message" = "Если ошибка повторяется, обратитесь в службу поддержки.";
+"account_blocked.generic_error.alert.switch_accounts" = "Сменить аккаунт";
+"account_blocked.generic_error.alert.send_logs" = "Отправить отладочный отчет";
+"account_blocked.generic_error.alert.retry" = "Повторить";

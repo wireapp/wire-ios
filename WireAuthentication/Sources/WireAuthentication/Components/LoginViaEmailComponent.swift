@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -29,12 +29,12 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
-    var backendInfo: BackendInfo { get }
+    var environment: BackendEnvironment2 { get }
     var minTLSVersion: TLSVersion { get }
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
+final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     public let email: String?
     private let canCreateAccount: Bool
@@ -57,26 +57,12 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     // MARK: - Children
 
-    func verificationCodeComponent(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeComponent {
-        VerificationCodeComponent(
+    private func personalAccountCreationComponent(teamAccountCreationLink: URL?) -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
             parent: self,
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        )
-    }
-
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
+            email: email ?? "",
+            environment: networkStack.backendEnvironment,
+            teamAccountCreationLink: teamAccountCreationLink
         )
     }
 
@@ -86,57 +72,42 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     // MARK: - Factory
 
+    @MainActor
+    func verifyLoginView(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeView {
+        let factory = verificationCodeFactory(
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        )
+        return VerificationCodeView(factory: factory)
+    }
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
+    }
+
+    @MainActor
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
+        let factory = personalAccountCreationFactory(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+        return PersonalAccountCreationView(factory: factory)
+    }
+
     @MainActor var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             factory: self,
             router: dependency.router,
             email: email,
-            backendInfo: networkStack.backendInfo,
+            environment: networkStack.backendEnvironment,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, networkStack, email] in
-                guard let dependency else { return }
-                Task.detached {
-                    do {
-                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
-                        await MainActor.run {
-                            dependency.router.dismissSheet()
-                            dependency.bridge.sendOutboundEvent(
-                                .accountRegistrationRequested(
-                                    email: email,
-                                    backendEnvironment
-                                )
-                            )
-                        }
-                    } catch {
-                        await MainActor.run {
-                            dependency.router.presentAlert(for: error)
-                        }
-                    }
-
-                }
-
-            }
-        )
-    }
-
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory {
-        verificationCodeComponent(
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        )
-    }
-
-    func noHistoryFactory(
-        authenticationResult: AuthenticationResult
-    ) -> any NoHistoryFactory {
-        noHistoryComponent(
-            authenticationResult: authenticationResult
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 
@@ -159,4 +130,32 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         ValidateEmailUseCase()
     }
 
+    // MARK: - private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+
+    private func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory {
+        VerificationCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        )
+    }
+
+    private func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+    }
 }

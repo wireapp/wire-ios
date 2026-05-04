@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
@@ -29,6 +30,17 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case v134 = "zmessaging2.134.0"
+    case v133 = "zmessaging2.133.0"
+    case v132 = "zmessaging2.132.0"
+    case v131 = "zmessaging2.131.0"
+    case v130 = "zmessaging2.130.0"
+    case v129 = "zmessaging2.129.0"
+    case v128 = "zmessaging2.128.0"
+    case v127 = "zmessaging2.127.0"
+    case v126 = "zmessaging2.126.0"
+    case v125 = "zmessaging2.125.0"
+    case v124 = "zmessaging2.124.0"
     case v123 = "zmessaging2.123.0"
     case v122 = "zmessaging2.122.0"
     case v121 = "zmessaging2.121.0"
@@ -76,12 +88,24 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-        case .v123:
+        case .v134:
             nil
-        case .v122:
-            .v123
-        case .v120, .v121:
-            .v122
+        case .v133:
+            .v134
+        case .v131, .v132:
+            .v133
+        case .v130:
+            .v131 // destination version runs custom migration actions
+        case .v129:
+            .v130
+        case .v128:
+            .v129
+        case .v127:
+            .v128
+        case .v125, .v126:
+            .v127
+        case .v120, .v121, .v122, .v123, .v124:
+            .v125
         case .v119:
             .v120 // destination version runs custom migration actions
         case .v116, .v117, .v118:
@@ -148,7 +172,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
-        WireDataModelBundle.bundle.url(
+        WireDataBundle.bundle.url(
             forResource: rawValue,
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory

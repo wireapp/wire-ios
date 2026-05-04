@@ -388,13 +388,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Пропущений дзвінок від %2$@</string>
+        <string>Missed call from %2$@</string>
         <key>few</key>
-        <string>Пропущені дзвінки від %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>many</key>
-        <string>Пропущених дзвінків від %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
         <key>other</key>
-        <string>Пропущених дзвінків від %2$@</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
@@ -495,6 +495,26 @@
         <string>%d спеціальних символів</string>
         <key>other</key>
         <string>%d спеціальних символів</string>
+      </dict>
+    </dict>
+    <key>conversation.message.multipart_attachments.link</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@attachment_count@</string>
+      <key>attachment_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 attached file</string>
+        <key>few</key>
+        <string>%d attached files</string>
+        <key>many</key>
+        <string>%d attached files</string>
+        <key>other</key>
+        <string>%d attached files</string>
       </dict>
     </dict>
   </dict>

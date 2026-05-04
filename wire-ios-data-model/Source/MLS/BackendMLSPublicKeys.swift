@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public struct BackendMLSPublicKeys: Equatable {
 
@@ -26,8 +27,8 @@ public struct BackendMLSPublicKeys: Equatable {
         self.removal = removal
     }
 
-    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [Data] {
-        let externalSender = switch ciphersuite.signature {
+    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [ExternalSenderKey] {
+        let externalSenderData = switch ciphersuite.signature {
         case .ed25519:
             removal.ed25519
         case .ed448:
@@ -40,13 +41,13 @@ public struct BackendMLSPublicKeys: Equatable {
             removal.p521
         }
 
-        return [externalSender]
-            .compactMap { $0 }
+        return [externalSenderData].compactMap(\.self).map(ExternalSenderKey.init)
     }
 
     public struct MLSPublicKeys: Equatable {
 
         let ed25519: Data?
+        /// deprecated: this field is not returned by backend
         let ed448: Data?
         let p256: Data?
         let p384: Data?

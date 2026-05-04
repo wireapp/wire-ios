@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"qualified_ids\":[{\"domain\":\"example.com\",\"id\":\"99DB9768-04E3-4B5D-9268-831B6A25C4AB\"}]}" \
+	"/v12/list-users"
