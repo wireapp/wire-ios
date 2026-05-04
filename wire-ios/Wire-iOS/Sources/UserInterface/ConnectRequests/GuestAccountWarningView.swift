@@ -31,7 +31,8 @@ final class GuestAccountWarningView: UIView {
         style: .subline1,
         color: SemanticColors.Label.textDefault
     )
-    private let linkLabel = UITextView()
+    private let linkLabel = UILabel()
+    private var linkURL: URL?
     private let imageView = UIImageView(
         image: {
             var image = UIImage(systemName: "shield.righthalf.filled")
@@ -80,26 +81,26 @@ final class GuestAccountWarningView: UIView {
 
         let linkText = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
         let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
+        linkURL = linkUrl
 
-        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+        let linkAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.mediumSemiboldFont,
             .foregroundColor: SemanticColors.Label.textDefault,
-            .link: linkUrl as AnyObject,
-            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
             .underlineColor: SemanticColors.Label.textDefault
         ]
 
         linkLabel.attributedText = .init(string: linkText, attributes: linkAttributes)
-        linkLabel.linkTextAttributes = linkAttributes
-        linkLabel.textContainerInset = .zero
-        linkLabel.textContainer.lineFragmentPadding = 0
-        linkLabel.adjustsFontForContentSizeCategory = true
-        linkLabel.contentInset = .zero
-        linkLabel.isEditable = false
-        linkLabel.isScrollEnabled = false
-        linkLabel.backgroundColor = .clear
+        linkLabel.numberOfLines = 0
+        linkLabel.isUserInteractionEnabled = true
+        linkLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(learnMoreTapped)))
 
         stackView.addArrangedSubview(linkLabel)
+    }
+
+    @objc private func learnMoreTapped() {
+        guard let url = linkURL else { return }
+        UIApplication.shared.open(url)
     }
 
     private func setupConstraints() {
