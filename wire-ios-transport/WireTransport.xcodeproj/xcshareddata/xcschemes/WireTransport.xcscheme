@@ -15,6 +15,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireFoundationSupport"
+               BuildableName = "WireFoundationSupport"
+               BlueprintName = "WireFoundationSupport"
+               ReferencedContainer = "container:../WireFoundation">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BCA61B1F35DF00232589"
                BuildableName = "WireTransport.framework"
                BlueprintName = "WireTransport-ios"

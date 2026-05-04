@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItPreprocessAssetMessage() {
         // given
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         let asset = message.assets.first!
         let messageSet: Set<NSManagedObject> = [message]
 
@@ -80,7 +83,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItMarksTheTransferStateAsModifiedAfterItsDoneProcessing() {
         // given
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         let messageSet: Set<NSManagedObject> = [message]
 
         // when

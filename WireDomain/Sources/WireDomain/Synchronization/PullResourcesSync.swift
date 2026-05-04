@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireLogging
 struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private let pullSelfUserSync: any PullSelfUserSyncProtocol
+    private let pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol
     private let pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol
     private let pullSelfTeamSync: any PullSelfTeamSyncProtocol
     private let pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol
@@ -38,6 +39,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     init(
         pullSelfUserSync: any PullSelfUserSyncProtocol,
+        pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol,
         pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol,
         pullSelfTeamSync: any PullSelfTeamSyncProtocol,
         pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol,
@@ -51,6 +53,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullMLSStatusSync: any PullMLSStatusSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
+        self.pullSelfUserClientsSync = pullSelfUserClientsSync
         self.pullSelfUserSettingsSync = pullSelfUserSettingsSync
         self.pullSelfTeamSync = pullSelfTeamSync
         self.pullSelfTeamRolesSync = pullSelfTeamRolesSync
@@ -65,135 +68,223 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     }
 
     func pull() async throws {
-        try await logger.measureTime(label: "pull resources") {
-            let teamID = try await pullSelfUser()
-            try await pullSelfUserSettings()
+        try await pullUserConnections()
+        try await pullAllConversations()
 
-            if let teamID {
-                try await pullSelfTeam(teamID: teamID)
-                try await pullSelfTeamRoles(teamID: teamID)
-                try await pullSelfTeamMembers(teamID: teamID)
-                try await pullSelfLegalholdInfo(teamID: teamID)
-            }
+        // Pulling known users must happen after we've discovered
+        // user ids from user connections and conversations.
+        try await pullKnownUsers()
 
-            try await pullUserConnections()
-            try await pullAllConversations()
+        // Pulling self user must happen after we've pulled known users
+        // otherwise some self user values might be overwritten with nil values.
+        let teamID = try await pullSelfUser()
+        try await pullSelfUserClients()
+        try await pullSelfUserSettings()
 
-            // Pulling known users must happen after we've discovered
-            // user ids from user connections and conversations.
-            try await pullKnownUsers()
-
-            try await pullConversationLabels()
-            try await pullFeatureConfigs()
-            try await pullMLSStatus()
+        if let teamID {
+            try await pullSelfTeam(teamID: teamID)
+            try await pullSelfTeamRoles(teamID: teamID)
+            try await pullSelfTeamMembers(teamID: teamID)
+            try await pullSelfLegalholdInfo(teamID: teamID)
         }
+
+        try await pullConversationLabels()
+        try await pullFeatureConfigs()
+        try await pullMLSStatus()
     }
 
     private func pullSelfUser() async throws -> UUID? {
-        do {
-            logger.debug("pulling self user")
-            return try await pullSelfUserSync.pull().teamID
-        } catch {
-            throw Failure(resourceName: "pull self user", reason: error)
+        let phase = "pulling self user"
+
+        return try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                return try await pullSelfUserSync.pull().teamID
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
+        }
+    }
+
+    private func pullSelfUserClients() async throws {
+        let phase = "pulling self user clients"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfUserClientsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullSelfUserSettings() async throws {
-        do {
-            logger.debug("pulling self user settings")
-            try await pullSelfUserSettingsSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull self user settings", reason: error)
+        let phase = "pulling self user settings"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfUserSettingsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullSelfTeam(teamID: UUID) async throws {
-        do {
-            logger.debug("pulling self team")
-            try await pullSelfTeamSync.pull(selfTeamID: teamID)
-        } catch {
-            throw Failure(resourceName: "pull self team", reason: error)
+        let phase = "pulling self team"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfTeamSync.pull(selfTeamID: teamID)
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullSelfTeamRoles(teamID: UUID) async throws {
-        do {
-            logger.debug("pulling self team roles")
-            try await pullSelfTeamRolesSync.pull(selfTeamID: teamID)
-        } catch {
-            throw Failure(resourceName: "pull self team roles", reason: error)
+        let phase = "pulling self team roles"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfTeamRolesSync.pull(selfTeamID: teamID)
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullSelfTeamMembers(teamID: UUID) async throws {
-        do {
-            logger.debug("pulling self members")
-            try await pullSelfTeamMembersSync.pull(selfTeamID: teamID)
-        } catch {
-            throw Failure(resourceName: "pull self team members", reason: error)
+        let phase = "pulling self team members"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfTeamMembersSync.pull(selfTeamID: teamID)
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullSelfLegalholdInfo(teamID: UUID) async throws {
-        do {
-            logger.debug("pulling self legalhold info")
-            try await pullSelfLegalholdInfoSync.pull(selfTeamID: teamID)
-        } catch {
-            throw Failure(resourceName: "pull self legal hold info", reason: error)
+        let phase = "pull self legal hold info"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullSelfLegalholdInfoSync.pull(selfTeamID: teamID)
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullUserConnections() async throws {
-        do {
-            logger.debug("pulling user connections")
-            try await pullUserConnectionsSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull user connections", reason: error)
+        let phase = "pull user connections"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullUserConnectionsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullAllConversations() async throws {
-        do {
-            logger.debug("pulling conversations")
-            try await pullAllConversationsSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull conversations", reason: error)
+        let phase = "pull conversations"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullAllConversationsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullKnownUsers() async throws {
-        do {
-            logger.debug("pulling known users")
-            try await pullKnownUsersSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull known users", reason: error)
+        let phase = "pull known users"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullKnownUsersSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullConversationLabels() async throws {
-        do {
-            logger.debug("pulling conversation labels")
-            try await pullConversationLabelsSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull conversation labels", reason: error)
+        let phase = "pull conversation labels"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullConversationLabelsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullFeatureConfigs() async throws {
-        do {
-            logger.debug("pulling feature configs")
-            try await pullAllFeatureConfigsSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull feature configs", reason: error)
+        let phase = "pull feature configs"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullAllFeatureConfigsSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 
     private func pullMLSStatus() async throws {
-        do {
-            logger.debug("pulling MLS status")
-            try await pullMLSStatusSync.pull()
-        } catch {
-            throw Failure(resourceName: "pull MLS status", reason: error)
+        let phase = "pulling MLS status"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullMLSStatusSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
         }
     }
 

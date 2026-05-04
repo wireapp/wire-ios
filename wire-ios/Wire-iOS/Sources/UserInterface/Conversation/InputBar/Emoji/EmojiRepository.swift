@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -93,11 +93,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         return emojiVersionTruncated <= supportedEmojiVersion
     }
 
-    private static let supportedEmojiVersion: Double = if #available(iOS 16.4, *) {
-        15.0
-    } else {
-        14.0
-    }
+    private static let supportedEmojiVersion: Double = 15.0
 
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@ import WireDesign
 private typealias Attributes = [NSAttributedString.Key: AnyObject]
 
 private extension ConversationActionType {
-    func formatKey(senderIsSelfUser: Bool) -> String {
+    func formatKey(senderIsSelfUser: Bool, isChannel: Bool) -> String {
         switch self {
         case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
-        case .added(herself: true): "content.system.conversation.guest.joined"
+        case .added(herself: true):
+            isChannel ? "content.system.channel.guest.joined" : "content.system.conversation.guest.joined"
         case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
         case .removed(reason: .legalHoldPolicyConflict): localizationKey(
                 with: "removed",
@@ -123,11 +124,21 @@ final class ParticipantsStringFormatter {
     func heading(
         senderName: String,
         senderIsSelf: Bool,
-        convName: String
+        convName: String,
+        isChannel: Bool
     ) -> NSAttributedString {
-        // "You/Bob started the conversation"
-        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
-            .Localizable.Content.System.Conversation.WithName.title(senderName)
+        let key: String
+        // swiftformat:disable:next conditionalAssignment
+        if isChannel {
+            // "You/Bob started the channel"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Channel.WithName.title(senderName)
+        } else {
+            // "You/Bob started the conversation"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Conversation.WithName.title(senderName)
+        }
+
         let text = key && font
 
         // "Italy Trip"
@@ -136,14 +147,16 @@ final class ParticipantsStringFormatter {
     }
 
     /// Title when the subject (sender) is performing the action alone.
-    func title(senderName: String, senderIsSelf: Bool) -> NSAttributedString? {
+    func title(senderName: String, senderIsSelf: Bool, isChannel: Bool) -> NSAttributedString? {
         switch message.actionType {
         case .added(herself: true) where senderIsSelf:
-            return L10n.Localizable.Content.System.Conversation.Guest.youJoined && font && textColor
+            typealias System = L10n.Localizable.Content.System
+            let text = isChannel ? System.Channel.Guest.youJoined : System.Conversation.Guest.youJoined
+            return text && font && textColor
 
         case .left, .teamMemberLeave, .added(herself: true):
             let formatKey = message.actionType.formatKey
-            return formatKey(senderIsSelf).localized(args: senderName) && font && textColor
+            return formatKey(senderIsSelf, isChannel).localized(args: senderName) && font && textColor
 
         default:
             return nil
@@ -155,7 +168,8 @@ final class ParticipantsStringFormatter {
         senderName: String,
         senderIsSelf: Bool,
         names: NameList,
-        isSelfIncludedInUsers: Bool = false
+        isSelfIncludedInUsers: Bool = false,
+        isChannel: Bool
     ) -> NSAttributedString? {
         guard !names.names.isEmpty else { return nil }
 
@@ -193,7 +207,8 @@ final class ParticipantsStringFormatter {
             return result
 
         case .removed, .added(herself: false), .started(name: .none):
-            result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
+            result = formatKey(senderIsSelf, isChannel)
+                .localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(name: .some):
             result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" &&
@@ -259,7 +274,7 @@ final class ParticipantsStringFormatter {
         guard
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.allTeamUsersAdded,
-            (message.conversationLike as? CanManageAccessProvider)?.canManageAccess ?? false
+            (message.conversationLike as? CanManageGuestsAccessProvider)?.canManageGuestsAccess ?? false
         else { return nil }
 
         // we only collapse whole team if there are more than 10 participants

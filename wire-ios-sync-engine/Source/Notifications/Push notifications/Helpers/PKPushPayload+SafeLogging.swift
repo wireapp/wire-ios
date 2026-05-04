@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ extension PKPushPayload: SafeForLoggingStringConvertible {
         //  }
         let data = dictionaryPayload["data"] as? [String: Any]
         let payloadData = data?["data"] as? [String: String]
-        let payloadID = payloadData?["id"]?.readableHash ?? "n/a"
-        let userID = (data?["user"] as? String)?.readableHash ?? "n/a"
+        let payloadID = payloadData?["id"] ?? "n/a"
+        let userID = (data?["user"] as? String) ?? "n/a"
         return "id=\(payloadID) user=\(userID)"
     }
 }

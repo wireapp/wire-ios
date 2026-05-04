@@ -29,8 +29,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "Explora las características adicionales de forma gratuita con el mismo nivel de seguridad."
           }
         },
         "et" : {
@@ -83,8 +83,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "Explore recursos extras gratuitamente com o mesmo nível de segurança."
           }
         },
         "ru" : {
@@ -113,8 +113,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "在同等安全级别下免费探索额外功能。"
           }
         },
         "zh-Hant" : {
@@ -153,8 +153,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "Crear equipo de Wire"
           }
         },
         "et" : {
@@ -207,8 +207,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "Criar Equipe Wire"
           }
         },
         "ru" : {
@@ -237,8 +237,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "创建Wire团队"
           }
         },
         "zh-Hant" : {
@@ -277,8 +277,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "Disfruta de los beneficios de un equipo"
           }
         },
         "et" : {
@@ -331,8 +331,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "Aproveite os benefícios de uma equipe"
           }
         },
         "ru" : {
@@ -361,8 +361,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "享受团队裨益"
           }
         },
         "zh-Hant" : {
@@ -652,8 +652,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "Cuando te sales ahora, pierdes tu progreso y necesitas reiniciar la creación del equipo."
           }
         },
         "et" : {
@@ -706,8 +706,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "Quando você sair agora, você perde seu progresso e precisa reiniciar a criação de equipe."
           }
         },
         "ru" : {
@@ -736,8 +736,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "您若现在离开，将会失去进度并需要重新开始创建团队。"
           }
         },
         "zh-Hant" : {
@@ -777,8 +777,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "Continuar con la creación del equipo"
           }
         },
         "et" : {
@@ -831,8 +831,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "Continuar Criação de Equipe"
           }
         },
         "ru" : {
@@ -861,8 +861,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "继续创建团队"
           }
         },
         "zh-Hant" : {
@@ -902,8 +902,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "Salir sin guardar"
           }
         },
         "et" : {
@@ -956,8 +956,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "Sair sem salvar"
           }
         },
         "ru" : {
@@ -986,8 +986,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "离开而不保存"
           }
         },
         "zh-Hant" : {
@@ -1027,8 +1027,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "¿Salir sin guardar?"
           }
         },
         "et" : {
@@ -1081,8 +1081,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "Sair sem salvar?"
           }
         },
         "ru" : {
@@ -1111,8 +1111,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "不保存就离开？"
           }
         },
         "zh-Hant" : {
@@ -1152,8 +1152,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Ahora eres el dueño del equipo %@.\n\nVe a Administración de Equipos a: \n• Invitar a los primeros miembros del equipo y empezar a trabajar juntos\n• Personalizar la configuración de tu equipo"
           }
         },
         "et" : {
@@ -1206,14 +1206,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Agora você é o dono da equipe %@.\n\nVá para Gerenciamento de Equipe para: \n• convidar seus primeiros membros da equipe e começarem a trabalhar juntos\n• Personalizar suas configurações de equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Теперь вы являетесь владельцем команды %@.\n\nПерейдите в раздел Управление командой, чтобы: \n• Пригласить первых членов команды и начать совместную работу\n• Настроить параметры команды"
           }
         },
         "sl" : {
@@ -1236,8 +1236,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "您现在是团队 %@ 的所有者。\n\n转到团队管理以：\n• 邀请您的第一批团队成员，并开始协同工作\n• 自定义您的团队设置"
           }
         },
         "zh-Hant" : {
@@ -1277,8 +1277,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "Volver a Wire"
           }
         },
         "et" : {
@@ -1331,8 +1331,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "Voltar ao Wire"
           }
         },
         "ru" : {
@@ -1361,8 +1361,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "回到Wire"
           }
         },
         "zh-Hant" : {
@@ -1402,8 +1402,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "Ir a Gestión de Equipos"
           }
         },
         "et" : {
@@ -1456,8 +1456,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "Ir para o gerenciamento de equipe"
           }
         },
         "ru" : {
@@ -1486,8 +1486,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "转到团队管理"
           }
         },
         "zh-Hant" : {
@@ -1526,8 +1526,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Cerrar vista del equipo creado"
           }
         },
         "et" : {
@@ -1580,8 +1580,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Fechar visualização de equipe criada"
           }
         },
         "ru" : {
@@ -1610,8 +1610,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "关闭团队创建的视图"
           }
         },
         "zh-Hant" : {
@@ -1651,8 +1651,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "Ahora eres el dueño del equipo %@."
           }
         },
         "et" : {
@@ -1705,8 +1705,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "Agora você é dono da equipe %@."
           }
         },
         "ru" : {
@@ -1735,8 +1735,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "您现在是团队 %@ 的所有者。"
           }
         },
         "zh-Hant" : {
@@ -1776,8 +1776,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "¡Enhorabuena %@!"
           }
         },
         "et" : {
@@ -1830,8 +1830,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "Parabéns, %@!"
           }
         },
         "ru" : {
@@ -1860,8 +1860,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "恭喜 %@！"
           }
         },
         "zh-Hant" : {
@@ -1900,8 +1900,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "Usted crea un equipo y transfiere su cuenta personal a una cuenta de equipo"
           }
         },
         "et" : {
@@ -1954,8 +1954,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "Você cria uma equipe e transfere a sua conta pessoal para uma conta de equipe"
           }
         },
         "ru" : {
@@ -1984,8 +1984,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "您创建一个团队并将您的个人账户转移到团队账户"
           }
         },
         "zh-Hant" : {
@@ -2024,8 +2024,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "Este cambio es permanente e irrevocable"
           }
         },
         "et" : {
@@ -2078,8 +2078,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "Esta mudança é permanente e irrevogável"
           }
         },
         "ru" : {
@@ -2108,8 +2108,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "此更改是永久的且不可撤销"
           }
         },
         "zh-Hant" : {
@@ -2148,8 +2148,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "Como propietario del equipo puedes invitar y eliminar miembros del equipo y administrar la configuración del equipo"
           }
         },
         "et" : {
@@ -2202,8 +2202,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "Como proprietário da equipe, você pode convidar e remover membros da equipe e gerenciar as configurações da equipe"
           }
         },
         "ru" : {
@@ -2232,8 +2232,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "作为团队所有者，你可以邀请和移除团队成员并管理团队设置"
           }
         },
         "zh-Hant" : {
@@ -2272,8 +2272,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Cerrar la confirmación"
           }
         },
         "et" : {
@@ -2326,8 +2326,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Fechar visualização de confirmação"
           }
         },
         "ru" : {
@@ -2356,8 +2356,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "关闭确认视图"
           }
         },
         "zh-Hant" : {
@@ -2647,8 +2647,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "Entiendo que esta migración de Personal a Equipo es permanente y no se puede deshacer."
           }
         },
         "et" : {
@@ -2701,8 +2701,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "Entendo que esta migração de Pessoal para Equipe é permanente e não pode ser desfeita."
           }
         },
         "ru" : {
@@ -2731,8 +2731,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "我理解，从个人到团队的迁移是永久性的，并且无法撤消。"
           }
         },
         "zh-Hant" : {
@@ -2772,8 +2772,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "Acepte nuestros [Términos y condiciones](%@) y [Política de privacidad](%@)."
           }
         },
         "et" : {
@@ -2826,8 +2826,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "Aceite nossos [Termos e Condições](%@) e [Política de Privacidade](%@)."
           }
         },
         "ru" : {
@@ -2856,8 +2856,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "接受我们的[条款和条件](%@)和[隐私政策](%@)。"
           }
         },
         "zh-Hant" : {
@@ -2897,8 +2897,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "Confirmación"
           }
         },
         "et" : {
@@ -2951,8 +2951,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "Confirmação"
           }
         },
         "ru" : {
@@ -2981,8 +2981,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "确认"
           }
         },
         "zh-Hant" : {
@@ -3022,7 +3022,7 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3046,7 +3046,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3076,7 +3076,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3106,8 +3106,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Ok"
+            "state" : "translated",
+            "value" : "确定"
           }
         },
         "zh-Hant" : {
@@ -3147,8 +3147,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "Has creado o unido un equipo con esta dirección de correo electrónico en otro dispositivo."
           }
         },
         "et" : {
@@ -3201,8 +3201,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "Você criou ou juntou-se a uma equipe com este endereço de e-mail em outro dispositivo."
           }
         },
         "ru" : {
@@ -3231,8 +3231,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "您已在另一台设备上使用此电子邮件地址创建或加入了团队。"
           }
         },
         "zh-Hant" : {
@@ -3272,8 +3272,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Ya forma parte de un equipo"
           }
         },
         "et" : {
@@ -3326,14 +3326,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Já faz parte de uma equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Уже в команде"
           }
         },
         "sl" : {
@@ -3356,8 +3356,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "已经是团队的一员"
           }
         },
         "zh-Hant" : {
@@ -3397,8 +3397,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Inténtalo de nuevo"
           }
         },
         "et" : {
@@ -3421,8 +3421,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Riprova"
           }
         },
         "ja" : {
@@ -3451,14 +3451,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Tente novamente"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Повторить попытку"
           }
         },
         "sl" : {
@@ -3481,8 +3481,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "再试一次"
           }
         },
         "zh-Hant" : {
@@ -3522,8 +3522,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "Wire no pudo completar la creación de tu equipo debido a un error desconocido."
           }
         },
         "et" : {
@@ -3576,14 +3576,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "O Wire não pôde completar a criação de sua equipe devido a um erro desconhecido."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "Wire не удалось завершить создание вашей команды из-за неизвестной ошибки."
           }
         },
         "sl" : {
@@ -3606,8 +3606,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "由于未知错误，Wire 无法完成您的团队创建。"
           }
         },
         "zh-Hant" : {
@@ -3647,8 +3647,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Equipo no creado"
           }
         },
         "et" : {
@@ -3701,14 +3701,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Equipe não criada"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Команда не создана"
           }
         },
         "sl" : {
@@ -3731,8 +3731,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "未创建团队"
           }
         },
         "zh-Hant" : {
@@ -3896,8 +3896,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Transforma tu cuenta personal en una cuenta de equipo para obtener más de tu colaboración."
           }
         },
         "et" : {
@@ -3950,14 +3950,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Transforme sua conta pessoal em uma conta de equipe para obter mais da sua colaboração."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Трансформируйте свой персональный аккаунт в командный, чтобы получить больше пользы от совместной работы."
           }
         },
         "sl" : {
@@ -3980,8 +3980,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "将您的个人账户转变为团队账户，以从协作中获得更多收益。"
           }
         },
         "zh-Hant" : {
@@ -4020,8 +4020,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Cerrar resumen de cuenta de equipo"
           }
         },
         "et" : {
@@ -4074,14 +4074,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Fechar visão geral da conta da equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Закрыть информацию об аккаунте команды"
           }
         },
         "sl" : {
@@ -4104,8 +4104,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "关闭团队账户概览"
           }
         },
         "zh-Hant" : {
@@ -4145,8 +4145,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Consola de administración**: Invita a los miembros del equipo y gestiona la configuración."
           }
         },
         "et" : {
@@ -4199,14 +4199,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Console administrativo**: Convide membros da equipe e gerencie as configurações."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Консоль администратора**: Приглашайте членов команды и управляйте настройками."
           }
         },
         "sl" : {
@@ -4229,8 +4229,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**管理员控制台**：邀请团队成员并管理设置。"
           }
         },
         "zh-Hant" : {
@@ -4270,8 +4270,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Colaboración sin esfuerzo**: comuníquese con los huéspedes y grupos externos."
           }
         },
         "et" : {
@@ -4324,14 +4324,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Colaboração sem esforço**: Comunique-se com convidados e partes externas."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Эффективное сотрудничество**: Общайтесь с гостями и внешними участниками."
           }
         },
         "sl" : {
@@ -4354,8 +4354,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**轻松协作**：与访客和外部各方沟通。"
           }
         },
         "zh-Hant" : {
@@ -4395,8 +4395,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Actualice a empresa**: Obtenga características adicionales y soporte premium."
           }
         },
         "et" : {
@@ -4449,14 +4449,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Atualize para Enterprise**: Obtenha recursos adicionais e suporte premium."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Обновление до Enterprise**: Получите дополнительные возможности и премиум-поддержку."
           }
         },
         "sl" : {
@@ -4479,8 +4479,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**升级到企业版**：获取附加功能和高级支持。"
           }
         },
         "zh-Hant" : {
@@ -4520,8 +4520,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Reuniones grandes**: Únete a las videoconferencias de hasta 150 participantes."
           }
         },
         "et" : {
@@ -4574,14 +4574,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Reuniões grandes**: Participe de videoconferências de até 150 participantes."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Большие совещания**:Присоединяйтесь к видеоконференциям с участием до 150 человек."
           }
         },
         "sl" : {
@@ -4604,8 +4604,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**大型会议**：最多可容纳 150 名参与者的视频会议。"
           }
         },
         "zh-Hant" : {
@@ -4645,8 +4645,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Estado de disponibilidad**: Indica a tu equipo si estás disponible, ocupado o ausente."
           }
         },
         "et" : {
@@ -4699,14 +4699,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Status de disponibilidade**: avise sua equipe se você estiver disponível, ocupado ou ausente."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Статус доступности**: Сообщите своей команде, если вы свободны, заняты или отсутствуете."
           }
         },
         "sl" : {
@@ -4729,8 +4729,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**可用状态**：让您的团队知道您是否有空、忙碌或离开。"
           }
         },
         "zh-Hant" : {
@@ -4770,8 +4770,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Cuenta de equipo"
           }
         },
         "et" : {
@@ -4824,14 +4824,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Conta de equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Аккаунт команды"
           }
         },
         "sl" : {
@@ -4854,8 +4854,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "团队账户"
           }
         },
         "zh-Hant" : {
@@ -4895,8 +4895,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Más información sobre los planes de Wire"
           }
         },
         "et" : {
@@ -4949,14 +4949,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Saiba mais sobre os planos do Wire"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Узнайте больше о тарифах Wire"
           }
         },
         "sl" : {
@@ -4979,8 +4979,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "进一步了解 Wire 的计划"
           }
         },
         "zh-Hant" : {
@@ -5020,8 +5020,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Paso %d de %d"
           }
         },
         "et" : {
@@ -5074,14 +5074,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Passo %d de %d"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Шаг %d из %d"
           }
         },
         "sl" : {
@@ -5104,8 +5104,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "第 %d 步，共 %d 步"
           }
         },
         "zh-Hant" : {
@@ -5145,8 +5145,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Selecciona un nombre para tu equipo. Puedes cambiarlo en cualquier momento."
           }
         },
         "et" : {
@@ -5199,14 +5199,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Selecione um nome para sua equipe. Você pode mudá-lo a qualquer momento."
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Выберите название для своей команды. Вы можете изменить его в любое время."
           }
         },
         "sl" : {
@@ -5229,8 +5229,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "为您的团队选择一个名称。您可以随时更改。"
           }
         },
         "zh-Hant" : {
@@ -5269,8 +5269,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Cerrar vista del nombre del equipo"
           }
         },
         "et" : {
@@ -5323,14 +5323,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Fechar visualização do nome da equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Закрыть просмотр информации о названии команды"
           }
         },
         "sl" : {
@@ -5353,8 +5353,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "关闭团队名称视图"
           }
         },
         "zh-Hant" : {
@@ -5394,8 +5394,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Tu equipo"
           }
         },
         "et" : {
@@ -5418,8 +5418,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Il tuo team"
           }
         },
         "ja" : {
@@ -5448,14 +5448,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Sua equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Ваша команда"
           }
         },
         "sl" : {
@@ -5478,8 +5478,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "您的团队"
           }
         },
         "zh-Hant" : {
@@ -5519,8 +5519,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "Nombre del equipo"
           }
         },
         "et" : {
@@ -5543,8 +5543,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "Nome del team"
           }
         },
         "ja" : {
@@ -5603,8 +5603,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "团队名称"
           }
         },
         "zh-Hant" : {
@@ -5644,8 +5644,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nombre del equipo"
           }
         },
         "et" : {
@@ -5668,8 +5668,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nome del team"
           }
         },
         "ja" : {
@@ -5698,14 +5698,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nome da equipe"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Название команды"
           }
         },
         "sl" : {
@@ -5728,8 +5728,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "团队名称"
           }
         },
         "zh-Hant" : {

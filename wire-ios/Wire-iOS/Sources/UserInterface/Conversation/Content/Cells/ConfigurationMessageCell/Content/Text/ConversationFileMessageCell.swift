@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
     }
 
@@ -52,9 +56,11 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        containerView.shape = .rounded(radius: 12)
+        let cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
+
+        containerView.shape = .rounded(radius: cornerRadius)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true
@@ -67,14 +73,11 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
-
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
@@ -126,17 +129,20 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
 
-    let configuration: View.Configuration
-
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var topMargin: CGFloat = 8
-    var showEphemeralTimer: Bool = false
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -147,7 +153,8 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
     }
 
 }

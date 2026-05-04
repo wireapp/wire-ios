@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,7 +68,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
         let identifier = AVSIdentifier(
             identifier: MockUser.mockSelf().remoteIdentifier,
-            domain: nil
+            domain: nil,
+            isFederationEnabled: false
         )
 
         selfAVSClient = AVSClient(
@@ -99,7 +100,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut = CallGridViewController(
             voiceChannel: mockVoiceChannel,
             configuration: configuration,
-            mediaManager: mediaManager
+            mediaManager: mediaManager,
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
 
         sut.isCovered = false
@@ -293,11 +296,12 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         }
 
         // Page 2 - Second half with video enabled
-        var expectedClients = [AVSClient]()
+        var expectedClientStreams = [AVSClientVideoStream]()
         for _ in half ..< CallGridViewController.maxItemsPerPage {
             let client = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
+
             configuration.streams += [stubProvider.stream(client: client, videoState: .started)]
-            expectedClients += [client]
+            expectedClientStreams += [AVSClientVideoStream(client: client, quality: .low)]
         }
 
         sut.configuration = configuration
@@ -306,7 +310,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut.requestVideoStreamsIfNeeded(forPage: 1)
 
         // then
-        XCTAssertEqual(mockDelegate.requestedClients, expectedClients)
+        XCTAssertEqual(mockDelegate.requestedClients, expectedClientStreams)
     }
 
     func testThatItDoesntRequestVideoStreams_IfPageIsInvalid() {
@@ -357,7 +361,8 @@ extension CallGridViewControllerSnapshotTests {
                         isCovered: false,
                         shouldShowActiveSpeakerFrame: true,
                         shouldShowBorderWhenVideoIsStopped: true,
-                        pinchToZoomRule: .enableWhenFitted
+                        pinchToZoomRule: .enableWhenFitted,
+                        userSession: UserSessionMock()
                     )
                 }
             }

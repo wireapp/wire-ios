@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,4 +109,20 @@ public protocol TeamLocalStoreProtocol {
     /// - returns: the user ID and the client ID.
 
     func selfUserInfo() async -> (id: UUID, clientId: String?)
+
+    /// Creates or updates a team locally.
+    /// - Parameters
+    ///     - identifier: The team ID.
+    ///     - name: The team name.
+    ///     - creator: The team creator.
+    ///     - icon: The team icon.
+    ///     - iconKey: The team iconKey.
+
+    func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async
 }

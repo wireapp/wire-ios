@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,7 +112,9 @@ final class CallViewController: UIViewController {
 
         self.callGridViewController = CallGridViewController(
             voiceChannel: voiceChannel,
-            configuration: callGridConfiguration
+            configuration: callGridConfiguration,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -218,7 +220,7 @@ final class CallViewController: UIViewController {
     }
 
     func reloadGrid() {
-        callGridViewController.releadGridData()
+        callGridViewController.reloadGridData()
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -292,11 +294,11 @@ final class CallViewController: UIViewController {
     private func acceptDegradedCall() {
         guard let userSession = userSession as? ZMUserSession else { return }
 
-        userSession.enqueue({
+        userSession.enqueue {
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
-        }, completionHandler: {
+        } completionHandler: {
             self.conversation?.joinCall()
-        })
+        }
     }
 
     @available(*, unavailable)

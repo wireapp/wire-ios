@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 import MessageUI
 import WireDataModel
+import WireMainNavigationUI
 import WireReusableUIComponents
+import WireSyncEngine
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
@@ -50,7 +52,14 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 
     weak var viewController: UIViewController?
 
-    private let mailRecipient = WireEmail.shared.callingSupportEmail
+    private let mailRecipient = WireEmail.shared.supportEmail
+    private let userSession: UserSession
+    private let mainCoordinator: any MainCoordinatorProtocol
+
+    init(userSession: UserSession, mainCoordinator: any MainCoordinatorProtocol) {
+        self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+    }
 
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
@@ -67,7 +76,9 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let shareViewController = ShareViewController<ZMConversation, ShareableDebugReport>(
             shareable: debugReport,
             destinations: destinations,
-            showPreview: true
+            showPreview: true,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
         )
 
         shareViewController.onDismiss = { shareController, _ in
@@ -86,8 +97,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        activityIndicator.stop()
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        activityIndicator.start()
         Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 

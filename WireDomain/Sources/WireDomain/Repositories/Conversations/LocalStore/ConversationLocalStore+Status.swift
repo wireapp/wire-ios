@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 /// An extension that encapsulates storage operations related to conversation statuses.
 
@@ -98,6 +98,12 @@ extension ConversationLocalStore {
 
         let conversationExists: Bool
 
+        guard let mlsService else {
+            return mlsLogger.error(
+                "Cannot update conversation MLS status: MLS service is missing"
+            )
+        }
+
         do {
             conversationExists = try await mlsService.conversationExists(
                 groupID: mlsGroupID
@@ -106,9 +112,13 @@ extension ConversationLocalStore {
             conversationExists = false
         }
 
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
+        var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform { [self] in
+            if localConversation.mlsStatus == .pendingJoinAfterReset {
+                // don't override the mlsStatus, this will be handle in re-establish group when needed
+                newStatus = .pendingJoinAfterReset
+            }
             localConversation.mlsStatus = newStatus
             context.saveOrRollback()
         }

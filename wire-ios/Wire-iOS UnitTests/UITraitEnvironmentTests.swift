@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,9 @@ final class UITraitEnvironmentTests: XCTestCase {
         let mockView = MockRegularView()
 
         // WHEN
-        let margins = mockView.conversationHorizontalMargins(windowWidth: 1024)
+        let margins = HorizontalMargins.conversationHorizontalMargins(
+            windowWidth: 1024
+        )
 
         // THEN
         XCTAssertEqual(margins.left, regularMargins.left)

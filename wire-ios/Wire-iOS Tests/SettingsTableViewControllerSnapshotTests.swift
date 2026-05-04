@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         MockUserRight.isPermitted = true
@@ -93,9 +96,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     @MainActor
     func testForSettingGroup() throws {
         let group = settingsCellDescriptorFactory.settingsGroup(
-            isPublicDomain: true,
+            isAnalyticsTrackingAvailable: true,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            mainCoordinator: MockMainCoordinator()
         )
         try verify(group: group)
     }
@@ -108,11 +112,11 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) throws {
-        BackendInfo.isFederationEnabled = federated
+        userSession.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
         let group = settingsCellDescriptorFactory.accountGroup(
-            isPublicDomain: true,
+            isAnalyticsTrackingAvailable: true,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: true
         )
@@ -154,7 +158,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = settingsCellDescriptorFactory.optionsGroup
         sut = SettingsTableViewController(
             group: group as! SettingsInternalGroupCellDescriptorType,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
 
         sut.view.backgroundColor = .black
@@ -166,7 +171,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(
             matching: sut,
-            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: 1400)
         )
     }
 
@@ -178,7 +183,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         // then
@@ -193,7 +201,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         // then
@@ -207,7 +218,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         let group = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
         try verify(group: group)
     }
@@ -221,7 +233,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = try XCTUnwrap(group as? SettingsInternalGroupCellDescriptorType)
         sut = SettingsTableViewController(
             group: group,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
 
         sut.view.backgroundColor = .black
@@ -233,14 +246,17 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - advanced
 
     func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        let group = settingsCellDescriptorFactory.advancedGroup(
+            userSession: userSession,
+            mainCoordinator: MockMainCoordinator()
+        )
         try verify(group: group)
     }
 
     // MARK: - data usage permissions
 
     func testForDataUsagePermissionsForPublicDomain() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isPublicDomain: true)
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: true)
         try verify(group: group)
     }
 }

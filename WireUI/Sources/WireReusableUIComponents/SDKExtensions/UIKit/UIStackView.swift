@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,20 +20,81 @@ import UIKit
 
 public extension UIStackView {
 
-    convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat = 0) {
-        self.init(frame: .zero)
-        self.axis = axis
-        self.spacing = spacing
-        self.alignment = .fill
-        setContentCompressionResistancePriority(.required, for: .vertical)
-        setContentCompressionResistancePriority(.required, for: .horizontal)
+    static func horizontal(
+        views: [UIView] = [],
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .horizontal,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 
-    static func horizontal(spacing: CGFloat = 0) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: spacing)
+    static func vertical(
+        views: [UIView] = [],
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .vertical,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 
-    static func vertical(spacing: CGFloat = 0) -> UIStackView {
-        UIStackView(axis: .vertical, spacing: spacing)
+    static func make(
+        views: [UIView] = [],
+        spacing: CGFloat,
+        axis: NSLayoutConstraint.Axis,
+        alignment: UIStackView.Alignment,
+        distribution: UIStackView.Distribution
+    ) -> UIStackView {
+        let stackView = UIStackView(arrangedSubviews: views)
+        stackView.alignment = alignment
+        stackView.distribution = distribution
+        stackView.spacing = spacing
+        stackView.axis = axis
+        return stackView
+    }
+}
+
+public extension Array where Element: UIView {
+
+    @MainActor
+    func horizontalStack(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: self,
+            spacing: spacing,
+            axis: .horizontal,
+            alignment: alignment,
+            distribution: distribution
+        )
+    }
+
+    @MainActor
+    func verticalStack(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: self,
+            spacing: spacing,
+            axis: .vertical,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 }

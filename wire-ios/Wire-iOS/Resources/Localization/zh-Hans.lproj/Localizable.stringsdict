@@ -13,7 +13,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>other</key>
-        <string>%2$@ could not be added to the group.</string>
+        <string>无法将 %2$@ 添加到群组。</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_never_get_message</key>
@@ -27,7 +27,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>other</key>
-        <string>%2$@ won’t get your message.</string>
+        <string>%2$@ 不会收到您的消息。</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_get_message_later</key>
@@ -41,7 +41,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>other</key>
-        <string>%2$@ will get your message later.</string>
+        <string>%2$@ 稍后会收到您的消息。</string>
       </dict>
     </dict>
     <key>self.new_device_alert.title_prefix.devices</key>
@@ -162,7 +162,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>other</key>
-        <string>%lu participants</string>
+        <string>%lu 名参与者</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.generic_message</key>
@@ -260,7 +260,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>other</key>
-        <string>%2$@ were removed from the conversation</string>
+        <string>%2$@ 已从对话中移出</string>
       </dict>
     </dict>
     <key>content.system.call.missed-call.groups</key>
@@ -274,7 +274,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>other</key>
-        <string>来自 %2$@ 的未接来电</string>
+        <string>Missed calls from %2$@ (%d)</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
@@ -345,6 +345,20 @@
         <string>d</string>
         <key>other</key>
         <string>%d 个特殊符号</string>
+      </dict>
+    </dict>
+    <key>conversation.message.multipart_attachments.link</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@attachment_count@</string>
+      <key>attachment_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%d attached files</string>
       </dict>
     </dict>
   </dict>

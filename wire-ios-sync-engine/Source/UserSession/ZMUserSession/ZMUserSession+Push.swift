@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import UserNotifications
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireTransport
@@ -52,20 +53,18 @@ struct PushTokenMetadata {
     ///
     /// @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
 
-    var tokenType: PushToken.TokenType
-
     var transportType: String {
-        isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
+        isSandbox ? "APNS_SANDBOX" : "APNS"
     }
 
-    static func current(for tokenType: PushToken.TokenType) -> PushTokenMetadata {
+    static func current() -> PushTokenMetadata {
         let appId = Bundle.main.bundleIdentifier ?? ""
         let buildType = BuildType(bundleID: appId)
 
         let isSandbox = ZMMobileProvisionParser().apsEnvironment == .sandbox
         let appIdentifier = buildType.certificateName
 
-        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
+        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier)
     }
 }
 
@@ -107,47 +106,51 @@ public extension ZMUserSession {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-// Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
-// it should not actually be assigned as the delegate of UNUserNotificationCenter.
-// Instead, the delegate should be the SessionManager, whose repsonsibility it is
-// to forward the method calls to the appropriate user session.
-extension ZMUserSession: UNUserNotificationCenterDelegate {
+// The `SessionManager` forwards `UNUserNotificationCenterDelegate` calls to a suitable `ZMUserSession` instance.
+extension ZMUserSession {
 
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
-    public func userNotificationCenter(
+    @MainActor
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
-            -> Void
-    ) {
-        Logging.push.safePublic("Notification center wants to present in-app notification: \(notification)")
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        WireLogger.notifications.info("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
-        handleInAppNotification(
-            with: notification.userInfo,
-            categoryIdentifier: categoryIdentifier,
-            completionHandler: completionHandler
-        )
+        return await withCheckedContinuation { continuation in
+            handleInAppNotification(
+                with: notification.userInfo,
+                categoryIdentifier: categoryIdentifier,
+                completionHandler: { options in
+                    continuation.resume(returning: options)
+                }
+            )
+        }
     }
 
     // Called by the SessionManager when the user engages a notification action.
-    public func userNotificationCenter(
+    @MainActor
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        Logging.push.safePublic("Did receive notification response: \(response)")
+        didReceive response: UNNotificationResponse
+    ) async {
+        WireLogger.notifications.info("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 
-        handleNotificationResponse(
-            actionIdentifier: response.actionIdentifier,
-            categoryIdentifier: note.request.content.categoryIdentifier,
-            userInfo: note.userInfo,
-            userText: userText,
-            completionHandler: completionHandler
-        )
+        await withCheckedContinuation { continuation in
+            handleNotificationResponse(
+                actionIdentifier: response.actionIdentifier,
+                categoryIdentifier: note.request.content.categoryIdentifier,
+                userInfo: note.userInfo,
+                userText: userText,
+                completionHandler: {
+                    continuation.resume()
+                }
+            )
+        }
     }
 
     // MARK: Abstractions
@@ -184,11 +187,12 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
-        case CallNotificationAction.ignore.rawValue:
+        case CallNotificationAction.ignore.rawValue, NotificationActionIdentifier.ignoreCallIdentifier:
             ignoreCall(with: userInfo, completionHandler: completionHandler)
         case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
-        case ConversationNotificationAction.mute.rawValue:
+        case ConversationNotificationAction.mute.rawValue,
+             NotificationActionIdentifier.muteConversationIdentifier:
             muteConversation(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.like.rawValue:
             likeMessage(with: userInfo, completionHandler: completionHandler)
@@ -196,12 +200,17 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             if let textInput = userText {
                 reply(with: userInfo, message: textInput, completionHandler: completionHandler)
             }
-        case ConversationNotificationAction.connect.rawValue:
+        case ConversationNotificationAction.connect.rawValue,
+             NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
+        // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
+//        case NotificationActionIdentifier.callbackIdentifier:
+//            callback(with: userInfo, completionHandler: completionHandler)
         default:
             showContent(for: userInfo)
             completionHandler()
         }
+
     }
 
 }
@@ -213,21 +222,16 @@ extension UNNotificationContent {
 }
 
 public extension PushToken {
-    init(deviceToken: Data, pushTokenType: TokenType) {
-        let metadata = PushTokenMetadata.current(for: pushTokenType)
+    init(deviceToken: Data) {
+        let metadata = PushTokenMetadata.current()
         self.init(
             deviceToken: deviceToken,
             appIdentifier: metadata.appIdentifier,
-            transportType: metadata.transportType,
-            tokenType: pushTokenType
+            transportType: metadata.transportType
         )
     }
 
-    static func createVOIPToken(from deviceToken: Data) -> PushToken {
-        PushToken(deviceToken: deviceToken, pushTokenType: .voip)
-    }
-
     static func createAPNSToken(from deviceToken: Data) -> PushToken {
-        PushToken(deviceToken: deviceToken, pushTokenType: .standard)
+        PushToken(deviceToken: deviceToken)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
 
     let containsHighlightableContent: Bool = false
 

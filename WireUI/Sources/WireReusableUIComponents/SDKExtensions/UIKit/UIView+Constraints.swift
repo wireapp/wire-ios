@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@ public extension UIView {
     /// - Parameters:
     ///   - view: The container view in which to fit `self`.
     ///   - insets: Insets to apply on each side of `self` relative to the container.
-    func fitIn(view: UIView, insets: UIEdgeInsets = .zero) {
+    @discardableResult
+    func pin(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left),
@@ -32,9 +33,11 @@ public extension UIView {
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),
             bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
         ])
+        return self
     }
 
     func constraintToSize(_ size: CGSize) {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: size.width),
             heightAnchor.constraint(equalToConstant: size.height)
@@ -42,6 +45,7 @@ public extension UIView {
     }
 
     func constraintToSquare(sideLength: CGFloat) {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: sideLength),
             heightAnchor.constraint(equalToConstant: sideLength)
@@ -49,12 +53,53 @@ public extension UIView {
     }
 
     func center(in view: UIView) {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             centerXAnchor.constraint(equalTo: view.centerXAnchor),
             centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
+    @discardableResult
+    func widthConstraint(_ value: CGFloat) -> Self {
+        translatesAutoresizingMaskIntoConstraints = false
+        widthAnchor.constraint(equalToConstant: value).isActive = true
+        return self
+    }
+
+    @discardableResult
+    func heightConstraint(_ value: CGFloat) -> Self {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        heightAnchor.constraint(equalToConstant: value).isActive = true
+        return self
+    }
+
+    @discardableResult
+    func minHeightConstraint(_ value: CGFloat) -> Self {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 38).isActive = true
+        return self
+    }
+
+    @discardableResult
+    func setTranslatesAutoresizingMaskIntoConstraints(_ value: Bool) -> Self {
+        translatesAutoresizingMaskIntoConstraints = value
+        return self
+    }
+
+    @discardableResult
+    func setIsUserInteractionEnabled(_ value: Bool) -> Self {
+        isUserInteractionEnabled = value
+        return self
+    }
+
+    @discardableResult
+    func setIsHidden(_ value: Bool) -> Self {
+        isHidden = value
+        return self
+    }
 }
 
 public extension UIView {
@@ -78,4 +123,28 @@ public extension UIView {
 
         return view
     }
+
+    /// Returns a container view which is specifically useful not to stretch its content.
+    func wrapInViewWithFlexibleTopAndBottom() -> UIView {
+        let view = UIView()
+        view.clipsToBounds = false
+        translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(self)
+
+        let bottomConstraint = view.bottomAnchor.constraint(equalTo: bottomAnchor)
+        bottomConstraint.priority = .defaultLow
+
+        let topConstraint = view.topAnchor.constraint(equalTo: topAnchor)
+        topConstraint.priority = .defaultLow
+
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            topConstraint,
+            bottomConstraint
+        ])
+
+        return view
+    }
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
@@ -66,7 +66,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async throws {
         // Mock
 
-        let (selfUser, selfClient) = await context.perform { [self] in
+        let (selfUser, _) = await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 domain: nil,
@@ -103,7 +103,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
         static let deletedUserClientID = UUID()
 
-        static let userClient1 = WireAPI.SelfUserClient(
+        static let userClient1 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -113,7 +113,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient2 = WireAPI.SelfUserClient(
+        static let userClient2 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -123,7 +123,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient3 = WireAPI.SelfUserClient(
+        static let userClient3 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,

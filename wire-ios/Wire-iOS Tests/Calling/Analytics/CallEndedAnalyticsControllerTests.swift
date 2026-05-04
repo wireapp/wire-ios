@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalyticsSupport
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireLogging
-import WireSystemSupport
 import XCTest
 
 @testable import Wire
@@ -34,7 +34,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     private var secondUser: ZMUser!
     private var thirdUser: ZMUser!
     private var mockAnalyticsEventTracker: MockAnalyticsEventTracker!
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var sut: CallEndedAnalyticsController<WireCallCenterV3>!
 
     var syncContext: NSManagedObjectContext { coreDataStack.syncContext }
@@ -428,7 +428,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     }
 }
 
-private class MockAnalyticsEventTracker: AnalyticsEventTracker {
+private class MockAnalyticsEventTracker: AnalyticsEventTrackerProtocol {
 
     var trackedEvents = [AnalyticsEvent]()
 

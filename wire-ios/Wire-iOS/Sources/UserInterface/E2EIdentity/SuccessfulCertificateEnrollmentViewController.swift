@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -217,6 +217,10 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {}
 
     func displayError(_ error: Error) {}
+
+    func didRewindToThisView() {
+        // no-op
+    }
 }
 
 // MARK: - Previews

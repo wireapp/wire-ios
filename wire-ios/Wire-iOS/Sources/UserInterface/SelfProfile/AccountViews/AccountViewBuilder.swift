@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,20 @@
 //
 
 import WireDataModel
+import WireSyncEngine
 
 struct AccountViewBuilder {
 
     var account: Account
     var user: ZMUser?
+    var userSession: UserSession
     var displayContext: DisplayContext
 
     func build() -> BaseAccountView {
         if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
             accountView
         } else {
-            PersonalAccountView(account: account, user: user, displayContext: displayContext)
+            PersonalAccountView(account: account, user: user, userSession: userSession, displayContext: displayContext)
         }
     }
 }

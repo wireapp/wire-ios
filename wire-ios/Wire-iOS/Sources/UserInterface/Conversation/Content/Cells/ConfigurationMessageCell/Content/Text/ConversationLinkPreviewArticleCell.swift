@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,23 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let textMessageData: TextMessageData
+    struct Configuration: Equatable {
+        var textMessageData: TextMessageData
         let showImage: Bool
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.showImage == rhs.showImage &&
+                lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.textMessageData.messageText == rhs.textMessageData.messageText
         }
+
     }
 
     private let articleView = ArticleView(withImagePlaceholder: true)
@@ -62,9 +69,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        articleView.fitIn(view: self, insets: insets)
+        articleView.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -101,19 +106,28 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                if let data = message.textMessageData {
+                    configuration.textMessageData = data
+                }
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
@@ -123,7 +137,13 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.configuration = View
+            .Configuration(
+                textMessageData: data,
+                showImage: showImage,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

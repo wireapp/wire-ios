@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,13 +22,42 @@
 "authentication.identity.input.submit" = "Næste";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "E-mail";
+"cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Adgangskode";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Næste";
 "cloud_user_login.forgot_password" = "Glemt adgangskode?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
+
+"login.sso.title" = "Log ind";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
+"login.sso.input_code.title" = "SSO access code";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "Log ud";
+"logout.alert.title" = "Log ud";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Annuller";
+
+"create_account_or_team.title" = "Don’t have a Wire account?";
+"create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
+
+"account_type_selector.title" = "How will you use Wire?";
+"account_type_selector.option_team.title" = "For collaboration";
+"account_type_selector.option_team.subtitle" = "Work securely with your team.";
+"account_type_selector.option_team.feature0" = "Communicate with your colleagues and share documents via a single app";
+"account_type_selector.option_team.feature1" = "Start for free, upgrade anytime";
+"account_type_selector.option_team.button" = "Create Team";
+"account_type_selector.option_personal.title" = "For private use";
+"account_type_selector.option_personal.subtitle" = "Chat with friends and family.";
+"account_type_selector.option_personal.feature0" = "Send messages and share pictures";
+"account_type_selector.option_personal.feature1" = "Always free";
+"account_type_selector.option_personal.button" = "Create Personal Account";
 
 "on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
 "on_prem_user_login.message" = "Enter your password to log in";
@@ -39,7 +68,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Adgangskode";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -52,9 +81,12 @@
 "switch_backend_confirmation.teams_url" = "Teams URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts URL:";
 "switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Annuller";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Can’t switch servers";
+"switch_backend.error.message.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
 
 "verification_code.title" = "You’ve got mail";
 "verification_code.message" = "Enter the verification code we sent to %@.";
@@ -63,29 +95,91 @@
 
 "authentication.no_history.title" = "Det er første gang du bruger Wire på denne enhed.";
 "authentication.no_history.message" = "Af hensyn til fortrolighed, vil din samtalehistorik ikke vises her.";
+"authentication.missing_history.title" = "Du har brugt Wire på denne enhed før.";
+"authentication.missing_history.message" = "Beskeder sendt i mellemtiden vises ikke.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "No internet";
-"authentication.error.title.general" = "Fejl";
-"authentication.error.title.invalid_sso_link" = "Fejl";
-"authentication.error.title.sso_login_failed" = "Noget gik galt";
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "Noget gik galt";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
 
-"authentication.error.message.no_internet" = "You are not connected to the internet.";
-"authentication.error.message.general" = "Noget gik galt";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.no_internet" = "Der synes at være problemer med dit netværk. Prøv igen senere.";
+"authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
-"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Denne konto har ikke længere tilladelse til at logge ind.";
+"authentication.error.message.incorrect_sso_code" = "Please verify your company SSO access code and try again.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email already in use";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "Opdatering nødvendig";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
+"obsolete_client.alert.ok_button" = "Gå til App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
+
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
+"obsolete.alert.update_button" = "Update";
+"obsolete.alert.switch_accounts" = "Switch Accounts";
+"obsolete.alert.logout" = "Log ud";
+"obsolete.alert.cancel" = "Annuller";
+"obsolete.alert.ok" = "OK";
+
+"obsolete_backend.alert.title" = "Server version not supported";
+"obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+"obsolete_backend_multibackend.alert.message" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+// Registration
+
+"create_personal_account.title" = "Create personal account";
+"create_personal_account.continue" = "Fortsæt";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
+"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.create_team" = "Opret team";
+"create_personal_account.input_name.title" = "Navn";
+"create_personal_account.input_name.placeholder" = "Enter your name";
+"create_personal_account.input_email.title" = "E-mail";
+"create_personal_account.input_email.placeholder" = "Enter your email";
+"create_personal_account.input_password.title" = "Adgangskode";
+"create_personal_account.input_password.placeholder" = "Enter a password";
+"create_personal_account.input_confirm_password.placeholder" = "Confirm password";
+"create_personal_account.input_confirm_password.error" = "Passwords don’t match";
+"create_personal_account.confirmation_alert.title" = "Terms of use";
+"create_personal_account.confirmation_alert.message" = "Please accept the Terms of Use to continue.";
+"create_personal_account.confirmation_alert.accept" = "Besvar";
+"create_personal_account.confirmation_alert.view" = "Vis";
+"create_personal_account.confirmation_alert.cancel" = "Annuller";
+"create_personal_account.verification_code.resend_code" = "Resend Code";
+"create_personal_account.verification_code.confirm" = "Bekræft";
+"create_personal_account.verification_code.message" = "Enter the verification code we sent to %@.";
+
+"create_personal_account.error.title.email-exists" = "Account Exists";
+"create_personal_account.error.message.email-exists" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
+"create_personal_account.error.title.invalid-email" = "Invalid information";
+"create_personal_account.error.message.invalid-email" = "Please enter a valid format for your email.";
+"create_personal_account.error.title.blacklisted-email" = "Invalid information";
+"create_personal_account.error.message.blacklisted-email" = "Your email has been identified as not trusted, for example, due to a rejection by a spam filter.";
+"create_personal_account.error.title.domain-blocked" = "Invalid information";
+"create_personal_account.error.message.domain-blocked" = "You can't create this account as your email domain is intentionally blocked.";
+"create_personal_account.error.title.invalid-code" = "Invalid information";
+"create_personal_account.error.message.invalid-code" = "Invalid code, or maximum attempts exceeded. Please retry, or request another code";
+"create_personal_account.error.title.too-many-team-members" = "Invalid information";
+"create_personal_account.error.message.too-many-team-members" = "This team has reached its membership limit.";
+"create_personal_account.error.title.user-creation-restricted" = "Invalid information";
+"create_personal_account.error.message.user-creation-restricted" = "This application version does not allow creation of personal accounts.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

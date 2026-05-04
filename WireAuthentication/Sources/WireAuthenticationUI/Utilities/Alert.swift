@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,14 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
+import WireNetwork
 
 /// Identifies an alert and provides it's title and message.
 
-struct Alert: Hashable, Identifiable, Sendable {
+package struct Alert: Hashable, Identifiable, Sendable {
 
-    package var id: Self { self }
+    public var id: Self { self }
 
     let title: String
     let message: String
@@ -33,8 +35,8 @@ struct Alert: Hashable, Identifiable, Sendable {
 
 extension Alert {
 
-    private typealias Title = L10n.Authentication.Error.Title
-    private typealias Message = L10n.Authentication.Error.Message
+    private typealias Title = L10n.Localizable.Authentication.Error.Title
+    private typealias Message = L10n.Localizable.Authentication.Error.Message
 
     static let noInternet = Alert(
         title: Title.noInternet,
@@ -66,9 +68,49 @@ extension Alert {
         message: Message.accountSuspended
     )
 
+    static let obsoleteClient = Alert(
+        title: L10n.Localizable.ObsoleteClient.Alert.title,
+        message: L10n.Localizable.ObsoleteClient.Alert.message
+    )
+
+    static let obsoleteBackend = Alert(
+        title: L10n.Localizable.ObsoleteBackend.Alert.title,
+        message: L10n.Localizable.ObsoleteBackend.Alert.message
+    )
+
+    static let switchBackendFailed = Alert(
+        title: L10n.Localizable.SwitchBackend.Error.Title.loggedIn,
+        message: L10n.Localizable.SwitchBackend.Error.Message.loggedIn
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general
+    )
+
+    static let ssoLoginFailed = Alert(
+        title: Title.ssoLoginFailed,
+        message: Message.ssoLoginFailed
+    )
+
+    static let invalidSSOLink = Alert(
+        title: Title.ssoLoginFailed,
+        message: Message.ssoLoginFailed
+    )
+
+    static let incorrectSSOCode = Alert(
+        title: Title.incorrectSsoCode,
+        message: Message.incorrectSsoCode
+    )
+
+    static let termsOfUse = Alert(
+        title: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.title,
+        message: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.message
+    )
+
+    static let logoutConfirmation = Alert(
+        title: L10n.Localizable.Logout.Alert.title,
+        message: L10n.Localizable.Logout.Alert.message
     )
 
 }
@@ -81,6 +123,10 @@ extension Alert {
         switch error {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
+        case NetworkStackError.clientAPIVersionObsolete:
+            .obsoleteClient
+        case NetworkStackError.backendAPIVersionObsolete:
+            .obsoleteBackend
         default:
             .unknownError
         }

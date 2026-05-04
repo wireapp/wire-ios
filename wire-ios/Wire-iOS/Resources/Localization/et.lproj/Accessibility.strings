@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "Close team creation option";
 
 "conversation.backButton.description" = "Go back to conversation list";
 "conversation.searchButton.description" = "Open search";
@@ -118,6 +120,7 @@
 "messageAction.saveButton.description" = "Save picture";
 "messageAction.revealButton.description" = "Reveal in conversation";
 "messageAction.deleteButton.description" = "Delete picture";
+"messageAction.collapseButton.description" = "Collapse";
 
 "audioMessage.pause.value" = "Pause";
 "audioMessage.play.value" = "Play";
@@ -143,10 +146,6 @@
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
 "conversationDetails.participantCell.hint" = "Double tap to open profile";
 
-"createConversation.backButton.description" = "Go back to contact list";
-"createConversation.hideSettings.hint" = "Double tap to hide settings";
-"createConversation.openSettings.hint" = "Double tap to open settings";
-"createConversation.searchView.description" = "Type group name";
 "createConversation.selectedUser.hint" = "Double tap to deselect";
 "createConversation.unselectedUser.hint" = "Double tap to select";
 
@@ -203,7 +202,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Close new conversation overview";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -221,25 +220,38 @@
 "conversationsList.replyStatus.value" = "Vasta";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.itemCell.avatar.group.label" = "Group";
+"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Liitu";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Double tap to open profile";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
 "conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
 "conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.channels.description" = "Show all channel conversations";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+"conversationsList.filter_menu_options.unread.description" = "Show all unread conversations";
+"conversationsList.filter_menu_options.mentions.description" = "Show all conversations with mentions";
+"conversationsList.filter_menu_options.replies.description" = "Show all conversations with replies";
+"conversationsList.filter_menu_options.drafts.description" = "Show all conversations with drafted messages";
 "conversationsList.filter_menu_options.folders.description" = "Folders";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
 "conversationsList.filter_menu_options.groups.selected.description" = "Groups, selected";
+"conversationsList.filter_menu_options.channels.selected.description" = "Channels, selected";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
 "conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
+"conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Drafts, selected";
+"conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
@@ -320,3 +332,12 @@
 "searchGifs.norResultsLabel.description" = "No Gifs found";
 "searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
 "searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
+
+// MARK: - Channel Creation UI - Navigation
+
+"conversation.create.channel.back" = "Go back to new conversation overview";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity Provider URL";
+"webAuth.urlLabel.hint" = "Select to open the complete URL.";

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -27,44 +27,77 @@ import WireReusableUIComponents
 protocol VerificationCodeComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
-    var authenticationAPI: any AuthenticationAPI { get }
-    var backendEnvironment: WireAuthenticationBackendEnvironment { get }
+    var networkStack: NetworkStack { get }
+    var didDetectDomainConflict: Bool { get }
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+final class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
-    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
-        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
-    }
+    private let email: String
+    private let password: String
+    private let proxyCredentials: ProxyCredentials?
 
-    @MainActor
-    func view(email: String, password: String, didDetectDomainConflict: Bool) -> VerificationCodeView {
-        VerificationCodeView(
-            viewModel: viewModel(
-                email: email,
-                password: password,
-                didDetectDomainConflict: didDetectDomainConflict
-            )
-        )
-    }
-
-    @MainActor
-    private func viewModel(
+    init(
+        parent: any Scope,
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeViewModel {
+        proxyCredentials: ProxyCredentials?
+    ) {
+        self.email = email
+        self.password = password
+        self.proxyCredentials = proxyCredentials
+        super.init(parent: parent)
+    }
+
+}
+
+extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: VerificationCodeViewModel {
         VerificationCodeViewModel(
+            factory: self,
             email: email,
             password: password,
-            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
-            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
-            router: dependency.router,
-            backendEnvironment: dependency.backendEnvironment,
-            didDetectDomainConflict: didDetectDomainConflict
+            proxyCredentials: proxyCredentials,
+            router: dependency.router
         )
     }
 
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
+    }
+
+    // MARK: - Use cases
+
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        SubmitProxyCredentialsUseCase(networkStack: dependency.networkStack)
+    }
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RequestLoginVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
+    }
+
+    // MARK: - Private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: dependency.didDetectDomainConflict
+        )
+    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,29 +32,59 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     private var sut: SelfProfileViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
+    private var accountManager: MockSelfProfileAccountManager!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = .init()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         SelfUser.provider = coreDataFixture.selfUserProvider
         selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())
 
         userSession = UserSessionMock(mockUser: selfUser)
+        accountManager = MockSelfProfileAccountManager()
+
+        setupMultipleAccounts(true)
+    }
+
+    private func setupMultipleAccounts(_ multipleAccounts: Bool) {
+        guard multipleAccounts else {
+            accountManager.sortedAccounts_MockValue = []
+            return
+        }
+
+        let accounts = [
+            Account(
+                userName: "Iggy Pop",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            ),
+            Account(
+                userName: "Rap Rock",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            )
+        ]
+        accountManager.sortedAccounts_MockValue = accounts
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-        sut = nil
         coreDataFixture = nil
         SelfUser.provider = nil
         selfUser = nil
         userSession = nil
+        accountManager = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -62,13 +92,21 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     @MainActor
     func testForAUserWithNoTeam() {
+        setupMultipleAccounts(false)
         createSut(userName: "Tarja Turunen", teamMember: false)
         snapshotHelper.verify(matching: sut.view)
     }
 
     @MainActor
     func testForAUserWithALongName() {
+        setupMultipleAccounts(false)
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
+        snapshotHelper.verify(matching: sut.view)
+    }
+
+    @MainActor
+    func testAccountSwitcher() {
+        createSut(userName: "Tarja Turunen", teamMember: true, canManageTeam: true)
         snapshotHelper.verify(matching: sut.view)
     }
 
@@ -152,15 +190,18 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     // MARK: Helper Method
 
     @MainActor
-    private func createSut(userName: String, teamMember: Bool) {
+    private func createSut(userName: String, teamMember: Bool, canManageTeam: Bool = false) {
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
+        selfUser.canManageTeam = canManageTeam
+        userSession.selfUser = selfUser
         sut = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
             userSession: userSession,
             accountSelector: MockAccountSelector(),
             mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
-            analyticsEventTracker: nil
+            analyticsEventTracker: nil,
+            accountManager: accountManager
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
 
 import UIKit
 import WireDataModel
+import WireMessagingUI
 import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     )
 
@@ -53,6 +54,9 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageShouldUpdate()
 
+    /// Notify the delegate that the content size of the message changed.
+    func conversationMessageContentDidChangeSize()
+
 }
 
 /// A generic view that displays conversation contents.
@@ -60,6 +64,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 protocol ConversationMessageCell: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
+
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -69,9 +75,6 @@ protocol ConversationMessageCell: UIView {
 
     /// The frame to highlight when the cell is selected.
     var selectionRect: CGRect { get }
-
-    /// Top inset for ephemeral timer relative to the cell content
-    var ephemeralTimerTopInset: CGFloat { get }
 
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
@@ -109,10 +112,6 @@ extension ConversationMessageCell {
         selectionView?.bounds ?? .zero
     }
 
-    var ephemeralTimerTopInset: CGFloat {
-        8
-    }
-
     var menuPresenter: ConversationMessageCellMenuPresenter? {
         ConversationMessageCellMenuPresenter(
             contentView: self,
@@ -143,24 +142,33 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
 
-    /// The views of neighbouring cell descriptions which return `true` might be
-    /// arranged in a vertical stack view inside a single table view cell.
-    /// If `false` the resulting view will always end up in a single table view cell.
-    var canBeCombinedWithOtherCells: Bool { get }
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
 
-    /// The top margin is used to configure the spacing between cells. This property will
-    /// get updated by the ConversationMessageSectionController if necessary so any
-    /// default value is just a recommendation.
+    /// A new type of model to replace the cell descriptions eventually.
+    /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
+    /// now.
+    var conversationCellModel: ConversationCellModel? { get }
+
+    /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
+
+    /// The bottom margin is used to configure the spacing between the current and the following cell.
+    var bottomMargin: CGFloat { get set }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
 
-    /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get }
-
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
+
+    /// Boolean to check for aligning message content for Bubbles
+    var shouldAlignMessageContentForBubbles: Bool { get }
+
+    /// Boolean to check if isCellAlreadyAligned
+    var isCellAlreadyAligned: Bool { get }
+
+    /// Boolean to check if isBubbleHasMaximumWidth
+    var isBubbleHasMaximumWidth: Bool { get }
 
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
@@ -194,16 +202,38 @@ protocol ConversationMessageCellDescription: AnyObject {
 
 extension ConversationMessageCellDescription {
 
-    var canBeCombinedWithOtherCells: Bool {
-        false
+    var conversationCellModel: ConversationCellModel? {
+        nil
     }
 
     var supportsActions: Bool {
         false
     }
 
+    var shouldAlignMessageContentForBubbles: Bool {
+        false
+    }
+
+    var isCellAlreadyAligned: Bool {
+        false
+    }
+
+    var isBubbleHasMaximumWidth: Bool {
+        false
+    }
+
     var isAccessibilityElement: Bool {
         false
+    }
+
+    var topMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &topMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &topMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
+    }
+
+    var bottomMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &bottomMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &bottomMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
     }
 
     func willDisplayCell() {
@@ -221,6 +251,13 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+
+        if let message {
+            // sometimes action controller still has background context message
+            // so re-set message from main context to avoid crash
+            actionController?.message = message
+        }
+        cell.accessibilityIdentifier = accessibilityIdentifier
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
@@ -252,6 +289,9 @@ extension ConversationMessageCellDescription {
 
 }
 
+private nonisolated(unsafe) var topMarginKey = 0
+private nonisolated(unsafe) var bottomMarginKey = 0
+
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
 
     /// Default implementation of isConfigurationEqual
@@ -277,14 +317,12 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let instanceGetter: () -> any ConversationMessageCellDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
 
+    private let _conversationCellModel: () -> ConversationCellModel?
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _canBeCombinedWithOtherCells: () -> Bool
-    private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
-    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _isAccessibilityElement: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
@@ -322,14 +360,12 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
+        self._conversationCellModel = { description.conversationCellModel }
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
-        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
-        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._isAccessibilityElement = AnyConstantProperty(description, keyPath: \.isAccessibilityElement)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
@@ -341,6 +377,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var baseType: AnyClass {
         baseTypeGetter()
+    }
+
+    var conversationCellModel: ConversationCellModel? {
+        _conversationCellModel()
     }
 
     var delegate: ConversationMessageCellDelegate? {
@@ -358,25 +398,12 @@ final class AnyConversationMessageCellDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
-    var canBeCombinedWithOtherCells: Bool {
-        _canBeCombinedWithOtherCells()
-    }
-
-    var topMargin: CGFloat {
-        get { _topMargin.getter() }
-        set { _topMargin.setter(newValue) }
-    }
-
     var containsHighlightableContent: Bool {
         _containsHighlightableContent.getter()
     }
 
     var supportsActions: Bool {
         _supportsActions()
-    }
-
-    var showEphemeralTimer: Bool {
-        _showEphemeralTimer.getter()
     }
 
     var cellIsAccessibilityElement: Bool {

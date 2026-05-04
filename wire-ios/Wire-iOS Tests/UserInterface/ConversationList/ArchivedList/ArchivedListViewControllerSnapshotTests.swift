@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,12 +52,15 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 
-    func testNonEmpty() {
+    @MainActor
+    func testNonEmpty() async throws {
 
-        let fixture = CoreDataFixture()
+        let fixture = try await CoreDataFixture()
         let modelHelper = ModelHelper()
-        let selfUser = modelHelper.createSelfUser(in: fixture.coreDataStack.viewContext)
-        let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        let conversation = modelHelper.createGroupConversation(
+            id: .init(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E56")!,
+            in: fixture.coreDataStack.viewContext
+        )
         conversation.userDefinedName = "Lorem Ipsum"
         conversation.isArchived = true
         userSessionMock.mockConversationList = ConversationList(

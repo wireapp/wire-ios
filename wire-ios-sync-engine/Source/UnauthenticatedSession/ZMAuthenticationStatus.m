@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -285,6 +285,19 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeAccountSuspended userInfo:nil];
     [self.delegate authenticationDidFail: error];
     [self resetLoginAndRegistrationStatus];
+    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
+- (void)didFailLoginBecauseTooManyRequests
+{
+    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
+    // This fixes a request loop on login
+    // we break the state of currentPhase ZMAuthenticationPhaseLoginWithEmail
+    if (self.isWaitingForLogin) {
+        self.isWaitingForLogin = NO;
+    }
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeTooManyRequests userInfo:nil];
+    [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 

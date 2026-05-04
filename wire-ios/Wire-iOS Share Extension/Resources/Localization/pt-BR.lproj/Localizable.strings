@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@
 
 // Content
 "share_extension.content.file.too_big" = "Você pode enviar arquivos de até %@";
-"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+"share_extension.content.file.unsupported_attachment" = "Anexo incompatível";
 
 "share_extension.error.conversation_does_not_exist.message" = "Por favor, selecione uma conversa para compartilhar";
 
@@ -60,20 +60,28 @@
 "share_extension.logged_out.message" = "Por favor, escolha outra conta.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Conversa em grupo vazia";
+"share_extension.conversation.displayname.emptygroup" = "Conversa vazia";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ começou a usar um novo dispositivo.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ começou a usar novos dispositivos.";
 "share_extension.meta.degraded.dialog_message" = "Ainda quer enviar sua mensagem?";
-"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
-"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+"share_extension.meta.degraded.cancel_sending_button" = "Não enviar";
+"share_extension.meta.degraded.send_anyway_button" = "Enviar mesmo assim";
 
 "share_extension.meta.legalhold.send_alert_title" = "A conversa está agora sujeita a proteção jurídica.";
 
 //Feature flag - File sharing
-"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
-"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+"share_extension.feature.flag.file_sharing.alert.title" = "Restrições de compartilhamento de arquivos";
+"share_extension.feature.flag.file_sharing.alert.message" = "Você não pode compartilhar este arquivo porque este recurso está desativado.";
 
 // Share Extension - Voice Over
 "share_extension.voiceover.conversation_under_legal_hold" = "Sob Proteção Jurídica.";
 "share_extension.voiceover.conversation_secure" = "Todos os clientes foram verificados.";
 "share_extension.voiceover.conversation_secure_with_ignored" = "Nem todos os clientes foram verificados.";
+
+// Update required
+"share_extension.error.update_required.title" = "Update required";
+"share_extension.error.update_required.obsolete_client" = "You are missing out on new features. Get the latest version of Wire to continue using the app with this account.";
+"share_extension.error.update_required.obsolete_backend" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+"share_extension.error.open_app.title" = "Open app";
+"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";

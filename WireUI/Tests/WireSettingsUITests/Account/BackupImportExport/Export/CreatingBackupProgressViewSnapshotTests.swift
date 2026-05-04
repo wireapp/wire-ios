@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
 
     func testOngoingColorSchemeVariants() async throws {
         let screenBounds = UIScreen.main.bounds
-        let sut = CreatingBackupProgressView(progress: .ongoing(0.25)) {}
+        let sut = CreatingBackupProgressView(progress: .ongoing(current: 1, total: 4)) {}
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -59,7 +59,7 @@ final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
     func testOngoingDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let sut = CreatingBackupProgressView(progress: .ongoing(0.25)) {}
+        let sut = CreatingBackupProgressView(progress: .ongoing(current: 1, total: 4)) {}
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

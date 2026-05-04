@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    var brushWidth: CGFloat = 6 {
+    var brushWidth: CGFloat = 8 {
         didSet {
             guard brushWidth != oldValue else {
                 return
@@ -196,7 +196,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.knobView = ColorKnobView()
+        self.knobView = ColorKnobView(knobDiameter: brushWidth)
 
         contentStackView.axis = .vertical
         contentStackView.alignment = .center

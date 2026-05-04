@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,13 +22,15 @@ import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
 
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
+    private let userSession: ZMUserSession?
     private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
         guard let userSession else { return nil }
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 
-    @Published var certificateExpirationTime = ""
+    static let minimumCertificateExpirationTime = 360
+
+    @Published var certificateExpirationTime = minimumCertificateExpirationTime
 
     @Published var storedCRLExpirationDatesByURL = [String: String]()
 
@@ -36,7 +38,8 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var certificateValidTo = ""
 
-    init() {
+    init(userSession: UserSession?) {
+        self.userSession = userSession as? ZMUserSession
         refreshCRLExpirationDates()
         Task {
             await fetchSelfClientCertificate()

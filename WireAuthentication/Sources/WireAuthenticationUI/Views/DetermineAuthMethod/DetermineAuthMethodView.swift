@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,204 +19,193 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
+import WireNetwork
 import WireReusableUIComponents
 
-package protocol DetermineAuthMethodBuilder {
+package protocol DetermineAuthMethodFactory {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
+    @MainActor var viewModel: DetermineAuthMethodViewModel { get }
+
+    @MainActor
+    func loginView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView
+
+    @MainActor
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 
 }
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
-
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let factory: any Factory
+    private typealias Strings = L10n.Localizable.Authentication
 
-    package init(
-        viewModel: DetermineAuthMethodViewModel,
-        factory: any Factory
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+    package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 16) {
-                HStack {
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                    Logo()
-                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                        .frame(width: 164, height: 95)
-                    Spacer()
-                        .frame(maxWidth: .infinity)
+                header
+                message
+                inputField
+                submitButton
+            }
+            .padding()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
+        }
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    dismissButton
                 }
-
-                Text(L10n.Authentication.Identity.Input.body)
-                    .multilineTextAlignment(.leading)
-                    .wireTextStyle(.body1)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.trailing)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    LabeledTextField(
-                        isMandatory: false,
-                        placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                        title: L10n.Authentication.Identity.Input.Field.title,
-                        string: $viewModel.emailOrSSOCode
-                    )
-                    .autocapitalization(.none)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Button(action: {
-                    Task {
-                        await viewModel.submitEmailOrSSOCode()
-                    }
-                }, label: {
-                    HStack {
-                        if viewModel.isLoading {
-                            ProgressView()
-                        }
-
-                        Text(L10n.Authentication.Identity.Input.submit)
-                            .lineLimit(nil)
-                    }
-                })
-                .wireButtonStyle(.primary)
-                .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
         }
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button {
-                    viewModel.onAlertDismiss()
-                } label: {
-                    Text(L10n.Authentication.Error.confirm)
-                }
+                Button(Strings.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
-        .navigationDestination(for: Destination.self) {
-            switch $0 {
-            case let .login(email, didDetectDomainConflict, backendMetadata):
-                factory.loginViaEmailView(
-                    email: email,
-                    canCreateAccount: false,
-                    didDetectDomainConflict: didDetectDomainConflict,
-                    backendMetadata: backendMetadata
-                )
-            case let .loginOrRegister(email, backendMetadata):
-                factory.loginViaEmailView(
-                    email: email,
-                    canCreateAccount: true,
-                    didDetectDomainConflict: false,
-                    backendMetadata: backendMetadata
-                )
-            }
+        .navigationDestination(for: DetermineAuthMethodDestination.self) {
+            destinationView(for: $0)
         }
-        .sheet(
-            item: $viewModel.modalDestination,
-            content: {
-                switch $0 {
-                case let .ssoLogin(
-                    ssoURL,
-                    backendEnvironment
-                ):
-                    factory.loginViaSSOView(
-                        ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
-                case let .switchBackend(
-                    email,
-                    environmentType,
-                    backendConfig
-                ):
-                    if #available(iOS 16.4, *) {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).presentationBackground(Color.black.opacity(0.7))
-                    } else {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).background(TransparentBackgroundView())
-                    }
-                }
-            }
-        )
-        .presentationDetents([.medium, .large])
+        .fullScreenCover(item: $viewModel.modalDestination) {
+            sheetView(for: $0)
+                .presentationBackground(Color.black.opacity(0.7))
+        }
         .interactiveDismissDisabled()
+        .background(ColorTheme.Backgrounds.surface.color)
         .presentationDragIndicator(.hidden)
     }
 
-    package enum Destination: Hashable {
+    // MARK: - Views
 
-        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
-        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
-
+    @ViewBuilder private var header: some View {
+        Group {
+            if viewModel.isOnPremiseBackend {
+                OnPremHeaderView(environment: viewModel.environment)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                Logo().frame(width: 164, height: 95)
+            }
+        }
+        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
     }
 
-}
+    @ViewBuilder private var message: some View {
+        Text(Strings.Identity.Input.body)
+            .multilineTextAlignment(.center)
+            .font(for: .body1)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.trailing)
+    }
 
-extension Alert {
-
-    private typealias Title = L10n.Authentication.Error.Title
-    private typealias Message = L10n.Authentication.Error.Message
-
-    static let invalidSSOLink = Alert(title: Title.ssoLoginFailed, message: Message.ssoLoginFailed)
-    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Message.incorrectSsoCode)
-
-}
-
-@MainActor
-func makeDetermineAuthMethodViewPreview(
-    emailOrSSOCode: String = "",
-    isLoading: Bool = false,
-    alert: Alert? = nil
-) -> some View {
-    MockDependencies().makeDetermineAuthMethodView(
-        emailOrSSOCode: emailOrSSOCode,
-        isLoading: isLoading,
-        alert: alert
-    )
-}
-
-#Preview {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
+    private var inputField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LabeledTextField(
+                isMandatory: false,
+                placeholder: Strings.Identity.Input.Field.placeholder,
+                title: Strings.Identity.Input.Field.title,
+                string: $viewModel.emailOrSSOCode,
+                keyboardType: .emailAddress,
+                textContentType: .username
             )
+            .autocorrectionDisabled()
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(Locators.WelcomePage.emailTextField.rawValue)
         }
-}
-
-private struct TransparentBackgroundView: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIView {
-        InnerView()
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    @ViewBuilder private var submitButton: some View {
+        Button(action: {
+            Task {
+                await viewModel.submitEmailOrSSOCode()
+            }
+        }, label: {
+            HStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
 
-    private class InnerView: UIView {
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
+                Text(Strings.Identity.Input.submit)
+                    .lineLimit(nil)
+            }
+        })
+        .wireButtonStyle(.primary)
+        .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+        .accessibilityIdentifier(Locators.WelcomePage.nextButton.rawValue)
+    }
 
-            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+    @ViewBuilder private var dismissButton: some View {
+        Button {
+            viewModel.exitFlow()
+        } label: {
+            Image(systemName: "xmark")
         }
+    }
 
+    // MARK: - Destinations
+
+    @ViewBuilder
+    private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
+        switch destination {
+        case let .login(email, didDetectDomainConflict, environment):
+            viewModel.factory
+                .loginView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    environment: environment
+                )
+        case let .loginOrRegister(
+            email,
+            didDetectDomainConflict,
+            environment
+        ):
+            viewModel.factory
+                .loginOrRegisterView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    environment: environment
+                )
+        case let .noHistory(authenticationResult):
+            viewModel.factory.noHistoryView(result: authenticationResult)
+        }
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: DetermineAuthMethodSheet) -> some View {
+        switch sheet {
+        case let .switchBackendConfirmation(
+            email,
+            environment
+        ):
+            SwitchBackendConfirmation(environment: environment) { didConfirm in
+                guard didConfirm else { return }
+                Task {
+                    await viewModel.switchBackend(
+                        email: email,
+                        environment: environment
+                    )
+                }
+            }
+        }
     }
 }

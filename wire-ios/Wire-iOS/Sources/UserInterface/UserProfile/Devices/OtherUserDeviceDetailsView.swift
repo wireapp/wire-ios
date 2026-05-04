@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ struct OtherUserDeviceDetailsView: View {
     private var showDeviceFingerPrintView: some View {
         HStack {
             Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
-                .font(.textStyle(.body2))
+                .font(for: .body2)
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(Color(SemanticColors.Label.textDefault))
             Spacer()
@@ -159,7 +159,7 @@ struct OtherUserDeviceDetailsView: View {
         if let description {
             VStack(alignment: .leading) {
                 Text(description)
-                    .font(.textStyle(.h4))
+                    .font(for: .h4)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(SemanticColors.Label.textCellSubtitle))
@@ -167,7 +167,7 @@ struct OtherUserDeviceDetailsView: View {
                     .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
-                    .font(.textStyle(.h4))
+                    .font(for: .h4)
                     .bold()
                     .foregroundColor(Color(SemanticColors.Label.textDefault))
                     .padding(.leading)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,37 +18,31 @@
 
 import SwiftUI
 import WireAuthenticationAPI
-
-package protocol NoHistoryViewBuilder {
-
-    @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView
-
-}
+import WireLocators
+import WireReusableUIComponents
 
 package struct NoHistoryView: View {
 
-    @StateObject var viewModel: NoHistoryViewModel
+    @StateObject private var viewModel: NoHistoryViewModel
+
+    private typealias Strings = L10n.Localizable.Authentication
 
     package init(
-        viewModel: NoHistoryViewModel
+        factory: @autoclosure @escaping () -> NoHistoryFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.Authentication.NoHistory.title)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(L10n.Authentication.NoHistory.message)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -60,72 +54,62 @@ package struct NoHistoryView: View {
                         ProgressView()
                     }
 
-                    Text(L10n.Authentication.NoHistory.confirm)
+                    Text(Strings.NoHistory.confirm)
                         .lineLimit(nil)
                 }
             }
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
+
         }
         .alert(
             item: $viewModel.alert,
             title: titleForAlert,
             message: messageForAlert,
             actions: { _ in
-                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                Button(Strings.Error.howToChangeEmail, action: {
                     viewModel.howToChangeEmail()
                 })
-                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                Button(Strings.Error.howToDeleteAccount, action: {
                     viewModel.howToDeleteAccount()
                 })
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(Strings.Error.confirm, action: {
+                    viewModel.confirmAlert()
+                })
             }
         )
         .onAppear {
             viewModel.onAppear()
         }
+        .padding(.vertical, 32)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
+        ) { _ in
+            viewModel.onAppear()
+        }
         .padding()
-        .presentationDetents([.medium])
+        .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
         switch alert {
         case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
+            Text(Strings.Error.Title.emailAlreadyInUse)
         }
     }
 
     private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
         switch alert {
         case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+            Text(Strings.Error.Message.emailAlreadyInUse)
         }
     }
 
-}
-
-#Preview {
-    let viewModel = NoHistoryViewModel(
-        didDetectDomainConflict: false,
-        howToChangeEmailURL: URL(string: "https://wire.com")!,
-        howToDeleteAccountURL: URL(string: "https://wire.com")!,
-        onFlowCompletion: {}
-    )
-    NoHistoryView(viewModel: viewModel)
-}
-
-#Preview("With background") {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            let viewModel = NoHistoryViewModel(
-                didDetectDomainConflict: false,
-                howToChangeEmailURL: URL(string: "https://wire.com")!,
-                howToDeleteAccountURL: URL(string: "https://wire.com")!,
-                onFlowCompletion: {}
-            )
-            NoHistoryView(viewModel: viewModel)
-        }
 }

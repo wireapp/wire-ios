@@ -29,8 +29,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder overview"
+            "state" : "translated",
+            "value" : "Cerrar resumen de carpeta"
           }
         },
         "et" : {
@@ -83,8 +83,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder overview"
+            "state" : "translated",
+            "value" : "Fechar visualização da pasta"
           }
         },
         "ru" : {
@@ -113,8 +113,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder overview"
+            "state" : "translated",
+            "value" : "关闭文件夹概览"
           }
         },
         "zh-Hant" : {
