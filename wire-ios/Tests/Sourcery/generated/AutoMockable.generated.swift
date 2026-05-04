@@ -1,9 +1,8 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.3.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +25,13 @@
 
 
 import CoreLocation
+import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireMessagingDomain
+import WireMessagingUI
+import WireFoundation
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -54,23 +57,24 @@ import WireAccountImageUI
 
 
 
-public class MockAccountSelector: AccountSelector {
+
+
+class MockAccountSelector: AccountSelector {
 
     // MARK: - Life cycle
 
-    public init() {}
 
     // MARK: - currentAccount
 
-    public var currentAccount: Account?
+    var currentAccount: Account?
 
 
     // MARK: - switchTo
 
-    public var switchToAccount_Invocations: [Account] = []
-    public var switchToAccount_MockMethod: ((Account) -> Void)?
+    var switchToAccount_Invocations: [Account] = []
+    var switchToAccount_MockMethod: ((Account) -> Void)?
 
-    public func switchTo(account: Account) {
+    func switchTo(account: Account) {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
@@ -82,10 +86,10 @@ public class MockAccountSelector: AccountSelector {
 
     // MARK: - switchTo
 
-    public var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
-    public var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
+    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
+    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
 
-    public func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
         switchToAccountCompletion_Invocations.append((account: account, completion: completion))
 
         guard let mock = switchToAccountCompletion_MockMethod else {
@@ -272,19 +276,46 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var build_MockMethod: (() async -> UIViewController?)?
+    var build_MockValue: UIViewController??
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController? {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
             fatalError("no mock for `build`")
+        }
+    }
+
+}
+
+class MockConversationCellProviderProtocol: ConversationCellProviderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - provideCell
+
+    var provideCellForTableViewIndexPathOnLongPress_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: (UITableViewCell) -> Void)] = []
+    var provideCellForTableViewIndexPathOnLongPress_MockMethod: ((ConversationCellModel, UITableView, IndexPath, @escaping (UITableViewCell) -> Void) -> UITableViewCell)?
+    var provideCellForTableViewIndexPathOnLongPress_MockValue: UITableViewCell?
+
+    @MainActor
+    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: @escaping (UITableViewCell) -> Void) -> UITableViewCell {
+        provideCellForTableViewIndexPathOnLongPress_Invocations.append((model: model, tableView: tableView, indexPath: indexPath, onLongPress: onLongPress))
+
+        if let mock = provideCellForTableViewIndexPathOnLongPress_MockMethod {
+            return mock(model, tableView, indexPath, onLongPress)
+        } else if let mock = provideCellForTableViewIndexPathOnLongPress_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideCellForTableViewIndexPathOnLongPress`")
         }
     }
 
@@ -453,15 +484,15 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
+    var build_MockMethod: (() async -> UIViewController)?
     var build_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
@@ -821,80 +852,6 @@ class MockImageTransformer: ImageTransformer {
         } else {
             fatalError("no mock for `adjustInputSaturationValueImage`")
         }
-    }
-
-}
-
-class MockLogFilesProviding: LogFilesProviding {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - generateLogFilesData
-
-    var generateLogFilesData_Invocations: [Void] = []
-    var generateLogFilesData_MockError: Error?
-    var generateLogFilesData_MockMethod: (() throws -> Data)?
-    var generateLogFilesData_MockValue: Data?
-
-    func generateLogFilesData() throws -> Data {
-        generateLogFilesData_Invocations.append(())
-
-        if let error = generateLogFilesData_MockError {
-            throw error
-        }
-
-        if let mock = generateLogFilesData_MockMethod {
-            return try mock()
-        } else if let mock = generateLogFilesData_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generateLogFilesData`")
-        }
-    }
-
-    // MARK: - generateLogFilesZip
-
-    var generateLogFilesZip_Invocations: [Void] = []
-    var generateLogFilesZip_MockError: Error?
-    var generateLogFilesZip_MockMethod: (() throws -> URL)?
-    var generateLogFilesZip_MockValue: URL?
-
-    func generateLogFilesZip() throws -> URL {
-        generateLogFilesZip_Invocations.append(())
-
-        if let error = generateLogFilesZip_MockError {
-            throw error
-        }
-
-        if let mock = generateLogFilesZip_MockMethod {
-            return try mock()
-        } else if let mock = generateLogFilesZip_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generateLogFilesZip`")
-        }
-    }
-
-    // MARK: - clearLogsDirectory
-
-    var clearLogsDirectory_Invocations: [Void] = []
-    var clearLogsDirectory_MockError: Error?
-    var clearLogsDirectory_MockMethod: (() throws -> Void)?
-
-    func clearLogsDirectory() throws {
-        clearLogsDirectory_Invocations.append(())
-
-        if let error = clearLogsDirectory_MockError {
-            throw error
-        }
-
-        guard let mock = clearLogsDirectory_MockMethod else {
-            fatalError("no mock for `clearLogsDirectory`")
-        }
-
-        try mock()
     }
 
 }
@@ -1385,17 +1342,17 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - transitionToListAndEnqueue
 
-    var transitionToListAndEnqueueLeftViewControllerRevealed_Invocations: [(leftViewControllerRevealed: Bool, block: () -> Void)] = []
-    var transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod: ((Bool, @escaping () -> Void) -> Void)?
+    var transitionToListAndEnqueue_Invocations: [() -> Void] = []
+    var transitionToListAndEnqueue_MockMethod: ((@escaping () -> Void) -> Void)?
 
-    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void) {
-        transitionToListAndEnqueueLeftViewControllerRevealed_Invocations.append((leftViewControllerRevealed: leftViewControllerRevealed, block: block))
+    func transitionToListAndEnqueue(_ block: @escaping () -> Void) {
+        transitionToListAndEnqueue_Invocations.append(block)
 
-        guard let mock = transitionToListAndEnqueueLeftViewControllerRevealed_MockMethod else {
-            fatalError("no mock for `transitionToListAndEnqueueLeftViewControllerRevealed`")
+        guard let mock = transitionToListAndEnqueue_MockMethod else {
+            fatalError("no mock for `transitionToListAndEnqueue`")
         }
 
-        mock(leftViewControllerRevealed, block)
+        mock(block)
     }
 
     // MARK: - setConversationTransitionClosure
@@ -1426,6 +1383,36 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(delegate)
+    }
+
+}
+
+class MockSelfProfileAccountManager: SelfProfileAccountManager {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - selectedAccount
+
+    var selectedAccount: Account?
+
+
+    // MARK: - sortedAccounts
+
+    var sortedAccounts_Invocations: [Void] = []
+    var sortedAccounts_MockMethod: (() -> [Account])?
+    var sortedAccounts_MockValue: [Account]?
+
+    func sortedAccounts() -> [Account] {
+        sortedAccounts_Invocations.append(())
+
+        if let mock = sortedAccounts_MockMethod {
+            return mock()
+        } else if let mock = sortedAccounts_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sortedAccounts`")
+        }
     }
 
 }
@@ -1609,6 +1596,357 @@ class MockTopOverlayPresenting: TopOverlayPresenting {
         }
 
         mock(animated)
+    }
+
+}
+
+class MockTrackingInterface: TrackingInterface {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isAnalyticsTrackingEnabled
+
+    var isAnalyticsTrackingEnabled: Bool {
+        get { return underlyingIsAnalyticsTrackingEnabled }
+        set(value) { underlyingIsAnalyticsTrackingEnabled = value }
+    }
+
+    var underlyingIsAnalyticsTrackingEnabled: Bool!
+
+
+    // MARK: - isAnalyticsTrackingAvailable
+
+    var isAnalyticsTrackingAvailableFor_Invocations: [String] = []
+    var isAnalyticsTrackingAvailableFor_MockMethod: ((String) -> Bool)?
+    var isAnalyticsTrackingAvailableFor_MockValue: Bool?
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        isAnalyticsTrackingAvailableFor_Invocations.append(domain)
+
+        if let mock = isAnalyticsTrackingAvailableFor_MockMethod {
+            return mock(domain)
+        } else if let mock = isAnalyticsTrackingAvailableFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isAnalyticsTrackingAvailableFor`")
+        }
+    }
+
+    // MARK: - requestAnalyticsConsent
+
+    var requestAnalyticsConsent_Invocations: [Void] = []
+    var requestAnalyticsConsent_MockError: Error?
+    var requestAnalyticsConsent_MockMethod: (() async throws -> Bool)?
+    var requestAnalyticsConsent_MockValue: Bool?
+
+    func requestAnalyticsConsent() async throws -> Bool {
+        requestAnalyticsConsent_Invocations.append(())
+
+        if let error = requestAnalyticsConsent_MockError {
+            throw error
+        }
+
+        if let mock = requestAnalyticsConsent_MockMethod {
+            return try await mock()
+        } else if let mock = requestAnalyticsConsent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requestAnalyticsConsent`")
+        }
+    }
+
+    // MARK: - disableAnalytics
+
+    var disableAnalytics_Invocations: [Void] = []
+    var disableAnalytics_MockError: Error?
+    var disableAnalytics_MockMethod: (() throws -> Void)?
+
+    func disableAnalytics() throws {
+        disableAnalytics_Invocations.append(())
+
+        if let error = disableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = disableAnalytics_MockMethod else {
+            fatalError("no mock for `disableAnalytics`")
+        }
+
+        try mock()
+    }
+
+    // MARK: - enableAnalytics
+
+    var enableAnalytics_Invocations: [Void] = []
+    var enableAnalytics_MockError: Error?
+    var enableAnalytics_MockMethod: (() async throws -> Void)?
+
+    func enableAnalytics() async throws {
+        enableAnalytics_Invocations.append(())
+
+        if let error = enableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = enableAnalytics_MockMethod else {
+            fatalError("no mock for `enableAnalytics`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeMeetingsView
+
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
+
+    @MainActor
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
+
+        if let mock = makeMeetingsView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeMeetingsView`")
+        }
+    }
+
+}
+
+class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeUploadDraftUseCase
+
+    var makeUploadDraftUseCaseCellName_Invocations: [String] = []
+    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveUploadDraftUseCaseProtocol)?
+    var makeUploadDraftUseCaseCellName_MockValue: WireDriveUploadDraftUseCaseProtocol?
+
+    func makeUploadDraftUseCase(cellName: String) -> WireDriveUploadDraftUseCaseProtocol {
+        makeUploadDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeUploadDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeUploadDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeUploadDraftUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeObserveDraftsUseCase
+
+    var makeObserveDraftsUseCaseCellName_Invocations: [String] = []
+    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveObserveDraftsUseCaseProtocol)?
+    var makeObserveDraftsUseCaseCellName_MockValue: WireDriveObserveDraftsUseCaseProtocol?
+
+    func makeObserveDraftsUseCase(cellName: String) -> WireDriveObserveDraftsUseCaseProtocol {
+        makeObserveDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeObserveDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeObserveDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeObserveDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makePublishDraftsUseCase
+
+    var makePublishDraftsUseCaseCellName_Invocations: [String] = []
+    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireDrivePublishDraftsUseCaseProtocol)?
+    var makePublishDraftsUseCaseCellName_MockValue: WireDrivePublishDraftsUseCaseProtocol?
+
+    func makePublishDraftsUseCase(cellName: String) -> WireDrivePublishDraftsUseCaseProtocol {
+        makePublishDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makePublishDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makePublishDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makePublishDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeClearPublishedDraftsUseCase
+
+    var makeClearPublishedDraftsUseCaseCellName_Invocations: [String] = []
+    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveClearPublishedDraftsUseCaseProtocol)?
+    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireDriveClearPublishedDraftsUseCaseProtocol?
+
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireDriveClearPublishedDraftsUseCaseProtocol {
+        makeClearPublishedDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeClearPublishedDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeClearPublishedDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeClearPublishedDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeDeleteDraftUseCase
+
+    var makeDeleteDraftUseCaseCellName_Invocations: [String] = []
+    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireDriveDeleteDraftUseCaseProtocol)?
+    var makeDeleteDraftUseCaseCellName_MockValue: WireDriveDeleteDraftUseCaseProtocol?
+
+    func makeDeleteDraftUseCase(cellName: String) -> WireDriveDeleteDraftUseCaseProtocol {
+        makeDeleteDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeDeleteDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeDeleteDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteDraftUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeRetryUploadDraftUseCase
+
+    var makeRetryUploadDraftUseCaseCellName_Invocations: [String] = []
+    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveRetryUploadDraftUseCaseProtocol)?
+    var makeRetryUploadDraftUseCaseCellName_MockValue: WireDriveRetryUploadDraftUseCaseProtocol?
+
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireDriveRetryUploadDraftUseCaseProtocol {
+        makeRetryUploadDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeRetryUploadDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeRetryUploadDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeRetryUploadDraftUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeDeleteNodesUseCase
+
+    var makeDeleteNodesUseCase_Invocations: [Void] = []
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireDriveDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireDriveDeleteNodesUseCaseProtocol?
+
+    func makeDeleteNodesUseCase() -> WireDriveDeleteNodesUseCaseProtocol {
+        makeDeleteNodesUseCase_Invocations.append(())
+
+        if let mock = makeDeleteNodesUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeDeleteNodesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteNodesUseCase`")
+        }
+    }
+
+    // MARK: - makeFetchNodeUseCase
+
+    var makeFetchNodeUseCase_Invocations: [Void] = []
+    var makeFetchNodeUseCase_MockMethod: (() -> WireDriveFetchNodeUseCaseProtocol)?
+    var makeFetchNodeUseCase_MockValue: WireDriveFetchNodeUseCaseProtocol?
+
+    func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol {
+        makeFetchNodeUseCase_Invocations.append(())
+
+        if let mock = makeFetchNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchNodeUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFetchNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFetchCachedNodeUseCase
+
+    var makeFetchCachedNodeUseCase_Invocations: [Void] = []
+    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireDriveFetchCachedNodeUseCaseProtocol)?
+    var makeFetchCachedNodeUseCase_MockValue: WireDriveFetchCachedNodeUseCaseProtocol?
+
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol {
+        makeFetchCachedNodeUseCase_Invocations.append(())
+
+        if let mock = makeFetchCachedNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchCachedNodeUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFetchCachedNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFilesView
+
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod: ((String, Bool, @escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColorProvider: accentColorProvider))
+
+        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod {
+            return mock(cellName, isCellsStatePending, accentColorProvider)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColorProvider`")
+        }
+    }
+
+    // MARK: - makeFilesBrowserView
+
+    var makeFilesBrowserViewAccentColorProvider_Invocations: [() -> WireAccentColor] = []
+    var makeFilesBrowserViewAccentColorProvider_MockMethod: ((@escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesBrowserViewAccentColorProvider_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesBrowserView(accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesBrowserViewAccentColorProvider_Invocations.append(accentColorProvider)
+
+        if let mock = makeFilesBrowserViewAccentColorProvider_MockMethod {
+            return mock(accentColorProvider)
+        } else if let mock = makeFilesBrowserViewAccentColorProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesBrowserViewAccentColorProvider`")
+        }
+    }
+
+    // MARK: - makeConversationCellProvider
+
+    var makeConversationCellProviderInsetsProvider_Invocations: [() -> ConversationCellInsets] = []
+    var makeConversationCellProviderInsetsProvider_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol)?
+    var makeConversationCellProviderInsetsProvider_MockValue: ConversationCellProviderProtocol?
+
+    func makeConversationCellProvider(insetsProvider: @escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol {
+        makeConversationCellProviderInsetsProvider_Invocations.append(insetsProvider)
+
+        if let mock = makeConversationCellProviderInsetsProvider_MockMethod {
+            return mock(insetsProvider)
+        } else if let mock = makeConversationCellProviderInsetsProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
+        }
     }
 
 }

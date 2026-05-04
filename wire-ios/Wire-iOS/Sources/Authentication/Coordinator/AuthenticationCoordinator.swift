@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 //
 
 import UIKit
+import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -89,8 +92,11 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to start and control the company login flow.
     let companyLoginController = CompanyLoginController(withDefaultEnvironment: ())
 
+    var analyticsEventTracker: (any AuthenticationAnalyticsEventTracker)?
+
     // MARK: - Internal State
 
+    private let defaultEnvironment: BackendEnvironment2
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
@@ -112,18 +118,24 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     /// Creates a new authentication coordinator with the required supporting objects.
     init(
+        defaultEnvironment: BackendEnvironment2,
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
         statusProvider: AuthenticationStatusProvider
     ) {
+        self.defaultEnvironment = defaultEnvironment
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
         self.featureProvider = featureProvider
         self.stateController = AuthenticationStateController()
-        self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
+        self.interfaceBuilder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: SessionManager.shared,
+            defaultEnvironment: defaultEnvironment
+        )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
         super.init()
         updateLoginObservers()
@@ -143,6 +155,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     }
 
     func tearDown() {
+        unauthenticatedSession.removeAuthenticationModuleURLActionProcessors()
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
@@ -173,6 +186,8 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
     ) {
+        analyticsEventTracker?.authenticationFlowStepReached(newState)
+
         guard let presenter, newState.needsInterface else {
             return
         }
@@ -207,7 +222,7 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
                     viewControllers.prefix { !milestone.shouldRewind(to: $0) },
                     [rewindedController],
                     [stepViewController]
-                ].flatMap { $0 }
+                ].flatMap(\.self)
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)
@@ -235,7 +250,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.startAuthentication(with: nil, numberOfAccounts: SessionManager.numberOfAccounts)
+            self?.startAuthentication(
+                environment: nil,
+                error: nil,
+                numberOfAccounts: SessionManager.numberOfAccounts
+            )
         }
     }
 
@@ -295,21 +314,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin(result):
-                // Make sure we use the same backend from the authentication flow.
-                let backendEnvironment = BackendEnvironment(
-                    type: result.backendEnvironment.environmentType,
-                    backendConfig: result.backendEnvironment.config
-                )
-
-                BackendEnvironment.shared = backendEnvironment
-                SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
-
-                // Make sure we persist and backend info gathered during authentication.
-                let backendMetadata = result.backendEnvironment.metadata
-                BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
-                BackendInfo.domain = backendMetadata.domain
-                BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
+            case let .completeWireAuthenticationLogin((result, trackingConsent)):
+                // Don't store the env here... pass it along when upgrading
+                // to an authenticated session.
 
                 if let emailCredentials = result.emailCredentials {
                     // Set credentials so we can register a new client via registration status.
@@ -326,14 +333,35 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     cookies: result.cookies
                 )
 
-                if case let .authenticated(_, _, username, password) = result.backendEnvironment.proxySettings {
-                    sessionManager.saveProxyCredentials(
-                        username: username,
-                        password: password
-                    )
+                switch trackingConsent {
+                case .declined:
+                    PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    ).set(false, forKey: .isAnalyticsTrackingEnabled)
+                case let .agreed(trackingID):
+                    PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    ).set(true, forKey: .isAnalyticsTrackingEnabled)
+                    PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    ).set(trackingID.transportString(), forKey: .trackingIDFromRegistration)
+                case .unknown:
+                    break
                 }
 
-                unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
+                let newEnvironment = NewEnvironment(
+                    backendEnvironment: result.backendEnvironment,
+                    metadata: result.backendMetadata,
+                    cookies: result.cookies,
+                    proxyCredentials: result.proxyCredentials
+                )
+                unauthenticatedSession.upgradeToAuthenticatedSession(
+                    with: userInfo,
+                    newEnvironment: newEnvironment
+                )
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
@@ -384,9 +412,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 continueFlow(withVerificationCode: code)
 
             case let .startRegistrationFlow(unverifiedCredential):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startRegistration(unverifiedCredential)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startRegistration(unverifiedCredential)
 
             case let .setFullName(fullName):
                 updateUnregisteredUser(\.name, fullName)
@@ -401,9 +428,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 companyLoginController?.updateBackendEnvironment(with: url)
 
             case let .startCompanyLogin(code):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startCompanyLoginFlowIfPossible(linkCode: code)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startCompanyLoginFlowIfPossible(linkCode: code)
 
             case .startSSOFlow:
                 startAutomaticSSOFlow()
@@ -413,6 +439,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .signOut(warn):
                 signOut(warn: warn)
+
+            case let .deleteSession(eraseData):
+
+                deleteSession(eraseData: eraseData)
 
             case let .addEmailAndPassword(newCredentials):
                 setEmailCredentialsForCurrentUser(newCredentials)
@@ -456,8 +486,18 @@ extension AuthenticationCoordinator {
     /// - parameter error: The error that caused the unauthenticated state, if any.
     /// - parameter numberOfAccounts: The number of accounts that are signed in with the app.
 
-    func startAuthentication(with error: NSError?, numberOfAccounts: Int) {
-        eventResponderChain.handleEvent(ofType: .flowStart(error, numberOfAccounts))
+    func startAuthentication(
+        environment: BackendEnvironment2?,
+        error: NSError?,
+        numberOfAccounts: Int
+    ) {
+        eventResponderChain.handleEvent(
+            ofType: .flowStart(
+                environment,
+                error,
+                numberOfAccounts
+            )
+        )
     }
 
     /// Creates a new unregistered user for starting a registration flow.
@@ -499,32 +539,44 @@ extension AuthenticationCoordinator {
     /// Signs the current user out with a warning.
     private func signOut(warn: Bool) {
         if warn {
-            let signOutAction = AuthenticationCoordinatorAlertAction(
-                title: L10n.Localizable.General.ok,
-                coordinatorActions: [
-                    .showLoadingView,
-                    .signOut(
-                        warn: false
-                    )
-                ],
+
+            typealias l10nAlert = L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert
+
+            let logoutDeleteDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndClear,
+                coordinatorActions: [.showLoadingView, .deleteSession(eraseData: true)],
                 style: .destructive
             )
 
+            let logoutKeepDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndKeep,
+                coordinatorActions: [.showLoadingView, .deleteSession(eraseData: false)],
+                style: .default
+            )
+
             let alertModel = AuthenticationCoordinatorAlert(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
-                actions: [.cancel, signOutAction]
+                title: l10nAlert.title,
+                message: l10nAlert.message,
+                actions: [logoutKeepDataAction, logoutDeleteDataAction, .cancel]
             )
 
             presentAlert(for: alertModel)
         } else {
-            guard let accountId = unauthenticatedSession.accountId,
-                  let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
-                fatal("No unauthenticated account to log out from")
-            }
-
-            sessionManager.delete(account: unauthenticatedAccount)
+            deleteSession(eraseData: true)
         }
+    }
+
+    func deleteSession(eraseData: Bool) {
+        guard let accountId = unauthenticatedSession.accountId,
+              let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
+            fatal("No unauthenticated account to log out from")
+        }
+
+        sessionManager.delete(
+            account: unauthenticatedAccount,
+            eraseData: eraseData
+        )
+
     }
 
     /// Repeats the current action.
@@ -665,14 +717,8 @@ extension AuthenticationCoordinator {
             )
         }
 
-        activateNetworkSessions { [weak self] error in
-            guard error == nil else {
-                self?.sessionManager.removeProxyCredentials()
-                self?.showAlertWithNoInternetConnectionError()
-                return
-            }
-            action()
-        }
+        sessionManager.markNetworkSessionsAsReady(true)
+        action()
     }
 
     // Sends the login verification code to the email address
@@ -859,19 +905,6 @@ extension AuthenticationCoordinator {
                 actions: [.ok]
             ))]
         )
-    }
-
-    /// Call this method when ready to use network sessions : first login
-    private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
-        sessionManager.markNetworkSessionsAsReady(true)
-        startActivityIndicator()
-        sessionManager.resolveAPIVersion { [weak self] error in
-            self?.stopActivityIndicator()
-            if error != nil {
-                self?.sessionManager.markNetworkSessionsAsReady(false)
-            }
-            action(error)
-        }
     }
 
     private func updateUsername(_ username: String) {

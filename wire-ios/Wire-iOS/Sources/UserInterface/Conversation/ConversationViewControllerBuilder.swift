@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,21 @@
 import UIKit
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
-import WireConversationUI
 
 @MainActor
 struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     typealias Dependencies = MainCoordinatorDependencies
-    typealias ConversationUI = NewConversationViewController<ZMConversation, ZMMessage>
+    typealias ConversationUI = ConversationRootViewController
 
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    var conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
+    var wireMessagingFactory: any WireMessagingFactoryProtocol
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,
@@ -38,65 +41,17 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
         mainCoordinator: MainCoordinator
     ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies {
 
-        // let viewController = ConversationRootViewController(
-        //     conversation: conversation,
-        //     message: message,
-        //     userSession: userSession,
-        //     mainCoordinator: .init(mainCoordinator: mainCoordinator),
-        //     selfProfileUIBuilder: selfProfileUIBuilder,
-        //     mediaPlaybackManager: mediaPlaybackManager
-        // )
-        let viewController = NewConversationViewController(
-            conversationModel: conversation,
-            conversationMessageType: ZMMessage.self,
-            persistentContainer: userSession.persistentContainer,
-            backButtonAction: { mainCoordinator.hideConversation()}
+        let viewController = ConversationRootViewController(
+            conversation: conversation,
+            message: message,
+            userSession: userSession,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
+            mediaPlaybackManager: mediaPlaybackManager,
+            wireMessagingFactory: wireMessagingFactory
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController
-    }
-}
-
-extension ZMConversation: NewConversationModel {}
-
-extension ZMMessage: NewConversationMessageModel {
-
-    public var conversationCellModel: ConversationCellModel {
-        if let textMessageData {
-            // return .timeDivider(TimeDividerModel(text: textMessageData.messageText ?? "<nil>", isUnreadIndicatorVisible: false))
-
-            let reactions = reactionsSortedByCreationDate().compactMap { reaction -> MessageReaction? in
-
-                guard !reaction.users.isEmpty else { return nil }
-
-                return MessageReaction(
-                    emojiID: reaction.reactionString,
-                    count: UInt(reaction.users.count),
-                    isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
-                )
-            }.map {
-                WireConversationUI.Reaction(
-                    emoji: $0.emojiID.first!,
-                    count: Int($0.count),
-                    isSelfReaction: $0.isSelfUserReacting
-                )
-            }
-
-            let model = SimpleTextMessageModel(
-                senderInfo: nil,
-                text: AttributedString(textMessageData.messageText ?? "<nil>"),
-                dateTime: (serverTimestamp ?? .now).formattedDate,
-                status: "todo: status",
-                reactions: reactions
-            )
-            return .simpleTextMessage(model)
-        } else {
-            return .timeDivider(TimeDividerModel(text: "???", isUnreadIndicatorVisible: false))
-        }
-    }
-
-    @objc
-    public var todo: SectionIdentifier {
-        "messages"
     }
 }

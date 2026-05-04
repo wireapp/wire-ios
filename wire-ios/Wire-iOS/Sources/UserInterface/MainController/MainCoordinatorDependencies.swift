@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ import WireDataModel
 import WireMainNavigationUI
 import WireSettingsUI
 import WireSidebarUI
-import WireConversationUI
 
 enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
 
@@ -34,10 +33,7 @@ enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
     // MainCoordinatorDependenciesProtocol
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
-    typealias TabBarController = MainTabBarController<
-        ConversationListViewController,
-        NewConversationViewController<ZMConversation, ZMMessage>
-    >
+    typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>
     typealias ConversationUIBuilder = ConversationViewControllerBuilder
     typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
 }

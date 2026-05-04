@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     typealias View = ConversationNewDeviceSystemMessageCell<ConversationNewDeviceSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -41,11 +41,15 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     init(
         message: ZMConversationMessage,
         systemMessageData: ZMSystemMessageData,
-        conversation: ZMConversation
+        conversation: ConversationLike,
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) {
         self.configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
             for: systemMessageData,
-            in: conversation
+            in: conversation,
+            onUserTap: onUserTap,
+            onConversationTap: onConversationTap
         )
         self.accessibilityLabel = configuration.attributedText?.string
         self.actionController = nil
@@ -65,7 +69,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
     private static func configuration(
         for systemMessage: ZMSystemMessageData,
-        in conversation: ZMConversation
+        in conversation: ConversationLike,
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) -> View.Configuration {
 
         let textAttributes = TextAttributes(
@@ -82,15 +88,26 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
             .sortedAscendingPrependingNil(by: \.name)
 
         if !systemMessage.addedUserTypes.isEmpty {
-            return configureForAddedUsers(in: conversation, attributes: textAttributes)
+            return configureForAddedUsers(
+                in: conversation,
+                attributes: textAttributes,
+                onConversationTap: onConversationTap
+            )
         } else if users.count == 1, let user = users.first, user.isSelfUser {
-            return configureForNewClientOfSelfUser(user, clients: clients, link: View.userClientURL)
+            return configureForNewClientOfSelfUser(
+                user,
+                clients: clients,
+                link: View.userClientURL,
+                onUserTap: onUserTap
+            )
         } else {
             return configureForOtherUsers(
                 users,
                 conversation: conversation,
                 clients: clients,
-                attributes: textAttributes
+                attributes: textAttributes,
+                onUserTap: onUserTap,
+                onConversationTap: onConversationTap
             )
         }
     }
@@ -102,7 +119,8 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     private static func configureForNewClientOfSelfUser(
         _ selfUser: UserType,
         clients: [UserClientType],
-        link: URL
+        link: URL,
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) -> View.Configuration {
         let string = L10n.Localizable.Content.System.selfUserNewClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
@@ -111,15 +129,17 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return View.Configuration(
             attributedText: attributedText,
             icon: isSelfClient ? nil : verifiedIcon,
-            linkTarget: .user(selfUser)
+            linkTarget: .user(selfUser.objectId, onUserTap)
         )
     }
 
     private static func configureForOtherUsers(
         _ users: [UserType],
-        conversation: ZMConversation,
+        conversation: ConversationLike,
         clients: [UserClientType],
-        attributes: TextAttributes
+        attributes: TextAttributes,
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) -> View.Configuration {
 
         let displayNamesOfOthers = users.filter { !$0.isSelfUser }.compactMap(\.name)
@@ -151,15 +171,19 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         let attributedText = attributedSenderNames
 
         let linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
-            .user(user)
+            .user(user.objectId, onUserTap)
         } else {
-            .conversation(conversation)
+            .conversation(conversation.objectId, onConversationTap)
         }
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: linkTarget)
     }
 
-    private static func configureForAddedUsers(in conversation: ZMConversation, attributes: TextAttributes) -> View
+    private static func configureForAddedUsers(
+        in conversation: ConversationLike,
+        attributes: TextAttributes,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
+    ) -> View
         .Configuration {
         let attributedNewUsers = NSAttributedString(
             string: L10n.Localizable.Content.System.newUsers,
@@ -175,7 +199,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return View.Configuration(
             attributedText: attributedText,
             icon: verifiedIcon,
-            linkTarget: .conversation(conversation)
+            linkTarget: .conversation(conversation.objectId, onConversationTap)
         )
     }
 

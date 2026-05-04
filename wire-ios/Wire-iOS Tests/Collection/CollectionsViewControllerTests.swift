@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -125,10 +126,12 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
         let controller = CollectionsViewController(
             collection: emptyCollection,
+            isCellsEnabled: false,
             fetchingDone: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
@@ -136,10 +139,12 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testThatLoadingIsShownWhenFetching() {
         let controller = CollectionsViewController(
             collection: emptyCollection,
+            isCellsEnabled: false,
             fetchingDone: false,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
@@ -241,9 +246,11 @@ final class CollectionsViewControllerTests: XCTestCase {
 
         let controller = CollectionsViewController(
             collection: collection,
+            isCellsEnabled: false,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         _ = controller.view
         delegate.assetCollectionDidFetch(

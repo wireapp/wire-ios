@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireDesign
-import WireDomainPkg
+import WireDomainPackage
 import WireFoundation
 import WireLogging
 
@@ -26,31 +26,31 @@ public struct BackupImportExportBuilder {
 
     let backupPasswordValidator: any BackupPasswordValidatorProtocol
     let createBackupUseCase: any CreateBackupUseCaseProtocol
-    let importBackupUseCase: any ImportBackupUseCaseProtocol
+    let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
     let exportBackupLogger: any LoggerProtocol
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
-    let wireAccentColorMapping: WireAccentColorMapping
+    let isContextMenuAllowed: Bool
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         createBackupUseCase: any CreateBackupUseCaseProtocol,
-        importBackupUseCase: any ImportBackupUseCaseProtocol,
+        importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
-        wireAccentColorMapping: WireAccentColorMapping,
-        wireAccentColor: WireAccentColor
+        wireAccentColor: WireAccentColor,
+        isContextMenuAllowed: Bool
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
-        self.importBackupUseCase = importBackupUseCase
+        self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
         self.exportBackupLogger = exportBackupLogger
         self.importBackupLogger = importBackupLogger
-        self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     @MainActor
@@ -64,7 +64,6 @@ public struct BackupImportExportBuilder {
             buildExportBackupView()
             buildImportBackupView()
         }
-        .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         .environment(\.wireAccentColor, wireAccentColor)
     }
 
@@ -107,7 +106,7 @@ public struct BackupImportExportBuilder {
             setPasswordAction: setPasswordAction
         )
 
-        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 
@@ -115,10 +114,10 @@ public struct BackupImportExportBuilder {
     func buildImportBackupView() -> some View {
 
         let viewModel = ImportBackupViewModel(
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             logger: importBackupLogger
         )
-        ImportBackupView(viewModel: viewModel)
+        ImportBackupView(viewModel: viewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 }
@@ -131,12 +130,12 @@ extension BackupImportExportBuilder {
         BackupImportExportBuilder(
             backupPasswordValidator: PreviewBackupPasswordValidator(),
             createBackupUseCase: PreviewCreateBackupUseCase(),
-            importBackupUseCase: PreviewImportBackupUseCase(),
+            importBackupUseCaseFactory: PreviewImportBackupUseCaseFactory(),
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
-            wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: .purple
+            wireAccentColor: .purple,
+            isContextMenuAllowed: true
         )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,24 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: LoginViaSSOUseCaseFactory {
 
     @MainActor
-    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
-        MockLoginViaSSOUseCase(backendEnvironment: backendEnvironment)
+    func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol {
+        MockLoginViaSSOUseCase(
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata
+        )
     }
 
 }
 
 struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
-    let backendEnvironment: WireAuthenticationBackendEnvironment
+    let backendEnvironment: BackendEnvironment2
+    let backendMetadata: ResolvedBackendMetadata
 
     func invoke(code: UUID?) async throws -> AuthenticationResult {
         AuthenticationResult(
@@ -38,7 +43,9 @@ struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             cookies: [],
             accessToken: nil,
             emailCredentials: nil,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata,
+            proxyCredentials: nil
         )
     }
 

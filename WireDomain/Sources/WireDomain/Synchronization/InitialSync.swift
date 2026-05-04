@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireLogging
 
@@ -25,23 +26,29 @@ public struct InitialSync: InitialSyncProtocol {
     private let pullResourcesSync: any PullResourcesSyncProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let oneOnOneResolver: any OneOnOneResolverProtocol
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
 
-    private let logger = WireLogger(tag: "initial-sync")
+    private let logger = WireLogger.sync
 
     public init(
         pullLastUpdateEventIDSync: any PullLastUpdateEventIDSyncProtocol,
         pullResourcesSync: any PullResourcesSyncProtocol,
         pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
-        oneOnOneResolver: any OneOnOneResolverProtocol
+        oneOnOneResolver: any OneOnOneResolverProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.pullLastUpdateEventIDSync = pullLastUpdateEventIDSync
         self.pullResourcesSync = pullResourcesSync
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.oneOnOneResolver = oneOnOneResolver
+        self.syncStateSubject = syncStateSubject
     }
 
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
-        try await logger.measureTime(label: "initial sync") {
+        try await logger.measureTime(
+            label: "new initial sync",
+            attributes: .initialSync
+        ) {
             if !skipPullingLastUpdateEventID {
                 try await pullLastUpdateEventID()
             }
@@ -52,37 +59,61 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     private func pullLastUpdateEventID() async throws {
-        do {
-            logger.debug("pulling last update event id")
-            try await pullLastUpdateEventIDSync.pull()
-        } catch {
-            throw Failure(phase: "pull last update event id", reason: error)
+        let phase = "pulling last update event id"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                syncStateSubject.send(.initialSyncing(.pullLastEventID))
+                try await pullLastUpdateEventIDSync.pull()
+            } catch {
+                throw Failure(phase: phase, reason: error)
+            }
         }
     }
 
     private func pullResources() async throws {
-        do {
-            logger.debug("pulling resources")
-            try await pullResourcesSync.pull()
-        } catch {
-            throw Failure(phase: "perform resource sync", reason: error)
+        try await logger.measureTime(label: "pull resources") {
+            do {
+                syncStateSubject.send(.initialSyncing(.pullResources))
+                try await pullResourcesSync.pull()
+            } catch {
+                throw Failure(phase: "perform resource sync", reason: error)
+            }
         }
     }
 
     private func pushSupportedProtocols() async throws {
-        do {
-            logger.debug("pushing supported protocols")
-            try await pushSupportedProtocolsUseCase.invoke()
-        } catch {
-            throw Failure(phase: "push supported protocols", reason: error)
+        let phase = "push supported protocols"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                syncStateSubject.send(.initialSyncing(.pushSupportedProtocols))
+                try await pushSupportedProtocolsUseCase.invoke()
+            } catch {
+                throw Failure(phase: phase, reason: error)
+            }
         }
     }
 
     private func resolveOneOnOneConversations() async throws {
-        do {
-            try await oneOnOneResolver.resolveAllOneOnOneConversations()
-        } catch {
-            throw Failure(phase: "resolve one on one conversations", reason: error)
+        let phase = "resolve one on one conversations"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                syncStateSubject.send(.initialSyncing(.resolveOneOnOneConversations))
+                try await oneOnOneResolver.resolveAllOneOnOneConversations()
+            } catch {
+                throw Failure(phase: phase, reason: error)
+            }
         }
     }
 

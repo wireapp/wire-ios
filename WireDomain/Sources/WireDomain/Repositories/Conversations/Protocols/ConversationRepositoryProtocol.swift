@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
-public protocol ConversationRepositoryProtocol {
+public protocol ConversationRepositoryProtocol: Sendable {
 
     /// Fetches and persists a conversation with a given ID.
     /// - Parameters:
@@ -66,10 +66,6 @@ public protocol ConversationRepositoryProtocol {
         domain: String?
     ) async -> ZMConversation
 
-    /// Fetches and persists all conversations
-
-    func pullConversations() async throws
-
     /// Pulls and stores a MLS one to one conversation locally.
     ///
     /// - parameters:
@@ -81,7 +77,7 @@ public protocol ConversationRepositoryProtocol {
     func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String
+    ) async throws -> (String, MLSPublicKeys?)
 
     /// Fetches a MLS conversation locally.
     ///
@@ -188,14 +184,6 @@ public protocol ConversationRepositoryProtocol {
         date: Date
     ) async
 
-    /// Updates the typing users for a given conversation.
-    /// - Parameters:
-    ///     - typingUsersInfo: A list of typing users for a given conversation.
-
-    func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
-    ) async
-
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation id.
     /// - returns: The guest link.
@@ -203,5 +191,16 @@ public protocol ConversationRepositoryProtocol {
     func fetchConversationGuestLink(
         conversationID: String
     ) async throws -> String?
+
+    /// Checks if selfUser is still in a given conversation
+    /// - Parameter conversationID: QualifiedID of the conversation
+    /// - Returns: true if selfUser belongs to the conversation, false otherwise
+    func isSelfAnActiveMember(
+        in conversationID: WireDataModel.QualifiedID
+    ) async -> Bool
+
+    /// Reset the pendingProposalDate for the conversation
+    /// - Parameter groupID: QualifiedID of the conversation
+    func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async
 
 }

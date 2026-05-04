@@ -1,0 +1,53 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireLocators
+import XCTest
+
+class SetUsernamePage: PageModel {
+
+    override var pageMainElement: XCUIElement {
+        usernameField
+    }
+
+    var usernameField: XCUIElement {
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
+    }
+
+    var confirmUsernameButton: XCUIElement {
+        app.descendants(matching: .button)[Locators.SetUsernamePage.confirmUsernameButton.rawValue].firstMatch
+    }
+
+    func setUsername(_ username: String) throws -> ConversationsPage {
+        XCTAssertTrue(usernameField.waitForExistence(timeout: 3), "Username field not found")
+
+        let predicate = NSPredicate(format: "exists == true AND hittable == true")
+        let element = XCTNSPredicateExpectation(predicate: predicate, object: usernameField)
+        XCTAssertEqual(
+            XCTWaiter().wait(for: [element], timeout: 3),
+            .completed,
+            "Username field not ready due to animation to type"
+        )
+
+        try usernameField.tapIfKeyboardNotFocused()
+        _ = app.keyboards.firstMatch.waitForExistence(timeout: 2)
+        usernameField.typeText(username)
+        confirmUsernameButton.tap()
+        return try ConversationsPage()
+    }
+}

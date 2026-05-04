@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "05E04B85-C1D7-4249-9719-C90D5164A909",
+      "id" : "8DA8C849-71C0-4072-92BA-9AF39BAA1039",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -9,19 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "environmentVariableEntries" : [
-      {
-        "key" : "CI",
-        "value" : "${CI}"
-      }
-    ],
-    "language" : "en",
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WireLogging",
-      "identifier" : "WireLoggingTests",
-      "name" : "WireLoggingTests"
-    }
+    "performanceAntipatternCheckerEnabled" : true
   },
   "testTargets" : [
     {

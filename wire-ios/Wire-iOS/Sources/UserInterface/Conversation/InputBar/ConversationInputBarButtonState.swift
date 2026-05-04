@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,25 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
+enum AttachmentState {
+    case none
+    case someUploaded
+    case allUploaded
+}
+
 final class ConversationInputBarButtonState {
 
     var sendButtonEnabled: Bool {
+        switch attachmentState {
+        case .none:
+            break
+        case .someUploaded:
+            return false
+        case .allUploaded:
+            return true
+        }
+
+        // TODO: [WPB-18166] Fix this messed up logic.
         let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
         return hasText || (disableSendButton == false && !markingDown)
     }
@@ -56,6 +72,7 @@ final class ConversationInputBarButtonState {
     private var syncedMessageDestructionTimeout = false
     private var isEphemeralSendingDisabled = false
     private var isEphemeralTimeoutForced = false
+    private(set) var attachmentState = AttachmentState.none
 
     func update(
         textLength: Int,
@@ -65,9 +82,9 @@ final class ConversationInputBarButtonState {
         mode: ConversationInputBarViewControllerMode,
         syncedMessageDestructionTimeout: Bool,
         isEphemeralSendingDisabled: Bool,
-        isEphemeralTimeoutForced: Bool
+        isEphemeralTimeoutForced: Bool,
+        attachmentState: AttachmentState
     ) {
-
         self.textLength = textLength
         self.editing = editing
         self.markingDown = markingDown
@@ -76,6 +93,7 @@ final class ConversationInputBarButtonState {
         self.syncedMessageDestructionTimeout = syncedMessageDestructionTimeout
         self.isEphemeralSendingDisabled = isEphemeralSendingDisabled
         self.isEphemeralTimeoutForced = isEphemeralTimeoutForced
+        self.attachmentState = attachmentState
     }
 
 }

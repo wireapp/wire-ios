@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystemSupport
+import WireFoundationSupport
 import WireTesting
 import WireUtilitiesSupport
 import XCTest
@@ -25,10 +25,10 @@ import XCTest
 
 final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var userDefaults: UserDefaults!
     private var userNotificationCenterMock: MockUserNotificationCenterAbstraction!
-    private var sut: ShouldPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
+    private var sut: ShouldPresentNotificationPermissionHintUseCase<CurrentDateProvidingMock>!
 
     override func setUp() {
         mockDateProvider = .init()
@@ -46,6 +46,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningTrueForDeniedAndNoDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -58,6 +59,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertTrue(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningTrueForDeniedAndDistantPastDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -71,6 +73,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertTrue(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForDeniedAndRecentPastDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -87,6 +90,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertFalse(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForAuthorized() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .authorized)
@@ -99,6 +103,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertFalse(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForNotDetermined() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .notDetermined)

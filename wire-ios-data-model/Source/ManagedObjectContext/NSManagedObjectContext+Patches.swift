@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,6 @@
 //
 
 import Foundation
-
-public extension NSManagedObjectContext {
-
-    /// Applies the required patches for the current version of the persisted data
-    func applyPersistedDataPatchesForCurrentVersion() {
-        LegacyPersistedDataPatch.applyAll(in: self)
-    }
-}
 
 public extension NSManagedObjectContext {
     func batchDeleteEntities(named entityName: String, matching predicate: NSPredicate) throws {

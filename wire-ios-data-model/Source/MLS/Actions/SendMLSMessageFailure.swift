@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case mlsCommitMissingReferences(message: String)
     case mlsProtocolError(message: String)
     case invalidRequestBody(message: String)
+    case mlsInvalidLeafNodeIndex(message: String)
+    case mlsInvalidLeafNodeSignature(message: String)
 
     // 403
     case missingLegalHoldConsent(message: String)
@@ -67,6 +69,7 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case mlsStaleMessage
     case mlsClientMismatch
     case unreachableDomains(Set<String>)
+    case groupOutOfSync(missingUsers: Set<QualifiedID>)
 
     // 422
     case mlsUnsupportedProposal(message: String)
@@ -108,6 +111,12 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case let .invalidRequestBody(message):
             "Invalid request body. message: \(message)"
+
+        case let .mlsInvalidLeafNodeIndex(message):
+            "A referenced leaf node index points to a blank or non-existing node: \(message)"
+
+        case let .mlsInvalidLeafNodeSignature(message):
+            "Invalid leaf node signature: \(message)"
 
         case let .missingLegalHoldConsent(message):
             "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent. message: \(message)"
@@ -153,6 +162,9 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case let .unreachableDomains(domains):
             "Some domains were unreachable: \(domains)"
+
+        case let .groupOutOfSync(missingUsers):
+            "The group is missing \(missingUsers.count) users"
         }
     }
 
@@ -176,6 +188,12 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case (400, "mls-protocol-error"):
             self = .mlsProtocolError(message: payloadMessage)
+
+        case (400, "mls-invalid-leaf-node-index"):
+            self = .mlsInvalidLeafNodeIndex(message: payloadMessage)
+
+        case (400, "mls-invalid-leaf-node-signature"):
+            self = .mlsInvalidLeafNodeSignature(message: payloadMessage)
 
         case (400, _):
             self = .invalidRequestBody(message: payloadMessage)

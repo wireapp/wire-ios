@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -220,6 +220,11 @@ final class RemoveClientsViewController: UIViewController,
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {
-        L10n.Localizable.General.failure
+        switch self {
+        case .tooManyRequests:
+            L10n.Localizable.Error.User.tooManyRequests
+        default:
+            L10n.Localizable.General.failure
+        }
     }
 }

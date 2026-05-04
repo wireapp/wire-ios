@@ -1,0 +1,112 @@
+name: Auto-approve 🍒 cherry-pick PRs
+
+on:
+  pull_request_target:
+    types: [opened, reopened, edited, synchronize, labeled]
+
+jobs:
+  auto-approve:
+    # Only run if the PR has the 'cherry-pick' label (added by the cherry-pick action)
+    if: contains(github.event.pull_request.labels.*.name, 'cherry-pick')
+    runs-on: ubuntu-latest
+
+    # Needed to create a review
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Approve PR as bot user
+        uses: actions/github-script@v7
+        with:
+          # PAT from zenkins user
+          github-token: ${{ secrets.SUBMODULE_PAT }}
+          script: |
+            const pr = context.payload.pull_request;
+            const botLogin = "zenkins";
+
+            // Fetch all reviews first
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+            });
+
+            // Map of users -> their latest review state
+            const latestStateByUser = new Map();
+            for (const r of reviews) {
+              latestStateByUser.set(r.user.login, r.state);
+            }
+
+            const botApproved = latestStateByUser.get(botLogin) === "APPROVED";
+            core.info(`Bot approval detected? ${botApproved}`);
+
+            let hasConflictMarkers = false;
+
+            if (!botApproved) {
+              core.info("Bot has not approved yet — scanning files for conflict markers…");
+
+              let page = 1;
+              const per_page = 100;
+
+              while (true) {
+                const { data: files } = await github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  per_page,
+                  page,
+                });
+
+                if (!files.length) break;
+
+                for (const file of files) {
+                  // We can use the patch (unified diff) to detect markers first.
+                  // Markers like "<<<<<<< HEAD" or ">>>>>>>" will show up there.
+                  if (!file.patch) continue;
+
+                  const patch = file.patch;
+
+                  if (patch.includes("<<<<<<< ") || patch.includes(">>>>>>> ") || patch.includes("=======")) {
+                    hasConflictMarkers = true;
+                    core.info(`Conflict markers detected in file: ${file.filename}`);
+                    break;
+                  }
+                }
+
+                if (hasConflictMarkers || files.length < per_page) {
+                  break;
+                }
+
+                page += 1;
+              }
+
+              if (hasConflictMarkers) {
+                core.info("Committed conflict markers found — requesting changes.");
+                // Only request changes if the bot hasn't already done so
+                const botRequestedChanges = latestStateByUser.get(botLogin) === "CHANGES_REQUESTED";
+                if (!botRequestedChanges) {
+                  await github.rest.pulls.createReview({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: pr.number,
+                    event: "REQUEST_CHANGES",
+                    body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
+                  });
+                } else {
+                  core.info("Bot has already requested changes — skipping duplicate review.");
+                }
+                return;
+              }
+
+              // Approve the PR
+              core.info(`Adding approval from bot…`);
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                event: "APPROVE",
+                body: "✅ Auto-approved cherry-pick PR 🍒."
+              });
+
+              core.info("Approval added.");
+            }

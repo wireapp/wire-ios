@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,6 +76,14 @@ public extension UIView {
     }
 
     @discardableResult
+    func minHeightConstraint(_ value: CGFloat) -> Self {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 38).isActive = true
+        return self
+    }
+
+    @discardableResult
     func setTranslatesAutoresizingMaskIntoConstraints(_ value: Bool) -> Self {
         translatesAutoresizingMaskIntoConstraints = value
         return self
@@ -115,4 +123,28 @@ public extension UIView {
 
         return view
     }
+
+    /// Returns a container view which is specifically useful not to stretch its content.
+    func wrapInViewWithFlexibleTopAndBottom() -> UIView {
+        let view = UIView()
+        view.clipsToBounds = false
+        translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(self)
+
+        let bottomConstraint = view.bottomAnchor.constraint(equalTo: bottomAnchor)
+        bottomConstraint.priority = .defaultLow
+
+        let topConstraint = view.topAnchor.constraint(equalTo: topAnchor)
+        topConstraint.priority = .defaultLow
+
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            topConstraint,
+            bottomConstraint
+        ])
+
+        return view
+    }
+
 }

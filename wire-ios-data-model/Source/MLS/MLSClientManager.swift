@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@ public protocol MLSClientManagerProtocol {
     func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool,
+        isE2EIRequired: Bool
     ) async
 
 }
@@ -51,10 +53,20 @@ public final class MLSClientManager: MLSClientManagerProtocol {
     public func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool,
+        isE2EIRequired: Bool
     ) async {
-        guard BackendInfo.isMLSEnabled, mlsFeature.isEnabled else {
+        guard isBackendMLSEnabled, mlsFeature.isEnabled else {
             WireLogger.mls.info("MLS feature in not enabled.")
+            return
+        }
+
+        if !hasRegisteredMLSClient, isE2EIRequired {
+            WireLogger.mls.info(
+                "MLS client needs to be initialized via E2EI.",
+                attributes: .safePublic
+            )
             return
         }
 
@@ -67,14 +79,20 @@ public final class MLSClientManager: MLSClientManagerProtocol {
 
     // MARK: - Private Implentation
 
+    private var didPerformMLSClientUpdate = false
+
     private func performsMLSClientUpdates() async {
+        guard !didPerformMLSClientUpdate else {
+            return
+        }
+
         do {
             try await mlsService.performPendingJoins()
         } catch {
             WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
         }
-        await mlsService.uploadKeyPackagesIfNeeded()
         await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+        didPerformMLSClientUpdate = true
     }
 
     private func createMLSClient(mlsClientID: MLSClientID) async {
