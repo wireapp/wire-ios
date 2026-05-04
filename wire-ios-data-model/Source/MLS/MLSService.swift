@@ -1607,7 +1607,9 @@ public final class MLSService: MLSServiceInterface {
                 forType: .conference,
                 parentGroupID: parentID
             )
-
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(3))
+            }
             if subgroup.epoch <= 0 {
                 try await createSubgroup(
                     with: subgroup.groupID,
