@@ -78,16 +78,16 @@ public enum BaseColorPalette {
     }
 
     public enum Grays {
-        public static let gray10 = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1.00) // #FAFAFA
-        public static let gray20 = UIColor(red: 0.93, green: 0.94, blue: 0.94, alpha: 1.00) // #EDEFF0
-        public static let gray30 = UIColor(red: 0.90, green: 0.91, blue: 0.92, alpha: 1.00) // #E5E8EA
-        public static let gray40 = UIColor(red: 0.86, green: 0.88, blue: 0.89, alpha: 1.00) // #DCE0E3
-        public static let gray50 = UIColor(red: 0.80, green: 0.81, blue: 0.82, alpha: 1.00) // #CBCED1
-        public static let gray60 = UIColor(red: 0.62, green: 0.63, blue: 0.65, alpha: 1.00) // #9FA1A7
-        public static let gray70 = UIColor(red: 0.40, green: 0.42, blue: 0.44, alpha: 1.00) // #676B71
-        public static let gray80 = UIColor(red: 0.33, green: 0.35, blue: 0.37, alpha: 1.00) // #54585F
-        public static let gray90 = UIColor(red: 0.20, green: 0.22, blue: 0.24, alpha: 1.00) // #34373D
-        public static let gray95 = UIColor(red: 0.15, green: 0.15, blue: 0.17, alpha: 1.00) // #26272C
-        public static let gray100 = UIColor(red: 0.09, green: 0.09, blue: 0.10, alpha: 1.00) // #17181A
+        public static let gray10 = UIColor(resource: .gray10)
+        public static let gray20 = UIColor(resource: .gray20)
+        public static let gray30 = UIColor(resource: .gray30)
+        public static let gray40 = UIColor(resource: .gray40)
+        public static let gray50 = UIColor(resource: .gray50)
+        public static let gray60 = UIColor(resource: .gray60)
+        public static let gray70 = UIColor(resource: .gray70)
+        public static let gray80 = UIColor(resource: .gray80)
+        public static let gray90 = UIColor(resource: .gray90)
+        public static let gray95 = UIColor(resource: .gray95)
+        public static let gray100 = UIColor(resource: .gray100)
     }
 }

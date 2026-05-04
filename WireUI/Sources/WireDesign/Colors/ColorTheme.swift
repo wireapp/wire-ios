@@ -173,23 +173,10 @@ public enum ColorTheme {
 private extension UIColor {
 
     convenience init(light: ColorResource, dark: ColorResource) {
-        self.init(light: .init(resource: light), dark: .init(resource: dark))
-    }
-
-    convenience init(light: UIColor, dark: ColorResource) {
-        self.init(light: light, dark: .init(resource: dark))
-    }
-
-    convenience init(light: ColorResource, dark: UIColor) {
-        self.init(light: .init(resource: light), dark: dark)
-    }
-
-    convenience init(light: UIColor, dark: UIColor) {
         self.init { traits in
-            traits.userInterfaceStyle == .dark ? dark : light
+            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
         }
     }
-
 }
 
 public extension UIColor {
