@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 public final class UserRepository: UserRepositoryProtocol {
 
@@ -29,7 +29,6 @@ public final class UserRepository: UserRepositoryProtocol {
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let userLocalStore: any UserLocalStoreProtocol
 
     private let pullSelfUserSync: PullSelfUserSync
@@ -41,13 +40,11 @@ public final class UserRepository: UserRepositoryProtocol {
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
-        conversationLocalStore: ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationLabelsRepository = conversationLabelsRepository
-        self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
         self.pullSelfUserSync = PullSelfUserSync(
             api: selfUserAPI,
@@ -197,9 +194,9 @@ public final class UserRepository: UserRepositoryProtocol {
         } else {
             await userLocalStore.markAccountAsDeleted(for: user)
 
-            try await conversationLocalStore.removeParticipantFromAllGroupConversations(
-                participantID: id,
-                participantDomain: domain,
+            await userLocalStore.removeUserFromAllConversations(
+                id: id,
+                domain: domain,
                 date: date
             )
         }
@@ -219,5 +216,9 @@ public final class UserRepository: UserRepositoryProtocol {
         )
 
         return isSelfUser
+    }
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        await userLocalStore.selfUserInfo()
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,13 @@ public struct AVSIdentifier: Hashable, Equatable {
     public let identifier: UUID
     public let domain: String?
 
-    public init(identifier: UUID, domain: String?) {
+    public init(
+        identifier: UUID,
+        domain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.identifier = identifier
-        self.domain = BackendInfo.isFederationEnabled ? domain : nil
+        self.domain = isFederationEnabled ? domain : nil
     }
 }
 
@@ -46,8 +50,14 @@ public extension AVSIdentifier {
     /// "@"
     /// - Returns: The avs identifier
 
-    static func from(string: String) -> AVSIdentifier {
-        guard let identifier = AVSIdentifier(string: string) else {
+    static func from(
+        string: String,
+        isFederationEnabled: Bool
+    ) -> AVSIdentifier {
+        guard let identifier = AVSIdentifier(
+            string: string,
+            isFederationEnabled: isFederationEnabled
+        ) else {
             fatalError("Wrong format of string passed to AVSIdentifier")
         }
 
@@ -58,7 +68,10 @@ public extension AVSIdentifier {
     /// The string should be composed of a UUID string and an optional domain. Components should be separated by "@".
     /// Example: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F@wire.link"
 
-    init?(string: String) {
+    init?(
+        string: String,
+        isFederationEnabled: Bool
+    ) {
         let components = string.components(separatedBy: "@")
 
         guard
@@ -70,6 +83,10 @@ public extension AVSIdentifier {
 
         let domain = components.count == 2 ? components[1] : nil
 
-        self.init(identifier: identifier, domain: domain)
+        self.init(
+            identifier: identifier,
+            domain: domain,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 }

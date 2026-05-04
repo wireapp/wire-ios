@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ import WireSyncEngine
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
-        let message: ZMConversationMessage
-        let deliveryState: ZMDeliveryState
+        var message: ZMConversationMessage
+        var deliveryState: ZMDeliveryState
         /// A message status is considered redundant if it does not provide additional information over a subsequent
         /// message's status. This basically means that only the last of subsequent messages of the same sender within a
         /// short time frame will show the status view, if the delivery state is the same.
@@ -83,7 +83,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         if object.isRedundant {
             toolboxView.setAllContentHidden()
         }
-
     }
 
     func messageToolboxDidRequestOpeningDetails(
@@ -115,13 +114,25 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration = View.Configuration(
+                    message: message,
+                    deliveryState: message.deliveryState,
+                    isRedundant: configuration.isRedundant
+                )
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil

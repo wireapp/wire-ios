@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationReactionMessageTests: XCTestCase {
+final class ConversationReactionMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -52,9 +52,11 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
-        let reaction = MessageReaction(emojiID: .like, count: 1, isSelfUserReacting: true)
-        let configuration = [reaction]
-
+        let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: [reaction],
+            userSession: userSession
+        )
         sut.configure(with: configuration, animated: false)
 
         // THEN
@@ -63,43 +65,47 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let likeReaction = MessageReaction(
-            emojiID: .like,
+        let likeReaction = MessageReactionMetadata(
+            emoji: .like,
             count: 4,
             isSelfUserReacting: false
         )
 
-        let thumbsUpReaction = MessageReaction(
-            emojiID: .thumbsUp,
+        let thumbsUpReaction = MessageReactionMetadata(
+            emoji: .thumbsUp,
             count: 1,
             isSelfUserReacting: false
         )
 
-        let thumbsDownReaction = MessageReaction(
-            emojiID: .thumbsDown,
+        let thumbsDownReaction = MessageReactionMetadata(
+            emoji: .thumbsDown,
             count: 6,
             isSelfUserReacting: false
         )
 
-        let slightlySmilingReaction = MessageReaction(
-            emojiID: .smile,
+        let slightlySmilingReaction = MessageReactionMetadata(
+            emoji: .smile,
             count: 8,
             isSelfUserReacting: false
         )
 
-        let frowningFaceReaction = MessageReaction(
-            emojiID: .frown,
+        let frowningFaceReaction = MessageReactionMetadata(
+            emoji: .frown,
             count: 10,
             isSelfUserReacting: false
         )
 
-        let configuration = [
+        let reaction = [
             likeReaction,
             thumbsUpReaction,
             thumbsDownReaction,
             slightlySmilingReaction,
             frowningFaceReaction
         ]
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: reaction,
+            userSession: userSession
+        )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
@@ -107,5 +113,4 @@ final class ConversationReactionMessageTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,5 +19,9 @@
 "sidebar.settings.description" = "Ihre Einstellungen öffnen";
 "sidebar.support.description" = "Support öffnen";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "Eins-zu-Eins Unterhaltungen";
+"sidebar.conversation_filter.unread.description" = "Ungelesenen Unterhaltungen anzeigen";
+"sidebar.conversation_filter.mentions.description" = "Unterhaltungen mit Erwähnungen anzeigen";
+"sidebar.conversation_filter.replies.description" = "Unterhaltungen mit Antworten anzeigen";
+"sidebar.conversation_filter.drafts.description" = "Unterhaltungen mit Entwürfen anzeigen";
 "sidebar.name.description" = "Profilname";
 "sidebar.handle.description" = "Benutzername";

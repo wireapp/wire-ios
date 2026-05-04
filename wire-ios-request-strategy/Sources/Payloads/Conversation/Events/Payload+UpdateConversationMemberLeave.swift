@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,23 +19,23 @@
 import Foundation
 import WireTransport
 
-extension Payload {
+public extension Payload {
     struct UpdateConversationMemberLeave: CodableEventData {
 
-        static var eventType: ZMUpdateEventType { .conversationMemberLeave }
+        public static var eventType: ZMUpdateEventType { .conversationMemberLeave }
 
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-        let reason: Reason?
+        public let userIDs: [UUID]?
+        public let qualifiedUserIDs: [QualifiedID]?
+        public let reason: Reason?
 
-        enum Reason: String, Codable {
+        public enum Reason: String, Codable {
             /// The user has been removed from the team and therefore removed from all conversations.
             case userDeleted = "user-deleted"
             case left
             case removed
         }
 
-        enum CodingKeys: String, CodingKey {
+        public enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
             case qualifiedUserIDs = "qualified_user_ids"
             case reason

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
 
 import SwiftUI
 import WireAuthenticationAPI
-
-package protocol NoHistoryFactory {
-
-    @MainActor var viewModel: NoHistoryViewModel { get }
-
-}
+import WireLocators
+import WireReusableUIComponents
 
 package struct NoHistoryView: View {
 
     @StateObject private var viewModel: NoHistoryViewModel
+
+    private typealias Strings = L10n.Localizable.Authentication
 
     package init(
         factory: @autoclosure @escaping () -> NoHistoryFactory
@@ -37,14 +35,14 @@ package struct NoHistoryView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.Authentication.NoHistory.title)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(L10n.Authentication.NoHistory.message)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -56,13 +54,14 @@ package struct NoHistoryView: View {
                         ProgressView()
                     }
 
-                    Text(L10n.Authentication.NoHistory.confirm)
+                    Text(Strings.NoHistory.confirm)
                         .lineLimit(nil)
                 }
             }
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
 
         }
         .alert(
@@ -70,13 +69,13 @@ package struct NoHistoryView: View {
             title: titleForAlert,
             message: messageForAlert,
             actions: { _ in
-                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                Button(Strings.Error.howToChangeEmail, action: {
                     viewModel.howToChangeEmail()
                 })
-                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                Button(Strings.Error.howToDeleteAccount, action: {
                     viewModel.howToDeleteAccount()
                 })
-                Button(L10n.Authentication.Error.confirm, action: {
+                Button(Strings.Error.confirm, action: {
                     viewModel.confirmAlert()
                 })
             }
@@ -102,14 +101,14 @@ package struct NoHistoryView: View {
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
         switch alert {
         case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
+            Text(Strings.Error.Title.emailAlreadyInUse)
         }
     }
 
     private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
         switch alert {
         case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+            Text(Strings.Error.Message.emailAlreadyInUse)
         }
     }
 

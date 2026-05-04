@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,5 +31,7 @@ public struct CountlyDummy: CountlyProtocol {
     public func changeDeviceID(_ id: String, mergeData: Bool) {}
     public func beginSession() {}
     public func endSession() {}
+    public func deviceID() -> String { "" }
     public func recordEvent(_ key: String, segmentation: [String: String]?) {}
+
 }

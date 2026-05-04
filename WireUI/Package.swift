@@ -1,5 +1,4 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -8,11 +7,10 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
-        .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
@@ -24,10 +22,12 @@ let package = Package(
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
+        .library(name: "WireMultiBackendUI", targets: ["WireMultiBackendUI"]),
+        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"]),
+        .library(name: "WireLocators", targets: ["WireLocators"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireAnalytics"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WireLogging"),
@@ -35,29 +35,40 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "WireLocators",
+            dependencies: [],
+            path: "Sources/WireLocators"
+        ),
+        .target(
             name: "WireAccountImageUI",
-            dependencies: ["WireDesign", "WireFoundation"]
+            dependencies: ["WireDesign", "WireFoundation", "WireLocators"]
         ),
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),
-        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
 
-        .target(
-            name: "WireConversationUI",
-            dependencies: ["WireAccountImageUI", "WireDesign", "WireFoundation", "WireReusableUIComponents"]
-        ),
-        .testTarget(name: "WireConversationUITests", dependencies: ["WireConversationUI"]),
-
-        .target(name: "WireDesign", dependencies: ["WireFoundation"]),
+        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
-        .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
+        .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents", "WireLocators"]),
+
+        .target(
+            name: "WireMultiBackendUI",
+            dependencies: ["WireDesign", "WireAccountImageUI", "WireReusableUIComponents", "WireLocators"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireMultiBackendUISupport",
+            dependencies: ["WireMultiBackendUI", "WireLocators"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
+        .testTarget(name: "WireMultiBackendUITests", dependencies: ["WireMultiBackendUI"]),
 
         .target(
             name: "WireIndividualToTeamMigrationUI",
             dependencies: [
-                "WireAnalytics",
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireReusableUIComponents"
@@ -65,13 +76,19 @@ let package = Package(
         ),
         .testTarget(name: "WireIndividualToTeamMigrationUITests", dependencies: ["WireIndividualToTeamMigrationUI"]),
 
-        .target(name: "WireMainNavigationUI"),
+        .target(
+            name: "WireMainNavigationUI",
+            dependencies: ["WireLocators", "WireDesign"]
+        ),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
-        .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
+        .target(
+            name: "WireMoveToFolderUI",
+            dependencies: ["WireFoundation", "WireReusableUIComponents", "WireLocators"]
+        ),
         .target(
             name: "WireMoveToFolderUISupport",
-            dependencies: ["WireMoveToFolderUI"],
+            dependencies: ["WireMoveToFolderUI", "WireLocators"],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
@@ -80,7 +97,7 @@ let package = Package(
 
         .target(
             name: "WireReusableUIComponents",
-            dependencies: ["WireDesign", "WireFoundation"],
+            dependencies: ["WireDesign", "WireFoundation", "WireLocators"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(
@@ -100,6 +117,7 @@ let package = Package(
                 "WireFoundation",
                 "WireLogging",
                 "WireReusableUIComponents",
+                "WireLocators"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
@@ -110,11 +128,15 @@ let package = Package(
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
-        .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI", "WireSettingsUISupport"]),
+        .testTarget(name: "WireSettingsUITests", dependencies: [
+            .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            "WireSettingsUI",
+            "WireSettingsUISupport"
+        ]),
 
         .target(
             name: "WireSidebarUI",
-            dependencies: ["WireFoundation"],
+            dependencies: ["WireDesign", "WireLocators"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-import OSLog
-
-public protocol FileLoggerDestination {
-    var log: URL? { get }
-}
+import Foundation
+import os
 
 public class SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
     private var tags = [LogAttributesKey: String]()
-
-    public var logFiles: [URL] {
-        []
-    }
 
     var lastReportTime: Date? {
         get {
@@ -90,16 +81,10 @@ public class SystemLogger: LoggerProtocol {
         }
 
         var finalMessage = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
-
-        if !tags.isEmpty {
-            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
-            finalMessage += extraInfo
-        }
-
-        if mergedAttributes[.public] as? Bool == true {
+        #if DEBUG
             os_log(osLogType, log: logger, "%{public}@", finalMessage)
-        } else {
+        #else
             os_log(osLogType, log: logger, "\(finalMessage)")
-        }
+        #endif
     }
 }

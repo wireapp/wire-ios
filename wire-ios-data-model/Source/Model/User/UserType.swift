@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,16 @@
 //
 
 import Foundation
+import WireData
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
 
-    /// The identifier which uniquely idenitifies the user in its domain
+    /// The identifier which uniquely identifies the user in its domain
     var remoteIdentifier: UUID! { get }
+
+    /// Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
 
     /// The domain which the user originates from
     var domain: String? { get }
@@ -48,6 +52,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The availability of the user
     var availability: Availability { get set }
 
+    /// If the user is part of a team this property returns the team's remote identifier.
+    var teamIdentifier: UUID? { get }
+
     /// Team membership for this user.
     /// This property is `nil` even for users, who are part of a
     /// team, but not the same team as the self user.
@@ -63,14 +70,21 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Returns `true` if the user is part of any team.
     @objc var hasTeam: Bool { get }
 
-    /// Whether the PDF digial signature is enable
+    /// Whether the PDF digital signature is enable
     var hasDigitalSignatureEnabled: Bool { get }
 
     /// The role (and permissions) e.g. partner, member, admin, owner
     var teamRole: TeamRole { get }
 
-    /// Whether this is a service user (bot)
-    var isServiceUser: Bool { get }
+    /// Whether this is an app (new-style MLS service).
+
+    var isApp: Bool { get }
+
+    /// Whether this is a bot (old-style service).
+
+    var isBot: Bool { get }
+
+    var isAppOrBot: Bool { get }
 
     /// Whether this uses uses SSO.
     var usesCompanyLogin: Bool { get }
@@ -123,6 +137,13 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
 
+    // these properties are used for apps
+    var appInfo: AppInfo? { get }
+
+    // these properties are used for legacy services (bots)
+    var providerIdentifier: String? { get }
+    var serviceIdentifier: String? { get }
+
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()
 
@@ -167,7 +188,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user can create services
     var canCreateService: Bool { get }
 
-    /// Whether the user can administate the team
+    /// Whether the user can administrate the team
     var canManageTeam: Bool { get }
 
     /// Whether the user can access the private company information of the other given user.
@@ -216,6 +237,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user can toggle the channel's access level setting in the conversation.
     @objc(canModifyChannelAccessLevelSettingsInConversation:)
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool
+
+    @objc(canModifyChannelHistoryDepthSettingsInConversation:)
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)

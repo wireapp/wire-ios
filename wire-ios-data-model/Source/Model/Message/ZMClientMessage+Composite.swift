@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - ConversationCompositeMessage
 
@@ -48,23 +49,25 @@ extension ZMClientMessage: CompositeMessageData {
 // MARK: - ButtonStates Interface
 
 extension ZMClientMessage {
+
     public static func updateButtonStates(
-        withConfirmation confirmation: ButtonActionConfirmation,
-        forConversation conversation: ZMConversation,
-        inContext moc: NSManagedObjectContext
+        buttonID: String?,
+        referenceMessageID: String,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
-        let nonce = UUID(uuidString: confirmation.referenceMessageID)
-        let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
-        message?.updateButtonStates(withConfirmation: confirmation)
+        let nonce = UUID(uuidString: referenceMessageID)
+        let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: context)
+        message?.updateButtonStates(buttonID: buttonID)
     }
 
     static func expireButtonState(
-        forButtonAction buttonAction: ButtonAction,
-        forConversation conversation: ZMConversation,
-        inContext moc: NSManagedObjectContext
+        buttonAction: ButtonAction,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
         let nonce = UUID(uuidString: buttonAction.referenceMessageID)
-        let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
+        let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: context)
         message?.expireButtonState(withButtonAction: buttonAction)
     }
 }
@@ -72,13 +75,13 @@ extension ZMClientMessage {
 // MARK: - ButtonStates Helpers
 
 extension ZMClientMessage {
-    private func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation) {
-        guard let moc = managedObjectContext else { return }
+    private func updateButtonStates(buttonID: String?) {
+        guard let context = managedObjectContext else { return }
 
-        if !containsButtonState(withId: confirmation.buttonID) {
-            ButtonState.insert(with: confirmation.buttonID, message: self, inContext: moc)
+        if let buttonID, !containsButtonState(withId: buttonID) {
+            ButtonState.insert(with: buttonID, message: self, inContext: context)
         }
-        buttonStates?.confirmButtonState(withId: confirmation.buttonID)
+        buttonStates?.confirmButtonState(buttonID: buttonID)
     }
 
     private func containsButtonState(withId buttonId: String) -> Bool {

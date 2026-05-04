@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
 
@@ -56,5 +55,14 @@ public extension SafeFileContext {
         if flock(fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(fileURL)")
         }
+    }
+
+    @discardableResult
+    /// Acquire lock but not blocking
+    func tryAcquireLock() -> Bool {
+        if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 {
+            return true
+        }
+        return false
     }
 }

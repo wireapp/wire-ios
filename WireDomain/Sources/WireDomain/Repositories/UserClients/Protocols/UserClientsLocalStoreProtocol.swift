@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -123,4 +123,10 @@ public protocol UserClientsLocalStoreProtocol {
         forUser user: ZMUser,
         createIfNeeded: Bool
     ) async -> WireDataModel.UserClient?
+
+    func fetchSelfClientID() async -> String?
+
+    /// Checks if self client has consumable notifications capability
+    /// - Returns: True if capability is there, false otherwise
+    func hasRegisteredConsumableNotificationsCapable() async -> Bool
 }

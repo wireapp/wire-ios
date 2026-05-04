@@ -21,6 +21,11 @@ on:
         description: 'Skip security tests'
         type: boolean
         default: false
+      distribute_externals:
+        type: boolean
+        description: 'Distribute externally: Wire Employees'
+        default: true
+      
 permissions: 
   checks: write
 
@@ -34,6 +39,8 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit
 
   column_2_restricted:
@@ -45,6 +52,8 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit
 
   column_3_restricted:
@@ -56,4 +65,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ final class PullResourcesSyncTests: XCTestCase {
     private var sut: PullResourcesSync!
 
     private var pullSelfUserSync: MockPullSelfUserSyncProtocol!
+    private var pullSelfUserClientsSync: MockPullSelfUserClientsSyncProtocol!
     private var pullSelfUserSettingsSync: MockPullSelfUserSettingsSyncProtocol!
     private var pullSelfTeamSync: MockPullSelfTeamSyncProtocol!
     private var pullSelfTeamRolesSync: MockPullSelfTeamRolesSyncProtocol!
@@ -39,6 +40,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
     override func setUp() async throws {
         pullSelfUserSync = MockPullSelfUserSyncProtocol()
+        pullSelfUserClientsSync = MockPullSelfUserClientsSyncProtocol()
         pullSelfUserSettingsSync = MockPullSelfUserSettingsSyncProtocol()
         pullSelfTeamSync = MockPullSelfTeamSyncProtocol()
         pullSelfTeamRolesSync = MockPullSelfTeamRolesSyncProtocol()
@@ -53,6 +55,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
         sut = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
+            pullSelfUserClientsSync: pullSelfUserClientsSync,
             pullSelfUserSettingsSync: pullSelfUserSettingsSync,
             pullSelfTeamSync: pullSelfTeamSync,
             pullSelfTeamRolesSync: pullSelfTeamRolesSync,
@@ -69,6 +72,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
     override func tearDown() async throws {
         pullSelfUserSync = nil
+        pullSelfTeamSync = nil
         pullSelfUserSettingsSync = nil
         pullSelfTeamSync = nil
         pullSelfTeamRolesSync = nil
@@ -90,6 +94,7 @@ final class PullResourcesSyncTests: XCTestCase {
             domain: Scaffolding.domain,
             teamID: Scaffolding.teamID
         )
+        pullSelfUserClientsSync.pull_MockMethod = {}
         pullSelfUserSettingsSync.pull_MockMethod = {}
         pullSelfTeamSync.pullSelfTeamID_MockMethod = { _ in }
         pullSelfTeamRolesSync.pullSelfTeamID_MockMethod = { _ in }
@@ -107,6 +112,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
         // Then
         XCTAssertEqual(pullSelfUserSync.pull_Invocations.count, 1)
+        XCTAssertEqual(pullSelfUserClientsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullSelfUserSettingsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullSelfTeamSync.pullSelfTeamID_Invocations, [Scaffolding.teamID])
         XCTAssertEqual(pullSelfTeamRolesSync.pullSelfTeamID_Invocations, [Scaffolding.teamID])
@@ -118,6 +124,89 @@ final class PullResourcesSyncTests: XCTestCase {
         XCTAssertEqual(pullConversationLabelsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullAllFeatureConfigsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullMLSStatusSync.pull_Invocations.count, 1)
+    }
+
+    func testPull_Resources_Are_Called_In_Right_Order() async throws {
+        // Given
+        var callOrder: [String] = []
+
+        // Mock
+        pullSelfUserSync.pull_MockMethod = {
+            callOrder.append("pullSelfUserSync")
+            return (
+                id: Scaffolding.userID,
+                domain: Scaffolding.domain,
+                teamID: Scaffolding.teamID
+            )
+        }
+
+        pullSelfUserClientsSync.pull_MockMethod = {
+            callOrder.append("pullSelfUserClientsSync")
+        }
+
+        pullSelfUserSettingsSync.pull_MockMethod = {
+            callOrder.append("pullSelfUserSettingsSync")
+        }
+
+        pullSelfTeamSync.pullSelfTeamID_MockMethod = { _ in
+            callOrder.append("pullSelfTeamSync")
+        }
+
+        pullSelfTeamRolesSync.pullSelfTeamID_MockMethod = { _ in
+            callOrder.append("pullSelfTeamRolesSync")
+        }
+
+        pullSelfTeamMembersSync.pullSelfTeamID_MockMethod = { _ in
+            callOrder.append("pullSelfTeamMembersSync")
+        }
+
+        pullSelfLegalholdInfoSync.pullSelfTeamID_MockMethod = { _ in
+            callOrder.append("pullSelfLegalholdInfoSync")
+        }
+
+        pullUserConnectionsSync.pull_MockMethod = {
+            callOrder.append("pullUserConnectionsSync")
+        }
+
+        pullAllConversationsSync.pull_MockMethod = {
+            callOrder.append("pullAllConversationsSync")
+        }
+
+        pullKnownUsersSync.pull_MockMethod = {
+            callOrder.append("pullKnownUsersSync")
+        }
+
+        pullConversationLabelsSync.pull_MockMethod = {
+            callOrder.append("pullConversationLabelsSync")
+        }
+
+        pullAllFeatureConfigsSync.pull_MockMethod = {
+            callOrder.append("pullAllFeatureConfigsSync")
+        }
+
+        pullMLSStatusSync.pull_MockMethod = {
+            callOrder.append("pullMLSStatusSync")
+        }
+
+        // When
+        try await sut.pull()
+
+        // Then, assert resources are called in right order.
+        XCTAssertEqual(callOrder, [
+            "pullUserConnectionsSync",
+            "pullAllConversationsSync",
+            "pullKnownUsersSync",
+            "pullSelfUserSync",
+            "pullSelfUserClientsSync",
+            "pullSelfUserSettingsSync",
+            "pullSelfTeamSync",
+            "pullSelfTeamRolesSync",
+            "pullSelfTeamMembersSync",
+            "pullSelfLegalholdInfoSync",
+            "pullConversationLabelsSync",
+            "pullAllFeatureConfigsSync",
+            "pullMLSStatusSync"
+        ])
     }
 
 }

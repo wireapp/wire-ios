@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,6 +61,10 @@ final class CollectionsView: UIView {
             CollectionHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CollectionHeaderView.reuseIdentifier
+        )
+        collectionView.register(
+            CollectionSearchFilesCell.self,
+            forCellWithReuseIdentifier: CollectionSearchFilesCell.reuseIdentifier
         )
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         collectionView.translatesAutoresizingMaskIntoConstraints = false

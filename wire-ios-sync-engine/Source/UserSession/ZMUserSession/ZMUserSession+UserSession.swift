@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import Foundation
 import LocalAuthentication
-import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
@@ -87,6 +86,10 @@ extension ZMUserSession: UserSession {
         dependencies.caches.searchUsers
     }
 
+    public var fileAssetCache: FileAssetCache {
+        dependencies.caches.fileAssets
+    }
+
     // MARK: Methods
 
     public func openAppLock() throws {
@@ -111,10 +114,8 @@ extension ZMUserSession: UserSession {
 
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
-
+        syncAgent?.resume()
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
-
-        processLegacyEvents()
     }
 
     public func deleteAppLockPasscode() throws {
@@ -122,15 +123,15 @@ extension ZMUserSession: UserSession {
     }
 
     public var selfUser: any UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var editableSelfUser: any EditableUserType & UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public func addUserObserver(
@@ -273,7 +274,7 @@ extension ZMUserSession: UserSession {
         IsUserE2EICertifiedUseCase(
             schedule: .immediate,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: syncContext),
+            featureRepository: LegacyFeatureRepository(context: syncContext),
             featureRepositoryContext: syncContext
         )
     }
@@ -281,7 +282,7 @@ extension ZMUserSession: UserSession {
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
         IsSelfUserE2EICertifiedUseCase(
             context: syncContext,
-            featureRepository: FeatureRepository(context: syncContext),
+            featureRepository: LegacyFeatureRepository(context: syncContext),
             featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
@@ -295,16 +296,19 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
-        let featureRepository = FeatureRepository(context: syncContext)
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
+        guard let setGuestsAndAppsUseCase = makeSetConversationGuestsAndAppsUseCase() else { return nil }
+        return CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setGuestsAndAppsUseCase)
     }
 
-    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        SetAllowGuestAndServicesUseCase()
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
+        clientSessionComponent.map { component in
+            SetAllowGuestAndAppsUseCase(api: component.conversationsAPI)
+        }
     }
 
     @MainActor
@@ -317,7 +321,10 @@ extension ZMUserSession: UserSession {
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
         guard let selfUserClient,
-              let selfMLSClientID = MLSClientID(userClient: selfUserClient),
+              let selfMLSClientID = MLSClientID(
+                  userClient: selfUserClient,
+                  localDomain: resolvedBackendMetadata.domain
+              ),
               e2eiFeature.isEnabled
         else {
             return nil
@@ -337,6 +344,10 @@ extension ZMUserSession: UserSession {
         AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
+    public func makeAppendMultipartMessageUseCase() -> AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
         AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
@@ -345,7 +356,7 @@ extension ZMUserSession: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
@@ -369,11 +380,34 @@ extension ZMUserSession: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
-        SearchUsersUseCase(
+    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol? {
+        guard
+            let searchAPI = clientSessionComponent?.searchAPI,
+            let teamsAPI = clientSessionComponent?.teamsAPI,
+            let usersAPI = clientSessionComponent?.usersAPI
+        else { return nil }
+
+        let searchDirectory = SearchDirectory(
+            userSession: self,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
+        )
+        return SearchUsersUseCase(
             context: syncContext,
-            searchDirectory: SearchDirectory(userSession: self),
-            isFederationUsageAllowed: isFederationUsageAllowed
+            searchDirectory: searchDirectory,
+            isFederationUsageAllowed: isFederationUsageAllowed,
+            isMLSEnabled: isBackendMLSEnabled
+        )
+    }
+
+    public var resolvedBackendMetadata: BackendMetadataProvider {
+        let metadata = userSessionComponent.backendMetadata
+        return BackendMetadataProvider(
+            apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
+            domainOverride: metadata.domain,
+            isFederationEnabledOverride: metadata.isFederationEnabled,
+            isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
         )
     }
 

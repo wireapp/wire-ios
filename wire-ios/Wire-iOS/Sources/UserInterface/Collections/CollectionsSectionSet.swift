@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ struct CollectionsSectionSet: OptionSet, Hashable {
         self.rawValue = rawValue
     }
 
-    init?(index: UInt) {
-        self = type(of: self).visible[Int(index)]
+    init?(index: UInt, isCellsEnabled: Bool) {
+        self = isCellsEnabled ? type(of: self).visibleWithSearchFiles[Int(index)] : type(of: self).visible[Int(index)]
     }
 
     static let none = CollectionsSectionSet([])
@@ -37,10 +37,14 @@ struct CollectionsSectionSet: OptionSet, Hashable {
     static let videos = CollectionsSectionSet(rawValue: 1 << 2)
     static let links = CollectionsSectionSet(rawValue: 1 << 3)
     static let loading = CollectionsSectionSet(rawValue: 1 << 4) // special section that shows the loading view
+    static let searchFiles = CollectionsSectionSet(rawValue: 1 << 5)
 
     /// Returns all possible section types
     static let all: CollectionsSectionSet = [.images, .filesAndAudio, .videos, .links, .loading]
 
     /// Returns visible sections in the display order
     static let visible: [CollectionsSectionSet] = [images, videos, links, filesAndAudio, loading]
+
+    /// Returns visible sections with search files in the display order
+    static let visibleWithSearchFiles = [CollectionsSectionSet.searchFiles] + CollectionsSectionSet.visible
 }

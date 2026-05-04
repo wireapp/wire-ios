@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public extension CoreDataStack {
     enum BackupError: Error {
         case failedToRead
         case failedToWrite(Error)
-        case missingEAREncryptionKey
+        case missingEARMigrator
     }
 
     struct BackupInfo {
@@ -85,80 +85,75 @@ public extension CoreDataStack {
     /// - Parameters:
     ///   - accountIdentifier: identifier of account being backed up
     ///   - applicationContainer: shared application container
-    ///   - dispatchGroup: group for testing
     ///   - databaseKey: EAR database key
-    ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
+    ///
+    ///   Returns: the folder where all data was written to.
+    @MainActor
     static func backupLocalStorage(
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup,
-        databaseKey: VolatileData? = nil,
-        completion: @escaping (Result<BackupInfo, Error>) -> Void
-    ) {
-        func fail(_ error: BackupError) {
-            log.debug("error backing up local store: \(error)")
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(.failure(error))
-            }
-        }
-
+        earMigrator: EARMigratorProtocol
+    ) async throws -> BackupInfo {
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else {
+            throw BackupError.failedToRead
+        }
 
         let backupDirectory = backupsDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = backupDirectory.appendingPathComponent(databaseDirectoryName)
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
-        workQueue.async(group: dispatchGroup) {
-            do {
-                let model = CoreDataStack.loadMessagingModel()
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        let task = Task.detached {
+            let model = CoreDataStack.loadMessagingModel()
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
-                // Create target directory
-                try fileManager.createDirectory(
-                    at: databaseDirectory,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-                let backupLocation = databaseDirectory.appendingStoreFile()
-                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+            // Create target directory
+            try fileManager.createDirectory(
+                at: databaseDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            let backupLocation = databaseDirectory.appendingStoreFile()
+            let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-                // Recreate the persistent store inside a new location
-                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
-                try coordinator.replacePersistentStore(
-                    at: backupLocation,
-                    destinationOptions: options,
-                    withPersistentStoreFrom: storeFile,
-                    sourceOptions: options,
-                    ofType: NSSQLiteStoreType
-                )
+            // Recreate the persistent store inside a new location
+            WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
+            try coordinator.replacePersistentStore(
+                at: backupLocation,
+                destinationOptions: options,
+                withPersistentStoreFrom: storeFile,
+                sourceOptions: options,
+                ofType: NSSQLiteStoreType
+            )
 
-                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
-                try prepareStoreForBackupExport(
-                    coordinator: coordinator,
-                    location: backupLocation,
-                    options: options,
-                    databaseKey: databaseKey
-                )
+            WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
+            try prepareStoreForBackupExport(
+                coordinator: coordinator,
+                location: backupLocation,
+                options: options,
+                earMigrator: earMigrator
+            )
 
-                // Create & write metadata
-                WireLogger.localStorage.debug("backup: Create & write metadata")
-                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
-                try metadata.write(to: metadataURL)
-                log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+            // Create & write metadata
+            WireLogger.localStorage.debug("backup: Create & write metadata")
+            let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
+            try metadata.write(to: metadataURL)
 
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    completion(.success(.init(url: backupDirectory, metadata: metadata)))
-                }
-            } catch {
-                fail(.failedToWrite(error))
-            }
+            log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+            return BackupInfo(url: backupDirectory, metadata: metadata)
+        }
+
+        do {
+            return try await task.value
+        } catch {
+            log.debug("error backing up local store: \(error)")
+            throw BackupError.failedToWrite(error)
         }
     }
 
@@ -168,50 +163,39 @@ public extension CoreDataStack {
     ///   - accountIdentifier: account for which to import the backup
     ///   - backupDirectory: root directory of the decrypted and uncompressed backup
     ///   - applicationContainer: shared application container
-    ///   - dispatchGroup: group for testing
-    ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
+    ///
+    ///   Returns: the folder where all data was written to.
+    @MainActor
     static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup,
-        completion: @escaping ((Result<URL, Error>) -> Void)
-    ) {
+        applicationContainer: URL
+    ) async throws -> URL {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
             WireLogger.localStorage
                 .error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
-            completion(.failure(CoreDataStackError.noDatabaseActivity))
-            return
+            throw CoreDataStackError.noDatabaseActivity
         }
-        importLocalStorage(
+
+        let result = try await importLocalStorage(
             accountIdentifier: accountIdentifier,
             from: backupDirectory,
             applicationContainer: applicationContainer,
-            dispatchGroup: dispatchGroup,
-            messagingMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>(isInMemoryStore: false),
-            completion: { result in
-                completion(result)
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
+            messagingMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>(isInMemoryStore: false)
         )
+
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        return result
     }
 
+    @MainActor
     internal static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup,
-        messagingMigrator: CoreDataMessagingMigratorProtocol,
-        completion: @escaping ((Result<URL, Error>) -> Void)
-    ) {
-        func fail(_ error: BackupImportError) {
-            WireLogger.localStorage.error("backup: error backing up local store: \(error)", attributes: .safePublic)
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(.failure(error))
-            }
-        }
-
+        messagingMigrator: CoreDataMessagingMigratorProtocol
+    ) async throws -> URL {
         let accountDirectory = accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
@@ -220,24 +204,29 @@ public extension CoreDataStack {
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
-        workQueue.async(group: dispatchGroup) {
+        let task = Task.detached {
+            let metadata: BackupMetadata
             do {
-                let metadata = try BackupMetadata(url: metadataURL)
-                let currentModel = CoreDataStack.loadMessagingModel()
+                metadata = try BackupMetadata(url: metadataURL)
+            } catch {
+                throw BackupImportError.failedToCopy(error)
+            }
+            let currentModel = CoreDataStack.loadMessagingModel()
 
-                guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
-                    return fail(.missingModelVersion(metadata.modelVersion))
-                }
+            guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
+                throw BackupImportError.missingModelVersion(metadata.modelVersion)
+            }
 
-                if let verificationError = metadata.verify(
-                    using: accountIdentifier,
-                    modelVersionProvider: currentModel
-                ) {
-                    return fail(.incompatibleBackup(verificationError))
-                }
+            if let verificationError = metadata.verify(
+                using: accountIdentifier,
+                modelVersionProvider: currentModel
+            ) {
+                throw BackupImportError.incompatibleBackup(verificationError)
+            }
 
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: backupModel)
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: backupModel)
 
+            do {
                 // Create target directory
                 try fileManager.createDirectory(
                     at: accountStoreFile.deletingLastPathComponent(),
@@ -278,12 +267,17 @@ public extension CoreDataStack {
                     attributes: .safePublic
                 )
 
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    completion(.success(accountDirectory))
-                }
+                return accountDirectory
             } catch {
-                fail(.failedToCopy(error))
+                throw BackupImportError.failedToCopy(error)
             }
+        }
+
+        do {
+            return try await task.value
+        } catch {
+            WireLogger.localStorage.error("backup: error backing up local store: \(error)", attributes: .safePublic)
+            throw error
         }
     }
 
@@ -305,7 +299,7 @@ public extension CoreDataStack {
         coordinator: NSPersistentStoreCoordinator,
         location: URL,
         options: [String: Any],
-        databaseKey: VolatileData? = nil
+        earMigrator: EARMigratorProtocol
     ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(
@@ -319,8 +313,8 @@ public extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
-                try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
+                try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
+
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()
                 try context.save()

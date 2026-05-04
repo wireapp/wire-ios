@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 /// This view controller was created because `UIActivityViewController` allows for assigning a
 /// `completionWithItemsHandler` closure, which SwiftUI's fileExporter doesn't.
@@ -32,11 +33,10 @@ final class CreatingBackupProgressViewController: UIViewController {
         }
     }
 
-    var progressValue = Float() {
+    var progressValues = (current: 0, total: 0) {
         didSet {
             guard isViewLoaded else { return }
-            progressView.progress = progressValue
-            progressLabel.text = "\(Int(progressValue * 100))%"
+            updateProgressValue()
         }
     }
 
@@ -66,7 +66,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
-        descriptionLabel.accessibilityIdentifier = "descriptionLabel"
+        descriptionLabel.accessibilityIdentifier = Locators.CreatingBackupPage.backupCreatedLabel.rawValue
         return descriptionLabel
     }()
 
@@ -84,7 +84,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var progressView = {
         let progressView = UIProgressView()
-        progressView.accessibilityIdentifier = "progressView"
+        progressView.accessibilityIdentifier = Locators.CreatingBackupPage.progressView.rawValue
         return progressView
     }()
 
@@ -92,7 +92,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         let title = String(localized: "exportBackup.creatingBackup.saveButton.title", bundle: .module)
         let exportButton = UIButton(configuration: .primary, primaryAction: .init(title: title) { _ in })
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
-        exportButton.accessibilityIdentifier = "exportButton"
+        exportButton.accessibilityIdentifier = Locators.CreatingBackupPage.exportBackupButton.rawValue
         return exportButton
     }()
 
@@ -114,9 +114,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
         descriptionLabel.text = progressDescription
 
-        progressLabel.text = "\(Int(progressValue * 100))%"
-
-        progressView.progress = progressValue
+        updateProgressValue()
 
         exportButton.isEnabled = backupURL != nil
 
@@ -166,6 +164,17 @@ final class CreatingBackupProgressViewController: UIViewController {
         let detent = topSpace + stackViewHeight + bottomSpace
         if let sheetPresentationController = navigationController.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in detent }]
+        }
+    }
+
+    private func updateProgressValue() {
+        let progressValue = Float(progressValues.current) / Float(progressValues.total)
+        if progressValue.isFinite {
+            progressLabel.text = progressValue.formatted(.percent.precision(.fractionLength(0)))
+            progressView.progress = progressValue
+        } else {
+            progressLabel.text = 0.formatted(.percent)
+            progressView.progress = 0
         }
     }
 

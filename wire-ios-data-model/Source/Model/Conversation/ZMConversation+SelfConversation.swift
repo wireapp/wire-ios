@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension ZMConversation {
 
@@ -123,7 +124,13 @@ public extension ZMConversation {
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> ZMClientMessage? {
-        guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
+        let selfClient = ZMUser.selfUser(in: context).selfClient()
+        let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient ?? false
+
+        guard
+            hasRegisteredMLSClient,
+            let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+        else {
             return nil
         }
 
@@ -155,7 +162,7 @@ public extension ZMConversation {
 
     static func updateConversation(
         withClearedFromSelfConversation cleared: Cleared,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
     ) {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return

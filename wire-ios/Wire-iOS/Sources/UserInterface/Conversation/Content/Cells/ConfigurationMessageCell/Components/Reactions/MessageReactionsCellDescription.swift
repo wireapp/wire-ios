@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
+
+// MARK: - MessageReactionsCellDescription
 
 final class MessageReactionsCellDescription: ConversationMessageCellDescription {
 
@@ -26,18 +29,26 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     typealias View = MessageReactionsCell
     let configuration: View.Configuration
 
-    init(message: ZMConversationMessage) {
+    let shouldAlignMessageContentForBubbles = true
+
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession
+    ) {
         self.message = message
-        self.configuration = message.reactionsSortedByCreationDate().compactMap { reaction in
 
-            guard !reaction.users.isEmpty else { return nil }
+        let reactions: [MessageReactionMetadata] = message.reactionsSortedByCreationDate().compactMap { reaction in
+            guard !reaction.users.isEmpty else {
+                return nil
+            }
 
-            return MessageReaction(
-                emojiID: reaction.reactionString,
+            return MessageReactionMetadata(
+                emoji: reaction.reactionString,
                 count: UInt(reaction.users.count),
                 isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
             )
         }
+        self.configuration = View.Configuration(reactions: reactions, userSession: userSession)
     }
 
     var supportsActions: Bool = false

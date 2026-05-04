@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,15 @@
 import avs
 import WireCommonComponents
 import WireFoundation
+import WireLogging
 import WireSyncEngine
 import WireUtilities
 
+// sourcery: AutoMockable
 protocol TrackingInterface {
 
-    var isAnalyticsDisabled: Bool { get }
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool
+    var isAnalyticsTrackingEnabled: Bool { get }
     func requestAnalyticsConsent() async throws -> Bool
     func disableAnalytics() throws
     func enableAnalytics() async throws
@@ -70,8 +73,6 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.disableSendButton: .sendButtonDisabled,
         SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
         SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
-        SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
-        SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
         SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
         SettingsPropertyName.collapseOwnMessages: .collapseOwnMessages
@@ -149,7 +150,8 @@ final class SettingsPropertyFactory {
         case .handle:
             return getOnlyProperty(
                 propertyName: propertyName,
-                value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled)
+                value: selfUser?
+                    .handleDisplayString(withDomain: userSession?.resolvedBackendMetadata.isFederationEnabled ?? false)
             )
 
         case .team:
@@ -239,7 +241,7 @@ final class SettingsPropertyFactory {
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
                 if let trackingManager {
-                    return SettingsPropertyValue(trackingManager.isAnalyticsDisabled)
+                    return SettingsPropertyValue(!trackingManager.isAnalyticsTrackingEnabled)
                 } else {
                     return SettingsPropertyValue(false)
                 }
@@ -425,7 +427,10 @@ final class SettingsPropertyFactory {
             )
 
         case .collapseOwnMessages:
-            let userId = selfUser!.remoteIdentifier!
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
             let storage = PrivateUserDefaults<CollapseKey>(userID: userId)
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -435,6 +440,23 @@ final class SettingsPropertyFactory {
                 setAction: { _, value, _ in
                     guard case let .number(enabled) = value else { return }
                     storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
+                }
+            )
+
+        case .conversationBackground:
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
+            let storage = PrivateUserDefaults<ConversationBackgroundKey>(userID: userId)
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { _ in
+                    SettingsPropertyValue(storage.bool(forKey: .conversationBackground))
+                },
+                setAction: { _, value, _ in
+                    guard case let .number(enabled) = value else { return }
+                    storage.set(enabled.boolValue, forKey: .conversationBackground)
                 }
             )
 
@@ -454,4 +476,9 @@ final class SettingsPropertyFactory {
 
 enum CollapseKey: String, DefaultsKey {
     case collapseOwnMessages
+    case uncollapsedMessages
+}
+
+enum ConversationBackgroundKey: String, DefaultsKey {
+    case conversationBackground
 }
