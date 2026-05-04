@@ -120,8 +120,7 @@ public final class AVSWrapper: AVSWrapperType {
 
         wcall_set_data_chan_estab_handler(handle, dataChannelEstablishedHandler)
         let timerIntervalInSeconds: Int32 = 5
-//        wcall_set_network_quality_handler(handle, networkQualityHandler, timerIntervalInSeconds, observer)
-        wcall_set_network_quality_handler(handle, networkQualityHandler1, timerIntervalInSeconds, observer)
+        wcall_set_network_quality_handler(handle, networkQualityHandler, timerIntervalInSeconds, observer)
         wcall_set_media_stopped_handler(handle, mediaStoppedChangeHandler)
         wcall_set_mute_handler(handle, muteChangeHandler, observer)
         wcall_set_participant_changed_handler(handle, callParticipantHandler, observer)
@@ -448,7 +447,7 @@ public final class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let networkQualityHandler1: Handler
+    private let networkQualityHandler: Handler
         .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, qualityInfoRef, contextRef in
             AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, qualityInfoRef) {
                 // For conference calls, userId and clientId will be respectively "sft" and "SFT".
@@ -456,7 +455,6 @@ public final class AVSWrapper: AVSWrapperType {
                 // identifier isn't formatted as expected.
                 // Instead, we pass the values as Strings and let the handler process them
                 guard let quality = AVSWrapper.parseNetworkQuality(from: $4) else {
-                    Self.logger.warning("Cannot parse network quality info: \($4)")
                     return
                 }
                 $0.handleNetworkQualityChange(
@@ -510,97 +508,6 @@ public final class AVSWrapper: AVSWrapperType {
         }
     }
 
-}
-
-private extension AVSWrapper {
-
-    struct NetworkQualityPayload: Decodable {
-        enum CandidateType: String, Decodable {
-            case relay = "Relay"
-            case host = "Host"
-            case srflx = "Srflx"
-            case prflx = "Prflx"
-            case unknown = "Unknown"
-
-            init(from decoder: Decoder) throws {
-                let container = try decoder.singleValueContainer()
-                let rawValue = try container.decode(String.self).lowercased()
-                switch rawValue {
-                case "relay": self = .relay
-                case "host": self = .host
-                case "srflx": self = .srflx
-                case "prflx": self = .prflx
-                default: self = .unknown
-                }
-            }
-        }
-
-        enum ProtocolType: String, Decodable {
-            case udp = "UDP"
-            case tcp = "TCP"
-            case unknown = "Unknown"
-
-            init(from decoder: Decoder) throws {
-                let container = try decoder.singleValueContainer()
-                let rawValue = try container.decode(String.self).lowercased()
-                switch rawValue {
-                case "udp": self = .udp
-                case "tcp": self = .tcp
-                default: self = .unknown
-                }
-            }
-        }
-
-        enum PeerType: String, Decodable {
-            case server = "Server"
-            case user = "User"
-            case unknown = "Unknown"
-
-            init(from decoder: Decoder) throws {
-                let container = try decoder.singleValueContainer()
-                let rawValue = try container.decode(String.self).lowercased()
-                switch rawValue {
-                case "server": self = .server
-                case "user": self = .user
-                default: self = .unknown
-                }
-            }
-        }
-
-        struct Loss: Decodable {
-            let tx: Double?
-            let rx: Double?
-        }
-
-        struct StreamJitter: Decodable {
-            let tx: Double?
-            let rx: Double?
-        }
-
-        struct Jitter: Decodable {
-            let audio: StreamJitter?
-            let video: StreamJitter?
-        }
-
-        struct Connection: Decodable {
-            let candidate: CandidateType?
-            let protocolType: ProtocolType?
-
-            private enum CodingKeys: String, CodingKey {
-                case candidate
-                case protocolType = "protocol"
-            }
-        }
-
-        let quality: Int32
-        let rtt: Double?
-        let loss: Loss?
-        let jitter: Jitter?
-        let connection: Connection?
-        let connectivity: Connection?
-        let peer: PeerType?
-    }
-
     static func parseNetworkQuality(from qualityInfo: String) -> NetworkQuality? {
         guard
             let data = qualityInfo.data(using: .utf8),
@@ -608,7 +515,6 @@ private extension AVSWrapper {
         else {
             return nil
         }
-
         return NetworkQuality(rawValue: payload.quality)
     }
 }
