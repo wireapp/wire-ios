@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -38,6 +37,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
@@ -45,12 +45,13 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     func testForAllScreenSizes() {
         sut = WipeDatabaseViewController()
-        verifyInAllDeviceSizes(matching: sut)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
     func testWipeDatabaseViewController() {
         let createSut: () -> UIViewController = {
-            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            let navigationController = UIViewController()
+                .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
             navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
             return navigationController
         }
@@ -61,7 +62,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,12 @@ final class ZiphySession: ZiphyURLRequester {
         self.userSession = userSession
     }
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
-        // Removing the https://host part from the given URL, so WireSyncEngine can prepend it with the Wire giphy proxy host
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    ) -> ZiphyRequestIdentifier {
+        // Removing the https://host part from the given URL, so WireSyncEngine can prepend it with the Wire giphy proxy
+        // host
         // e.g. url = https://api.giphy.com/v1/gifs/trending?limit=50&offset=0
         //      requestPath = /v1/gifs/trending?limit=50&offset=0
 

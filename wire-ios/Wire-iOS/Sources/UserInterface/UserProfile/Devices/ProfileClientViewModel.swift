@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireSyncEngine
 final class ProfileClientViewModel {
     let userClient: UserClient
     private let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
-    private (set) var fingerprintData: Data?
+    private(set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 

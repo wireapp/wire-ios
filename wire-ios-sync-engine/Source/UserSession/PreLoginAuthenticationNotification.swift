@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,32 +19,27 @@
 import Foundation
 import WireDataModel
 
-extension ZMUser {
+public extension ZMUser {
 
-    @objc public var loginCredentials: LoginCredentials {
-        return LoginCredentials(emailAddress: self.emailAddress,
-                                phoneNumber: self.phoneNumber,
-                                hasPassword: self.emailAddress != nil,
-                                usesCompanyLogin: self.usesCompanyLogin)
+    @objc var loginCredentials: LoginCredentials {
+        LoginCredentials(
+            emailAddress: emailAddress,
+            usesCompanyLogin: usesCompanyLogin
+        )
     }
 
 }
 
-extension LoginCredentials {
+public extension LoginCredentials {
 
     /// This will be used to set user info on the NSError
-    public var dictionaryRepresentation: [String: Any] {
+    var dictionaryRepresentation: [String: Any] {
         var userInfo: [String: Any] = [:]
         userInfo[ZMUserLoginCredentialsKey] = self
-        userInfo[ZMUserHasPasswordKey] = hasPassword
         userInfo[ZMUserUsesCompanyLoginCredentialKey] = usesCompanyLogin
 
         if let emailAddress, !emailAddress.isEmpty {
             userInfo[ZMEmailCredentialKey] = emailAddress
-        }
-
-        if let phoneNumber, !phoneNumber.isEmpty {
-            userInfo[ZMPhoneCredentialKey] = phoneNumber
         }
 
         return userInfo

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,16 @@
 
 import Foundation
 
-extension NSError {
-    @objc public static var ZMUserSessionErrorDomain = "ZMUserSession"
+public extension NSError {
 
-    @objc(initWitUserSessionErrorWithErrorCode:userInfo:)
-    public convenience init(code: ZMUserSessionErrorCode, userInfo: [String: Any]?) {
+    @objc(ZMUserSessionErrorDomain) static var userSessionErrorDomain = "ZMUserSession"
+
+    @objc
+    convenience init(userSessionErrorCode: UserSessionErrorCode, userInfo: [String: Any]?) {
         var info = userInfo ?? [:]
-        if let description = code.errorDescription {
+        if let description = userSessionErrorCode.errorDescription {
             info[NSLocalizedDescriptionKey] = description
         }
-        self.init(domain: NSError.ZMUserSessionErrorDomain, code: Int(code.rawValue), userInfo: info)
+        self.init(domain: NSError.userSessionErrorDomain, code: Int(userSessionErrorCode.rawValue), userInfo: info)
     }
 }

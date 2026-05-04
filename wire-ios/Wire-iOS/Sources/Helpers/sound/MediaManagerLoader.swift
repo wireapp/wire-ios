@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,14 +63,14 @@ final class MediaManagerLoader: NSObject {
         didSet {
             switch state {
             case .loaded:
-                self.loadMediaManager()
+                loadMediaManager()
             default: break
             }
         }
     }
 
     func send(message: LoadingMessage) {
-        self.state.send(message: message)
+        state.send(message: message)
     }
 
     private func loadMediaManager() {
@@ -80,7 +80,7 @@ final class MediaManagerLoader: NSObject {
 
     private func configureMediaManager() {
         guard AVSFlowManager.getInstance() != nil,
-                let mediaManager = AVSMediaManager.sharedInstance() else {
+              let mediaManager = AVSMediaManager.sharedInstance() else {
             return
         }
 
@@ -92,12 +92,17 @@ final class MediaManagerLoader: NSObject {
 
     override init() {
         super.init()
-        flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { [weak self] _ in
-            self?.send(message: .flowManagerLoaded)
-        })
+        self.flowManagerObserver = NotificationCenter.default.addObserver(
+            forName: FlowManager.AVSFlowManagerCreatedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { [weak self] _ in
+                self?.send(message: .flowManagerLoaded)
+            }
+        )
 
         if AVSFlowManager.getInstance() != nil {
-            self.send(message: .flowManagerLoaded)
+            send(message: .flowManagerLoaded)
         }
     }
 }

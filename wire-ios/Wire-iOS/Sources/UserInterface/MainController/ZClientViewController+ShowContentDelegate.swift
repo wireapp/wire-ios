@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,27 +22,29 @@ import WireSyncEngine
 
 extension ZClientViewController {
 
-    private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
-        let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
-        navWrapperController.modalPresentationStyle = .formSheet
-
-        dismissAllModalControllers(callback: { [weak self] in
-            self?.present(navWrapperController, animated: true)
-        })
+    @MainActor
+    private func wrapInNavigationControllerAndPresent(viewController: UIViewController) async {
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .formSheet
+        await mainCoordinator.presentViewController(navigationController)
     }
 
-    func showConnectionRequest(userId: UUID) {
-        let searchUserViewConroller = SearchUserViewController(
-            userId: userId,
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        let searchUserViewController = SearchUserViewController(
+            qualifiedID: qualifiedID,
             profileViewControllerDelegate: self,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self)
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
-        wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
+        Task { @MainActor in
+            await wrapInNavigationControllerAndPresent(viewController: searchUserViewController)
+        }
     }
 
-    func showUserProfile(user: UserType) {
+    func showUserProfile(user: UserType) async {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -53,11 +55,13 @@ extension ZClientViewController {
             viewer: selfUser,
             context: .profileViewer,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self)
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.delegate = self
 
-        wrapInNavigationControllerAndPresent(viewController: profileViewController)
+        await wrapInNavigationControllerAndPresent(viewController: profileViewController)
     }
 
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
@@ -65,16 +69,14 @@ extension ZClientViewController {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
         case .group, .oneOnOne:
-            select(conversation: conversation,
-                   scrollTo: message,
-                   focusOnView: true,
-                   animated: true)
+            select(
+                conversation: conversation,
+                scrollTo: message,
+                focusOnView: true,
+                animated: true
+            )
         default:
             break
         }
-    }
-
-    func showConversationList() {
-        transitionToList(animated: true, completion: nil)
     }
 }

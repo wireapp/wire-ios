@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
 
@@ -43,7 +43,7 @@ final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
         let sut = NSMutableAttributedString.markdown(from: plainText, style: NSAttributedString.style)
 
         // WHEN
-        sut.replaceEmoticons(excluding: [5..<999])
+        sut.replaceEmoticons(excluding: [5 ..< 999])
 
         // THEN
         XCTAssertEqual(sut.string, "❤ Lorem Ipsum Dolor Sit Amed. :)")
@@ -57,7 +57,7 @@ final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
         let sut = NSMutableAttributedString.markdown(from: plainText, style: NSAttributedString.style)
 
         // WHEN
-        sut.replaceEmoticons(excluding: [5..<20])
+        sut.replaceEmoticons(excluding: [5 ..< 20])
 
         // THEN
         XCTAssertEqual(sut.string, "❤ Lorem Ipsum Dolor 😈Amed. 😊")

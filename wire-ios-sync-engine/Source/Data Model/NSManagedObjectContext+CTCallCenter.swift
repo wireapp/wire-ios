@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,7 @@ public extension NSManagedObjectContext {
 
     private static let WireCallCenterKey = "WireCallCenterKey"
 
-    @objc
-    var zm_callCenter: WireCallCenterV3? {
+    @objc var zm_callCenter: WireCallCenterV3? {
 
         get {
             precondition(zm_isUserInterfaceContext, "callCenter can only be accessed on the ui context")
@@ -40,8 +39,7 @@ public extension NSManagedObjectContext {
 
     private static let ConstantBitRateAudioKey = "ConstantBitRateAudioKey"
 
-    @objc
-    var zm_useConstantBitRateAudio: Bool {
+    @objc var zm_useConstantBitRateAudio: Bool {
 
         get {
             precondition(zm_isUserInterfaceContext, "zm_useConstantBitRateAudio can only be accessed on the ui context")

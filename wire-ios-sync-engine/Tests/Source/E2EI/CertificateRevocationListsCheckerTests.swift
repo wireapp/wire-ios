@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,32 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import XCTest
 
 final class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
 
     private var sut: CertificateRevocationListsChecker!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
     private var mockMLSGroupVerification: MockMLSGroupVerificationProtocol!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
     private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var mockCoreDataStack: CoreDataStack!
 
     override func setUp() async throws {
         try await super.setUp()
 
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        let safeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        let coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: mockCoreCryptoContext)
         let provider = MockCoreCryptoProviderProtocol()
-        provider.coreCrypto_MockValue = safeCoreCrypto
+        provider.coreCrypto_MockValue = coreCrypto
 
         coreDataHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataHelper.createStack()
@@ -49,12 +51,17 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         mockMLSGroupVerification = MockMLSGroupVerificationProtocol()
         mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         mockCRLExpirationDatesRepository = MockCRLExpirationDatesRepositoryProtocol()
+        mockLegacyFeatureRepository = .init()
+        mockLegacyFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
 
         sut = CertificateRevocationListsChecker(
             crlAPI: mockCRLAPI,
             crlExpirationDatesRepository: mockCRLExpirationDatesRepository,
             mlsGroupVerification: mockMLSGroupVerification,
             selfClientCertificateProvider: mockSelfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                return self?.mockLegacyFeatureRepository.fetchE2EI_MockValue?.config
+            },
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
         )
@@ -62,11 +69,12 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
 
     override func tearDown() async throws {
         sut = nil
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockCRLAPI = nil
         mockMLSGroupVerification = nil
         mockSelfClientCertificateProvider = nil
         mockCRLExpirationDatesRepository = nil
+        mockLegacyFeatureRepository = nil
         mockCoreDataStack = nil
         try coreDataHelper.cleanupDirectory()
         coreDataHelper = nil
@@ -110,9 +118,9 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It registers the CRLs with core crypto
-        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 2)
+        XCTAssertEqual(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 2)
         XCTAssertEqual(
-            Set(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
+            Set(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
             Set([dp2, dp3])
         )
 
@@ -146,7 +154,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         XCTAssertTrue(mockCRLAPI.getRevocationListFrom_Invocations.isEmpty)
 
         // It doesn't register any CRL with core crypto
-        XCTAssertTrue(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.isEmpty)
+        XCTAssertTrue(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.isEmpty)
 
         // It desn't store expiration date
         XCTAssertTrue(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.isEmpty)
@@ -205,9 +213,9 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It registers the fetched CRLs with core crypto
-        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 1)
+        XCTAssertEqual(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 1)
         XCTAssertEqual(
-            Set(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
+            Set(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
             Set([dp2])
         )
 
@@ -220,12 +228,12 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
             Set([dp2])
         )
         XCTAssertEqual(
-            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map({
+            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map {
                 String(reflecting: $0.expirationDate)
-            }),
-            [Date.distantFuture].map({
+            },
+            [Date.distantFuture].map {
                 String(reflecting: $0)
-            })
+            }
         )
 
         // It updates conversations verification statuses for dp1
@@ -237,7 +245,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
 
     private func mockCRLRegistration(with configurations: [String: (dirty: Bool, expiration: Date?)]) {
         // Mock registering the CRL with core crypto and returning the registration
-        mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_MockMethod = { dp, _ in
+        mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_MockMethod = { dp, _ in
             guard let configuration = configurations[dp] else {
                 return .init(dirty: false, expiration: nil)
             }
@@ -253,24 +261,24 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
     private func mockDummies() {
         // Mock getting the CRL from distribution point
         mockCRLAPI.getRevocationListFrom_MockMethod = { _ in
-            return .random()
+            .random()
         }
 
         // Mock storing the expiration date
         mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
-        mockMLSGroupVerification.updateAllConversations_MockMethod = { }
+        mockMLSGroupVerification.updateAllConversations_MockMethod = {}
 
         // Mock getting a certificate for a self client
-        mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }
+        mockSelfClientCertificateProvider.getCertificate_MockMethod = { nil }
     }
 
     private func mockCRLExpirationDateExists(for distributionPoints: [String]) {
         // Mock wether or not there is an expiraiton date for the CRL associated to a given distribution point
         // If there is no expiration date, the distribution point is considered to be unknown/new
         mockCRLExpirationDatesRepository.crlExpirationDateExistsFor_MockMethod = { distributionPoint in
-            return distributionPoints.contains(distributionPoint.absoluteString)
+            distributionPoints.contains(distributionPoint.absoluteString)
         }
     }
 

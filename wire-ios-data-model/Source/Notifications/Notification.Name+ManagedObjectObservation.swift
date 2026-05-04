@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,8 @@ extension Notification.Name {
     static let NewUnreadKnock = Notification.Name("ZMNewUnreadKnockNotification")
     static let NewUnreadUnsentMessage = Notification.Name("ZMNewUnreadUnsentMessageNotification")
     static let VoiceChannelStateChange = Notification.Name("ZMVoiceChannelStateChangeNotification")
-    static let VoiceChannelParticipantStateChange = Notification.Name("ZMVoiceChannelParticipantStateChangeNotification")
+    static let VoiceChannelParticipantStateChange = Notification
+        .Name("ZMVoiceChannelParticipantStateChangeNotification")
     static let TeamChange = Notification.Name("TeamChangeNotification")
     static let LabelChange = Notification.Name("LabelChangeNotification")
     static let ParticipantRoleChange = Notification.Name("ParticipantRoleChange")

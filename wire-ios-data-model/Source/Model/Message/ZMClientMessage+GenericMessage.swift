@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
-    public var underlyingMessage: GenericMessage? {
+    var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil
         }
@@ -34,7 +35,7 @@ extension ZMClientMessage {
     private func underlyingMessageMergedFromDataSet() -> GenericMessage? {
         let filteredData = dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
-            .filter { $0.knownMessage && $0.imageAssetData == nil }
+            .filter { $0.content != nil && $0.imageAssetData == nil }
             .compactMap { try? $0.serializedData() }
 
         guard !Array(filteredData).isEmpty else {
@@ -53,7 +54,7 @@ extension ZMClientMessage {
     /// - Parameter message: The protobuf message object to be associated with this client message.
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
 
-    public func setUnderlyingMessage(_ message: GenericMessage) throws {
+    func setUnderlyingMessage(_ message: GenericMessage) throws {
         let messageData = try mergeWithExistingData(message)
 
         if nonce == .none, let messageID = messageData.underlyingMessage?.messageID {
@@ -64,8 +65,18 @@ extension ZMClientMessage {
         setLocallyModifiedKeys([#keyPath(ZMClientMessage.dataSet)])
     }
 
+    /// Sets the underlying protobuf message data by creating a new `ZMGenericMessageData` object,
+    /// without checking if any generic message data exists to merge with.
+    ///
+    /// - Parameter message: The protobuf message object to be associated with this asset client message.
+    /// - Throws `ProcessingError` if the protobuf data can't be processed.
+
+    func setNewUnderlyingMessage(_ message: GenericMessage) throws {
+        try createNewGenericMessageData(with: message)
+    }
+
     @discardableResult
-    func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
+    internal func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
         cachedUnderlyingMessage = nil
 
         let existingMessageData = dataSet
@@ -85,6 +96,7 @@ extension ZMClientMessage {
         return messageData
     }
 
+    @discardableResult
     private func createNewGenericMessageData(with message: GenericMessage) throws -> ZMGenericMessageData {
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext

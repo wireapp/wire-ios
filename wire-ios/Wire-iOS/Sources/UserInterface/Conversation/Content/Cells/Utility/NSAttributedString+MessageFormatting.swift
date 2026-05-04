@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,30 +20,21 @@ import Down
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLinkPreview
 import WireUtilities
 
 extension NSAttributedString {
 
-    static var paragraphStyle: NSParagraphStyle = {
-        return defaultParagraphStyle()
-    }()
+    static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
 
     static var previewParagraphStyle: NSParagraphStyle {
-        return defaultPreviewParagraphStyle()
+        defaultPreviewParagraphStyle()
     }
 
-    static var style: DownStyle = {
-        return defaultMarkdownStyle()
-    }()
+    static var style: DownStyle = defaultMarkdownStyle()
 
-    static var previewStyle: DownStyle = {
-        return previewMarkdownStyle()
-    }()
-
-    static var linkDataDetector: NSDataDetector? = {
-        return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-    }()
+    static var previewStyle: DownStyle = previewMarkdownStyle()
 
     /// This method needs to be called as soon as the preferredContentSizeCategory is changed
     @objc
@@ -61,7 +52,8 @@ extension NSAttributedString {
     fileprivate static func defaultParagraphStyle() -> NSParagraphStyle {
         let paragraphStyle = NSMutableParagraphStyle()
 
-        paragraphStyle.minimumLineHeight = 22 * UIFont.wr_preferredContentSizeMultiplier(for: UIApplication.shared.preferredContentSizeCategory)
+        paragraphStyle.minimumLineHeight = 22 * UIFont
+            .wr_preferredContentSizeMultiplier(for: UIApplication.shared.preferredContentSizeCategory)
         paragraphStyle.paragraphSpacing = CGFloat.MessageCell.paragraphSpacing
 
         return paragraphStyle
@@ -102,8 +94,11 @@ extension NSAttributedString {
         return style
     }
 
-    @objc
-    static func formatForPreview(message: ZMTextMessageData, inputMode: Bool) -> NSAttributedString {
+    static func formatForPreview(
+        message: TextMessageData,
+        inputMode: Bool,
+        accentColor: AccentColor
+    ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
@@ -113,7 +108,12 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects, paragraphStyle: nil)
+        markdownText
+            .highlight(
+                mentions: mentionTextObjects,
+                paragraphStyle: nil,
+                accentColor: accentColor
+            )
 
         // Remove trailing link if we show a link preview
         let links = markdownText.links()
@@ -129,19 +129,29 @@ extension NSAttributedString {
         }
 
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
-        markdownText.addAttribute(.foregroundColor, value: SemanticColors.Label.textDefault, range: NSRange(location: 0, length: markdownText.length))
+        markdownText.addAttribute(
+            .foregroundColor,
+            value: SemanticColors.Label.textDefault,
+            range: NSRange(location: 0, length: markdownText.length)
+        )
         return markdownText
     }
 
-    @objc
-    static func format(message: ZMTextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(
+        message: TextMessageData,
+        isObfuscated: Bool,
+        accentColor: AccentColor
+    ) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
-            let attributes: [NSAttributedString.Key: Any] = [ .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
-                                                               .foregroundColor: UIColor.accent(),
-                                                               .paragraphStyle: paragraphStyle]
+            let color: UIColor = accentColor.uiColor
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
+                .foregroundColor: color,
+                .paragraphStyle: paragraphStyle
+            ]
             return NSAttributedString(string: plainText, attributes: attributes)
         }
 
@@ -152,7 +162,7 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: style)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects)
+        markdownText.highlight(mentions: mentionTextObjects, accentColor: accentColor)
 
         // Remove trailing link if we show a link preview
         if let linkPreview = message.linkPreview {
@@ -173,7 +183,7 @@ extension NSAttributedString {
     }
 
     func links() -> [URLWithRange] {
-        return NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
+        NSDataDetector.linkDetector?.detectLinksAndRanges(in: string, excluding: []) ?? []
     }
 
 }
@@ -185,7 +195,8 @@ extension NSMutableAttributedString {
 
         let allowedIndexSet = IndexSet(integersIn: Range<Int>(wholeRange)!, excluding: excludedRanges)
 
-        // Reverse the order of replacing, if we start replace from the beginning, the string may be shorten and other ranges may be invalid.
+        // Reverse the order of replacing, if we start replace from the beginning, the string may be shorten and other
+        // ranges may be invalid.
         for range in allowedIndexSet.rangeView.sorted(by: { $0.lowerBound > $1.lowerBound }) {
             let convertedRange = NSRange(location: range.lowerBound, length: range.upperBound - range.lowerBound)
             mutableString.resolveEmoticonShortcuts(in: convertedRange)
@@ -199,7 +210,10 @@ extension NSMutableAttributedString {
     }
 
     func removeTrailingWhitespace() {
-        let trailingWhitespaceRange = mutableString.rangeOfCharacter(from: .whitespacesAndNewlines, options: [.anchored, .backwards])
+        let trailingWhitespaceRange = mutableString.rangeOfCharacter(
+            from: .whitespacesAndNewlines,
+            options: [.anchored, .backwards]
+        )
 
         if trailingWhitespaceRange.location != NSNotFound {
             mutableString.deleteCharacters(in: trailingWhitespaceRange)
@@ -207,10 +221,15 @@ extension NSMutableAttributedString {
     }
 
     func removeTrailingLink(for linkPreview: LinkMetadata) {
-        let text = self.string
+        let text = string
 
         guard
-            let linkPreviewRange = text.range(of: linkPreview.originalURLString, options: .backwards, range: nil, locale: nil),
+            let linkPreviewRange = text.range(
+                of: linkPreview.originalURLString,
+                options: .backwards,
+                range: nil,
+                locale: nil
+            ),
             linkPreviewRange.upperBound == text.endIndex
         else {
             return
@@ -224,9 +243,9 @@ extension NSMutableAttributedString {
 private extension String {
 
     mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
-        return mentions.sorted(by: {
-            return $0.range.location > $1.range.location
-        }).compactMap({ mention in
+        mentions.sorted(by: {
+            $0.range.location > $1.range.location
+        }).compactMap { mention in
             guard let range = Range(mention.range, in: self) else { return nil }
 
             let name = String(self[range].dropFirst()) // drop @
@@ -235,7 +254,7 @@ private extension String {
             replaceSubrange(range, with: textObject.token)
 
             return textObject
-        })
+        }
     }
 
 }
@@ -247,7 +266,7 @@ private extension IndexSet {
         var excludedIndexSet = IndexSet()
         var includedIndexSet = IndexSet()
 
-        excluding.forEach({ excludedIndexSet.insert(integersIn: $0) })
+        excluding.forEach { excludedIndexSet.insert(integersIn: $0) }
         includedIndexSet.insert(integersIn: range)
 
         self = includedIndexSet.subtracting(excludedIndexSet)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 
 public extension Equatable {
     func isOne(of others: Self...) -> Bool {
-        return isOne(of: others)
+        isOne(of: others)
     }
 
-    func isOne<T: Collection>(of others: T) -> Bool where T.Element == Self {
-        return others.contains(self)
+    func isOne(of others: some Collection<Self>) -> Bool {
+        others.contains(self)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ extension Notification.Name {
 }
 
 // MARK: - URLActionRouterDelegete
+
 protocol URLActionRouterDelegate: AnyObject {
 
     func urlActionRouterWillShowCompanyLoginError()
@@ -33,36 +34,43 @@ protocol URLActionRouterDelegate: AnyObject {
 }
 
 // MARK: - URLActionRouterProtocol
+
 protocol URLActionRouterProtocol {
     func open(url: URL) -> Bool
 }
 
 // MARK: - Logging
+
 private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - URLActionRouter
+
 class URLActionRouter: URLActionRouterProtocol {
 
-    // MARK: - Public Property
-    var sessionManager: SessionManager?
+    // MARK: - Public Properties
+
+    private(set) var sessionManager: SessionManager?
     weak var delegate: URLActionRouterDelegate?
     weak var authenticatedRouter: AuthenticatedRouterProtocol?
 
-    // MARK: - Private Property
-    private let rootViewController: RootViewController
+    // MARK: - Private Properties
+
+    private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
+
     init(
-        viewController: RootViewController,
-        sessionManager: SessionManager? = nil
+        viewController: @autoclosure @escaping () -> UIViewController,
+        sessionManager: SessionManager?
     ) {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
     }
 
     // MARK: - Public Implementation
+
     @discardableResult
     func open(url: URL) -> Bool {
         do {
@@ -71,9 +79,9 @@ class URLActionRouter: URLActionRouterProtocol {
             if error is CompanyLoginError {
                 delegate?.urlActionRouterWillShowCompanyLoginError()
 
-                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true, completion: {
+                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true) {
                     UIApplication.shared.topmostViewController()?.showAlert(for: error)
-                })
+                }
             } else {
                 UIApplication.shared.topmostViewController()?.showAlert(for: error)
             }
@@ -127,11 +135,12 @@ class URLActionRouter: URLActionRouterProtocol {
     }
 
     func internalPresentAlert(_ alert: UIAlertController) {
-        rootViewController.present(alert, animated: true, completion: nil)
+        rootViewController().present(alert, animated: true, completion: nil)
     }
 }
 
 // MARK: - PresentationDelegate
+
 extension URLActionRouter: PresentationDelegate {
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
@@ -153,7 +162,7 @@ extension URLActionRouter: PresentationDelegate {
             completion(password)
         }
 
-        let helpLinkURL = URL.wr_guestLinksLearnMore
+        let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
@@ -168,13 +177,14 @@ extension URLActionRouter: PresentationDelegate {
 
         // Use the rootViewController to present the alert
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
-            rootViewController.present(alertController, animated: true)
+            rootViewController().present(alertController, animated: true)
         } else {
             pendingAlert = alertController
         }
     }
 
     // MARK: - Public Implementation
+
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
         presentLocalizedErrorAlert(localizedError)
@@ -189,29 +199,81 @@ extension URLActionRouter: PresentationDelegate {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
         case .connectBot:
-            presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend(let url):
-            // Switching backend is handled below, so pass false here.
-            decisionHandler(false)
-            switchBackend(configURL: url)
+            presentAlert(
+                title: UrlAction.title,
+                message: UrlAction.ConnectToBot.message,
+                decisionHandler: decisionHandler
+            )
+        case let .accessBackend(url):
+            if let error = sessionManager?.canSwitchBackend() {
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
+                decisionHandler(false)
+                return
+            }
+
+            if DeveloperFlag.useWireAuthentication.isOn {
+                if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
+                    // allows switching backend from current session
+                    sessionManager.addAccount {
+                        decisionHandler(SecurityFlags.customBackend.isEnabled)
+                    }
+                } else {
+                    decisionHandler(SecurityFlags.customBackend.isEnabled)
+                }
+
+            } else {
+                // Switching backend is handled below, so pass false here.
+                decisionHandler(false)
+                switchBackend(configURL: url)
+            }
+        case .openUserProfile:
+            openUserProfileIfNeeded(decisionHandler)
         default:
             decisionHandler(true)
         }
     }
 
-    func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void) {
+    private func openUserProfileIfNeeded(_ decisionHandler: @escaping (Bool) -> Void) {
+        guard let userSession = sessionManager?.activeUserSession, !userSession.isLocked else {
+            decisionHandler(false)
+            return
+        }
+        typealias UrlAction = L10n.Localizable.UrlAction
+        Task {
+            let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [shouldShowUserProfile] in
+                if shouldShowUserProfile {
+                    decisionHandler(shouldShowUserProfile)
+                } else {
+                    presentAlertWarning(
+                        message: UrlAction.UserProfileQrFeatureFlag.message,
+                        decisionHandler: decisionHandler
+                    )
+                }
+            }
+        }
+    }
+
+    func shouldPerformActionWithMessage(
+        _ message: String,
+        action: URLAction,
+        decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void
+    ) {
         switch action {
         case .joinConversation:
-            presentConfirmationAlert(title: nil,
-                                     message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
-                                     decisionHandler: decisionHandler)
+            presentAlert(
+                title: nil,
+                message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
+                decisionHandler: decisionHandler
+            )
         default:
             decisionHandler(true)
         }
     }
 
-    func showConnectionRequest(userId: UUID) {
-        navigate(to: .connectionRequest(userId))
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        navigate(to: .connectionRequest(qualifiedID))
     }
 
     func showUserProfile(user: UserType) {
@@ -227,21 +289,33 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     // MARK: - Private Implementation
+
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
 
-    private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-
-        let alert = UIAlertController(title: title,
-                                      message: message,
-                                      preferredStyle: .alert)
+    private func presentAlert(
+        title: String?,
+        message: String,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
-        alert.addAction(agreeAction)
+        let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
+        [agreeAction, cancelAction].forEach { alert.addAction($0) }
 
-        let cancelAction = UIAlertAction.cancel({ decisionHandler(false) })
-        alert.addAction(cancelAction)
+        presentAlert(alert)
+    }
+
+    private func presentAlertWarning(
+        message: String,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+
+        let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(false) }
+        alert.addAction(agreeAction)
 
         presentAlert(alert)
     }
@@ -258,16 +332,16 @@ extension URLActionRouter: PresentationDelegate {
             guard let self else { return }
 
             switch result {
-            case .success(let backendEnvironment):
-                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+            case let .success(backendEnvironment):
+                requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }
 
-            case .failure(let error):
-                let localizedError = self.mapToLocalizedError(error)
-                self.presentLocalizedErrorAlert(localizedError)
+            case let .failure(error):
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
             }
         }
     }
@@ -283,7 +357,7 @@ extension URLActionRouter: PresentationDelegate {
 
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
-        rootViewController.present(hostingController, animated: true)
+        rootViewController().present(hostingController, animated: true)
     }
 
 }
@@ -336,29 +410,29 @@ private extension URLActionRouter {
         }
 
         var errorDescription: String? {
-            return AlertStrings.title
+            AlertStrings.title
         }
 
         var failureReason: String? {
             switch self {
             case .conversationIsFull:
-                return AlertStrings.ConverationIsFull.message
+                AlertStrings.ConverationIsFull.message
 
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
-                return AlertStrings.LinkIsInvalid.message
+                AlertStrings.LinkIsInvalid.message
 
             case .invalidConversationPassword:
-                return AlertStrings.InvalidPassword.message
+                AlertStrings.InvalidPassword.message
 
             case .unknown:
-                return L10n.Localizable.Error.User.unkownError
+                L10n.Localizable.Error.User.unkownError
             }
         }
 
     }
 
     private func mapToLocalizedError(_ error: Error) -> LocalizedError {
-        return (error as? LocalizedError) ?? URLActionError(from: error)
+        (error as? LocalizedError) ?? URLActionError(from: error)
     }
 
     private func presentLocalizedErrorAlert(_ error: LocalizedError) {
@@ -374,12 +448,13 @@ private extension URLActionRouter {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URL.wr_guestLinksLearnMore.appendingLocaleParameter)
-                topmostViewController?.present(browserViewController, animated: true)
+                WireURLs.shared.guestLinksInfo.open(from: topmostViewController)
             }
-            alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
-                                          style: .default,
-                                          handler: guestLinksLearnMoreHandler))
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
+                style: .default,
+                handler: guestLinksLearnMoreHandler
+            ))
         default:
             break
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import UIKit
 
 extension UIViewControllerContextTransitioning {
     var fromView: UIView? {
-        return view(forKey: .from)
+        view(forKey: .from)
     }
 
     var toView: UIView? {
@@ -34,10 +34,10 @@ extension UIViewControllerContextTransitioning {
     }
 
     var fromViewController: UIViewController? {
-        return viewController(forKey: .from)
+        viewController(forKey: .from)
     }
 
     var toViewController: UIViewController? {
-        return viewController(forKey: .to)
+        viewController(forKey: .to)
     }
 }

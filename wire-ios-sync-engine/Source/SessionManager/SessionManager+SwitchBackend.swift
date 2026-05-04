@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,38 @@
 
 import Foundation
 
-extension SessionManager {
+public extension SessionManager {
 
-    public enum SwitchBackendError: Swift.Error {
-        case loggedInAccounts
+    enum SwitchBackendError: Swift.Error {
+        case maxNumberAccountsReached
         case invalidBackend
     }
 
-    public typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
+    typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
-    public func canSwitchBackend() -> SwitchBackendError? {
-        guard accountManager.accounts.isEmpty else { return .loggedInAccounts }
+    func canSwitchBackend() -> SwitchBackendError? {
+        guard accountManager.numberOfAccounts < maxNumberAccounts else {
+            return .maxNumberAccountsReached
+        }
 
         return nil
     }
 
-    public func switchBackend(to environment: BackendEnvironment) {
+    func switchBackendWithoutResolving(to environment: BackendEnvironment) {
         self.environment = environment
-        unauthenticatedSession = nil
+        setUnauthenticatedSession(nil)
     }
 
-    public func fetchBackendEnvironment(
+    func switchBackend(
+        to environment: BackendEnvironment,
+        completion: @escaping ((any Error)?) -> Void = { _ in }
+    ) {
+        self.environment = environment
+        setUnauthenticatedSession(nil)
+        completion(nil)
+    }
+
+    func fetchBackendEnvironment(
         at url: URL,
         completion: @escaping (Result<BackendEnvironment, Error>) -> Void
     ) {
@@ -50,7 +61,7 @@ extension SessionManager {
         BackendEnvironment.fetchEnvironment(url: url) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let environment):
+                case let .success(environment):
                     completion(.success(environment))
                 case .failure:
                     completion(.failure(SwitchBackendError.invalidBackend))

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireDataModel
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
-    typealias View = FailedUsersSystemMessageCell
+    typealias View = FailedUsersSystemMessageCell<ConversationFailedToAddParticipantsSystemMessageCellDescription>
 
     let configuration: View.Configuration
 
@@ -30,22 +30,20 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 26.0
+    var topMargin: CGFloat = 26.0
+    var bottomMargin: CGFloat = 0
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
             content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
             isCollapsed: isCollapsed,
-            icon: .init(resource: .attention),
+            icon: .init(resource: .attention).withRenderingMode(.alwaysOriginal),
             buttonAction: buttonAction
         )
     }
@@ -62,7 +60,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
         let keyString = "content.system.failedtoadd_participants.could_not_be_added"
 
-        let userNames = failedUsers.compactMap { $0.name }
+        let userNames = failedUsers.compactMap(\.name)
         let userNamesJoined = userNames.joined(separator: ", ")
         let text = keyString.localized(args: userNames.count, userNamesJoined)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireDomain
 import WireRequestStrategy
 
 @objcMembers
@@ -27,15 +28,11 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public let userProfileUpdateStatus: UserProfileUpdateStatus
     public let clientRegistrationStatus: ZMClientRegistrationStatus
     public let clientUpdateStatus: ClientUpdateStatus
-    public let pushNotificationStatus: PushNotificationStatus
     public let proxiedRequestStatus: ProxiedRequestsStatus
-    public let syncStatus: SyncStatus
     public let operationStatus: OperationStatus
     public let requestCancellation: ZMRequestCancellation
-    public let analytics: AnalyticsType?
     public let teamInvitationStatus: TeamInvitationStatus
     public let assetDeletionStatus: AssetDeletionStatus
-    public let callEventStatus: CallEventStatus
 
     fileprivate var callInProgressObserverToken: Any?
 
@@ -44,35 +41,34 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         cookieStorage: ZMPersistentCookieStorage,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
-        lastEventIDRepository: LastEventIDRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        analytics: AnalyticsType? = nil
+        isSyncV2Enabled: Bool,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
-        self.callEventStatus = CallEventStatus()
-        self.analytics = analytics
         self.teamInvitationStatus = TeamInvitationStatus()
-        self.operationStatus.isInBackground = application.applicationState == .background
-        self.syncStatus = SyncStatus(
-            managedObjectContext: managedObjectContext,
-            lastEventIDRepository: lastEventIDRepository
-        )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
+        operationStatus.isInBackground = application.applicationState == .background
+
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
-        self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
-                                                                   cookieProvider: cookieStorage,
-                                                                   coreCryptoProvider: coreCryptoProvider)
-        self.pushNotificationStatus = PushNotificationStatus(
-            managedObjectContext: managedObjectContext,
-            lastEventIDRepository: lastEventIDRepository
+        self.clientRegistrationStatus = ZMClientRegistrationStatus(
+            context: managedObjectContext,
+            cookieProvider: cookieStorage,
+            coreCryptoProvider: coreCryptoProvider,
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
         )
         self.proxiedRequestStatus = ProxiedRequestsStatus(requestCancellation: requestCancellation)
         self.userProfileImageUpdateStatus = UserProfileImageUpdateStatus(managedObjectContext: managedObjectContext)
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] note in
+        self.callInProgressObserverToken = NotificationInContext.addObserver(
+            name: CallStateObserver.CallInProgressNotification,
+            context: managedObjectContext.notificationContext
+        ) { [weak self] note in
             managedObjectContext.performGroupedBlock {
                 if let callInProgress = note.userInfo[CallStateObserver.CallInProgressKey] as? Bool {
                     self?.operationStatus.hasOngoingCall = callInProgress
@@ -82,38 +78,24 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var operationState: OperationState {
         switch operationStatus.operationState {
         case .foreground:
-            return .foreground
-        case .background, .backgroundCall, .backgroundFetch, .backgroundTask:
-            return .background
+            .foreground
+        case .background, .backgroundCall, .backgroundTask:
+            .background
         }
     }
 
     public var synchronizationState: SynchronizationState {
         if !clientRegistrationStatus.clientIsReadyForRequests {
-            return .unauthenticated
-        } else if syncStatus.isSlowSyncing {
-            return .slowSyncing
-        } else if syncStatus.isFetchingNotificationStream {
-            return .quickSyncing
-        } else if syncStatus.isSyncing {
-            return .establishingWebsocket
+            .unauthenticated
         } else {
-            return .online
+            .online
         }
-    }
-
-    public func requestResyncResources() {
-        syncStatus.resyncResources()
-    }
-
-    public func requestQuickSync() {
-        syncStatus.forceQuickSync()
     }
 
 }

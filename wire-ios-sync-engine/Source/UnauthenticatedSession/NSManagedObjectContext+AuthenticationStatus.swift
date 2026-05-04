@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,32 +21,33 @@ import Foundation
 private let cookieLabelKey = "ZMCookieLabel"
 private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
 
-@objc extension NSManagedObjectContext {
+@objc
+extension NSManagedObjectContext {
 
     public var registeredOnThisDevice: Bool {
         get {
-            return self.metadataBoolValueForKey(registeredOnThisDeviceKey)
+            metadataBoolValueForKey(registeredOnThisDeviceKey)
         }
         set {
-            self.setBooleanMetadataOnBothContexts(newValue, key: registeredOnThisDeviceKey)
+            setBooleanMetadataOnBothContexts(newValue, key: registeredOnThisDeviceKey)
         }
     }
 
     private func metadataBoolValueForKey(_ key: String) -> Bool {
-        return (self.persistentStoreMetadata(forKey: key) as? NSNumber)?.boolValue ?? false
+        (persistentStoreMetadata(forKey: key) as? NSNumber)?.boolValue ?? false
     }
 
     private func setBooleanMetadataOnBothContexts(_ newValue: Bool, key: String) {
-        precondition(self.zm_isSyncContext)
+        precondition(zm_isSyncContext)
         let value = NSNumber(value: newValue)
-        self.setPersistentStoreMetadata(value, key: key)
-        guard let uiContext = self.zm_userInterface else { return }
+        setPersistentStoreMetadata(value, key: key)
+        guard let uiContext = zm_userInterface else { return }
         uiContext.performGroupedBlock {
             uiContext.setPersistentStoreMetadata(value, key: key)
         }
     }
 
     public var legacyCookieLabel: String? {
-        return self.persistentStoreMetadata(forKey: cookieLabelKey) as? String
+        persistentStoreMetadata(forKey: cookieLabelKey) as? String
     }
 }

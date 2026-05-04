@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@ import UIKit
 extension UIImage: MediaAsset {
     var imageData: Data? {
         if isTransparent {
-            return pngData()
+            pngData()
         } else {
-            return jpegData(compressionQuality: 1.0)
+            jpegData(compressionQuality: 1.0)
         }
     }
 
     var isGIF: Bool {
-        return false
+        false
     }
 
     var isTransparent: Bool {
-        guard let alpha: CGImageAlphaInfo = self.cgImage?.alphaInfo else { return false }
+        guard let alpha: CGImageAlphaInfo = cgImage?.alphaInfo else { return false }
 
         switch alpha {
         case .first, .last, .premultipliedFirst, .premultipliedLast, .alphaOnly:

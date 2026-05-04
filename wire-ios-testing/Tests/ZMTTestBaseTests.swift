@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,10 +23,13 @@ class ZMTTestBaseTests: ZMTBaseTest {
     func testVerySmallJPEG() {
 
         // given
-        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(forResource: "tiny", withExtension: "jpg")!)
+        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(
+            forResource: "tiny",
+            withExtension: "jpg"
+        )!)
 
         // when
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
 
         // then
         XCTAssertNotNil(data)
@@ -37,10 +40,13 @@ class ZMTTestBaseTests: ZMTBaseTest {
     func testMediumJPEG() {
 
         // given
-        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(forResource: "medium", withExtension: "jpg")!)
+        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(
+            forResource: "medium",
+            withExtension: "jpg"
+        )!)
 
         // when
-        let data = self.mediumJPEGData()
+        let data = mediumJPEGData()
 
         // then
         XCTAssertNotNil(data)
@@ -51,7 +57,10 @@ class ZMTTestBaseTests: ZMTBaseTest {
     func testVerySmallJPEG_static() {
 
         // given
-        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(forResource: "tiny", withExtension: "jpg")!)
+        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(
+            forResource: "tiny",
+            withExtension: "jpg"
+        )!)
 
         // when
         let data = ZMTBaseTest.verySmallJPEGData()
@@ -65,7 +74,10 @@ class ZMTTestBaseTests: ZMTBaseTest {
     func testMediumJPEG_static() {
 
         // given
-        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(forResource: "medium", withExtension: "jpg")!)
+        let expectedData = try? Data(contentsOf: Bundle(for: object_getClass(ZMTBaseTest.self)!).url(
+            forResource: "medium",
+            withExtension: "jpg"
+        )!)
 
         // when
         let data = ZMTBaseTest.mediumJPEGData()

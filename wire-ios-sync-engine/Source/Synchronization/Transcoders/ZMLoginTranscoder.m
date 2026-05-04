@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,8 +64,6 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
         self.authenticationStatus = authenticationStatus;
         _timedDownstreamSync = timedDownstreamSync ?: [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:groupQueue];
         _verificationResendRequest = verificationResendRequest ?: [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
-
-        _loginWithPhoneNumberSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
     }
     return self;
 }
@@ -94,13 +92,8 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     if(request) {
         return request;
     }
-    
-    if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithPhone) {
-        [self.loginWithPhoneNumberSync readyForNextRequestIfNotBusy];
-        return [self.loginWithPhoneNumberSync nextRequestForAPIVersion:apiVersion];
-    }
+
     if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
-        [self.timedDownstreamSync readyForNextRequestIfNotBusy];
         request = [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion];
     }
 
@@ -121,8 +114,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 
 - (ZMTransportRequest *)requestForSingleRequestSync:(ZMSingleRequestSync *)sync apiVersion:(APIVersion)apiVersion
 {
-    if (sync == self.timedDownstreamSync ||
-        sync == self.loginWithPhoneNumberSync) {
+    if (sync == self.timedDownstreamSync) {
         return [self loginRequestForAPIVersion: apiVersion];
     } else {
         return nil;
@@ -149,10 +141,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
         payload[@"email"] = credentials.email;
         payload[@"password"] = credentials.password;
     }
-    else if (credentials.phoneNumber != nil && credentials.phoneNumberVerificationCode != nil) {
-        payload[@"phone"] = credentials.phoneNumber;
-        payload[@"code"] = credentials.phoneNumberVerificationCode;
-    }
+
     else {
         return nil;
     }
@@ -188,14 +177,13 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
             if ([self isResponseForPendingEmailActionvation:response]) {
                 [authenticationStatus didFailLoginWithEmailBecausePendingValidation];
                 shouldStartTimer = YES;
-            }
-            else {
+            } else if ([self isTooManyRequests:response]) {
+                [authenticationStatus didFailLoginBecauseTooManyRequests];
+            } else {
                 [authenticationStatus didFailLoginWithEmail:[self isResponseForInvalidCredentials:response]];
             }
         }
-        else if (sync == self.loginWithPhoneNumberSync) {
-            [authenticationStatus didFailLoginWithPhone:[self isResponseForInvalidCredentials:response]];
-        }
+
     }
 
     if (shouldStartTimer) {
@@ -236,6 +224,11 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 {
     NSString *label = [response.payload asDictionary][@"label"];
     return response.HTTPStatus == 403 && [label isEqualToString:@"suspended"];
+}
+
+- (BOOL)isTooManyRequests:(ZMTransportResponse *)response
+{
+    return response.HTTPStatus == 429;
 }
 
 @end

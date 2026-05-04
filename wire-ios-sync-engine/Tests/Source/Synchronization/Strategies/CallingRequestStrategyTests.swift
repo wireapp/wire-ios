@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,62 +17,67 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
-import WireRequestStrategy
-@testable import WireSyncEngine
+@preconcurrency import WireRequestStrategy
 import WireSyncEngineSupport
+import WireTransport
 
+@testable import WireSyncEngine
+
+@preconcurrency
 class CallingRequestStrategyTests: MessagingTest {
 
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
     var mockMessageSender: MockMessageSenderInterface!
-
-    override class func setUp() {
-        super.setUp()
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
 
     override func setUp() {
         super.setUp()
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
         mockMessageSender = MockMessageSenderInterface()
 
+        createSUT(localDomain: "wire.com", isFederationEnabled: false)
+        setupMockMessageSyncForMLSSuccessfully()
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockApplicationStatus = nil
+        mockFetchUserClientsUseCase = nil
+
+        super.tearDown()
+    }
+
+    func createSUT(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) {
         syncMOC.performAndWait {
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
             sut.callCenter = WireCallCenterV3Mock(
                 userId: .stub,
                 clientId: UUID().transportString(),
                 uiMOC: uiMOC,
                 flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock()
+                transport: WireCallCenterTransportMock(),
+                notificationCenter: .init(),
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
         }
-        setupMockMessageSyncForMLSSuccessfully()
-    }
-
-    override func tearDown() {
-        sut = nil
-        mockRegistrationDelegate = nil
-        mockApplicationStatus = nil
-        mockFetchUserClientsUseCase = nil
-        BackendInfo.isFederationEnabled = false
-        super.tearDown()
     }
 
     // MARK: - Call Config
@@ -94,8 +99,13 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.path, "/calls/config/v2")
 
         // when
-        let payload = [ "config": true ]
-        request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        let payload = ["config": true]
+        request?.complete(with: ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -147,12 +157,26 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.path, "/calls/config/v2")
 
         // when
-        let badPayload = [ "error": "not found" ]
-        request?.complete(with: ZMTransportResponse(payload: badPayload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        let badPayload = ["error": "not found"]
+        request?.complete(
+            with: ZMTransportResponse(
+                payload: badPayload as ZMTransportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+        )
 
         // when
-        let payload = [ "config": true ]
-        request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        let payload = ["config": true]
+        request?.complete(
+            with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+        )
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -162,8 +186,10 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Client List
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_NotFederated() throws {
+        // Given
+        BackendInfo.isFederationEnabled = false
+
         let (conversation, payload) = try syncMOC.performAndWait {
-            // Given
             let selfClient = createSelfClient()
 
             // One user with two clients connected to self.
@@ -190,11 +216,13 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.needsToBeUpdatedFromBackend = false
             syncMOC.saveOrRollback()
 
+            let user1RemoteID = user1.remoteIdentifier.uuidString
+            let user2RemoteID = user2.remoteIdentifier.uuidString
             let payload = """
             {
                 "missing": {
-                    "\(user1.remoteIdentifier.uuidString)": ["\(client1.remoteIdentifier!)", "\(client2.remoteIdentifier!)"],
-                    "\(user2.remoteIdentifier.uuidString)": ["\(client3.remoteIdentifier!)", "\(client4.remoteIdentifier!)"]
+                    "\(user1RemoteID)": ["\(client1.remoteIdentifier!)", "\(client2.remoteIdentifier!)"],
+                    "\(user2RemoteID)": ["\(client3.remoteIdentifier!)", "\(client4.remoteIdentifier!)"]
                 }
             }
             """
@@ -227,10 +255,18 @@ class CallingRequestStrategyTests: MessagingTest {
         syncMOC.performAndWait {
             let request = sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
-            XCTAssertEqual(request?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
+            )
 
             // When
-            request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         // Then
@@ -239,9 +275,10 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .temporary()
-        BackendInfo.isFederationEnabled = true
+        createSUT(localDomain: "foo.com", isFederationEnabled: true)
+
         let (conversation, payload) = try syncMOC.performAndWait {
+            syncMOC.isFederationEnabled = true
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "foo.com"
@@ -273,14 +310,16 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.needsToBeUpdatedFromBackend = false
             syncMOC.saveOrRollback()
 
+            let user1RemoteID = user1.remoteIdentifier.uuidString
+            let user2RemoteID = user2.remoteIdentifier.uuidString
             let payload = """
             {
                 "missing": {
                     "foo.com": {
-                        "\(user1.remoteIdentifier.uuidString)": ["\(client1.remoteIdentifier!)", "\(client2.remoteIdentifier!)"]
+                        "\(user1RemoteID)": ["\(client1.remoteIdentifier!)", "\(client2.remoteIdentifier!)"]
                     },
                     "bar.com": {
-                        "\(user2.remoteIdentifier.uuidString)": ["\(client3.remoteIdentifier!)", "\(client4.remoteIdentifier!)"]
+                        "\(user2RemoteID)": ["\(client3.remoteIdentifier!)", "\(client4.remoteIdentifier!)"]
                     }
                 }
             }
@@ -315,10 +354,18 @@ class CallingRequestStrategyTests: MessagingTest {
             let request = sut.nextRequest(for: .v1)
             XCTAssertNotNil(request)
             XCTAssertEqual(request?.apiVersion, APIVersion.v1.rawValue)
-            XCTAssertEqual(request?.path, "/v1/conversations/foo.com/\(conversation.remoteIdentifier!.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/foo.com/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
+            )
 
             // When
-            request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v1.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            ))
         }
 
         // Then
@@ -370,22 +417,22 @@ class CallingRequestStrategyTests: MessagingTest {
             // Mock
             mockFetchUserClientsUseCase.mockReturnValueForFetchUserClients = Set([
                 QualifiedClientID(
-                    userID: avsClient1.avsIdentifier.identifier,
+                    userID: avsClient1.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient1.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient2.avsIdentifier.identifier,
+                    userID: avsClient2.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient2.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient3.avsIdentifier.identifier,
+                    userID: avsClient3.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient3.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient4.avsIdentifier.identifier,
+                    userID: avsClient4.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient4.clientId
                 )
@@ -450,16 +497,15 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Targeted Calling Messages
 
     func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() throws {
-        var sentMessage: GenericMessageEntity?
         let (conversationAVSID, user1, client1, user2, client2, targets) = try syncMOC.performAndWait { [self] in
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                localDomain: "wire.com",
+                isFederationEnabled: false
             )
             // Given
             let selfClient = createSelfClient()
@@ -481,7 +527,10 @@ class CallingRequestStrategyTests: MessagingTest {
             // A conversation with both users and self
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = .create()
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.addParticipantsAndUpdateConversationState(
+                users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                role: nil
+            )
             conversation.needsToBeUpdatedFromBackend = false
 
             syncMOC.saveOrRollback()
@@ -491,24 +540,30 @@ class CallingRequestStrategyTests: MessagingTest {
             let avsClient2 = AVSClient(userId: user2.avsIdentifier, clientId: client2.remoteIdentifier!)
             let targets = [avsClient1, avsClient2]
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (conversationAVSID, user1, client1, user2, client2, targets)
         }
 
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
+        }
+
         // When we schedule the targeted message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversationAVSID, targets: targets, overMLSSelfConversation: false) { _ in }
+            self.sut.send(
+                data: Data(),
+                conversationId: conversationAVSID,
+                targets: targets,
+                overMLSSelfConversation: false
+            ) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performAndWait {
             // Then we send the message to the targeted clients
-            let targetRecipients = if case .clients(let recipients) = sentMessage?.targetRecipients {
+            let targetRecipients = if case let .clients(recipients) = sentMessage?.targetRecipients {
                 recipients.mapValues { clients in
                     clients.map { userClient in
                         userClient.clientId
@@ -535,35 +590,39 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC.perform { [self] in
-            // Given
-            let selfClient = createSelfClient()
 
-            // One user with two clients connected to self
-            let user1 = ZMUser.insertNewObject(in: syncMOC)
-            user1.remoteIdentifier = .create()
+        let conversationAVSID = try await syncMOC
+            .perform { [self] in
+                // Given
+                let selfClient = createSelfClient()
 
-            let client1 = createClient(for: user1, connectedTo: selfClient)
-            let client2 = createClient(for: user1, connectedTo: selfClient)
+                // One user with two clients connected to self
+                let user1 = ZMUser.insertNewObject(in: syncMOC)
+                user1.remoteIdentifier = .create()
 
-            // Another user with two clients connected to self
-            let user2 = ZMUser.insertNewObject(in: syncMOC)
-            user2.remoteIdentifier = .create()
+                createClient(for: user1, connectedTo: selfClient)
+                createClient(for: user1, connectedTo: selfClient)
 
-            let client3 = createClient(for: user2, connectedTo: selfClient)
-            let client4 = createClient(for: user2, connectedTo: selfClient)
+                // Another user with two clients connected to self
+                let user2 = ZMUser.insertNewObject(in: syncMOC)
+                user2.remoteIdentifier = .create()
 
-            // A conversation with both users and self
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.remoteIdentifier = .create()
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
-            conversation.needsToBeUpdatedFromBackend = false
+                createClient(for: user2, connectedTo: selfClient)
+                createClient(for: user2, connectedTo: selfClient)
 
-            syncMOC.saveOrRollback()
+                // A conversation with both users and self
+                let conversation = ZMConversation.insertNewObject(in: syncMOC)
+                conversation.remoteIdentifier = .create()
+                conversation.addParticipantsAndUpdateConversationState(
+                    users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                    role: nil
+                )
+                conversation.needsToBeUpdatedFromBackend = false
 
-            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
-            return (user1, user2, client1, client2, client3, client4, conversationAVSID)
-        }
+                syncMOC.saveOrRollback()
+
+                return try XCTUnwrap(conversation.avsIdentifier)
+            }
 
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
@@ -587,29 +646,11 @@ class CallingRequestStrategyTests: MessagingTest {
             return
         }
 
-        let data = await sentMessage.encryptForTransport()?.data
-
         await syncMOC.perform {
-            guard let data,
-                let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
-            else {
-                return XCTFail("Expected OTR message")
-            }
-
             // Then we send the message to all clients in the conversation
-            XCTAssertEqual(otrMessage.recipients.count, 2)
-
-            guard let recipient1 = otrMessage.recipients.first(where: { $0.user == user1.userId }) else {
-                return XCTFail("Expected user1 to be recipient")
+            guard case Recipients.conversationParticipants = sentMessage.targetRecipients else {
+                return XCTFail("Expected to target all clients in the conversation")
             }
-
-            XCTAssertEqual(Set(recipient1.clients.map(\.client)), Set([client1, client2].map(\.clientId)))
-
-            guard let recipient2 = otrMessage.recipients.first(where: { $0.user == user2.userId }) else {
-                return XCTFail("Expected user2 to be recipient")
-            }
-
-            XCTAssertEqual(Set(recipient2.clients.map(\.client)), Set([client3, client4].map(\.clientId)))
         }
     }
 
@@ -618,17 +659,6 @@ class CallingRequestStrategyTests: MessagingTest {
         let client = UserClient.insertNewObject(in: syncMOC)
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
-
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: [John] use flag here
-        // swiftlint:enable todo_requires_jira_link
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
-            try! session.createClientSession(
-                client.sessionIdentifier!,
-                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
-            )
-        }
-
         return client
     }
 
@@ -643,44 +673,7 @@ class CallingRequestStrategyTests: MessagingTest {
         return try! JSONSerialization.data(withJSONObject: json, options: [])
     }
 
-    // MARK: - Event processing
-
-    func testThatItAsksCallCenterToMute_WhenReceivingRemoteMuteEvent() {
-        // GIVEN
-        let json = ["src_userid": UUID.create().uuidString,
-                    "src_clientid": "clientID",
-                    "resp": false,
-                    "type": "REMOTEMUTE"] as [String: Any]
-        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let content = String(data: data, encoding: .utf8)!
-        let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
-        let text = try? message.serializedData().base64String()
-        let payload = [
-            "conversation": UUID().transportString(),
-            "data": [
-                "sender": UUID().transportString(),
-                "text": text
-            ],
-            "from": UUID().transportString(),
-            "time": Date().transportString(),
-            "type": "conversation.otr-message-add"
-        ] as [String: Any]
-
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
-
-        sut.callCenter?.isMuted = false
-
-        // WHEN
-        syncMOC.performAndWait {
-            sut.processEvents([updateEvent], liveEvents: false, prefetchResult: nil)
-        }
-
-        // THEN
-        XCTAssertTrue(sut.callCenter?.isMuted ?? false)
-    }
-
     func test_ThatItHandlesMLSRejectMessage() throws {
-        var sentMessage: GenericMessageEntity?
         let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given
             createMLSSelfConversation()
@@ -699,28 +692,32 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.remoteIdentifier = .create()
             conversation.mlsGroupID = MLSGroupID(Data([2, 2, 2]))
             conversation.messageProtocol = .mls
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.addParticipantsAndUpdateConversationState(
+                users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                role: nil
+            )
             conversation.needsToBeUpdatedFromBackend = false
 
             syncMOC.saveOrRollback()
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let mockMLSService = MockMLSServiceInterface()
 
-            self.syncMOC.mlsService = mockMLSService
+            syncMOC.mlsService = mockMLSService
 
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
+        }
+
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
         }
 
         // Targeting one client
         let avsClient1 = AVSClient(userId: user1AVSIdentifier, clientId: client1RemoteIdentifier)
         let targets = [avsClient1]
 
-        let expectation = self.customExpectation(description: "reject message is sent to MLS self conversation")
+        let expectation = customExpectation(description: "reject message is sent to MLS self conversation")
         // When we schedule the message
         syncMOC.performGroupedBlock {
             self.sut.send(

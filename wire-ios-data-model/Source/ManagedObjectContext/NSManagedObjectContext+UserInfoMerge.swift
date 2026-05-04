@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import Foundation
 
-@objc extension NSManagedObjectContext {
+@objc
+public extension NSManagedObjectContext {
 
     /// Will merge all relevant user info data from another context (e.g. sync to UI, or UI to sync)
-    public func mergeUserInfo(fromUserInfo userInfo: [String: Any]) {
-        self.mergeSecurityLevelDegradationInfo(fromUserInfo: userInfo)
-        self.mergeCallStateChanges(fromUserInfo: userInfo)
+    func mergeUserInfo(fromUserInfo userInfo: [String: Any]) {
+        mergeSecurityLevelDegradationInfo(fromUserInfo: userInfo)
+        mergeCallStateChanges(fromUserInfo: userInfo)
     }
 }

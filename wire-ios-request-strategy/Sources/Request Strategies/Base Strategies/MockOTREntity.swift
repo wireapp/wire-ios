@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import XCTest
 
@@ -28,16 +29,14 @@ final class MockOTREntity: OTREntity {
     var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
-    func expire() {
-        isExpired = true
-    }
     var expirationReasonCode: NSNumber?
 
     let messageData: Data
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
+
     var conversation: ZMConversation?
 
     var isMissingClients = false
@@ -65,19 +64,28 @@ final class MockOTREntity: OTREntity {
         isFailedToSendUsers = true
     }
 
+    func expire(withReason reason: ExpirationReason) {
+        isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
+    }
+
 }
 
 extension MockOTREntity: ProteusMessage {
+    func setUnderlyingMessage(_ message: GenericMessageProtocol.GenericMessage) throws {}
+
+    var targetRecipients: WireRequestStrategy.Recipients {
+        .conversationParticipants
+    }
+
+    func prepareMessageForSending() async throws {}
+
     var debugInfo: String {
         "Mock ProteusMessage"
     }
 
-    func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
-        return ("non-qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
-    }
-
-    func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        return ("qualified".data(using: .utf8)!, .doNotIgnoreAnyMissingClient)
+    var underlyingMessage: GenericMessage? {
+        nil
     }
 
     func setExpirationDate() {
@@ -86,5 +94,5 @@ extension MockOTREntity: ProteusMessage {
 }
 
 func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
-    return lhs === rhs
+    lhs === rhs
 }

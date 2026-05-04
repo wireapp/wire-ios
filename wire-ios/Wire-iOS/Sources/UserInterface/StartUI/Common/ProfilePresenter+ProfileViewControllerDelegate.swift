@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,9 @@ extension ProfilePresenter: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         guard let controller else { return }
 
-        dismiss(viewController: controller) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,22 +21,20 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationActionController {
-
     func openMoveToFolder(for conversation: ZMConversation) {
-        guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
-        let folderPicker = FolderPickerViewController(conversation: conversation, directory: directory)
-        folderPicker.delegate = self
-        self.present(folderPicker.wrapInNavigationController())
-    }
-}
+        guard let directory = (userSession as? ZMUserSession)?.conversationDirectory else { return }
+        let useCase = userSession.makeConversationFolderSelectionUseCase()
 
-extension ConversationActionController: FolderPickerViewControllerDelegate {
+        Task { @MainActor in
+            let builder = FolderPickerBuilder()
+            let folderPicker = builder.build(
+                conversation: conversation,
+                directory: directory,
+                useCase: useCase,
+                context: userSession.contextProvider.viewContext
+            )
 
-    func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
-
-        userSession.enqueue {
-            conversation.moveToFolder(folder)
+            present(folderPicker)
         }
     }
-
 }

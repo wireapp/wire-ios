@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationTitleView: TitleView {
+
     var conversation: GroupDetailsConversationType
     var interactive: Bool = true
 
@@ -74,9 +75,9 @@ final class ConversationTitleView: TitleView {
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return .proteusVerifiedShield()
+            .proteusVerifiedShield()
         case .mls:
-            return .e2eiVerifiedShield()
+            .e2eiVerifiedShield()
         }
     }
 
@@ -107,15 +108,15 @@ final class ConversationTitleView: TitleView {
 
         accessibilityTraits = .button
         accessibilityHint = conversation.conversationType == .oneOnOne
-        ? Conversation.TitleViewForOneToOne.hint
-        : Conversation.TitleViewForGroup.hint
+            ? Conversation.TitleViewForOneToOne.hint
+            : Conversation.TitleViewForGroup.hint
     }
 
 }
 
-extension NSTextAttachment {
+private extension NSTextAttachment {
 
-    fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
+    static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = UIImage(resource: .verifiedShield)
         attachment.image = shield
@@ -125,7 +126,7 @@ extension NSTextAttachment {
         return attachment
     }
 
-    fileprivate static func e2eiVerifiedShield() -> NSTextAttachment {
+    static func e2eiVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = UIImage(resource: .certificateValid)
         attachment.image = shield
@@ -133,9 +134,12 @@ extension NSTextAttachment {
         return attachment
     }
 
-    fileprivate static func legalHold() -> NSTextAttachment {
+    static func legalHold() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let legalHold = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
+        let legalHold = StyleKitIcon.legalholdactive.makeImage(
+            size: .tiny,
+            color: SemanticColors.Icon.foregroundDefaultRed
+        )
         attachment.image = legalHold
         let ratio = legalHold.size.width / legalHold.size.height
         let height: CGFloat = 12

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,27 +20,12 @@ import UIKit
 
 class RoundedView: UIView, RoundedViewProtocol {
 
-    final override class var layerClass: AnyClass {
-        return ContinuousMaskLayer.self
-    }
-
-    func toggleCircle() {
-        shape = .circle
-    }
-
-    func toggleRectangle() {
-        shape = .rectangle
-    }
-
-    func setRelativeCornerRadius(multiplier: CGFloat, dimension: MaskDimension) {
-        shape = .relative(multiplier: multiplier, dimension: dimension)
+    override static var layerClass: AnyClass {
+        ContinuousMaskLayer.self
     }
 
     func setCornerRadius(_ cornerRadius: CGFloat) {
         shape = .rounded(radius: cornerRadius)
     }
 
-    func setRoundedCorners(_ corners: UIRectCorner) {
-        roundedCorners = corners
-    }
 }

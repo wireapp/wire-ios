@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,18 @@
 //
 
 import LocalAuthentication
+import WireLogging
 import WireSystem
 
 enum AuthenticationType: CaseIterable {
 
-    case faceID, touchID, passcode, unavailable
+    case faceID
+    case touchID
+    case passcode
+    case unavailable
 
     static var current: AuthenticationType {
-        return AuthenticationTypeDetector().current
+        AuthenticationTypeDetector().current
     }
 
 }

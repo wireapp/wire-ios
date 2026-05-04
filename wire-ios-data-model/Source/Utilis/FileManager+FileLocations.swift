@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,10 @@ public extension FileManager {
         //
         // The app should not allow to run in all those cases.
 
-        require(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
+        require(
+            sharedContainerURL != nil,
+            "Unable to create shared container url using app group identifier: \(appGroupIdentifier)"
+        )
 
         return sharedContainerURL!
     }
@@ -44,19 +47,32 @@ public extension FileManager {
     @objc static let cachesFolderPrefix: String = "wire-account"
 
     /// Returns the URL for caches appending the accountIdentifier if specified
-    @objc func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
-        guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else { return nil }
+    @objc
+    func cachesURL(for appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
+        guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
+        else { return nil }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
     }
 
     /// Returns the URL for caches appending the accountIdentifier if specified
-    @objc func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
+    @objc
+    func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
-                                    .appendingPathComponent("Caches", isDirectory: true)
+            .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier {
-            return url.appendingPathComponent("\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
+            return url.appendingPathComponent(
+                "\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)",
+                isDirectory: true
+            )
         }
         return url
+    }
+
+    static let sharedLogsDirectoryName = "Logs"
+
+    func sharedLogsDirectoryURL(for appGroupIdentifier: String) -> URL? {
+        cachesURL(for: appGroupIdentifier, accountIdentifier: nil)?
+            .appending(path: Self.sharedLogsDirectoryName, directoryHint: .isDirectory)
     }
 
 }

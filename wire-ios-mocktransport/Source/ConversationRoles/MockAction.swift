@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockAction: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockAction: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var name: String
     @NSManaged public var roles: Set<MockRole>
 
@@ -36,6 +37,6 @@ extension MockAction {
     }
 
     var payload: ZMTransportData {
-        return name as NSString
+        name as NSString
     }
 }

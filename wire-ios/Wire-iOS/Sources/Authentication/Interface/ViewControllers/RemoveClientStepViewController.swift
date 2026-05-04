@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
-    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-       return traitEnvironment.traitCollection.horizontalSizeClass
+    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+        traitEnvironment.traitCollection.horizontalSizeClass
     }
 
     private var contentViewWidthRegular: NSLayoutConstraint!
@@ -35,7 +35,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Initialization
 
     init(clients: [UserClient]) {
-        clientListController = RemoveClientsViewController(clientsList: clients)
+        self.clientListController = RemoveClientsViewController(clientsList: clients)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -72,7 +72,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
         NSLayoutConstraint.activate([
             clientListController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            clientListController.view.topAnchor.constraint(equalTo: safeTopAnchor),
+            clientListController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
@@ -95,15 +95,18 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Adaptive UI
 
     func toggleConstraints() {
-        userInterfaceSizeClass(self).toggle(compactConstraints: [contentViewWidthCompact],
-               regularConstraints: [contentViewWidthRegular])
+        userInterfaceSizeClass(self).toggle(
+            compactConstraints: [contentViewWidthCompact],
+            regularConstraints: [contentViewWidthRegular]
+        )
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -120,6 +123,10 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     func displayError(_ error: Error) {
         // no-op
     }
+
+    func didRewindToThisView() {
+        // no-op
+    }
 }
 
 // MARK: - ClientListViewControllerDelegate
@@ -131,8 +138,10 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
     }
 
     func failedToDeleteClients(_ error: Error) {
-        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error as NSError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 

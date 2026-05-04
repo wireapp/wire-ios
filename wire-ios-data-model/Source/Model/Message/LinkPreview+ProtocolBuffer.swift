@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +17,30 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLinkPreview
 
-extension ArticleMetadata {
-    public convenience init(protocolBuffer: LinkPreview) {
-        self.init(originalURLString: protocolBuffer.url,
-                  permanentURLString: protocolBuffer.permanentURL,
-                  resolvedURLString: protocolBuffer.permanentURL,
-                  offset: Int(protocolBuffer.urlOffset))
+public extension ArticleMetadata {
+    convenience init(protocolBuffer: LinkPreview) {
+        self.init(
+            originalURLString: protocolBuffer.url,
+            permanentURLString: protocolBuffer.permanentURL,
+            resolvedURLString: protocolBuffer.permanentURL,
+            offset: Int(protocolBuffer.urlOffset)
+        )
         title = protocolBuffer.title.removingExtremeCombiningCharacters
         summary = protocolBuffer.summary.removingExtremeCombiningCharacters
     }
 }
 
-extension TwitterStatusMetadata {
-    public convenience init(protocolBuffer: LinkPreview) {
-        self.init(originalURLString: protocolBuffer.url,
-                  permanentURLString: protocolBuffer.permanentURL,
-                  resolvedURLString: protocolBuffer.permanentURL,
-                  offset: Int(protocolBuffer.urlOffset))
+public extension TwitterStatusMetadata {
+    convenience init(protocolBuffer: LinkPreview) {
+        self.init(
+            originalURLString: protocolBuffer.url,
+            permanentURLString: protocolBuffer.permanentURL,
+            resolvedURLString: protocolBuffer.permanentURL,
+            offset: Int(protocolBuffer.urlOffset)
+        )
         message = protocolBuffer.title.removingExtremeCombiningCharacters
         let newAuthor = protocolBuffer.hasTweet ? protocolBuffer.tweet.author : nil
         author = newAuthor?.removingExtremeCombiningCharacters

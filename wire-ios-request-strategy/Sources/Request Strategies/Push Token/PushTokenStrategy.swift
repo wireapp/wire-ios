@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
+public class PushTokenStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
@@ -35,11 +35,11 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        registerPushTokenActionHandler = RegisterPushTokenActionHandler(context: managedObjectContext)
-        removePushTokenActionHandler = RemovePushTokenActionHandler(context: managedObjectContext)
-        getPushTokensActionHandler = GetPushTokensActionHandler(context: managedObjectContext)
+        self.registerPushTokenActionHandler = RegisterPushTokenActionHandler(context: managedObjectContext)
+        self.removePushTokenActionHandler = RemovePushTokenActionHandler(context: managedObjectContext)
+        self.getPushTokensActionHandler = GetPushTokensActionHandler(context: managedObjectContext)
 
-        actionSync = EntityActionSync(actionHandlers: [
+        self.actionSync = EntityActionSync(actionHandlers: [
             registerPushTokenActionHandler,
             removePushTokenActionHandler,
             getPushTokensActionHandler
@@ -51,33 +51,6 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
     // MARK: - Requests
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return actionSync.nextRequest(for: apiVersion)
-    }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        guard liveEvents else { return }
-        events.forEach(process(updateEvent:))
-    }
-
-    func process(updateEvent event: ZMUpdateEvent) {
-        guard event.type == .userPushRemove else { return }
-
-        // expected payload:
-        // { "type: "user.push-remove",
-        //   "token":
-        //    { "transport": "APNS",
-        //            "app": "name of the app",
-        //          "token": "the token you get from apple"
-        //    }
-        // }
-
-        // We ignore the payload and remove the local push token
-        PushTokenStorage.pushToken = nil
+        actionSync.nextRequest(for: apiVersion)
     }
 }

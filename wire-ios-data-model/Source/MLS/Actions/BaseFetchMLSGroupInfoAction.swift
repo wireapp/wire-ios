@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,23 +37,23 @@ public class BaseFetchMLSGroupInfoAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint unavailable."
+                "Endpoint unavailable."
             case .noConversation:
-                return "Conversation not found"
+                "Conversation not found"
             case .missingGroupInfo:
-                return "The conversation has no group information"
+                "The conversation has no group information"
             case .conversationIdOrDomainNotFound:
-                return "Conversation ID or domain not found."
+                "Conversation ID or domain not found."
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
             case .emptyParameters:
-                return "Empty parameters."
+                "Empty parameters."
             case .invalidParameters:
-                return "Invalid conversation ID or domain"
+                "Invalid conversation ID or domain"
             case .mlsNotEnabled:
-                return "MLS is not configured on this backend"
+                "MLS is not configured on this backend"
             case let .unknown(status, label, message):
-                return "Unknown error (response status: \(status), label: \(label), message: \(message))"
+                "Unknown error (response status: \(status), label: \(label), message: \(message))"
             }
         }
     }

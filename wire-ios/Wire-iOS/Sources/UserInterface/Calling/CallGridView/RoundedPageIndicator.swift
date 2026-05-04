@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class RoundedPageIndicator: RoundedBlurView {
             pageControl.currentPage = currentPage
             guard numberOfPages > 0 else { return }
             let lastPageIndex = numberOfPages - 1
-            for index in 0...lastPageIndex {
+            for index in 0 ... lastPageIndex {
                 pageControl.setIndicatorImage(defaultPageIndicator, forPage: index)
             }
             pageControl.setIndicatorImage(selectedPageIndicator, forPage: currentPage)

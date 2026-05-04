@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,14 @@
 import Combine
 import Foundation
 
-/**
- * The snapshot of the state of a call.
- */
+/// The snapshot of the state of a call.
 
 struct CallSnapshot {
 
     var qualifiedID: QualifiedID?
     var groupIDs: (parent: MLSGroupID, subconversation: MLSGroupID)?
 
+    let messageProtocol: MessageProtocol
     let callParticipants: CallParticipantsSnapshot
     let callState: CallState
     let callStarter: AVSIdentifier
@@ -45,18 +44,17 @@ struct CallSnapshot {
     var updateConferenceInfoTask: Task<Void, Never>?
 
     var isDegradedCall: Bool {
-        return degradedUser != nil
+        degradedUser != nil
     }
 
-    /**
-     * Updates the snapshot with the new state of the call.
-     * - parameter callState: The new state of the call computed from AVS.
-     */
+    /// Updates the snapshot with the new state of the call.
+    /// - parameter callState: The new state of the call computed from AVS.
 
     func update(with callState: CallState) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -75,15 +73,14 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the CBR state.
-     * - parameter enabled: Whether constant bitrate was enabled.
-     */
+    /// Updates the snapshot with the CBR state.
+    /// - parameter enabled: Whether constant bitrate was enabled.
 
     func updateConstantBitrate(_ enabled: Bool) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -102,15 +99,14 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the new video state.
-     * - parameter videoState: The new video state.
-     */
+    /// Updates the snapshot with the new video state.
+    /// - parameter videoState: The new video state.
 
     func updateVideoState(_ videoState: VideoState) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -129,15 +125,14 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the new network condition.
-     * - parameter networkCondition: The new network condition.
-     */
+    /// Updates the snapshot with the new network condition.
+    /// - parameter networkCondition: The new network condition.
 
     func updateNetworkQuality(_ networkQuality: NetworkQuality) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -156,19 +151,18 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the new degraded user.
-     *
-     * A user degrades the call if they were previously trusted by the self
-     * client and then joined the call with an unverified device.
-     * 
-     * - parameter degradedUser: The user who degraded the call.
-     */
+    /// Updates the snapshot with the new degraded user.
+    ///
+    /// A user degrades the call if they were previously trusted by the self
+    /// client and then joined the call with an unverified device.
+    ///
+    /// - parameter degradedUser: The user who degraded the call.
 
     func updateDegradedUser(_ degradedUser: ZMUser) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -187,15 +181,14 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the new audio levels of the call.
-     * - parameter activeSpeakers: The new active speakers of the call computed from AVS.
-     */
+    /// Updates the snapshot with the new audio levels of the call.
+    /// - parameter activeSpeakers: The new active speakers of the call computed from AVS.
 
     func updateActiveSpeakers(_ activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -214,15 +207,14 @@ struct CallSnapshot {
         )
     }
 
-    /**
-     * Updates the snapshot with the new presentation mode of the video grid.
-     * - parameter presentationMode: The new mode of presentation in video grid
-     */
+    /// Updates the snapshot with the new presentation mode of the video grid.
+    /// - parameter presentationMode: The new mode of presentation in video grid
 
     func updateVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,

@@ -1,0 +1,2 @@
+curl \
+	"/notifications/last?client=abcd1234"

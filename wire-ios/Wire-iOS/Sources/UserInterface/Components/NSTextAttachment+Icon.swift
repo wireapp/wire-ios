@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension NSTextAttachment {
 
@@ -33,17 +34,34 @@ extension NSTextAttachment {
         insets: UIEdgeInsets? = nil
     ) -> NSTextAttachment {
 
-        let image: UIImage
-        if let insets {
-            image = icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
+        let image: UIImage = if let insets {
+            icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
         } else {
-            image = icon.makeImage(size: iconSize, color: color)
+            icon.makeImage(size: iconSize, color: color)
         }
 
+        return makeAttachment(
+            image: image,
+            iconSize: iconSize,
+            verticalCorrection: verticalCorrection
+        )
+    }
+
+    private static func makeAttachment(
+        image: UIImage,
+        iconSize: StyleKitIcon.Size,
+        verticalCorrection: CGFloat
+    ) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = image
         let ratio = image.size.width / image.size.height
-        attachment.bounds = CGRect(x: 0, y: verticalCorrection, width: iconSize.rawValue * ratio, height: iconSize.rawValue)
+        attachment.bounds = CGRect(
+            x: 0,
+            y: verticalCorrection,
+            width: iconSize.rawValue * ratio,
+            height: iconSize.rawValue
+        )
         return attachment
     }
+
 }

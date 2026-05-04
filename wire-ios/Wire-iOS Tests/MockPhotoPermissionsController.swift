@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
 
@@ -31,19 +31,19 @@ final class MockPhotoPermissionsController: PhotoPermissionsController {
     }
 
     var isCameraAuthorized: Bool {
-        return camera
+        camera
     }
 
     var isPhotoLibraryAuthorized: Bool {
-        return library
+        library
     }
 
     var areCameraOrPhotoLibraryAuthorized: Bool {
-        return camera || library
+        camera || library
     }
 
     var areCameraAndPhotoLibraryAuthorized: Bool {
-        return camera && library
+        camera && library
     }
 
 }

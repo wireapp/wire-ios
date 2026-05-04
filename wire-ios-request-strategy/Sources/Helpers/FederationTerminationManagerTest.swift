@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class FederationTerminationManagerTests: MessagingTestBase {
 
@@ -55,7 +55,10 @@ class FederationTerminationManagerTests: MessagingTestBase {
             // THEN
             XCTAssertTrue(conversation.isForcedReadOnly)
             XCTAssertTrue(conversation.isReadOnly)
-            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                conversation.lastMessage?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
@@ -117,8 +120,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             let lastMessages = conversation.lastMessages(limit: 2)
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
@@ -138,8 +147,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
 
             let lastMessages = conversation.lastMessages(limit: 2)
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
@@ -164,8 +179,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             let lastMessages = conversation.lastMessages(limit: 2)
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
@@ -194,8 +215,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
 
             let lastMessages = conversation.lastMessages(limit: 2)
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
@@ -222,8 +249,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
 
             let lastMessages = conversation.lastMessages(limit: 2)
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 

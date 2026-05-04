@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,19 +23,17 @@ import WireDataModel
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
-    typealias View = FailedUsersSystemMessageCell
+    typealias View = FailedUsersSystemMessageCell<ConversationMessageFailedRecipientsCellDescription>
 
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 5
+    var topMargin: CGFloat = 5
+    var bottomMargin: CGFloat = 0
 
-    var isFullWidth: Bool = true
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 
@@ -43,11 +41,13 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var accessibilityLabel: String?
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
-                                           content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
-                                           isCollapsed: isCollapsed,
-                                           icon: nil,
-                                           buttonAction: buttonAction)
+        self.configuration = View.Configuration(
+            title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
+            content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
+            isCollapsed: isCollapsed,
+            icon: nil,
+            buttonAction: buttonAction
+        )
     }
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
@@ -74,7 +74,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         }
 
         /// The list of participants with incomplete metadata.
-        let usersWithoutName = failedUsers.filter { $0.hasEmptyName }
+        let usersWithoutName = failedUsers.filter(\.hasEmptyName)
         if !usersWithoutName.isEmpty {
             let keyString = "content.system.failedtosend_participants.will_never_get_message"
 
@@ -107,14 +107,18 @@ extension NSAttributedString {
     static var unreachableBackendLearnMoreLink: NSAttributedString {
         typealias SystemContent = L10n.Localizable.Content.System
 
-        return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
-                                  attributes: [.font: UIFont.mediumSemiboldFont,
-                                               .link: URL.wr_unreachableBackendLearnMore])
+        return NSAttributedString(
+            string: SystemContent.FailedParticipants.learnMore,
+            attributes: [
+                .font: UIFont.mediumSemiboldFont,
+                .link: WireURLs.shared.unreachableBackendInfo
+            ]
+        )
     }
 
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
-        return .markdown(from: text, style: .errorLabelStyle)
-               .adding(font: .mediumSemiboldFont, to: highlighted)
+        .markdown(from: text, style: .errorLabelStyle)
+            .adding(font: .mediumSemiboldFont, to: highlighted)
     }
 
 }

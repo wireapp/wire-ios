@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@ typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 extension UserType {
 
     var pov: PointOfView {
-        return self.isSelfUser ? .secondPerson : .thirdPerson
+        isSelfUser ? .secondPerson : .thirdPerson
     }
 
     var isPendingApproval: Bool {
-        return isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
+        isPendingApprovalBySelfUser || isPendingApprovalByOtherUser
     }
 
     var hasUntrustedClients: Bool {
-        return allClients.contains { !$0.verified }
+        allClients.contains { !$0.verified }
     }
 
 }

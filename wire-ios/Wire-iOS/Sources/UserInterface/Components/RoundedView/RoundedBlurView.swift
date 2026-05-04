@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,9 +37,8 @@ class RoundedBlurView: RoundedView {
         addSubview(blurView)
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: Bill activate super constraints in 1 batch.
-    // swiftlint:enable todo_requires_jira_link
     func createConstraints() {
         blurView.translatesAutoresizingMaskIntoConstraints = false
         blurView.fitIn(view: self)

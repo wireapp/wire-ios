@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,19 +25,19 @@ class DatabaseTest: ZMTBaseTest {
     var coreDataStack: CoreDataStack?
 
     var useInMemoryDatabase: Bool {
-        return true
+        true
+    }
+
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMOC.dispatchGroupContext?.groups ?? []) + (syncMOC.dispatchGroupContext?.groups ?? [])
     }
 
     var uiMOC: NSManagedObjectContext {
-        return self.coreDataStack!.viewContext
+        coreDataStack!.viewContext
     }
 
     var syncMOC: NSManagedObjectContext {
-        return self.coreDataStack!.syncContext
-    }
-
-    var searchMOC: NSManagedObjectContext {
-        return self.coreDataStack!.searchContext
+        coreDataStack!.syncContext
     }
 
     var sharedContainerURL: URL? {
@@ -47,49 +47,56 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.randomCacheURL!
+        FileManager.default.randomCacheURL!
 
     }
 
     private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL!,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }
 
-    private func createCoreDataStack() -> CoreDataStack {
+    private func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL!,
-                                  inMemoryStore: true,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL!,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
-
+        try await stack.load()
         return stack
     }
 
-    private func configureCaches() {
+    private func configureCaches() async {
         let fileAssetCache = FileAssetCache(location: cacheURL)
         let userImageCache = UserImageLocalCache(location: nil)
 
-        uiMOC.zm_fileAssetCache = fileAssetCache
-        uiMOC.zm_userImageCache = userImageCache
-
-        syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_fileAssetCache = fileAssetCache
+        await uiMOC.perform {
+            self.uiMOC.zm_fileAssetCache = fileAssetCache
             self.uiMOC.zm_userImageCache = userImageCache
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.zm_fileAssetCache = fileAssetCache
+            self.syncMOC.zm_userImageCache = userImageCache
         }
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        self.coreDataStack = createCoreDataStack()
+        coreDataStack = try await createCoreDataStack()
 
-        configureCaches()
+        await configureCaches()
     }
 
     override func tearDown() {
@@ -106,26 +113,40 @@ class DatabaseTest: ZMTBaseTest {
 
     func performPretendingUIMocIsSyncMoc(_ block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()
     }
 
-    func event(withPayload payload: [AnyHashable: Any]?, type: ZMUpdateEventType, in conversation: ZMConversation, user: ZMUser) -> ZMUpdateEvent {
-        return ZMUpdateEvent(uuid: nil, payload: eventPayload(content: payload, type: type, in: conversation, from: user), transient: false, decrypted: true, source: .download)!
+    func event(
+        withPayload payload: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        user: ZMUser
+    ) -> ZMUpdateEvent {
+        ZMUpdateEvent(
+            uuid: nil,
+            payload: eventPayload(content: payload, type: type, in: conversation, from: user),
+            transient: false,
+            decrypted: true,
+            source: .download
+        )!
     }
 
-    private func eventPayload(content: [AnyHashable: Any]?,
-                              type: ZMUpdateEventType,
-                              in conversation: ZMConversation,
-                              from user: ZMUser,
-                              timestamp: Date = Date()) -> [AnyHashable: Any] {
-        return [ "conversation": conversation.remoteIdentifier!.transportString(),
-                 "data": conversation,
-                 "from": user.remoteIdentifier!.transportString(),
-                 "time": timestamp.transportString(),
-                 "type": ZMUpdateEvent.eventTypeString(for: type)!
+    private func eventPayload(
+        content: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        from user: ZMUser,
+        timestamp: Date = Date()
+    ) -> [AnyHashable: Any] {
+        [
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "data": conversation,
+            "from": user.remoteIdentifier!.transportString(),
+            "time": timestamp.transportString(),
+            "type": ZMUpdateEvent.eventTypeString(for: type)!
         ]
     }
 

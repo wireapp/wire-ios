@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension MockMessage: AudioTrack {
 
     var title: String? {
-        return .none
+        .none
     }
 
     var author: String? {
-        return .none
+        .none
     }
 
     var duration: TimeInterval {
-        return 9999
+        9999
     }
 
     var streamURL: URL? {
-        return .none
+        .none
     }
 
     var previewStreamURL: URL? {
-        return .none
+        .none
     }
 
     var failedToLoad: Bool {
         get {
-            return false
+            false
         }
         set {
             // no-op
@@ -56,9 +56,9 @@ final class AudioMessageViewTests: XCTestCase {
     var sut: AudioMessageView!
     var mediaPlaybackManager: MediaPlaybackManager!
     var userSession: UserSessionMock!
+    var coreDataStack: CoreDataStack!
 
     override func setUp() {
-        super.setUp()
         userSession = UserSessionMock()
         let url = Bundle(for: type(of: self)).url(forResource: "audio_sample", withExtension: "m4a")!
 
@@ -73,14 +73,21 @@ final class AudioMessageViewTests: XCTestCase {
 
         sut.audioTrackPlayer?.load(audioMessage, sourceMessage: audioMessage)
         sut.configure(for: audioMessage, isInitial: true)
+
+        coreDataStack = CoreDataStack(
+            account: Account(userName: "", userIdentifier: UUID()),
+            applicationContainer: URL.documentsDirectory,
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {
         sut = nil
         userSession = nil
         mediaPlaybackManager = nil
-
-        super.tearDown()
+        coreDataStack = nil
     }
 
     func testThatAudioMessageIsResumedAfterIncomingCallIsTerminated() {
@@ -91,12 +98,24 @@ final class AudioMessageViewTests: XCTestCase {
         XCTAssert((sut.audioTrackPlayer?.isPlaying)!)
 
         // THEN
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
-        sut.callCenterDidChange(callState: incomingState, conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: nil)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
+        sut.callCenterDidChange(
+            callState: incomingState,
+            conversation: ZMConversation(context: coreDataStack.viewContext),
+            caller: ZMUser(context: coreDataStack.viewContext),
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
-        sut.callCenterDidChange(callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal), conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: incomingState)
+        sut.callCenterDidChange(
+            callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal),
+            conversation: ZMConversation(context: coreDataStack.viewContext),
+            caller: ZMUser(context: coreDataStack.viewContext),
+            timestamp: nil,
+            previousCallState: incomingState
+        )
 
         XCTAssert((sut.audioTrackPlayer?.isPlaying)!)
     }
@@ -113,12 +132,24 @@ final class AudioMessageViewTests: XCTestCase {
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
         // THEN
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
-        sut.callCenterDidChange(callState: incomingState, conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: nil)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
+        sut.callCenterDidChange(
+            callState: incomingState,
+            conversation: ZMConversation(context: coreDataStack.viewContext),
+            caller: ZMUser(context: coreDataStack.viewContext),
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
-        sut.callCenterDidChange(callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal), conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: incomingState)
+        sut.callCenterDidChange(
+            callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal),
+            conversation: ZMConversation(context: coreDataStack.viewContext),
+            caller: ZMUser(context: coreDataStack.viewContext),
+            timestamp: nil,
+            previousCallState: incomingState
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
     }

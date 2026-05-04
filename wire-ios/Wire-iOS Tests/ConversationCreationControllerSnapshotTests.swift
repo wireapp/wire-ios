@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireNetwork
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
+@MainActor
 final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
@@ -33,7 +34,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
@@ -43,26 +43,26 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     // MARK: - Snapshot Tests
 
-    func testForEditingTextField() {
-        createSut(isTeamMember: false)
+    func testForEditingTextField() async {
+        await createSut(isTeamMember: false)
 
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTeamGroupOptionsCollapsed() {
-        createSut(isTeamMember: true)
+    func testTeamGroupOptions() async {
+        await createSut(isTeamMember: true)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -72,24 +72,40 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
     }
 
-    func testTeamGroupOptionsExpanded() {
-        createSut(isTeamMember: true)
-        sut.expandOptions()
+    func testTeamGroupOptions_withoutServices() async {
+        await createSut(isTeamMember: true, messageProtocol: .mls)
 
         snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool) {
+    private func createSut(
+        isTeamMember: Bool,
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+    ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
-        sut = ConversationCreationController(preSelectedParticipants: nil, userSession: mockUserSession)
+        mockUserSession.isWireDriveEnabled = true
+        mockUserSession.mlsFeature = .init(
+            status: .enabled,
+            config: .init(
+                defaultProtocol: messageProtocol,
+                defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            )
+        )
+
+        sut = ConversationCreationController(
+            preSelectedParticipants: nil,
+            userSession: mockUserSession,
+            isAppsFeatureEnabled: false,
+            areLegacyBotsAvailable: false
+        )
     }
 }

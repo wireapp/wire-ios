@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,13 +50,13 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
     ) {
         self.configuration = configuration
 
-        participantsViewController = CallParticipantsListViewController(
+        self.participantsViewController = CallParticipantsListViewController(
             participants: configuration.accessoryType.participants,
             showParticipants: false,
             selfUser: selfUser
         )
 
-        avatarView = UserImageViewContainer(
+        self.avatarView = UserImageViewContainer(
             size: .big,
             maxSize: 240,
             yOffset: -8,
@@ -107,9 +107,9 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
 
     private func updateState() {
         switch configuration.accessoryType {
-        case .avatar(let user):
+        case let .avatar(user):
             avatarView.user = user.value
-        case .participantsList(let participants):
+        case let .participantsList(participants):
             participantsViewController.participants = participants
         case .none: break
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
 extension PasswordRuleSet {
@@ -71,15 +72,15 @@ extension PasswordRuleSet {
         let localizedRules: [String] = ruleSet.requiredCharacters.compactMap { requiredClass in
             switch requiredClass {
             case .digits:
-                return L10n.Localizable.Registration.Password.Rules.number(1)
+                L10n.Localizable.Registration.Password.Rules.number(1)
             case .lowercase:
-                return L10n.Localizable.Registration.Password.Rules.lowercase(1)
+                L10n.Localizable.Registration.Password.Rules.lowercase(1)
             case .uppercase:
-                return L10n.Localizable.Registration.Password.Rules.uppercase(1)
+                L10n.Localizable.Registration.Password.Rules.uppercase(1)
             case .special:
-                return L10n.Localizable.Registration.Password.Rules.special(1)
+                L10n.Localizable.Registration.Password.Rules.special(1)
             default:
-                return nil
+                nil
             }
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 
 private extension Team {
 
-    static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey())
-    }()
+    static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = .init(
+        format: "%K == YES AND %K != NULL",
+        #keyPath(Team.needsToDownloadRoles),
+        Team.remoteIdentifierDataKey()
+    )
 
     func updateRoles(with payload: [String: Any]) {
         guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else { return }
-        let existingRoles = self.roles
+        let existingRoles = roles
 
         // Update or insert new roles
         let newRoles = rolesPayload.compactMap {
@@ -48,12 +50,13 @@ public final class TeamRolesDownloadRequestStrategy:
     ZMDownstreamTranscoder {
 
     private(set) var downstreamSync: ZMDownstreamObjectSync!
-    private unowned var syncStatus: SyncStatus
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
-        self.syncStatus = syncStatus
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        downstreamSync = ZMDownstreamObjectSync(
+        self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
             predicateForObjectsToDownload: Team.predicateForTeamRolesNeedingToBeUpdated,
@@ -63,51 +66,36 @@ public final class TeamRolesDownloadRequestStrategy:
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = downstreamSync.nextRequest(for: apiVersion)
-        if request == nil {
-            completeSyncPhaseIfNoTeam()
-        }
-        return request
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-        return [self]
+        [self]
     }
 
-    fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
+    // MARK: - ZMDownstreamTranscoder
 
-    fileprivate var isSyncing: Bool {
-        return syncStatus.currentSyncPhase == self.expectedSyncPhase
-    }
-
-    private func completeSyncPhaseIfNoTeam() {
-        if self.syncStatus.currentSyncPhase == self.expectedSyncPhase && !self.downstreamSync.hasOutstandingItems {
-            self.syncStatus.finishCurrentSyncPhase(phase: self.expectedSyncPhase)
-        }
-    }
-
-// MARK: - ZMDownstreamTranscoder
-
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
+              let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
         return TeamDownloadRequestFactory.requestToDownloadRoles(for: team.remoteIdentifier!, apiVersion: apiVersion)
     }
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
-            let team = object as? Team,
-            let payload = response.payload?.asDictionary() as? [String: Any] else { return }
+              let team = object as? Team,
+              let payload = response.payload?.asDictionary() as? [String: Any] else { return }
 
         team.needsToDownloadRoles = false
         team.updateRoles(with: payload)
-
-        if self.isSyncing {
-            self.syncStatus.finishCurrentSyncPhase(phase: self.expectedSyncPhase)
-        }
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

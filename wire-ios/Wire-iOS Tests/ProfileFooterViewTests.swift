@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ProfileFooterViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ProfileFooterView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ProfileFooterView!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = ProfileFooterView()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -67,28 +72,35 @@ final class ProfileFooterViewTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testWithOneAction() {
+        // GIVEN & WHEN
         sut = setupProfileFooterView(configureProfileActions: [.openOneToOne])
-        verify(matching: sut)
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testWithMultipleActions() {
+        // GIVEN & WHEN
         sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive])
-        verify(matching: sut)
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdates() {
+        // GIVEN & WHEN
         sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive, .createGroup])
-        verify(matching: sut)
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
     func setupProfileFooterView(
-        userInterfaceStyle: UIUserInterfaceStyle = .light,
         configureProfileActions: [ProfileAction]
     ) -> ProfileFooterView {
         let view = ProfileFooterView()
-        view.overrideUserInterfaceStyle = userInterfaceStyle
         view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
         view.configure(with: configureProfileActions)
 

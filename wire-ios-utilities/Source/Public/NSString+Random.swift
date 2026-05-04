@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,26 +18,23 @@
 
 import Foundation
 
-extension NSString {
-
-    @objc static func randomAlphanumerical(length: UInt) -> String {
-        String.randomAlphanumerical(length: length)
-    }
-
-    @objc public static func randomClientIdentifier() -> String {
-        String.randomClientIdentifier()
-    }
-
-    @objc public static func randomRemoteIdentifier() -> String {
-        String.randomRemoteIdentifier()
-    }
-}
-
-// MARK: - Legacy
-
 public extension NSString {
-    @available(*, deprecated, message: "Better use one of the newer random string methods!")
-    @objc static func createLegacyAlphanumerical() -> String {
-        String.createLegacyAlphanumerical()
-    }
+
+    // TODO: [WPB-11016] Move this test code from production targets
+    #if DEBUG
+        @objc
+        static func randomAlphanumerical(length: UInt) -> String {
+            String.randomAlphanumerical(length: length)
+        }
+
+        @objc
+        static func randomClientIdentifier() -> String {
+            String.randomClientIdentifier()
+        }
+
+        @objc
+        static func randomRemoteIdentifier() -> String {
+            String.randomRemoteIdentifier()
+        }
+    #endif
 }

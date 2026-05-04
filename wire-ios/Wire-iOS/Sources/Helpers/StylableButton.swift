@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ class StylableButton: UIButton, Stylable {
     var buttonStyle: ButtonStyle?
 
     func applyStyle(_ style: ButtonStyle) {
-        self.buttonStyle = style
+        buttonStyle = style
 
         setTitleColor(style.normalStateColors.title, for: .normal)
         setTitleColor(style.highlightedStateColors.title, for: .highlighted)
@@ -33,23 +33,23 @@ class StylableButton: UIButton, Stylable {
     }
 
     private func applyStyleToNonDynamicProperties(style: ButtonStyle) {
-        setBackgroundImageColor(style.normalStateColors.background, for: .normal)
-        setBackgroundImageColor(style.highlightedStateColors.background, for: .highlighted)
-        setBackgroundImageColor(style.selectedStateColors?.background, for: .selected)
+        setBackgroundImageColor(style.normalStateColors.background(), for: .normal)
+        setBackgroundImageColor(style.highlightedStateColors.background(), for: .highlighted)
+        setBackgroundImageColor(style.selectedStateColors?.background(), for: .selected)
 
         setBorder(for: style)
     }
 
     private func setBorder(for style: ButtonStyle) {
         guard style.highlightedStateColors.border != nil ||
-                style.normalStateColors.border != nil ||
-                style.selectedStateColors?.border != nil else { return }
+            style.normalStateColors.border != nil ||
+            style.selectedStateColors?.border != nil else { return }
         let normalStateColor = style.normalStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let highlightedStateColor = style.highlightedStateColors.border?.cgColor ?? UIColor.clear.cgColor
-        let selectedStateColor = style.selectedStateColors?.border.cgColor ?? UIColor.clear.cgColor
-        self.layer.borderWidth = 1
-        self.layer.borderColor = isHighlighted ? highlightedStateColor : normalStateColor
-        self.layer.borderColor = isSelected ? selectedStateColor : normalStateColor
+        let selectedStateColor = style.selectedStateColors?.border?.cgColor ?? UIColor.clear.cgColor
+        layer.borderWidth = 1
+        layer.borderColor = isHighlighted ? highlightedStateColor : normalStateColor
+        layer.borderColor = isSelected ? selectedStateColor : normalStateColor
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

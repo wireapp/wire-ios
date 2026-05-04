@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireCryptobox;
 
 #import "MockConversation.h"
 #import "MockEvent.h"
@@ -57,6 +56,7 @@
 @dynamic receiptMode;
 @dynamic nonTeamRoles;
 @dynamic participantRoles;
+@synthesize domain;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
@@ -69,6 +69,7 @@
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
+    conversation.domain = @"local@domain";
     conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
     conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     conversation.accessRoleV2 = [MockConversation defaultAccessRoleV2WithConversationType:type team:nil];
@@ -176,7 +177,10 @@
     data[@"access_role"] = self.accessRole;
     data[@"access_role_v2"] = self.accessRoleV2;
     data[@"team"] = self.team.identifier ?: [NSNull null];
-    
+    data[@"qualified_id"] = @{
+        @"domain": self.domain != nil ? self.domain : [NSNull null],
+        @"id": data[@"id"]
+    };
     if (self.receiptMode != nil) {
         data[@"receipt_mode"] = self.receiptMode;
     }
@@ -257,17 +261,6 @@
                                 @"text": [data base64EncodedStringWithOptions:0]
                                 };
     return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrMessageAdd data:eventData];
-}
-
-- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
-                                     toClient:(MockUserClient *)toClient
-                                         data:(NSData *)data;
-{
-    Require(fromClient.identifier != nil);
-    Require(toClient.identifier != nil);
-    Require(data != nil);
-    NSData *encrypted = [MockUserClient encryptedWithData:data from:fromClient to:toClient];
-    return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import WireDataModelSupport
 import WireRequestStrategySupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
@@ -34,7 +34,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
     private var service: MockConversationServiceInterface!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {
@@ -48,7 +48,8 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         sut = CreateTeamOneOnOneConversationUseCase(
             protocolSelector: protocolSelector,
             migrator: migrator,
-            service: service
+            service: service,
+            localDomain: "wire.com"
         )
     }
 
@@ -65,7 +66,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
     // MARK: - Helpers
 
     private func createTeamWithAnotherUser() async throws -> ZMUser {
-        return try await syncContext.perform {
+        try await syncContext.perform {
             let (_, _, otherUsers) = self.modelHelper.createSelfTeam(
                 numberOfUsers: 1,
                 in: self.syncContext
@@ -96,6 +97,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         do {
             // When
             _ = try await sut.invoke(with: otherUser, syncContext: syncContext)
+            XCTFail("should fail")
         } catch CreateTeamOneOnOneConversationError.userIsNotOnSameTeam {
             // Then
         } catch {
@@ -113,6 +115,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         do {
             // When
             _ = try await sut.invoke(with: otherUser, syncContext: syncContext)
+            XCTFail("should fail")
         } catch CreateTeamOneOnOneConversationError.noCommonProtocols {
             // Then
         } catch {
@@ -138,7 +141,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
         // Mock: migrator returns id of the created mls one on one.
         migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in
-            return groupID
+            groupID
         }
 
         // When

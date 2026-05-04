@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class GetMLSFeatureUseCaseTests: XCTestCase {
 
-    private var mockRepository: MockFeatureRepositoryInterface!
+    private var mockRepository: MockLegacyFeatureRepositoryInterface!
 
     override func setUp() {
         super.setUp()
 
-        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository = MockLegacyFeatureRepositoryInterface()
         mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
     }
 

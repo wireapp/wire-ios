@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,9 +52,15 @@ extension FlowManager: AVSFlowManagerDelegate {
         // no-op
     }
 
-    public func request(withPath path: String!, method: String!, mediaType mtype: String!, content: Data!, context ctx: UnsafeRawPointer!) -> Bool {
+    public func request(
+        withPath path: String!,
+        method: String!,
+        mediaType mtype: String!,
+        content: Data!,
+        context ctx: UnsafeRawPointer!
+    ) -> Bool {
         // no-op
-        return false
+        false
     }
 
     public func didEstablishMedia(inConversation convid: String!) {

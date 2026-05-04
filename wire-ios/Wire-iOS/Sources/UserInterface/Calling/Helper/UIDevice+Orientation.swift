@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@ extension UIDevice {
         if orientation.isPortrait || orientation.isLandscape {
             return orientation
         }
-        guard let interfaceOrientation = UIApplication.shared.firstKeyWindow?.windowScene?.interfaceOrientation else {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let interfaceOrientation = appDelegate.mainWindow?.windowScene?.interfaceOrientation else {
             return .portrait
         }
         return interfaceOrientation.isLandscape ? .landscapeLeft : .portrait

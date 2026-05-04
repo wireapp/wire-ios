@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class SecurityLevelView: UIView {
 
     // MARK: - Constants
 
-    private static let SecurityLevelViewHeight = 24.0
+    static let securityLevelViewHeight = 24.0
 
     // MARK: - Properties
 
@@ -76,13 +77,15 @@ final class SecurityLevelView: UIView {
             levelText
         ].joined(separator: " ")
 
-        accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
+        accessibilityLabel = securityLevelLabel.text
+        accessibilityIdentifier = Locators.SecurityLevelView.classificationBanner.rawValue + classification
+            .accessibilitySuffix
     }
 
     func configure(
         with otherUsers: [UserType],
         conversationDomain: String?,
-        provider: SecurityClassificationProviding? = ZMUserSession.shared()
+        provider: SecurityClassificationProviding?
     ) {
         guard let classification = provider?.classification(
             users: otherUsers,
@@ -120,7 +123,7 @@ final class SecurityLevelView: UIView {
             securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             securityLevelLabel.topAnchor.constraint(equalTo: topAnchor),
             securityLevelLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.SecurityLevelViewHeight),
+            securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.securityLevelViewHeight),
             iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
             iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),

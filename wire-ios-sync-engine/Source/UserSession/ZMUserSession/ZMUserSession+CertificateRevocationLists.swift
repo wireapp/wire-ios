@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMUserSession {
 
@@ -32,6 +33,12 @@ extension ZMUserSession {
             crlAPI: CertificateRevocationListAPI(),
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                guard let self else { return nil }
+
+                let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
+                return featureRepository.fetchE2EI().config
+            },
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
         )
@@ -51,7 +58,10 @@ extension ZMUserSession {
         }
 
         Task {
-            await cRLsChecker.checkExpiredCRLs()
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                await cRLsChecker.checkExpiredCRLs()
+            }
         }
     }
 }

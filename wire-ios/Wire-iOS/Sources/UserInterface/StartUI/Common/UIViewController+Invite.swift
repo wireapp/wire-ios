@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,25 @@
 //
 
 import UIKit
+import WireSystem
 
 extension UIViewController {
-    func presentInviteActivityViewController(with sourceView: UIView) {
+
+    func presentInviteActivityViewController(
+        popoverPresentationConfiguration: PopoverPresentationControllerConfiguration?,
+        completionWithItemsHandler: UIActivityViewController.CompletionWithItemsHandler? = nil
+    ) {
+
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
-        let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
-
+        let activityController = UIActivityViewController(
+            activityItems: [shareItemProvider],
+            applicationActivities: nil
+        )
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
-
-        activityController.configPopover(pointToView: sourceView)
-
+        activityController.completionWithItemsHandler = completionWithItemsHandler
+        if let popoverPresentationConfiguration {
+            activityController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
+        }
         present(activityController, animated: true)
     }
 }

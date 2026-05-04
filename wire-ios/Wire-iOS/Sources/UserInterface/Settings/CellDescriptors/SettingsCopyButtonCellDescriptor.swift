@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSettingsUI
 
 protocol IconActionCellDelegate: AnyObject {
     func updateLayout()
@@ -38,6 +39,7 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     func featureCell(_ cell: SettingsCellType) {
         if let iconActionCell = cell as? IconActionCell {
             delegate = iconActionCell
+            iconActionCell.accessibilityTraits = .button
             iconActionCell.configure(with: copyInProgress ? copiedLink : copyLink)
         }
     }
@@ -46,33 +48,37 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
 
     typealias Actions = L10n.Localizable.Self.Settings.AccountSection.ProfileLink.Actions
 
-    let copiedLink: CellConfiguration = .iconAction(title: Actions.copiedLink,
-                                                    icon: .checkmark,
-                                                    color: nil,
-                                                    action: { _ in }
+    let copiedLink: CellConfiguration = .iconAction(
+        title: Actions.copiedLink,
+        icon: .checkmark,
+        color: nil,
+        action: { _ in }
     )
 
-    let copyLink: CellConfiguration = .iconAction(title: Actions.copyLink,
-                                                  icon: .copy,
-                                                  color: nil,
-                                                  action: { _ in }
+    let copyLink: CellConfiguration = .iconAction(
+        title: Actions.copyLink,
+        icon: .copy,
+        color: nil,
+        action: { _ in }
     )
 
     // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue?) {
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { nil }
+
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         UIPasteboard.general.string = title
         copyInProgress = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in

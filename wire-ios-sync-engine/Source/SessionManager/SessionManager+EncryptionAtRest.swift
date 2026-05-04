@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension SessionManager: UserSessionEncryptionAtRestDelegate {
 
@@ -24,26 +25,25 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
-        let sharedContainerURL = self.sharedContainerURL
-        let dispatchGroup = self.dispatchGroup
+        let sharedContainerURL = sharedContainerURL
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {
-                self?.activeUserSession = nil
-                CoreDataStack.migrateLocalStorage(
-                    accountIdentifier: account.userIdentifier,
-                    applicationContainer: sharedContainerURL,
-                    dispatchGroup: dispatchGroup,
-                    migration: onReady,
-                    completion: { result in
-                        switch result {
-                        case .success:
-                            self?.loadSession(for: account, completion: { _ in })
-                        case .failure(let error):
-                            WireLogger.ear.error("failed to migrate account: \(error)")
-                        }
+                self?.setActiveUserSession(nil)
+                Task {
+                    do {
+                        try await CoreDataStack.migrateLocalStorage(
+                            accountIdentifier: account.userIdentifier,
+                            applicationContainer: sharedContainerURL,
+                            migration: onReady
+                        )
+
+                    } catch {
+                        WireLogger.ear.error("failed to migrate account: \(error)")
                     }
-                )
+
+                    _ = await self?.loadSession(for: account)
+                }
             }
         })
     }

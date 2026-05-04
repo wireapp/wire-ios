@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 //
 
 import WireDataModel
-@testable import WireDataModelSupport
 import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import XCTest
+@testable import WireShareEngine
+
+@testable import WireDataModelSupport
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
@@ -34,9 +35,9 @@ class BaseSharingSessionTests: BaseTest {
     var sharingSession: SharingSession!
     var moc: NSManagedObjectContext!
 
-    override func setUp() {
-        super.setUp()
-        sharingSession = try! createSharingSession()
+    override func setUp() async throws {
+        try await super.setUp()
+        sharingSession = try await createSharingSession()
         moc = sharingSession.userInterfaceContext
     }
 
@@ -59,21 +60,21 @@ class BaseTest: ZMTBaseTest {
     var applicationStatusDirectory: ApplicationStatusDirectory!
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
+    var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(
@@ -85,12 +86,12 @@ class BaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: cachesDirectory,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await coreDataStack.load()
 
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         transportSession = mockTransport.mockedTransportSession()
@@ -98,7 +99,7 @@ class BaseTest: ZMTBaseTest {
         saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: cachesDirectory)
         analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: cachesDirectory)
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [], apiVersion: .v0)
         let registrationStatus = ClientRegistrationStatus(context: coreDataStack.syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
 
@@ -120,36 +121,42 @@ class BaseTest: ZMTBaseTest {
         strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext),
-            transportSession: transportSession
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(
+                linkPreviewDetector: linkPreviewDetector,
+                managedObjectContext: coreDataStack.syncContext
+            ),
+            transportSession: transportSession,
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: .v0,
+            localDomain: "wire.com"
         )
 
         let context = coreDataStack.syncContext
 
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = accountIdentifier
-        selfUser.domain = "example.com"
+        await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.remoteIdentifier = self.accountIdentifier
+            selfUser.domain = "wire.com"
 
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = "selfClient"
-        selfClient.user = selfUser
+            let selfClient = UserClient.insertNewObject(in: context)
+            selfClient.remoteIdentifier = "selfClient"
+            selfClient.user = selfUser
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
+            context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
 
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabase_MockMethod = { }
-        mockEARService.lockDatabase_MockMethod = { }
+        mockEARService.unlockDatabase_MockMethod = {}
+        mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
+        mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
-        context.saveOrRollback()
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sharedUserDefaults = .temporary()
     }
 
     override func tearDown() {
@@ -162,21 +169,21 @@ class BaseTest: ZMTBaseTest {
         applicationStatusDirectory = nil
         operationLoop = nil
         strategyFactory = nil
-        mockCryptoboxMigrationManager = nil
         mockEARService = nil
         mockProteusService = nil
         mockMLSDecryptionService = nil
         super.tearDown()
     }
 
-    func createSharingSession() throws -> SharingSession {
-        let earService = EARService(
+    func createSharingSession() async throws -> SharingSession {
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        return try SharingSession(
+        return try await SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
@@ -187,10 +194,10 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
+            mlsService: mockMLSService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()
         )

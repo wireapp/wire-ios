@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,8 @@ extension ConversationActionController {
                 case .failure:
                     let alert = UIAlertController(
                         title: L10n.Localizable.Error.Conversation.title,
-                        message: L10n.Localizable.Conversation.DeleteRequestErrorDialog.title(conversation.displayNameWithFallback),
+                        message: L10n.Localizable.Conversation.DeleteRequestErrorDialog
+                            .title(conversation.displayNameWithFallback),
                         preferredStyle: .alert
                     )
                     alert.addAction(UIAlertAction(

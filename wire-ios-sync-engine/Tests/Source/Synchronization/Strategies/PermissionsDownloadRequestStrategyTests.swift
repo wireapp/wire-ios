@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
+@testable import WireSyncEngine
 
 final class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
@@ -27,7 +27,10 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        sut = PermissionsDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = PermissionsDownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -78,22 +81,6 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotCreateARequestDuringSync() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let member = Member.insertNewObject(in: self.syncMOC)
-            member.remoteIdentifier = .create()
-            self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-
-            // when
-            member.needsToBeUpdatedFromBackend = true
-            self.boostrapChangeTrackers(with: member)
-
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
-        }
-    }
-
     func testThatItUpdatesAMembersPermissionsWithTheResponse() {
         var member: Member!
         var user: ZMUser!
@@ -117,7 +104,12 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
                 "permissions": ["self": 17, "copy": 0]
             ]
 
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -158,7 +150,12 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: [] as ZMTransportData,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)

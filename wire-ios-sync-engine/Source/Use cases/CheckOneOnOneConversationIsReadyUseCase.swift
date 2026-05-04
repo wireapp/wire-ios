@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     ///
     /// - Parameter userID: The qualified ID of the user to check the one on one conversation for
     /// - Returns: Whether the one on one conversation is ready.
-    func invoke(userID: QualifiedID) async throws -> Bool
+    func invoke(userID: WireDataModel.QualifiedID) async throws -> Bool
 
 }
 
@@ -88,8 +88,8 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
     // MARK: - Helpers
 
     private func isMLSConversationEstablished(groupID: MLSGroupID) async throws -> Bool {
-        try await coreCryptoProvider.coreCrypto().perform {
-            await $0.conversationExists(conversationId: groupID.data)
+        try await coreCryptoProvider.coreCrypto().transaction {
+            try await $0.conversationExists(conversationId: groupID.conversationId)
         }
     }
 

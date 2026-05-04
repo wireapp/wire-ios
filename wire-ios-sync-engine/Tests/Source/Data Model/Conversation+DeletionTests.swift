@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
+import WireMockTransport
 import XCTest
+@testable import WireSyncEngine
 
 class Conversation_DeletionTests: DatabaseTest {
 
@@ -25,22 +26,36 @@ class Conversation_DeletionTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-        setCurrentAPIVersion(.v0)
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
     }
 
     override func tearDown() {
         mockTransportSession.cleanUp()
         mockTransportSession = nil
-        resetCurrentAPIVersion()
         super.tearDown()
     }
 
     func testThatItParsesAllKnownConversationDeletionErrorResponses() {
 
         let errorResponses: [(ConversationDeletionError, ZMTransportResponse)] = [
-            (ConversationDeletionError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationDeletionError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (
+                ConversationDeletionError.invalidOperation,
+                ZMTransportResponse(
+                    payload: ["label": "invalid-op"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                ConversationDeletionError.conversationNotFound,
+                ZMTransportResponse(
+                    payload: ["label": "no-conversation"] as ZMTransportData,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            )
         ]
 
         for (expectedError, response) in errorResponses {
@@ -62,8 +77,12 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+        conversation.delete(
+            in: coreDataStack!,
+            transportSession: mockTransportSession,
+            metadata: .mock()
+        ) { result in
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }
@@ -82,8 +101,12 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+        conversation.delete(
+            in: coreDataStack!,
+            transportSession: mockTransportSession,
+            metadata: .mock()
+        ) { result in
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }
@@ -104,10 +127,18 @@ class Conversation_DeletionTests: DatabaseTest {
         conversation.teamRemoteIdentifier = UUID()
 
         // WHEN
-        guard let request = WireSyncEngine.ConversationDeletionRequestFactory.requestForDeletingTeamConversation(conversation) else { return XCTFail() }
+        guard let request = WireSyncEngine.ConversationDeletionRequestFactory.requestForDeletingTeamConversation(
+            conversation,
+            metadata: .mock()
+        ) else {
+            return XCTFail()
+        }
 
         // THEN
-        XCTAssertEqual(request.path, "/teams/\(conversation.teamRemoteIdentifier!.transportString())/conversations/\(conversation.remoteIdentifier!.transportString())")
+        XCTAssertEqual(
+            request.path,
+            "/teams/\(conversation.teamRemoteIdentifier!.transportString())/conversations/\(conversation.remoteIdentifier!.transportString())"
+        )
     }
 
 }

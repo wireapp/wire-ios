@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,70 +22,112 @@ import WireSyncEngine
 
 final class ConversationInputBarSendController: NSObject {
     let conversation: InputBarConversationType
-    private let feedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let feedbackGenerator: UIImpactFeedbackGenerator = .init(style: .light)
 
     init(conversation: InputBarConversationType) {
         self.conversation = conversation
         super.init()
     }
 
-    func sendMessage(withImageData imageData: Data,
-                     userSession: UserSession,
-                     completion completionHandler: Completion? = nil) {
+    func sendMessage(
+        image: SendableImage,
+        userSession: UserSession,
+        completion completionHandler: Completion? = nil
+    ) {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
-        userSession.enqueue({
+        userSession.enqueue {
             do {
-                try conversation.appendImage(from: imageData)
+                let useCase = userSession.makeAppendImageMessageUseCase()
+                try useCase.invoke(
+                    image: image,
+                    in: conversation
+                )
                 self.feedbackGenerator.impactOccurred()
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
+        } completionHandler: {
             completionHandler?()
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
-        })
+        }
     }
 
-    func sendTextMessage(_ text: String,
-                         mentions: [Mention],
-                         userSession: UserSession,
-                         replyingTo message: ZMConversationMessage?) {
+    func sendTextMessage(
+        _ text: String,
+        attachments: [MultipartAttachment],
+        mentions: [Mention],
+        userSession: UserSession,
+        replyingTo message: ZMConversationMessage?,
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        userSession.enqueue({
+        userSession.enqueue {
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: message, fetchLinkPreview: shouldFetchLinkPreview)
-                conversation.draftMessage = nil
+                if attachments.isEmpty {
+                    let useCase = userSession.makeAppendTextMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview
+                    )
+
+                } else {
+                    let useCase = userSession.makeAppendMultipartMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview,
+                        attachments: attachments
+                    )
+                }
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
-
-        })
+        }
     }
 
-    func sendTextMessage(_ text: String, mentions: [Mention], userSession: UserSession, withImageData data: Data) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        withGIFImageData data: Data
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
-        userSession.enqueue({
+        userSession.enqueue {
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: shouldFetchLinkPreview)
-                try conversation.appendImage(from: data)
-                conversation.draftMessage = nil
+                let textMessageUseCase = userSession.makeAppendTextMessageUseCase()
+                let imageMessageUseCase = userSession.makeAppendImageMessageUseCase()
+                try textMessageUseCase.invoke(
+                    text: text,
+                    mentions: mentions,
+                    replyingTo: nil,
+                    in: conversation,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: data
+                )
+                try imageMessageUseCase.invoke(
+                    image: image,
+                    in: conversation
+                )
             } catch {
-                Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
-        })
+        }
     }
 }

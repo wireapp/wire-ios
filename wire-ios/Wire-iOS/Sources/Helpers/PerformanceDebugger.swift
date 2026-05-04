@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
 
-/**
- * An object that tracks performance issues in the application for debugging purposes.
- */
+/// An object that tracks performance issues in the application for debugging purposes.
 
 final class PerformanceDebugger {
 
@@ -31,7 +30,7 @@ final class PerformanceDebugger {
     private var displayLink: CADisplayLink!
 
     init() {
-        displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
+        self.displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
     }
 
     deinit {
@@ -45,7 +44,12 @@ final class PerformanceDebugger {
         }
 
         displayLink.add(to: .main, forMode: .default)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleMemoryWarning), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleMemoryWarning),
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
     }
 
     @objc

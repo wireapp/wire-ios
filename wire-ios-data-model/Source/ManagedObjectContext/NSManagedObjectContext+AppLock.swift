@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,17 +18,19 @@
 
 import Foundation
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     /// Whether the applock feature is enabled.
 
-    internal(set) public var isAppLockEnabled: Bool {
+    internal(set) var isAppLockEnabled: Bool {
         get {
             (persistentStoreMetadata(forKey: PersistentMetadataKey.appLock.rawValue) as? NSNumber)?.boolValue ?? false
         }
         set {
-            setPersistentStoreMetadata(NSNumber(value: newValue),
-                                       key: PersistentMetadataKey.appLock.rawValue)
+            setPersistentStoreMetadata(
+                NSNumber(value: newValue),
+                key: PersistentMetadataKey.appLock.rawValue
+            )
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ protocol CallStateExtending {
 
 extension CallStateExtending {
     func isEqual(toCallState other: CallStateExtending) -> Bool {
-        return isConnected == other.isConnected &&
+        isConnected == other.isConnected &&
             isTerminating == other.isTerminating &&
             canAccept == other.canAccept
     }
@@ -35,22 +35,22 @@ extension CallStateExtending {
 extension CallState: CallStateExtending {
     var isConnected: Bool {
         switch self {
-        case .established, .establishedDataChannel: return true
-        default: return false
+        case .established, .establishedDataChannel: true
+        default: false
         }
     }
 
     var isTerminating: Bool {
         switch self {
-        case .terminating, .incoming(video: _, shouldRing: false, degraded: _): return true
-        default: return false
+        case .terminating, .incoming(isVideo: _, shouldRing: false, degraded: _): true
+        default: false
         }
     }
 
     var canAccept: Bool {
         switch self {
-        case .incoming(video: _, shouldRing: true, degraded: _): return true
-        default: return false
+        case .incoming(isVideo: _, shouldRing: true, degraded: _): true
+        default: false
         }
     }
 }

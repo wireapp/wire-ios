@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     }
 
     var showSeparator: Bool {
-        get { return !separator.isHidden }
+        get { !separator.isHidden }
         set { separator.isHidden = !newValue }
     }
 
@@ -50,8 +50,8 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 

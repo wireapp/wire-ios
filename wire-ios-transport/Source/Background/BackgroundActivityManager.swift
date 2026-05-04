@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 import UIKit
 
-/**
- * A protocol for objects that can start and end background activities.
- */
+/// A protocol for objects that can start and end background activities.
 
-@objc public protocol BackgroundActivityManager: NSObjectProtocol {
+@objc
+public protocol BackgroundActivityManager: NSObjectProtocol {
     /// Begin a background task.
     func beginBackgroundTask(withName name: String?, expirationHandler: (() -> Void)?) -> UIBackgroundTaskIdentifier
 
@@ -40,7 +39,7 @@ extension BackgroundActivityManager {
     var stateDescription: String {
         if applicationState == .background {
             // Sometimes time remaining is very large even if we run in background
-            let time = backgroundTimeRemaining > 100000 ? "No Limit" : String(format: "%.2f", backgroundTimeRemaining)
+            let time = backgroundTimeRemaining > 100_000 ? "No Limit" : String(format: "%.2f", backgroundTimeRemaining)
             return "App state: \(applicationState), time remaining: \(time)"
         } else {
             return "App state: \(applicationState)"

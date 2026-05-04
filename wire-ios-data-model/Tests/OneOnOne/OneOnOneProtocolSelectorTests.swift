@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
 
@@ -101,6 +101,29 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
         XCTAssertNil(result)
     }
 
+    func test_GetProtocolForUser_DeletedUser_NoCommonProtocol() async throws {
+        // Given
+        let userID = QualifiedID.random()
+
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = [.mls]
+            user.isAccountDeleted = true
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = [.mls]
+        }
+
+        // When
+        let result = try await sut.getProtocolForUser(
+            with: userID,
+            in: uiMOC
+        )
+
+        // Then
+        XCTAssertNil(result)
+    }
+
     func test_GetProtocolForUser_DefaultsToProteus() async throws {
         // Given
         let userID = QualifiedID.random()
@@ -121,6 +144,28 @@ final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertEqual(result, .proteus)
+    }
+
+    func test_GetProtocolForUser_IfNoProtocolForSelfReturnsNil() async throws {
+        // Given
+        let userID = QualifiedID.random()
+
+        await uiMOC.perform { [self] in
+            let user = createUser(id: userID, in: uiMOC)
+            user.supportedProtocols = [.proteus]
+
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.supportedProtocols = []
+        }
+
+        // When
+        let result = try await sut.getProtocolForUser(
+            with: userID,
+            in: uiMOC
+        )
+
+        // Then
+        XCTAssertEqual(result, .none)
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import MapKit
-@testable import Wire
 import WireDataModel
 import XCTest
+@testable import Wire
 
 final class LocationDataTests: XCTestCase {
 
@@ -30,7 +30,7 @@ final class LocationDataTests: XCTestCase {
 
     func testThatLocationDataCanBeStored() {
         // given
-        let location: LocationData = LocationData.locationData(withLatitude: 1, longitude: 2, name: "test", zoomLevel: 3)
+        let location = LocationData.locationData(withLatitude: 1, longitude: 2, name: "test", zoomLevel: 3)
         Settings.shared[.lastUserLocation] = location
 
         // when

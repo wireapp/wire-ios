@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,15 @@
 //
 
 import Foundation
+import WireLogging
 
 final class ConnectionPayloadProcessor {
+
+    private let isFederationEnabled: Bool
+
+    init(isFederationEnabled: Bool) {
+        self.isFederationEnabled = isFederationEnabled
+    }
 
     func processPayload(
         _ payload: Payload.UserConnectionEvent,
@@ -60,6 +67,7 @@ final class ConnectionPayloadProcessor {
         conversation.lastModifiedDate = payload.lastUpdate
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
+        // The conversation we link here may be wrong and may need to be unset using `ConnectionValidator`.
         connection.to.oneOnOneConversation = conversation
         connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate

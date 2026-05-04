@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireLogging
 import WireSyncEngine
 
 extension ConversationContentViewController: CanvasViewControllerDelegate {
-    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+
+    func canvasViewController(
+        _ canvasViewController: CanvasViewController,
+        didExportImage image: UIImage
+    ) {
         parent?.dismiss(animated: true) {
             if let imageData = image.pngData() {
 
-                self.userSession.enqueue({
+                self.userSession.enqueue {
                     do {
-                        try self.conversation.appendImage(from: imageData)
+                        let useCase = self.userSession.makeAppendImageMessageUseCase()
+                        let image = SendableImage(
+                            name: nil,
+                            utType: nil,
+                            data: imageData
+                        )
+                        try useCase.invoke(
+                            image: image,
+                            in: self.conversation
+                        )
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
                     }
-                }, completionHandler: {
-                    Analytics.shared.tagMediaActionCompleted(.photo, inConversation: self.conversation)
-                })
+                }
             }
         }
     }

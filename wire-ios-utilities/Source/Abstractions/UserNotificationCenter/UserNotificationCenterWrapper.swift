@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     }
 
     @available(*, noasync)
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+    public func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    ) {
         userNotificationCenter.requestAuthorization(options: options, completionHandler: completionHandler)
     }
 
@@ -58,7 +61,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     }
 
     @available(*, noasync)
-    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
+    public func add(
+        _ request: UNNotificationRequest,
+        withCompletionHandler completionHandler: (((any Error)?) -> Void)?
+    ) {
         userNotificationCenter.add(request, withCompletionHandler: completionHandler)
     }
 
@@ -73,9 +79,9 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
 
 // MARK: - UserNotificationCenterAbstraction + wrapper(_:)
 
-extension UserNotificationCenterAbstraction where Self == UserNotificationCenterWrapper {
+public extension UserNotificationCenterAbstraction where Self == UserNotificationCenterWrapper {
 
-    public static func wrapper(_ userNotificationCenter: UNUserNotificationCenter) -> Self {
+    static func wrapper(_ userNotificationCenter: UNUserNotificationCenter) -> Self {
         .init(userNotificationCenter: userNotificationCenter)
     }
 }

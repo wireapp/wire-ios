@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngineSupport
 import XCTest
+@testable import Wire
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -36,9 +36,10 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockContextProvider: MockContextProvider!
     var mockEnrollE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol!
 
-    override func setUp() {
-        super.setUp()
-        coreDataFixture = CoreDataFixture()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
         client = mockUserClient()
         mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         emailCredentials = UserEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
@@ -94,7 +95,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         )
         let testFingerPrint = String.randomAlphanumerical(length: 16)
         mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in
-            return testFingerPrint.data(using: .utf8)
+            testFingerPrint.data(using: .utf8)
         }
         let fingerPrint = await deviceActionHandler.getProteusFingerPrint()
         XCTAssertEqual(fingerPrint, testFingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased())
@@ -111,7 +112,7 @@ extension E2eIdentityCertificate {
         expiryDate: Date = .now,
         sertialNumber: String = .mockSerialNumber
     ) -> E2eIdentityCertificate {
-        return .init(
+        .init(
             clientId: "sdjksksd",
             certificateDetails: certificateDetails,
             mlsThumbprint: .mockMlsThumbprint,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
         label.numberOfLines = 0
         [container, label].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-          container.topAnchor.constraint(equalTo: contentView.topAnchor),
-          container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-          container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-          label.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
-          label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
-          label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-          label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
+            container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            container.topAnchor.constraint(equalTo: contentView.topAnchor),
+            container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+            label.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
+            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
         ])
     }
 

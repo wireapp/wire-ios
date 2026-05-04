@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,11 @@ extension NSMutableString {
     /// - Parameters:
     ///   - range: the range to resolve
     ///   - configuration: a EmoticonSubstitutionConfiguration object for injection
-    func resolveEmoticonShortcuts(in range: NSRange,
-                                  configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration.sharedInstance) {
+    func resolveEmoticonShortcuts(
+        in range: NSRange,
+        configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration
+            .sharedInstance
+    ) {
         let shortcuts = configuration.shortcuts
 
         var mutableRange = range
@@ -34,15 +37,24 @@ extension NSMutableString {
         for shortcut in shortcuts {
             guard let emoticon = configuration.substitutionRules[shortcut] else { continue }
 
-            let howManyTimesReplaced = replaceOccurrences(of: shortcut,
-                                                          with: emoticon,
-                                                          options: .literal,
-                                                          range: mutableRange)
+            let howManyTimesReplaced = replaceOccurrences(
+                of: shortcut,
+                with: emoticon,
+                options: .literal,
+                range: mutableRange
+            )
 
             if howManyTimesReplaced > 0 {
-                let length = max(mutableRange.length - ((shortcut as NSString).length - (emoticon as NSString).length) * howManyTimesReplaced, 0)
-                mutableRange = NSRange(location: mutableRange.location,
-                                       length: length)
+                let length = max(
+                    mutableRange
+                        .length - ((shortcut as NSString).length - (emoticon as NSString).length) *
+                        howManyTimesReplaced,
+                    0
+                )
+                mutableRange = NSRange(
+                    location: mutableRange.location,
+                    length: length
+                )
             }
         }
     }

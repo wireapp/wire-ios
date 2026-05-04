@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
 // sourcery: AutoMockable
@@ -29,17 +30,19 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
     func showMyDevice() {
         guard let selfUserClient = userSession.selfUserClient else { return }
 
-        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
-                                                                userSession: userSession,
-                                                                fromConversation: true)
+        let selfClientController = SettingsClientViewController(
+            userClient: selfUserClient,
+            userSession: userSession,
+            fromConversation: true
+        )
         let navigationControllerWrapper = selfClientController.wrapInNavigationController()
-        navigationControllerWrapper.presentTopmost()
+        navigationControllerWrapper.presentOverAll()
     }
 
     func howToDoThat() {
         guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        URL.wr_fingerprintHowToVerify.openInApp(above: topMostViewController)
+        WireURLs.shared.howToVerifyFingerprintArticle.open(from: topMostViewController)
     }
 }

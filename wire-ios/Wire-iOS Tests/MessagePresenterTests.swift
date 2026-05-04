@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,31 @@
 
 import AVKit
 import PassKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MessagePresenterTests: XCTestCase {
 
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
-    var originalRootViewConttoller: UIViewController!
+    var originalRootViewController: UIViewController!
     var userSession: UserSessionMock!
+
+    private var rootViewController: UIViewController! {
+        get { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController }
+        set { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController = newValue }
+    }
 
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
         mediaPlaybackManager = MediaPlaybackManager(name: nil, userSession: userSession)
-        sut = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        sut = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         UIView.setAnimationsEnabled(false)
 
-        if originalRootViewConttoller == nil {
-            originalRootViewConttoller = UIApplication.shared.firstKeyWindow?.rootViewController
+        if originalRootViewController == nil {
+            originalRootViewController = rootViewController
         }
     }
 
@@ -46,10 +52,11 @@ final class MessagePresenterTests: XCTestCase {
         sut = nil
         super.tearDown()
         UIView.setAnimationsEnabled(true)
-        UIApplication.shared.firstKeyWindow?.rootViewController = originalRootViewConttoller
+        rootViewController = originalRootViewController
     }
 
     // MARK: - Video
+
     func testThatAVPlayerViewControllerIsPresentedWhenOpeningAVideoFile() {
         // GIVEN
         let message = MockMessageFactory.videoMessage()
@@ -57,7 +64,7 @@ final class MessagePresenterTests: XCTestCase {
         message.backingFileMessageData?.fileURL = fileURL
 
         let targetViewController = UIViewController()
-        UIApplication.shared.firstKeyWindow?.rootViewController = targetViewController
+        rootViewController = targetViewController
         sut.targetViewController = targetViewController
         _ = targetViewController.view
 

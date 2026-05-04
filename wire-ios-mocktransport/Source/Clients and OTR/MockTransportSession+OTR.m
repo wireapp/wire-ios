@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #import "MockTransportSession+OTR.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (OTR)
@@ -27,7 +28,7 @@
     NSString *senderClientId = payload[@"sender"];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     request.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", senderClientId];
-    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert:request].firstObject;
+    MockUserClient *client = [self.managedObjectContext executeFetchRequestOrAssert_mt:request].firstObject;
     return client;
 }
 

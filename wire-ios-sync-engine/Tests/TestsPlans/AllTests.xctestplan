@@ -9,6 +9,7 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "commandLineArgumentEntries" : [
       {
         "argument" : "-XCTestObserverClass InfiniteLoopAfterRunningTests",
@@ -32,6 +33,10 @@
         "enabled" : false,
         "key" : "ZMLOG_TAGS",
         "value" : "MockTransportRequests"
+      },
+      {
+        "key" : "CI",
+        "value" : "${CI}"
       }
     ],
     "targetForVariableExpansion" : {
@@ -46,26 +51,13 @@
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",
-        "ZMMissingUpdateEventsTranscoderTests"
+        "ZMMissingUpdateEventsTranscoderTests",
+        "ZMUserSessionTests\/testItSlowSyncsAfterRegisteringMLSClient()"
       ],
       "target" : {
         "containerPath" : "container:WireSyncEngine.xcodeproj",
         "identifier" : "3E1860C2191A649D000FE027",
         "name" : "UnitTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "AvailabilityTests",
-        "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
-        "SessionManagerTests\/testThatItMarksConversationsAsRead()",
-        "UserRichProfileIntegrationTests\/testThatItHandlesErrorWhenUpdatingRichInfo()",
-        "UserTests"
-      ],
-      "target" : {
-        "containerPath" : "container:WireSyncEngine.xcodeproj",
-        "identifier" : "169BA1D125ECDBA300374343",
-        "name" : "IntegrationTests"
       }
     }
   ],

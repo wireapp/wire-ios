@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol ConversationServiceInterface {
@@ -26,7 +27,7 @@ public protocol ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -73,11 +74,15 @@ public final class ConversationService: ConversationServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext,
-                participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? = nil) {
+    public init(
+        context: NSManagedObjectContext,
+        participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? =
+            nil,
+        localDomain: String?
+    ) {
         self.context = context
         self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
-            ConversationParticipantsService(context: syncContext)
+            ConversationParticipantsService(context: syncContext, localDomain: localDomain)
         }
     }
 
@@ -87,7 +92,7 @@ public final class ConversationService: ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -95,7 +100,7 @@ public final class ConversationService: ConversationServiceInterface {
         createGroupFlow.start()
         let flowCompletion = { [weak self] (result: Swift.Result<ZMConversation, ConversationCreationFailure>) in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 self?.createGroupFlow.fail(error)
             case .success:
                 self?.createGroupFlow.succeed()
@@ -109,7 +114,7 @@ public final class ConversationService: ConversationServiceInterface {
                 name: name,
                 users: users,
                 allowGuests: allowGuests,
-                allowServices: allowServices,
+                allowApps: allowApps,
                 enableReceipts: enableReceipts,
                 messageProtocol: messageProtocol,
                 completion: flowCompletion
@@ -136,17 +141,17 @@ public final class ConversationService: ConversationServiceInterface {
             accessMode: ConversationAccessMode.value(forAllowGuests: true),
             accessRoles: ConversationAccessRoleV2.from(
                 allowGuests: true,
-                allowServices: true
+                allowApps: true
             ),
             enableReceipts: false,
             messageProtocol: .proteus
         ) { result in
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 user.oneOnOneConversation = conversation
                 completion(.success(conversation))
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -157,7 +162,7 @@ public final class ConversationService: ConversationServiceInterface {
         name: String?,
         users: Set<ZMUser>,
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -174,7 +179,7 @@ public final class ConversationService: ConversationServiceInterface {
             accessMode: ConversationAccessMode.value(forAllowGuests: allowGuests),
             accessRoles: ConversationAccessRoleV2.from(
                 allowGuests: allowGuests,
-                allowServices: allowServices
+                allowApps: allowApps
             ),
             enableReceipts: enableReceipts,
             messageProtocol: messageProtocol,
@@ -208,50 +213,57 @@ public final class ConversationService: ConversationServiceInterface {
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
 
-            func createGroup(
-                withUsers users: Set<ZMUser>,
-                completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
-            ) {
-                internalCreateGroupConversation(
-                    teamID: teamID,
-                    name: name,
-                    users: users,
-                    accessMode: accessMode,
-                    accessRoles: accessRoles,
-                    enableReceipts: enableReceipts,
-                    messageProtocol: messageProtocol,
-                    completion: completion
-                )
-            }
+        func createGroup(
+            withUsers users: Set<ZMUser>,
+            completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
+        ) {
+            internalCreateGroupConversation(
+                teamID: teamID,
+                name: name,
+                users: users,
+                accessMode: accessMode,
+                accessRoles: accessRoles,
+                enableReceipts: enableReceipts,
+                messageProtocol: messageProtocol,
+                completion: completion
+            )
+        }
 
-            createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
-            createGroup(withUsers: users) { result in
-                switch result {
-                case .failure(.networkError(.unreachableDomains(let domains))):
-                    let unreachableUsers = users.belongingTo(domains: domains)
-                    let reachableUsers = Set(users).subtracting(unreachableUsers)
+        createGroupFlow
+            .checkpoint(
+                description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))"
+            )
+        createGroup(withUsers: users) { result in
+            switch result {
+            case let .failure(.networkError(.unreachableDomains(domains))):
+                let unreachableUsers = users.belongingTo(domains: domains)
+                let reachableUsers = Set(users).subtracting(unreachableUsers)
 
-                    self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
-                    createGroup(withUsers: reachableUsers) { retryResult in
+                self.createGroupFlow
+                    .checkpoint(
+                        description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))"
+                    )
+                createGroup(withUsers: reachableUsers) { retryResult in
 
-                        if case .success(let conversation) = retryResult {
-                            conversation.appendFailedToAddUsersSystemMessage(
-                                users: unreachableUsers,
-                                sender: .selfUser(in: self.context),
-                                at: Date()
-                            )
-                        }
-
-                        completion(retryResult)
+                    if case let .success(conversation) = retryResult {
+                        conversation.appendFailedToAddUsersSystemMessage(
+                            users: unreachableUsers,
+                            sender: .selfUser(in: self.context),
+                            at: Date()
+                        )
                     }
 
-                default:
-                    completion(result)
+                    completion(retryResult)
                 }
+
+            default:
+                completion(result)
             }
         }
+    }
 
     private func internalCreateGroupConversation(
         teamID: UUID?,
@@ -299,12 +311,13 @@ public final class ConversationService: ConversationServiceInterface {
 
             self.context.perform {
                 switch result {
-                case .success(let objectID):
+                case let .success(objectID):
                     Task {
                         do {
                             try await self.handleMLSConversationIfNeeded(
                                 for: objectID,
-                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID)))
+                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID))
+                            )
                         } catch {
                             if error.isFailedToAddSomeUsersError {
                                 // we ignore the error a system message is inserted
@@ -331,15 +344,17 @@ public final class ConversationService: ConversationServiceInterface {
                     self.context.enqueueDelayedSave()
                     completion(.failure(.networkError(.notConnected)))
 
-                case .failure(let failure):
+                case let .failure(failure):
                     completion(.failure(.networkError(failure)))
                 }
             }
         }
     }
 
-    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID,
-                                               participantObjectIDs: Set<NSManagedObjectID>) async throws {
+    private func handleMLSConversationIfNeeded(
+        for conversationObjectId: NSManagedObjectID,
+        participantObjectIDs: Set<NSManagedObjectID>
+    ) async throws {
         guard let syncContext = await context.perform({ self.context.zm_sync }) else {
             assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
             return
@@ -371,11 +386,14 @@ public final class ConversationService: ConversationServiceInterface {
 
         guard let mlsGroupID, let mlsService else { return }
 
-        self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
-        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
+        createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
+        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, removalKeys: nil)
 
         await syncContext.perform {
-            self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")
+            self.createGroupFlow
+                .checkpoint(
+                    description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))"
+                )
 
             // Self user is creator, so we don't need to process a welcome message
             syncConversation.mlsStatus = .ready
@@ -384,7 +402,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         let participantsService = participantsServiceBuilder(syncContext)
-        self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
+        createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
         try await participantsService.addParticipants(syncParticipants, to: syncConversation)
     }
 

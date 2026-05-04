@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension ZMTransportResponse: SafeForLoggingStringConvertible {
     @objc public var safeForLoggingDescription: String {
         let errorDescription = transportSessionError?.localizedDescription
         let status = "status: \(httpStatus)"
-        let dataSize = "size: \(self.rawData?.count ?? 0)"
+        let dataSize = "size: \(rawData?.count ?? 0)"
         return "\(errorDescription ?? status) \(dataSize)"
     }
 }

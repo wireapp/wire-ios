@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import UIKit
 import WireSyncEngine
 
@@ -25,7 +26,8 @@ enum DebugActions {
     static func alert(
         _ message: String,
         title: String = "",
-        textToCopy: String? = nil) {
+        textToCopy: String? = nil
+    ) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if let textToCopy {
@@ -38,8 +40,7 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBadgeCount(_ type: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func findUnreadConversationContributingToBadgeCount(userSession: ZMUserSession) {
         let predicate = ZMConversation.predicateForConversationConsideredUnread()
 
         let uiMOC = userSession.managedObjectContext
@@ -48,10 +49,11 @@ enum DebugActions {
 
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
 
-            let message = ["Found an unread conversation:",
-                           "\(String(describing: convo.displayName))",
-                        "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
-                ].joined(separator: "\n")
+            let message = [
+                "Found an unread conversation:",
+                "\(String(describing: convo.displayName))",
+                "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
+            ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
         } else {
@@ -60,10 +62,8 @@ enum DebugActions {
     }
 
     /// Shows the user ID of the self user
-    static func showUserId(_ type: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.providedSelfUser as? ZMUser)
-        else { return }
+    static func showUserId(userSession: ZMUserSession) {
+        guard let selfUser = (userSession.providedSelfUser as? ZMUser) else { return }
 
         alert(
             selfUser.remoteIdentifier.uuidString,
@@ -73,16 +73,16 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBackArrowDot(_ type: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func findUnreadConversationContributingToBackArrowDot(userSession: ZMUserSession) {
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
         if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
-            let message = ["Found an unread conversation:",
-                           "\(String(describing: convo.displayName))",
+            let message = [
+                "Found an unread conversation:",
+                "\(String(describing: convo.displayName))",
                 "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
-                ].joined(separator: "\n")
+            ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
 
@@ -91,8 +91,8 @@ enum DebugActions {
         }
     }
 
-    static func deleteInvalidConversations(_ type: SettingsCellDescriptorType) {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else { return }
+    static func deleteInvalidConversations(userSession: ZMUserSession) {
+        let context = userSession.managedObjectContext
 
         let predicate = NSPredicate(format: "domain = ''")
         try? context.batchDeleteEntities(named: ZMConversation.entityName(), matching: predicate)
@@ -100,18 +100,15 @@ enum DebugActions {
     }
 
     /// Sends a message that will fail to decode on every other device, on the first conversation of the list
-    static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
+    static func sendBrokenMessage(userSession: ZMUserSession) {
         guard
-            let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
-            else {
-                return
+        else {
+            return
         }
 
         var external = External()
-        if let otr = "broken_key".data(using: .utf8) {
-             external.otrKey = otr
-        }
+        external.otrKey = Data("broken_key".utf8)
         let genericMessage = GenericMessage(content: external)
 
         userSession.enqueue {
@@ -120,13 +117,12 @@ enum DebugActions {
     }
 
     /// Sends a number of messages to the top conversation in the list, in an asynchronous fashion
-    static func spamWithMessages(amount: Int) {
+    static func spamWithMessages(amount: Int, userSession: ZMUserSession) {
         guard
             amount > 0,
-            let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
-            else {
-                return
+        else {
+            return
         }
         let nonce = UUID()
 
@@ -144,31 +140,28 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
-    static func triggerResyncResources(_ type: SettingsCellDescriptorType) {
-        ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.requestResyncResources()
+    static func triggerResyncResources(userSession: ZMUserSession) {
+        Task {
+            await userSession.triggerResourcesSync()
         }
     }
 
-    static func triggerSlowSync(_ type: SettingsCellDescriptorType) {
-        ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.syncStatus.forceSlowSync()
+    static func triggerSlowSync(userSession: ZMUserSession) {
+        Task {
+            await userSession.triggerInitialSync()
         }
     }
 
-    static func showAnalyticsIdentifier(_ type: SettingsCellDescriptorType) {
-        guard
-            let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-            let userSession = ZMUserSession.shared()
-        else {
+    static func showTrackingID(userSession: ZMUserSession) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
 
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
+        let selfUser = ZMUser.selfUser(in: userSession.viewContext)
 
         let alert = UIAlertController(
             title: "Analytics identifier",
-            message: "\(selfUser.analyticsIdentifier ?? "nil")",
+            message: "\(selfUser.trackingID?.transportString().uppercased() ?? "nil")",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(
@@ -179,7 +172,7 @@ enum DebugActions {
         controller.present(alert, animated: true)
     }
 
-    static func showAPIVersionInfo(_ type: SettingsCellDescriptorType) {
+    static func showAPIVersionInfo(_ type: any SettingsCellDescriptorType) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
@@ -204,15 +197,17 @@ enum DebugActions {
         controller.present(alert, animated: true)
     }
 
-    static func reloadUserInterface(_ type: SettingsCellDescriptorType) {
+    static func reloadUserInterface(_ type: any SettingsCellDescriptorType) {
         guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
             return
         }
 
-        appRootRouter.reload()
+        Task { @MainActor in
+            appRootRouter.reload()
+        }
     }
 
-    static func resetCallQualitySurveyMuteFilter(_ type: SettingsCellDescriptorType) {
+    static func resetCallQualitySurveyMuteFilter(_ type: any SettingsCellDescriptorType) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
 
         CallQualityController.resetSurveyMuteFilter()
@@ -231,7 +226,7 @@ enum DebugActions {
     }
 
     /// Accepts a debug command
-    static func enterDebugCommand(_ type: SettingsCellDescriptorType) {
+    static func enterDebugCommand(userSession: ZMUserSession) {
         askString(title: "Debug command") { string in
             guard let command = DebugCommand(string: string) else {
                 alert("Command not recognized")
@@ -240,16 +235,22 @@ enum DebugActions {
 
             switch command {
             case .repairInvalidAccessRoles:
-                DebugActions.updateInvalidAccessRoles()
-            }
+                DebugActions.updateInvalidAccessRoles(userSession: userSession)
 
+            case .resyncResources:
+                DebugActions.triggerResyncResources(userSession: userSession)
+
+            case .repairFaultyMLSRemovalKeys:
+                DebugActions.repairFaultyMLSRemovalKeys(userSession: userSession)
+            }
         }
     }
 
-    static func updateInvalidAccessRoles() {
-        guard let userSession = ZMUserSession.shared() else { return }
-        let predicate = NSPredicate(format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
-                                    [ConversationAccessRoleV2.teamMember.rawValue])
+    static func updateInvalidAccessRoles(userSession: ZMUserSession) {
+        let predicate = NSPredicate(
+            format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
+            [ConversationAccessRoleV2.teamMember.rawValue]
+        )
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = predicate
 
@@ -257,30 +258,61 @@ enum DebugActions {
         syncContext.performGroupedBlock {
             let conversations = try? syncContext.fetch(request)
             conversations?.forEach {
-                let action = UpdateAccessRolesAction(conversation: $0,
-                                                     accessMode: ConversationAccessMode.value(forAllowGuests: true),
-                                                     accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
+                let action = UpdateAccessRolesAction(
+                    conversation: $0,
+                    accessMode: ConversationAccessMode.value(forAllowGuests: true),
+                    accessRoles: ConversationAccessRoleV2
+                        .fromLegacyAccessRole(.nonActivated)
+                )
                 action.send(in: userSession.notificationContext)
             }
         }
     }
 
-    static func appendMessagesToDatabase(count: Int) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func repairFaultyMLSRemovalKeys(userSession: UserSession) {
+        guard let useCase = userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+            alert("Error: Repair use case not available")
+            return
+        }
+
+        Task {
+            do {
+                let result = try await useCase.invoke()
+                await MainActor.run {
+                    let message = """
+                    Found: \(result.faultyConversationsFound) faulty conversation(s)
+                    Repaired: \(result.conversationsRepaired) conversation(s)
+                    """
+                    alert(message, title: "Faulty MLS Removal Keys Repair")
+                }
+            } catch {
+                await MainActor.run {
+                    alert("Error: \(error.localizedDescription)", title: "Repair Failed")
+                }
+            }
+        }
+    }
+
+    static func appendMessagesToDatabase(count: Int, userSession: ZMUserSession) {
         let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
         let syncContext = userSession.syncManagedObjectContext
         syncContext.performGroupedBlock {
             let syncConversation = try! syncContext.existingObject(with: conversationId) as! ZMConversation
-            let messages: [ZMClientMessage] = (0...count).map { i in
+            let messages: [ZMClientMessage] = (0 ... count).map { i in
                 let nonce = UUID()
-                let genericMessage = GenericMessage(content: Text(content: "Debugging message \(i): Append many messages to the top conversation; Append many messages to the top conversation;"), nonce: nonce)
+                let genericMessage = GenericMessage(
+                    content: Text(
+                        content: "Debugging message \(i): Append many messages to the top conversation; Append many messages to the top conversation;"
+                    ),
+                    nonce: nonce
+                )
                 let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: syncContext)
                 try! clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = ZMUser.selfUser(in: syncContext)
 
-                clientMessage.expire()
+                clientMessage.expire(withReason: .other)
                 clientMessage.linkPreviewState = .done
 
                 return clientMessage
@@ -290,14 +322,14 @@ enum DebugActions {
         }
     }
 
-    static func recalculateBadgeCount(_ type: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared() else { return }
+    static func recalculateBadgeCount(userSession: ZMUserSession) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
 
         var conversations: [ZMConversation]?
         userSession.syncManagedObjectContext.performGroupedBlock {
-            conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
-            conversations?.forEach({ _ = $0.estimatedUnreadCount })
+            conversations = try? userSession.syncManagedObjectContext
+                .fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+            conversations?.forEach { _ = $0.estimatedUnreadCount }
         }
         userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
         userSession.syncManagedObjectContext.performGroupedAndWait {
@@ -329,7 +361,8 @@ enum DebugActions {
     }
 
     static func askString(title: String, _ callback: @escaping (String) -> Void) {
-        guard let controllerToPresentOver = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+        guard let controllerToPresentOver = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        else { return }
 
         let controller = UIAlertController(
             title: title,
@@ -343,12 +376,12 @@ enum DebugActions {
 
         controller.addTextField()
 
-        controller.addAction(.cancel { })
+        controller.addAction(.cancel {})
         controller.addAction(okAction)
         controllerToPresentOver.present(controller, animated: true, completion: nil)
     }
 
-    static func appendMessagesInBatches(count: Int) {
+    static func appendMessagesInBatches(count: Int, userSession: ZMUserSession) {
         var left = count
         let step = 10_000
 
@@ -357,23 +390,21 @@ enum DebugActions {
 
             left -= toAppendInThisStep
 
-            appendMessages(count: toAppendInThisStep)
-        }
-        while(left > 0)
+            appendMessages(count: toAppendInThisStep, userSession: userSession)
+        } while left > 0
     }
 
-    static func appendMessages(count: Int) {
-        let batchSize = 5_000
+    static func appendMessages(count: Int, userSession: ZMUserSession) {
+        let batchSize = 5000
 
         var currentCount = count
 
         repeat {
             let thisBatchCount = currentCount > batchSize ? batchSize : currentCount
 
-            appendMessagesToDatabase(count: thisBatchCount)
+            appendMessagesToDatabase(count: thisBatchCount, userSession: userSession)
 
             currentCount -= thisBatchCount
-        }
-        while (currentCount > 0)
+        } while currentCount > 0
     }
 }

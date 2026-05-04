@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,15 @@
 import Foundation
 
 @objc
-public protocol NotificationContext: NSObjectProtocol { }
+public protocol NotificationContext: NSObjectProtocol {}
 
 extension NSPersistentStoreCoordinator: NotificationContext {}
 
 public extension NSManagedObjectContext {
 
     /// Prefer `UserSession.notificationContext` over this property.
-    @objc
-    var notificationContext: NotificationContext {
-        return persistentStoreCoordinator!
+    @objc var notificationContext: NotificationContext {
+        persistentStoreCoordinator!
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ struct SessionManagerBuilder {
 
     var maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts
     var jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector()
-    var dispatchGroup: ZMSDispatchGroup = ZMSDispatchGroup(label: "SessionManagerBuilder.internal")
+    var dispatchGroup: ZMSDispatchGroup = .init(label: "SessionManagerBuilder.internal")
 
     func build() -> SessionManager {
         let application = ApplicationMock()
@@ -67,7 +67,8 @@ struct SessionManagerBuilder {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: .temporary(),
-            deleteUserLogs: nil
+            deleteUserLogs: nil,
+            analyticsServiceConfiguration: nil
         )
     }
 }

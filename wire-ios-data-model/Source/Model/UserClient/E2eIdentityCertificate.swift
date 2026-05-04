@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,14 @@
 
 import Foundation
 import WireCoreCrypto
+import WireFoundation
 
 public enum E2EIdentityCertificateStatus: CaseIterable {
-    case notActivated, revoked, expired, invalid, valid
+    case notActivated
+    case revoked
+    case expired
+    case invalid
+    case valid
 }
 
 public enum E2eIdentityCertificateConstants {
@@ -28,10 +33,11 @@ public enum E2eIdentityCertificateConstants {
     public static let serverRetainedDays: TimeInterval = 28 * TimeInterval.oneDay
 
     // Randomising time so that not all clients update certificate at the same time
-    public static let randomInterval: TimeInterval = .random(in: 0..<TimeInterval.oneDay)
+    public static let randomInterval: TimeInterval = .random(in: 0 ..< TimeInterval.oneDay)
 }
 
-@objc public class E2eIdentityCertificate: NSObject {
+@objc
+public class E2eIdentityCertificate: NSObject {
 
     public var clientId: String
     public var details: String
@@ -52,7 +58,7 @@ public enum E2eIdentityCertificateConstants {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: CurrentDateProviding = SystemDateProvider(),
+        comparedDate: CurrentDateProviding = .system,
         serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
         randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {
@@ -80,7 +86,7 @@ public enum E2eIdentityCertificateConstants {
 public extension E2eIdentityCertificate {
 
     private var isExpired: Bool {
-        return expiryDate <= comparedDate.now
+        expiryDate <= comparedDate.now
     }
 
     private var isValid: Bool {
@@ -88,7 +94,7 @@ public extension E2eIdentityCertificate {
     }
 
     private var isActivated: Bool {
-        return notValidBefore <= comparedDate.now
+        notValidBefore <= comparedDate.now
     }
 
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
@@ -96,10 +102,12 @@ public extension E2eIdentityCertificate {
         return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
     }
 
-    /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it to `notValidBefore` date
+    /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it
+    /// to `notValidBefore` date
     /// Standard deductions are : Server storage time(HT), Grace period set by team admin(GP),  Random time in a day(UT)
     /// Renewal nudging date = VP - (HT + GP + UT)
-    /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the renewal nudging date
+    /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the
+    /// renewal nudging date
     /// This is done so as to be in sync with Android codebase
     func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
         let standardDeductionsFromExpiry = serverStoragePeriod + gracePeriod + randomPeriod

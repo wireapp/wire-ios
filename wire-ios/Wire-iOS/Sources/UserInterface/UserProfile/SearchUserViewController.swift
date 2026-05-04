@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,20 +19,25 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
+import WireMessagingDomain
+import WireReusableUIComponents
 import WireSyncEngine
 
-final class SearchUserViewController: UIViewController, SpinnerCapable {
+final class SearchUserViewController: UIViewController {
 
     // MARK: - Properties
 
-    var dismissSpinner: SpinnerCompletion?
-
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
-    private let userId: UUID
+    private let qualifiedID: QualifiedID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
@@ -40,20 +45,32 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     // MARK: - Init
 
     init(
-        userId: UUID,
+        qualifiedID: QualifiedID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        self.userId = userId
+        self.qualifiedID = qualifiedID
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared() {
-            searchDirectory = SearchDirectory(userSession: session)
+        if let session = userSession as? ZMUserSession,
+           let searchAPI = session.clientSessionComponent?.searchAPI,
+           let teamsAPI = session.clientSessionComponent?.teamsAPI,
+           let usersAPI = session.clientSessionComponent?.usersAPI {
+            self.searchDirectory = SearchDirectory(
+                userSession: session,
+                searchAPI: searchAPI,
+                teamsAPI: teamsAPI,
+                usersAPI: usersAPI
+            )
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -73,40 +90,49 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let cancelItem = UIBarButtonItem(icon: .cross, target: self, action: #selector(cancelButtonTapped))
-        cancelItem.accessibilityIdentifier = "CancelButton"
-        cancelItem.accessibilityLabel = L10n.Localizable.General.cancel
-        navigationItem.rightBarButtonItem = cancelItem
+        activityIndicator.start()
+        startLookup()
+    }
 
-        isLoadingViewVisible = true
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.pendingSearchTask?.cancel()
+            self?.pendingSearchTask = nil
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.cancel)
 
-        if let task = searchDirectory?.lookup(userId: userId) {
-            task.addResultHandler({ [weak self] in
-                self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            })
-            task.start()
-
-            pendingSearchTask = task
-        }
-
+        navigationItem.rightBarButtonItem = closeItem
     }
 
     // MARK: - Methods
 
-    private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
-        guard !resultHandled, isCompleted else { return }
+    private func startLookup() {
+        guard let searchDirectory else { return }
+
+        Task {
+            let task = searchDirectory.createLookupTask(with: qualifiedID)
+            pendingSearchTask = task
+            let searchResult = await task.start()
+            pendingSearchTask = nil
+            activityIndicator.stop()
+            handleSearchResult(searchResult: searchResult)
+        }
+    }
+
+    private func handleSearchResult(searchResult: SearchResult) {
+        guard !resultHandled else { return }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
         }
 
-        let profileUser: UserType?
-        if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            profileUser = searchUser
+        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
+            searchUser
         } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            profileUser = memberUser
+            memberUser
         } else {
-            profileUser = nil
+            nil
         }
 
         if let profileUser {
@@ -115,13 +141,15 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
                 viewer: selfUser,
                 context: .profileViewer,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = profileViewControllerDelegate
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
-        } else if isCompleted {
+        } else {
             let alert = UIAlertController(
                 title: L10n.Localizable.UrlAction.InvalidUser.title,
                 message: L10n.Localizable.UrlAction.InvalidUser.message,
@@ -137,14 +165,5 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
             present(alert, animated: true)
         }
-    }
-
-    // MARK: - Actions
-
-    @objc private func cancelButtonTapped(sender: AnyObject?) {
-        pendingSearchTask?.cancel()
-        pendingSearchTask = nil
-
-        dismiss(animated: true)
     }
 }

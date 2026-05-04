@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,13 +30,15 @@ final class SetFullNameStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        mainView = TextFieldDescription(placeholder: TeamFullName.Textfield.placeholder.capitalized,
-                                        actionDescription: L10n.Localizable.General.next,
-                                        kind: .name(isTeam: false))
-        headline = TeamFullName.headline
-        subtext = nil
-        secondaryView = nil
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.mainView = TextFieldDescription(
+            placeholder: TeamFullName.Textfield.placeholder.capitalized,
+            actionDescription: L10n.Localizable.General.next,
+            kind: .name(isTeam: false)
+        )
+        self.headline = TeamFullName.headline
+        self.subtext = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@ import Foundation
 
 // MARK: Protocols
 
-/**
- * A network session task that downloads data.
- */
+/// A network session task that downloads data.
 
 protocol DataTask: AnyObject {
 
@@ -40,9 +38,7 @@ protocol DataTask: AnyObject {
 
 }
 
-/**
- * An object that schedules and manages data tasks.
- */
+/// An object that schedules and manages data tasks.
 
 protocol DataTaskSession: AnyObject {
 
@@ -58,7 +54,7 @@ extension URLSessionDataTask: DataTask {}
 extension URLSession: DataTaskSession {
 
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
-        return dataTask(with: url, completionHandler: completionHandler)
+        dataTask(with: url, completionHandler: completionHandler)
     }
 
 }

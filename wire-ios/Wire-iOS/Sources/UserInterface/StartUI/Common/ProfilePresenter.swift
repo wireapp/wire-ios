@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,39 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
-final class ProfilePresenter: NSObject, ViewControllerDismisser {
+final class ProfilePresenter: NSObject {
 
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: ConversationCreationRepositoryProtocol
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    init(mainCoordinator: MainCoordinating) {
+    init(
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    ) {
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         super.init()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(deviceOrientationChanged),
-                                               name: UIDevice.orientationDidChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deviceOrientationChanged),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -56,7 +68,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         else { return }
 
         presentedViewController.popoverPresentationController?.sourceRect = presentedFrame
-        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
+        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0)
+            .size
     }
 
     func presentProfileViewController(
@@ -83,11 +96,11 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             viewer: viewer,
             context: .search,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.delegate = self
-        profileViewController.viewControllerDismisser = self
-
         let navigationController = profileViewController.wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
 
@@ -97,11 +110,15 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)? = nil) {
         viewController.dismiss(animated: true) {
             completion?()
-            self.onDismiss?()
-            self.controllerToPresentOn = nil
-            self.viewToPresentOn = nil
-            self.presentedFrame = .zero
-            self.onDismiss = nil
+            self.cleanup()
         }
+    }
+
+    private func cleanup() {
+        onDismiss?()
+        controllerToPresentOn = nil
+        viewToPresentOn = nil
+        presentedFrame = .zero
+        onDismiss = nil
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,9 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     //
     var selfUserProvider: SelfUserProvider!
 
-    override open func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotBackgroundColor = .white
         setupTestObjects()
 
@@ -46,7 +47,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUserProvider = SelfProvider(providedSelfUser: selfUser)
     }
 
-    override open func tearDown() {
+    override func tearDown() {
         selfUser = nil
         otherUser = nil
         otherUserConversation = nil
@@ -62,11 +63,11 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     // MARK: – Setup
 
     private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()
-
+        team!.name = "Wire"
         teamMember = Member.insertNewObject(in: uiMOC)
         teamMember!.user = selfUser
         teamMember!.team = team
@@ -79,7 +80,6 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUser.name = "selfUser"
         selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
 
         ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
         if selfUserInTeam {
@@ -124,6 +124,12 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         return user
     }
 
+    func createApp(name: String) -> ZMUser {
+        let user = createUser(name: name)
+        user.type = .app
+        return user
+    }
+
     func nonTeamTest(_ block: () -> Void) {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = false
@@ -143,23 +149,23 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
     }
 
-// MARK: - mock conversation
+    // MARK: - mock conversation
 
     func createGroupConversation() -> ZMConversation {
-        return ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createGroupConversationOnlyAdmin() -> ZMConversation {
-        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+        ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 
-// MARK: - mock service user
+    // MARK: - mock service user
 
-    func createServiceUser() -> ZMUser {
+    func createBot() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
@@ -168,7 +174,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }

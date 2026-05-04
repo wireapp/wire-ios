@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -27,7 +27,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: UserSearchResultsViewController!
-    private var serviceUser: MockServiceUserType!
+    private var serviceUser: MockUserType!
     private var selfUser: MockUserType!
     private var otherUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
@@ -35,41 +35,47 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     // MARK: setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
-        // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
+        // self user should be a team member and other participants should be guests, in order to show guest icon in the
+        // user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         otherUser = MockUserType.createDefaultOtherUser()
 
-        serviceUser = MockServiceUserType.createServiceUser(name: "ServiceUser")
+        serviceUser = MockUserType.createBot(name: "ServiceUser")
 
         XCTAssert(selfUser.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
     }
 
     // MARK: - tearDown
+
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
         selfUser = nil
         otherUser = nil
         serviceUser = nil
-        super.tearDown()
     }
 
     // MARK: - Helper methods
+
     func createSUT() {
         sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
-    func mockSearchResultUsers(file: StaticString = #file, line: UInt = #line) -> [UserType] {
+    func mockSearchResultUsers(file: StaticString = #filePath, line: UInt = #line) -> [UserType] {
         var allUsers: [UserType] = []
 
         for name in MockUserType.usernames {
             let user = MockUserType.createUser(name: name)
             user.zmAccentColor = .amber
-            XCTAssertFalse(user.isTeamMember, "user should not be a team member to generate snapshots with guest icon", file: file, line: line)
+            XCTAssertFalse(
+                user.isTeamMember,
+                "user should not be a team member to generate snapshots with guest icon",
+                file: file,
+                line: line
+            )
             allUsers.append(user)
         }
 
@@ -95,7 +101,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -105,7 +111,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -120,7 +126,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -133,7 +139,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
 
         let numberOfUsers = MockUserType.usernames.count
 
-        for _ in 0..<numberOfUsers {
+        for _ in 0 ..< numberOfUsers {
             sut.selectPreviousUser()
         }
 
@@ -148,17 +154,17 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         let numberOfUsers = MockUserType.usernames.count
 
         // go to top most
-        for _ in 0..<numberOfUsers + 5 {
+        for _ in 0 ..< numberOfUsers + 5 {
             sut.selectPreviousUser()
         }
 
         // go to bottom most
-        for _ in 0..<numberOfUsers + 5 {
+        for _ in 0 ..< numberOfUsers + 5 {
             sut.selectNextUser()
         }
 
         // go to middle
-        for _ in 0..<numberOfUsers / 2 {
+        for _ in 0 ..< numberOfUsers / 2 {
             sut.selectPreviousUser()
         }
 
@@ -173,7 +179,8 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         NotificationCenter.default.post(name: UIResponder.keyboardWillShowNotification, object: nil, userInfo: [
             UIResponder.keyboardFrameBeginUserInfoKey: CGRect(x: 0, y: 0, width: 0, height: 0),
             UIResponder.keyboardFrameEndUserInfoKey: CGRect(x: 0, y: 0, width: 0, height: 100),
-            UIResponder.keyboardAnimationDurationUserInfoKey: TimeInterval(0.0)])
+            UIResponder.keyboardAnimationDurationUserInfoKey: TimeInterval(0.0)
+        ])
 
         snapshotHelper.verify(matching: sut)
     }

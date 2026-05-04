@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -35,10 +35,11 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         mockUser = SwiftMockLoader.mockUsers().first
         selfClient = mockUserClient()
@@ -64,7 +65,9 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
     /// Prepare SUT for snapshot tests
     ///
     /// - Parameters:
-    /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
+    /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same
+    /// screen
+    @MainActor
     func prepareSut(numberOfClients: Int = 3) {
         sut = ClientListViewController(
             clientsList: Array(
@@ -72,15 +75,18 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
                 count: numberOfClients
             ),
             selfClient: selfClient,
+            userSession: UserSessionMock(),
             credentials: nil,
+            contextProvider: nil,
             detailedView: true,
             showTemporary: true
         )
-        sut.isLoadingViewVisible = false
+        sut.activityIndicator.stop()
     }
 
     // MARK: - Unit Tests
 
+    @MainActor
     func testThatObserverIsNonRetained() {
         prepareSut()
 
@@ -96,11 +102,13 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testForLightTheme() {
         prepareSut()
         snapshotHelper.verify(matching: sut)
     }
 
+    @MainActor
     func testForDarkTheme() {
         prepareSut()
 
@@ -109,6 +117,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
             .verify(matching: sut)
     }
 
+    @MainActor
     func testForLightThemeWrappedInNavigationController() {
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
@@ -117,6 +126,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForOneDeviceWithNoEditButton() {
         prepareSut(numberOfClients: 0)
         let navWrapperController = sut.wrapInNavigationController()
@@ -124,6 +134,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForOneDeviceWithBackButtonAndNoEditButton() {
         prepareSut(numberOfClients: 0)
         let mockRootViewController = UIViewController()
@@ -133,12 +144,13 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForEditMode() {
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
         navWrapperController.navigationBar.tintColor = UIColor.accent()
-        let editButton = sut.navigationItem.rightBarButtonItem!
-        UIApplication.shared.sendAction(editButton.action!, to: editButton.target, from: nil, for: nil)
+
+        sut.setEditingState(true)
 
         snapshotHelper.verify(matching: navWrapperController)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 import WireSyncEngine
 
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
@@ -27,8 +28,10 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
     ///
     /// - networkStatusViewController: caller of this delegate method
     /// - Parameter orientation: orientation to check
-    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain orientation.
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool
+    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain
+    /// orientation.
+    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation)
+        -> Bool
 }
 
 final class NetworkStatusViewController: UIViewController {
@@ -46,28 +49,47 @@ final class NetworkStatusViewController: UIViewController {
     private var state: NetworkStatusViewState = .online
     private var finishedViewWillAppear: Bool = false
 
-    private var device: DeviceProtocol = UIDevice.current
-    private var application: ApplicationProtocol = UIApplication.shared
+    private var device: DeviceAbstraction
+    private var application: ApplicationProtocol
 
-    /// default init method with a parameter for injecting mock device and mock application
+    let userSession: UserSession
+
+    /// Convenience init for injecting mock device and mock application in tests.
     ///
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
-    convenience init(device: DeviceProtocol = UIDevice.current, application: ApplicationProtocol = UIApplication.shared) {
-        self.init(nibName: nil, bundle: nil)
-
+    /// - Parameter userSession: The user session to observe network state from
+    convenience init(
+        device: DeviceAbstraction,
+        application: ApplicationProtocol,
+        userSession: UserSession
+    ) {
+        self.init(userSession: userSession)
         self.device = device
         self.application = application
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        self.device = .current
+        self.application = UIApplication.shared
+        super.init(nibName: nil, bundle: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateStateForIPad), name: UIDevice.orientationDidChangeNotification, object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateStateForIPad),
+            name: UIDevice.orientationDidChangeNotification,
+            object: .none
+        )
 
         view.addSubview(networkStatusView)
 
         createConstraints()
+    }
+
+    @available(*, unavailable)
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        fatalError("Use init(userSession:)")
     }
 
     private func createConstraints() {
@@ -96,8 +118,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-
-        if let userSession = ZMUserSession.shared() {
+        // The cast is not needed for compilation but is a necessary hack for tests
+        if let userSession = userSession as? ZMUserSession {
             enqueue(state: viewState(from: userSession.networkState))
             networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
                 self,
@@ -105,7 +127,10 @@ final class NetworkStatusViewController: UIViewController {
             )
         }
 
-        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnNetworkStatusBar)))
+        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(tappedOnNetworkStatusBar)
+        ))
 
         setupApplicationNotifications()
     }
@@ -116,9 +141,7 @@ final class NetworkStatusViewController: UIViewController {
         guard !finishedViewWillAppear else { return }
 
         finishedViewWillAppear = true
-        if let userSession = ZMUserSession.shared() {
-            enqueue(state: viewState(from: userSession.networkState))
-        }
+        enqueue(state: viewState(from: userSession.networkState))
     }
 
     func showOfflineAlert() {
@@ -128,21 +151,22 @@ final class NetworkStatusViewController: UIViewController {
             preferredStyle: .alert
         )
         alert.addAction(.confirm())
-        alert.presentTopmost()
+        alert.presentOverAll()
     }
 
     private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
-            return .offlineExpanded
+            .offlineExpanded
         case .online:
-            return .online
+            .online
         case .onlineSynchronizing:
-            return .onlineSynchronizing
+            .onlineSynchronizing
         }
     }
 
-    @objc func tappedOnNetworkStatusBar() {
+    @objc
+    func tappedOnNetworkStatusBar() {
         switch networkStatusView.state {
         case .offlineExpanded:
             showOfflineAlert()
@@ -158,7 +182,8 @@ final class NetworkStatusViewController: UIViewController {
         perform(#selector(applyPendingState), with: nil, afterDelay: 1)
     }
 
-    @objc func applyPendingState() {
+    @objc
+    func applyPendingState() {
         guard let state = pendingState else { return }
         update(state: state)
         pendingState = nil
@@ -188,12 +213,17 @@ extension NetworkStatusViewController {
         guard isIPadRegular(device: device) else { return true }
         guard let delegate else { return true }
 
-        let newOrientation = application.statusBarOrientation
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return true
+        }
+
+        let newOrientation = windowScene.interfaceOrientation
 
         return delegate.showInIPad(networkStatusViewController: self, with: newOrientation)
     }
 
-    @objc func updateStateForIPad() {
+    @objc
+    func updateStateForIPad() {
         guard device.userInterfaceIdiom == .pad else { return }
 
         switch traitCollection.horizontalSizeClass {
@@ -201,7 +231,8 @@ extension NetworkStatusViewController {
             if shouldShowOnIPad() {
                 networkStatusView.update(state: state, animated: false)
             } else {
-                // When size class changes and delegate view controller disabled to show networkStatusView, hide the networkStatusView
+                // When size class changes and delegate view controller disabled to show networkStatusView, hide the
+                // networkStatusView
                 networkStatusView.update(state: .online, animated: false)
             }
         case .compact, .unspecified:

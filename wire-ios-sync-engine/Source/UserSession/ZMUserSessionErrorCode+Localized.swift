@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,31 @@
 
 import Foundation
 
-extension ZMUserSessionErrorCode: LocalizedError {
+extension UserSessionErrorCode: LocalizedError {
+
     public var errorDescription: String? {
         let bundle = Bundle(for: ZMUserSession.self)
         switch self {
         case .blacklistedEmail:
-            return bundle.localizedString(forKey: "user_session.error.blacklisted-email", value: nil, table: "ZMLocalizable")
+            return bundle.localizedString(
+                forKey: "user_session.error.blacklisted-email",
+                value: nil,
+                table: "ZMLocalizable"
+            )
         case .domainBlocked:
-            return bundle.localizedString(forKey: "user_session.error.domain-blocked", value: nil, table: "ZMLocalizable")
+            return bundle.localizedString(
+                forKey: "user_session.error.domain-blocked",
+                value: nil,
+                table: "ZMLocalizable"
+            )
         case .emailIsAlreadyRegistered:
             return bundle.localizedString(forKey: "user_session.error.email-exists", value: nil, table: "ZMLocalizable")
         case .invalidEmail:
-            return bundle.localizedString(forKey: "user_session.error.invalid-email", value: nil, table: "ZMLocalizable")
+            return bundle.localizedString(
+                forKey: "user_session.error.invalid-email",
+                value: nil,
+                table: "ZMLocalizable"
+            )
         case .invalidActivationCode:
             return bundle.localizedString(forKey: "user_session.error.invalid-code", value: nil, table: "ZMLocalizable")
         case .unknownError:

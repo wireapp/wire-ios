@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,20 @@
 
 @testable import WireDataModel
 
-extension MLSConferenceInfo {
+public extension MLSConferenceInfo {
 
-    public static func random() -> Self {
+    static func random() -> Self {
         .init(
-            epoch: .random(in: (.min)...(.max)),
+            epoch: .random(in: .min ... .max),
             keyData: Data.random(byteCount: 8),
             members: [.random()]
         )
     }
 }
 
-extension MLSConferenceInfo.Member {
+public extension MLSConferenceInfo.Member {
 
-    public static func random() -> Self {
+    static func random() -> Self {
         .init(
             id: .random(),
             isInSubconversation: .random()

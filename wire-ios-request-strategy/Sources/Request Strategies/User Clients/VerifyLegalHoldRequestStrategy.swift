@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,33 @@
 
 import Foundation
 
-/// This strategy observes the `needsToVerifyLegalHold` flag on conversations and fetches an updated list of available clients
+/// This strategy observes the `needsToVerifyLegalHold` flag on conversations and fetches an updated list of available
+/// clients
 /// and verifies that the legal hold status is correct.
 
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate let requestFactory = ClientMessageRequestFactory()
+    fileprivate let requestFactory: ClientMessageRequestFactory
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return conversationSync.nextRequest(for: apiVersion)
+        conversationSync.nextRequest(for: apiVersion)
     }
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
+    ) {
+        self.requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        configuration = [.allowsRequestsWhileOnline,
-                         .allowsRequestsDuringQuickSync,
-                         .allowsRequestsWhileWaitingForWebsocket,
-                         .allowsRequestsWhileInBackground]
-        conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)
+        configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileInBackground
+        ]
+        self.conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)
     }
 
 }
@@ -46,21 +52,22 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMConversation.sortedFetchRequest(with: NSPredicate(format: "needsToVerifyLegalHold != 0"))
+        ZMConversation.sortedFetchRequest(with: NSPredicate(format: "needsToVerifyLegalHold != 0"))
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = objects.compactMap({ $0 as? ZMConversation })
+        let conversationsNeedingToVerifyClients = objects.compactMap { $0 as? ZMConversation }
 
         conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = object.compactMap({ $0 as? ZMConversation }).filter(\.needsToVerifyLegalHold)
+        let conversationsNeedingToVerifyClients = object.compactMap { $0 as? ZMConversation }
+            .filter(\.needsToVerifyLegalHold)
 
         if !conversationsNeedingToVerifyClients.isEmpty {
             conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
@@ -73,7 +80,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
     public typealias T = ZMConversation
 
     public var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<ZMConversation>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -82,14 +89,27 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return nil }
 
-        return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: conversation.domain, selfClient: selfClient, apiVersion: apiVersion)
+        return requestFactory.upstreamRequestForFetchingClients(
+            conversationId: conversationID,
+            domain: conversation.domain,
+            selfClient: selfClient,
+            apiVersion: apiVersion
+        )
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<ZMConversation>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let conversation = identifiers.first else { return completionHandler() }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
-        let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
+        let clientChanges = verifyClientsParser.processEmptyUploadResponse(
+            response,
+            in: conversation,
+            clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate
+        )
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
 
@@ -125,7 +145,7 @@ private class VerifyClientsParser: OTREntity {
         self.conversation = conversation
     }
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
 
@@ -151,7 +171,7 @@ private class VerifyClientsParser: OTREntity {
 
     var expirationReasonCode: NSNumber?
 
-    func expire() {
+    func expire(withReason reason: ExpirationReason) {
         // no-op
     }
 

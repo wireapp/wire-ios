@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ public final class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyVali
         try validateCharactersValue(&anyPointee)
     }
 
-    @discardableResult public static func validateCharactersValue(_ ioValue: inout Any?) throws -> Bool {
+    @discardableResult
+    public static func validateCharactersValue(_ ioValue: inout Any?) throws -> Bool {
 
         guard let string = ioValue as? String else {
             throw ExtremeCombiningCharactersValidationError.notAString

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import UIKit
-@testable import Wire
 import WireCommonComponents
 import XCTest
+@testable import Wire
 
 class ZMSnapshotTestCase: XCTestCase {
 
@@ -32,16 +32,18 @@ class ZMSnapshotTestCase: XCTestCase {
 
     /// If YES the uiMOC will have image and file caches. Defaults to NO.
     var needsCaches: Bool {
-        return false
+        false
     }
 
     var documentsDirectory: URL?
 
-    override open func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
-        if UIDevice.current.systemVersion.compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+        if UIDevice.current.systemVersion
+            .compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
@@ -50,32 +52,37 @@ class ZMSnapshotTestCase: XCTestCase {
         accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
-        do {
-            documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        documentsDirectory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
 
-        setupCoreDataStack()
+        try await setupCoreDataStack()
+
         if needsCaches {
             setUpCaches()
         }
     }
 
-    func setupCoreDataStack() {
+    @MainActor
+    func setupCoreDataStack() async throws {
         let account = Account(userName: "", userIdentifier: UUID())
-        let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: documentsDirectory!,
-                                          inMemoryStore: true)
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: documentsDirectory!,
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
 
-        coreDataStack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
+        try await coreDataStack.load()
         self.coreDataStack = coreDataStack
-        self.uiMOC = coreDataStack.viewContext
+        uiMOC = coreDataStack.viewContext
     }
 
-    override open func tearDown() {
+    override func tearDown() {
         if needsCaches {
             wipeCaches()
         }
@@ -92,7 +99,11 @@ class ZMSnapshotTestCase: XCTestCase {
 
     func removeContentsOfDocumentsDirectory() {
         do {
-            let contents = try FileManager.default.contentsOfDirectory(at: documentsDirectory!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: documentsDirectory!,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+            )
 
             for content: URL in contents {
                 do {

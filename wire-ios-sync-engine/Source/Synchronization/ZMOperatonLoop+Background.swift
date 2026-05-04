@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,35 +19,18 @@
 import Foundation
 
 private enum PushChannelKeys: String {
-    case data = "data"
+    case data
     case identifier = "id"
     case notificationType = "type"
 }
 
 private enum PushNotificationType: String {
     case plain
-    case cipher
     case notice
 }
 
 @objc
 public extension ZMOperationLoop {
-
-    @objc(fetchEventsFromPushChannelPayload:completionHandler:)
-    func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
-        guard let nonce = messageNonce(fromPushChannelData: payload) else {
-            return completionHandler()
-        }
-
-        pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
-            self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
-                guard let self else { return completionHandler() }
-                syncMOC.performGroupedBlock {
-                    completionHandler()
-                }
-            }
-        })
-    }
 
     func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
@@ -58,37 +41,10 @@ public extension ZMOperationLoop {
 
         switch notificationType {
         case .plain, .notice:
-            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+               let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)
             }
-        case .cipher:
-            return messageNonce(fromEncryptedPushChannelData: notificationData)
-        }
-
-        return nil
-    }
-
-    func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable: Any]) -> UUID? {
-        //    @"aps" : @{ @"alert": @{@"loc-args": @[],
-        //                          @"loc-key"   : @"push.notification.new_message"}
-        //              },
-        //    @"data": @{ @"data" : @"SomeEncryptedBase64EncodedString",
-        //                @"mac"  : @"someMacHashToVerifyTheIntegrityOfTheEncodedPayload",
-        //                @"type" : @"cipher"
-        //
-
-        guard let apsSignalKeyStore else {
-            Logging.network.debug("Could not initiate APSSignalingKeystore")
-            return nil
-        }
-
-        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
-            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
-            return nil
-        }
-
-        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
-            return UUID(uuidString: rawUUID)
         }
 
         return nil

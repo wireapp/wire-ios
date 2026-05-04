@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,17 @@
 //
 
 import Foundation
+import WireNetwork
 
 final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
-        let error = context.0
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (BackendEnvironment2?, NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
+        let error = context.1
 
         // Only handle errors on start
         guard case .start = currentStep else {
@@ -35,7 +39,7 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
             return nil
         }
 
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

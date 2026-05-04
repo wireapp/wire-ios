@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 @testable import Wire
@@ -31,7 +32,30 @@ final class CoreDataFixture {
     var otherUserConversation: ZMConversation!
     var team: Team?
     var teamMember: Member?
-    let usernames = ["Anna", "Claire", "Dean", "Erik", "Frank", "Gregor", "Hanna", "Inge", "James", "Laura", "Klaus", "Lena", "Linea", "Lara", "Elliot", "Francois", "Felix", "Brian", "Brett", "Hannah", "Ana", "Paula"]
+    let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula"
+    ]
 
     // The provider to use when configuring `SelfUser.provider`, needed only when tested code
     // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
@@ -54,36 +78,43 @@ final class CoreDataFixture {
 
     /// If YES the uiMOC will have image and file caches. Defaults to NO.
     var needsCaches: Bool {
-        return false
+        false
     }
 
     var documentsDirectory: URL?
 
-    init() {
+    @MainActor
+    init() async throws {
         /// From ZMSnapshotTestCase
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
-        if UIDevice.current.systemVersion.compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+        if UIDevice.current.systemVersion
+            .compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        snapshotBackgroundColor = UIColor.clear
+        self.snapshotBackgroundColor = UIColor.clear
 
-        do {
-            documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        self.documentsDirectory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
 
         let account = Account(userName: "", userIdentifier: UUID())
         let group = ZMSDispatchGroup(dispatchGroup: dispatchGroup, label: "CoreDataStack")
-        let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: documentsDirectory!,
-                                          inMemoryStore: true,
-                                          dispatchGroup: group)
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: documentsDirectory!,
+            inMemoryStore: true,
+            dispatchGroup: group,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
 
-        coreDataStack.loadStores(completionHandler: { _ in })
+        try await coreDataStack.load()
         self.uiMOC = coreDataStack.viewContext
         self.coreDataStack = coreDataStack
 
@@ -93,11 +124,11 @@ final class CoreDataFixture {
 
         /////////////////////////
 
-        snapshotBackgroundColor = .white
+        self.snapshotBackgroundColor = .white
         setupTestObjects()
 
         MockUser.setMockSelf(selfUser)
-        selfUserProvider = SelfProvider(providedSelfUser: selfUser)
+        self.selfUserProvider = SelfProvider(providedSelfUser: selfUser)
 
         SelfUser.provider = selfUserProvider
     }
@@ -122,7 +153,7 @@ final class CoreDataFixture {
     // MARK: – Setup
 
     private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()
@@ -139,7 +170,6 @@ final class CoreDataFixture {
         selfUser.name = "selfUser"
         selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
 
         if selfUserInTeam {
             setupMember()
@@ -206,7 +236,8 @@ final class CoreDataFixture {
 // MARK: - mock service user
 
 extension CoreDataFixture {
-    func createServiceUser() -> ZMUser {
+
+    func createBot() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
@@ -215,9 +246,9 @@ extension CoreDataFixture {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }
 
 protocol CoreDataFixtureTestHelper {
@@ -242,31 +273,34 @@ protocol CoreDataFixtureTestHelper {
 }
 
 // MARK: - default implementation for migrating CoreDataSnapshotTestCase to XCTestCase
+
 extension CoreDataFixtureTestHelper {
     var otherUser: ZMUser! {
-        return coreDataFixture.otherUser
+        coreDataFixture.otherUser
     }
 
     var selfUser: ZMUser! {
-        return coreDataFixture.selfUser
+        coreDataFixture.selfUser
     }
 
     var otherUserConversation: ZMConversation! {
-        return coreDataFixture.otherUserConversation
+        coreDataFixture.otherUserConversation
     }
 
     func createGroupConversation() -> ZMConversation {
-        return ZMConversation.createGroupConversation(moc: coreDataFixture.uiMOC,
-                                                      otherUser: otherUser,
-                                                      selfUser: selfUser)
+        ZMConversation.createGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser,
+            selfUser: selfUser
+        )
     }
 
     func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createUser(name: String) -> ZMUser {
-        return coreDataFixture.createUser(name: name)
+        coreDataFixture.createUser(name: name)
     }
 
     func teamTest(_ block: () -> Void) {
@@ -278,23 +312,23 @@ extension CoreDataFixtureTestHelper {
     }
 
     var uiMOC: NSManagedObjectContext! {
-        return coreDataFixture.uiMOC
+        coreDataFixture.uiMOC
     }
 
     var usernames: [String] {
-        return coreDataFixture.usernames
+        coreDataFixture.usernames
     }
 
     var team: Team? {
-        return coreDataFixture.team
+        coreDataFixture.team
     }
 
     func mockUserClient() -> UserClient! {
-        return coreDataFixture.mockUserClient()
+        coreDataFixture.mockUserClient()
     }
 
     func createGroupConversationOnlyAdmin() -> ZMConversation {
-        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+        ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 }
 
@@ -308,7 +342,7 @@ extension CoreDataFixture {
         client.model = "Simulator"
         client.label = "Bill's MacBook Pro"
 
-        client.activationDate = Date(timeIntervalSince1970: 1664717723)
+        client.activationDate = Date(timeIntervalSince1970: 1_664_717_723)
         return client
     }
 }

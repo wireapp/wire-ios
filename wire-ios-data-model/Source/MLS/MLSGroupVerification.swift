@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSGroupVerificationProtocol {
@@ -84,7 +85,10 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         do {
             try await updateVerificationStatus.invoke(for: conversation, groupID: groupID)
         } catch {
-            WireLogger.e2ei.warn("failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))")
+            WireLogger.e2ei
+                .warn(
+                    "failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))"
+                )
         }
     }
 

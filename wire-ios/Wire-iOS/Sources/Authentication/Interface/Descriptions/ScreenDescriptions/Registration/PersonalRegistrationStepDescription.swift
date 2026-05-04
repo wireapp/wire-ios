@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The step to start personal user registration.
- */
+/// The step to start personal user registration.
 
 final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
 
@@ -32,12 +30,12 @@ final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        mainView = EmptyViewDescription()
-        headline = L10n.Localizable.Registration.Personal.title
-        subtext = nil
-        secondaryView = nil
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.mainView = EmptyViewDescription()
+        self.headline = L10n.Localizable.Registration.Personal.title
+        self.subtext = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 
 }

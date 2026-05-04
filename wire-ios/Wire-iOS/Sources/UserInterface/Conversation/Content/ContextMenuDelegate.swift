@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,10 +38,12 @@ extension ContextMenuDelegate {
             return nil
         }
 
-        return ConversationMessageActionController(responder: delegate,
-                                                   message: message,
-                                                   context: .content,
-                                                   view: view)
+        return ConversationMessageActionController(
+            responder: delegate,
+            message: message,
+            context: .content,
+            view: view
+        )
     }
 
 }
@@ -53,14 +55,16 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            return BrowserViewController(url: url)
+            url.browserControllerOrOpenExternally()
         }
 
-        return UIContextMenuConfiguration(identifier: nil,
-                                          previewProvider: previewProvider,
-                                          actionProvider: { _ in
-                                            return self.makeContextMenu(title: url.absoluteString, view: view)
-        })
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: previewProvider,
+            actionProvider: { _ in
+                self.makeContextMenu(title: url.absoluteString, view: view)
+            }
+        )
 
     }
 }

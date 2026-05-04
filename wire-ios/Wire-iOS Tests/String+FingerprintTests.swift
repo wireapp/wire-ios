@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class String_FingerprintTests: XCTestCase {
     let fingerprintString: String = "05 1c f4 ca 74 4b 80"
@@ -28,7 +28,10 @@ final class String_FingerprintTests: XCTestCase {
         let boldAttributes = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)]
 
         // WHEN
-        let attributedString = fingerprintString.fingerprintString(attributes: regularAttributes, boldAttributes: boldAttributes)
+        let attributedString = fingerprintString.fingerprintString(
+            attributes: regularAttributes,
+            boldAttributes: boldAttributes
+        )
 
         // THEN
         stride(from: 0, to: 20, by: 6).forEach {

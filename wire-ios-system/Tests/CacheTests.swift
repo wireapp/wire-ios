@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 class CacheTests: XCTestCase {
     func testThatItStoresAndReadsValue() {
@@ -36,7 +36,7 @@ class CacheTests: XCTestCase {
         // GIVEN
         let cache = Cache<String, String>(maxCost: 1000, maxElementsCount: 10)
 
-        (0..<10).forEach {
+        (0 ..< 10).forEach {
             cache.set(value: "Hello \($0)", for: "word \($0)", cost: 1)
         }
         // WHEN

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,27 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
-
-extension XCTestCase {
-    func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
-        weak var weakInstance: T?
-        var instance: T?
-
-        autoreleasepool {
-            instance = instanceGenerator()
-            // then
-            weakInstance = instance
-            XCTAssertNotNil(weakInstance)
-            // when
-            instance = nil
-        }
-
-        XCTAssertNil(instance)
-        XCTAssertNil(weakInstance)
-    }
-}
+@testable import Wire
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
 
@@ -82,27 +63,33 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    private func createCallViewController(selfUser: UserType,
-                                          mediaManager: ZMMockAVSMediaManager) -> CallViewController {
+    private func createCallViewController(
+        selfUser: UserType,
+        mediaManager: ZMMockAVSMediaManager
+    ) -> CallViewController {
 
-        let proximityManager = ProximityMonitorManager()
-        let callController = CallViewController(
+        let proximityManager = ProximityMonitorManager(userSession: userSession)
+        return CallViewController(
             voiceChannel: mockVoiceChannel,
             selfUser: selfUser,
             proximityMonitorManager: proximityManager,
             mediaManager: mediaManager,
             userSession: userSession
         )
-
-        return callController
     }
 
     private func participants(amount: Int) -> [CallParticipant] {
         var participants = [CallParticipant]()
 
-        for _ in 0..<amount {
+        for _ in 0 ..< amount {
             participants.append(
-                CallParticipant(user: MockUserType(), userId: AVSIdentifier.stub, clientId: UUID().transportString(), state: .connected(videoState: .started, microphoneState: .unmuted), activeSpeakerState: .inactive)
+                CallParticipant(
+                    user: MockUserType(),
+                    userId: AVSIdentifier.stub,
+                    clientId: UUID().transportString(),
+                    state: .connected(videoState: .started, microphoneState: .unmuted),
+                    activeSpeakerState: .inactive
+                )
             )
         }
 
@@ -134,11 +121,16 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
     func testThatCallGridViewControllerDelegate_ForwardsVideoStreamsRequestToVoiceChannel() {
         // Given
         let configuration = MockCallGridViewControllerInput()
-        let viewController = CallGridViewController(configuration: configuration)
+        let viewController = CallGridViewController(
+            voiceChannel: mockVoiceChannel,
+            configuration: configuration,
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
+        )
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
-        ]
+        ].map { AVSClientVideoStream(client: $0) }
 
         // When
         sut.callGridViewController(viewController, perform: .requestVideoStreamsForClients(clients))
@@ -151,7 +143,10 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         // when & then
         verifyDeallocation { () -> CallViewController in
             // given
-            let callController = createCallViewController(selfUser: MockUserType.createSelfUser(name: "Alice"), mediaManager: ZMMockAVSMediaManager())
+            let callController = createCallViewController(
+                selfUser: MockUserType.createSelfUser(name: "Alice"),
+                mediaManager: ZMMockAVSMediaManager()
+            )
             // Simulate user click
             callController.startOverlayTimer()
             return callController

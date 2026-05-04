@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         mockTopOverlayPresenter = .init()
         userSession = UserSessionMock()
         sut = ActiveCallRouter(
-            rootviewController: RootViewController(),
+            mainWindow: .init(),
             userSession: userSession,
             topOverlayPresenter: mockTopOverlayPresenter
         )
@@ -74,7 +74,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?({ })
+        sut.scheduledPostCallAction? {}
         XCTAssertTrue(executed)
     }
 

@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2023 Wire Swiss GmbH
+# Copyright (C) 2026 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SWIFTGEN="$REPO_ROOT/scripts/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
+SWIFTGEN="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftGen in CI environment"
@@ -31,7 +31,4 @@ if [[ ! -f "$SWIFTGEN" ]]; then
     echo "❌ Executable is missing, please run the setup script!"
 fi
 
-(
-    cd "$REPO_ROOT/wire-ios"
-    "$SWIFTGEN" "$@"
-)
+"$SWIFTGEN" "$@"

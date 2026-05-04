@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
 public struct SearchResult {
+
+    /// The managed object context the Core Data objects in the search result must be accessed on.
+
+    public let context: NSManagedObjectContext
+
     /// Users already connected to.
+
     public var contacts: [ZMSearchUser]
+
     /// Users from the team.
+
     public var teamMembers: [ZMSearchUser]
-    /// Legacy, not used anymore.
-    public var addressBook: [ZMSearchUser]
+
     /// Non-connected users.
+
     public var directory: [ZMSearchUser]
+
     /// Group conversations.
+
     public var conversations: [ZMConversation]
-    /// Bots.
-    public var services: [ServiceUser]
+
+    public var apps: [any UserType]
+
+    public var bots: [any UserType]
+
     /// Cache for search users.
+
     let searchUsersCache: SearchUsersCache?
+
 }
 
 extension SearchResult {
+
+    init() {
+        self.context = .init(concurrencyType: .privateQueueConcurrencyType)
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.apps = []
+        self.bots = []
+        self.searchUsersCache = nil
+    }
 
     public init?(
         payload: [AnyHashable: Any],
@@ -51,7 +77,8 @@ extension SearchResult {
         let filteredDocuments = documents.filter { document -> Bool in
             let name = document["name"] as? String
             let handle = document["handle"] as? String
-            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?.contains(query.string.lowercased()) ?? false
+            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?
+                .contains(query.string.lowercased()) ?? false
         }
 
         let searchUsers = ZMSearchUser.searchUsers(
@@ -60,95 +87,47 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
-        contacts = []
-        addressBook = []
-        directory = searchUsers.filter({ !$0.isConnected && !$0.isTeamMember })
-        conversations = []
-        services = []
+        self.context = contextProvider.viewContext
+        self.contacts = []
+        self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
+        self.conversations = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = searchUsersCache
 
-        if searchOptions.contains(.teamMembers) &&
+        if searchOptions.contains(.teamMembers),
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
-            teamMembers = searchUsers.filter({ $0.isTeamMember })
+            self.teamMembers = searchUsers.filter(\.isTeamMember)
         } else {
-            teamMembers = []
+            self.teamMembers = []
         }
-    }
-
-    public init?(
-        servicesPayload servicesFullPayload: [AnyHashable: Any],
-        query: String,
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard let servicesPayload = servicesFullPayload["services"] as? [[String: Any]] else {
-            return nil
-        }
-
-        let searchUsersServices = ZMSearchUser.searchUsers(
-            from: servicesPayload,
-            contextProvider: contextProvider,
-            searchUsersCache: searchUsersCache
-        )
-
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = []
-        conversations = []
-        services = searchUsersServices
-        self.searchUsersCache = searchUsersCache
-    }
-
-    public init?(
-        userLookupPayload: [AnyHashable: Any],
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard
-            let userLookupPayload = userLookupPayload as? [String: Any],
-            let searchUser = ZMSearchUser.searchUser(
-                from: userLookupPayload,
-                contextProvider: contextProvider,
-                searchUsersCache: searchUsersCache
-            ),
-            searchUser.user == nil
-            || searchUser.user?.isTeamMember == false
-        else {
-            return nil
-        }
-
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = [searchUser]
-        conversations = []
-        services = []
-        self.searchUsersCache = searchUsersCache
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
         payload.members.forEach { membershipPayload in
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
-            let permissions = membershipPayload.permissions.flatMap({ Permissions(rawValue: $0.selfPermissions) })
+            let permissions = membershipPayload.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
             searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: membershipPayload.createdBy)
         }
     }
 
-    mutating func filterBy(searchOptions: SearchOptions,
-                           query: String,
-                           contextProvider: ContextProvider) {
+    mutating func filterBy(
+        searchOptions: SearchOptions,
+        query: String,
+        contextProvider: ContextProvider
+    ) {
         guard searchOptions.contains(.excludeNonActivePartners) else { return }
 
         let selfUser = ZMUser.selfUser(in: contextProvider.viewContext)
         let isHandleQuery = query.hasPrefix("@")
-        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query).lowercased()
+        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query)
+            .lowercased()
 
-        teamMembers = teamMembers.filter({
+        teamMembers = teamMembers.filter {
             $0.teamRole != .partner ||
-            $0.teamCreatedBy == selfUser.remoteIdentifier ||
-            isHandleQuery && $0.handle == queryWithoutAtSymbol
-        })
+                $0.teamCreatedBy == selfUser.remoteIdentifier ||
+                isHandleQuery && $0.handle == queryWithoutAtSymbol
+        }
     }
 
     func copy(on context: NSManagedObjectContext) -> SearchResult {
@@ -158,47 +137,82 @@ extension SearchResult {
         }
 
         return SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: copiedConversations,
-            services: services,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
-        SearchResult(contacts: result.contacts,
-                     teamMembers: result.teamMembers,
-                     addressBook: result.addressBook,
-                     directory: directory,
-                     conversations: result.conversations,
-                     services: services,
-                     searchUsersCache: searchUsersCache
+        SearchResult(
+            context: context,
+            contacts: result.contacts,
+            teamMembers: result.teamMembers,
+            directory: directory,
+            conversations: result.conversations,
+            apps: result.apps,
+            bots: bots,
+            searchUsersCache: searchUsersCache
         )
     }
 
-    func union(withServiceResult result: SearchResult) -> SearchResult {
+    func union(withAppsResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: conversations,
-            services: result.services,
+            apps: apps + result.apps.filter { newApp in
+                !apps.contains { existingApp in
+                    newApp.remoteIdentifier == existingApp.remoteIdentifier
+                }
+            },
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withBotsResult result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
     }
 
     func union(withDirectoryResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
-            addressBook: addressBook,
             directory: result.directory,
             conversations: conversations,
-            services: services,
+            apps: apps,
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(prependingDirectory result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: result.directory + directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }

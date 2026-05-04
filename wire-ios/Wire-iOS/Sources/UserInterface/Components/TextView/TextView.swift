@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,13 +43,16 @@ class TextView: UITextView {
 
     var attributedPlaceholder: NSAttributedString? {
         didSet {
-            let mutableCopy: NSMutableAttributedString
-            if let attributedPlaceholder {
-                mutableCopy = NSMutableAttributedString(attributedString: attributedPlaceholder)
+            let mutableCopy = if let attributedPlaceholder {
+                NSMutableAttributedString(attributedString: attributedPlaceholder)
             } else {
-                mutableCopy = NSMutableAttributedString()
+                NSMutableAttributedString()
             }
-            mutableCopy.addAttribute(.foregroundColor, value: placeholderTextColor, range: NSRange(location: 0, length: mutableCopy.length))
+            mutableCopy.addAttribute(
+                .foregroundColor,
+                value: placeholderTextColor,
+                range: NSRange(location: 0, length: mutableCopy.length)
+            )
             placeholderLabel.attributedText = mutableCopy
             placeholderLabel.sizeToFit()
             showOrHidePlaceholder()
@@ -74,22 +77,21 @@ class TextView: UITextView {
         }
     }
 
-    var placeholderTextAlignment: NSTextAlignment = NSTextAlignment.natural {
+    var placeholderTextAlignment: NSTextAlignment = .natural {
         didSet {
             placeholderLabel.textAlignment = placeholderTextAlignment
         }
     }
+
     var language: String?
 
-    private let placeholderLabel: TransformLabel = TransformLabel()
+    private let placeholderLabel: TransformLabel = .init()
     private var placeholderLabelLeftConstraint: NSLayoutConstraint?
     private var placeholderLabelRightConstraint: NSLayoutConstraint?
 
-    private var shouldDrawPlaceholder = false
-
     override var accessibilityValue: String? {
         get {
-            return text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue
+            text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue
         }
 
         set {
@@ -120,10 +122,16 @@ class TextView: UITextView {
     }
 
     // MARK: Setup
+
     private func setup() {
         placeholderTextContainerInset = textContainerInset
 
-        NotificationCenter.default.addObserver(self, selector: #selector(textChanged(_:)), name: UITextView.textDidChangeNotification, object: self)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textChanged(_:)),
+            name: UITextView.textDidChangeNotification,
+            object: self
+        )
 
         setupPlaceholderLabel()
 
@@ -143,12 +151,13 @@ class TextView: UITextView {
     }
 
     // MARK: - Copy/Pasting
+
     override func paste(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
         zmLog.debug("types available: \(pasteboard.types)")
 
         if pasteboard.hasImages,
-            let image = UIPasteboard.general.mediaAsset() {
+           let image = UIPasteboard.general.mediaAsset() {
             informalTextViewDelegate?.textView(self, hasImageToPaste: image)
         } else if pasteboard.hasStrings {
             super.paste(sender)
@@ -162,12 +171,27 @@ class TextView: UITextView {
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+
         if action == #selector(paste(_:)) {
-            let pasteboard = UIPasteboard.general
-            return pasteboard.hasImages || pasteboard.hasStrings
+            if isContextMenuAllowed {
+                let pasteboard = UIPasteboard.general
+                return pasteboard.hasImages || pasteboard.hasStrings
+            } else {
+                return false
+            }
         }
 
         return super.canPerformAction(action, withSender: sender)
+    }
+
+    var isContextMenuAllowed: Bool {
+        SecurityFlags.clipboard.isEnabled
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            builder.remove(menu: .autoFill)
+        }
     }
 
     @discardableResult
@@ -180,11 +204,13 @@ class TextView: UITextView {
     }
 
     // MARK: Language
+
     override var textInputMode: UITextInputMode? {
-        return overriddenTextInputMode
+        overriddenTextInputMode
     }
 
-    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center vertically)
+    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center
+    /// vertically)
     var placeholderTextContainerInset: UIEdgeInsets = .zero {
         didSet {
             placeholderLabelLeftConstraint?.constant = placeholderTextContainerInset.left
@@ -203,8 +229,14 @@ class TextView: UITextView {
 
         addSubview(placeholderLabel)
 
-        placeholderLabelLeftConstraint = placeholderLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: placeholderTextContainerInset.left + linePadding)
-        placeholderLabelRightConstraint = placeholderLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: placeholderTextContainerInset.right - linePadding)
+        placeholderLabelLeftConstraint = placeholderLabel.leftAnchor.constraint(
+            equalTo: leftAnchor,
+            constant: placeholderTextContainerInset.left + linePadding
+        )
+        placeholderLabelRightConstraint = placeholderLabel.rightAnchor.constraint(
+            equalTo: rightAnchor,
+            constant: placeholderTextContainerInset.right - linePadding
+        )
 
         NSLayoutConstraint.activate([
             placeholderLabelLeftConstraint!,

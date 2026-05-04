@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         let dropProposal = sut.dropProposal(mediaShareRestrictionManager: shareRestrictionManager)
 
         // THEN
-        XCTAssertEqual(dropProposal.operation, UIDropOperation.copy, file: #file, line: #line)
+        XCTAssertEqual(dropProposal.operation, UIDropOperation.copy, file: #filePath, line: #line)
     }
 
     func testThatItPreventsDroppingFiles_FlagDisabled() {
@@ -64,15 +64,17 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         let dropProposal = sut.dropProposal(mediaShareRestrictionManager: shareRestrictionManager)
 
         // THEN
-        XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #file, line: #line)
+        XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #filePath, line: #line)
     }
 
-    private func makeConversationInputBarViewController(conversation: MockInputBarConversationType) -> ConversationInputBarViewController {
+    private func makeConversationInputBarViewController(conversation: MockInputBarConversationType)
+        -> ConversationInputBarViewController {
         ConversationInputBarViewController(
             conversation: conversation,
             userSession: mockUserSession,
             classificationProvider: mockSecurityClassificationProviding,
-            networkStatusObservable: MockNetworkStatusObservable()
+            networkStatusObservable: MockNetworkStatusObservable(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
 }
@@ -90,7 +92,7 @@ private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManag
     }
 
     override var isFileSharingFlagEnabled: Bool {
-        return canFilesBeShared
+        canFilesBeShared
     }
 
 }

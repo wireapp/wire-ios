@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,9 +64,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var mlsThumbprint: String? {
-        e2eIdentityCertificate?
-            .mlsThumbprint
-            .splitStringIntoLines(charactersPerLine: 16)
+        userClient.mlsThumbPrint?.splitStringIntoLines(charactersPerLine: 16)
     }
 
     var serialNumber: String? {
@@ -74,6 +72,21 @@ final class DeviceInfoViewModel: ObservableObject {
             .uppercased()
             .splitStringIntoLines(charactersPerLine: 16)
             .replacingOccurrences(of: " ", with: ":")
+    }
+
+    var showCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status != .notActivated else { return false }
+        return true
+    }
+
+    var getCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status == .notActivated, isSelfClient  else { return false }
+        return true
+    }
+
+    var updateCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status != .notActivated, isSelfClient else { return false }
+        return true
     }
 
     var showCertificateUpdateSuccess: ((String) -> Void)?
@@ -117,8 +130,8 @@ final class DeviceInfoViewModel: ObservableObject {
             }
         }
 
-        e2eIdentityCertificate = userClient.e2eIdentityCertificate
-        isProteusVerificationEnabled = userClient.verified
+        self.e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        self.isProteusVerificationEnabled = userClient.verified
     }
 
     func update(from userClient: UserClientType) {
@@ -128,19 +141,19 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func enrollClient() async {
-        self.isActionInProgress = true
+        isActionInProgress = true
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
         } catch {
             showEnrollmentCertificateError = true
         }
-        self.isActionInProgress = false
+        isActionInProgress = false
     }
 
     @MainActor
     func removeDevice() async {
-        self.shouldDismiss = await actionsHandler.removeDevice()
+        shouldDismiss = await actionsHandler.removeDevice()
     }
 
     func resetSession() {
@@ -165,7 +178,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func getProteusFingerPrint() async {
-        self.proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
+        proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
     }
 
     func onAppear() {

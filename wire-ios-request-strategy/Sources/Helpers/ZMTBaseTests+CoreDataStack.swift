@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,37 +27,48 @@ extension ZMTBaseTest {
     }
 
     @objc
-    func createCoreDataStack(userIdentifier: UUID = UUID(),
-                             inMemoryStore: Bool = true) -> CoreDataStack {
+    func createCoreDataStack(
+        userIdentifier: UUID = UUID(),
+        inMemoryStore: Bool = true
+    ) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL,
-                                  inMemoryStore: inMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: inMemoryStore,
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await stack.load()
 
         return stack
     }
 
     @objc
-    func setupCaches(in coreDataStack: CoreDataStack) {
+    func setupCaches(in coreDataStack: CoreDataStack) async {
         let userImageCache = UserImageLocalCache(location: nil)
         let fileAssetCache = FileAssetCache(location: sharedContainerURL)
 
-        coreDataStack.viewContext.zm_userImageCache = userImageCache
-        coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
+        await coreDataStack.viewContext.perform {
+            coreDataStack.viewContext.zm_userImageCache = userImageCache
+            coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
 
-        coreDataStack.syncContext.performGroupedAndWait {
+        }
+
+        await coreDataStack.syncContext.perform {
             coreDataStack.syncContext.zm_userImageCache = userImageCache
             coreDataStack.syncContext.zm_fileAssetCache = fileAssetCache
         }
     }
 
     func removeFilesInSharedContainer() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }

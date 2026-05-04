@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     typealias Token = GetPushTokensActionHandler.Token
 
     func token(clientID: String, data: Data, type: String) -> Token {
-        return Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
+        Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
     }
 
     func response(payload: GetPushTokensActionHandler.ResponsePayload, status: Int) -> ZMTransportResponse {
@@ -37,7 +37,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     }
 
     func response(payload: ZMTransportData?, status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,
@@ -72,7 +72,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var receivedTokens = [PushToken]()
 
         action.onResult { result in
-            guard case .success(let tokens) = result else { return }
+            guard case let .success(tokens) = result else { return }
             receivedTokens = tokens
             didSucceed.fulfill()
         }
@@ -81,8 +81,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let payload = Payload(tokens: [
             token(clientID: "clientA", data: Data([0x01, 0x01, 0x01]), type: "APNS"),
             token(clientID: "clientB", data: Data([0x02, 0x02, 0x02]), type: "APNS_SANDBOX"),
-            token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_VOIP"),
-            token(clientID: "clientB", data: Data([0x04, 0x04, 0x04]), type: "APNS_VOIP_SANDBOX"),
+            token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_SANDBOX"),
             token(clientID: "clientA", data: Data([0x05, 0x05, 0x05]), type: "GCM")
         ])
 
@@ -90,13 +89,14 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(receivedTokens.count, 2)
+        guard receivedTokens.count == 2 else { return XCTFail("receivedTokens.count != 2") }
 
-        let apns = PushToken(deviceToken: Data([0x01, 0x01, 0x01]), appIdentifier: "app", transportType: "APNS", tokenType: .standard)
-        XCTAssertEqual(receivedTokens.element(atIndex: 0), apns)
-
-        let voIP = PushToken(deviceToken: Data([0x03, 0x3, 0x03]), appIdentifier: "app", transportType: "APNS_VOIP", tokenType: .voip)
-        XCTAssertEqual(receivedTokens.element(atIndex: 1), voIP)
+        let apns = PushToken(
+            deviceToken: Data([0x01, 0x01, 0x01]),
+            appIdentifier: "app",
+            transportType: "APNS"
+        )
+        XCTAssertEqual(receivedTokens[0], apns)
     }
 
     func test_itHandlesResponse_200_MalformedResponse() throws {

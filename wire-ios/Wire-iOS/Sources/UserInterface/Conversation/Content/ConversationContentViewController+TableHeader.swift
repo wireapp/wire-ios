@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,11 @@ extension ConversationContentViewController {
 
     func headerViewFrame(view: UIView) -> CGRect {
         let fittingSize = CGSize(width: tableView.bounds.size.width, height: headerHeight)
-        let requiredSize = view.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriority.required, verticalFittingPriority: UILayoutPriority.defaultLow)
+        let requiredSize = view.systemLayoutSizeFitting(
+            fittingSize,
+            withHorizontalFittingPriority: UILayoutPriority.required,
+            verticalFittingPriority: UILayoutPriority.defaultLow
+        )
 
         return CGRect(origin: .zero, size: requiredSize)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-extension ZMMessage {
+public extension ZMMessage {
 
     static func add(
-        reaction: WireProtos.Reaction,
+        reaction: GenericMessageProtocol.Reaction,
         senderID: UUID,
         conversation: ZMConversation,
         creationDate: Date?,
@@ -39,20 +40,20 @@ extension ZMMessage {
         localMessage.updateCategoryCache()
     }
 
-    func selfUserReactions() -> Set<String> {
+    internal func selfUserReactions() -> Set<String> {
         let result = usersReaction
             .filter { _, users in users.contains(where: \.isSelfUser) }
-            .map { $0.key }
+            .map(\.key)
 
         return Set(result)
     }
 
-    public func otherUsersReactions() -> Set<String> {
+    func otherUsersReactions() -> Set<String> {
         let result = usersReaction
             .filter { _, users in users.contains { user in
                 !user.isSelfUser
             }}
-            .map { $0.key }
+            .map(\.key)
 
         return Set(result)
     }

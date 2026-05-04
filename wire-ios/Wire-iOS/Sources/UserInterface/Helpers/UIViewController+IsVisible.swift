@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@ import UIKit
 
 extension UIViewController {
 
-    /// return true if the view controller's view is in a window, not covered by a modelled VC and the bounds is intersects with the screen's bound
+    /// return true if the view controller's view is in a window, not covered by a modelled VC and the bounds is
+    /// intersects with the screen's bound
     var isVisible: Bool {
         let isInWindow = view.window != nil
         let notCoveredModally = presentedViewController == nil
@@ -33,6 +34,6 @@ extension UIViewController {
 
 extension UIView {
     var isVisible: Bool {
-        return convert(bounds, to: nil).intersects(UIScreen.main.bounds)
+        convert(bounds, to: nil).intersects(UIScreen.main.bounds)
     }
 }

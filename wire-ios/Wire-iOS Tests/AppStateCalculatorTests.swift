@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngine
+import WireTransport
 import XCTest
 
 @testable import Wire
@@ -34,13 +36,11 @@ final class AppStateCalculatorTests: XCTestCase {
             completion()
         }
         sut.delegate = delegate
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         delegate = nil
-        BackendInfo.apiVersion = nil
 
         super.tearDown()
     }
@@ -114,41 +114,59 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnSessionManagerWillLogout() {
 
         // GIVEN
-        let error = NSError(code: ZMUserSessionErrorCode.unknownError, userInfo: nil)
+        let accountID = UUID()
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.unknownError, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLogin() {
 
         // GIVEN
-        let error = NSError(code: ZMUserSessionErrorCode.invalidCredentials, userInfo: nil)
+        let accountID = UUID()
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.invalidCredentials, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerDidFailToLogin(error: error)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
     func testThatAppStateChanges_OnDidFailToLogin_CanNotRegisterMoreClients() {
         // GIVEN
-        let error = NSError(code: ZMUserSessionErrorCode.canNotRegisterMoreClients, userInfo: nil)
+        let accountID = UUID()
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.canNotRegisterMoreClients, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerDidFailToLogin(error: error)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {
@@ -207,7 +225,7 @@ final class AppStateCalculatorTests: XCTestCase {
         if let userSession {
             XCTAssertEqual(sut.appState, .authenticated(userSession))
         } else {
-            guard case let .unauthenticated(error: error) = sut.appState else {
+            guard case let .unauthenticated(_, _, error: error) = sut.appState else {
                 return XCTFail("Error - unauthenticated")
             }
 
@@ -317,22 +335,5 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
-    }
-
-    func testThatItDoesntTransitionAwayFromBlacklisted_IfThereIsNoCurrentAPIVersion() {
-
-        // GIVEN
-        let userSession = UserSessionMock()
-        sut.applicationDidBecomeActive()
-        BackendInfo.apiVersion = nil
-
-        let blacklistState = AppState.blacklisted(reason: .clientAPIVersionObsolete)
-        sut.testHelper_setAppState(blacklistState)
-
-        // WHEN
-        sut.sessionManagerDidReportLockChange(forSession: userSession)
-
-        // THEN
-        XCTAssertEqual(sut.appState, blacklistState)
     }
 }

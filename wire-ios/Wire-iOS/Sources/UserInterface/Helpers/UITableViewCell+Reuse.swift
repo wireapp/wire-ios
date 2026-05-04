@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import UIKit
 
 extension NSObject {
     static var zm_reuseIdentifier: String {
-        return NSStringFromClass(self) + "_ReuseIdentifier"
+        NSStringFromClass(self) + "_ReuseIdentifier"
     }
 }
 
@@ -48,16 +48,16 @@ extension UITableViewHeaderFooterView {
 
 extension UICollectionView {
     func dequeueReusableCell<T: UICollectionViewCell>(ofType cellType: T.Type, for indexPath: IndexPath) -> T {
-        return dequeueReusableCell(withReuseIdentifier: T.zm_reuseIdentifier, for: indexPath) as! T
+        dequeueReusableCell(withReuseIdentifier: T.zm_reuseIdentifier, for: indexPath) as! T
     }
 }
 
 extension UITableView {
     func dequeueReusableCell<T: UITableViewCell>(ofType cellType: T.Type, for indexPath: IndexPath) -> T {
-        return dequeueReusableCell(withIdentifier: T.zm_reuseIdentifier, for: indexPath) as! T
+        dequeueReusableCell(withIdentifier: T.zm_reuseIdentifier, for: indexPath) as! T
     }
 
     func dequeueReusableHeaderFooter<T: UITableViewHeaderFooterView>(ofType headerFooterType: T.Type) -> T {
-        return dequeueReusableHeaderFooterView(withIdentifier: T.zm_reuseIdentifier) as! T
+        dequeueReusableHeaderFooterView(withIdentifier: T.zm_reuseIdentifier) as! T
     }
 }

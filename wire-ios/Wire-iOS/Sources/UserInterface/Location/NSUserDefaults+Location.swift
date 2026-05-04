@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ private let zoomLevelKey = "LastLocationZoomLevelKey"
 extension LocationData {
 
     func toDictionary() -> [String: Any] {
-        return [
+        [
             latitudeKey: latitude,
             longitudeKey: longitude,
             zoomLevelKey: Int(zoomLevel)
@@ -35,25 +35,30 @@ extension LocationData {
 
     static func locationData(fromDictionary dict: [String: Any]) -> LocationData? {
         guard let latitude = dict[latitudeKey],
-            let longitude = dict[longitudeKey],
-            let zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
+              let longitude = dict[longitudeKey],
+              let zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
 
         let latitudeFloat: Float
         let longitudeFloat: Float
 
         if let latitudeFloatUnwrap = latitude as? Float,
-            let longitudeFloatUnwrap = longitude as? Float {
+           let longitudeFloatUnwrap = longitude as? Float {
             latitudeFloat = latitudeFloatUnwrap
             longitudeFloat = longitudeFloatUnwrap
         } else if let latitudeDoubleUnwrap = latitude as? Double,
-                let longitudeDoubleUnwrap = longitude as? Double {
+                  let longitudeDoubleUnwrap = longitude as? Double {
             latitudeFloat = Float(latitudeDoubleUnwrap)
             longitudeFloat = Float(longitudeDoubleUnwrap)
         } else {
             return nil
         }
 
-        return .locationData(withLatitude: latitudeFloat, longitude: longitudeFloat, name: nil, zoomLevel: Int32(zoomLevel))
+        return .locationData(
+            withLatitude: latitudeFloat,
+            longitude: longitudeFloat,
+            name: nil,
+            zoomLevel: Int32(zoomLevel)
+        )
     }
 
 }

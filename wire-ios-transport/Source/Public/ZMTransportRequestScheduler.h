@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,6 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 /// The task given access to the NSHTTPURLResponse and NSError.
 - (void)processCompletedURLTask:(NSURLSessionTask *)task;
 - (void)processCompletedURLResponse:(nullable NSHTTPURLResponse *)response URLError:(nullable NSError *)error;
-- (void)processWebSocketError:(NSError *)error;
 
 - (void)sessionDidReceiveAccessToken:(id<ZMTransportRequestSchedulerSession>)session;
 /// The scheduler uses this to retry sending requests if it's in offline mode.
@@ -68,10 +67,12 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 /// The transport session uses this to determine whether to continue requesting an access token
 - (BOOL)canSendRequests;
 
+- (void)performGroupedBlock:(dispatch_block_t)block;
 
 @property (atomic, readonly) NSInteger concurrentRequestCountLimit;
 @property (nonatomic) ZMTransportRequestSchedulerState schedulerState;
 @property (nonatomic, readonly) id<ReachabilityProvider> reachability;
+@property (nonatomic, readonly) ZMSDispatchGroup *group;
 
 @end
 
@@ -82,13 +83,11 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 
 @end
 
-/// This protocol allows the ZMTransportSession to handle both ZMTransportRequest and ZMPushChannel as scheduled items.
+/// This protocol allows the ZMTransportSession to handle ZMTransportRequest as scheduled items.
 @protocol ZMTransportRequestSchedulerItemAsRequest <NSObject>
 
 /// If the receiver is a transport request, returns @c self, @c nil otherwise
 @property (nonatomic, readonly) ZMTransportRequest *transportRequest;
-/// If the receiver is a request to open the push channel
-@property (nonatomic, readonly) BOOL isPushChannelRequest;
 
 @end
 

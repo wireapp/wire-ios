@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,10 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 enum Constants {
-
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-}
-
-extension Float {
-    enum ConversationButtonMessageCell {
-        static let verticalInset: Float = 8
-    }
 }
 
 extension StyleKitIcon.Size {
@@ -96,7 +90,8 @@ extension CGFloat {
     enum ConversationListHeader {
         static let iconWidth: CGFloat = 32
         /// 75% of ConversationAvatarView.iconWidth + TeamAccountView.imageInset * 2 = 24 + 2 * 2
-        static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants.teamAccountViewImageInsets.right
+        static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants
+            .teamAccountViewImageInsets.right
 
         static let barHeight: CGFloat = 44
     }

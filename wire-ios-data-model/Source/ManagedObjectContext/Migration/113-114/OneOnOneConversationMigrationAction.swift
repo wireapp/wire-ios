@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,11 @@
 //
 
 import Foundation
+import WireLogging
 
+// Up until model version 2.113, a user was related to their one on one
+// conversation via the `connection` relationship, ie `user.connection.conversation`
+// and inversely `conversation.connection.to`.
 final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
     let batchSize = 200
 
@@ -76,7 +80,11 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         //  2. The only participants are the current user and the selected user
         //  3. It does not have a custom display name
         let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
         let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
         let sameParticipant = NSPredicate(
             format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
@@ -93,6 +101,10 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             noUserDefinedName,
             sameParticipant
         ])
+
+        //  4. sort by their fully qualified conversation ID in ascending oder, and use the first one.
+        // primary_key is basically the qualified id
+        request.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
 
         guard
             let conversation = try context.fetch(request).first

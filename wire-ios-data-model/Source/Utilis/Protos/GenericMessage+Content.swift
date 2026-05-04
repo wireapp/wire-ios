@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,72 +17,73 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - GenericMessage
 
 public extension GenericMessage {
     var hasText: Bool {
-        return messageData is Text
+        messageData is Text
     }
 
     var hasConfirmation: Bool {
-        return messageData is Confirmation
+        messageData is Confirmation
     }
 
     var hasReaction: Bool {
-        return messageData is WireProtos.Reaction
+        messageData is GenericMessageProtocol.Reaction
     }
 
     var hasAsset: Bool {
-        return messageData is WireProtos.Asset
+        messageData is GenericMessageProtocol.Asset
     }
 
     var hasClientAction: Bool {
-        return messageData is ClientAction
+        messageData is ClientAction
     }
 
     var hasCleared: Bool {
-        return messageData is Cleared
+        messageData is Cleared
     }
 
     var hasLastRead: Bool {
-        return messageData is LastRead
+        messageData is LastRead
     }
 
     var hasKnock: Bool {
-        return messageData is Knock
+        messageData is Knock
     }
 
     var hasExternal: Bool {
-        return messageData is External
+        messageData is External
     }
 
     var hasAvailability: Bool {
-        return messageData is WireProtos.Availability
+        messageData is GenericMessageProtocol.Availability
     }
 
     var hasEdited: Bool {
-        return messageData is MessageEdit
+        messageData is MessageEdit
     }
 
     var hasDeleted: Bool {
-        return messageData is MessageDelete
+        messageData is MessageDelete
     }
 
     var hasCalling: Bool {
-        return messageData is Calling
+        messageData is Calling
     }
 
     var hasHidden: Bool {
-        return messageData is MessageHide
+        messageData is MessageHide
     }
 
     var hasLocation: Bool {
-        return messageData is Location
+        messageData is Location
     }
 
     var hasDataTransfer: Bool {
-        return messageData is DataTransfer
+        messageData is DataTransfer
     }
 }
 
@@ -90,18 +91,18 @@ public extension GenericMessage {
 
 public extension Ephemeral {
     var hasAsset: Bool {
-        return messageData is WireProtos.Asset
+        messageData is GenericMessageProtocol.Asset
     }
 
     var hasKnock: Bool {
-        return messageData is Knock
+        messageData is Knock
     }
 
     var hasLocation: Bool {
-        return messageData is Location
+        messageData is Location
     }
 
     var hasText: Bool {
-        return messageData is Text
+        messageData is Text
     }
 }

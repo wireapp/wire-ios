@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,18 @@
 //
 
 import avs
-
-private let zmLog = ZMSLog(tag: "AVS")
+import WireLogging
 
 final class AVSLogObserver: AVSLogger {
     private var token: Any!
 
     init() {
-        token = SessionManager.addLogger(self)
+        self.token = SessionManager.addLogger(self)
     }
 
-    // MARK: - AVSLoggger
+    // MARK: - AVSLogger
 
     func log(message: String) {
-        zmLog.safePublic(SanitizedString(stringLiteral: message), level: .public)
+        WireLogger.avs.info(SanitizedString(stringLiteral: message).safeForLoggingDescription, attributes: .safePublic)
     }
 }

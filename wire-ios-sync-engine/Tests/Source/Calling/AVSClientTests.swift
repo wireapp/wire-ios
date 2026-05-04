@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,26 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AVSClientTests: XCTestCase {
 
     func testThatItSupportsAVSIdentifier() {
         // Given
-        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com")
+        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com", isFederationEnabled: false)
 
         // When
         let sut = AVSClient(userId: avsIdentifier, clientId: UUID().uuidString)
 
         // Then
         XCTAssertEqual(sut.userId, avsIdentifier.serialized)
-        XCTAssertEqual(sut.avsIdentifier, avsIdentifier)
+        XCTAssertEqual(sut.avsIdentifier(isFederationEnabled: false), avsIdentifier)
     }
 
     func testThatItSupportsAVSIdentifer_WhenCreatedFromAVSCallMember() {
         // Given
-        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com")
+        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com", isFederationEnabled: false)
 
         let member = AVSCallMember(member: AVSParticipantsChange.Member(
             userid: avsIdentifier.serialized,
@@ -51,12 +51,12 @@ class AVSClientTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.userId, avsIdentifier.serialized)
-        XCTAssertEqual(sut.avsIdentifier, avsIdentifier)
+        XCTAssertEqual(sut.avsIdentifier(isFederationEnabled: false), avsIdentifier)
     }
 
     func testThatItSupportsAVSIdentifer_WhenCreatedFromActiveSpeaker() {
         // Given
-        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com")
+        let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com", isFederationEnabled: false)
 
         let activeSpeaker = AVSActiveSpeakersChange.ActiveSpeaker(
             userId: avsIdentifier.serialized,
@@ -70,7 +70,7 @@ class AVSClientTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.userId, avsIdentifier.serialized)
-        XCTAssertEqual(sut.avsIdentifier, avsIdentifier)
+        XCTAssertEqual(sut.avsIdentifier(isFederationEnabled: false), avsIdentifier)
     }
 
 }

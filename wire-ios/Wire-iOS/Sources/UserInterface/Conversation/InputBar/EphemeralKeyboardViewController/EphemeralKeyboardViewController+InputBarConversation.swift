@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 // MARK: - InputBarConversation Extension
 
@@ -42,7 +43,10 @@ extension InputBarConversation {
     ///   - color: Indicates the color for the icons
     /// - Returns: An UIImage as the icon with the proper icon
 
-    private func timeoutImage(for timeout: MessageDestructionTimeoutValue, withColor color: UIColor = UIColor.accent()) -> UIImage? {
+    private func timeoutImage(
+        for timeout: MessageDestructionTimeoutValue,
+        withColor color: UIColor = UIColor.accent()
+    ) -> UIImage? {
         guard timeout != .none else { return nil }
         if timeout.isYears { return StyleKitIcon.timeoutYear.makeImage(size: 64, color: color) }
         if timeout.isWeeks { return StyleKitIcon.timeoutWeek.makeImage(size: 64, color: color) }

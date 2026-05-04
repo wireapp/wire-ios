@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 class PrefillPrimaryKeyAction: CoreDataMigrationAction {
 
@@ -44,7 +45,10 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
             }
         } catch {
-            WireLogger.localStorage.error("error fetching data \(entityName) during PrefillPrimaryKeyAction: \(error.localizedDescription)")
+            WireLogger.localStorage
+                .error(
+                    "error fetching data \(entityName) during PrefillPrimaryKeyAction: \(error.localizedDescription)"
+                )
         }
     }
 }

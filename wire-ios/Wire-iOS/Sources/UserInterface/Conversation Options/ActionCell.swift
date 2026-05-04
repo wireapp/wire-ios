@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,17 +53,17 @@ final class ActionCell: UITableViewCell, CellConfigurationConfigurable {
     private func createConstraints() {
         [label, imageContainer, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          imageContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
-          imageContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          imageContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-          imageContainer.widthAnchor.constraint(equalToConstant: 64),
+            imageContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageContainer.widthAnchor.constraint(equalToConstant: 64),
             iconImageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
             iconImageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor),
-          label.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
-          label.topAnchor.constraint(equalTo: contentView.topAnchor),
-          label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-          label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          label.heightAnchor.constraint(equalToConstant: 56)
+            label.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            label.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireSyncEngine
 import WireSyncEngineSupport
-import WireUITesting
+import WireTestingPackage
+import WireTransport
 import XCTest
 
 @testable import Wire
@@ -79,7 +79,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
@@ -89,20 +88,29 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        BackendInfo.storage = UserDefaults.standard
         mockConversation = nil
         mockUserSession = nil
         mockCreateSecuredGuestLinkUseCase = nil
+
         super.tearDown()
     }
 
     // MARK: - Helper methods
 
-    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
+    private func makeViewModel(
+        config: MockOptionsViewModelConfiguration,
+        apiVersion: APIVersion = .v0
+    ) -> ConversationGuestOptionsViewModel {
         ConversationGuestOptionsViewModel(
             configuration: config,
             conversation: mockConversation.convertToRegularConversation(),
-            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase
+            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase,
+            metadata: BackendMetadataProvider(
+                apiVersionOverride: apiVersion,
+                domainOverride: "wire.com",
+                isFederationEnabledOverride: false,
+                isBackendMLSEnabledOverride: false
+            )
         )
     }
 
@@ -160,7 +168,10 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     func testThatItRendersAllowGuests_WithLink() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
@@ -170,7 +181,10 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     func testThatItRendersAllowGuests_WithLink_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
 
@@ -184,7 +198,10 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
 
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
@@ -196,7 +213,10 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     func testThatItRendersAllowGuests_WithLink_DarkTheme_Copying() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
@@ -380,15 +400,18 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersLoading() {
-        // GIVEN
+
+        // Given
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
-        // WHEN
-        viewModel.setAllowGuests(true)
-        // THEN
+
+        // When
+        viewModel.setAllowGuests(true, view: .init())
+
+        // Then
         snapshotHelper.verify(matching: navigationController)
     }
 
@@ -399,7 +422,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
         // WHEN
-        viewModel.setAllowGuests(true)
+        viewModel.setAllowGuests(true, view: .init())
 
         // THEN
         snapshotHelper
@@ -427,7 +450,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         config.areGuestPresent = false
         let viewModel = makeViewModel(config: config)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false)
+        let sut = viewModel.setAllowGuests(false, view: .init())
         // THEN
         XCTAssertNil(sut)
     }
@@ -439,7 +462,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        guard let sut = viewModel.setAllowGuests(false) else {
+        guard let sut = viewModel.setAllowGuests(false, view: .init()) else {
             return XCTFail("This sut shouldn't be nil")
         }
         // THEN
@@ -450,22 +473,24 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
         // GIVEN
-        BackendInfo.apiVersion = .v4
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = makeViewModel(config: config)
+        let viewModel = makeViewModel(config: config, apiVersion: .v4)
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
-        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow()
+        viewModel.startGuestLinkCreationFlow(from: .init())
 
         // THEN
-        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
+        XCTAssertEqual(
+            mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count,
+            1
+        )
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
@@ -475,20 +500,21 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
-        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow()
+        viewModel.startGuestLinkCreationFlow(from: .init())
 
         // THEN
-        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
-
+        XCTAssertEqual(
+            mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count,
+            0
+        )
     }
-
 }

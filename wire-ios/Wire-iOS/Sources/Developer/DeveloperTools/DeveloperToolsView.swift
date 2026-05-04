@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,13 @@ struct DeveloperToolsView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperToolsViewModel
+    @StateObject var viewModel: DeveloperToolsViewModel
 
     // MARK: - Views
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Developer tools")
+            .navigationTitle(Text(verbatim: "Developer tools"))
             .navigationBarItems(trailing: dismissButton)
             .alert(isPresented: $viewModel.isPresentingAlert) {
                 Alert(
@@ -58,53 +57,22 @@ struct DeveloperToolsView: View {
             }
 
         case let .text(textItem):
-            TextItemCell(title: textItem.title, value: textItem.value)
-                .contextMenu {
-                    Button(
-                        hapticFeedbackStyle: .success,
-                        action: {
-                            viewModel.handleEvent(.itemCopyRequested(item))
-                        },
-                        label: {
-                            Label("Copy", systemImage: "doc.on.doc")
-                        }
-                    )
-                }
+            TextItemCell(title: textItem.title, value: textItem.value) {
+                viewModel.handleEvent(.itemCopyRequested(item))
+            }
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
-
         }
     }
 
     private var dismissButton: some View {
         Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
+            label: { Text(verbatim: "Close") }
         )
     }
 
-}
-
-// MARK: - Subviews
-
-private struct TextItemCell: View {
-
-    let title: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Text(title)
-
-            Spacer()
-
-            Text(value)
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundColor(.secondary)
-        }
-    }
 }
 
 // MARK: - Previews
@@ -116,5 +84,4 @@ struct DeveloperToolsView_Previews: PreviewProvider {
             DeveloperToolsView(viewModel: DeveloperToolsViewModel())
         }
     }
-
 }

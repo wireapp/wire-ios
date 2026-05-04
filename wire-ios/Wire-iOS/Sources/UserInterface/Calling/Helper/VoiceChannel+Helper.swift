@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ extension VoiceChannel {
     }
 
     func getSecondParticipant() -> ZMUser? {
-        guard let participants = self.conversation?.participants as? [ZMUser] else { return nil }
+        guard let participants = conversation?.participants as? [ZMUser] else { return nil }
         if case .incoming = state, let initiator = initiator as? ZMUser {
             return initiator
         }
@@ -35,6 +35,6 @@ extension VoiceChannel {
     }
 
     var isGroupCall: Bool {
-        return conversation?.conversationType == .group
+        conversation?.conversationType == .group
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationDegradedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationDegradedSystemMessageSectionDescription>
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
@@ -32,11 +32,6 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -48,13 +43,13 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
             attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: .init(resource: .certificateExpired),
             attributedText: title,
             showLine: true
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 }

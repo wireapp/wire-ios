@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class OfflineBar: UIView {
 
@@ -37,16 +38,16 @@ final class OfflineBar: UIView {
     }
 
     override init(frame: CGRect) {
-        offlineLabel = UILabel()
+        self.offlineLabel = UILabel()
 
         super.init(frame: frame)
-        backgroundColor = UIColor(rgb: 0xFEBF02, alpha: 1)
+        backgroundColor = ColorTheme.Base.warning
 
         layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
         layer.masksToBounds = true
 
         offlineLabel.font = FontSpec(FontSize.small, .medium).font
-        offlineLabel.textColor = UIColor.white
+        offlineLabel.textColor = ColorTheme.Base.onWarning
         offlineLabel.text = L10n.Localizable.SystemStatusBar.NoInternet.title.uppercased()
 
         addSubview(offlineLabel)
@@ -63,12 +64,12 @@ final class OfflineBar: UIView {
     private func createConstraints() {
         offlineLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          offlineLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-          offlineLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            offlineLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            offlineLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             offlineLabel.leftAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leftAnchor),
             offlineLabel.rightAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.rightAnchor),
 
-          heightConstraint
+            heightConstraint
         ])
     }
 

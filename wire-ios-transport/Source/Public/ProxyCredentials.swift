@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,18 +23,10 @@ public final class ProxyCredentials: NSObject {
     public var password: String
     public var proxy: ProxySettingsProvider
 
-    init(proxy: ProxySettingsProvider, username: String, password: String) {
+    public init(username: String, password: String, proxy: ProxySettingsProvider) {
         self.username = username
         self.password = password
         self.proxy = proxy
-    }
-
-    @objc(initWithUsername:password:forProxy:)
-    public convenience init?(username: String?, password: String?, proxy: ProxySettingsProvider) {
-        guard let username, let password else {
-            return nil
-        }
-        self.init(proxy: proxy, username: username, password: password)
     }
 
     public func persist() throws {
@@ -55,11 +47,13 @@ public final class ProxyCredentials: NSObject {
             let usernameData = try Keychain.fetchItem(.usernameItem(for: proxy))
             let passwordData = try Keychain.fetchItem(.passwordItem(for: proxy))
 
-            let username = String(data: usernameData, encoding: .utf8)
-            let password = String(data: passwordData, encoding: .utf8)
-            return ProxyCredentials(username: username,
-                                    password: password,
-                                    proxy: proxy)
+            let username = String(decoding: usernameData, as: UTF8.self)
+            let password = String(decoding: passwordData, as: UTF8.self)
+            return ProxyCredentials(
+                username: username,
+                password: password,
+                proxy: proxy
+            )
         } catch {
             return nil
         }
@@ -100,7 +94,7 @@ struct GenericPasswordKeychainItem: KeychainItem {
     }
 
     func queryForSetting(value: Data) -> [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: itemIdentifier,
             kSecValueData: value

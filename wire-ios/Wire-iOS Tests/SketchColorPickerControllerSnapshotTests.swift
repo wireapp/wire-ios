@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -26,6 +25,7 @@ import XCTest
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
+
     typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
     private var snapshotHelper: SnapshotHelper!
@@ -62,7 +62,7 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     func testForColorButtonBumpedThreeTimes() {
         // GIVEN & WHEN
-        for _ in 1...3 {
+        for _ in 1 ... 3 {
             sut.collectionView(sut.colorsCollectionView, didSelectItemAt: IndexPath(item: 1, section: 0))
         }
 

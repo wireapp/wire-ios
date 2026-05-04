@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import UIKit
+import WireCommonComponents
 
 typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
-/**
- * The step informing the user that they need to enroll into end-2-end identity
- */
+/// The step informing the user that they need to enroll into end-2-end identity
 
 class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
+
     let backButton: BackButtonDescription? = nil
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
@@ -33,14 +33,14 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription? = nil
 
     init() {
-        mainView = SolidButtonDescription(
+        self.mainView = SolidButtonDescription(
             title: E2ei.GetCertificateButton.title,
             accessibilityIdentifier: "get_certificate"
         )
-        secondaryView = nil
-        headline = E2ei.title
-        let details = [E2ei.subtitle, E2ei.learnMore(URL.wr_e2eiLearnMore)].joined(separator: "\n")
-        subtext = .markdown(from: details, style: .login)
+        self.secondaryView = nil
+        self.headline = E2ei.title
+        let details = [E2ei.subtitle, E2ei.learnMore(WireURLs.shared.endToEndIdentityInfo)].joined(separator: "\n")
+        self.subtext = .markdown(from: details, style: .login)
     }
 
 }

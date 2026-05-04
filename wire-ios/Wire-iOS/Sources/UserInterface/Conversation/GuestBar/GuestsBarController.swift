@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,15 +26,20 @@ final class GuestsBarController: UIViewController {
     // MARK: Properties
 
     enum State: Equatable {
-        case visible(labelKey: String, identifier: String)
+        case visible(labelKey: String)
         case hidden
     }
 
     private let label = UILabel()
     private let container = UIView()
-    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor.constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor.constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -3)
+    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -3
+    )
 
     private static let collapsedHeight: CGFloat = 2
     private static let expandedHeight: CGFloat = 20
@@ -44,12 +49,13 @@ final class GuestsBarController: UIViewController {
 
     var state: State {
         get {
-            return _state
+            _state
         }
         set {
             setState(newValue, animated: false)
         }
     }
+
     // MARK: Override Methods
 
     override func viewDidLoad() {
@@ -60,6 +66,7 @@ final class GuestsBarController: UIViewController {
     }
 
     // MARK: UI and Layout
+
     private func setupViews() {
         view.backgroundColor = .clear
         container.backgroundColor = .accent()
@@ -104,21 +111,29 @@ final class GuestsBarController: UIViewController {
 
         let change = {
             if !collapsed {
-                self.heightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+                self.heightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController
+                    .expandedHeight
             }
 
-            self.containerHeightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+            self.containerHeightConstraint.constant = collapsed ? GuestsBarController
+                .collapsedHeight : GuestsBarController.expandedHeight
             self.bottomLabelConstraint.constant = collapsed ? -GuestsBarController.expandedHeight : -3
             self.label.alpha = collapsed ? 0 : 1
         }
 
         let completion: (Bool) -> Void = { _ in
             guard collapsed else { return }
-            self.containerHeightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+            self.containerHeightConstraint.constant = collapsed ? GuestsBarController
+                .collapsedHeight : GuestsBarController.expandedHeight
         }
 
         if animated {
-            UIView.animate(easing: collapsed ? .easeOutQuad : .easeInQuad, duration: 0.4, animations: change, completion: completion)
+            UIView.animate(
+                easing: collapsed ? .easeOutQuad : .easeInQuad,
+                duration: 0.4,
+                animations: change,
+                completion: completion
+            )
         } else {
             change()
             completion(true)
@@ -129,21 +144,20 @@ final class GuestsBarController: UIViewController {
         switch state {
         case .hidden:
             label.text = nil
-            label.accessibilityIdentifier = nil
-        case .visible(let text, let accessibilityIdentifier):
+        case let .visible(text):
             label.text = text
             label.font = FontSpec.mediumSemiboldFont.font!
             label.textColor = SemanticColors.Label.textDefaultWhite
             label.textAlignment = .center
-            label.accessibilityIdentifier = accessibilityIdentifier
         }
     }
 
 }
 
 // MARK: - Bar
+
 extension GuestsBarController: Bar {
     var weight: Float {
-        return 1
+        1
     }
 }

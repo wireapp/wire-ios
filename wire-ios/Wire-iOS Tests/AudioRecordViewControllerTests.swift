@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import avs
-@testable import Wire
 import XCTest
+@testable import Wire
 
 private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
 
@@ -30,7 +30,12 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
 
     func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController) {}
 
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    ) {}
 }
 
 final class AudioRecordViewControllerTests: XCTestCase {
@@ -58,9 +63,11 @@ final class AudioRecordViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    func verify(file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
+    func verify(
+        file: StaticString = #filePath,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         verifyInAllPhoneWidths(
             matching: sut.prepareForSnapshot(),
@@ -137,7 +144,8 @@ final class AudioRecordViewControllerTests: XCTestCase {
 }
 
 private extension UIViewController {
-    @discardableResult func prepareForSnapshot() -> UIView {
+    @discardableResult
+    func prepareForSnapshot() -> UIView {
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,18 +48,18 @@ struct CallHandle: Hashable {
             return nil
         }
 
-        accountID = identifiers[0]
-        conversationID = identifiers[1]
+        self.accountID = identifiers[0]
+        self.conversationID = identifiers[1]
     }
 
     // MARK: - Methods
 
     var cxHandle: CXHandle {
-        return CXHandle(type: .generic, value: encodedString)
+        CXHandle(type: .generic, value: encodedString)
     }
 
     var encodedString: String {
-        return "\(accountID.transportString())\(Self.separator)\(conversationID.transportString())"
+        "\(accountID.transportString())\(Self.separator)\(conversationID.transportString())"
     }
 
 }

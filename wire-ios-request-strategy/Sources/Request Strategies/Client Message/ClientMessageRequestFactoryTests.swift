@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,33 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
-import WireProtos
-@testable import WireRequestStrategy
+import WireTransport
 import WireUtilities
 import XCTest
+@testable import WireRequestStrategy
 
-class ClientMessageRequestFactoryTests: MessagingTestBase {
-
-    private var apiVersion: APIVersion! {
-        didSet {
-            setCurrentAPIVersion(apiVersion)
-        }
-    }
-
-    override func setUp() {
-        super.setUp()
-        apiVersion = .v0
-    }
-
-    override func tearDown() {
-        apiVersion = nil
-        super.tearDown()
-    }
-
-}
+class ClientMessageRequestFactoryTests: MessagingTestBase {}
 
 // MARK: - Client discovery
+
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
@@ -50,17 +34,18 @@ extension ClientMessageRequestFactoryTests {
             // GIVEN
             let conversationID = UUID()
             let expectedMessage = Proteus_NewOtrMessage(
-                withSender: self.selfClient,
+                withSenderId: self.selfClient.hexRemoteIdentifier,
                 nativePush: false,
-                recipients: []
+                recipients: [],
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
             // WHEN
-            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+            let request = ClientMessageRequestFactory(localDomain: "wire.com").upstreamRequestForFetchingClients(
                 conversationId: conversationID,
                 domain: nil,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: .v0
             )
 
             guard let data = request?.binaryData else {
@@ -78,7 +63,7 @@ extension ClientMessageRequestFactoryTests {
     }
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
-        apiVersion = .v1
+        let apiVersion = APIVersion.v1
         syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
@@ -91,11 +76,11 @@ extension ClientMessageRequestFactoryTests {
             )
 
             // WHEN
-            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+            let request = ClientMessageRequestFactory(localDomain: "wire.com").upstreamRequestForFetchingClients(
                 conversationId: conversationID,
                 domain: domain,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: apiVersion
             )
 
             guard let data = request?.binaryData else {
@@ -107,7 +92,10 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages"
+            )
             XCTAssertEqual(message, expectedMessage)
         }
     }

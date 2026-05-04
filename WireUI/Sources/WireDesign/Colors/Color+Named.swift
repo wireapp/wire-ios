@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,46 +20,60 @@ import SwiftUI
 
 public extension Color {
 
-    static let primaryText = Color(uiColor: UIColor(
-        light: .black,
-        dark: .white
-    )
-    )
-
-    static let secondaryText = Color(uiColor: UIColor(
-        light: .gray70,
-        dark: .gray30
-    )
+    static let primaryText = Color(
+        uiColor: UIColor(
+            light: .black,
+            dark: .white
+        )
     )
 
-    static let primaryButtonBackground = Color(uiColor: UIColor(
-        light: .blue500Light,
-        dark: .blue500Dark
-    )
-    )
-
-    static let primaryButtonText = Color(uiColor: UIColor(
-        light: .white,
-        dark: .black
-    )
+    static let secondaryText = Color(
+        uiColor: UIColor(
+            light: .gray70,
+            dark: .gray30
+        )
     )
 
-    static let secondaryButtonBackground = Color(uiColor: UIColor(
-        light: .white,
-        dark: .gray95
-    )
-    )
-
-    static let secondaryButtonBorder = Color(uiColor: UIColor(
-        light: .gray40,
-        dark: .gray80
-    )
+    static let primaryButtonBackground = Color(
+        uiColor: UIColor(
+            light: .blue500Light,
+            dark: .blue500Dark
+        )
     )
 
-    static let secondaryButtonText = Color(uiColor: UIColor(
-        light: .black,
-        dark: .white
+    static let primaryButtonText = Color(
+        uiColor: UIColor(
+            light: .white,
+            dark: .black
+        )
     )
+
+    static let secondaryButtonBackground = Color(
+        uiColor: UIColor(
+            light: .white,
+            dark: .gray95
+        )
+    )
+
+    static let secondaryButtonBorder = Color(
+        uiColor: UIColor(
+            light: .gray40,
+            dark: .gray80
+        )
+    )
+
+    static let secondaryButtonText = Color(
+        uiColor: UIColor(
+            light: .black,
+            dark: .white
+        )
+    )
+
+    static let viewBackground = Color(
+        uiColor: UIColor(
+            light: .gray20,
+            dark: .gray100
+        )
     )
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import WireDesign
 import WireSyncEngineSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -28,40 +29,49 @@ final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
     func testThatItRendersWithUserName() {
         let user = SwiftMockLoader.mockUsers().first!
-        let sut = IncomingConnectionView(user: user)
+        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock())
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUnconnectedUser() {
         let user = MockUserType.createUser(name: "Test")
         user.isConnected = false
-        let sut = IncomingConnectionView(user: user)
+        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock())
 
         sut.backgroundColor = .white
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUserName_NoHandle() {
         let user = SwiftMockLoader.mockUsers().last! // The last user does not have a username
-        let sut = IncomingConnectionView(user: user)
+        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock())
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenClassified() {
@@ -69,10 +79,14 @@ final class IncomingConnectionViewTests: XCTestCase {
         let mockClassificationProvider = MockSecurityClassificationProviding()
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
-        let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenNotClassified() {
@@ -80,10 +94,14 @@ final class IncomingConnectionViewTests: XCTestCase {
         let mockClassificationProvider = MockSecurityClassificationProviding()
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
 
-        let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithFederatedUser() {
@@ -92,10 +110,14 @@ final class IncomingConnectionViewTests: XCTestCase {
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
         user.isFederated = true
 
-        let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,14 +32,16 @@ enum CallHapticsEvent: String {
     case toggleVideo
 
     enum FeedbackType {
-        case success, warning, impact
+        case success
+        case warning
+        case impact
     }
 
     var feedbackType: FeedbackType {
         switch self {
-        case .start, .reconnect, .join: return .success
-        case .leave, .end: return .warning
-        case .toggleVideo: return .impact
+        case .start, .reconnect, .join: .success
+        case .leave, .end: .warning
+        case .toggleVideo: .impact
         }
     }
 }

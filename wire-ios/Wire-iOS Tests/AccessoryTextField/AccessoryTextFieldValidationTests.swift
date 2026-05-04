@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
     private func checkSucceed(
         textFieldType: ValidatedTextField.Kind,
         text: String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // WHEN
@@ -110,7 +110,7 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
         textFieldType: ValidatedTextField.Kind,
         text: String?,
         expectedError: TextFieldValidator.ValidationError?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // WHEN
@@ -281,9 +281,15 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
         let missingRequiredClassesSet: Set<PasswordCharacterClass> = [.uppercase, .special, .digits]
 
         // WHEN & THEN
-        checkError(textFieldType: type, text: text, expectedError:
-                .invalidPassword([.tooShort,
-                                  .missingRequiredClasses(missingRequiredClassesSet)]))
+        checkError(
+            textFieldType: type,
+            text: text,
+            expectedError:
+            .invalidPassword([
+                .tooShort,
+                .missingRequiredClasses(missingRequiredClassesSet)
+            ])
+        )
     }
 
     func testThat129CharacterPasswordIsInvalid_New() {

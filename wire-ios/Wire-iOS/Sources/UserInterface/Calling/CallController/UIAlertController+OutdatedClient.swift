@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 
 extension UIAlertController {
     static var unsupportedVersionAlert: UIAlertController {
@@ -29,7 +30,7 @@ extension UIAlertController {
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.Force.Update.okButton,
             style: .default,
-            handler: { _ in UIApplication.shared.open(URL.wr_wireAppOnItunes) }
+            handler: { _ in UIApplication.shared.open(WireURLs.shared.appOnItunes) }
         ))
 
         alertController.addAction(UIAlertAction(

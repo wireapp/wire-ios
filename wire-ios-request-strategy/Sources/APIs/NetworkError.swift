@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@ public enum NetworkError: Error, Equatable {
     case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
 
     public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
-        return switch (lhs, rhs) {
+        switch (lhs, rhs) {
         case (.errorEncodingRequest, .errorEncodingRequest):
             true
         case (.errorDecodingResponse(_), .errorDecodingResponse(_)):
             true
-        case (.missingClients(let lhsStatus, _), .missingClients(let rhsStatus, _)):
+        case let (.missingClients(lhsStatus, _), .missingClients(rhsStatus, _)):
             lhsStatus == rhsStatus
-        case (.invalidRequestError(let lhsFailure, _), .invalidRequestError(let rhsFailure, _)):
+        case let (.invalidRequestError(lhsFailure, _), .invalidRequestError(rhsFailure, _)):
             lhsFailure == rhsFailure
         default:
             false
@@ -43,19 +43,40 @@ public enum NetworkError: Error, Equatable {
     }
 
     var response: ZMTransportResponse? {
-        return switch self {
+        switch self {
         case .errorEncodingRequest:
             nil
         case .endpointNotAvailable:
             nil
         case .errorDecodingURLResponse:
             nil
-        case .errorDecodingResponse(let response):
+        case let .errorDecodingResponse(response):
             response
-        case .missingClients(_, let response):
+        case let .missingClients(_, response):
             response
-        case .invalidRequestError(_, let response):
+        case let .invalidRequestError(_, response):
             response
+        }
+    }
+}
+
+// MARK: - LocalizedError
+
+extension NetworkError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .errorEncodingRequest:
+            "Failed to encode the request."
+        case let .errorDecodingResponse(response):
+            "Failed to decode the response: \(response)."
+        case let .errorDecodingURLResponse(urlResponse):
+            "Failed to decode the URL response: \(urlResponse)."
+        case .endpointNotAvailable:
+            "The requested endpoint is not available."
+        case let .missingClients(status, response):
+            "Missing clients with status: \(status). Response: \(response)."
+        case let .invalidRequestError(failure, response):
+            "Invalid request error: \(failure). Response: \(response)."
         }
     }
 }

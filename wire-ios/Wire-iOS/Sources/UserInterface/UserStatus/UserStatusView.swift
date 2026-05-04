@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,18 +81,20 @@ final class UserStatusView: TitleView {
         var title = ""
 
         if options.contains(.displayUserName) {
-            title = userStatus.name
+            title = userStatus.displayName
             var accessibilityLabel = title
             if userStatus.isE2EICertified {
                 trailingIcons += [.e2eiCertifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesHaveValidCertificates
             }
             if userStatus.isProteusVerified {
                 trailingIcons += [.proteusVerifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesProteusVerified
             }
             self.accessibilityLabel = accessibilityLabel
-        } else if availability == .none && options.contains(.allowSettingStatus) {
+        } else if availability == .none, options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
         } else if availability != .none {
@@ -102,9 +104,9 @@ final class UserStatusView: TitleView {
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
         configure(
-            leadingIcons: leadingIcons.compactMap { $0 },
+            leadingIcons: leadingIcons.compactMap(\.self),
             title: title,
-            trailingIcons: trailingIcons.compactMap { $0 },
+            trailingIcons: trailingIcons.compactMap(\.self),
             subtitle: nil,
             interactive: isInteractive,
             showInteractiveIcon: showInteractiveIcon
@@ -152,9 +154,9 @@ extension UserStatusView {
     }
 }
 
-extension NSTextAttachment {
+private extension NSTextAttachment {
 
-    fileprivate static var e2eiCertifiedShield: NSTextAttachment {
+    static var e2eiCertifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .certificateValid)
         if let imageSize = textAttachment.image?.size {
             textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
@@ -162,7 +164,7 @@ extension NSTextAttachment {
         return textAttachment
     }
 
-    fileprivate static var proteusVerifiedShield: NSTextAttachment {
+    static var proteusVerifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
         if let imageSize = textAttachment.image?.size {
             textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)

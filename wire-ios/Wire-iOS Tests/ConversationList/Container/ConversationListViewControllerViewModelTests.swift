@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,21 +29,31 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
 
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
         userSession = UserSessionMock(mockUser: selfUser)
+
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
+
         sut = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
@@ -56,8 +66,8 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         selfUser = nil
         mockConversation = nil
         userSession = nil
-
-        super.tearDown()
+        mockGetUserAccountImageSourceUseCase = nil
+        mockMainCoordinator = nil
     }
 
     func testThatSelectAConversationCallsSelectOnListContentController() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 struct E2EIdentityCertificateDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
     var certificateDetails: String
     var isDownloadAndCopyEnabled: Bool
 
@@ -37,7 +37,7 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
-                .font(.textStyle(.h3))
+                .font(for: .h3)
                 .accessibilityIdentifier("CertificateDetailsTitle")
             Spacer()
         }
@@ -45,18 +45,12 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                Button(
-                    action: {
-                        dismiss()
-                        didDismiss?()
-                    },
-                    label: {
-                        Image(.close)
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
-                )
-                .accessibilityIdentifier("CloseButton")
-                .padding(.all, ViewConstants.Padding.standard)
+                CloseButton(action: {
+                    dismiss()
+                    didDismiss?()
+                }, accessibilityLabel: L10n.Localizable.General.close)
+                    .accessibilityIdentifier("CloseButton")
+                    .padding(.all, ViewConstants.Padding.standard)
             }
         }
     }
@@ -64,7 +58,7 @@ struct E2EIdentityCertificateDetailsView: View {
     private var certificateView: some View {
         ScrollView {
             Text(certificateDetails)
-                .font(.textStyle(.subline1).monospaced())
+                .font(for: .subline1).monospaced()
                 .padding()
                 .frame(maxHeight: .infinity)
                 .accessibilityIdentifier("CertificateDetailsView")
@@ -90,7 +84,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(.textStyle(.body2))
+                    .font(for: .body2)
             }
         )
         .accessibilityIdentifier("DownloadButton")
@@ -133,10 +127,10 @@ struct E2EIdentityCertificateDetailsView: View {
                     Spacer()
                     moreButton
                         .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    .confirmationDialog("...", isPresented: $isMenuPresented) {
-                        copyToClipboardButton
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
+                        .confirmationDialog("...", isPresented: $isMenuPresented) {
+                            copyToClipboardButton
+                                .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
+                        }
                 }
             }
         }
@@ -159,13 +153,14 @@ struct E2EIdentityCertificateDetailsView: View {
 
         certificateView
             .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
-
-        .safeAreaInset(edge: .bottom,
-                       spacing: .zero) {
-            bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
-        }
-        .ignoresSafeArea()
-        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
+            .safeAreaInset(
+                edge: .bottom,
+                spacing: .zero
+            ) {
+                bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
+            }
+            .ignoresSafeArea()
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 }
 

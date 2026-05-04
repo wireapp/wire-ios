@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ final class MockCollection: NSObject, ZMCollection {
     }
 
     static var empty: MockCollection {
-        return MockCollection(messages: [:])
+        MockCollection(messages: [:])
     }
 
-    func tearDown() { }
+    func tearDown() {}
 
     func assets(for category: WireDataModel.CategoryMatch) -> [ZMConversationMessage] {
-        return messages[category] ?? []
+        messages[category] ?? []
     }
 
     let fetchingDone = true

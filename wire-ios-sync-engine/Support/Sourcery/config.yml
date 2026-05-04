@@ -5,6 +5,5 @@ templates:
 output:
   ./generated
 args:
+  autoMockableImports: ["WireDataModel", "WireDomain", "Combine", "WireNetwork"]
   autoMockableTestableImports: ["WireSyncEngine"]
-  autoMockableImports: []
- 

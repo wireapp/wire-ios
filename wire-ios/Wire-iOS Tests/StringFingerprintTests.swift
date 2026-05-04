@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class StringFingerprintTests: XCTestCase {
     func testThatFingerprintSplitsProperlyFor2() {
@@ -25,7 +25,7 @@ final class StringFingerprintTests: XCTestCase {
         let testStrings = ["abc", "mfngsdnfgljsfgjdns", "!!@#!@#!@#AASDF", ""]
         let resultStrings = ["ab c", "mf ng sd nf gl js fg jd ns", "!! @# !@ #! @# AA SD F", ""]
 
-        for i in 0..<testStrings.count {
+        for i in 0 ..< testStrings.count {
             // when
 
             let splitString = testStrings[i].fingerprintStringWithSpaces
@@ -40,7 +40,7 @@ final class StringFingerprintTests: XCTestCase {
         let testStrings = ["abc", "mfngsdnfgljsfgjdns", "!!@#!@#!@#AASDF", ""]
         let resultStrings = ["abc", "mfng sdnf gljs fgjd ns", "!!@# !@#! @#AA SDF", ""]
 
-        for i in 0..<testStrings.count {
+        for i in 0 ..< testStrings.count {
             // when
 
             let splitString = testStrings[i].split(every: 4).joined(separator: " ")

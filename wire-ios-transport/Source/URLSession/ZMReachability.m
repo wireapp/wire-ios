@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 @property (nonatomic) NSMapTable *referenceToFlag;
 @property (nonatomic) NSMapTable *referenceToName;
 @property (atomic) BOOL mayBeReachable;
-@property (atomic) BOOL isMobileConnection;
 @property (atomic) BOOL oldMayBeReachable;
-@property (atomic) BOOL oldIsMobileConnection;
 @property (nonatomic) ZMAtomicInteger *tornDownFlag;
 
 @end
@@ -68,15 +66,21 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 {
     if ([self.tornDownFlag setValueWithEqualityCondition:NO newValue:YES]) {
         NSArray *refs = self.reachabilityReferences;
+
+        // Disable callbacks synchronously on the same queue they run on
+        dispatch_sync(self.workQueue, ^{
+            for (id obj in refs) {
+                SCNetworkReachabilityRef ref = (__bridge SCNetworkReachabilityRef)obj;
+                // Clear the dispatch queue first to stop any further callbacks
+                Require(SCNetworkReachabilitySetDispatchQueue(ref, NULL));
+                // Clear the callback and context to release the retained `info`
+                Require(SCNetworkReachabilitySetCallback(ref, NULL, NULL));
+            }
+        });
+
+        // Now it's safe to drop our references
         self.reachabilityReferences = nil;
         self.referenceToFlag = nil;
-        [self.group asyncOnQueue:self.workQueue block:^{
-            for (id obj in refs) {
-                SCNetworkReachabilityRef ref = (__bridge SCNetworkReachabilityRef) obj;
-                // Setting the queue to NULL disables the callbacks:
-                Require(SCNetworkReachabilitySetDispatchQueue(ref, NULL));
-            }
-        }];
     } else {
         ZMLogWarn(@"Tearing down <%@: %p> when it's already torn down.", self.class, self);
     }
@@ -137,9 +141,9 @@ static CFStringRef copyDescription(const void *info)
                 [self.referenceToName setObject:name forKey:obj];
                 SCNetworkReachabilityContext context = {
                     0,
-                    (__bridge void *) self,
-                    NULL,
-                    NULL,
+                    (__bridge void *)self,
+                    CFRetain,
+                    CFRelease,
                     copyDescription,
                 };
                 Require(SCNetworkReachabilitySetCallback(ref, networkReachabilityCallBack, &context));
@@ -184,7 +188,6 @@ static CFStringRef copyDescription(const void *info)
                                                                0);
 
     BOOL globalReachable = YES;
-    BOOL isMobileConnection = NO;
     
     for(id obj in self.referenceToFlag.keyEnumerator) {
         NSString *name = [self.referenceToName objectForKey:obj];
@@ -199,18 +202,13 @@ static CFStringRef copyDescription(const void *info)
         else {
             ZMLogInfo(@"REACHABILITY: %@ reachable", name);
         }
-        if (0 != (flags & kSCNetworkReachabilityFlagsIsWWAN)) {
-            isMobileConnection = YES;
-        }
         globalReachable &= serverReachable;
 
         ZMLogInfo(@"FINAL REACHABILITY: %d", globalReachable);
     }
     
     self.oldMayBeReachable = self.mayBeReachable;
-    self.oldIsMobileConnection = self.isMobileConnection;
     self.mayBeReachable = globalReachable;
-    self.isMobileConnection = isMobileConnection;
     [self notifyReachabilityDidChange];
 }
 
@@ -247,7 +245,7 @@ static CFStringRef copyDescription(const void *info)
         if ((flags & kSCNetworkReachabilityFlagsIsDirect) != 0) {
             [flagNames addObject:@"IsDirect"];
         }
-#if	TARGET_OS_IPHONE
+#if    TARGET_OS_IPHONE
         if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0) {
             [flagNames addObject:@"IsWWAN"];
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@ extension UIViewController {
     /// - Parameters:
     ///   - flag: true if animated
     ///   - completion: the completion closure
-    func presentTopmost(animated flag: Bool = true,
-                        completion: (() -> Void)? = nil) {
+    func presentOverAll(
+        animated flag: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
         UIApplication.shared
             .topmostViewController(onlyFullScreen: false)?
             .present(self, animated: flag, completion: completion)

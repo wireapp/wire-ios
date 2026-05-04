@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,24 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMClientMessage {
-    static func editMessage(withEdit messageEdit: MessageEdit,
-                            forConversation conversation: ZMConversation,
-                            updateEvent: ZMUpdateEvent,
-                            inContext moc: NSManagedObjectContext,
-                            prefetchResult: ZMFetchRequestBatchResult) -> ZMClientMessage? {
+    static func editMessage(
+        withEdit messageEdit: MessageEdit,
+        forConversation conversation: ZMConversation,
+        updateEvent: ZMUpdateEvent,
+        inContext moc: NSManagedObjectContext,
+        prefetchResult: ZMFetchRequestBatchResult
+    ) -> ZMClientMessage? {
         guard
             let editedMessageId = UUID(uuidString: messageEdit.replacingMessageID),
-            let editedMessage = ZMClientMessage.fetch(withNonce: editedMessageId, for: conversation, in: moc, prefetchResult: prefetchResult),
+            let editedMessage = ZMClientMessage.fetch(
+                withNonce: editedMessageId,
+                for: conversation,
+                in: moc,
+                prefetchResult: prefetchResult
+            ),
             editedMessage.processMessageEdit(messageEdit, from: updateEvent)
         else {
             return nil
@@ -39,14 +47,13 @@ extension ZMClientMessage {
     ///
     /// - parameter messageEdit: Message edit update
     /// - parameter updateEvent: Update event which delivered the message edit update
-    /// - Returns: true if edit was succesfully applied
+    /// - Returns: true if edit was successfully applied
 
     func processMessageEdit(_ messageEdit: MessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
         guard
             let nonce = updateEvent.messageNonce,
             let senderUUID = updateEvent.senderUUID,
             let originalText = underlyingMessage?.textData,
-            case .text? = messageEdit.content,
             senderUUID == sender?.remoteIdentifier
         else {
             return false

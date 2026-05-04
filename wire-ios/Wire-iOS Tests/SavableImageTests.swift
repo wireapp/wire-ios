@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Photos
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     static var url: URL?
@@ -41,7 +41,7 @@ final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     static var image: UIImage?
 
     static func forAsset() -> MockAssetCreationRequest {
-        return MockAssetCreationRequest()
+        MockAssetCreationRequest()
     }
 
     func addResource(with type: PHAssetResourceType, data: Data, options: PHAssetResourceCreationOptions?) {
@@ -64,9 +64,9 @@ final class SavableImageTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        image = self.image(inTestBundleNamed: "transparent.png")
+        image = image(inTestBundleNamed: "transparent.png")
         imageData = image.imageData
-        gif = self.image(inTestBundleNamed: "animated.gif")
+        gif = image(inTestBundleNamed: "animated.gif")
         gifData = gif.imageData
     }
 
@@ -105,7 +105,7 @@ final class SavableImageTests: XCTestCase {
                 savableImage = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
 
         }
 
@@ -140,7 +140,7 @@ final class SavableImageTests: XCTestCase {
                 mockOwner = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
         }
 
         // THEN
@@ -166,7 +166,7 @@ final class SavableImageTests: XCTestCase {
                 savableImage = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
 
         }
 
@@ -209,7 +209,7 @@ final class SavableImageTests: XCTestCase {
                 mockOwner = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
         }
 
         // THEN

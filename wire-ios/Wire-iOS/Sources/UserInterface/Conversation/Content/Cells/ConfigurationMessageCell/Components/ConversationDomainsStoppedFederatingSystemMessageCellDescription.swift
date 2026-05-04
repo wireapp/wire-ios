@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,16 +22,11 @@ import WireDesign
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationDomainsStoppedFederatingSystemMessageCellDescription>
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -43,10 +38,11 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 
     init(systemMessageData: ZMSystemMessageData) {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
-        let content = ConversationDomainsStoppedFederatingSystemMessageCellDescription.makeAttributedString(for: systemMessageData)
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        let content = ConversationDomainsStoppedFederatingSystemMessageCellDescription
+            .makeAttributedString(for: systemMessageData)
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
 
-        accessibilityLabel = content?.string
+        self.accessibilityLabel = content?.string
     }
 
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
@@ -60,22 +56,27 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
         var text: String
         if domains.hasSelfDomain, let user = SelfUser.provider?.providedSelfUser {
             let withoutSelfDomain = domains.filter { $0 != user.domain }
-            text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
+            text = BackendsStopFederating.selfBackend(
+                withoutSelfDomain.first ?? "",
+                WireURLs.shared.federationInfo.absoluteString
+            )
         } else {
-            text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
+            text = BackendsStopFederating.otherBackends(
+                domains.first ?? "",
+                domains.last ?? "",
+                WireURLs.shared.federationInfo.absoluteString
+            )
         }
 
-        let attributedString = NSAttributedString.markdown(from: text, style: .systemMessage)
-
-        return attributedString
+        return NSAttributedString.markdown(from: text, style: .systemMessage)
     }
 
 }
 
-private extension Array where Element == String {
+private extension [String] {
 
     var hasSelfDomain: Bool {
-        return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
+        contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 
 }

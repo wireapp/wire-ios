@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireData
 import WireDataModel
+import WireFoundation
 
 @testable import Wire
 
@@ -29,12 +31,12 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         self.init()
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try? container.decode(String.self, forKey: .name)
-        displayName = try container.decode(String.self, forKey: .displayName)
-        initials = try? container.decode(String.self, forKey: .initials)
-        handle = try? container.decode(String.self, forKey: .handle)
-        domain = try? container.decode(String.self, forKey: .domain)
-        isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
+        self.name = try? container.decode(String.self, forKey: .name)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.initials = try? container.decode(String.self, forKey: .initials)
+        self.handle = try? container.decode(String.self, forKey: .handle)
+        self.domain = try? container.decode(String.self, forKey: .domain)
+        self.isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
            let zmAccentColor = ZMAccentColor.from(rawValue: rawAccentColorValue) {
             self.zmAccentColor = zmAccentColor
@@ -49,6 +51,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var teamIdentifier: UUID?
     var remoteIdentifier: UUID?
+    var objectId: Any {
+        remoteIdentifier ?? UUID()
+    }
 
     var canLeaveConversation = false
     var canCreateConversation = true
@@ -62,7 +67,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canModifyReadReceiptSettingsInConversation = false
     var canModifyEphemeralSettingsInConversation = false
     var canModifyNotificationSettingsInConversation = false
-    var canModifyAccessControlSettings = false
+    var canModifyGuestsAccessControlSettings = false
+    var canModifyChannelAccessLevelSettings = false
+    var canModifyChannelHistorySettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
     var isPendingMetadataRefresh = false
@@ -120,10 +127,13 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var isSelfUser: Bool = false
 
-    var mockedIsServiceUser: Bool = false
-    var isServiceUser: Bool {
-        return mockedIsServiceUser
-    }
+    var mockedIsApp = false
+    var isApp: Bool { mockedIsApp }
+
+    var mockedIsBot = false
+    var isBot: Bool { mockedIsBot }
+
+    var isAppOrBot: Bool { isApp || isBot }
 
     var isVerified: Bool = false
 
@@ -132,7 +142,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var membership: Member?
 
     var isTeamMember: Bool {
-        return teamIdentifier != nil
+        teamIdentifier != nil
     }
 
     var hasTeam: Bool = false
@@ -167,13 +177,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         isBlocked = true
     }
 
-    func ignore(completion: @escaping (Error?) -> Void) {
+    func ignore(completion: @escaping (Error?) -> Void) {}
 
-    }
-
-    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
-
-    }
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
     // MARK: - Wireless
 
@@ -201,32 +207,43 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var canManageTeam: Bool = false
 
+    // MARK: - App specific
+
+    var appInfo: AppInfo?
+
+    // MARK: - Bot specific
+
+    var providerIdentifier: String?
+    var serviceIdentifier: String?
+
+    // MARK: - Methods
+
     func canLeave(_ conversation: ZMConversation) -> Bool {
-        return canLeaveConversation
+        canLeaveConversation
     }
 
     func canCreateConversation(type: ZMConversationType) -> Bool {
-        return canCreateConversation
+        canCreateConversation
     }
 
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
-        return canDeleteConversation
+        canDeleteConversation
     }
 
     func canAddUser(to conversation: ConversationLike) -> Bool {
-        return canAddUserToConversation
+        canAddUserToConversation
     }
 
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
-        return canRemoveUserFromConversation
+        canRemoveUserFromConversation
     }
 
     func canAddService(to conversation: ZMConversation) -> Bool {
-        return canAddServiceToConversation
+        canAddServiceToConversation
     }
 
     func canRemoveService(from conversation: ZMConversation) -> Bool {
-        return canRemoveService
+        canRemoveService
     }
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
@@ -234,37 +251,45 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
             let otherUser = user as? MockUserType,
             let teamIdentifier,
             let otherTeamIdentifier = otherUser.teamIdentifier
-            else { return false }
+        else { return false }
 
         return teamIdentifier == otherTeamIdentifier
     }
 
     func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
-        return canModifyOtherMemberInConversation
+        canModifyOtherMemberInConversation
     }
 
     func canModifyTitle(in conversation: ConversationLike) -> Bool {
-        return canModifyTitleInConversation
+        canModifyTitleInConversation
     }
 
     func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyReadReceiptSettingsInConversation
+        canModifyReadReceiptSettingsInConversation
     }
 
     func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyEphemeralSettingsInConversation
+        canModifyEphemeralSettingsInConversation
     }
 
     func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyNotificationSettingsInConversation
+        canModifyNotificationSettingsInConversation
     }
 
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyAccessControlSettings
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
+        canModifyGuestsAccessControlSettings
+    }
+
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        canModifyChannelAccessLevelSettings
+    }
+
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool {
+        canModifyChannelHistorySettings
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {
-        return isGroupAdminInConversation
+        isGroupAdminInConversation
     }
 
     var canCreateMLSGroups: Bool = false
@@ -276,7 +301,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     }
 
     func isGuest(in conversation: ConversationLike) -> Bool {
-        return isGuestInConversation
+        isGuestInConversation
     }
 
     func requestPreviewProfileImage() {
@@ -330,7 +355,28 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - dummy user names
 
-    static let usernames = ["Anna", "Claire", "Dean", "Erik", "Frank", "Gregor", "Hanna", "Inge", "James",
-                            "Laura", "Klaus", "Lena", "Linea", "Lara", "Elliot", "Francois", "Felix", "Brian",
-                            "Brett", "Hannah", "Ana", "Paula"]
+    static let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula"
+    ]
 }

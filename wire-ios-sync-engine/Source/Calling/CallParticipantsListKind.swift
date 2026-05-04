@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ extension CallParticipantsListKind {
         switch self {
         case .all where activeSpeaker.audioLevelNow > 0,
              .smoothedActiveSpeakers where activeSpeaker.audioLevel > 0:
-            return .active(audioLevelNow: activeSpeaker.audioLevelNow)
+            .active(audioLevelNow: activeSpeaker.audioLevelNow)
         default:
-            return .inactive
+            .inactive
         }
     }
 

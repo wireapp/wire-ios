@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,22 +22,42 @@ struct DeepLinksView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeepLinksViewModel
+    @StateObject var viewModel: DeepLinksViewModel
 
-    @State
-    private var urlString = ""
+    @State private var urlString = ""
+
+    @State private var isQRScannerPresented: Bool = false
 
     // MARK: - Views
 
     var body: some View {
         List {
             Section("Open deeplink") {
-                TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
-                Button("Go") {
+                TextField(
+                    "Link",
+                    text: $urlString,
+                    prompt: Text("Enter deeplink")
+                )
+                Button("Open") {
                     viewModel.openLink(urlString: urlString)
                 }
                 .disabled(urlString.isEmpty)
+            }
+
+            Section("Switch backend") {
+                ForEach(DeepLinksViewModel.Backend.allCases, id: \.self) { backend in
+                    Text(backend.rawValue).onTapGesture {
+                        viewModel.openSwitchBackendLink(for: backend)
+                    }
+                }
+            }
+        }
+        .listStyle(InsetGroupedListStyle())
+        .toolbar {
+            ToolbarItem {
+                Button("Scan", systemImage: "qrcode") {
+                    isQRScannerPresented = true
+                }
             }
         }
         .alert(
@@ -45,6 +65,31 @@ struct DeepLinksView: View {
             error: viewModel.error,
             actions: {}
         )
+        .sheet(isPresented: $isQRScannerPresented) {
+            QRCodeScannerView { scannedCode in
+                urlString = scannedCode
+                viewModel.openLink(urlString: scannedCode)
+            }
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity
+            )
+        }
+    }
+}
+
+struct QRCodeScannerView: UIViewControllerRepresentable {
+
+    var onQRCodeScanned: (String) -> Void
+
+    func makeUIViewController(context: Context) -> QRCodeScannerViewController {
+        let viewController = QRCodeScannerViewController()
+        viewController.onQRCodeScanned = onQRCodeScanned
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: QRCodeScannerViewController, context: Context) {
+        // Nothing to update here.
     }
 }
 

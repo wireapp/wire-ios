@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,24 +25,24 @@ final class MockPanGestureRecognizer: UIPanGestureRecognizer {
     var mockView: UIView?
 
     init(location: CGPoint?, translation: CGPoint?, view: UIView?, state: UIGestureRecognizer.State) {
-        mockLocation = location
-        mockTranslation = translation
-        mockState = state
-        mockView = view
+        self.mockLocation = location
+        self.mockTranslation = translation
+        self.mockState = state
+        self.mockView = view
 
         super.init(target: nil, action: nil)
     }
 
     override func location(in view: UIView?) -> CGPoint {
-        return mockLocation ?? super.location(in: view)
+        mockLocation ?? super.location(in: view)
     }
 
     override func translation(in view: UIView?) -> CGPoint {
-        return mockTranslation ?? super.translation(in: view)
+        mockTranslation ?? super.translation(in: view)
     }
 
     override var view: UIView? {
-        return mockView ?? super.view
+        mockView ?? super.view
     }
 
     override var state: UIGestureRecognizer.State {

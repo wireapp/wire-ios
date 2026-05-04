@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCommonComponents
 import XCTest
+
+@testable import WireCommonComponents
 
 final class ExtensionSettingsTests: XCTestCase {
 
@@ -35,34 +36,6 @@ final class ExtensionSettingsTests: XCTestCase {
         settings = nil
         defaults = nil
         super.tearDown()
-    }
-
-    func testThatItDisablesCrashReportByDefault() {
-        XCTAssert(settings.disableCrashSharing)
-    }
-
-    func testThatItEnablesAnalyticsReportByDefault() {
-        XCTAssertFalse(settings.disableAnalyticsSharing)
-    }
-
-    func testThatItHandlesCrashReportPreferenceChange() {
-        XCTAssert(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = false
-        XCTAssertFalse(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = true
-        XCTAssert(settings.disableCrashSharing)
-    }
-
-    func testThatItHandlesAnalyticsPreferenceChange() {
-        XCTAssertFalse(settings.disableAnalyticsSharing)
-
-        settings.disableAnalyticsSharing = true
-        XCTAssert(settings.disableAnalyticsSharing)
-
-        settings.disableAnalyticsSharing = false
-        XCTAssertFalse(settings.disableAnalyticsSharing)
     }
 
     func testThatItEnablesLinkPreviewsByDefault() {

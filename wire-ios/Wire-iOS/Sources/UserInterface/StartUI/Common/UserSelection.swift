@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,17 +36,17 @@ final class UserSelection: NSObject {
 
     func replace(_ users: [UserType]) {
         self.users = UserSet(users)
-        observers.forEach({ $0.unbox?.userSelection(self, wasReplacedBy: users) })
+        observers.forEach { $0.unbox?.userSelection(self, wasReplacedBy: users) }
     }
 
     func add(_ user: UserType) {
         users.insert(user)
-        observers.forEach({ $0.unbox?.userSelection(self, didAddUser: user) })
+        observers.forEach { $0.unbox?.userSelection(self, didAddUser: user) }
     }
 
     func remove(_ user: UserType) {
         users.remove(user)
-        observers.forEach({ $0.unbox?.userSelection(self, didRemoveUser: user) })
+        observers.forEach { $0.unbox?.userSelection(self, didRemoveUser: user) }
     }
 
     func add(observer: UserSelectionObserver) {
@@ -74,6 +74,6 @@ final class UserSelection: NSObject {
 
     func setLimit(_ limit: Int, handler: @escaping () -> Void) {
         self.limit = limit
-        self.limitReachedHandler = handler
+        limitReachedHandler = handler
     }
 }

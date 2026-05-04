@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,28 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         selfUserInTeam = true
-        super.setUp()
+        try await super.setUp()
     }
 
     override var needsCaches: Bool {
-        return true
+        true
     }
 }
 
 // MARK: - Only replies
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_oneToOne() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
 
         let selfMessage = appendSelfMessage(to: sut)
@@ -52,12 +54,11 @@ extension ConversationStatusLineTests_Muting {
         XCTAssertEqual(status.string, "Replied to your message")
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move this test to SE
-    // swiftlint:enable todo_requires_jira_link
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_group() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
 
@@ -77,12 +78,12 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleEphemeralRepliesWhenOnlyReplies() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
 
         let selfMessage = appendSelfMessage(to: sut)
 
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendReply(to: sut, selfMessage: selfMessage)
         }
         markAllMessagesAsUnread(in: sut)
@@ -97,9 +98,9 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleMessagesAndReplyWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.mutedMessageTypes = [.all]
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
 
@@ -116,7 +117,7 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForOneReplyWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.mutedMessageTypes = [.all]
 
         let selfMessage = appendSelfMessage(to: sut)
@@ -132,14 +133,14 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleRepliesAndMultipleMessagesWhenOnlyReplies() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        for _ in 1...5 {
+        let sut = otherUserConversation!
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
 
         let selfMessage = appendSelfMessage(to: sut)
 
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendReply(to: sut, selfMessage: selfMessage)
         }
         markAllMessagesAsUnread(in: sut)
@@ -155,21 +156,22 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - mentions & replies
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForMultipleMentionsAndRepliesAndMultipleMessagesWhenOnlyMentionsAndReplies() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        for _ in 1...5 {
+        let sut = otherUserConversation!
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
 
         let selfMessage = appendSelfMessage(to: sut)
 
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendReply(to: sut, selfMessage: selfMessage)
         }
 
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendMention(to: sut)
         }
 
@@ -186,10 +188,11 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - Only mentions
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForSingleMessageWhenOnlyMentions() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         appendTextMessage(to: sut)
         markAllMessagesAsUnread(in: sut)
         sut.mutedMessageTypes = .regular
@@ -203,7 +206,7 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSpecialSummaryForSingleEphemeralMentionWhenOnlyMentions_oneToOne() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         appendMention(to: sut)
         markAllMessagesAsUnread(in: sut)
@@ -218,7 +221,7 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSpecialSummaryForSingleEphemeralMentionWhenOnlyMentions_group() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.addParticipantAndSystemMessageIfMissing(createUser(name: "other"))
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         appendMention(to: sut)
@@ -234,9 +237,9 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleEphemeralMentionsWhenOnlyMentions() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendMention(to: sut)
         }
         markAllMessagesAsUnread(in: sut)
@@ -251,7 +254,7 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowContentForSingleMentionWhenOnlyMentions() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         appendTextMessage(to: sut)
         markAllMessagesAsUnread(in: sut)
         sut.mutedMessageTypes = .regular
@@ -265,8 +268,8 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleMentionsWhenOnlyMentions() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        for _ in 1...5 {
+        let sut = otherUserConversation!
+        for _ in 1 ... 5 {
             appendMention(to: sut)
         }
         markAllMessagesAsUnread(in: sut)
@@ -281,11 +284,11 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleMentionsAndMultipleMessagesWhenOnlyMentions() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        for _ in 1...5 {
+        let sut = otherUserConversation!
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendMention(to: sut)
         }
         markAllMessagesAsUnread(in: sut)
@@ -300,10 +303,11 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - No notifications
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForSingleMentionWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         appendMention(to: sut)
         markAllMessagesAsUnread(in: sut)
         sut.mutedMessageTypes = .all
@@ -317,7 +321,7 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForSingleEphemeralMentionWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         appendMention(to: sut)
         markAllMessagesAsUnread(in: sut)
@@ -332,9 +336,9 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleMessagesWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.mutedMessageTypes = [.all]
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
         markAllMessagesAsUnread(in: sut)
@@ -347,12 +351,12 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleVariousMessagesWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.mutedMessageTypes = [.all]
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendImage(to: sut)
         }
         markAllMessagesAsUnread(in: sut)
@@ -365,9 +369,9 @@ extension ConversationStatusLineTests_Muting {
 
     func testStatusShowSummaryForMultipleMessagesAndMentionWhenNoNotifications() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         sut.mutedMessageTypes = [.all]
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             appendTextMessage(to: sut)
         }
         appendMention(to: sut)

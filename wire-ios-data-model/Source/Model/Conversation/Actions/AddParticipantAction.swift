@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ public class AddParticipantAction: EntityAction {
     public let conversationID: NSManagedObjectID
 
     public required init(users: [ZMUser], conversation: ZMConversation) {
-        userIDs = users.map(\.objectID)
-        conversationID = conversation.objectID
+        self.userIDs = users.map(\.objectID)
+        self.conversationID = conversation.objectID
     }
 }

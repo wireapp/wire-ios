@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 import UIKit
 
-final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvoidingViewController, AuthenticationCoordinatedViewController {
+final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvoidingViewController,
+    AuthenticationCoordinatedViewController {
     weak var authenticationCoordinator: AuthenticationCoordinator? {
         get {
-            return childAuthenticationCoordinatedViewController?.authenticationCoordinator
+            childAuthenticationCoordinatedViewController?.authenticationCoordinator
         }
 
         set {
@@ -37,7 +38,11 @@ final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvo
         childAuthenticationCoordinatedViewController?.displayError(error)
     }
 
+    func didRewindToThisView() {
+        // no-op
+    }
+
     private var childAuthenticationCoordinatedViewController: AuthenticationCoordinatedViewController? {
-        return viewController as? AuthenticationCoordinatedViewController
+        viewController as? AuthenticationCoordinatedViewController
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,40 +19,39 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationSessionResetSystemMessageCellDescription>
 
     var message: ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
-    var topMargin: Float = 0
-    var isFullWidth: Bool = true
     var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: ConversationSystemMessageCell.Configuration
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
         let title = Self.makeAttributedString(sender)
-        configuration = View.Configuration(icon: icon,
-                                           attributedText: title,
-                                           showLine: true)
-        accessibilityLabel = title.string
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: true
+        )
+        self.accessibilityLabel = title.string
     }
 
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
-        let string: String
-        if sender.isSelfUser {
-            string = L10n.Localizable.Content.System.SessionReset.`self`
+        let string: String = if sender.isSelfUser {
+            L10n.Localizable.Content.System.SessionReset.`self`
         } else {
-            string = L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
+            L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
         }
 
         return NSMutableAttributedString.markdown(from: string, style: .systemMessage)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,17 +21,20 @@ import WireSyncEngine
 final class ForegroundNotificationFilter {
 
     // MARK: - Public Property
+
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
+
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
 }
 
-// TO DO: Ask for the logic, not clear when a notification shuld be presented
+// TO DO: Ask for the logic, not clear when a notification should be presented
 extension ForegroundNotificationFilter: ForegroundNotificationResponder {
 
+    @MainActor
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool {
         // user wants to see fg notifications
         let chatHeadsDisabled: Bool = Settings.shared[.chatHeadsDisabled] ?? false
@@ -60,13 +63,12 @@ extension ForegroundNotificationFilter: ForegroundNotificationResponder {
         }
 
         // conversation view is visible for another conversation
-        guard
-            let convID = userInfo.conversationID,
-            convID != clientVC.currentConversation?.remoteIdentifier
-        else {
-            return false
-        }
+        let svc = clientVC.mainSplitViewController
+        let conversationVC = svc.conversationUI ?? svc.tabController.conversationUI
+        let conversationListVC = svc.conversationListUI ?? svc.tabController.conversationListUI
+        let visibleConversation = conversationVC?.conversationModel ?? conversationListVC?.selectedConversation
+        guard let convID = userInfo.conversationID else { return false }
 
-        return true
+        return convID != visibleConversation?.remoteIdentifier
     }
 }

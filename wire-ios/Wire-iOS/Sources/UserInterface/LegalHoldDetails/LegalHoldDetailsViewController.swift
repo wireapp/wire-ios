@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class LegalHoldDetailsViewController: UIViewController {
@@ -27,31 +29,41 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     convenience init?(
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         guard let conversation = user.oneToOneConversation else { return nil }
         self.init(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
     init(
         conversation: LegalHoldDetailsConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
-        self.collectionViewController.collectionView = collectionView
+        collectionViewController.collectionView = collectionView
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
@@ -71,9 +83,18 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UINavigationController? {
-        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession, mainCoordinator: mainCoordinator) else { return nil }
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            user: user,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
+        guard let legalHoldDetailsViewController else { return nil }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
@@ -83,24 +104,32 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UINavigationController {
-        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession, mainCoordinator: mainCoordinator)
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = L10n.Localizable.Legalhold.Header.title.localizedUppercase
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        setupNavigationBarTitle(L10n.Localizable.Legalhold.Header.title)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -129,7 +158,10 @@ final class LegalHoldDetailsViewController: UIViewController {
 
     private func computeVisibleSections() -> [CollectionViewSectionController] {
         let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(frame: .zero))
-        let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(conversation: conversation)
+        let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
         legalHoldParticipantsSection.delegate = self
 
         return [headerSection, legalHoldParticipantsSection]
@@ -150,9 +182,10 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
             viewer: viewer,
             context: .deviceList,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         show(profileViewController, sender: nil)
     }
-
 }

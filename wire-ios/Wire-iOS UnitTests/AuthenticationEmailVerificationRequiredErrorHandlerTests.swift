@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireSyncEngine
 import XCTest
+@testable import Wire
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
 
@@ -30,7 +30,7 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
         let password = "12345678"
         let credentials = UserEmailCredentials(email: email, password: password)
         let step = AuthenticationFlowStep.authenticateEmailCredentials(credentials)
-        let error = NSError.userSessionErrorWith(.accountIsPendingVerification, userInfo: nil)
+        let error = NSError.userSessionError(code: .accountIsPendingVerification, userInfo: nil)
 
         // WHEN
         let result = sut.handleEvent(currentStep: step, context: error)
@@ -53,7 +53,7 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
         // GIVEN
         let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         let step = AuthenticationFlowStep.registerEmailCredentials(credentials, isResend: false)
-        let error = NSError.userSessionErrorWith(.accessTokenExpired, userInfo: nil)
+        let error = NSError.userSessionError(code: .accessTokenExpired, userInfo: nil)
 
         // WHEN
         let result = sut.handleEvent(currentStep: step, context: error)

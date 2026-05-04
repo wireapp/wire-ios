@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@ import Foundation
 
 /// Action to perform on a given persistentContainer
 class CoreDataMigrationAction {
+    var dataModelName: String {
+        "zmessaging"
+    }
 
     private func loadStore(for persistentContainer: NSPersistentContainer) throws {
         persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
@@ -65,12 +68,11 @@ class CoreDataMigrationAction {
     }
 
     func execute(in context: NSManagedObjectContext) throws {
-        // to be overriden by subclasses
+        // to be overridden by subclasses
     }
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
 
-        let dataModelName = "zmessaging"
         let container = NSPersistentContainer(
             name: dataModelName,
             managedObjectModel: model

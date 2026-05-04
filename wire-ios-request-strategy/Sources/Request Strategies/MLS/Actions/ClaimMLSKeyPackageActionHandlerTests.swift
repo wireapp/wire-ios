@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,13 @@
 //
 
 import Foundation
+import WireTransport
 @testable import WireRequestStrategy
 
-class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
+class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
+    ClaimMLSKeyPackageAction,
+    ClaimMLSKeyPackageActionHandler
+> {
 
     private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
 
@@ -36,7 +40,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             userId: userId,
             ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         )
-        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
+        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC, localDomain: domain)
     }
 
     // MARK: - Request generation
@@ -67,7 +71,10 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         }
 
         // when the domain is missing
-        BackendInfo.domain = nil
+        handler = ClaimMLSKeyPackageActionHandler(
+            context: syncMOC,
+            localDomain: nil
+        )
 
         test_itDoesntGenerateARequest(
             action: ClaimMLSKeyPackageAction(

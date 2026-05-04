@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireFoundation
+
 @testable import Wire
 
 final class MockCell: UIView, ConversationMessageCell {
@@ -26,6 +28,7 @@ final class MockCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isConfigured: Bool = false
     var isSelected: Bool = false
@@ -40,9 +43,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-    var isFullWidth: Bool = false
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 
@@ -55,6 +55,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
 
     init() {
         let backgroundColor = AccentColor.red.uiColor
-        configuration = View.Configuration(backgroundColor: backgroundColor)
+        self.configuration = View.Configuration(backgroundColor: backgroundColor)
     }
 }

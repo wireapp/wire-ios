@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ import Foundation
 extension NSString {
 
     var uppercasedWithCurrentLocale: String {
-        return uppercased(with: NSLocale.current)
+        uppercased(with: NSLocale.current)
     }
 
     var lowercasedWithCurrentLocale: String {
-        return lowercased(with: NSLocale.current)
+        lowercased(with: NSLocale.current)
     }
 
 }

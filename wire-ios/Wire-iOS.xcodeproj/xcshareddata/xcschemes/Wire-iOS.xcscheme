@@ -63,95 +63,6 @@
                BlueprintName = "Wire-iOS-Tests"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AVURLAsset_conversionTests">
-               </Test>
-               <Test
-                  Identifier = "AppLockModuleInteractorTests">
-               </Test>
-               <Test
-                  Identifier = "AppStateCalculatorTests/testApplicationTransit_WhenAppStateChanges()">
-               </Test>
-               <Test
-                  Identifier = "ArticleViewTests/testArticleViewWithImageHavingExactSize()">
-               </Test>
-               <Test
-                  Identifier = "ArticleViewTests/testArticleViewWithPicture()">
-               </Test>
-               <Test
-                  Identifier = "AuthenticationInterfaceBuilderTests/testLandingScreen()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
-               </Test>
-               <Test
-                  Identifier = "ConversationTextMessageTests/testMediaPreviewAttachment()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testCancelledUploadCell_fromThisDevice()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testFailedUploadCell_fromThisDevice()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testUploadedCell_fromOtherUser()">
-               </Test>
-               <Test
-                  Identifier = "DeveloperOptionsControllerSnapshotTests/testForInitState()">
-               </Test>
-               <Test
-                  Identifier = "ImageMessageViewTests/testThatItRendersPortraitImage()">
-               </Test>
-               <Test
-                  Identifier = "LandingViewControllerSnapshotTests/testForInitState()">
-               </Test>
-               <Test
-                  Identifier = "ProfileDetailsViewControllerTests/test_Group_BlockingConnectionRequest_MissingLegalHoldConsent1()">
-               </Test>
-               <Test
-                  Identifier = "SearchResultLabelTests">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_FileMessage()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_File_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Image_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Photos()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Video_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsers()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndName_AllowGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndWithoutName_AllowGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithoutParticipants_AllowGuests()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
@@ -179,6 +90,18 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-com.apple.CoreData.ConcurrencyDebug 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-com.apple.SwiftUI.IgnoreSolarium YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-com.apple.SwiftUI.DisableSolarium YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-NSShowNonLocalizedStrings YES"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -234,14 +157,6 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-UseAnalytics 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-ConsoleAnalytics"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--keep-calling-overlay-visible"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -270,6 +185,21 @@
          <EnvironmentVariable
             key = "IDELogRedirectionPolicy"
             value = "oslogToStdio"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "SQLITE_AUTO_TRACE"
+            value = "1"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "SQLITE_ENABLE_FILE_ASSERTIONS"
+            value = "1"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "SQLITE_ENABLE_THREAD_ASSERTIONS"
+            value = "1"
             isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>

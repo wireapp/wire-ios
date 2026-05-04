@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,27 +19,34 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
-                                                       UITableViewDelegate,
-                                                       UITableViewDataSource,
-                                                       SpinnerCapable,
-                                                       ConversationServicesOptionsViewModelDelegate {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ConversationServicesOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
-    convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
+    convenience init(
+        conversation: ZMConversation,
+        userSession: ZMUserSession,
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
+    ) {
         let configuration = ZMConversation.OptionsConfigurationContainer(
             conversation: conversation,
-            userSession: userSession
+            userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         self.init(
             viewModel: .init(configuration: configuration)
@@ -56,9 +63,11 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceConversationSettings.CloseButton.description
+
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.AppsOptionsCell.title.capitalized)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description)
     }
 
     @available(*, unavailable)
@@ -76,7 +85,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
     }
 
     private func createConstraints() {
@@ -91,20 +99,28 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     // MARK: – ConversationOptionsViewModelDelegate
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel,
-                   didUpdateState state: ConversationServicesOptionsViewModel.State) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didUpdateState state: ConversationServicesOptionsViewModel.State
+    ) {
+        activityIndicator.setIsActive(state.isLoading)
         tableView.reloadData()
-
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, didReceiveError error: Error) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didReceiveError error: Error
+    ) {
         present(UIAlertController.checkYourConnection(), animated: false)
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, sourceView: UIView? = nil, confirmRemovingServices completion: @escaping (Bool) -> Void) -> UIAlertController? {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
+        confirmRemovingServices completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingServices(completion)
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configurePopoverPresentationController(using: fallbackActivityPopoverConfiguration)
         present(alertController, animated: true)
 
         return alertController
@@ -113,28 +129,30 @@ final class ConversationServicesOptionsViewController: UIViewController,
     // MARK: – UITableViewDelegate & UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.state.rows.count
+        viewModel.state.rows.count
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return viewModel.state.rows[indexPath.row].action != nil
+        viewModel.state.rows[indexPath.row].action != nil
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: row.cellType.reuseIdentifier,
+            for: indexPath
+        ) as! CellConfigurationConfigurable
         cell.configure(with: row)
         return cell as! UITableViewCell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)
+        let cell = tableView.cellForRow(at: indexPath)!
         viewModel.state.rows[indexPath.row].action?(cell)
     }
-
 }

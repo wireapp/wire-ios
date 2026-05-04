@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ class RoundedBadge: UIButton {
 
     init(view: UIView, contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4)) {
         self.contentInset = contentInset
-        containedView = view
+        self.containedView = view
         super.init(frame: .zero)
 
-        self.addSubview(containedView)
+        addSubview(containedView)
 
         createConstraints()
 
         updateCollapseConstraints(isCollapsed: true)
 
-        self.layer.masksToBounds = true
+        layer.masksToBounds = true
         updateCornerRadius()
     }
 
@@ -46,7 +46,10 @@ class RoundedBadge: UIButton {
         translatesAutoresizingMaskIntoConstraints = false
 
         leadingConstraint = containedView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: contentInset.left)
-        trailingConstraint = containedView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -contentInset.right)
+        trailingConstraint = containedView.trailingAnchor.constraint(
+            equalTo: trailingAnchor,
+            constant: -contentInset.right
+        )
         widthGreaterThanHeightConstraint = widthAnchor.constraint(greaterThanOrEqualTo: heightAnchor)
 
         NSLayoutConstraint.activate([
@@ -73,9 +76,10 @@ class RoundedBadge: UIButton {
     }
 
     func updateCornerRadius() {
-        self.layer.cornerRadius = ceil(self.bounds.height / 2.0)
+        layer.cornerRadius = ceil(bounds.height / 2.0)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -89,8 +93,11 @@ class RoundedBadge: UIButton {
 final class RoundedTextBadge: RoundedBadge {
     var textLabel = UILabel()
 
-    init(contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4), font: UIFont = .smallSemiboldFont) {
-        super.init(view: self.textLabel, contentInset: contentInset)
+    init(
+        contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4),
+        font: UIFont = .smallSemiboldFont
+    ) {
+        super.init(view: textLabel, contentInset: contentInset)
         textLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         textLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
         textLabel.textAlignment = .center

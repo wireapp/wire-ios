@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ private let zmLog = ZMSLog(tag: "Bundle")
 
 extension Bundle {
     static var developerModeEnabled: Bool {
-        return Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
+        Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
     }
 
     static func fileURL(for resource: String, with fileExtension: String) -> URL? {

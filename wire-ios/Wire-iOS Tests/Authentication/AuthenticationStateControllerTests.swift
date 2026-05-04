@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModel
 import XCTest
+
+@testable import Wire
 
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
 
@@ -100,11 +101,17 @@ class AuthenticationStateControllerTests: XCTestCase {
         stateController.transition(to: .createCredentials(user), mode: .normal)
 
         // WHEN
-        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+        stateController.transition(
+            to: .incrementalUserCreation(user, .setName),
+            mode: .rewindToOrReset(to: .createCredentials(user))
+        )
 
         // THEN
         XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))
-        XCTAssertEqual(stateController.stack, [.start, .landingScreen, .createCredentials(user), .incrementalUserCreation(user, .setName)])
+        XCTAssertEqual(
+            stateController.stack,
+            [.start, .landingScreen, .createCredentials(user), .incrementalUserCreation(user, .setName)]
+        )
         XCTAssertEqual(delegate.lastKnownChangeMode, .rewindToOrReset(to: .createCredentials(user)))
         XCTAssertEqual(delegate.lastKnownStep, .incrementalUserCreation(user, .setName))
     }
@@ -115,7 +122,10 @@ class AuthenticationStateControllerTests: XCTestCase {
         stateController.transition(to: .landingScreen, mode: .normal)
 
         // WHEN
-        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+        stateController.transition(
+            to: .incrementalUserCreation(user, .setName),
+            mode: .rewindToOrReset(to: .createCredentials(user))
+        )
 
         // THEN
         XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))

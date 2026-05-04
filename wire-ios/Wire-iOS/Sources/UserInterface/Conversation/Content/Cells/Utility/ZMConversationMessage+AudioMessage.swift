@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,32 +33,32 @@ extension ZMConversationMessage {
     }
 
     var audioTrack: AudioTrack? {
-        return fileMessageData?.isAudio == true ? self as? AudioTrack : .none
+        fileMessageData?.isAudio == true ? self as? AudioTrack : .none
     }
 }
 
 extension ZMAssetClientMessage: AudioTrack {
     var title: String? {
-        guard let fileMessageData = self.fileMessageData else { return "" }
+        guard let fileMessageData else { return "" }
         return fileMessageData.filename
     }
 
     var author: String? {
-        return self.sender?.name
+        sender?.name
     }
 
     var duration: TimeInterval {
-        guard let fileMessageData = self.fileMessageData else { return 0 }
+        guard let fileMessageData else { return 0 }
         return TimeInterval(Float(fileMessageData.durationMilliseconds) / 1000.0)
     }
 
     var streamURL: URL? {
-        return fileMessageData?.temporaryURLToDecryptedFile()
+        fileMessageData?.temporaryURLToDecryptedFile()
     }
 
     var failedToLoad: Bool {
         get {
-            return false
+            false
         }
         set {
             // no-op

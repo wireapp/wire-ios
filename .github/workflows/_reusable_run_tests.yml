@@ -1,120 +1,106 @@
 on:
   workflow_call:
     inputs:
-      wire-ios:
-        type: boolean
-        default: false
-        required: false
-      wire-reusable-ui-components:
-        type: boolean
-        default: false
-        required: false
-      wire-design:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-sync-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-data-model:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-system:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-request-strategy:
-        type: boolean
-        default: false
-        required: false
-      wire-api:
-        type: boolean
-        default: false
-        required: false
-      wire-domain:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-transport:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-share-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-cryptobox:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-mocktransport:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-notification-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-protos:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-images:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-link-preview:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-utilities:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-testing:
-        type: boolean
-        default: false
-        required: false
+      folders:
+        type: string
       all:
         type: boolean
         default: false
         required: false
+      branch:
+        type: string
+        required: false
+      notify_secret:
+        type: string
+        required: true
+      test_dependencies:
+        type: boolean
+        default: false
+      run_critical_flows:
+        type: boolean
+        required: true
+      kalium_ref:
+        type: string
+        required: false
+        default: ''
+      testiny_run_name:
+        type: string
+        required: false
+        default: ''
+      notify:
+        type: string
+        required: true
+        default: 'failure' # values: always | failure | never
+
     secrets:
       ZENKINS_USERNAME:
         required: true
       DD_API_KEY:
         required: true
+      OP_SERVICE_ACCOUNT_TOKEN:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_TEST_LOGIN_EMAIL: "foo@example.com" # can be removed after 4.17 is released
+  UI_TEST_LOGIN_PASSWORD: "123456" # can be removed after 4.17 is released
+
 
 jobs:
   run-tests:
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    name: Run tests
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    outputs:
+      xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'true'
 
+      - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
+    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
 
-      - uses: maxim-lobanov/setup-xcode@v1.5.1
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
 
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-            path: fastlane/
+          path: fastlane/
 
       - name: Restore Carthage Cache
         uses: actions/cache@v3
@@ -123,21 +109,33 @@ jobs:
           path: Carthage
           key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
 
-      - name: Restore Danger results
-        id: restore-danger-results
-        uses: actions/cache/restore@v4
-        with:
-          path: Danger.results
-          key: ${{ github.event.pull_request.base.ref }}-${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-Danger.results
-
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        if: steps.cache-swift-packages.outputs.cache-hit != 'true'
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
+      - name: Display all fastlane lanes
+        if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
+        run: |
+          bundle exec fastlane lanes
 
       - name: Setup workspace
         run: |
@@ -146,687 +144,284 @@ jobs:
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
+          
+      - name: Install 1Password
+        if: ${{ inputs.run_critical_flows }}
+        uses: 1password/install-cli-action@v1
 
-      # WireSystem
-
-      - name: Build WireSystem
-        if: ${{ inputs.wire-ios-system || inputs.all }}
+      - name: Generate env file
+        if: ${{ inputs.run_critical_flows }}
         run: |
-          echo "WireSystem has changes"
-          echo "Building WireSystem..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-ios-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
-
-      - name: Run Danger for WireSystem
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-system || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-system || inputs.all }}
+          bundle exec fastlane generate_env
+          
+      - name: Setup Kalium Testservice
+        if: ${{ inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/setup
         with:
-          results: xcodebuild-wire-ios-system.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          kalium_ref: ${{ inputs.kalium_ref }}
 
-      - name: Test WireSystem
-        if: ${{ inputs.wire-ios-system || inputs.all }}
+      - name: "Test new critical flows"
+        if: ${{ inputs.run_critical_flows }}
         run: |
-          echo "Testing WireSystem..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
-          exit ${PIPESTATUS[0]}
+          bundle exec fastlane run_uitests
 
-      # WireTesting
-
-      - name: Build WireTesting
-        if: ${{ inputs.wire-ios-testing || inputs.all }}
-        run: |
-          echo "WireTesting has changes"
-          echo "Building WireTesting..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTesting -resultBundlePath xcodebuild-wire-ios-testing.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-testing.log | bundle exec xcpretty
-
-      - name: Run Danger for WireTesting
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-testing || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-testing.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTesting" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-testing || inputs.all }}
+      - name: Stop Kalium Testservice
+        if: ${{ always() && inputs.run_critical_flows && inputs.branch != 'release/cycle-4.16' && inputs.branch != 'release/cycle-4.17' }}
+        uses: ./.github/actions/kalium-testservice/stop
         with:
-          results: xcodebuild-wire-ios-testing.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          print_logs_on_failure: ${{ job.status != 'success' }}
 
-      - name: Test WireTesting
-        if: ${{ inputs.wire-ios-testing || inputs.all }}
-        run: |
-          echo "Testing WireTesting..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireUtilities
-
-      - name: Build WireUtilities
-        if: ${{ inputs.wire-ios-utilities || inputs.all }}
-        run: |
-          echo "WireUtilities has changes"
-          echo "Building WireUtilities..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -resultBundlePath xcodebuild-wire-ios-utilities.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-utilities.log | bundle exec xcpretty
-
-      - name: Run Danger for WireUtilities
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-utilities || inputs.all }}
+      - name: Upload XCResult results to Testiny
+        if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
+        shell: bash
         env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-utilities.xcresult
+          TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
         run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilities" --verbose
+          set -euo pipefail
+          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
+          echo "::add-mask::$TESTINY_API_KEY"
+          export TESTINY_API_KEY
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-utilities || inputs.all }}
+          # Find a xcresult bundle produced by the run
+          XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"
+          if [ -z "$XCRESULT" ]; then
+            echo "[ERROR] No .xcresult found under artifacts/"
+            exit 1
+          fi
+
+          echo "[INFO] Using xcresult: $XCRESULT"
+
+          python3 ./scripts/send_xcresult_to_testiny.py \
+            --xcresult "$XCRESULT" \
+            --run-name "$TESTINY_RUN_NAME" \
+            --require-existing-run
+
+      - name: "Test all selected frameworks"
+        if: ${{ inputs.test_dependencies || inputs.all }}
+        run: |
+          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+          
+      - name: "Test frameworks without dependencies"
+        if: ${{ inputs.test_dependencies == false }}
+        run: |
+          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+
+      - name: Check for duplicate symbol implementations
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check_duplicate_classes.sh .
+
+      - name: Find all .xcresult files
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        id: find-xcresults
+        run: |
+          # Find all .xcresult directories and convert them to a JSON array
+          files=`find artifacts -type d -name "*.xcresult" | jq -R . | jq -s .`
+          echo xcresult_files=${files} >> $GITHUB_OUTPUT
+      - name: Debug Print xcresult files
+        run: |
+          echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
+      - name: Upload .xcresult files as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          results: xcodebuild-wire-ios-utilities.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          path: artifacts/**/*.xcresult
 
-      - name: Test WireUtilities
-        if: ${{ inputs.wire-ios-utilities || inputs.all }}
+      # Scripts
+      - name: Test Scripts
+        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
         run: |
-          echo "Testing WireUtilities..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-utilities.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireCryptobox
-
-      - name: Build WireCryptobox
-        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        run: |
-          echo "WireCryptobox has changes"
-          echo "Building WireCryptobox..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -resultBundlePath xcodebuild-wire-ios-cryptobox.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty
-
-      - name: Run Danger for WireCryptobox
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-cryptobox.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireCryptobox" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-cryptobox.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireCryptobox
-        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        run: |
-          echo "Testing WireCryptobox..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty --report junit --output build/reports/WireCryptobox.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireTransport
-
-      - name: Build WireTransport
-        if: ${{ inputs.wire-ios-transport || inputs.all }}
-        run: |
-          echo "WireTransport has changes"
-          echo "Building WireTransport..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTransport -resultBundlePath xcodebuild-wire-ios-transport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-transport.log | bundle exec xcpretty
-
-      - name: Run Danger for WireTransport
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-transport || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-transport.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTransport" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-transport || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-transport.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireTransport
-        if: ${{ inputs.wire-ios-transport || inputs.all }}
-        run: |
-          echo "Testing WireTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-transport.log | bundle exec xcpretty --report junit --output build/reports/WireTransport.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireLinkPreview
-
-      - name: Build WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
-        run: |
-          echo "WireLinkPreview has changes"
-          echo "Building WireLinkPreview..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-ios-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
-
-      - name: Run Danger for WireLinkPreview
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-link-preview || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-link-preview.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireLinkPreview" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-link-preview.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
-        run: |
-          echo "Testing WireLinkPreview..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireImages
-
-      - name: Build WireImages
-        if: ${{ inputs.wire-ios-images || inputs.all }}
-        run: |
-          echo "WireImages has changes"
-          echo "Building WireImages..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireImages -resultBundlePath xcodebuild-wire-ios-images.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-images.log | bundle exec xcpretty
-
-      - name: Run Danger for WireImages
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-images || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-images.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireImages" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-images || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-images.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireImages
-        if: ${{ inputs.wire-ios-images || inputs.all }}
-        run: |
-          echo "Testing WireImages..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-images.log | bundle exec xcpretty --report junit --output build/reports/WireImages.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireProtos
-
-      - name: Build WireProtos
-        if: ${{ inputs.wire-ios-protos || inputs.all }}
-        run: |
-          echo "WireProtos has changes"
-          echo "Building WireProtos..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireProtos -resultBundlePath xcodebuild-wire-ios-protos.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-protos.log | bundle exec xcpretty
-
-      - name: Run Danger for WireProtos
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-protos || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-protos.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireProtos" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-protos || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-protos.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireProtos
-        if: ${{ inputs.wire-ios-protos || inputs.all }}
-        run: |
-          echo "Testing WireProtos..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-protos.log | bundle exec xcpretty
-          exit ${PIPESTATUS[0]}
-
-      # WireMockTransport
-
-      - name: Build WireMockTransport
-        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        run: |
-          echo "WireMockTransport has changes"
-          echo "Building WireMockTransport..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -resultBundlePath xcodebuild-wire-ios-mocktransport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty
-
-      - name: Run Danger for WireMockTransport
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-mocktransport.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireMockTransport" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-mocktransport.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireMockTransport
-        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        run: |
-          echo "Testing WireMockTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty --report junit --output build/reports/WireMockTransport.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireDataModel
-
-      - name: Build WireDataModel
-        if: ${{ inputs.wire-ios-data-model || inputs.all }}
-        run: |
-          echo "WireDataModel has changes"
-          echo "Building WireDataModel..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -resultBundlePath xcodebuild-wire-ios-data-model.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
-
-      - name: Run Danger for WireDataModel
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-data-model || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-data-model.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDataModel" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-data-model || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-data-model.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireDataModel
-        if: ${{ inputs.wire-ios-data-model || inputs.all }}
-        run: |
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireAPI
-
-      - name: Build WireAPI
-        if: ${{ inputs.wire-api || inputs.all }}
-        run: |
-          echo "WireAPI has changes"
-          echo "Building WireAPI..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
-
-      - name: Run Danger for WireAPI
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-api || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-api.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireAPI" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-api || inputs.all }}
-        with:
-          results: xcodebuild-wire-api.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireAPI
-        if: ${{ inputs.wire-api || inputs.all }}
-        run: |
-          echo "Testing WireAPI..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireDomain
-
-      - name: Build WireDomain
-        if: ${{ inputs.wire-domain || inputs.all }}
-        run: |
-          echo "WireDomain has changes"
-          echo "Building WireDomain..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomain -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
-
-      - name: Run Danger for WireDomain
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-domain || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-domain.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomain" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-domain || inputs.all }}
-        with:
-          results: xcodebuild-wire-domain.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireDomain
-        if: ${{ inputs.wire-domain || inputs.all }}
-        run: |
-          echo "Testing WireDomain..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDomain -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireRequestStrategy
-
-      - name: Build WireRequestStrategy
-        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
-        run: |
-          echo "WireRequestStrategy has changes"
-          echo "Building WireRequestStrategy..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -resultBundlePath xcodebuild-wire-ios-request-strategy.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty
-
-      - name: Run Danger for WireRequestStrategy
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-request-strategy || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-request-strategy.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireRequestStrategy" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-request-strategy.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireRequestStrategy
-        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
-        run: |
-          echo "Testing WireRequestStrategy..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty --report junit --output build/reports/WireRequestStrategy.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireShareEngine
-
-      - name: Build WireShareEngine
-        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
-        run: |
-          echo "WireShareEngine has changes"
-          echo "Building WireShareEngine..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -resultBundlePath xcodebuild-wire-ios-share-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty
-
-      - name: Run Danger for WireShareEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-share-engine || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-share-engine.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireShareEngine" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-share-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireShareEngine
-        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
-        run: |
-          echo "Testing WireShareEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty --report junit --output build/reports/WireShareEngine.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireSyncEngine
-
-      - name: Build WireSyncEngine
-        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
-        run: |
-          echo "WireSyncEngine has changes"
-          echo "Building WireSyncEngine..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -resultBundlePath xcodebuild-wire-ios-sync-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty
-
-      - name: Run Danger for WireSyncEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-sync-engine || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-sync-engine.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSyncEngine" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-sync-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireSyncEngine
-        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
-        run: |
-          echo "Testing WireSyncEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireDesign
-
-      - name: Build WireDesign
-        if: ${{ inputs.wire-design || inputs.all }}
-        run: |
-          echo "WireDesign has changes"
-          echo "Building WireDesign..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDesign -resultBundlePath xcodebuild-wire-design.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-design.log | bundle exec xcpretty
-
-      - name: Run Danger for WireDesign
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-design || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-design.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDesign" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-design || inputs.all }}
-        with:
-          results: xcodebuild-wire-design.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireDesign
-        if: ${{ inputs.wire-design || inputs.all }}
-        run: |
-          echo "Testing WireDesign..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireReusableUIComponents
-
-      - name: Test WireReusableUIComponents
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        run: |
-          echo "WireReusableUIComponents has changes"
-          echo "Building WireReusableUIComponents..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -resultBundlePath xcodebuild-wire-reusable-ui-components.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty
-
-      - name: Run Danger for WireReusableUIComponents
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-reusable-ui-components.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireReusableUIComponents" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        with:
-          results: xcodebuild-wire-reusable-ui-components.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireReusableUIComponents
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        run: |
-          echo "Testing WireReusableUIComponents..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
-          exit ${PIPESTATUS[0]}
-
-      # Wire-iOS
-
-      - name: Build Wire-iOS
-        if: ${{ inputs.wire-ios || inputs.all }}
-        run: |
-          echo "Wire-iOS has changes"
-          echo "Building Wire-iOS..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -resultBundlePath xcodebuild-wire-ios.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty
-
-      - name: Run Danger for Wire-iOS
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for Wire-iOS" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test Wire-iOS
-        if: ${{ inputs.wire-ios || inputs.all }}
-        run: |
-          echo "Testing Wire-iOS..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
-          exit ${PIPESTATUS[0]}
-
-      - name: Test Wire-iOS German Locale Tests
-        if: ${{ inputs.wire-ios || inputs.all }}
-        run: |
-          echo "Testing Wire-iOS German Locale Tests..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan GermanLocaleTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-de.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-DE.junit
-          exit ${PIPESTATUS[0]}
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
 
       - name: Upload Failed snapshots
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          name: Failed Snapshots and log
+          name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
-            wire-ios/SnapshotResults/
+            **/SnapshotResults/
             xcodebuild*.log
 
-      # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
-      # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
-      # after the Wire-iOS.
-      - name: Build WireNotificationEngine
-        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        run: |
-          echo "WireNotificationEngine has changes"
-          echo "Building WireNotificationEngine..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -resultBundlePath xcodebuild-wire-ios-notification-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty
-
-      - name: Run Danger for WireNotificationEngine
-        # TODO: WPB-9872 revert after fixing Dangerfile
-        if: false # ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          XCRESULT_PATH: xcodebuild-wire-ios-notification-engine.xcresult
-        run: |
-          bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireNotificationEngine" --verbose
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        with:
-          results: xcodebuild-wire-ios-notification-engine.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireNotificationEngine
-        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        run: |
-          echo "Testing WireNotificationEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty --report junit --output build/reports/WireNotificationEngine.junit
-          exit ${PIPESTATUS[0]}
-
-      - uses: actions/cache/save@v4
-        with:
-          path: Danger.results
-          key: ${{ steps.restore-danger-results.outputs.cache-primary-key }}
-
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-reports
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             build/reports/*.junit
+            artifacts/**/*.junit
+            app-group.zip
+            fastlane/app-group.zip
 
-      - name: Prepare visual representation of test results
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+      - name: Publish Test Results Summary
         if: always()
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
         with:
           files: |
             build/reports/*.junit
+            artifacts/**/*.junit
           compare_to_earlier_commit: false
+          comment_title: "Test Results"
+
+      - name: Publish test results + Allure report
+        if: always()
+        uses: ./.github/actions/allure-reporting
+        with:
+          allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
+          xcresult_search_path: "artifacts"
+
+      - name: Add Allure Report to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report Generated Successfully";
+            echo "";
+            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
+            echo "";
+            echo "### 📥 How to View the Report";
+            echo "";
+            echo "1. Download and extract the ZIP file";
+            echo "2. **Double-click index.html** to open in your browser";
+            echo "";
+            echo "---";
+            echo "";
+            echo "_Report retention depends on repository artifact settings_";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Add Allure Report Not Generated to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE != 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report";
+            echo "";
+            echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
+          } >> "$GITHUB_STEP_SUMMARY"
+
 
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          name: derived-data-xcode
+          name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Notify on Wire if failed
-        if: ${{ failure() && github.ref_name == 'develop' }}
+      - name: Get Commit Info
+        if: always()
+        env:
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "commit_message=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
+
+      - name: Always Notify on Wire
         uses: 8398a7/action-slack@v3
+        continue-on-error: true
+        if: ${{ inputs.notify == 'always' && always() }}
         with:
           status: ${{ job.status }}
-          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: |
+            **Tests for ${{ env.SANITIZED_BRANCH }}**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Only Notify on Wire failures
+        uses: 8398a7/action-slack@v3
+        continue-on-error: true
+        if: ${{ inputs.notify == 'failure' && failure() }}
+        with:
+          status: ${{ job.status }}
+          text: |
+            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  analyze-xcresults:
+    needs: run-tests
+    name: Analyze xcresults
+    if: ${{ always() && github.event_name == 'pull_request' && needs.run-tests.result != 'skipped' && needs.run-tests.outputs.xcresult_files != '' && needs.run-tests.outputs.xcresult_files != '[]' }}
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    strategy:
+      matrix:
+        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
+      fail-fast: false # avoid to fail one job
+    steps:
+      - name: Sanitize branch name
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
+      - name: Download .xcresult files
+        uses: actions/download-artifact@v4
+        with:
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          path: ./artifacts
+
+      - name: Display downloaded files
+        run: ls -R
+      
+      - name: Analyze .xcresult file
+        continue-on-error: true
+        uses: wireapp/analyze-xcoderesults-action@v1.0.0
+        with:
+          results: ${{ matrix.xcresult_file }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
-    runs-on: ubuntu-latest
+    name: Upload to Datadog
+    runs-on: ubuntu-24.04
     needs: run-tests
-    if: always()
+    if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
+      - name: Sanitize branch name
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'false'
+          sparse-checkout: .github/actions
+
       - name: Download tests results
-        uses: actions/download-artifact@v3
+        id: download-test-results
+        uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: test-reports
-      - uses: actions/setup-node@v3
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+
+      - name: Upload JUnit results to Datadog
+        if: steps.download-test-results.outcome == 'success'
+        uses: ./.github/actions/upload-datadog-junit
         with:
-          node-version: 18
-      - name: Install datadog-ci
-        run: npm install -g @datadog/datadog-ci
-      - name: "Upload results"
-        env:
-          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ci
-          DATADOG_SITE: datadoghq.eu
-        run: |
-          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+          api_key: ${{ secrets.DD_API_KEY }}

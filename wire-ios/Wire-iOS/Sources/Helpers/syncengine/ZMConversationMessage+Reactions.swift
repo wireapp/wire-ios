@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+
+private let linkDetector = NSDataDetector.linkDetector
 
 extension ZMConversationMessage {
 
@@ -39,7 +41,7 @@ extension ZMConversationMessage {
 
     var liked: Bool {
         get {
-            return likers.contains { $0.isSelfUser }
+            likers.contains { $0.isSelfUser }
         }
 
         set {
@@ -58,12 +60,9 @@ extension ZMConversationMessage {
     }
 
     var canVisitLink: Bool {
-        guard let url = URL(string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
-                            ?? ""),
-              UIApplication.shared.canOpenURL(url) else {
-            return false
-        }
-        return true
+        let content = textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+        guard let content, let url = linkDetector?.detectLinks(in: content).first else { return false }
+        return UIApplication.shared.canOpenURL(url)
     }
 
     func selfUserReactions() -> Set<Emoji.ID> {
@@ -75,13 +74,13 @@ extension ZMConversationMessage {
     }
 
     func hasReactions() -> Bool {
-        return usersReaction.contains { _, users in
+        usersReaction.contains { _, users in
             !users.isEmpty
         }
     }
 
     var likers: [UserType] {
-        return usersReaction["❤️"] ?? []
+        usersReaction["❤️"] ?? []
     }
 
     var sortedLikers: [UserType] {
@@ -92,17 +91,4 @@ extension ZMConversationMessage {
         readReceipts.sortedAscendingPrependingNil(by: \.userType.name)
     }
 
-    func react(_ reaction: Emoji.ID) {
-        if selfUserReactions().contains(reaction) {
-            ZMMessage.removeReaction(
-                reaction,
-                from: self
-            )
-        } else {
-            ZMMessage.addReaction(
-                reaction,
-                to: self
-            )
-        }
-    }
 }

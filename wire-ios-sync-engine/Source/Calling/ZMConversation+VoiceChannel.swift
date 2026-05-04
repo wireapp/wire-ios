@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import Foundation
 private var voiceChannelAssociatedKey: UInt8 = 0
 
 public extension ZMConversation {
-    /// NOTE: this object is transient, and will be re-created periodically. Do not hold on to this object, hold on to the owning conversation instead.
+    /// NOTE: this object is transient, and will be re-created periodically. Do not hold on to this object, hold on to
+    /// the owning conversation instead.
     var voiceChannel: VoiceChannel? {
         guard conversationType == .oneOnOne || conversationType == .group else {
             return nil

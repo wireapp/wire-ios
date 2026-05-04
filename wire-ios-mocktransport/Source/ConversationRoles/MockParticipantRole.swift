@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversation: MockConversation
     @NSManaged public var user: MockUser
     @NSManaged public var role: MockRole?
@@ -27,9 +28,13 @@ import Foundation
     public static var entityName = "ParticipantRole"
 }
 
-extension MockParticipantRole {
+public extension MockParticipantRole {
     @objc
-    public static func insert(in context: NSManagedObjectContext, conversation: MockConversation, user: MockUser) -> MockParticipantRole {
+    static func insert(
+        in context: NSManagedObjectContext,
+        conversation: MockConversation,
+        user: MockUser
+    ) -> MockParticipantRole {
         let participantRole: MockParticipantRole = insert(in: context)
         participantRole.conversation = conversation
         participantRole.user = user

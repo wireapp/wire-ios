@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The view that displays the message to inform the user that they have too many devices.
- */
+/// The view that displays the message to inform the user that they have too many devices.
 
 final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
 
@@ -34,13 +32,16 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
     typealias TooManyDevices = L10n.Localizable.Registration.Signin.TooManyDevices
 
     init() {
-        backButton = BackButtonDescription()
-        headline = TooManyDevices.title
-        subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
+        self.backButton = BackButtonDescription()
+        self.headline = TooManyDevices.title
+        self.subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
 
-        mainView = SolidButtonDescription(title: TooManyDevices.ManageButton.title.capitalized, accessibilityIdentifier: "manage_devices")
-        secondaryView = nil
-        footerView = nil
+        self.mainView = SolidButtonDescription(
+            title: TooManyDevices.ManageButton.title.capitalized,
+            accessibilityIdentifier: "manage_devices"
+        )
+        self.secondaryView = nil
+        self.footerView = nil
     }
 
 }

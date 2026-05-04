@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/api-version"
-  - method: get
-  - body: none

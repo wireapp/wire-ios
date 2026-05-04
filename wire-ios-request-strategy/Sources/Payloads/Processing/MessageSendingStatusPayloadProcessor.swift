@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 final class MessageSendingStatusPayloadProcessor {
 
@@ -37,10 +38,12 @@ final class MessageSendingStatusPayloadProcessor {
         let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
             WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
-            return (payload.deleted.fetchClients(in: context),
-                    payload.redundant.fetchUsers(in: context),
-                    payload.missing.fetchOrCreateClients(in: message.context),
-                    payload.failedToConfirm.fetchUsers(in: message.context))
+            return (
+                payload.deleted.fetchClients(in: context),
+                payload.redundant.fetchUsers(in: context),
+                payload.missing.fetchOrCreateClients(in: message.context),
+                payload.failedToConfirm.fetchUsers(in: message.context)
+            )
         }
 
         if !deletedClients.isEmpty {
@@ -51,7 +54,7 @@ final class MessageSendingStatusPayloadProcessor {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for deletedClient in deletedClients.values.flatMap({ $0 }) {
+        for deletedClient in deletedClients.values.flatMap(\.self) {
             await deletedClient.deleteClientAndEndSession()
         }
 
@@ -77,9 +80,12 @@ final class MessageSendingStatusPayloadProcessor {
                 message.detectedRedundantUsers(redundantUsers)
             }
 
-            newMissingClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
+            newMissingClients.forEach { $0.discoveredByMessage = message as? ZMOTRMessage }
             message.registersNewMissingClients(Set(newMissingClients))
-            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(newMissingClients), causedBy: message as? ZMOTRMessage)
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(
+                clients: Set(newMissingClients),
+                causedBy: message as? ZMOTRMessage
+            )
 
             if !failedToConfirmUsers.isEmpty {
                 message.addFailedToSendRecipients(failedToConfirmUsers)
@@ -109,7 +115,7 @@ final class MessageSendingStatusPayloadProcessor {
         withDomain domain: String?,
         in context: NSManagedObjectContext
     ) -> [ZMUser: Payload.ClientList] {
-        return clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
+        clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
             guard let userID = UUID(uuidString: next.key) else {
                 return
             }

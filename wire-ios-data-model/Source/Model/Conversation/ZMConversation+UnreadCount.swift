@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,21 @@
 //
 
 import Foundation
+import WireLogging
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Fetch all conversation that are marked as needsToCalculateUnreadMessages and calculate unread messages for them
-    public static func calculateLastUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
+    static func calculateLastUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationsNeedingToBeCalculatedUnreadMessages())
         let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation]
 
         conversations?.forEach { $0.calculateLastUnreadMessages() }
     }
 
-    /// Fetch all conversations that could potentially have unread messages and recalculate the latest unread messages for them.
-    public static func recalculateUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
+    /// Fetch all conversations that could potentially have unread messages and recalculate the latest unread messages
+    /// for them.
+    static func recalculateUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationConsideredUnread())
 
         if let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] {

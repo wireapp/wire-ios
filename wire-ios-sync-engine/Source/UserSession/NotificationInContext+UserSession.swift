@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,11 @@ extension ZMConversation {
 
     @objc
     public func addTypingObserver(_ observer: ZMTypingChangeObserver) -> Any {
-        return NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
-                                                 context: self.managedObjectContext!.notificationContext,
-                                                 object: self) { [weak observer, weak self] note in
+        NotificationInContext.addObserver(
+            name: ZMConversation.typingNotificationName,
+            context: managedObjectContext!.notificationContext,
+            object: self
+        ) { [weak observer, weak self] note in
             guard let self else { return }
 
             let users = note.userInfo[typingNotificationUsersKey] as? Set<ZMUser> ?? Set()
@@ -38,14 +40,17 @@ extension ZMConversation {
 
     @objc
     func notifyTyping(typingUsers: Set<ZMUser>) {
-        NotificationInContext(name: ZMConversation.typingNotificationName,
-                              context: self.managedObjectContext!.notificationContext,
-                              object: self,
-                              userInfo: [typingNotificationUsersKey: typingUsers]).post()
+        NotificationInContext(
+            name: ZMConversation.typingNotificationName,
+            context: managedObjectContext!.notificationContext,
+            object: self,
+            userInfo: [typingNotificationUsersKey: typingUsers]
+        ).post()
     }
 }
 
-@objc public protocol ZMTypingChangeObserver: NSObjectProtocol {
+@objc
+public protocol ZMTypingChangeObserver: NSObjectProtocol {
 
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType])
 }
@@ -54,7 +59,7 @@ extension ZMConversation {
 
 public struct DatabaseEncryptionLockNotification: SelfPostingNotification {
 
-    static var notificationName: Notification.Name = Notification.Name("DatabaseEncryptionLockNotification")
+    static var notificationName: Notification.Name = .init("DatabaseEncryptionLockNotification")
 
     var databaseIsEncrypted: Bool
 

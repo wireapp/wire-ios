@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,27 +21,31 @@ import Foundation
 public extension String {
 
     var utf8Data: Data? {
-        return data(using: .utf8)
+        data(using: .utf8)
     }
 
     var base64EncodedData: Data? {
-        return utf8Data?.base64EncodedData()
+        utf8Data?.base64EncodedData()
     }
 
     var base64EncodedBytes: [Byte]? {
-        return base64EncodedData?.bytes
+        base64EncodedData.map { data in
+            [UInt8](data)
+        }
     }
 
     var base64EncodedString: String? {
-        return utf8Data?.base64EncodedString()
+        utf8Data?.base64EncodedString()
     }
 
     var base64DecodedData: Data? {
-        return Data(base64Encoded: self)
+        Data(base64Encoded: self)
     }
 
     var base64DecodedBytes: [Byte]? {
-        return base64DecodedData?.bytes
+        base64DecodedData.map { data in
+            [UInt8](data)
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 final class ZMTransportRequestLoggingTests: ZMTBaseTest {
 
@@ -33,10 +33,12 @@ final class ZMTransportRequestLoggingTests: ZMTBaseTest {
         ]
 
         // when
-        let requestDescription = ZMTransportRequest(path: "/test",
-                                                    method: .get,
-                                                    payload: payload as ZMTransportData,
-                                                    apiVersion: 0).description
+        let requestDescription = ZMTransportRequest(
+            path: "/test",
+            method: .get,
+            payload: payload as ZMTransportData,
+            apiVersion: 0
+        ).description
 
         // then
         XCTAssertTrue(requestDescription.contains("password = \"<redacted>\""))

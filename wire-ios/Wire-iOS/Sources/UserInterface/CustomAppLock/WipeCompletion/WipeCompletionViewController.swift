@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,10 @@ import UIKit
 import WireDesign
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(title: L10n.Localizable.WipeDatabaseCompletion.title, subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle)
+    let wireLogoInfoView = WireLogoInfoView(
+        title: L10n.Localizable.WipeDatabaseCompletion.title,
+        subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle
+    )
 
     private lazy var loginButton = {
         let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)

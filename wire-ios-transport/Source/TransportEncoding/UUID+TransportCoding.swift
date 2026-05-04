@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,15 +29,14 @@ extension UUID: TransportCoding {
     }
 }
 
-extension NSUUID {
+public extension NSUUID {
 
-    @objc(transportString)
-    public var transportString: String {
+    @objc(transportString) var transportString: String {
         (self as UUID).transportString()
     }
 
     @objc(uuidWithTransportString:)
-    public static func uuid(transportString: String) -> NSUUID? {
+    static func uuid(transportString: String) -> NSUUID? {
         Foundation.UUID(transportString: transportString) as NSUUID?
     }
 }

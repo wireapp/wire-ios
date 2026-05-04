@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,20 +19,16 @@
 import avs
 import Foundation
 
-/**
- * General error codes for calls
- */
+/// General error codes for calls
 
 public enum CallError: Int32 {
 
     /// Impossible to receive a call due to incompatible protocol (e.g. older versions)
     case unknownProtocol
 
-    /**
-     * Creates the call error from the AVS flag.
-     * - parameter wcall_error: The flag
-     * - returns: The decoded error, or `nil` if the flag couldn't be processed.
-     */
+    /// Creates the call error from the AVS flag.
+    /// - parameter wcall_error: The flag
+    /// - returns: The decoded error, or `nil` if the flag couldn't be processed.
 
     init?(wcall_error: Int32) {
         switch wcall_error {
@@ -47,7 +43,7 @@ public enum CallError: Int32 {
     var wcall_error: Int32 {
         switch self {
         case .unknownProtocol:
-            return WCALL_REASON_NORMAL
+            WCALL_REASON_NORMAL
         }
     }
 }

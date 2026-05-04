@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ final class SystemSettingsTests: XCTestCase {
     func test_internalBuild() throws {
         let url = try XCTUnwrap(Bundle.main.url(forResource: "Settings.bundle/Root", withExtension: "plist"))
         let data = try Data(contentsOf: url)
-        let string = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let string = try XCTUnwrap(String(decoding: data, as: UTF8.self))
 
         XCTAssertTrue(string.contains("DEVELOPER SETTINGS"))
         XCTAssertTrue(string.contains("LICENSES"))

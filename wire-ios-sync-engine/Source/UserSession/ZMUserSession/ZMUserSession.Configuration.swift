@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,15 +27,13 @@ public extension ZMUserSession {
         // MARK: - Properties
 
         public let appLockConfig: AppLockController.LegacyConfig?
-        public let useLegacyPushNotifications: Bool
 
         // MARK: - Life cycle
 
-        public init(appLockConfig: AppLockController.LegacyConfig? = nil,
-                    useLegacyPushNotifications: Bool = true) {
-
+        public init(
+            appLockConfig: AppLockController.LegacyConfig? = nil
+        ) {
             self.appLockConfig = appLockConfig
-            self.useLegacyPushNotifications = useLegacyPushNotifications
         }
 
     }

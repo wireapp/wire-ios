@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,18 @@
 import UIKit
 
 protocol InputLanguageSettable {
-    var language: String? {get set}
-    var originalTextInputMode: UITextInputMode? {get}
+    var language: String? { get set }
+    var originalTextInputMode: UITextInputMode? { get }
 }
 
 extension TextView: InputLanguageSettable {
 
     var originalTextInputMode: UITextInputMode? {
-        return super.textInputMode
+        super.textInputMode
     }
 
     var overriddenTextInputMode: UITextInputMode? {
-        guard let language, language.count > 0 else {
+        guard let language, !language.isEmpty else {
             return super.textInputMode
         }
 

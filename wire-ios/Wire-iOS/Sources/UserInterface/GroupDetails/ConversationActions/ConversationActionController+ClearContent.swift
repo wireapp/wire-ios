@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum ClearContentResult {
-    case delete(leave: Bool), cancel
+    case delete(leave: Bool)
+    case cancel
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.General.cancel
-        case .delete(leave: true): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
-        case .delete(leave: false): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
+        case .cancel: L10n.Localizable.General.cancel
+        case .delete(leave: true): L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
+        case .delete(leave: false): L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
         }
     }
 
@@ -36,18 +38,25 @@ enum ClearContentResult {
     }
 
     func action(_ handler: @escaping (ClearContentResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        if case .delete(leave: false) = self {
+            action.setValue(
+                Locators.ConversationsPage.clearButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
+        }
+        return action
     }
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
+        L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
     }
 
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {
         if conversation.conversationType == .oneOnOne || !conversation.isSelfAnActiveMember {
-            return [.delete(leave: false), .cancel]
+            [.delete(leave: false), .cancel]
         } else {
-            return [.delete(leave: true), .delete(leave: false), .cancel]
+            [.delete(leave: true), .delete(leave: false), .cancel]
         }
     }
 }
@@ -56,21 +65,38 @@ extension ConversationActionController {
 
     func requestClearContentResult(for conversation: ZMConversation, handler: @escaping (ClearContentResult) -> Void) {
         let controller = UIAlertController(title: ClearContentResult.title, message: nil, preferredStyle: .actionSheet)
-        ClearContentResult.options(for: conversation) .map { $0.action(handler) }.forEach(controller.addAction)
+        ClearContentResult.options(for: conversation).map { $0.action(handler) }.forEach(controller.addAction)
+        if let sourceView, let superView = sourceView.superview,
+           let popover = controller.popoverPresentationController {
+            currentContext = .sourceView(superView, sourceView.frame)
+            popover.permittedArrowDirections = .left
+        }
+
         present(controller)
     }
 
     func handleClearContentResult(_ result: ClearContentResult, for conversation: ZMConversation) {
-        guard case .delete(leave: let leave) = result else { return }
+        guard case let .delete(leave: leave) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
         }
 
-        transitionToListAndEnqueue {
-            conversation.clearMessageHistory()
+        guard let conversationID = conversation.qualifiedID,
+              let useCase = userSession.clientSessionComponent?
+              .clearConversationContentUseCase(conversationID: conversationID) else {
+            return
+        }
+
+        Task {
+            await useCase.invoke()
             if leave {
-                conversation.removeOrShowError(participant: user)
+                await ZClientViewController.shared?.transitionToList()
+                await MainActor.run {
+                    userSession.enqueue {
+                        conversation.removeOrShowError(participant: user)
+                    }
+                }
             }
         }
     }

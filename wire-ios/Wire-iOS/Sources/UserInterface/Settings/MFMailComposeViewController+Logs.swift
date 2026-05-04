@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,29 +19,18 @@
 import Foundation
 import MessageUI
 import WireCommonComponents
+import WireLogging
 import WireSystem
 
 extension MFMailComposeViewController {
 
     func prefilledBody(withMessage message: String = "") -> String {
-        let date = Date()
-        let device = UIDevice.current.zm_model()
-
         var body = """
         --DO NOT EDIT--
-        App Version: \(Bundle.main.appInfo.fullVersion)
-        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
-        Device: \(device)
-        iOS version: \(UIDevice.current.systemVersion)
-        Date: \(date.transportString())
+        \(LogFilesProvider().info())
+        ---------------\n
         """
 
-        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
-            // display only when enabled
-            body.append("\nDatadog ID: \(datadogUserIdentifier)")
-        }
-
-        body.append("\n---------------\n")
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
         let details = """
         \(l10n.firstline)
@@ -60,22 +49,12 @@ extension MFMailComposeViewController {
         return body
     }
 
-    func attachLogs() async {
-        defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
-            }
-        }
-
-        var logFiles = WireLogger.logFiles
-        logFiles.append(contentsOf: ZMSLog.pathsForExistingLogs)
-
-        if let data = FileManager.default.zipData(from: logFiles) {
+    func attachLogs() {
+        do {
+            let data = try LogFilesProvider().generateLogFilesData()
             addAttachmentData(data, mimeType: "application/zip", fileName: "logs.zip")
-        } else {
-            WireLogger.system.debug("no logs for WireLogger to send \(logFiles.description)")
+        } catch {
+            WireLogger.system.debug("no logs for WireLogger to send: \(String(describing: error))")
         }
     }
 }

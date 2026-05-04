@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,21 +27,21 @@ final class MockLegalHoldDataSource: NSObject {
 extension MockUser: SelfLegalHoldSubject {
 
     public var needsToAcknowledgeLegalHoldStatus: Bool {
-        return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
+        legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
     public var legalHoldStatus: UserLegalHoldStatus {
         if isUnderLegalHold {
-            return .enabled
+            .enabled
         } else if let request = legalHoldDataSource.legalHoldRequest {
-            return .pending(request)
+            .pending(request)
         } else {
-            return .disabled
+            .disabled
         }
     }
 
     public var fingerprint: String? {
-        return "test"
+        "test"
     }
 
     public func acknowledgeLegalHoldStatus() {
@@ -62,8 +62,18 @@ extension MockUser: SelfLegalHoldSubject {
     }
 
     func requestLegalHold() {
-        let prekey = LegalHoldRequest.Prekey(id: 65535, key: Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!)
-        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(target: UUID(), requester: UUID(), clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
+        let prekey = LegalHoldRequest.Prekey(
+            id: 65_535,
+            key: Data(
+                base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+            )!
+        )
+        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(
+            target: UUID(),
+            requester: UUID(),
+            clientIdentifier: "eca3c87cfe28be49",
+            lastPrekey: prekey
+        )
     }
 
 }

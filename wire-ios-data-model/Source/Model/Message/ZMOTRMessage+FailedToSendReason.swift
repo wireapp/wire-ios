@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@ import Foundation
 
 extension ZMMessage: SwiftConversationMessage {
 
-    public var failedToSendReason: MessageSendFailure? {
+    public var expirationReason: ExpirationReason? {
         guard
             isExpired,
             let reasonCode = expirationReasonCode,
-            let expirationReason = MessageSendFailure(rawValue: reasonCode.intValue)
+            let reason = ExpirationReason(rawValue: reasonCode.intValue)
         else {
             return nil
         }
 
-        return expirationReason
+        return reason
     }
 
     public var failedToSendUsers: [UserType] {

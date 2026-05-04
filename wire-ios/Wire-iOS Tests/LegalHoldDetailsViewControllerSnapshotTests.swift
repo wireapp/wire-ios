@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -29,12 +29,17 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
@@ -49,23 +54,23 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         sut = nil
         SelfUser.provider = nil
         userSession = nil
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Helper method
 
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
-        let createSut: () -> UIViewController = {
+        {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
-                mainCoordinator: .mock
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
             )
             return self.sut.wrapInNavigationController()
         }
-
-        return createSut
     }
 
     // MARK: - Snapshot Tests
@@ -85,7 +90,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -95,7 +100,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -112,7 +117,9 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
-                mainCoordinator: .mock
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
             )
             return self.sut.wrapInNavigationController()
         }
@@ -125,7 +132,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -135,7 +142,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

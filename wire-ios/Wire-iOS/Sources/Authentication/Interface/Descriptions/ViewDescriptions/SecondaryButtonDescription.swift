@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ extension SecondaryButtonDescription: ViewDescriptor {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title, for: .normal)
-        button.accessibilityIdentifier = self.accessibilityIdentifier
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(SecondaryButtonDescription.buttonTapped(_:)), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
@@ -50,7 +50,8 @@ extension SecondaryButtonDescription: ViewDescriptor {
         return button
     }
 
-    @objc dynamic func buttonTapped(_ sender: UIButton) {
+    @objc
+    dynamic func buttonTapped(_ sender: UIButton) {
         buttonTapped?()
     }
 }

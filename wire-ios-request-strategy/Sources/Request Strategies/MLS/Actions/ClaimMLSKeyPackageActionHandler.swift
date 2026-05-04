@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,16 @@ import Foundation
 
 class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
+
     // MARK: - Methods
 
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -30,12 +40,13 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        guard let domain = action.domain?.nilIfEmpty ?? BackendInfo.domain else {
+        guard let domain = action.domain?.nilIfEmpty ?? localDomain else {
             action.fail(with: .missingDomain)
             return nil
         }
 
-        let path = "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
+        let path =
+            "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
 
         var payload: ZMTransportData?
         if let skipOwn = action.excludedSelfClientId, !skipOwn.isEmpty {

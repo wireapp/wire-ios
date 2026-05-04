@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,71 +19,46 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
+import WireSettingsUI
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
 
     // MARK: - Options Group
-    var optionsGroup: SettingsCellDescriptorType {
+
+    var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
-            shareContactsDisabledSection,
-            clearHistorySection,
             notificationVisibleSection,
             chatHeadsSection,
             soundAlertSection,
             callKitSection,
             muteCallSection,
             SecurityFlags.forceConstantBitRateCalls.isEnabled ? nil : VBRSection,
-// temporary hiding this section because currently we have only one sound. We plan to add more in the future. https://wearezeta.atlassian.net/browse/WPB-455
+            // temporary hiding this section because currently we have only one sound. We plan to add more in the
+            // future. https://wearezeta.atlassian.net/browse/WPB-455
 //            soundsSection,
             externalAppsSection,
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
             SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
-        ].compactMap { $0 }
+            // temporarily hiding this section because it conflicts with chat bubbles.
+            // https://wearezeta.atlassian.net/browse/WPB-18939
+//            collapseSelfMessageSection
+        ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(
             items: descriptors,
             title: L10n.Localizable.Self.Settings.OptionsMenu.title,
             icon: .settingsOptions,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: .options,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
     // MARK: - Sections
-    private var shareContactsDisabledSection: SettingsSectionDescriptorType {
-        let settingsButton = SettingsButtonCellDescriptor(
-            title: L10n.Localizable.Self.Settings.PrivacyContactsMenu.SettingsButton.title,
-            isDestructive: false,
-            selectAction: { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-        })
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [settingsButton],
-            header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
-            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
-            visibilityAction: { _ in
-                return AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
-        })
-    }
-
-    private var clearHistorySection: SettingsSectionDescriptorType {
-        let clearHistoryButton = SettingsButtonCellDescriptor(
-            title: L10n.Localizable.Self.Settings.Privacy.ClearHistory.title,
-            isDestructive: false,
-            selectAction: { _ in
-                // erase history is not supported yet
-        })
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [clearHistoryButton],
-            header: .none,
-            footer: L10n.Localizable.Self.Settings.Privacy.ClearHistory.subtitle,
-            visibilityAction: { _ in return false }
-        )
-    }
 
     private var notificationVisibleSection: SettingsSectionDescriptorType {
         let notificationToggle = SettingsPropertyToggleCellDescriptor(
@@ -112,7 +87,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var soundAlertSection: SettingsSectionDescriptorType {
-        return SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
+        SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
     }
 
     private var callKitSection: SettingsSectionDescriptorType {
@@ -135,12 +110,11 @@ extension SettingsCellDescriptorFactory {
             inverse: false
         )
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // FIXME: Headers
         // The header of the CallKit section is used as a generic "Calls" section header, not
         // only for the CallKit toggle but also for the other call settings. The CallKit toggle
         // is sometimes hidden, which means if it is, we need to add the header to the next section.
-        // swiftlint:enable todo_requires_jira_link
         return SettingsSectionDescriptor(
             cellDescriptors: [muteCallToggle],
             header: SecurityFlags.forceCallKitDisabled.isEnabled ? L10n.Localizable.Self.Settings.Callkit.title : .none,
@@ -197,7 +171,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var externalAppsSection: SettingsSectionDescriptorType? {
-        var descriptors = [SettingsCellDescriptorType]()
+        var descriptors = [any SettingsCellDescriptorType]()
 
         if BrowserOpeningOption.optionsAvailable {
             descriptors.append(browserOpeningGroup(for: settingsPropertyFactory.property(.browserOpeningOption)))
@@ -207,11 +181,7 @@ extension SettingsCellDescriptorFactory {
             descriptors.append(mapsOpeningGroup(for: settingsPropertyFactory.property(.mapsOpeningOption)))
         }
 
-        if TweetOpeningOption.optionsAvailable {
-            descriptors.append(twitterOpeningGroup(for: settingsPropertyFactory.property(.tweetOpeningOption)))
-        }
-
-        guard descriptors.count > 0 else {
+        guard !descriptors.isEmpty else {
             return nil
         }
 
@@ -235,8 +205,11 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
-        let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
-
+        let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(
+            for: settingsPropertyFactory.property(.darkMode),
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
+        )
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
             footer: L10n.Localizable.Self.Settings.PopularDemand.DarkMode.footer
@@ -244,14 +217,17 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var appLockSection: SettingsSectionDescriptorType {
-        let appLockToggle = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.lockApp))
+        let appLockToggle = SettingsPropertyToggleCellDescriptor(
+            settingsProperty: settingsPropertyFactory
+                .property(.lockApp)
+        )
 
         appLockToggle.settingsProperty.enabled = !settingsPropertyFactory.isAppLockForced
 
         return SettingsSectionDescriptor(
             cellDescriptors: [appLockToggle],
-            headerGenerator: { return nil },
-            footerGenerator: { return self.appLockSectionSubtitle }
+            headerGenerator: { nil },
+            footerGenerator: { self.appLockSectionSubtitle }
         )
     }
 
@@ -268,9 +244,25 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    private var collapseSelfMessageSection: SettingsSectionDescriptorType {
+        let collapseToggle = SettingsPropertyToggleCellDescriptor(
+            settingsProperty: settingsPropertyFactory.property(.collapseOwnMessages)
+        )
+
+        return SettingsSectionDescriptor(
+            cellDescriptors: [collapseToggle],
+            header: nil,
+            footer: L10n.Localizable.Self.Settings.PrivacySecurity.CollapseOwnMessages.footer
+        )
+    }
+
     // MARK: - Helpers
 
-    static func darkThemeGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    static func darkThemeGroup(
+        for property: SettingsProperty,
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
+    ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -280,43 +272,26 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) }) else { return .text(SettingsColorScheme.defaultPreference.displayString) }
+            guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) })
+            else { return .text(SettingsColorScheme.defaultPreference.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
+        )
     }
 
-    func twitterOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
-        let cells = TweetOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
-
-            return SettingsPropertySelectValueCellDescriptor(
-                settingsProperty: property,
-                value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
-            )
-        }
-
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
-        let preview: PreviewGeneratorType = { _ in
-            let value = property.value().value() as? Int
-            guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) }) else { return .text(TweetOpeningOption.none.displayString) }
-            return .text(option.displayString)
-        }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
-    }
-
-    func mapsOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    func mapsOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = MapsOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -326,20 +301,31 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: nil, footer: L10n.Localizable.OpenLink.Maps.footer, visibilityAction: nil)
+        let section = SettingsSectionDescriptor(
+            cellDescriptors: cells.map { $0 as SettingsCellDescriptorType },
+            header: nil,
+            footer: L10n.Localizable.OpenLink.Maps.footer,
+            visibilityAction: nil
+        )
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) }) else { return .text(MapsOpeningOption.apple.displayString) }
+            guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) })
+            else { return .text(MapsOpeningOption.apple.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
+        )
     }
 
-    func browserOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
+    func browserOpeningGroup(for property: SettingsProperty) -> any SettingsCellDescriptorType {
         let cells = BrowserOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
             return SettingsPropertySelectValueCellDescriptor(
@@ -352,14 +338,20 @@ extension SettingsCellDescriptorFactory {
         let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) }) else { return .text(BrowserOpeningOption.safari.displayString) }
+            guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) })
+            else { return .text(BrowserOpeningOption.safari.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
+        )
     }
 
     static var appLockFormatter: DateComponentsFormatter {
@@ -390,20 +382,21 @@ extension SettingsCellDescriptorFactory {
     private func authenticationTypeDescription() -> String {
         switch AuthenticationType.current {
         case .touchID:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.touchId
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.touchId
         case .faceID:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.faceId
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.faceId
         default:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
         }
     }
 
 }
 
 // MARK: - Helpers
+
 extension SettingsCellDescriptorFactory {
     // Encryption at rest will trigger its own variant of AppLock.
     var isAppLockAvailable: Bool {
-        return !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
+        !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
     }
 }

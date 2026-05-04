@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension Sequence where Iterator.Element == NSAttributedString {
+public extension Sequence where Iterator.Element == NSAttributedString {
 
-    public func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
+    func joined(separator: NSAttributedString? = .none) -> NSAttributedString {
         let result = Array(self)
         guard result.count > 1 else { return result.first ?? .init() }
 

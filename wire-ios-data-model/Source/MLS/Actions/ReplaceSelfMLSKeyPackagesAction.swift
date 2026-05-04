@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,17 +35,17 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint not available"
+                "Endpoint not available"
             case .invalidParameters:
-                return "Invalid client ID or key packages"
+                "Invalid client ID or key packages"
             case .invalidBodyOrCiphersuites:
-                return "Invalid body or ciphersuites"
+                "Invalid body or ciphersuites"
             case .mlsProtocolError:
-                return "MLS protocol error"
+                "MLS protocol error"
             case .mlsIdentityMismatch:
-                return "Key package credential does not match qualified client ID"
-            case .unknown(let status):
-                return "Unknown error (response status: \(status))"
+                "Key package credential does not match qualified client ID"
+            case let .unknown(status):
+                "Unknown error (response status: \(status))"
             }
         }
     }
@@ -55,16 +55,19 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
     public var resultHandler: ResultHandler?
     public var clientID: String
     public var keyPackages: [String]
+    public let ciphersuite: MLSCipherSuite
 
     // MARK: - Life cycle
 
     public init(
         clientID: String,
         keyPackages: [String],
+        ciphersuite: MLSCipherSuite,
         resultHandler: ResultHandler? = nil
     ) {
         self.clientID = clientID
         self.keyPackages = keyPackages
+        self.ciphersuite = ciphersuite
         self.resultHandler = resultHandler
     }
 }

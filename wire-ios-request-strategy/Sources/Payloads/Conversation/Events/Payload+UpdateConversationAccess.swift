@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationAccessModeUpdate
+            .conversationAccessModeUpdate
         }
 
         let access: [String]
@@ -36,9 +36,9 @@ extension Payload {
         let accessRoleV2: [String]?
 
         init(accessMode: ConversationAccessMode, accessRoles: Set<ConversationAccessRoleV2>) {
-            access = accessMode.stringValue
-            accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
-            accessRoleV2 = accessRoles.map(\.rawValue)
+            self.access = accessMode.stringValue
+            self.accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
+            self.accessRoleV2 = accessRoles.map(\.rawValue)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,29 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+import WireLogging
 
-extension ZMOTRMessage {
+public extension ZMOTRMessage {
 
     func establishRelationshipsForInsertedQuote(_ quote: Quote) {
 
         guard let managedObjectContext,
               let conversation,
               let quotedMessageId = UUID(uuidString: quote.quotedMessageID),
-              let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: managedObjectContext) else { return }
+              let quotedMessage = ZMOTRMessage.fetch(
+                  withNonce: quotedMessageId,
+                  for: conversation,
+                  in: managedObjectContext
+              ) else { return }
 
         if quotedMessage.hashOfContent == quote.quotedMessageSha256 {
             quotedMessage.replies.insert(self)
         } else {
-            WireLogger.eventProcessing.warn("Rejecting quote since local hash \(quotedMessage.hashOfContent?.zmHexEncodedString() ?? "N/A") doesn't match \(quote.quotedMessageSha256.zmHexEncodedString())")
+            WireLogger.eventProcessing
+                .warn(
+                    "Rejecting quote since local hash \(quotedMessage.hashOfContent?.zmHexEncodedString() ?? "N/A") doesn't match \(quote.quotedMessageSha256.zmHexEncodedString())"
+                )
         }
     }
 

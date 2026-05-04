@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,23 @@
 //
 
 import Foundation
+import WireDomain
 
 @testable import WireSyncEngine
 
 class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
 
-    static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("MockSessionManager.accounts")
+    static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        .appendingPathComponent("MockSessionManager.accounts")
 
     var foregroundNotificationResponder: ForegroundNotificationResponder?
     var callKitManager: CallKitManagerInterface = MockCallKitManager()
     var callNotificationStyle: CallNotificationStyle = .pushNotifications
-    var accountManager: AccountManager = AccountManager(sharedDirectory: accountManagerURL)
+    var accountManager: AccountManager = try! .init(
+        currentAppVersion: "1.0.0",
+        directory: accountManagerURL,
+        defaults: .temporary()
+    )
     var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     var mockUserSession: ZMUserSession?
 
@@ -37,7 +43,11 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var lastRequestToShowUserProfile: UserType?
     var lastRequestToShowConnectionRequest: UUID?
 
-    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?, in session: ZMUserSession) {
+    func showConversation(
+        _ conversation: ZMConversation,
+        at message: ZMConversationMessage?,
+        in session: ZMUserSession
+    ) {
         if let message {
             lastRequestToShowMessage = (session, conversation, message)
         } else {
@@ -71,11 +81,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     }
 
     func update(credentials: UserCredentials) -> Bool {
-        return false
-    }
-
-    func checkJailbreakIfNeeded() -> Bool {
-        return false
+        false
     }
 
     func passwordVerificationDidFail(with failCount: Int) {
@@ -96,7 +102,7 @@ class MockCallKitManager: CallKitManagerInterface {
     }
 
     func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        return false
+        false
     }
 
     func requestMuteCall(in conversation: ZMConversation, muted: Bool) {

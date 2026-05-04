@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ extension UIViewController {
         var message = ""
 
         if nsError.domain == ZMObjectValidationErrorDomain,
-            let code: ZMManagedObjectValidationErrorCode = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
+           let code = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
             switch code {
             case .tooLong:
                 message = L10n.Localizable.Error.Input.tooLong
@@ -53,8 +53,8 @@ extension UIViewController {
             default:
                 break
             }
-        } else if nsError.domain == NSError.ZMUserSessionErrorDomain,
-            let code: ZMUserSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(nsError.code)) {
+        } else if nsError.domain == NSError.userSessionErrorDomain,
+                  let code = UserSessionErrorCode(rawValue: nsError.code) {
             switch code {
             case .noError:
                 message = ""
@@ -76,8 +76,8 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.registrationUnknownError
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
-            case .codeRequestIsAlreadyPending:
-                 message = L10n.Localizable.Error.User.verificationCodeTooMany
+            case .requestIsAlreadyPending:
+                message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely
             case .lastUserIdentityCantBeDeleted:
@@ -86,6 +86,8 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.accountSuspended
             case .accountLimitReached:
                 message = L10n.Localizable.Error.User.accountLimitReached
+            case .tooManyRequests:
+                message = L10n.Localizable.Error.User.tooManyRequests
             case .unknownError:
                 message = L10n.Localizable.Error.User.unkownError
             default:

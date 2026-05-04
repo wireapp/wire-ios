@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Looks up if there's any accessible authentication cookie data for any user
 ///
-/// - Returns: True if it's possible acccess any authentication cookie data
+/// - Returns: True if it's possible access any authentication cookie data
 + (BOOL)hasAccessibleAuthenticationCookieData;
 
 /// Delete all keychain items for for all servers and users
@@ -43,6 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSDate *authenticationCookieExpirationDate;
 
 /// Authentication cookie available in the storage
+///
+/// - warning: This is encrypted data stored in the keychain. It may not be possible to decrypt it. For example, if the
+/// app is deleted then reinstalled this data may still exist but the encryption key will be different.
 @property (nonatomic, nullable) NSData *authenticationCookieData;
 
 /// User identifier associated with the storage
@@ -57,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZMPersistentCookieStorage (HTTPCookie)
 
-//If you try tu set it to something different than NSHTTPCookieAcceptPolicyNever it will be set to NSHTTPCookieAcceptPolicyAlways
+//If you try to set it to something different than NSHTTPCookieAcceptPolicyNever it will be set to NSHTTPCookieAcceptPolicyAlways
 + (void)setCookiesPolicy:(NSHTTPCookieAcceptPolicy)policy;
 + (NSHTTPCookieAcceptPolicy)cookiesPolicy;
 

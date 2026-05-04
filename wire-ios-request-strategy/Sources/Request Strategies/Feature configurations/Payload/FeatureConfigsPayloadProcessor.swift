@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,19 @@
 //
 
 import Foundation
-import protocol WireDataModel.FeatureRepositoryInterface
+import protocol WireDataModel.LegacyFeatureRepositoryInterface
+import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
+    private let apiVersion: WireTransport.APIVersion?
 
-    func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
+    init(apiVersion: WireTransport.APIVersion?) {
+        self.apiVersion = apiVersion
+    }
+
+    func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
@@ -113,51 +119,95 @@ struct FeatureConfigsPayloadProcessor {
         }
     }
 
-    func processEventPayload(
-        data: Data,
-        featureName: Feature.Name,
-        repository: FeatureRepositoryInterface
-    ) throws {
-        switch featureName {
-        case .conferenceCalling:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            repository.storeConferenceCalling(.init(status: response.status))
+    func processActionPayloadAPIV6(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
+        let payload = try decoder.decode(FeatureConfigsPayloadAPIV6.self, from: data)
 
-        case .fileSharing:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            repository.storeFileSharing(.init(status: response.status))
+        if let appLock = payload.appLock {
+            repository.storeAppLock(
+                Feature.AppLock(
+                    status: appLock.status,
+                    config: appLock.config
+                )
+            )
+        }
 
-        case .appLock:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
-            repository.storeAppLock(.init(status: response.status, config: response.config))
+        if let classifiedDomains = payload.classifiedDomains {
+            repository.storeClassifiedDomains(
+                Feature.ClassifiedDomains(
+                    status: classifiedDomains.status,
+                    config: classifiedDomains.config
+                )
+            )
+        }
 
-        case .selfDeletingMessages:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
-            repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+        if let conferenceCalling = payload.conferenceCalling {
+            repository.storeConferenceCalling(
+                Feature.ConferenceCalling(
+                    status: conferenceCalling.status,
+                    config: conferenceCalling.config
+                )
+            )
+        }
 
-        case .conversationGuestLinks:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            repository.storeConversationGuestLinks(.init(status: response.status))
+        if let conversationGuestLinks = payload.conversationGuestLinks {
+            repository.storeConversationGuestLinks(
+                Feature.ConversationGuestLinks(
+                    status: conversationGuestLinks.status
+                )
+            )
+        }
 
-        case .classifiedDomains:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
-            repository.storeClassifiedDomains(.init(status: response.status, config: response.config))
+        if let digitalSignatures = payload.digitalSignatures {
+            repository.storeDigitalSignature(
+                Feature.DigitalSignature(
+                    status: digitalSignatures.status
+                )
+            )
+        }
 
-        case .digitalSignature:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatus.self, from: data)
-            repository.storeDigitalSignature(.init(status: response.status))
+        if let fileSharing = payload.fileSharing {
+            repository.storeFileSharing(
+                Feature.FileSharing(
+                    status: fileSharing.status
+                )
+            )
+        }
 
-        case .mls:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
-            repository.storeMLS(.init(status: response.status, config: response.config))
+        if let mls = payload.mls {
+            repository.storeMLS(
+                Feature.MLS(
+                    status: mls.status,
+                    config: mls.config
+                )
+            )
+        }
 
-        case .mlsMigration:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
-            repository.storeMLSMigration(.init(status: response.status, config: response.config))
+        if let selfDeletingMessages = payload.selfDeletingMessages {
+            repository.storeSelfDeletingMessages(
+                Feature.SelfDeletingMessages(
+                    status: selfDeletingMessages.status,
+                    config: selfDeletingMessages.config
+                )
+            )
+        }
 
-        case .e2ei:
-            let response = try decoder.decode(FeatureConfigsPayload.FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
-            repository.storeE2EI(.init(status: response.status, config: response.config))
+        if let mlsMigration = payload.mlsMigration {
+            repository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
+        if let e2ei = payload.mlsE2EId {
+            repository.storeE2EI(
+                Feature.E2EI(
+                    status: e2ei.status,
+                    config: e2ei.config
+                )
+            )
         }
     }
+
 }

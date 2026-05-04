@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ extern NSString *const ZMConversationUserDefinedNameKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
+extern NSString *const ZMConversationGroupTypeKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
 

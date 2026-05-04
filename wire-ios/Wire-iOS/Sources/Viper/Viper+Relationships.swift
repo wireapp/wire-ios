@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import Foundation
 /// The names of all relationship protocols follow the format:
 ///
 ///  <module name><implementer><caller>Interface
-/// 
+///
 /// For example, the name FooInteractorPresenterInterface is the relationship
 /// implemented by the interactor, called by the presenter, and located in the
 /// "Foo" module.
@@ -36,30 +36,30 @@ import Foundation
 ///
 /// Typically contains methods fetch data and perform business logic.
 
-protocol InteractorPresenterInterface: AnyObject { }
+protocol InteractorPresenterInterface: AnyObject {}
 
 /// Interface of the presenter from the perspective of the interactor.
 ///
 /// Typically contains methods to report the results of data fetches
 /// and business logic.
 
-protocol PresenterInteractorInterface: AnyObject { }
+protocol PresenterInteractorInterface: AnyObject {}
 
 /// Interface of the presenter from the perspective of the view.
 ///
 /// Typically contains methods to react to view life cycle and
 /// use interaction events.
 
-protocol PresenterViewInterface: AnyObject { }
+protocol PresenterViewInterface: AnyObject {}
 
 /// Interface of the view from the perspective of the presenter.
 ///
 /// Typically contains methods to set and update view data.
 
-protocol ViewPresenterInterface: AnyObject { }
+protocol ViewPresenterInterface: AnyObject {}
 
 /// Interface of the router from the perspective of the presenter.
 ///
 /// Typically contains methods to react to navigation requests.
 
-protocol RouterPresenterInterface: AnyObject { }
+protocol RouterPresenterInterface: AnyObject {}

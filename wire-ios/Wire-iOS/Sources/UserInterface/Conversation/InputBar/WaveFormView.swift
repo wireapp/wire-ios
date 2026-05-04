@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@ final class WaveFormView: UIView {
     private let leftGradient = GradientView()
     private let rightGradient = GradientView()
 
-    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
-    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
+    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
+    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
 
     var gradientWidth: CGFloat = 25 {
         didSet {
@@ -105,7 +107,7 @@ final class WaveFormView: UIView {
 
     private func updateWaveFormColor() {
         let clearGradientColor = gradientColor.withAlphaComponent(0)
-        let leftColors = [gradientColor, clearGradientColor].map { $0.cgColor }
+        let leftColors = [gradientColor, clearGradientColor].map(\.cgColor)
         leftGradient.gradientLayer.colors = leftColors
         rightGradient.gradientLayer.colors = leftColors
     }

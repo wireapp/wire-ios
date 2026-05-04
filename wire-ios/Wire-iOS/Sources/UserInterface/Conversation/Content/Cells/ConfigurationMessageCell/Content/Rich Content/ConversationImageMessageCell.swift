@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,17 +19,21 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
-final class ConversationImageMessageCell: UIView,
-                                          ConversationMessageCell,
-                                          ContextMenuDelegate {
+final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let image: ZMImageMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            return message.isObfuscated
+    struct Configuration: Equatable {
+        var image: ZMImageMessageData
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var containerView = UIView()
@@ -49,16 +53,14 @@ final class ConversationImageMessageCell: UIView,
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    var containerColor: UIColor? = SemanticColors.View.backgroundCollectionCell
-    var containerHeightConstraint: NSLayoutConstraint!
-
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -73,24 +75,21 @@ final class ConversationImageMessageCell: UIView,
     }
 
     private func configureView() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func createConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -98,24 +97,28 @@ final class ConversationImageMessageCell: UIView,
         heightConstraint?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom,
             widthConstraint!,
-            heightConstraint!
+            heightConstraint!,
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
         ])
     }
 
     func configure(with object: Configuration, animated: Bool) {
         let scaleFactor: CGFloat = object.image.isAnimatedGIF ? 1 : 0.5
-        let imageSize = object.image.originalSize.applying(CGAffineTransform.init(scaleX: scaleFactor, y: scaleFactor))
+        let imageSize = object.image.originalSize.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let imageAspectRatio = imageSize.width > 0 ? imageSize.height / imageSize.width : 1.0
 
-        aspectConstraint.map({ containerView.removeConstraint($0) })
+        aspectConstraint.map { containerView.removeConstraint($0) }
         let isRestricted = (!object.message.canBeShared && !object.isObfuscated)
-        aspectConstraint = containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor,
-                                                                 multiplier: !isRestricted ? imageAspectRatio : 9 / 16)
+        aspectConstraint = containerView.heightAnchor.constraint(
+            equalTo: containerView.widthAnchor,
+            multiplier: !isRestricted ? imageAspectRatio : 9 / 16
+        )
         aspectConstraint?.isActive = true
         widthConstraint?.constant = imageSize.width
         heightConstraint?.constant = imageSize.height
@@ -164,34 +167,49 @@ final class ConversationImageMessageCell: UIView,
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }
+
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                if let imageMessageData = message.imageMessageData {
+                    configuration.image = imageMessageData
+                }
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
+    let shouldAlignMessageContentForBubbles: Bool = true
+
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
+        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
+    let isAccessibilityElement = true
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
-        self.configuration = View.Configuration(image: image, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
+        self.configuration = View
+            .Configuration(
+                image: image,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 
 }

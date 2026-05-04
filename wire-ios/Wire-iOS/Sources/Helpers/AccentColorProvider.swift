@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,12 +20,17 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 extension UserType {
 
     /// Returns the current accent color of the user.
     var accentColor: UIColor {
         (zmAccentColor?.accentColor ?? .default).uiColor
+    }
+
+    var wireAccentColor: WireAccentColor {
+        zmAccentColor?.accentColor ?? .default
     }
 }
 

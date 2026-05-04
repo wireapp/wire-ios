@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,35 +17,36 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    func removePendingDeliveryReceipts() {
-        // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the backend
+    internal func removePendingDeliveryReceipts() {
+        // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the
+        // backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
             return
         }
 
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
 
-        let possibleMatches = try! self.managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
+        let possibleMatches = try? managedObjectContext?.fetch(requestForInsertedMessages) as? [ZMClientMessage]
         let confirmationReceipts = possibleMatches?.filter { candidateConfirmationReceipt in
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
                 return false
             }
-            if genericMessage.hasConfirmation &&
-                genericMessage.confirmation.hasFirstMessageID &&
-                genericMessage.confirmation.firstMessageID == self.nonce?.transportString() {
+            if genericMessage.hasConfirmation,
+               genericMessage.confirmation.hasFirstMessageID,
+               genericMessage.confirmation.firstMessageID == self.nonce?.transportString() {
                 return true
             }
             return false
         }
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Re-enable
         //            NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
-        // swiftlint:enable todo_requires_jira_link
         confirmationReceipts?.map { $0 as ZMClientMessage }.forEach {
             $0.managedObjectContext?.delete($0)
         }
@@ -66,10 +67,12 @@ extension ZMMessage {
         moc.delete(message)
     }
 
-    static func remove(remotelyDeletedMessage deletedMessage: MessageDelete,
-                       inConversation conversation: ZMConversation,
-                       senderID: UUID,
-                       inContext moc: NSManagedObjectContext) {
+    static func remove(
+        remotelyDeletedMessage deletedMessage: MessageDelete,
+        inConversation conversation: ZMConversation,
+        senderID: UUID,
+        inContext moc: NSManagedObjectContext
+    ) {
         guard
             let messageID = UUID(uuidString: deletedMessage.messageID),
             let message = ZMMessage.fetch(withNonce: messageID, for: conversation, in: moc)
@@ -86,20 +89,21 @@ extension ZMMessage {
         }
 
         // Only the sender of the original message can delete it
-        if senderID != message.sender?.remoteIdentifier && !message.isEphemeral {
+        if senderID != message.sender?.remoteIdentifier, !message.isEphemeral {
             return
         }
 
         let selfUser = ZMUser.selfUser(in: moc)
 
         // Only clients other than self should see the system message
-        if senderID != selfUser.remoteIdentifier && !message.isEphemeral, let sender = message.sender {
+        if senderID != selfUser.remoteIdentifier, !message.isEphemeral, let sender = message.sender {
             let timestamp = message.serverTimestamp ?? Date()
             conversation.appendDeletedForEveryoneSystemMessage(at: timestamp, sender: sender)
         }
 
-        // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
-        if message.isEphemeral && message.sender?.remoteIdentifier != selfUser.remoteIdentifier {
+        // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop
+        // the deletion timer
+        if message.isEphemeral, message.sender?.remoteIdentifier != selfUser.remoteIdentifier {
             message.removeClearingSender(true)
             stopDeletionTimer(for: message)
         } else {

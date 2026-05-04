@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,13 +32,18 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
     private let getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol
     private let context: NSManagedObjectContext
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
-    init(getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
-         context: NSManagedObjectContext) {
+    init(
+        getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.getE2eIdentityCertificatesUseCase = getE2eIdentityCertificatesUseCase
         self.context = context
+        self.localDomain = localDomain
     }
 
     public var hasCertificate: Bool {
@@ -59,7 +64,7 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
             }
 
             guard let selfClient = ZMUser.selfUser(in: self.context).selfClient(),
-                  let mlsSelfClient = MLSClientID(userClient: selfClient)
+                  let mlsSelfClient = MLSClientID(userClient: selfClient, localDomain: self.localDomain)
             else {
                 throw Error.failedToGetSelfClientID
             }
@@ -69,7 +74,8 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
         return try await getE2eIdentityCertificatesUseCase.invoke(
             mlsGroupId: conversationID,
-            clientIds: [clientID]).first
+            clientIds: [clientID]
+        ).first
     }
 
     enum Error: Swift.Error {

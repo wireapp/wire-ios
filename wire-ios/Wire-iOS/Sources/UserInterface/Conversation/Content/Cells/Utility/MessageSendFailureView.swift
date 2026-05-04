@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,10 +24,12 @@ import WireDesign
 final class MessageSendFailureView: UIView {
 
     // MARK: - Properties
+
     override var isHidden: Bool {
         didSet {
             titleLabel.isHidden = isHidden
             retryButton.isHidden = isHidden
+            bottomConstraint?.isActive = !isHidden
         }
     }
 
@@ -35,11 +37,18 @@ final class MessageSendFailureView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
-    private let retryButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private let retryButton = SecondaryTextButton(
+        fontSpec: FontSpec.buttonSmallSemibold,
+        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    )
+
+    private var bottomConstraint: NSLayoutConstraint?
 
     // MARK: - initialization
-    override init(frame: CGRect) {
+
+    override init(
+        frame: CGRect = .zero,
+    ) {
         super.init(frame: CGRect.zero)
 
         setupViews()
@@ -51,15 +60,19 @@ final class MessageSendFailureView: UIView {
     }
 
     // MARK: - Setup UI
+
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
+        titleLabel.textAlignment = .right
     }
 
     private func setupViews() {
         addSubview(stackView)
 
-        stackView.alignment = .leading
-        stackView.spacing = 15
+        stackView.spacing = 8
+        stackView.alignment = .trailing
+
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
         [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
         retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
@@ -75,15 +88,19 @@ final class MessageSendFailureView: UIView {
 
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
+            stackView.topAnchor.constraint(equalTo: topAnchor)
         ])
+
+        bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+        bottomConstraint?.isActive = true
     }
 
     // MARK: - Methods
+
     @objc
     func retryButtonTapped(_ sender: UIButton) {
         tapHandler?(sender)
@@ -92,7 +109,8 @@ final class MessageSendFailureView: UIView {
 }
 
 // MARK: - DownStyle extension
-    extension DownStyle {
+
+extension DownStyle {
 
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()

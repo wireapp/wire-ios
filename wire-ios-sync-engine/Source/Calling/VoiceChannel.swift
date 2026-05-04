@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,18 +26,14 @@ public enum CaptureDevice: Int {
     var deviceIdentifier: String {
         switch  self {
         case .front:
-            return "com.apple.avfoundation.avcapturedevice.built-in_video:1"
+            "com.apple.avfoundation.avcapturedevice.built-in_video:1"
         case .back:
-            return "com.apple.avfoundation.avcapturedevice.built-in_video:0"
+            "com.apple.avfoundation.avcapturedevice.built-in_video:0"
         }
     }
 }
 
-public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {
-
-    init(conversation: ZMConversation)
-
-}
+public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {}
 
 public protocol CallProperties: NSObjectProtocol {
 
@@ -76,7 +72,7 @@ public protocol CallActions: NSObjectProtocol {
     func join(video: Bool, userSession: ZMUserSession) -> Bool
     func leave(userSession: ZMUserSession, completion: (() -> Void)?)
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession)
-    func request(videoStreams: [AVSClient])
+    func request(videoStreams: [AVSClientVideoStream])
 
 }
 
@@ -90,26 +86,32 @@ public protocol CallActionsInternal: NSObjectProtocol {
 
 public protocol CallObservers: NSObjectProtocol {
 
-    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should
+    /// be active.
     func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any
 
-    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any
 
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any
 
-    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     func addConstantBitRateObserver(_ observer: ConstantBitRateAudioObserver) -> Any
 
-    /// Add observer of network quality. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of network quality. Returns a token which needs to be retained as long as the observer should be
+    /// active.
     func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any
 
-    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be
+    /// active.
     func addMuteStateObserver(_ observer: MuteStateObserver) -> Any
 
     func addActiveSpeakersObserver(_ observer: ActiveSpeakersObserver) -> Any
 
-    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the
+    /// observer should be active.
     static func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,12 +67,11 @@ extension AppLockModule.Presenter: AppLockPresenterViewInterface {
 
     func processEvent(_ event: AppLockModule.Event) {
         switch event {
-        // In iOS 14, it was found that 'viewDidAppear' may be invoked even when the app is in the background. To prevent re-authentication when the app is in the background, there is the 'requireActiveApp' parameter.
-        case .viewDidAppear, .unlockButtonTapped:
-            interactor.executeRequest(.initiateAuthentication(requireActiveApp: true))
-
-        case .applicationWillEnterForeground:
-            interactor.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        // In iOS 14, it was found that 'viewDidAppear' may be invoked even when the app is in the background.
+        // To prevent re-authentication when the app is in the background, there is the 'requireForegroundApp'
+        // parameter.
+        case .viewDidFirstAppear, .unlockButtonTapped, .applicationWillEnterForeground:
+            interactor.executeRequest(.initiateAuthentication)
 
         case .passcodeSetupCompleted, .customPasscodeVerified:
             interactor.executeRequest(.openAppLock)

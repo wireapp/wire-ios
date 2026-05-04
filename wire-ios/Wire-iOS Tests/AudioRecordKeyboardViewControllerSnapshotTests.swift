@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
@@ -31,9 +31,9 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.mockUserSession = UserSessionMock()
-        self.mockAudioRecorder = MockAudioRecorder()
-        self.sut = AudioRecordKeyboardViewController(
+        mockUserSession = UserSessionMock()
+        mockAudioRecorder = MockAudioRecorder()
+        sut = AudioRecordKeyboardViewController(
             audioRecorder: mockAudioRecorder,
             userSession: mockUserSession
         )

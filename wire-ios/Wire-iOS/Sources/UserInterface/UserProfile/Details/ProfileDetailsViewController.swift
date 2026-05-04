@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-/**
- * A view controller that displays the details for a user.
- */
+/// A view controller that displays the details for a user.
 
 final class ProfileDetailsViewController: UIViewController {
 
@@ -43,12 +41,10 @@ final class ProfileDetailsViewController: UIViewController {
         didSet { profileHeaderViewController.isAdminRole = isAdminRole }
     }
 
-    /**
-     * The object that calculates and controls the content to display in the user
-     * details screen. It is also responsible for reacting to user profile updates
-     * that impact the details.
-     * - note: It should be the delegate and data source of the table view.
-     */
+    /// The object that calculates and controls the content to display in the user
+    /// details screen. It is also responsible for reacting to user profile updates
+    /// that impact the details.
+    /// - note: It should be the delegate and data source of the table view.
 
     let contentController: ProfileDetailsContentController
 
@@ -74,15 +70,16 @@ final class ProfileDetailsViewController: UIViewController {
 
         var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideTeamName]
 
-        // The availability status has been moved to the left of the user name, so now we can always hide this status in the user's profile.
+        // The availability status has been moved to the left of the user name, so now we can always hide this status in
+        // the user's profile.
         profileHeaderOptions.insert(.hideAvailability)
 
         self.user = user
-        isAdminRole = conversation.map(user.isGroupAdmin) ?? false
+        self.isAdminRole = conversation.map(user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = .init(
+        self.profileHeaderViewController = .init(
             user: user,
             viewer: viewer,
             conversation: conversation,
@@ -91,10 +88,11 @@ final class ProfileDetailsViewController: UIViewController {
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        contentController = .init(
+        self.contentController = .init(
             user: user,
             viewer: viewer,
-            conversation: conversation
+            conversation: conversation,
+            userSession: userSession
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -154,7 +152,7 @@ final class ProfileDetailsViewController: UIViewController {
     // MARK: - Layout
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLayoutSubviews() {

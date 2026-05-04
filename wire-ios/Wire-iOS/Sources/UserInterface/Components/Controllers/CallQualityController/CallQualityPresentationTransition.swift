@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import UIKit
 final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -57,9 +57,15 @@ final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimate
             contentView.transform = .identity
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: .systemPresentationCurve, animations: animations) { finished in
-            transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
-        }
+        UIView
+            .animate(
+                withDuration: duration,
+                delay: 0,
+                options: .systemPresentationCurve,
+                animations: animations
+            ) { finished in
+                transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
+            }
 
     }
 

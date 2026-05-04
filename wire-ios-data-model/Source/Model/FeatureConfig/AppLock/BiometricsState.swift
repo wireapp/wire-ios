@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ import Foundation
 // sourcery: AutoMockable
 protocol BiometricsStateProtocol {
 
-   func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
-   func persistState()
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
+    func persistState()
 
 }
 
@@ -32,7 +32,7 @@ final class BiometricsState: BiometricsStateProtocol {
 
     var lastPolicyDomainState: Data? {
         get {
-            return UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
+            UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
         }
 
         set {
@@ -53,7 +53,7 @@ final class BiometricsState: BiometricsStateProtocol {
 
     /// Persists the last seen biometrics state for future comparisons.
 
-     func persistState() {
+    func persistState() {
         lastPolicyDomainState = currentPolicyDomainState
     }
 

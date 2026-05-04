@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,18 @@
 
 import Foundation
 
-extension ZMConnection {
+public extension ZMConnection {
 
-    @objc public static let invalidateTopConversationCacheNotificationName = Notification.Name("ZMInvalidateTopConversationCacheNotificationName")
+    @objc static let invalidateTopConversationCacheNotificationName = Notification
+        .Name("ZMInvalidateTopConversationCacheNotificationName")
 
-    @objc public func invalidateTopConversationCache() {
-        guard let moc = self.managedObjectContext else { return }
-        NotificationInContext(name: type(of: self).invalidateTopConversationCacheNotificationName,
-                              context: moc.notificationContext).post()
+    @objc
+    func invalidateTopConversationCache() {
+        guard let moc = managedObjectContext else { return }
+        NotificationInContext(
+            name: type(of: self).invalidateTopConversationCacheNotificationName,
+            context: moc.notificationContext
+        ).post()
     }
 
 }

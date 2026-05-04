@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Actions that can be performed by the view controllers when authentication fails.
- */
+/// Actions that can be performed by the view controllers when authentication fails.
 
 enum AuthenticationErrorFeedbackAction: Int {
     /// The view should display a guidance dot to indicate user input is invalid.
@@ -43,4 +41,6 @@ protocol AuthenticationCoordinatedViewController: AnyObject {
     ///
     /// - Parameter error: The error to present to the user.
     func displayError(_ error: Error)
+
+    func didRewindToThisView()
 }

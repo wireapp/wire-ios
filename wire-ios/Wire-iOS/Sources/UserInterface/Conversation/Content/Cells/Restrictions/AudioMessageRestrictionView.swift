@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ final class AudioMessageRestrictionView: BaseMessageRestrictionView {
     override func setupViews() {
         super.setupViews()
 
-        [topLabel, bottomLabel, iconView].forEach(self.addSubview)
+        [topLabel, bottomLabel, iconView].forEach(addSubview)
     }
 
     override func createConstraints() {
@@ -44,9 +44,9 @@ final class AudioMessageRestrictionView: BaseMessageRestrictionView {
 
         NSLayoutConstraint.activate([
             // top label
-            topLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 12),
+            topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
             topLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
-            topLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
+            topLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
 
             // bottom label
             bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 2),
@@ -54,8 +54,8 @@ final class AudioMessageRestrictionView: BaseMessageRestrictionView {
             bottomLabel.trailingAnchor.constraint(equalTo: topLabel.trailingAnchor),
 
             // icon view
-            iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
+            iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             iconView.widthAnchor.constraint(equalToConstant: 32),
             iconView.heightAnchor.constraint(equalToConstant: 32)
         ])

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,14 +79,17 @@ final class CallTopOverlayController: UIViewController {
 
     // MARK: - Init
 
-    init(conversation: ZMConversation) {
+    init(conversation: ZMConversation, userSession: UserSession) {
         self.conversation = conversation
         callDurationFormatter.allowedUnits = [.minute, .second]
         callDurationFormatter.zeroFormattingBehavior = DateComponentsFormatter.ZeroFormattingBehavior(rawValue: 0)
         super.init(nibName: nil, bundle: nil)
 
-        if let userSession = ZMUserSession.shared() {
-            observerTokens.append(WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession))
+        if let userSession = userSession as? ZMUserSession {
+            observerTokens.append(WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            ))
             observerTokens.append(WireCallCenterV3.addMuteStateObserver(observer: self, userSession: userSession))
         }
 
@@ -110,7 +113,7 @@ final class CallTopOverlayController: UIViewController {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openCall(_:)))
 
         view.clipsToBounds = true
-        view.backgroundColor = SemanticColors.View.backgroundCallTopOverlay
+        view.backgroundColor = ColorTheme.Base.positive
         view.accessibilityIdentifier = "OpenOngoingCallButton"
         view.shouldGroupAccessibilityChildren = true
         view.isAccessibilityElement = true
@@ -123,7 +126,7 @@ final class CallTopOverlayController: UIViewController {
         durationLabel.translatesAutoresizingMaskIntoConstraints = false
         interactiveView.addSubview(durationLabel)
         durationLabel.font = FontSpec(.small, .semibold).font
-        durationLabel.textColor = SemanticColors.Label.textDefault
+        durationLabel.textColor = ColorTheme.Base.onPositive
         durationLabel.lineBreakMode = .byTruncatingMiddle
         durationLabel.textAlignment = .center
 
@@ -136,7 +139,7 @@ final class CallTopOverlayController: UIViewController {
             interactiveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             interactiveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             interactiveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            interactiveView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.safeArea.top),
+            interactiveView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             durationLabel.centerYAnchor.constraint(equalTo: interactiveView.centerYAnchor),
             durationLabel.leadingAnchor.constraint(equalTo: muteIcon.trailingAnchor, constant: 8),
             durationLabel.trailingAnchor.constraint(equalTo: interactiveView.trailingAnchor, constant: -16),
@@ -156,7 +159,7 @@ final class CallTopOverlayController: UIViewController {
             if displayMuteIcon {
                 muteIcon.setIcon(.microphoneOff, size: 12, color: .white)
                 muteIcon.setTemplateIcon(.microphoneOff, size: 12)
-                muteIcon.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+                muteIcon.tintColor = ColorTheme.Base.onPositive
                 muteIconWidth?.constant = 12
             } else {
                 muteIcon.image = nil
@@ -187,10 +190,10 @@ final class CallTopOverlayController: UIViewController {
     }
 
     private func updateCallDuration() {
-        if let callStartDate = self.conversation.voiceChannel?.callStartDate {
-            self.callDuration = -callStartDate.timeIntervalSinceNow
+        if let callStartDate = conversation.voiceChannel?.callStartDate {
+            callDuration = -callStartDate.timeIntervalSinceNow
         } else {
-            self.callDuration = 0
+            callDuration = 0
         }
     }
 
@@ -209,9 +212,13 @@ final class CallTopOverlayController: UIViewController {
             let duration = callDurationFormatter.string(from: callDuration) ?? ""
             return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
         default:
-            let initiator = self.conversation.voiceChannel?.initiator?.name ?? ""
-            let conversation = self.conversation.displayNameWithFallback
-            return state.description(callee: initiator, conversation: conversation, isGroup: self.conversation.conversationType == .group)
+            let initiator = conversation.voiceChannel?.initiator?.name ?? ""
+            let conversation = conversation.displayNameWithFallback
+            return state.description(
+                callee: initiator,
+                conversation: conversation,
+                isGroup: self.conversation.conversationType == .group
+            )
         }
     }
 
@@ -252,7 +259,13 @@ final class CallTopOverlayController: UIViewController {
 // MARK: - CallTopOverlayController: WireCallCenterCallStateObserver
 
 extension CallTopOverlayController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateCallDurationTimer(for: callState)
     }
 }

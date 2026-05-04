@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
+@testable import WireRequestStrategy
 
 class AssetRequestFactoryTests: MessagingTestBase {
 
@@ -76,7 +76,8 @@ class AssetRequestFactoryTests: MessagingTestBase {
         user.teamIdentifier = .init()
 
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(session: self.coreDataStack, participants: [user]) else { return XCTFail("no conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(session: coreDataStack, participants: [user])
+        else { return XCTFail("no conversation") }
 
         // then
         XCTAssert(conversation.containsTeamUser)
@@ -95,6 +96,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
         let request = try XCTUnwrap(sut.upstreamRequestForAsset(
             withData: data,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: apiVersion
         ))
 
@@ -112,6 +114,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
         let request = try XCTUnwrap(sut.upstreamRequestForAsset(
             withData: data,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: apiVersion
         ))
 
@@ -129,6 +132,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
         let request = try XCTUnwrap(sut.upstreamRequestForAsset(
             withData: data,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: apiVersion
         ))
 
@@ -153,6 +157,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
                 message: message,
                 withData: data,
                 retention: .eternal,
+                assetAuditLogMetaData: nil,
                 apiVersion: apiVersion
             ))
 
@@ -178,6 +183,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
                 message: message,
                 withData: data,
                 retention: .eternal,
+                assetAuditLogMetaData: nil,
                 apiVersion: apiVersion
             ))
 
@@ -203,12 +209,52 @@ class AssetRequestFactoryTests: MessagingTestBase {
                 message: message,
                 withData: data,
                 retention: .eternal,
+                assetAuditLogMetaData: nil,
                 apiVersion: apiVersion
             ))
 
             // Then
             XCTAssertEqual(request.path, "/v2/assets")
         }
+    }
+
+    func test_AssetAuditLogMetaData() throws {
+        // Given
+        let sut = AssetRequestFactory()
+        let data = Data([1, 2, 3])
+        let id = UUID()
+        let metaData = AssetRequestFactory.AssetAuditLogMetaData(
+            conversationID: QualifiedID(uuid: id, domain: "wire.com"),
+            fileName: "picture.jpg",
+            mimeType: "image/jpeg"
+        )
+
+        // When
+        let multipartData = try sut.dataForMultipartAssetUploadRequest(
+            data,
+            shareable: false,
+            retention: .eternal,
+            assetAuditLogMetaData: metaData
+        )
+
+        // Then
+        var string = String(decoding: multipartData, as: UTF8.self)
+
+        guard let jsonSubstring = string.firstMatch(of: /{.*}/)?.0 else {
+            XCTFail("No JSON object found")
+            return
+        }
+
+        let jsonString = String(jsonSubstring)
+        let jsonData = Data(jsonString.utf8)
+        let json = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
+
+        XCTAssertEqual((json["convId"] as? [String: String])?["id"], id.transportString())
+        XCTAssertEqual((json["convId"] as? [String: String])?["domain"], "wire.com")
+        XCTAssertEqual(json["filetype"] as? String, "image/jpeg")
+        XCTAssertEqual(json["filename"] as? String, "picture.jpg")
+        XCTAssertEqual(json["retention"] as? String, "eternal")
+        XCTAssertEqual(json["public"] as? Bool, false)
     }
 
 }

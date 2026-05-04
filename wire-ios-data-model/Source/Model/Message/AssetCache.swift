@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ protocol Cache {
     /// - parameter createdAt: date when the asset data was created
     ///
     /// This will probably cause I/O
-    func storeAssetFromURL(_ url: URL, key: String, createdAt: Date)
+    func storeAssetFromURL(_ url: URL, key: String, movingOriginal: Bool, createdAt: Date)
 
     /// Deletes the data for a key.
     func deleteAssetData(_ key: String)

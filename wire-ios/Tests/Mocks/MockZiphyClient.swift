@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,11 @@ extension MockDataTask: ZiphyRequestIdentifier {}
 
 extension MockURLSession: ZiphyURLRequester {
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
-        return self.makeDataTask(with: request.url!, completionHandler: completionHandler) as! MockDataTask
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    ) -> ZiphyRequestIdentifier {
+        makeDataTask(with: request.url!, completionHandler: completionHandler) as! MockDataTask
     }
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {

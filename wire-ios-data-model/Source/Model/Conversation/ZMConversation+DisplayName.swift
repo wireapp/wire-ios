@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,32 +19,28 @@
 public extension ZMConversation {
 
     /// A meaningful display name is one that can be constructed from the conversation data
-    @objc
-    var displayName: String? {
+    @objc var displayName: String? {
         switch conversationType {
-        case .connection: return connectionDisplayName()
-        case .group: return groupDisplayName()
-        case .oneOnOne: return oneOnOneDisplayName()
-        case .self: return managedObjectContext.map(ZMUser.selfUser)?.name
-        case .invalid: return nil
+        case .connection: connectionDisplayName()
+        case .group: groupDisplayName()
+        case .oneOnOne: oneOnOneDisplayName()
+        case .self: managedObjectContext.map(ZMUser.selfUser)?.name
+        case .invalid: nil
         }
     }
 
     private func connectionDisplayName() -> String? {
         precondition(conversationType == .connection)
 
-        let name: String?
-        if let connectedName = connectedUser?.name, !connectedName.isEmpty {
-            name = connectedName
+        return if let connectedName = connectedUser?.name, !connectedName.isEmpty {
+            connectedName
         } else {
-            name = userDefinedName
+            userDefinedName
         }
-
-        return name
     }
 
     private var selfUser: ZMUser? {
-        return managedObjectContext.map(ZMUser.selfUser)
+        managedObjectContext.map(ZMUser.selfUser)
     }
 
     /// Get the group name from the participants

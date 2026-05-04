@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class MediaBarSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: MediaBar!
+    private var sut: MediaBar!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         setupMediaBar()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -55,6 +60,6 @@ final class MediaBarSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

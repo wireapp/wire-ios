@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 enum ConversationCellType: Int {
     case text
@@ -69,7 +69,7 @@ final class DeleteMessageTests: XCTestCase {
     }
 
     func actionController(for conversationType: ConversationCellType) -> ConversationMessageActionController {
-        let message = self.message(for: conversationType)!
+        let message = message(for: conversationType)!
         return ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
     }
 

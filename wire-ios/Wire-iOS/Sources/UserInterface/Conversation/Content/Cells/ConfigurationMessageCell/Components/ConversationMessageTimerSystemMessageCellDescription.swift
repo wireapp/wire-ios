@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 
@@ -33,35 +33,62 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType) {
-        let senderText = message.senderName
-        let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
+    enum State {
+        case updated(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType)
+        case unavailable
+    }
 
+    init(state: State) {
         var updateText: NSAttributedString?
-        let baseAttributes: [NSAttributedString.Key: AnyObject] = [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
+        let baseAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.mediumFont,
+            .foregroundColor: LabelColors.textDefault
+        ]
 
-        if timeoutValue == .none {
-            updateText = NSAttributedString(string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText), attributes: baseAttributes)
+        switch state {
+        case let .updated(message, _, timer, sender):
+            let senderText = message.senderName
+            let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
 
-        } else if let displayString = timeoutValue.displayString {
-            let timerString = displayString.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
-            updateText = NSAttributedString(string: "content.system.message_timer_changes".localized(pov: sender.pov, args: senderText, timerString), attributes: baseAttributes)
+            if timeoutValue == .none {
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText),
+                    attributes: baseAttributes
+                )
+
+            } else if let displayString = timeoutValue.displayString {
+                let timerString = displayString.replacingOccurrences(
+                    of: String.breakingSpace,
+                    with: String.nonBreakingSpace
+                )
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_changes"
+                        .localized(pov: sender.pov, args: senderText, timerString),
+                    attributes: baseAttributes
+                )
+            }
+
+        case .unavailable:
+            updateText = NSAttributedString(
+                string: L10n.Localizable.Content.System.messageTimerUnavailable,
+                attributes: baseAttributes
+            ).adding(font: .mediumSemiboldFont, to: "off")
         }
 
+        typealias LabelColors = SemanticColors.Label
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
-        configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
-        accessibilityLabel = updateText?.string
-        actionController = nil
+        self.configuration = View.Configuration(
+            icon: icon,
+            topText: NSAttributedString(string: ""),
+            bottomText: updateText ?? NSAttributedString(string: "")
+        )
+        self.accessibilityLabel = updateText?.string
+        self.actionController = nil
     }
 
 }

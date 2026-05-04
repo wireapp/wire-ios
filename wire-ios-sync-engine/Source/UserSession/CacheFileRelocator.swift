@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,15 +20,22 @@ import Foundation
 
 struct CacheFileRelocator {
 
-    // whitelisted files, so the FileRelocator doesn't consider to check these system files.
-    // - com.apple.nsurlsessiond is used by the system as cache while sharing an item.
-    // - .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
-    private let whitelistedFiles = ["com.apple.nsurlsessiond", ".DS_Store"]
+    // Whitelisted files, so the FileRelocator doesn't consider to check these files.
+    private let whitelistedFiles = [
+        // com.apple.nsurlsessiond is used by the system as cache while sharing an item.
+        "com.apple.nsurlsessiond",
+        // .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
+        ".DS_Store",
+        // Global logs directory. Ideally logs would be grouped by account as well, but we're not there yet.
+        FileManager.sharedLogsDirectoryName
+    ]
     private let zmLog = ZMSLog(tag: "ZMUserSession")
 
-    /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a user account 
+    /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a
+    /// user account
     /// and moves them to a folder named `wire-account-{accountIdentifier}` if there is no user-account folder yet
-    /// It asserts if the caches folder contains unassigned files even though there is already an existing user account folder as this would be considered a programmer error
+    /// It asserts if the caches folder contains unassigned files even though there is already an existing user account
+    /// folder as this would be considered a programmer error
     func moveCachesIfNeededForAccount(with accountIdentifier: UUID, in sharedContainerURL: URL) {
         let fm = FileManager.default
         let newCacheLocation = fm.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
@@ -42,7 +49,7 @@ struct CacheFileRelocator {
         // FIXME: Use dictionary grouping in Swift4
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
-        if result.assigned.count == 0 {
+        if result.assigned.isEmpty {
             result.unassigned.forEach {
                 let newLocation = newCacheLocation.appendingPathComponent($0)
                 let oldLocation = oldCacheLocation.appendingPathComponent($0)
@@ -50,7 +57,10 @@ struct CacheFileRelocator {
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)
                 } catch {
-                    zmLog.error("Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)")
+                    zmLog
+                        .error(
+                            "Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)"
+                        )
                     do {
                         try fm.removeItem(at: oldLocation)
                     } catch let anError {
@@ -58,20 +68,22 @@ struct CacheFileRelocator {
                     }
                 }
             }
-        } else if result.unassigned.count > 0 {
-            requireInternal(false, "Caches folder contains items that have not been assigned to an account. Items should always be assigned to an account. Use `FileManager.cachesURLForAccount(with accountIdentifier:, in sharedContainerURL:)` to get the default Cache location for the current account")
+        } else if !result.unassigned.isEmpty {
+            requireInternal(
+                false,
+                "Caches folder contains items that have not been assigned to an account. Items should always be assigned to an account. Use `FileManager.cachesURLForAccount(with accountIdentifier:, in sharedContainerURL:)` to get the default Cache location for the current account"
+            )
         }
     }
 
     /// Groups files by checking if the fileName starts with the cachesFolderPrefix
     func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
-        let result: ([String], [String]) = fileNames.reduce(([], [])) { tempResult, fileName in
+        fileNames.reduce(([], [])) { tempResult, fileName in
             if fileName.hasPrefix(FileManager.cachesFolderPrefix) {
                 return (tempResult.0 + [fileName], tempResult.1)
             }
             return (tempResult.0, tempResult.1 + [fileName])
         }
-        return result
     }
 
 }

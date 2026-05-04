@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,21 +21,34 @@ import WireRequestStrategy
 
 /// TeamImageAssetUpdateStrategy is responsible for downloading the image associated with a team
 
-public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
+public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMDownstreamTranscoder {
 
     fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate var observer: Any!
+    private let localDomain: String?
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
+    ) {
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                                    entityName: Team.entityName(),
-                                                                    predicateForObjectsToDownload: Team.imageDownloadFilter,
-                                                                    managedObjectContext: managedObjectContext)
+        self.downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: Team.entityName(),
+            predicateForObjectsToDownload: Team
+                .imageDownloadFilter,
+            managedObjectContext: managedObjectContext
+        )
 
-        observer = NotificationInContext.addObserver(name: .teamDidRequestAsset, context: managedObjectContext.notificationContext, using: { [weak self] in self?.requestAssetForNotification(note: $0) })
+        self.observer = NotificationInContext.addObserver(
+            name: .teamDidRequestAsset,
+            context: managedObjectContext.notificationContext,
+            using: { [weak self] in self?.requestAssetForNotification(note: $0) }
+        )
     }
 
     private func requestAssetForNotification(note: NotificationInContext) {
@@ -49,18 +62,22 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamRequestSync?.nextRequest(for: apiVersion)
+        downstreamRequestSync?.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamRequestSync]
+        [downstreamRequestSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         guard let team = object as? Team, let assetId = team.pictureAssetId else { return nil }
 
         let path: String
@@ -68,9 +85,9 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         switch apiVersion {
         case .v0, .v1:
             path = "/assets/v3/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = BackendInfo.domain else { return nil }
-            path = "/assets/\(domain)/\(assetId)"
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            guard let localDomain else { return nil }
+            path = "/assets/\(localDomain)/\(assetId)"
         }
         return ZMTransportRequest.imageGet(fromPath: path, apiVersion: apiVersion.rawValue)
     }

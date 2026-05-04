@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public struct AnyClassTuple<T: Hashable>: Hashable {
 
 public func == <T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {
     // We store the hash which makes comparison very cheap.
-    return (lhs.hashValue == rhs.hashValue)
+    (lhs.hashValue == rhs.hashValue)
         && (lhs.secondElement == rhs.secondElement)
         && (lhs.classOfObject === rhs.classOfObject)
 }

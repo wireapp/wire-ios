@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,12 @@ import WireSyncEngine
 extension ConversationInputBarViewController {
 
     func setupInputLanguageObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(inputModeDidChange(_:)), name: UITextInputMode.currentInputModeDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(inputModeDidChange(_:)),
+            name: UITextInputMode.currentInputModeDidChangeNotification,
+            object: nil
+        )
 
     }
 
@@ -30,7 +35,7 @@ extension ConversationInputBarViewController {
     func inputModeDidChange(_ notification: Notification?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        guard let keyboardLanguage = self.inputBar.textView.originalTextInputMode?.primaryLanguage else { return }
+        guard let keyboardLanguage = inputBar.textView.originalTextInputMode?.primaryLanguage else { return }
 
         userSession.enqueue {
             conversation.language = keyboardLanguage

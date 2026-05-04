@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,11 +46,11 @@ public extension EntityAction {
     typealias ResultHandler = (Swift.Result<Result, Failure>) -> Void
 
     static var notificationName: Notification.Name {
-        return Notification.Name(String(describing: Self.Type.self))
+        Notification.Name(String(describing: Self.Type.self))
     }
 
     static var userInfoKey: String {
-        return "action"
+        "action"
     }
 
     /// Request the action to be performed
@@ -66,7 +66,7 @@ public extension EntityAction {
 
     /// Called by an `EntityActionHandler` when the action has been performed.
     mutating func notifyResult(_ result: Swift.Result<Result, Failure>) {
-        let resultHandler = self.resultHandler
+        let resultHandler = resultHandler
         self.resultHandler = nil
 
         DispatchQueue.main.async {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public final class Cache<Key: Hashable, Value> {
         assert(maxElementsCount > 0, "maxElementsCount must be greather than 0")
         self.maxCost = maxCost
         self.maxElementsCount = maxElementsCount
-        cacheBuffer = CircularArray<Key>(size: maxElementsCount)
+        self.cacheBuffer = CircularArray<Key>(size: maxElementsCount)
     }
 
     /// Add a value to the cache
@@ -73,7 +73,7 @@ public final class Cache<Key: Hashable, Value> {
     ///     - key: Key used to retrieve a previously stored value.
     /// - Returns: Value if it exists the cache.
     public func value(for key: Key) -> Value? {
-        return cache[key]?.value
+        cache[key]?.value
     }
 
     /// Remove all values from the cache.
@@ -100,7 +100,7 @@ public final class Cache<Key: Hashable, Value> {
             return false
         }
 
-        var elementsToDiscard: Int = 0
+        var elementsToDiscard = 0
 
         // Get the objects from the current cache buffer
         let currentCacheBuffer = cacheBuffer.content

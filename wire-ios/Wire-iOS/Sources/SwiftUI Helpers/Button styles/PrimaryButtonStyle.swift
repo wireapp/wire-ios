@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@ import SwiftUI
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.primaryButtonBackground)
-                .foregroundStyle(Color.primaryButtonText)
-                .clipShape(.rect(cornerRadius: 16))
-        }
+        configuration.label
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.primaryButtonBackground)
+            .foregroundStyle(Color.primaryButtonText)
+            .clipShape(.rect(cornerRadius: 16))
+    }
 
 }

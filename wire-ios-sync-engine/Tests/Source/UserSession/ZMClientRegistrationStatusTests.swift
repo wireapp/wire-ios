@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireTransport
 import XCTest
 
-class MockCookieStorage: CookieProvider {
+@testable import WireSyncEngine
+
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
@@ -33,7 +35,7 @@ class MockCookieStorage: CookieProvider {
 
 }
 
-class ZMClientRegistrationStatusTests: MessagingTest {
+final class ZMClientRegistrationStatusTests: MessagingTest {
 
     private var sut: ZMClientRegistrationStatus!
     private var mockCookieStorage: MockCookieStorage!
@@ -49,20 +51,30 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        self.sut = ZMClientRegistrationStatus(
-            context: self.syncMOC,
-            cookieProvider: mockCookieStorage,
-            coreCryptoProvider: mockCoreCryptoProvider
-        )
-        self.sut.registrationStatusDelegate = self.mockClientRegistationDelegate
+        createSut(mlsEnabled: false)
+
+        syncMOC.performAndWait {
+            syncMOC.proteusService = MockProteusServiceInterface()
+        }
     }
 
     override func tearDown() {
-        self.mockClientRegistationDelegate = nil
-        self.mockCookieStorage = nil
-        self.sut = nil
+        mockClientRegistationDelegate = nil
+        mockCookieStorage = nil
+        sut = nil
 
         super.tearDown()
+    }
+
+    private func createSut(mlsEnabled: Bool) {
+        sut = ZMClientRegistrationStatus(
+            context: syncMOC,
+            cookieProvider: mockCookieStorage,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: mlsEnabled
+        )
+        sut.registrationStatusDelegate = mockClientRegistationDelegate
     }
 
     // MARK: Initialisation
@@ -85,7 +97,10 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             // then
             XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
-            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+            XCTAssertEqual(
+                mockClientRegistationDelegate.currentError as? NSError,
+                needToToEnrollE2EIToRegisterClientError()
+            )
         }
     }
 
@@ -177,7 +192,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     func testThatItReturns_WaitingForDeletion_AfterUserSelectedClientToDelete() {
         // given
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
@@ -219,7 +234,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         }
     }
 
-    func testThatItInvalidatesSelfClientAndDeletesAndRecreatesCryptoBoxOnDidDetectCurrentClientDeletion() {
+    func testThatItInvalidatesSelfClient_OnDidDetectCurrentClientDeletion() {
         syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -302,7 +317,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
 
@@ -322,7 +336,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
 
@@ -342,7 +355,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = nil
             selfUser.emailAddress = "email@example.com"
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForHandle)
 
@@ -387,7 +399,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             selfUser.usesCompanyLogin = true
 
             // then
@@ -417,12 +428,11 @@ class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesTheUIIfTheRegistrationFailsWithNeedToToEnrollE2EI() {
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             syncMOC.saveOrRollback()
 
             let client = UserClient.insertNewObject(in: self.syncMOC)
@@ -436,7 +446,10 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             // then
             XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
-            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+            XCTAssertEqual(
+                mockClientRegistationDelegate.currentError as? NSError,
+                needToToEnrollE2EIToRegisterClientError()
+            )
         }
     }
 
@@ -447,7 +460,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             self.syncMOC.saveOrRollback()
 
             // when
@@ -466,7 +478,6 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = nil
             selfUser.emailAddress = "email@example.com"
-            selfUser.phoneNumber = nil
             syncMOC.saveOrRollback()
 
             // when
@@ -486,8 +497,9 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             syncMOC.saveOrRollback()
             let error = NSError(
                 domain: "ZMUserSession",
-                code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue),
-                userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+                code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation
+            )
 
             // when
             sut.didFail(toRegisterClient: error)
@@ -507,7 +519,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
             let error = NSError(
                 domain: "ZMUserSession",
-                code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue)
+                code: UserSessionErrorCode.invalidCredentials.rawValue
             )
 
             // when
@@ -581,7 +593,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -598,7 +610,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertTrue(sut.needsToRegisterMLSCLient)
+            XCTAssertTrue(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -614,7 +626,7 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -623,11 +635,11 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
-            DeveloperFlag.enableMLSSupport.enable(false)
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .disabled))
             BackendInfo.apiVersion = .v5
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -761,36 +773,34 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func needsPasswordError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue))
+    private func needsPasswordError() -> NSError {
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue)
     }
 
-    func tooManyClientsError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue))
+    private func tooManyClientsError() -> NSError {
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue)
     }
 
-    func needToRegisterEmailError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue))
+    private func needToRegisterEmailError() -> NSError {
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
     }
 
-    func needToToEnrollE2EIToRegisterClientError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue))
+    private func needToToEnrollE2EIToRegisterClientError() -> NSError {
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
     }
 
-    func needToSetHandleError() -> NSError {
-        NSError(domain: "ZMUserSession", code: Int(ZMUserSessionErrorCode.needsToHandleToRegisterClient.rawValue))
-    }
-
-    @objc
-    func enableMLS() {
-        DeveloperFlag.storage = .temporary()
-        DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
-        BackendInfo.apiVersion = .v5
+    private func needToSetHandleError() -> NSError {
+        NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
     }
 
     @objc
-    func enableE2EI() {
-        FeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
+    private func enableMLS() {
+        LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        createSut(mlsEnabled: true)
+    }
+
+    @objc
+    private func enableE2EI() {
+        LegacyFeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
     }
 }

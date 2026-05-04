@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when a client is successfully registered
@@ -27,13 +28,18 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 }
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
         WireLogger.sessionManager.debug("Client registration was successful")
 
-        if self.configuration.encryptionAtRestEnabledByDefault {
+        if configuration.encryptionAtRestEnabledByDefault {
             do {
                 try activeUserSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
             } catch {
@@ -54,12 +60,42 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
         let account = accountManager.account(with: accountId)
         guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidFailToLogin(error: error)
+
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: accountId)
+
+        delegate?.sessionManagerWillLogout(
+            accountID: accountId,
+            environment: environment,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
     }
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+
+        guard account == accountManager.selectedAccount else {
+            return
+        }
+
+        Task {
+            if let activeUserSession {
+                await configureAnalytics(for: activeUserSession)
+            }
+
+            await MainActor.run {
+                delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+            }
+        }
+    }
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        delegate?.sessionManagerDidFailSyncing(
+            error: error,
+            retryHandler: retryHandler
+        )
     }
 }

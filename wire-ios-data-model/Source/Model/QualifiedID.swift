@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import WireFoundation
 
-public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
+public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConvertible, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case uuid = "id"
@@ -28,26 +29,56 @@ public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
     public let uuid: UUID
     public let domain: String
 
+    public init?(rawValue: String) {
+        let components = rawValue.split(
+            separator: "@",
+            omittingEmptySubsequences: false
+        ).map(String.init)
+
+        guard components.count == 2,
+              let uuid = UUID(uuidString: components[0])
+        else {
+            return nil
+        }
+
+        self.init(uuid: uuid, domain: components[1])
+    }
+
     public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
     }
 
     public var debugDescription: String {
-        return "\(uuid)@\(domain)"
+        "\(uuid)@\(domain)"
     }
 
 }
 
 extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        "\(self.uuid.safeForLoggingDescription) - \(self.domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
+        "\(uuid.uuidString.lowercased()) - \(domain)"
     }
 }
 
-public extension ZMUser {
+public extension WireFoundation.QualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
+    }
+
+}
+
+public protocol HasQualifiedID {
+    var qualifiedID: WireDataModel.QualifiedID? { get }
+}
+
+extension ZMUser: HasQualifiedID {
+
+    public var qualifiedID: QualifiedID? {
         guard
             let context = managedObjectContext,
             let uuid = remoteIdentifier,
@@ -61,12 +92,12 @@ public extension ZMUser {
 
 }
 
-public extension ZMConversation {
+extension ZMConversation: HasQualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? managedObjectContext?.localDomain
         else {
             return nil
         }
@@ -76,7 +107,7 @@ public extension ZMConversation {
 
 }
 
-public extension Collection where Element == ZMUser {
+public extension Collection<ZMUser> {
 
     var qualifiedUserIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
@@ -86,7 +117,7 @@ public extension Collection where Element == ZMUser {
 
 }
 
-public extension Collection where Element == ZMConversation {
+public extension Collection<ZMConversation> {
 
     var qualifiedIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
@@ -96,13 +127,16 @@ public extension Collection where Element == ZMConversation {
 
 }
 
-public extension QualifiedID {
+// TODO: [WPB-11016] Move this test code from production targets
+#if DEBUG
+    public extension QualifiedID {
 
-    static func random() -> QualifiedID {
-        return QualifiedID(
-            uuid: UUID(),
-            domain: .randomDomain()
-        )
+        static func random() -> QualifiedID {
+            QualifiedID(
+                uuid: UUID(),
+                domain: .randomDomain()
+            )
+        }
+
     }
-
-}
+#endif

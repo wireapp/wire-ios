@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,93 +18,51 @@
 
 import Foundation
 import PushKit
+import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
-    // MARK: - Legacy voIP push
-
-    public func processIncomingRealVoIPPush(
-        payload: [AnyHashable: Any],
-        completion: @escaping () -> Void
-    ) {
-        WireLogger.notifications.info("processing incoming (real) voIP push payload: \(payload)")
-
-        // We were given some time to run, resume background task creation.
-        BackgroundActivityFactory.shared.resume()
-        notificationsTracker?.registerReceivedPush()
-
-        guard
-            let accountId = accountId(from: payload),
-            let account = self.accountManager.account(with: accountId),
-            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
-                name: "\(payload.stringIdentifier)",
-                expirationHandler: { [weak self] in
-                  WireLogger.notifications.warn("Processing push payload expired: \(payload)")
-                  self?.notificationsTracker?.registerProcessingExpired()
-                }
-            )
-        else {
-            WireLogger.notifications.warn("Aborted processing of payload: \(payload)")
-            notificationsTracker?.registerProcessingAborted()
-            return completion()
-        }
-
-        withSession(for: account, perform: { userSession in
-            WireLogger.notifications.info(
-                "Forwarding push payload to user session with account \(account.userIdentifier)",
-                attributes: .safePublic
-            )
-
-            userSession.receivedPushNotification(with: payload, completion: { [weak self] in
-                WireLogger.notifications.info("Processing push payload completed")
-                self?.notificationsTracker?.registerNotificationProcessingCompleted()
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                completion()
-            })
-        })
-    }
-
-    public func processPendingCallEvents(accountID: UUID) {
+    public func processPendingCallEvents(accountID: UUID) async {
         WireLogger.calling.info("process pending call events preemptively")
 
         guard
-            let account = accountManager.account(with: accountID),
-            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
+            let account = accountManager.account(with: accountID)
         else {
-            WireLogger.calling.error("failed to process pending call events preemptively")
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively: account not found",
+                attributes: .safePublic
+            )
             return
         }
 
-        withSession(for: account) { session in
-            session.processPendingCallEvents {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
-        }
-    }
-
-    // MARK: Helpers
-
-    private func accountId(from dictionary: [AnyHashable: Any]) -> UUID? {
-        let pushChannelDataKey = "data"
-        let pushChannelUserIDKey = "user"
-
-        guard let userInfoData = dictionary[pushChannelDataKey] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload")
-            return nil
+        guard
+            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
+        else {
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively: activity not started",
+                attributes: .safePublic
+            )
+            return
         }
 
-        guard let userIdString = userInfoData[pushChannelUserIDKey] as? String else {
-            return nil
+        do {
+            let session = try await withSession(for: account)
+            await session.processPendingCallEvents(only: true)
+        } catch let error as NSError {
+            let errorMessage = error.safeForLoggingDescription
+            WireLogger.calling.critical(
+                "failed to process pending call events preemptively failed: cannot load session - \(errorMessage)",
+                attributes: .safePublic
+            )
         }
-
-        return UUID(uuidString: userIdString)
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
 }
 
 private extension VoIPPushPayload {
 
     func caller(in context: NSManagedObjectContext) -> ZMUser? {
-        return ZMUser.fetch(
+        ZMUser.fetch(
             with: senderID,
             domain: senderDomain,
             in: context
@@ -112,7 +70,7 @@ private extension VoIPPushPayload {
     }
 
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
-        return ZMConversation.fetch(
+        ZMConversation.fetch(
             with: conversationID,
             domain: conversationDomain,
             in: context
@@ -121,7 +79,7 @@ private extension VoIPPushPayload {
 
 }
 
-private extension Dictionary where Key == AnyHashable, Value == Any {
+private extension [AnyHashable: Any] {
 
     var stringIdentifier: String {
         guard
@@ -129,7 +87,7 @@ private extension Dictionary where Key == AnyHashable, Value == Any {
             let innerData = data["data"] as? [AnyHashable: Any],
             let id = innerData["id"]
         else {
-            return self.description
+            return description
         }
 
         return "\(id)"

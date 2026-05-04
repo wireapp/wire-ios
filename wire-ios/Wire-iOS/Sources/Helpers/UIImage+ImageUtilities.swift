@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension UIImage {
 
     func imageScaled(with scaleFactor: CGFloat) -> UIImage? {
-        let size = self.size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
+        let size = size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let scale: CGFloat = 0 // Automatically use scale factor of main screens
         let hasAlpha = false
 
@@ -35,7 +36,10 @@ extension UIImage {
     }
 
     func with(insets: UIEdgeInsets, backgroundColor: UIColor? = nil) -> UIImage? {
-        let newSize = CGSize(width: size.width + insets.left + insets.right, height: size.height + insets.top + insets.bottom)
+        let newSize = CGSize(
+            width: size.width + insets.left + insets.right,
+            height: size.height + insets.top + insets.bottom
+        )
 
         UIGraphicsBeginImageContextWithOptions(newSize, _: 0.0 != 0, _: 0.0)
 
@@ -64,12 +68,16 @@ extension UIImage {
     }
 
     class func deviceOptimizedImage(from imageData: Data) -> UIImage? {
-        return UIImage(from: imageData, withMaxSize: UIScreen.main.nativeBounds.size.height)
+        UIImage(from: imageData, withMaxSize: UIScreen.main.nativeBounds.size.height)
     }
 
     convenience init?(from imageData: Data, withMaxSize maxSize: CGFloat) {
         guard let source: CGImageSource = CGImageSourceCreateWithData(imageData as CFData, nil),
-            let scaledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, UIImage.thumbnailOptions(withMaxSize: maxSize)) else { return nil }
+              let scaledImage = CGImageSourceCreateThumbnailAtIndex(
+                  source,
+                  0,
+                  UIImage.thumbnailOptions(withMaxSize: maxSize)
+              ) else { return nil }
 
         self.init(cgImage: scaledImage, scale: 2.0, orientation: .up)
     }
@@ -94,7 +102,7 @@ extension UIImage {
         }
 
         if let height = properties[kCGImagePropertyPixelHeight] as? CGFloat,
-            let width = properties[kCGImagePropertyPixelWidth] as? CGFloat {
+           let width = properties[kCGImagePropertyPixelWidth] as? CGFloat {
             return CGSize(width: width, height: height)
         }
 
@@ -117,7 +125,11 @@ extension UIImage {
             longSideLength = shorterSideLength * (size.height / size.width)
         }
 
-        guard let scaledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, UIImage.thumbnailOptions(withMaxSize: longSideLength)) else { return nil }
+        guard let scaledImage = CGImageSourceCreateThumbnailAtIndex(
+            source,
+            0,
+            UIImage.thumbnailOptions(withMaxSize: longSideLength)
+        ) else { return nil }
 
         self.init(cgImage: scaledImage, scale: UIScreen.main.scale, orientation: .up)
     }
@@ -140,8 +152,44 @@ extension UIImage {
 extension UIImage {
 
     func resize(for size: StyleKitIcon.Size) -> UIImage {
-        UIGraphicsImageRenderer(size: size.cgSize).image { _ in
-            draw(in: CGRect(origin: .zero, size: size.cgSize))
+        resize(size: size.cgSize)
+    }
+
+    func resize(size: CGSize) -> UIImage {
+        UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    func resizeMaintainingAspectRatio(targetSize: CGSize) -> UIImage? {
+        guard size.width > 0, size.height > 0 else { return nil }
+
+        let originalSize = size
+        let scaleFactor = min(targetSize.width / originalSize.width, targetSize.height / originalSize.height)
+
+        if scaleFactor.isNaN || scaleFactor.isInfinite { return nil }
+
+        let newSize = CGSize(width: originalSize.width * scaleFactor, height: originalSize.height * scaleFactor)
+        let origin = CGPoint(
+            x: (targetSize.width - newSize.width) / 2,
+            y: (targetSize.height - newSize.height) / 2
+        )
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            draw(in: CGRect(origin: origin, size: newSize))
+        }
+    }
+}
+
+extension UIImage {
+
+    func verticallyInverted() -> UIImage {
+        UIGraphicsImageRenderer(size: size).image { rendererContext in
+            rendererContext.cgContext.translateBy(x: size.width / 2, y: size.height / 2)
+            rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
+            rendererContext.cgContext.translateBy(x: -size.width / 2, y: -size.height / 2)
+            draw(in: CGRect(origin: .zero, size: size))
         }
     }
 }

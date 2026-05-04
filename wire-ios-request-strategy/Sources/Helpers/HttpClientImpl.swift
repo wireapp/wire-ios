@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@ import WireTransport
 public struct HttpClientImpl: HttpClient {
 
     let transportSession: any TransportSessionType
-    let queue: any ZMSGroupQueue
+    let queue: any GroupQueue
 
-    public init(transportSession: any TransportSessionType, queue: any ZMSGroupQueue) {
+    public init(transportSession: any TransportSessionType, queue: any GroupQueue) {
         self.transportSession = transportSession
         self.queue = queue
     }

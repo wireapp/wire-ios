@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ import Foundation
 extension Payload {
     struct QualifiedConversationList: Codable {
         enum CodingKeys: String, CodingKey {
-            case found = "found"
+            case found
             case notFound = "not_found"
-            case failed = "failed"
+            case failed
         }
 
         let found: [Conversation]

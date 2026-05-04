@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 import WireDesign
 import WireLinkPreview
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 // MARK: - UIView extension
 
-extension UIView {
+private extension UIView {
 
-    fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
+    func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
         container.translatesAutoresizingMaskIntoConstraints = false
         container.widthAnchor.constraint(equalToConstant: size.width).isActive = true
@@ -67,14 +67,14 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersTextMessagePreview() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -84,7 +84,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -92,14 +92,14 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersEmojiOnly() {
         let message = MockMessageFactory.textMessage(withText: "😀🌮")
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -109,21 +109,21 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
     }
 
     func testThatItRendersMention() {
-        let sut = mentionMessage().replyPreview()!.prepareForSnapshot()
+        let sut = mentionMessage().replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -133,22 +133,25 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
     }
 
     func testThatItRendersTextMessagePreview_LongText() {
-        let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed.")
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let message = MockMessageFactory
+            .textMessage(
+                withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed."
+            )
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -158,7 +161,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -166,14 +169,14 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersFileMessagePreview() {
         let message = MockMessageFactory.fileTransferMessage()
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -183,7 +186,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -191,14 +194,14 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersLocationMessagePreview() {
         let message = MockMessageFactory.locationMessage()
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -208,7 +211,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -216,44 +219,33 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersLinkPreviewMessagePreview() {
         let url = "https://www.example.com/article/1"
-        let article = ArticleMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: url,
+            permanentURLString: url,
+            resolvedURLString: url,
+            offset: 0
+        )
         article.title = "You won't believe what happened next!"
 
         let message = MockMessageFactory.textMessage(withText: "https://www.example.com/article/1")
         message.backingTextMessageData.backingLinkPreview = article
         message.backingTextMessageData.linkPreviewImageCacheKey = "image-id-unsplash_matterhorn.jpg"
-        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)
+        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+            .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
-        let previewView = message.replyPreview()!
+        let previewView = message.replyPreview(userSession: UserSessionMock())!
+
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "LightTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "DarkTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
+        verifyViewInAllThemes(previewView)
     }
 
     func testThatItRendersImageMessagePreview() throws {
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let previewView = try XCTUnwrap(message.replyPreview())
+        let previewView = try XCTUnwrap(message.replyPreview(userSession: UserSessionMock()))
         XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
@@ -261,7 +253,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -271,7 +263,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -282,28 +274,10 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         message.backingFileMessageData.mimeType = "audio/x-m4a"
         message.backingFileMessageData.filename = "vacation.m4a"
 
-        let previewView = message.replyPreview()!
+        let previewView = message.replyPreview(userSession: UserSessionMock())!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "LightTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: previewView.prepareForSnapshot(),
-                named: "DarkTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
+        verifyViewInAllThemes(previewView)
     }
 
     // MARK: - Unit Test
@@ -311,11 +285,35 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         verifyDeallocation {
-            return message.replyPreview()!
+            message.replyPreview(userSession: UserSessionMock())!
         }
     }
 
     // MARK: - Helper method
+
+    private func verifyViewInAllThemes(
+        _ view: UIView,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        testName: String = #function
+    ) {
+        let themes: [(style: UIUserInterfaceStyle, name: String)] = [
+            (.light, "LightTheme"),
+            (.dark, "DarkTheme")
+        ]
+
+        for theme in themes {
+            snapshotHelper
+                .withUserInterfaceStyle(theme.style)
+                .verify(
+                    matching: view.prepareForSnapshot(),
+                    named: theme.name,
+                    file: file,
+                    testName: testName,
+                    line: line
+                )
+        }
+    }
 
     private func mentionMessage() -> MockMessage {
         let message = MockMessageFactory.messageTemplate()

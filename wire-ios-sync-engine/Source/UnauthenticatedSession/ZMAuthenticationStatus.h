@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;
+@protocol ZMSGroupQueue;
 
 FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
@@ -55,23 +56,21 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
 typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
     ZMAuthenticationPhaseUnauthenticated = 0,
-    ZMAuthenticationPhaseLoginWithPhone,
-    ZMAuthenticationPhaseLoginWithEmail,
-    ZMAuthenticationPhaseWaitingToImportBackup,
-    ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin,
-    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin,
-    ZMAuthenticationPhaseVerifyPhone,
-    ZMAuthenticationPhaseAuthenticated
+    //ZMAuthenticationPhaseLoginWithPhone = 1 __attribute__((deprecated("Use ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin instead"))),
+    ZMAuthenticationPhaseLoginWithEmail = 2,
+    ZMAuthenticationPhaseWaitingToImportBackup = 3,
+    //ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin = 4 __attribute__((deprecated("This phase is deprecated"))),
+    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin = 5,
+    //ZMAuthenticationPhaseVerifyPhone = 6 __attribute__((deprecated("Use ZMAuthenticationPhaseLoginWithPhone instead"))),
+    ZMAuthenticationPhaseAuthenticated = 7
 };
 
 @interface ZMAuthenticationStatus : NSObject
 
-@property (nonatomic, readonly, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
-@property (nonatomic, readonly, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
-@property (nonatomic, readonly) UserCredentials *loginCredentials;
-@property (nonatomic, readonly) UserPhoneCredentials *registrationPhoneValidationCredentials;
+
+@property (nonatomic) UserCredentials *loginCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -79,7 +78,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
 @property (nonatomic, readonly) NSUUID *authenticatedUserIdentifier;
-@property (nonatomic) NSData *profileImageData;
 
 @property (nonatomic) NSData *authenticationCookieData;
 
@@ -91,7 +89,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)prepareForLoginWithCredentials:(UserCredentials *)credentials;
 - (void)continueAfterBackupImportStep;
-- (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
 
 - (void)didCompleteRequestForLoginCodeSuccessfully;
@@ -100,15 +97,13 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)notifyCompanyLoginCodeDidBecomeAvailable:(NSUUID *)uuid;
 
-- (void)didCompletePhoneVerificationSuccessfully;
-
 - (void)startLogin;
 - (void)loginSucceededWithResponse:(ZMTransportResponse *)response;
 - (void)loginSucceededWithUserInfo:(UserInfo *)userInfo;
-- (void)didFailLoginWithPhone:(BOOL)invalidCredentials;
 - (void)didFailLoginWithEmailBecausePendingValidation;
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials;
 - (void)didFailLoginBecauseAccountSuspended;
+- (void)didFailLoginBecauseTooManyRequests;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsRequired;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsInvalid;
 - (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials;

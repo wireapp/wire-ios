@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import SafariServices
 import UIKit
+import WireCommonComponents
 import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
@@ -26,7 +27,7 @@ extension URL {
 
     @discardableResult
     func open() -> Bool {
-        let opened = openAsTweet() || openAsLink()
+        let opened = openAsLink()
         if opened {
             return true
         } else {
@@ -37,7 +38,7 @@ extension URL {
         }
     }
 
-    func openInApp(above viewController: UIViewController) {
+    private func openInApp(above viewController: UIViewController) {
         let browser = BrowserViewController(url: self)
         browser.modalPresentationCapturesStatusBarAppearance = true
         viewController.present(browser, animated: true, completion: nil)
@@ -45,10 +46,31 @@ extension URL {
 
 }
 
-extension NSURL {
+extension URL {
 
-    func openInApp(aboveViewController viewController: UIViewController) {
-        (self as URL).openInApp(above: viewController)
+    /// Returns a browser view controller if `openLinksExternally` is false, or opens externally if
+    /// `openLinksExternally` is true.
+    /// - Returns: A view controller to present, or `nil` if already opened externally.
+    func browserControllerOrOpenExternally() -> UIViewController? {
+        if SecurityFlags.openLinksExternally.isEnabled {
+            open()
+            return nil
+        } else {
+            return BrowserViewController(url: self)
+        }
+    }
+
+    /// Opens the URL directly: externally if `openLinksExternally` is true, or presents the internal browser from the
+    /// given presenter.
+    func open(
+        from presenter: UIViewController?,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        if let browserVC = browserControllerOrOpenExternally() as? BrowserViewController {
+            browserVC.onDismiss = onDismiss
+            browserVC.modalPresentationCapturesStatusBarAppearance = true
+            presenter?.present(browserVC, animated: true)
+        }
     }
 
 }
@@ -70,7 +92,7 @@ extension LinkOpeningOption {
 
     static var storedPreference: ApplicationOptionEnum {
         if let openingRawValue: ApplicationOptionEnum.RawValue = Settings.shared[settingKey],
-            let openingOption: ApplicationOptionEnum = ApplicationOptionEnum.init(rawValue: openingRawValue) {
+           let openingOption = ApplicationOptionEnum(rawValue: openingRawValue) {
             return openingOption
         }
 
@@ -78,11 +100,11 @@ extension LinkOpeningOption {
     }
 
     static var availableOptions: [Self] {
-        return allOptions.filter { $0.isAvailable }
+        allOptions.filter(\.isAvailable)
     }
 
     static var optionsAvailable: Bool {
-        return availableOptions.count > 1
+        availableOptions.count > 1
     }
 
 }
@@ -90,7 +112,7 @@ extension LinkOpeningOption {
 extension UIApplication {
 
     func canHandleScheme(_ scheme: String) -> Bool {
-        return URL(string: scheme).map(canOpenURL) ?? false
+        URL(string: scheme).map(canOpenURL) ?? false
     }
 
 }

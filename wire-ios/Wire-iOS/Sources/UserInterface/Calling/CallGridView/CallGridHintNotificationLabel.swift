@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@ enum CallGridHintKind {
     var message: String {
         switch self {
         case .fullscreen:
-            return HintString.fullscreen
+            HintString.fullscreen
         case .zoom:
-            return HintString.zoom
+            HintString.zoom
         case .goBackOrZoom:
-            return HintString.goBackOrZoom
+            HintString.goBackOrZoom
         case .goBack:
-            return HintString.goBack
+            HintString.goBack
         }
     }
 }

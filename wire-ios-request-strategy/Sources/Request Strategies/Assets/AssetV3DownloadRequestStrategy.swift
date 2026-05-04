@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireImages
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
 
-@objcMembers public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objcMembers
+public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
+    ZMContextChangeTrackerSource {
 
-    private let requestFactory = AssetDownloadRequestFactory()
+    private let requestFactory: AssetDownloadRequestFactory
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
+    ) {
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = .allowsRequestsWhileOnline
@@ -39,31 +47,38 @@ private let zmLog = ZMSLog(tag: "Asset V3")
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version >= 3 else { return false }
 
-            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message.underlyingMessage?.assetData?.hasUploaded == true
+            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message
+                .underlyingMessage?.assetData?.hasUploaded == true
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                                        entityName: ZMAssetClientMessage.entityName(),
-                                                                        predicateForObjectsToDownload: downloadPredicate,
-                                                                        managedObjectContext: managedObjectContext)
+        self.assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMAssetClientMessage.entityName(),
+            predicateForObjectsToDownload: downloadPredicate,
+            managedObjectContext: managedObjectContext
+        )
 
         registerForCancellationNotification()
         registerForWhitelistingNotification()
     }
 
     func registerForCancellationNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.cancelOngoingRequestForAssetClientMessage(objectID)
         })
     }
 
     func registerForWhitelistingNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadAsset(objectID)
         })
@@ -72,10 +87,10 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else { return }
             message.isDownloading = true
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -83,20 +98,24 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self  else { return }
-            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
+            else { return }
             guard message.version >= 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
-            self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
+            applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.isDownloading = false
             message.associatedTaskIdentifier = nil
         }
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
-    fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
         var decryptSuccess = false
 
         assetClientMessage.isDownloading = false
@@ -125,9 +144,11 @@ private let zmLog = ZMSLog(tag: "Asset V3")
         assetClientMessage.updateCategoryCache()
 
         if decryptSuccess {
-            NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
-                                                            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
-                                                            uiContext: self.managedObjectContext.zm_userInterface!)
+            NotificationDispatcher.notifyNonCoreDataChanges(
+                objectID: assetClientMessage.objectID,
+                changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+                uiContext: managedObjectContext.zm_userInterface!
+            )
         }
     }
 
@@ -159,7 +180,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func validateAndStoreImage(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys
@@ -180,7 +201,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func validateAndStoreFile(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys
@@ -203,23 +224,27 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage {
 
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
             }
 
-            let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+            let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
                 self.handleResponse(response, forMessage: assetClientMessage)
             }
 
-            let progressHandler = ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+            let progressHandler = ZMTaskProgressHandler(on: managedObjectContext) { progress in
                 assetClientMessage.progress = progress
                 self.managedObjectContext.enqueueDelayedSave()
             }
@@ -227,7 +252,12 @@ private let zmLog = ZMSLog(tag: "Asset V3")
             if let asset = assetClientMessage.underlyingMessage?.assetData {
                 let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
                 let domain = asset.uploaded.assetDomain
-                if let request = requestFactory.requestToGetAsset(withKey: asset.uploaded.assetID, token: token, domain: domain, apiVersion: apiVersion) {
+                if let request = requestFactory.requestToGetAsset(
+                    withKey: asset.uploaded.assetID,
+                    token: token,
+                    domain: domain,
+                    apiVersion: apiVersion
+                ) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)

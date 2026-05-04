@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "Feature")
-
 @objcMembers
 public class Feature: ZMManagedObject {
 
@@ -32,16 +30,24 @@ public class Feature: ZMManagedObject {
 
     public enum Name: String, Codable, CaseIterable {
 
+        case allowedGlobalOperations
         case appLock
-        case conferenceCalling
-        case fileSharing
-        case selfDeletingMessages
-        case conversationGuestLinks
+        case apps
+        case assetAuditLog
+        case cells
+        case cellsInternal
+        case channels
         case classifiedDomains
+        case conferenceCalling
+        case consumableNotifications
+        case simplifiedUserConnectionRequestQRCode
+        case conversationGuestLinks
         case digitalSignature
-        case mls
         case e2ei = "mlsE2EId"
+        case fileSharing
+        case mls
         case mlsMigration
+        case selfDeletingMessages
 
     }
 
@@ -62,7 +68,7 @@ public class Feature: ZMManagedObject {
 
     public var config: Data? {
         get {
-            return configData
+            configData
         }
 
         set {
@@ -106,17 +112,17 @@ public class Feature: ZMManagedObject {
 
     /// Whether the feature has been updated from backend
     private var hasBeenUpdatedFromBackend: Bool {
-        return !statusValue.isEmpty && !hasInitialDefault
+        !statusValue.isEmpty && !hasInitialDefault
     }
 
     // MARK: - Methods
 
     public override static func entityName() -> String {
-        return "Feature"
+        "Feature"
     }
 
     public override static func sortKey() -> String {
-        return #keyPath(Feature.nameValue)
+        #keyPath(Feature.nameValue)
     }
 
     /// Fetch the instance for the given name.
@@ -129,8 +135,10 @@ public class Feature: ZMManagedObject {
     ///
     /// - Returns: An instance, if it exists, otherwise `nil`.
 
-    public static func fetch(name: Name,
-                             context: NSManagedObjectContext) -> Feature? {
+    public static func fetch(
+        name: Name,
+        context: NSManagedObjectContext
+    ) -> Feature? {
 
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         fetchRequest.predicate = NSPredicate(format: "nameValue == %@", name.rawValue)
@@ -220,14 +228,22 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling,
-                .fileSharing,
-                .conversationGuestLinks,
-                .classifiedDomains,
-                .digitalSignature,
-                .mls,
-                .mlsMigration,
-                .e2ei:
+        case .allowedGlobalOperations,
+             .apps,
+             .assetAuditLog,
+             .cells,
+             .cellsInternal,
+             .channels,
+             .classifiedDomains,
+             .conferenceCalling,
+             .consumableNotifications,
+             .simplifiedUserConnectionRequestQRCode,
+             .conversationGuestLinks,
+             .digitalSignature,
+             .e2ei,
+             .fileSharing,
+             .mls,
+             .mlsMigration:
             break
         }
     }

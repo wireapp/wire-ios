@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {
@@ -39,18 +40,18 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         case noSelfClient
         case invalidGroupID
         case invalidIdentity
+        case invalidCiphersuite
     }
 
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let context: NSManagedObjectContext
-    private let commitSender: CommitSending
     private let newKeyPackageCount: UInt32 = 100
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -60,19 +61,14 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
         context: NSManagedObjectContext,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        commitSender: CommitSending? = nil
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
-        self.conversationEventProcessor = conversationEventProcessor
         self.context = context
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
-        self.commitSender = commitSender ?? CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: context.notificationContext
-        )
+        self.featureRepository = featureRepository
     }
 
     // MARK: - Interface
@@ -89,41 +85,54 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        // Get the rotate bundle from core crypto
-        let rotateBundle = try await coreCrypto.perform {
-            try await $0.e2eiRotateAll(
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
+            try await context.saveX509Credential(
                 enrollment: enrollment,
-                certificateChain: certificateChain,
-                newKeyPackagesCount: newKeyPackageCount
+                certificateChain: certificateChain
             )
         }
 
-        guard !rotateBundle.commits.isEmpty else {
-            // TODO: [WPB-6281] [jacob] remove this guard when implementing
-            return
-        }
-
-        // Replace the key packages with the ones including the certificate
-        try await replaceKeyPackages(rotateBundle: rotateBundle)
-
-        // Send migration commits after key packages rotations
-        for (groupID, commit) in rotateBundle.commits {
-            do {
-                try await migrateConversation(with: groupID, commit: commit)
-            } catch {
-                WireLogger.e2ei.warn("failed to rotate keys for group: \(String(describing: error))")
-            }
-        }
+        try await replaceKeyPackages()
+        try await replaceCredentialsInExistingConversations()
 
         // Publish new certificate revocation lists (CRLs) distribution points
-        if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
+        if let newDistributionPoints = CRLsDistributionPoints(from: crlNewDistributionPoints) {
             onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
         }
     }
 
     // MARK: - Helpers
 
-    private func replaceKeyPackages(rotateBundle: RotateBundle) async throws {
+    private func replaceCredentialsInExistingConversations() async throws {
+        let mlsConversationsToMigrate = try await context.perform {
+            var mlsGroupIDs = try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .ready,
+                in: self.context
+            ).compactMap(\.mlsGroupID)
+
+            if let selfMLSGroupID = ZMConversation.fetchSelfMLSConversation(in: self.context)?.mlsGroupID {
+                mlsGroupIDs.append(selfMLSGroupID)
+            }
+
+            return mlsGroupIDs
+        }
+
+        try await coreCrypto.transaction { context in
+            for groupID in mlsConversationsToMigrate {
+                do {
+                    try await context.e2eiRotate(conversationId: groupID.conversationId)
+                } catch {
+                    WireLogger.e2ei
+                        .warn(
+                            "failed to rotate keys for group \(groupID.safeForLoggingDescription): \(String(describing: error))"
+                        )
+                }
+            }
+        }
+    }
+
+    private func replaceKeyPackages() async throws {
+        let mlsConfig = await featureRepository.fetchMLS().config
 
         guard let clientID = await context.perform({ [self] in
             ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
@@ -131,26 +140,28 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.noSelfClient
         }
 
-        let newKeyPackages = rotateBundle.newKeyPackages.map { $0.base64String() }
-        var action = ReplaceSelfMLSKeyPackagesAction(
-            clientID: clientID,
-            keyPackages: newKeyPackages
-        )
-        try await action.perform(in: context.notificationContext)
-    }
-
-    private func migrateConversation(with groupID: String, commit: CommitBundle) async throws {
-        guard let groupData = groupID.zmHexDecodedData() else {
-            throw Error.invalidGroupID
+        guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+            throw Error.invalidCiphersuite
         }
 
-        let groupID = MLSGroupID(groupData)
-        let events = try await commitSender.sendCommitBundle(
-            commit,
-            for: groupID
-        )
+        try await coreCrypto.transaction { coreCryptoContext in
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
 
-        await conversationEventProcessor.processConversationEvents(events)
+            let newKeyPackages = try await coreCryptoContext.clientKeypackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
+                credentialType: .x509,
+                amountRequested: self.newKeyPackageCount
+            )
+
+            var action = ReplaceSelfMLSKeyPackagesAction(
+                clientID: clientID,
+                keyPackages: newKeyPackages.map { $0.copyBytes().base64EncodedString() },
+                ciphersuite: ciphersuite
+            )
+            try await action.perform(in: self.context.notificationContext)
+        }
     }
 
 }

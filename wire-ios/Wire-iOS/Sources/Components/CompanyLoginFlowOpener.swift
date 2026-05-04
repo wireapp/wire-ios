@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@ protocol CompanyLoginFlowHandlerDelegate: AnyObject {
     func userDidCancelCompanyLoginFlow()
 }
 
-/**
- * Handles opening URLs to validate company login authentication.
- */
+/// Handles opening URLs to validate company login authentication.
 
 final class CompanyLoginFlowHandler {
 
@@ -80,10 +78,11 @@ final class CompanyLoginFlowHandler {
     }
 
     private func startListeningToFlowCompletion() {
-        token = NotificationCenter.default.addObserver(forName: .companyLoginDidFinish, object: nil, queue: .main) { [weak self] _ in
-            self?.activeWebBrowser?.dismiss(animated: true, completion: nil)
-            self?.activeWebBrowser = nil
-        }
+        token = NotificationCenter.default
+            .addObserver(forName: .companyLoginDidFinish, object: nil, queue: .main) { [weak self] _ in
+                self?.activeWebBrowser?.dismiss(animated: true, completion: nil)
+                self?.activeWebBrowser = nil
+            }
     }
 
     // MARK: - Utilities

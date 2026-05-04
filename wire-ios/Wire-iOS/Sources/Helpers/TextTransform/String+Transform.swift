@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,32 +26,23 @@ extension String {
     /// - Returns: the transformed string
     func applying(transform: TextTransform) -> String {
         switch transform {
-        case .none: return self
-        case .capitalize: return localizedCapitalized
-        case .lower: return localizedLowercase
-        case .upper: return localizedUppercase
+        case .none: self
+        case .capitalize: localizedCapitalized
+        case .lower: localizedLowercase
+        case .upper: localizedUppercase
         }
     }
 }
 
 extension NSAttributedString {
 
-    /**
-     * Creates a new string by applying the given transform.
-     */
+    /// Creates a new string by applying the given transform.
 
     func applying(transform: TextTransform) -> NSAttributedString {
-        let newString = self.string.applying(transform: transform)
+        let newString = string.applying(transform: transform)
 
-        let mutableCopy = self.mutableCopy() as! NSMutableAttributedString
-        mutableCopy.replaceCharacters(in: NSRange(location: 0, length: self.length), with: newString)
+        let mutableCopy = mutableCopy() as! NSMutableAttributedString
+        mutableCopy.replaceCharacters(in: NSRange(location: 0, length: length), with: newString)
         return mutableCopy
-    }
-}
-
-extension String {
-
-    func trim() -> String {
-        return self.trimmingCharacters(in: .whitespaces)
     }
 }

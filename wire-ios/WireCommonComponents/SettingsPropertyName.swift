@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,17 @@
 //
 import Foundation
 
-/**
- Available settings
- 
- - ChatHeadsDisabled:      Disable chat heads in conversation and self profile
- - DisableMarkdown:        Disable markdown formatter for messages
- - DarkMode:               Dark mode for conversation
- - PriofileName:           User name
- - SoundAlerts:            Sound alerts level
- - DisableCrashAndAnalyticsSharing: Opt-Out analytics and App Center
- - DisableSendButton:      Opt-Out of new send button
- - DisableLinkPreviews:    Disable link previews for links you send
- - Disable(.*):            Disable some app features (debug)
- */
+/// Available settings
+///
+/// - ChatHeadsDisabled:      Disable chat heads in conversation and self profile
+/// - DisableMarkdown:        Disable markdown formatter for messages
+/// - DarkMode:               Dark mode for conversation
+/// - PriofileName:           User name
+/// - SoundAlerts:            Sound alerts level
+/// - DisableCrashAndAnalyticsSharing: Opt-Out analytics and App Center
+/// - DisableSendButton:      Opt-Out of new send button
+/// - DisableLinkPreviews:    Disable link previews for links you send
+/// - Disable(.*):            Disable some app features (debug)
 public enum SettingsPropertyName: String, CustomStringConvertible {
 
     // User defaults
@@ -42,13 +40,14 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case disableSendButton = "DisableSendButton"
 
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 
     // Profile
     case profileName = "ProfileName"
-    case handle = "handle"
-    case email = "email"
-    case domain = "domain"
-    case team = "team"
+    case handle
+    case email
+    case domain
+    case team
 
     case accentColor = "AccentColor"
 
@@ -62,30 +61,28 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case pingSoundName = "PingSoundName"
 
     // Open In
-    case tweetOpeningOption = "TweetOpeningOption"
     case mapsOpeningOption = "MapsOpeningOption"
     case browserOpeningOption = "BrowserOpeningOption"
 
-    // Persoanl Information
+    // Personal Information
     // Analytics
-    case disableCrashSharing = "DisableCrashSharing"
     case disableAnalyticsSharing = "DisableAnalyticsSharing"
-    case receiveNewsAndOffers = "ReceiveNewsAndOffers"
 
     // Debug
     case disableCallKit = "DisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
-    case callingProtocolStrategy = "CallingProtcolStrategy"
     case enableBatchCollections = "EnableBatchCollections"
 
-    case lockApp = "lockApp"
+    case lockApp
 
-    case readReceiptsEnabled = "readReceiptsEnabled"
+    case readReceiptsEnabled
 
-    case encryptMessagesAtRest = "encryptMessagesAtRest"
+    case encryptMessagesAtRest
+
+    case conversationBackground
 
     public var changeNotificationName: String {
-        return self.description + "ChangeNotification"
+        description + "ChangeNotification"
     }
 
     public var notificationName: Notification.Name {

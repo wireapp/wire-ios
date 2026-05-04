@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,20 @@
 //
 
 import Foundation
+import WireFoundation
+import WireLogging
 
-final class ServerCertificateTrust: NSObject, BackendTrustProvider {
-    let trustData: [TrustData]
+public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 
-    init(trustData: [TrustData]) {
+    public let trustData: [TrustData]
+    private let currentDateProvider: any CurrentDateProviding
+
+    public init(
+        trustData: [TrustData],
+        currentDateProvider: any CurrentDateProviding
+    ) {
         self.trustData = trustData
+        self.currentDateProvider = currentDateProvider
     }
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
@@ -35,11 +43,11 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
                 trustData.certificateKey
             }
 
-        return verifyServerTrustWithPinnedKeys(trust, pinnedKeys)
+        return verifyServerTrustWithPinnedKeys(trust, pinnedKeys, currentDateProvider.now)
     }
 
     /// Returns the public key of the leaf certificate associated with the trust object
-    /// 
+    ///
     /// To dump certificate data, use
     ///     CFIndex const certCount = SecTrustGetCertificateCount(serverTrust);
     /// and
@@ -69,10 +77,20 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         return SecTrustCopyKey(trust)
     }
 
-    private func verifyServerTrustWithPinnedKeys(_ serverTrust: SecTrust, _ pinnedKeys: [SecKey]) -> Bool {
+    private func verifyServerTrustWithPinnedKeys(
+        _ serverTrust: SecTrust,
+        _ pinnedKeys: [SecKey],
+        _ verifyDate: Date
+    ) -> Bool {
         var someError: CFError?
         // serverTrust is the certificate coming from the backend server we make request to, so next line will
         // check that the certificate is not expired
+        let status = SecTrustSetVerifyDate(serverTrust, verifyDate as CFDate)
+        guard status == errSecSuccess else {
+            let message = someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys failed to set verify date"
+            WireLogger.backend.error(message)
+            return false
+        }
         guard SecTrustEvaluateWithError(serverTrust, &someError) else {
             WireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
             return false
@@ -81,7 +99,8 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         guard !pinnedKeys.isEmpty else {
             return true
         }
-        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public key
+        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public
+        // key
         guard let publicKey = publicKeyAssociatedWithServerTrust(serverTrust) else {
             return false
         }

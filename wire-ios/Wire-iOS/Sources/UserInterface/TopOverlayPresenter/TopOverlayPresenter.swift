@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ import UIKit
 
 struct TopOverlayPresenter: TopOverlayPresenting {
 
-    var rootViewController: UIViewController
+    var mainWindow: UIWindow
 
     private var zClientViewController: ZClientViewController? {
-        guard let zClientViewController = rootViewController.firstChild(ofType: ZClientViewController.self) else {
+        guard let zClientViewController = mainWindow.rootViewController as? ZClientViewController else {
             assertionFailure("there should be at least one instance of `ZClientViewController`")
             return nil
         }

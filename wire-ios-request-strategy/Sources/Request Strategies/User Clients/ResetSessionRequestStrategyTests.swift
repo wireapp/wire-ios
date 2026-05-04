@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
     var mockMessageSender: MockMessageSenderInterface!
 
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     override func setUp() {
         super.setUp()
         mockMessageSender = MockMessageSenderInterface()
         sut = ResetSessionRequestStrategy(
-            managedObjectContext: self.syncMOC,
+            managedObjectContext: syncMOC,
             messageSender: mockMessageSender
         )
     }
@@ -64,7 +64,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     // MARK: Response handling

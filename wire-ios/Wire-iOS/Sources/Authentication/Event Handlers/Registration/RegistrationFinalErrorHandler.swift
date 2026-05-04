@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles errors in the final state of registration.
- */
+/// Handles errors in the final state of registration.
 
 final class RegistrationFinalErrorHandler: AuthenticationEventHandler {
 
@@ -38,7 +36,10 @@ final class RegistrationFinalErrorHandler: AuthenticationEventHandler {
         }
 
         // Present alert
-        let alert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         return [.hideLoadingView, .presentErrorAlert(alert)]
     }
 

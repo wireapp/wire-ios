@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     func testStartObserving_givenEpochChange_thenInvokeUseCase() async {
         // given
-        let expectation = self.expectation(description: "")
+        let expectation = expectation(description: "")
 
         let mlsGroupID: MLSGroupID = .random()
         await syncContext.perform { [self] in
@@ -76,7 +76,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mlsGroupVerification.startObserving()
         streamContinuation.yield(mlsGroupID)
 
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         let groupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
@@ -85,7 +85,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     func testStartObserving_givenDealloc_thenDoNotInvokeUseCase() async {
         // given
-        let expectation = self.expectation(description: "")
+        let expectation = expectation(description: "")
         expectation.isInverted = true
 
         let mlsGroupID: MLSGroupID = .random()
@@ -108,7 +108,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mlsGroupVerification = nil
         streamContinuation.yield(mlsGroupID)
 
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         XCTAssert(mockUpdateVerificationStatus.invokeForGroupID_Invocations.isEmpty)

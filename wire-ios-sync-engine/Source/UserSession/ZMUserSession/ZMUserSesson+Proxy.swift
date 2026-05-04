@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,13 +20,20 @@ import Foundation
 
 @objc
 public enum ProxiedRequestType: Int {
-    case giphy, soundcloud, youTube
+    case giphy
+    case soundcloud
+    case youTube
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
     @objc(proxiedRequestWithPath:method:type:callback:) @discardableResult
-    public func proxiedRequest(path: String, method: ZMTransportRequestMethod, type: ProxiedRequestType, callback: ProxyRequestCallback?) -> ProxyRequest {
+    func proxiedRequest(
+        path: String,
+        method: ZMTransportRequestMethod,
+        type: ProxiedRequestType,
+        callback: ProxyRequestCallback?
+    ) -> ProxyRequest {
 
         let request = ProxyRequest(type: type, path: path, method: method, callback: callback)
 
@@ -39,7 +46,7 @@ extension ZMUserSession {
     }
 
     @objc
-    public func cancelProxiedRequest(_ request: ProxyRequest) {
+    func cancelProxiedRequest(_ request: ProxyRequest) {
         syncManagedObjectContext.performGroupedBlock {
             self.applicationStatusDirectory.proxiedRequestStatus.cancel(request: request)
         }

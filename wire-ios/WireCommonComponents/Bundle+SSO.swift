@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension Bundle {
-    public static var ssoURLScheme: String? {
-        return Bundle.appMainBundle.infoForKey("Wire SSO URL Scheme")
+public extension Bundle {
+    static var ssoURLScheme: String? {
+        Bundle.appMainBundle.infoForKey("Wire SSO URL Scheme")
     }
 }

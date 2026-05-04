@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 final class ConversationListAccessoryView: UIView {
 
@@ -58,7 +59,7 @@ final class ConversationListAccessoryView: UIView {
     }
 
     var activeMediaPlayer: MediaPlayer? {
-        let mediaManager = mediaPlaybackManager ?? AppDelegate.shared.mediaPlaybackManager
+        let mediaManager = mediaPlaybackManager ?? (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
         return mediaManager?.activeMediaPlayer
     }
 
@@ -118,22 +119,24 @@ final class ConversationListAccessoryView: UIView {
         let transparentIconViewTrailing = transparentIconView.trailingAnchor.constraint(equalTo: trailingAnchor)
         transparentIconViewTrailing.priority = UILayoutPriority(999.0)
 
-        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
+        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor
+            .constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
         expandWidthConstraint = widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
         // collapseWidthConstraint is inactive when init, it is toggled in updateCollapseConstraints()
         collapseWidthConstraint = widthAnchor.constraint(equalToConstant: 0)
 
-        NSLayoutConstraint.activate([
-            badgeView.heightAnchor.constraint(equalToConstant: 20),
-            transparentIconViewLeading,
-            transparentIconViewTrailing,
-            expandTransparentIconViewWidthConstraint,
-            expandWidthConstraint,
-            transparentIconView.topAnchor.constraint(equalTo: topAnchor),
-            transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ]
+        NSLayoutConstraint.activate(
+            [
+                badgeView.heightAnchor.constraint(equalToConstant: 20),
+                transparentIconViewLeading,
+                transparentIconViewTrailing,
+                expandTransparentIconViewWidthConstraint,
+                expandWidthConstraint,
+                transparentIconView.topAnchor.constraint(equalTo: topAnchor),
+                transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ]
         )
         badgeView.fitIn(view: self)
     }
@@ -154,6 +157,7 @@ final class ConversationListAccessoryView: UIView {
 
         switch icon {
         case .pendingConnection:
+            // TODO: [WPB-17197] update format of icon
             iconView.setTemplateIcon(.clock, size: iconSize)
             iconView.tintColor = iconTintColor
             accessibilityValue = ConversationListVoiceOver.pendingConnection
@@ -191,9 +195,12 @@ final class ConversationListAccessoryView: UIView {
             return iconView
         case .typing:
             return .none
-        case .unreadMessages(let count):
+        case let .unreadMessages(count):
             textLabel.text = String(count)
             textLabel.textColor = textLabelColor
+            textLabel.isAccessibilityElement = true
+            textLabel.accessibilityIdentifier = Locators.ConversationsPage.unreadMessageCount.rawValue
+            textLabel.accessibilityValue = String(count)
             accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)
             return textLabel
         case .mention:
@@ -228,17 +235,17 @@ final class ConversationListAccessoryView: UIView {
     }
 
     func updateForIcon() {
-        self.badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
+        badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
 
-        self.badgeView.isHidden = false
-        self.transparentIconView.isHidden = true
+        badgeView.isHidden = false
+        transparentIconView.isHidden = true
 
-        self.expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
-        self.expandWidthConstraint.constant = defaultViewWidth
+        expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
+        expandWidthConstraint.constant = defaultViewWidth
 
         guard let icon else {
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = true
+            badgeView.isHidden = true
+            transparentIconView.isHidden = true
 
             updateCollapseConstraints(isCollapsed: true)
             return
@@ -246,40 +253,40 @@ final class ConversationListAccessoryView: UIView {
 
         switch icon {
         case .activeCall(false):
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.phone, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.phone, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
-            self.expandTransparentIconViewWidthConstraint.constant = activeCallWidth
-            self.expandWidthConstraint.constant = activeCallWidth
+            expandTransparentIconViewWidthConstraint.constant = activeCallWidth
+            expandWidthConstraint.constant = activeCallWidth
 
         case .activeCall(true): // "Join" button
-            self.badgeView.backgroundColor = IconColors.backgroundJoinCall
+            badgeView.backgroundColor = IconColors.backgroundJoinCall
 
         case .typing:
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.pencil, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.pencil, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
         case .unreadMessages, .mention:
-            self.textLabel.textColor = textLabelColor
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+            textLabel.textColor = textLabelColor
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
         case .unreadPing, .reply, .missedCall:
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
         default:
-            self.transparentIconView.image = .none
+            transparentIconView.image = .none
         }
 
         updateCollapseConstraints(isCollapsed: false)
 
-        if let view = self.viewForState {
-            self.badgeView.containedView.addSubview(view)
+        if let view = viewForState {
+            badgeView.containedView.addSubview(view)
 
-            let parentView = self.badgeView.containedView
+            let parentView = badgeView.containedView
             view.translatesAutoresizingMaskIntoConstraints = false
             parentView.translatesAutoresizingMaskIntoConstraints = false
 

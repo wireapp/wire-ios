@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,14 +38,14 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 }
 
 extension GroupDetailsReceiptOptionsCell: ConversationOptionsConfigurable {
     func configure(with conversation: GroupDetailsConversationType) {
-         isOn = conversation.hasReadReceiptsEnabled
+        isOn = conversation.hasReadReceiptsEnabled
     }
 }

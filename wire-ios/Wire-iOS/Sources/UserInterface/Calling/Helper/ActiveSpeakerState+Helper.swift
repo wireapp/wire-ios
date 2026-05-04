@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ import WireSyncEngine
 extension ActiveSpeakerState {
     var isSpeakingNow: Bool {
         switch self {
-        case .active(audioLevelNow: let audioLevel):
-            return audioLevel > 0
+        case let .active(audioLevelNow: audioLevel):
+            audioLevel > 0
         default:
-            return false
+            false
         }
     }
 }

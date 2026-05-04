@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
+@objcMembers
+public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
 
     let managedObjectContext: NSManagedObjectContext
     let zmLog: ZMSLog
@@ -66,7 +67,7 @@ import Foundation
         objectsBeingProcessed.insert(message)
 
         if let textMessageData = (message as ZMConversationMessage).textMessageData,
-            let messageText = textMessageData.messageText {
+           let messageText = textMessageData.messageText {
             zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
 
             // We DONT want to generate link previews inside a mentions

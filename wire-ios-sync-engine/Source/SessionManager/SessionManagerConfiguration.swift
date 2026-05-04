@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 
     // MARK: - Properties
 
-    /// If set to true then the session manager will delete account data instead of just asking the user to re-authenticate when the cookie or client gets invalidated.
+    /// If set to true then the session manager will delete account data instead of just asking the user to
+    /// re-authenticate when the cookie or client gets invalidated.
     ///
     /// The default value of this property is `false`.
     public var wipeOnCookieInvalid: Bool
@@ -63,7 +64,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     /// The default value of this property is `nil`, i.e. threshold is ignored
     public var failedPasswordThresholdBeforeWipe: Int?
 
-    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all sessions.
+    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all
+    /// sessions.
     ///
     /// The default value of this property is `false`
     public var encryptionAtRestEnabledByDefault: Bool
@@ -74,6 +76,13 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     /// from the backend. If this is present, only this config will be used.
 
     public var legacyAppLockConfig: AppLockController.LegacyConfig?
+
+    /// A dictionary mapping domains to hex encoded MLS removal keys that are considered faulty.
+    ///
+    /// If this is set, then any groups belonging to the specified domains with any of the specified keys will be reset.
+    /// Key: domain, Value: array of hex encoded faulty removal keys
+
+    public var faultyMLSRemovalKeysByDomain: [String: [String]]
 
     // MARK: - Init
 
@@ -86,7 +95,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         authenticateAfterReboot: Bool = false,
         failedPasswordThresholdBeforeWipe: Int? = nil,
         encryptionAtRestIsEnabledByDefault: Bool = false,
-        legacyAppLockConfig: AppLockController.LegacyConfig? = nil
+        legacyAppLockConfig: AppLockController.LegacyConfig? = nil,
+        faultyMLSRemovalKeysByDomain: [String: [String]] = [:]
     ) {
         self.wipeOnCookieInvalid = wipeOnCookieInvalid
         self.blacklistDownloadInterval = blacklistDownloadInterval
@@ -97,25 +107,42 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         self.failedPasswordThresholdBeforeWipe = failedPasswordThresholdBeforeWipe
         self.encryptionAtRestEnabledByDefault = encryptionAtRestIsEnabledByDefault
         self.legacyAppLockConfig = legacyAppLockConfig
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
-        blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
-        blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
-        wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
-        messageRetentionInterval = try container.decodeIfPresent(TimeInterval.self, forKey: .messageRetentionInterval)
-        authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
-        failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(Int.self, forKey: .failedPasswordThresholdBeforeWipe)
-        encryptionAtRestEnabledByDefault = try container.decode(Bool.self, forKey: .encryptionAtRestEnabledByDefault)
-        legacyAppLockConfig = try container.decodeIfPresent(AppLockController.LegacyConfig.self, forKey: .legacyAppLockConfig)
+        self.wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
+        self.blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
+        self.blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
+        self.wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
+        self.messageRetentionInterval = try container.decodeIfPresent(
+            TimeInterval.self,
+            forKey: .messageRetentionInterval
+        )
+        self.authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
+        self.failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
+            Int.self,
+            forKey: .failedPasswordThresholdBeforeWipe
+        )
+        self.encryptionAtRestEnabledByDefault = try container.decode(
+            Bool.self,
+            forKey: .encryptionAtRestEnabledByDefault
+        )
+        self.legacyAppLockConfig = try container.decodeIfPresent(
+            AppLockController.LegacyConfig.self,
+            forKey: .legacyAppLockConfig
+        )
+        self.faultyMLSRemovalKeysByDomain = try container.decodeIfPresent(
+            [String: [String]].self,
+            forKey: .faultyMLSRemovalKeysByDomain
+        ) ?? [:]
     }
 
     // MARK: - Methods
 
     public func copy(with zone: NSZone? = nil) -> Any {
-        let copy = SessionManagerConfiguration(
+        SessionManagerConfiguration(
             wipeOnCookieInvalid: wipeOnCookieInvalid,
             blacklistDownloadInterval: blacklistDownloadInterval,
             blockOnJailbreakOrRoot: blockOnJailbreakOrRoot,
@@ -124,14 +151,13 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
             authenticateAfterReboot: authenticateAfterReboot,
             failedPasswordThresholdBeforeWipe: failedPasswordThresholdBeforeWipe,
             encryptionAtRestIsEnabledByDefault: encryptionAtRestEnabledByDefault,
-            legacyAppLockConfig: legacyAppLockConfig
+            legacyAppLockConfig: legacyAppLockConfig,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
-
-        return copy
     }
 
     public static var defaultConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration()
+        SessionManagerConfiguration()
     }
 
     public static func load(from URL: URL) -> SessionManagerConfiguration? {
@@ -158,6 +184,7 @@ extension SessionManagerConfiguration {
         case failedPasswordThresholdBeforeWipe
         case encryptionAtRestEnabledByDefault
         case legacyAppLockConfig
+        case faultyMLSRemovalKeysByDomain
 
     }
 

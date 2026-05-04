@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public protocol MessageCapable {
     func setContent(on message: inout GenericMessage)
@@ -27,10 +28,10 @@ public protocol EphemeralMessageCapable: MessageCapable {
     func setEphemeralContent(on ephemeral: inout Ephemeral)
 }
 
-extension MessageCapable {
-    public var expectsReadConfirmation: Bool {
+public extension MessageCapable {
+    var expectsReadConfirmation: Bool {
         get {
-            return false
+            false
         }
         set {}
     }
@@ -68,7 +69,7 @@ extension Text: EphemeralMessageCapable {
     }
 }
 
-extension WireProtos.Asset: EphemeralMessageCapable {
+extension GenericMessageProtocol.Asset: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
     }
@@ -79,6 +80,12 @@ extension WireProtos.Asset: EphemeralMessageCapable {
 }
 
 // MARK: - MessageCapable
+
+extension Multipart: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.multipart = self
+    }
+}
 
 extension ImageAsset: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
@@ -104,7 +111,7 @@ extension ButtonActionConfirmation: MessageCapable {
     }
 }
 
-extension WireProtos.Availability: MessageCapable {
+extension GenericMessageProtocol.Availability: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.availability = self
     }
@@ -116,7 +123,7 @@ extension ButtonAction: MessageCapable {
     }
 }
 
-extension WireProtos.Reaction: MessageCapable {
+extension GenericMessageProtocol.Reaction: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.reaction = self
     }
@@ -134,7 +141,19 @@ extension Calling: MessageCapable {
     }
 }
 
-extension WireProtos.MessageEdit: MessageCapable {
+extension InCallEmoji: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.inCallEmoji = self
+    }
+}
+
+extension InCallHandRaise: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.inCallHandRaise = self
+    }
+}
+
+extension GenericMessageProtocol.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self
     }
@@ -159,7 +178,7 @@ extension MessageDelete: MessageCapable {
     }
 }
 
-extension WireProtos.Confirmation: MessageCapable {
+extension GenericMessageProtocol.Confirmation: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.confirmation = self
     }

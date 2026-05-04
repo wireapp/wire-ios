@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         sut = AssetDeletionRequestStrategy(
             context: syncMOC,
             applicationStatus: mockApplicationStatus,
-            identifierProvider: mockIdentifierProvider
+            identifierProvider: mockIdentifierProvider,
+            localDomain: "wire.com"
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -73,7 +74,12 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
 
         // When
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -90,7 +96,12 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
 
         // When
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -107,7 +118,7 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
 extension AssetDeletionRequestStrategyTests {
     func testThatItCreatesARequestIfThereIsAnIdentifier(for apiVersion: APIVersion) {
         // Given
-        let domain = "example.domain.com"
+        let domain = "wire.com"
         BackendInfo.domain = domain
         let identifier = UUID.create().transportString()
         mockIdentifierProvider.nextIdentifier = identifier
@@ -116,14 +127,13 @@ extension AssetDeletionRequestStrategyTests {
         let request = sut.nextRequest(for: apiVersion)
 
         // Then
-        let expectedPath: String
-        switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
-            expectedPath = "/assets/v3/\(identifier)"
+            "/assets/v3/\(identifier)"
         case .v1:
-            expectedPath = "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6:
-            expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
+            "/v1/assets/v3/\(identifier)"
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.method, .delete)
@@ -141,7 +151,7 @@ private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
     var failedToDeleteIdentifiers = [String]()
 
     func nextIdentifierToDelete() -> String? {
-        return nextIdentifier
+        nextIdentifier
     }
 
     func didDelete(identifier: String) {

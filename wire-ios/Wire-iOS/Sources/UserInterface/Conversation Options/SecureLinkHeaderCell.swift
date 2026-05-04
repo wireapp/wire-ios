@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,8 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
     }
 
     private func createConstraints() {
-        [topSeparator, iconImageView, titleLabel, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [topSeparator, iconImageView, titleLabel, subtitleLabel]
+            .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topSeparator.topAnchor.constraint(equalTo: contentView.topAnchor),

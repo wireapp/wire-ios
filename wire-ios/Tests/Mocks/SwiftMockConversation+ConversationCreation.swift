@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,11 @@ extension SwiftMockConversation {
     static func oneOnOneConversation(
         otherUser: UserType = MockUser.mockUsers().first!
     ) -> SwiftMockConversation {
-        let selfUser = (MockUser.mockSelf() as Any) as! ZMUser
+        _ = MockUser.mockSelf()
         let mockConversation = SwiftMockConversation()
         mockConversation.conversationType = .oneOnOne
         mockConversation.displayName = otherUser.name
         mockConversation.connectedUserType = otherUser
-
         return mockConversation
     }
 
@@ -37,8 +36,6 @@ extension SwiftMockConversation {
         let mockConversation = SwiftMockConversation()
         mockConversation.conversationType = .group
         mockConversation.displayName = otherUser.name
-
         return mockConversation
     }
-
 }

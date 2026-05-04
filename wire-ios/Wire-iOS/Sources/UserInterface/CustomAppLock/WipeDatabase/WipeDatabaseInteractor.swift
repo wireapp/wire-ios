@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ protocol WipeDatabaseInteractorInput: AnyObject {
     func deleteAccount()
 }
 
-protocol WipeDatabaseInteractorOutput: AnyObject {
-}
+protocol WipeDatabaseInteractorOutput: AnyObject {}
 
 final class WipeDatabaseInteractor {
     weak var output: WipeDatabaseInteractorOutput?
 }
 
 // MARK: - Interface
+
 extension WipeDatabaseInteractor: WipeDatabaseInteractorInput {
     func deleteAccount() {
         guard

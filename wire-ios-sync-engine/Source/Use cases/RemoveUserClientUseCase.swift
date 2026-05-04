@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
 
-    func invoke(clientId: String, password: String) async throws
+    func invoke(clientId: String, password: String?) async throws
 
 }
 
@@ -36,16 +37,17 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     init(
         userClientAPI: UserClientAPI,
-        syncContext: NSManagedObjectContext) {
-            self.userClientAPI = userClientAPI
-            self.syncContext = syncContext
-        }
+        syncContext: NSManagedObjectContext
+    ) {
+        self.userClientAPI = userClientAPI
+        self.syncContext = syncContext
+    }
 
     // MARK: - Public interface
 
-    func invoke(clientId: String, password: String) async throws {
+    func invoke(clientId: String, password: String?) async throws {
         let userClient = await syncContext.perform {
-            return UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
+            UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
         }
         guard let userClient else {
             throw RemoveUserClientError.clientDoesNotExistLocally
@@ -66,12 +68,13 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         await userClient.deleteClientAndEndSession()
         await ZMClientUpdateNotification.notifyDeletionCompleted(
             remainingClients: selfUserClientsExcludingSelfClient,
-            context: syncContext)
+            context: syncContext
+        )
     }
 
     private var selfUserClientsExcludingSelfClient: [UserClient] {
         get async {
-            return await syncContext.perform {
+            await syncContext.perform {
                 let selfUser = ZMUser.selfUser(in: self.syncContext)
                 let selfClient = selfUser.selfClient()
                 let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
@@ -81,8 +84,13 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
     }
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
+        WireLogger.userClient.error(
+            "error removing self client: \(failure.localizedDescription)",
+            attributes: [.selfClientId: userClient.safeForLoggingDescription]
+        )
+
         switch failure {
-        case .invalidRequestError(let failureResponse, _):
+        case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
             case .clientNotFound:
                 // the client existed locally but not remotely, we delete it locally
@@ -94,12 +102,20 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
             case .invalidCredentials, .missingAuth, .badRequest:
                 throw RemoveUserClientError.invalidCredentials
 
+            case .unknown:
+                switch failureResponse.code {
+                case TooManyRequestsStatusCode:
+                    throw RemoveUserClientError.tooManyRequests
+                default:
+                    throw RemoveUserClientError.generic
+                }
+
             default:
-                throw failure
+                throw RemoveUserClientError.generic
             }
 
         default:
-            throw failure
+            throw RemoveUserClientError.generic
         }
     }
 }
@@ -109,5 +125,10 @@ public enum RemoveUserClientError: Error {
     case clientToDeleteNotFound
     case clientDoesNotExistLocally
     case invalidCredentials
+    case tooManyRequests
+
+    // other error types that are not explicitly handled
+    // this allows showing a readable error message to the user
+    case generic
 
 }

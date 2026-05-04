@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMOTRMessage {
 
     private static let deliveryConfirmationDayThreshold = 7
 
-    @NSManaged dynamic var expectsReadConfirmation: Bool
+    @NSManaged public dynamic var expectsReadConfirmation: Bool
 
-    @objc
-    var needsDeliveryConfirmation: Bool {
-        return needsDeliveryConfirmationAtCurrentDate()
+    @objc var needsDeliveryConfirmation: Bool {
+        needsDeliveryConfirmationAtCurrentDate()
     }
 
     func needsDeliveryConfirmationAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
@@ -47,20 +47,20 @@ extension ZMOTRMessage {
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {
                 switch genericMessage.content {
-                case .ephemeral(let data)?:
-                    return data.expectsReadConfirmation
-                case .knock(let data)?:
-                    return data.expectsReadConfirmation
-                case .text(let data)?:
-                    return data.expectsReadConfirmation
-                case .location(let data)?:
-                    return data.expectsReadConfirmation
-                case .asset(let data)?:
-                    return data.expectsReadConfirmation
-                case .composite(let data):
-                    return data.expectsReadConfirmation
+                case let .ephemeral(data)?:
+                    data.expectsReadConfirmation
+                case let .knock(data)?:
+                    data.expectsReadConfirmation
+                case let .text(data)?:
+                    data.expectsReadConfirmation
+                case let .location(data)?:
+                    data.expectsReadConfirmation
+                case let .asset(data)?:
+                    data.expectsReadConfirmation
+                case let .composite(data):
+                    data.expectsReadConfirmation
                 default:
-                    return false
+                    false
                 }
             }
 

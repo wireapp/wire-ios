@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 
 import Foundation
 
-extension UpdateAccessRolesError {
+public extension UpdateAccessRolesError {
 
-    public init?(response: ZMTransportResponse) {
+    init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation
         case (403, "access-denied"?): self = .accessDenied
         case (403, "action-denied"?): self = .actionDenied
         case (404, "no-conversation"?): self = .conversationNotFound
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
@@ -35,7 +35,22 @@ extension UpdateAccessRolesError {
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
 
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    private let eventProcessor: ConversationEventProcessor
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.eventProcessor = ConversationEventProcessor(
+            context: context,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
 
     // MARK: - Methods
 
@@ -47,19 +62,21 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
               let conversationID = conversation.remoteIdentifier?.transportString(),
               let payloadData = payload.payloadData(encoder: .defaultEncoder),
               let payloadAsString = String(bytes: payloadData, encoding: .utf8) else {
-                  return nil
-              }
+            return nil
+        }
 
         switch apiVersion {
 
         case .v0:
-            return ZMTransportRequest(path: "/conversations/\(conversationID)/access",
-                                      method: .put,
-                                      payload: payloadAsString as ZMTransportData?,
-                                      apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/conversations/\(conversationID)/access",
+                method: .put,
+                payload: payloadAsString as ZMTransportData?,
+                apiVersion: apiVersion.rawValue
+            )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             return ZMTransportRequest(
@@ -87,10 +104,10 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
             }
 
             let success = {
-                action.notifyResult(.success(Void()))
+                action.notifyResult(.success(()))
             }
             Task {
-                await eventProcessor.processConversationEvents([updateEvent])
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
 

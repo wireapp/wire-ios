@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 import WireUtilities
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
@@ -27,7 +28,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .normalSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -36,7 +38,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     private let subtitleLabel: UILabel = {
         let valueLabel = DynamicFontLabel(
             fontSpec: .mediumRegularFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
         valueLabel.textAlignment = .right
         return valueLabel
     }()
@@ -60,7 +63,10 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
         return iconView
     }()
 
-    private lazy var titleLabelToIconInset: NSLayoutConstraint = titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 22)
+    private lazy var titleLabelToIconInset: NSLayoutConstraint = titleLabel.leadingAnchor.constraint(
+        equalTo: iconImageView.trailingAnchor,
+        constant: 22
+    )
 
     var isAccessoryIconHidden: Bool = true {
         didSet {
@@ -71,21 +77,24 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     var type: SettingsCellPreview = .none {
         didSet {
             switch type {
-            case .image(let image):
+            case let .image(image):
                 iconImageView.image = image
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
                 titleLabelToIconInset.isActive = true
-            case .color(let color):
+                accessibilityTraits = [.button]
+            case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
                 subtitleLabel.text = AccentColor.current.name
                 titleLabelToIconInset.isActive = true
+                accessibilityTraits = [.button]
             default:
                 subtitleLabel.text = nil
                 iconImageView.backgroundColor = UIColor.clear
                 iconImageView.image = .none
                 titleLabelToIconInset.isActive = false
+                accessibilityTraits = []
             }
             layoutIfNeeded()
         }

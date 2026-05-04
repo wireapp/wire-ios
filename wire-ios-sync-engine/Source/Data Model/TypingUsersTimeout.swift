@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ class TypingUsersTimeout: NSObject {
     private var timeouts = [Key: Date]()
 
     var firstTimeout: Date? {
-        return timeouts.values.min()
+        timeouts.values.min()
     }
 
     func add(_ user: ZMUser, for conversation: ZMConversation, withTimeout timeout: Date) {

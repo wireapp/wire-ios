@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@ import UIKit
 
 extension ConversationListViewController: NetworkStatusBarDelegate {
     var bottomMargin: CGFloat {
-        return CGFloat.NetworkStatusBar.bottomMargin
+        CGFloat.NetworkStatusBar.bottomMargin
     }
 
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
+    func showInIPad(
+        networkStatusViewController: NetworkStatusViewController,
+        with orientation: UIInterfaceOrientation
+    ) -> Bool {
         // do not show on iPad for any orientation in regular mode
-        return false
+        false
     }
 }

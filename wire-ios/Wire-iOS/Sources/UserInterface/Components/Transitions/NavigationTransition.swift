@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,15 +29,15 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let fromView = transitionContext.fromView,
-            let toView = transitionContext.toView,
-            let fromViewController = transitionContext.fromViewController,
-            let toViewController = transitionContext.toViewController else {
-                return
+              let toView = transitionContext.toView,
+              let fromViewController = transitionContext.fromViewController,
+              let toViewController = transitionContext.toViewController else {
+            return
         }
 
         let containerView = transitionContext.containerView
@@ -71,18 +71,21 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         containerView.layoutIfNeeded()
 
-        UIView.animate(easing: .easeOutExpo,
-                          duration: transitionDuration(using: transitionContext),
-                          animations: {
-            fromView.transform = fromViewEndTransform
-            toView.transform = .identity
-        }, completion: { _ in
-            fromView.transform = .identity
-            transitionContext.completeTransition(true)
-        })
+        UIView.animate(
+            easing: .easeOutExpo,
+            duration: transitionDuration(using: transitionContext),
+            animations: {
+                fromView.transform = fromViewEndTransform
+                toView.transform = .identity
+            },
+            completion: { _ in
+                fromView.transform = .identity
+                transitionContext.completeTransition(true)
+            }
+        )
     }
 
     private var rightToLeft: Bool {
-        return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
+        UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
     }
 }

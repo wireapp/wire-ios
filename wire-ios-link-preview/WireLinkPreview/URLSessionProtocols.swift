@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ extension URLSessionTask: URLSessionDataTaskType {}
 
 extension URLSession: URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
-        return (dataTask(with: request) as URLSessionDataTask) as URLSessionDataTaskType
+        (dataTask(with: request) as URLSessionDataTask) as URLSessionDataTaskType
     }
 
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
-        return (dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTask) as URLSessionDataTaskType
+        (dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTask) as URLSessionDataTaskType
     }
 }

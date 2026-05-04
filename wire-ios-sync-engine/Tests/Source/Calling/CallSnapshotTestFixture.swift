@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,21 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
-struct CallSnapshotTestFixture {
-    static func degradedCallSnapshot(conversationId: AVSIdentifier, user: ZMUser, callCenter: WireCallCenterV3) -> CallSnapshot {
+enum CallSnapshotTestFixture {
+    static func degradedCallSnapshot(
+        conversationId: AVSIdentifier,
+        user: ZMUser,
+        callCenter: WireCallCenterV3,
+        messageProtocol: WireDataModel.MessageProtocol = .mls
+    ) -> CallSnapshot {
 
-        let callMember = AVSCallMember(client: AVSClient(userId: user.avsIdentifier, clientId: UUID().transportString()))
+        let callMember = AVSCallMember(client: AVSClient(
+            userId: user.avsIdentifier,
+            clientId: UUID().transportString()
+        ))
 
         let callParticipantSnapshot = CallParticipantsSnapshot(
             conversationId: conversationId,
@@ -31,6 +40,7 @@ struct CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantSnapshot,
             callState: .established,
             callStarter: AVSIdentifier.stub,
@@ -52,7 +62,8 @@ struct CallSnapshotTestFixture {
         callCenter: WireCallCenterV3,
         clients: [AVSClient],
         state: CallState = .established,
-        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = []
+        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = [],
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callParticipantsSnapshot = CallParticipantsSnapshot(
@@ -62,6 +73,7 @@ struct CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantsSnapshot,
             callState: state,
             callStarter: AVSIdentifier.stub,

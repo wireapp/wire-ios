@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,43 +17,75 @@
 //
 
 import FLAnimatedImage
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
+
 final class ConfirmAssetViewControllerTests: XCTestCase {
 
-    var sut: ConfirmAssetViewController!
+    // MARK: - Properties
+
+    private var sut: ConfirmAssetViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
 
         accentColor = .green
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))),
+            userSession: UserSessionMock()
+        )
         sut.previewTitle = "Matterhorn"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))))
 
         accentColor = .red
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))),
+            userSession: UserSessionMock()
+        )
         sut.previewTitle = "Burger & Beer"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg").imageScaled(with: 0.5)!)))
 
         accentColor = .red
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(
+                    mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg")
+                        .imageScaled(with: 0.5)!
+                )),
+            userSession: UserSessionMock()
+        )
         sut.previewTitle = "Sea Food"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - GIF, Unit Tests
@@ -61,7 +93,9 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItShowsEditOptionsForSignalFrameGIF() {
         // GIVEN & WHEN
         sut = ConfirmAssetViewController(
-            context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif"))),
+            userSession: UserSessionMock()
         )
 
         // THEN
@@ -71,7 +105,11 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItHidesEditOptionsForAnimatedGIF() {
         // GIVEN & WHEN
         let data = dataInTestBundleNamed("animated.gif")
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))),
+            userSession: UserSessionMock()
+        )
 
         // THEN
         XCTAssertFalse(sut.showEditingOptions)

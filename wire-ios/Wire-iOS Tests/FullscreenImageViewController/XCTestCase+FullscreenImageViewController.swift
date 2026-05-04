@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireMessagingDomainSupport
 import XCTest
+
+@testable import Wire
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
-        let mockTapGestureRecognizer = MockTapGestureRecognizer(location: CGPoint(x: fullscreenImageViewController.view.bounds.size.width / 2, y: fullscreenImageViewController.view.bounds.size.height / 2), state: .ended)
+        let mockTapGestureRecognizer = MockTapGestureRecognizer(
+            location: CGPoint(
+                x: fullscreenImageViewController.view.bounds.size.width / 2,
+                y: fullscreenImageViewController.view.bounds.size.height / 2
+            ),
+            state: .ended
+        )
 
         fullscreenImageViewController.handleDoubleTap(mockTapGestureRecognizer)
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
-    func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
-        let image = self.image(inTestBundleNamed: imageFileName)
+    @MainActor
+    func createFullscreenImageViewControllerForTest(
+        imageFileName: String,
+        userSession: UserSessionMock
+    ) -> FullscreenImageViewController {
+        let image = image(inTestBundleNamed: imageFileName)
 
         let message = MockMessageFactory.imageMessage(with: image)
 
         let sut = FullscreenImageViewController(
             message: message,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.setBoundsSizeAsIPhone4_7Inch()
         sut.viewDidLoad()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,15 +50,18 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
     private let service: ConversationServiceInterface
+    private let localDomain: String?
 
     init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
-        service: ConversationServiceInterface
+        service: ConversationServiceInterface,
+        localDomain: String?
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
         self.service = service
+        self.localDomain = localDomain
     }
 
     func invoke(
@@ -72,7 +75,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
 
             guard
                 let userID = user.remoteIdentifier,
-                let domain = user.domain ?? BackendInfo.domain
+                let domain = user.domain ?? localDomain
             else {
                 throw Error.missingUserQualifiedID
             }
@@ -142,12 +145,12 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     ) async throws -> NSManagedObjectID {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
-                self.service.createTeamOneOnOneProteusConversation(user: user) {
+                service.createTeamOneOnOneProteusConversation(user: user) {
                     switch $0 {
-                    case .success(let conversation):
+                    case let .success(conversation):
                         continuation.resume(returning: conversation.objectID)
 
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     }
                 }

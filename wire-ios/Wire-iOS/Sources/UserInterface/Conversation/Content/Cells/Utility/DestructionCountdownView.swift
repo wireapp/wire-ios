@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,12 +92,12 @@ final class DestructionCountdownView: UIView {
     // MARK: - Animation
 
     var isAnimatingProgress: Bool {
-        return elapsedTimeLayer.animation(forKey: elapsedTimeAnimationKey) != nil
+        elapsedTimeLayer.animation(forKey: elapsedTimeAnimationKey) != nil
     }
 
     var remainingTimeColor: UIColor? {
         get {
-            return remainingTimeLayer.fillColor.flatMap(UIColor.init)
+            remainingTimeLayer.fillColor.flatMap(UIColor.init)
         }
         set {
             remainingTimeLayer.fillColor = newValue?.cgColor
@@ -106,7 +106,7 @@ final class DestructionCountdownView: UIView {
 
     var elapsedTimeColor: UIColor? {
         get {
-            return elapsedTimeLayer.strokeColor.flatMap(UIColor.init)
+            elapsedTimeLayer.strokeColor.flatMap(UIColor.init)
         }
         set {
             elapsedTimeLayer.strokeColor = newValue?.withAlphaComponent(1).cgColor

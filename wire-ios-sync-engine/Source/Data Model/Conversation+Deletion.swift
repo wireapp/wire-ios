@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,19 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSystem
 
 public enum ConversationDeletionError: Error {
-    case unknown, invalidOperation, conversationNotFound
+    case unknown
+    case invalidOperation
+    case conversationNotFound
 
     init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation
         case (404, "no-conversation"?): self = .conversationNotFound
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
@@ -39,12 +42,18 @@ extension ZMConversation {
     ///
     /// Only team conversations can be deleted.
     public func delete(in userSession: ZMUserSession, completion: @escaping (Result<Void, Error>) -> Void) {
-        delete(in: userSession.coreDataStack, transportSession: userSession.transportSession, completion: completion)
+        delete(
+            in: userSession.coreDataStack,
+            transportSession: userSession.transportSession,
+            metadata: userSession.resolvedBackendMetadata,
+            completion: completion
+        )
     }
 
     func delete(
         in contextProvider: ContextProvider,
         transportSession: TransportSessionType,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         let removeLocalConversation = RemoveLocalConversationUseCase()
@@ -52,7 +61,10 @@ extension ZMConversation {
         guard
             ZMUser.selfUser(in: contextProvider.viewContext).canDeleteConversation(self),
             let conversationId = remoteIdentifier,
-            let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(self)
+            let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(
+                self,
+                metadata: metadata
+            )
         else {
             return completion(.failure(ConversationDeletionError.invalidOperation))
         }
@@ -63,10 +75,10 @@ extension ZMConversation {
             if response.httpStatus == 200 {
 
                 let conversation = ZMConversation.fetch(
-                        with: conversationId,
-                        domain: nil,
-                        in: contextProvider.syncContext
-                    )
+                    with: conversationId,
+                    domain: nil,
+                    in: contextProvider.syncContext
+                )
 
                 guard let conversation else {
                     DispatchQueue.main.async {
@@ -106,11 +118,14 @@ extension ZMConversation {
 
 }
 
-struct ConversationDeletionRequestFactory {
+enum ConversationDeletionRequestFactory {
 
-    static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
+    static func requestForDeletingTeamConversation(
+        _ conversation: ZMConversation,
+        metadata: BackendMetadataProvider
+    ) -> ZMTransportRequest? {
         guard
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion = metadata.apiVersion,
             let conversationId = conversation.remoteIdentifier,
             let teamRemoteIdentifier = conversation.teamRemoteIdentifier
         else { return nil }

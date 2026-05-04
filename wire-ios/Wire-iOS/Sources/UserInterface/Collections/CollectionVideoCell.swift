@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class CollectionVideoCell: CollectionCell {
     private var containerView = UIView()
@@ -40,7 +41,7 @@ final class CollectionVideoCell: CollectionCell {
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = self.message else {
+        guard let message else {
             return
         }
 
@@ -70,12 +71,11 @@ final class CollectionVideoCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .movie
+        .movie
     }
 
     private func setup(_ view: UIView) {
-        view.clipsToBounds = true
-
+        containerView.clipsToBounds = true
         containerView.removeSubviews()
         containerView.addSubview(view)
 
@@ -98,6 +98,6 @@ final class CollectionVideoCell: CollectionCell {
 
 extension CollectionVideoCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        self.delegate?.collectionCell(self, performAction: action)
+        delegate?.collectionCell(self, performAction: action)
     }
 }

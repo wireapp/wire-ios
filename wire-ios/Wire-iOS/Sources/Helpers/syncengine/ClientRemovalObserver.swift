@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,19 +24,22 @@ enum ClientRemovalUIError: Error {
 }
 
 protocol ClientRemovalObserverDelegate: AnyObject {
-    func present(_ clientRemovalObserver: ClientRemovalObserver,
-                 viewControllerToPresent: UIViewController)
+    func present(
+        _ clientRemovalObserver: ClientRemovalObserver,
+        viewControllerToPresent: UIViewController
+    )
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool)
 }
 
 final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     var userClientToDelete: UserClient
+    private let userSession: UserSession
     private weak var delegate: ClientRemovalObserverDelegate?
     private let completion: ((Error?) -> Void)?
     private var credentials: UserEmailCredentials?
-    private lazy var requestPasswordController: RequestPasswordController = {
-        return RequestPasswordController(context: .removeDevice,
-                                         callback: {[weak self] password in
+    private lazy var requestPasswordController: RequestPasswordController = .init(
+        context: .removeDevice,
+        callback: { [weak self] password in
             guard let password,
                   !password.isEmpty else {
                 self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
@@ -46,28 +49,33 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
             self?.credentials = UserEmailCredentials(email: "", password: password)
             self?.startRemoval()
             self?.passwordIsNecessaryForDelete = true
-        })
-    }()
+        }
+    )
+
     private var passwordIsNecessaryForDelete: Bool = false
     private var observerToken: Any?
 
-    init(userClientToDelete: UserClient,
-         delegate: ClientRemovalObserverDelegate,
-         credentials: UserEmailCredentials?,
-         completion: ((Error?) -> Void)? = nil) {
+    init(
+        userClientToDelete: UserClient,
+        delegate: ClientRemovalObserverDelegate,
+        userSession: UserSession,
+        credentials: UserEmailCredentials?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         self.userClientToDelete = userClientToDelete
         self.delegate = delegate
+        self.userSession = userSession
         self.credentials = credentials
         self.completion = completion
 
         super.init()
 
-        observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.observerToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
     }
 
     func startRemoval() {
         delegate?.setIsLoadingViewVisible(self, isVisible: true)
-        ZMUserSession.shared()?.deleteClient(userClientToDelete, credentials: credentials)
+        (userSession as? ZMUserSession)?.deleteClient(userClientToDelete, credentials: credentials)
     }
 
     private func endRemoval(result: Error?) {

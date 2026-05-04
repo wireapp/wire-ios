@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,16 @@
 import Foundation
 import WireDataModel
 
-/**
- * Handles the change of email of the user when logging in.
- */
+/// Handles the change of email of the user when logging in.
 
 final class UserEmailChangeEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: UserChangeInfo) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: UserChangeInfo
+    ) -> [AuthenticationCoordinatorAction]? {
         let changeInfo = context
 
         // Only execute actions if the profile has changed.

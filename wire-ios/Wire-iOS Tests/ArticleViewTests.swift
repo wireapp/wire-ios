@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModel
 import WireLinkPreview
 import XCTest
+
+@testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {
-
-    }
-
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
+    func conversationMessageCell(
+        _ contentView: UIView,
+        present viewController: UIViewController
+    ) {
         // no-op
-        return false
     }
 
     func conversationMessageWantsToOpenUserDetails(
@@ -43,7 +42,11 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
         // no-op
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
+    func conversationMessageWantsToOpenMessageDetails(
+        _ cell: UIView,
+        for message: ZMConversationMessage,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    ) {
         // no-op
     }
 
@@ -73,6 +76,10 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
     ) {
         // no-op
     }
+
+    func conversationMessageContentDidChangeSize() {
+        // no-op
+    }
 }
 
 // MARK: - MockArticleViewDelegate
@@ -86,8 +93,8 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
     let mockConversationMessageCellDelegate = MockConversationMessageCellDelegate()
 
     init() {
-        delegate = mockConversationMessageCellDelegate
-        message = MockMessage()
+        self.delegate = mockConversationMessageCellDelegate
+        self.message = MockMessage()
     }
 }
 
@@ -118,13 +125,17 @@ final class ArticleViewTests: XCTestCase {
     // MARK: - Fixture - Helper methods
 
     func articleWithoutPicture() -> MockTextMessageData {
-        let article = ArticleMetadata(originalURLString: "https://www.example.com/article/1",
-                                      permanentURLString: "https://www.example.com/article/1",
-                                      resolvedURLString: "https://www.example.com/article/1",
-                                      offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: "https://www.example.com/article/1",
+            permanentURLString: "https://www.example.com/article/1",
+            resolvedURLString: "https://www.example.com/article/1",
+            offset: 0
+        )
 
         article.title = "Title with some words in it"
-        article.summary = "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
+        article
+            .summary =
+            "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
 
         let textMessageData = MockTextMessageData()
         textMessageData.backingLinkPreview = article
@@ -132,13 +143,17 @@ final class ArticleViewTests: XCTestCase {
     }
 
     private func articleWithPicture(imageNamed: String = "unsplash_matterhorn.jpg") -> MockTextMessageData {
-        let article = ArticleMetadata(originalURLString: "https://www.example.com/article/1",
-                                      permanentURLString: "https://www.example.com/article/1",
-                                      resolvedURLString: "https://www.example.com/article/1",
-                                      offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: "https://www.example.com/article/1",
+            permanentURLString: "https://www.example.com/article/1",
+            resolvedURLString: "https://www.example.com/article/1",
+            offset: 0
+        )
 
         article.title = "Title with some words in it"
-        article.summary = "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
+        article
+            .summary =
+            "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
 
         let textMessageData = MockTextMessageData()
         textMessageData.backingLinkPreview = article
@@ -150,18 +165,23 @@ final class ArticleViewTests: XCTestCase {
     }
 
     func articleWithLongURL() -> MockTextMessageData {
-        let article = ArticleMetadata(originalURLString: "https://www.example.com/verylooooooooooooooooooooooooooooooooooooongpath/article/1/",
-                                      permanentURLString: "https://www.example.com/veryloooooooooooooooooooooooooooooooooooongpath/article/1/",
-                                      resolvedURLString: "https://www.example.com/veryloooooooooooooooooooooooooooooooooooongpath/article/1/",
-                                      offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: "https://www.example.com/verylooooooooooooooooooooooooooooooooooooongpath/article/1/",
+            permanentURLString: "https://www.example.com/veryloooooooooooooooooooooooooooooooooooongpath/article/1/",
+            resolvedURLString: "https://www.example.com/veryloooooooooooooooooooooooooooooooooooongpath/article/1/",
+            offset: 0
+        )
 
         article.title = "Title with some words in it"
-        article.summary = "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
+        article
+            .summary =
+            "Summary summary summary summary summary summary summary summary summary summary summary summary summary summary summary"
 
         let textMessageData = MockTextMessageData()
         textMessageData.backingLinkPreview = article
         textMessageData.linkPreviewImageCacheKey = "image-id"
-        textMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)
+        textMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+            .jpegData(compressionQuality: 0.9)
         textMessageData.linkPreviewHasImage = true
 
         return textMessageData
@@ -176,7 +196,9 @@ final class ArticleViewTests: XCTestCase {
         )
         twitterStatus.author = "John Doe"
         twitterStatus.username = "johndoe"
-        twitterStatus.message = "Message message message message message message message message message message message message message message message message message message"
+        twitterStatus
+            .message =
+            "Message message message message message message message message message message message message message message message message message message"
 
         let textMessageData = MockTextMessageData()
         textMessageData.backingLinkPreview = twitterStatus
@@ -205,7 +227,7 @@ final class ArticleViewTests: XCTestCase {
 
     func setUpArticleView(
         withImagePlaceholder: Bool,
-        textMessageData: ZMTextMessageData
+        textMessageData: TextMessageData
     ) -> ArticleView {
 
         let sut = ArticleView(withImagePlaceholder: withImagePlaceholder)
@@ -304,21 +326,25 @@ final class ArticleViewTests: XCTestCase {
         createTestForArticleViewWithImage(named: "unsplash_matterhorn_exact_size.jpg")
     }
 
-    func createTestForArticleViewWithImage(named: String,
-                                           file: StaticString = #file,
-                                           testName: String = #function,
-                                           line: UInt = #line) {
+    func createTestForArticleViewWithImage(
+        named: String,
+        file: StaticString = #filePath,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
-        verifyInAllPhoneWidths(createSut: {
-            self.sut = ArticleView(withImagePlaceholder: true)
-            self.sut.translatesAutoresizingMaskIntoConstraints = false
-            self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
-            XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+        verifyInAllPhoneWidths(
+            createSut: { _ in
+                self.sut = ArticleView(withImagePlaceholder: true)
+                self.sut.translatesAutoresizingMaskIntoConstraints = false
+                self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
+                XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-            return self.sut
-        } as () -> UIView,
-                               file: file,
-                               testName: testName,
-                               line: line)
+                return self.sut
+            } as (CGFloat) -> UIView,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 }

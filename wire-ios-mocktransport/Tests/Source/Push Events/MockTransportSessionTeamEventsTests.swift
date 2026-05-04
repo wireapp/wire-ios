@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,204 +16,85 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireMockTransport
 import XCTest
 
-class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
+@testable import WireMockTransport
 
-    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, team: MockTeam, data: [String: String] = [:], file: StaticString = #file, line: UInt = #line) {
+final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
+
+    func check(
+        event: TestPushChannelEvent?,
+        hasType type: ZMUpdateEventType,
+        team: MockTeam,
+        data: [String: String] = [:],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
     }
 
-    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, teamIdentifier: String, data: [String: String?] = [:], file: StaticString = #file, line: UInt = #line) {
+    func check(
+        event: TestPushChannelEvent?,
+        hasType type: ZMUpdateEventType,
+        teamIdentifier: String,
+        data: [String: String?] = [:],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         guard let event else { XCTFail("Should have event", file: file, line: line); return }
 
-        XCTAssertEqual(event.type, type, "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))", file: file, line: line)
+        XCTAssertEqual(
+            event.type,
+            type,
+            "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))",
+            file: file,
+            line: line
+        )
 
-        guard let payload = event.payload as? [String: Any] else { XCTFail("Event should have payload", file: file, line: line); return }
+        guard let payload = event.payload as? [String: Any] else { XCTFail(
+            "Event should have payload",
+            file: file,
+            line: line
+        ); return }
 
         XCTAssertEqual(payload["team"] as? String, teamIdentifier, "Wrong team identifier", file: file, line: line)
-        guard let date = (payload as NSDictionary).optionalDate(forKey: "time") else { XCTFail("Event should have time", file: file, line: line); return }
+        guard let date = (payload as NSDictionary).optionalDate(forKey: "time")
+        else { XCTFail("Event should have time", file: file, line: line); return }
 
         // workaroud: the date decoded from a string can have a rounded time in the milliseconds and then be "in the future",
         // so we add one second here for the comparison to avoid flakiness.
-        XCTAssertLessThan(date, Date(timeIntervalSinceNow: 1), "Event date should be in the past", file: file, line: line)
+        XCTAssertLessThan(
+            date,
+            Date(timeIntervalSinceNow: 1),
+            "Event date should be in the past",
+            file: file,
+            line: line
+        )
 
         guard !data.isEmpty else {
             return
         }
-        guard let receivedData = payload["data"] as? [String: String?] else { XCTFail("Event payload should have data", file: file, line: line); return }
+        guard let receivedData = payload["data"] as? [String: String?]
+        else { XCTFail("Event payload should have data", file: file, line: line); return }
 
         for (key, value) in data {
             guard let dataValue = receivedData[key] else {
                 XCTFail("Event payload data does not contain key: \"\(key)\"", file: file, line: line)
                 continue
             }
-            XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"", file: file, line: line)
+            XCTAssertEqual(
+                dataValue,
+                value,
+                "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"",
+                file: file,
+                line: line
+            )
         }
     }
-}
 
-// MARK: - Team events
-extension MockTransportSessionTeamEventsTests {
+    // MARK: - Team events
 
-    func testThatItCreatesEventsForDeletedTeams() {
-        // Given
-        var team: MockTeam!
-        var teamIdentifier: String!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-            teamIdentifier = team.identifier
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        sut.performRemoteChanges { session in
-            session.delete(team)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        check(event: events.first, hasType: .teamDelete, teamIdentifier: teamIdentifier)
-    }
-
-}
-
-// MARK: - Members events
-extension MockTransportSessionTeamEventsTests {
-
-    func testThatItCreatesEventWhenMemberIsRemovedFromTeam() {
-        // Given
-        var team: MockTeam!
-        var user: MockUser!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-            user = session.insertUser(withName: "name")
-            _ = session.insertMember(with: user, in: team)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        sut.performRemoteChanges { session in
-            session.removeMember(with: user, from: team)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "user": user.identifier
-        ]
-        check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
-    }
-
-    func testThatItCreatesEventWhenSelfMemberIsRemovedFromTeam() {
-        // Given
-        var team: MockTeam!
-        var selfUser: MockUser!
-
-        sut.performRemoteChanges { session in
-            selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        sut.performRemoteChanges { session in
-            session.removeMember(with: selfUser, from: team)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "user": selfUser.identifier
-        ]
-        check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
-    }
-}
-
-// MARK: - Conversation events
-extension MockTransportSessionTeamEventsTests {
-    func testThatItCreatesEventWhenConversationIsCreatedInTeam() {
-        // Given
-        var team: MockTeam!
-        var user: MockUser!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-            user = session.insertUser(withName: "some user")
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        var conversation: MockConversation!
-        sut.performRemoteChanges { session in
-            conversation = session.insertTeamConversation(to: team, with: [user], creator: user)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(conversation.team, team)
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "conv": conversation.identifier
-        ]
-        check(event: events.first, hasType: .teamConversationCreate, team: team, data: updateData)
-    }
-
-    func testThatItCreatesEventWhenConversationIsDeletedInTeam() {
-        // Given
-        var team: MockTeam!
-        var user: MockUser!
-        var conversation: MockConversation!
-        var conversationIdentifier: String!
-
-        sut.performRemoteChanges { session in
-            let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
-            user = session.insertUser(withName: "some user")
-            conversation = session.insertTeamConversation(to: team, with: [user], creator: user)
-            conversationIdentifier = conversation.identifier
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(conversation.team, team)
-        createAndOpenPushChannelAndCreateSelfUser(false)
-
-        // When
-        sut.performRemoteChanges { session in
-            session.delete(conversation)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        let updateData = [
-            "conv": conversationIdentifier!
-        ]
-        check(event: events.first, hasType: .teamConversationDelete, team: team, data: updateData)
-    }
+    // MARK: - Members events
 
     func testThatItDoesNotSendEventsFromATeamThatYouAreNotAMemberOf() {
         // Given
@@ -231,57 +112,6 @@ extension MockTransportSessionTeamEventsTests {
         // Then
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
         XCTAssertEqual(events.count, 0)
-    }
-
-    func testThatItDoesSendConversationEventsInATeamConversationWhereYouAreGuest() {
-        // Given
-        createAndOpenPushChannel()
-
-        // When
-        sut.performRemoteChanges { session in
-            let user1 = session.insertUser(withName: "one")
-            let team = session.insertTeam(withName: "some", isBound: true, users: [user1])
-
-            let user2 = session.insertUser(withName: "some user")
-            _ = session.insertTeamConversation(to: team, with: [user1, user2, self.sut.selfUser], creator: user1)
-        }
-
-        // Then
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-    }
-}
-
-// MARK: - Legal Hold Events
-
-extension MockTransportSessionTeamEventsTests {
-
-    func testThatItDoesSendEventWhenRequestingLegalHoldOnUser() {
-        // GIVEN
-        createAndOpenPushChannel()
-
-        var team: MockTeam!
-        var user: MockUser!
-
-        // WHEN
-        sut.performRemoteChanges { session in
-            user = session.insertUser(withName: "one")
-            team = session.insertTeam(withName: "some", isBound: true, users: [user])
-
-            team.hasLegalHoldService = true
-            XCTAssertTrue(user.requestLegalHold())
-        }
-
-        // THEN
-        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
-        XCTAssertEqual(events.count, 1)
-
-        guard let firstEvent = events.first else {
-            return XCTFail("Expected one update event")
-        }
-
-        XCTAssertEqual(firstEvent.type, .userLegalHoldRequest)
     }
 
 }

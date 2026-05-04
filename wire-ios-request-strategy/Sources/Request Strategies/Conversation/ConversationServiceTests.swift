@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,13 @@ final class ConversationServiceTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         mockConversationParticipantsService = MockConversationParticipantsServiceInterface()
-        sut = ConversationService(context: uiMOC, participantsServiceBuilder: { _ in
-            self.mockConversationParticipantsService
-        })
+        sut = ConversationService(
+            context: uiMOC,
+            participantsServiceBuilder: { _ in
+                self.mockConversationParticipantsService
+            },
+            localDomain: "wire.com"
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
@@ -71,17 +75,17 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, groupConversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -92,11 +96,11 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, .allowGuests)
-        XCTAssertEqual(performedAction.accessRoles, [.guest, .service, .nonTeamMember, .teamMember])
+        XCTAssertEqual(performedAction.accessRoles, [.guest, .app, .nonTeamMember, .teamMember])
         XCTAssertEqual(performedAction.legacyAccessRole, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
         XCTAssertEqual(performedAction.isReadReceiptsEnabled, true)
@@ -125,17 +129,17 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, groupConversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -146,7 +150,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, ConversationAccessMode())
@@ -180,7 +184,7 @@ final class ConversationServiceTests: MessagingTestBase {
         // When
         sut.createTeamOneOnOneProteusConversation(user: user1) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, oneToOneConversation)
 
@@ -189,7 +193,7 @@ final class ConversationServiceTests: MessagingTestBase {
                 XCTAssertEqual(self.user1.oneOnOneConversation, conversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -199,7 +203,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let performedAction = try XCTUnwrap(mockActionHandler.performedActions.first)
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
@@ -220,7 +224,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -231,7 +235,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -255,7 +259,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -266,7 +270,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -296,8 +300,8 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            return ciphersuite
+        mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
+            ciphersuite
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -321,17 +325,17 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 XCTAssertEqual(conversation.mlsStatus, .ready)
                 XCTAssertEqual(conversation.ciphersuite, ciphersuite)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -342,10 +346,10 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
 
         // Then we created the mls group once with no users.
-        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
+        let createGroupCalls = mlsService.createGroupForRemovalKeys_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
+        XCTAssertEqual(createGroupCalls.first?.removalKeys, nil)
 
         // Then we only added the user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
@@ -378,8 +382,8 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -403,7 +407,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -411,7 +415,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -422,10 +426,10 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 2)
 
         // Then we created the mls group
-        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
+        let createGroupCalls = mlsService.createGroupForRemovalKeys_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
+        XCTAssertEqual(createGroupCalls.first?.removalKeys, nil)
 
         // Then we only added the reachable user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
@@ -460,7 +464,7 @@ final class ConversationServiceTests: MessagingTestBase {
         }
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { groupId, _ in
+        mlsService.createGroupForRemovalKeys_MockMethod = { groupId, _ in
             self.syncMOC.performAndWait {
                 XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
             }
@@ -476,7 +480,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -484,7 +488,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -509,7 +513,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -520,7 +524,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -542,8 +546,10 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            results: [.failure(.unreachableDomains([unreachableDomain])),
-                      .success(groupConversation.objectID)],
+            results: [
+                .failure(.unreachableDomains([unreachableDomain])),
+                .success(groupConversation.objectID)
+            ],
             context: uiMOC.notificationContext
         )
 
@@ -552,14 +558,14 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Test",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
             defer { didFinish.fulfill() }
 
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 XCTAssertEqual(conversation, groupConversation)
                 // Then a system message is added.
                 guard let systemMessage = conversation.lastMessage?.systemMessageData else {
@@ -568,7 +574,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
                 XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -597,7 +603,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "New",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -608,7 +614,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }

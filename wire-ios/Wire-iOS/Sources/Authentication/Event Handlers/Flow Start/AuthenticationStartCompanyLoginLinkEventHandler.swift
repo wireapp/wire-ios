@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,20 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
-/**
- * Handles the case where the app is opened from an SSO link.
- */
+/// Handles the case where the app is opened from an SSO link.
 
 final class AuthenticationStartCompanyLoginLinkEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
-        let error = context.0
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (BackendEnvironment2?, NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
+        let error = context.1
 
         // Only handle "add account" request errors
         guard case .addAccountRequested? = error?.userSessionErrorCode else {

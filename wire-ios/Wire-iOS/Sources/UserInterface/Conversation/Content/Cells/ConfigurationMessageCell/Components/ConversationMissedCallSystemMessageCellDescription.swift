@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationMissedCallSystemMessageCellDescription>
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
@@ -32,11 +32,6 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -54,13 +49,13 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
 
         let attributedString = viewModel.attributedTitle()
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: viewModel.image(),
             attributedText: attributedString,
             showLine: false
         )
-        accessibilityLabel = attributedString?.string
-        actionController = nil
+        self.accessibilityLabel = attributedString?.string
+        self.actionController = nil
     }
 
     func isConfigurationEqual(with other: Any) -> Bool {
@@ -68,6 +63,6 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
             return false
         }
 
-        return self.configuration == otherDescription.configuration
+        return configuration == otherDescription.configuration
     }
 }

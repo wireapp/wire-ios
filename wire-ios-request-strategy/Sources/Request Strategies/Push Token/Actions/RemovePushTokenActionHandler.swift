@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
-        return ZMTransportRequest(
+        ZMTransportRequest(
             path: "/push/tokens/\(action.deviceToken)",
             method: .delete,
             payload: nil,
@@ -46,7 +46,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
         case 201:
             action.notifyResult(.success(()))
 
-            // Push token unregistered
+        // Push token unregistered
         case 204:
             action.notifyResult(.success(()))
 

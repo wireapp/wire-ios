@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ extension URL {
     }
 
     var urlWithoutScheme: String {
-        return stringWithoutPrefix("\(scheme ?? "")://")
+        stringWithoutPrefix("\(scheme ?? "")://")
     }
 
     var urlWithoutSchemeAndHost: String {
-        return stringWithoutPrefix("\(scheme ?? "")://\(host ?? "")")
+        stringWithoutPrefix("\(scheme ?? "")://\(host ?? "")")
     }
 
     private func stringWithoutPrefix(_ prefix: String) -> String {

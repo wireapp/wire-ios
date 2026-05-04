@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,19 @@ import MobileCoreServices
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
 
+    public var name: String? {
+        guard
+            let message = assetClientMessage.underlyingMessage,
+            let original = message.assetData?.original
+        else {
+            return nil
+        }
+
+        return original.name
+    }
+
     public var isDownloaded: Bool {
-        return hasDownloadedFile
+        hasDownloadedFile
     }
 
     public func fetchImageData(
@@ -58,26 +69,20 @@ public class V2Asset: NSObject, ZMImageMessageData {
                 return
             }
 
-            if
-                let mediumEncryptedKey,
-                let key,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumEncryptedKey,
-                    encryptionKey: key,
-                    sha256Digest: digest
-                )
-            {
+            if let mediumEncryptedKey,
+               let key,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumEncryptedKey,
+                   encryptionKey: key,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
-            } else if
-                let mediumKey,
-                let data = cache.assetData(mediumKey)
-            {
+            } else if let mediumKey,
+                      let data = cache.assetData(mediumKey) {
                 completionHandler(data)
-            } else if
-                let originalKey,
-                let data = cache.assetData(originalKey)
-            {
+            } else if let originalKey,
+                      let data = cache.assetData(originalKey) {
                 completionHandler(data)
             } else {
                 completionHandler(nil)
@@ -90,14 +95,15 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     public init?(with message: ZMAssetClientMessage) {
         guard message.version < 3 else { return nil }
-        assetClientMessage = message
+        self.assetClientMessage = message
 
         guard let managedObjectContext = message.managedObjectContext else { return nil }
-        moc = managedObjectContext
+        self.moc = managedObjectContext
     }
 
     public var imageMessageData: ZMImageMessageData? {
-        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil else { return nil }
+        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil
+        else { return nil }
 
         return self
     }
@@ -136,11 +142,11 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
     public var previewData: Data? {
@@ -164,7 +170,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageType: String? {
-        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
+        assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
     }
 
     public var originalSize: CGSize {
@@ -189,12 +195,12 @@ extension V2Asset: AssetProxyType {
         }
 
         return cache.hasEncryptedMediumImageData(for: assetClientMessage)
-        || cache.hasMediumImageData(for: assetClientMessage)
-        || cache.hasOriginalImageData(for: assetClientMessage)
+            || cache.hasMediumImageData(for: assetClientMessage)
+            || cache.hasOriginalImageData(for: assetClientMessage)
     }
 
     public var hasDownloadedPreview: Bool {
-        return assetClientMessage.fileMessageData != nil && hasImageData
+        assetClientMessage.fileMessageData != nil && hasImageData
     }
 
     public var hasDownloadedFile: Bool {
@@ -233,19 +239,31 @@ extension V2Asset: AssetProxyType {
 
     public func requestFileDownload() {
         guard assetClientMessage.fileMessageData != nil || assetClientMessage.imageMessageData != nil else { return }
-        guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
+        guard !assetClientMessage.objectID.isTemporaryID, let moc = moc.zm_userInterface else { return }
 
         if assetClientMessage.imageMessageData != nil {
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         } else {
-            NotificationInContext(name: ZMAssetClientMessage.assetDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.assetDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         }
     }
 
     public func requestPreviewDownload() {
-        guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
+        guard !assetClientMessage.objectID.isTemporaryID, let moc = moc.zm_userInterface else { return }
         if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         }
     }
 

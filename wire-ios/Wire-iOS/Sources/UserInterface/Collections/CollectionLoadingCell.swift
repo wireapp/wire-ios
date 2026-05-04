@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ final class CollectionLoadingCell: UICollectionViewCell {
         loadingView.hidesWhenStopped = false
         loadingView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          loadingView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-          loadingView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            loadingView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            loadingView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 
@@ -49,7 +49,8 @@ final class CollectionLoadingCell: UICollectionViewCell {
         }
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
         var newFrame = layoutAttributes.frame
         newFrame.size.height = 24 + (collapsed ? 0 : 64)
         newFrame.size.width = containerWidth

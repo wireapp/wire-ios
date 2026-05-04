@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,12 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireLinkPreview
+import WireSyncEngine
 
 final class ArticleView: UIView {
 
     // MARK: - Styling
+
     private let containerColor: UIColor = SemanticColors.View.backgroundCollectionCell
     private let titleTextColor: UIColor = SemanticColors.Label.textDefault
     private let titleFont: UIFont = .normalSemiboldFont
@@ -35,11 +37,12 @@ final class ArticleView: UIView {
 
     var imageHeight: CGFloat = 144 {
         didSet {
-            self.imageHeightConstraint.constant = self.imageHeight
+            imageHeightConstraint.constant = imageHeight
         }
     }
 
     // MARK: - Views
+
     let messageLabel = UILabel()
     let authorLabel = UILabel()
     let imageView = ImageResourceView()
@@ -69,9 +72,9 @@ final class ArticleView: UIView {
 
     private func setupViews() {
         accessibilityElements = [imageView, messageLabel, authorLabel]
-        self.backgroundColor = self.containerColor
-        self.layer.cornerRadius = 4
-        self.clipsToBounds = true
+        backgroundColor = containerColor
+        layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
+        clipsToBounds = true
         accessibilityIdentifier = "linkPreview"
 
         imageView.clipsToBounds = true
@@ -99,7 +102,7 @@ final class ArticleView: UIView {
     }
 
     private func setupConstraints(_ imagePlaceholder: Bool) {
-        let imageHeight: CGFloat = imagePlaceholder ? self.imageHeight : 0
+        let imageHeight: CGFloat = imagePlaceholder ? imageHeight : 0
 
         [messageLabel, authorLabel, imageView, obfuscationView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -130,7 +133,7 @@ final class ArticleView: UIView {
     }
 
     private var authorHighlightAttributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
+        [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
     }
 
     private func formatURL(_ URL: Foundation.URL) -> NSAttributedString {
@@ -144,8 +147,10 @@ final class ArticleView: UIView {
         }
     }
 
-    func configure(withTextMessageData textMessageData: ZMTextMessageData,
-                   obfuscated: Bool) {
+    func configure(
+        withTextMessageData textMessageData: TextMessageData,
+        obfuscated: Bool
+    ) {
         guard let linkPreview = textMessageData.linkPreview else {
             return
         }
@@ -174,14 +179,14 @@ final class ArticleView: UIView {
     }
 
     func updateContentMode() {
-        guard let image = self.imageView.image else { return }
+        guard let image = imageView.image else { return }
         let width = image.size.width * image.scale
         let height = image.size.height * image.scale
 
         if width < 480.0 || height < 160.0 {
-            self.imageView.contentMode = .center
+            imageView.contentMode = .center
         } else {
-            self.imageView.contentMode = .scaleAspectFill
+            imageView.contentMode = .scaleAspectFill
         }
     }
 
@@ -197,7 +202,10 @@ final class ArticleView: UIView {
 
     private func configure(withTwitterStatus twitterStatus: TwitterStatusMetadata) {
         let author = twitterStatus.author ?? "-"
-        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
+        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(
+            authorHighlightAttributes,
+            toSubstring: author
+        )
 
         messageLabel.text = twitterStatus.message
     }
@@ -220,13 +228,18 @@ final class ArticleView: UIView {
 
 extension ArticleView: UIContextMenuInteractionDelegate {
 
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        return delegate?.linkPreviewContextMenu(view: self)
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        delegate?.linkPreviewContextMenu(view: self)
     }
 
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                animator: UIContextMenuInteractionCommitAnimating) {
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
+        animator: UIContextMenuInteractionCommitAnimating
+    ) {
         animator.addCompletion {
             self.openURL()
         }
@@ -235,7 +248,8 @@ extension ArticleView: UIContextMenuInteractionDelegate {
 
 extension LinkMetadata {
 
-    /// Returns a `URL` that can be openened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be created.
+    /// Returns a `URL` that can be opened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be
+    /// created.
     var openableURL: URL? {
         let application = UIApplication.shared
 

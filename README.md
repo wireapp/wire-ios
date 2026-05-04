@@ -22,7 +22,7 @@ No license is granted to the Wire trademark and its associated logos, all of whi
 The Wire mobile app has an architectural layer that we call *sync engine*. It is the client-side layer that processes all the data that is displayed in the mobile app. It handles network communication and authentication with the backend, push notifications, local caching of data, client-side business logic, signaling with the audio-video libraries, encryption and decryption (using encryption libraries from a lower level) and other bits and pieces.
 
 The user interface layer of the mobile app is built on top of the *sync engine*, which provides the data to display to the UI.
-The sync engine itself is built on top of a few third-party frameworks, and uses Wire components that are shared between platforms for cryptography (Proteus/Cryptobox) and audio-video signaling (AVS).
+The sync engine itself is built on top of a few third-party frameworks, and uses Wire components that are shared between platforms for cryptography (Proteus/MLS) and audio-video signaling (AVS).
 
 ![Mobile app architecture](https://github.com/wireapp/wire/blob/master/assets/mobile-architecture.png?raw=true)
 
@@ -43,6 +43,7 @@ To build Wire for iOS locally, ensure the following tools are installed and set 
 - [Carthage 0.39.1 or newer](https://github.com/Carthage/Carthage)
 - Ruby environment without admin permissions, which can be set up using [rbenv](https://github.com/rbenv/rbenv). Install the Ruby version specific in the [`Gemfile`](Gemfile) and set it as the global version.
 - SSH key for Git. Follow these guides to [generate a new SSH key and add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+- Git LFS is used for large binary files.
 
 The setup script will automatically verify that these requirements are met.
 
@@ -79,19 +80,19 @@ xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=26.0.1'
 
 xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireSyncEngine \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=26.0.1'
 
 xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireDataModel \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=26.0.1'
 ```
 
 `xcodebuild` will print the test results to the console. It will also log the location of the test results (in `.xcresult` format), which you can open with Xcode to see the test results in a more user-friendly format.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ import os.log
 private var logTagToLevel: [String: ZMLogLevel] = [:]
 private var logTagToLogger: [String: OSLog] = [:]
 
-@objc extension ZMSLog {
+@objc
+extension ZMSLog {
 
     /// Sets the minimum logging level for the tag
     /// - note: switches to the log queue
@@ -48,7 +49,7 @@ private var logTagToLogger: [String: OSLog] = [:]
     /// Gets the minimum logging level for the tag
     /// - note: Does not switch to the log queue
     static func getLevelNoLock(tag: String) -> ZMLogLevel {
-        return logTagToLevel[tag] ?? .warn
+        logTagToLevel[tag] ?? .warn
     }
 
     /// Registers a tag for logging
@@ -80,6 +81,7 @@ private var logTagToLogger: [String: OSLog] = [:]
 }
 
 // MARK: - Debugging
+
 extension ZMSLog {
 
     static func debug_resetAllLevels() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-typealias GroupConversationCellConversation = Conversation & StableRandomParticipantsProvider
+typealias GroupConversationCellConversation
+    = Conversation & HasQualifiedID & StableRandomParticipantsProvider
 
 final class GroupConversationCell: UICollectionViewCell {
 
@@ -35,7 +36,8 @@ final class GroupConversationCell: UICollectionViewCell {
 
     override var isHighlighted: Bool {
         didSet {
-            backgroundColor = isHighlighted ? SemanticColors.View.backgroundUserCellHightLighted : SemanticColors.View.backgroundUserCell
+            backgroundColor = isHighlighted ? SemanticColors.View.backgroundUserCellHightLighted : SemanticColors.View
+                .backgroundUserCell
         }
     }
 
@@ -51,11 +53,11 @@ final class GroupConversationCell: UICollectionViewCell {
 
     private func setup() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = FontSpec.init(.normal, .light).font!
+        titleLabel.font = FontSpec(.normal, .light).font!
         titleLabel.accessibilityIdentifier = "user_cell.name"
 
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.font = FontSpec.init(.small, .regular).font!
+        subtitleLabel.font = FontSpec(.small, .regular).font!
         subtitleLabel.accessibilityIdentifier = "user_cell.username"
 
         avatarView.translatesAutoresizingMaskIntoConstraints = false
@@ -119,5 +121,4 @@ final class GroupConversationCell: UICollectionViewCell {
             subtitleLabel.isHidden = true
         }
     }
-
 }

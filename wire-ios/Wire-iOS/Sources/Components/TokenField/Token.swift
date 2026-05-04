@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,12 +27,14 @@ final class Token<T: NSObjectProtocol>: Hashable {
     // if title render is longer than this length, it is trimmed with "..."
     var maxTitleWidth: CGFloat = 0
 
-    init(title: String,
-         representedObject: T) {
+    init(
+        title: String,
+        representedObject: T
+    ) {
         self.title = title
         self.representedObject = HashBox(value: representedObject)
 
-        maxTitleWidth = .greatestFiniteMagnitude
+        self.maxTitleWidth = .greatestFiniteMagnitude
     }
 
     func hash(into hasher: inout Hasher) {
@@ -40,6 +42,6 @@ final class Token<T: NSObjectProtocol>: Hashable {
     }
 
     static func == (lhs: Token<T>, rhs: Token<T>) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 }

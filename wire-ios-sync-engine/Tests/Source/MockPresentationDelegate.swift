@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 class MockPresentationDelegate: PresentationDelegate {
 
-    var completedURLActionCallsCompletion: () -> Void = { }
+    var completedURLActionCallsCompletion: () -> Void = {}
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
     var showUserProfileCalls: [UserType] = []
@@ -39,7 +39,11 @@ class MockPresentationDelegate: PresentationDelegate {
         decisionHandler(isPerformingActions)
     }
 
-    func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (Bool) -> Void) {
+    func shouldPerformActionWithMessage(
+        _ message: String,
+        action: URLAction,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
         shouldPerformActionCalls.append(action)
         decisionHandler(isPerformingActions)
     }
@@ -61,8 +65,8 @@ class MockPresentationDelegate: PresentationDelegate {
         showUserProfileCalls.append(user)
     }
 
-    func showConnectionRequest(userId: UUID) {
-        showConnectionRequestCalls.append(userId)
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        showConnectionRequestCalls.append(qualifiedID.uuid)
     }
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {

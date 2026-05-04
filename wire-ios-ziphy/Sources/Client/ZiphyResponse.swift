@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,26 +18,20 @@
 
 import Foundation
 
-/**
- * A JSON response that encapsulates a JSON data object.
- */
+/// A JSON response that encapsulates a JSON data object.
 
 struct ZiphyDataResponse<Object>: Codable where Object: Codable {
     let data: Object
 }
 
-/**
- * A JSON response that provides pagination information.
- */
+/// A JSON response that provides pagination information.
 
 struct ZiphyPaginatedResponse<Object>: Codable where Object: Codable {
     let pagination: ZiphyPagination
     let data: Object
 }
 
-/**
- * Pagination information for a JSON response.
- */
+/// Pagination information for a JSON response.
 
 struct ZiphyPagination: Codable {
 
@@ -46,7 +40,9 @@ struct ZiphyPagination: Codable {
     let offset: Int
 
     enum CodingKeys: String, CodingKey {
-        case count, offset, totalCount = "total_count"
+        case count
+        case offset
+        case totalCount = "total_count"
     }
 
 }

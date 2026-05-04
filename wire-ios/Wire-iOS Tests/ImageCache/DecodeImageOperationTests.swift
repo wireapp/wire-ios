@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class DecodeImageOperationTests: XCTestCase {
 
-    var operationQueue: OperationQueue!
-    var sut: UIImageView!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var operationQueue: OperationQueue!
+    private var sut: UIImageView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         operationQueue = OperationQueue()
         sut = UIImageView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
         sut.contentMode = .scaleAspectFit
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         operationQueue = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Test
 
     func testThatItDecodedValidImageData() {
         // GIVEN
@@ -52,12 +65,14 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         sut.image = image
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: - Unit Test
 
     func testThatItDoesNotDecodeInvalidImageData() {
         // GIVEN
@@ -74,7 +89,7 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         XCTAssertNil(image)

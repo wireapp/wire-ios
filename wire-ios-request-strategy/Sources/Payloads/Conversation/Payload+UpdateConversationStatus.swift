@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,16 +43,16 @@ extension Payload {
                 let reference = conversation.silencedChangedTimestamp ?? Date()
                 conversation.silencedChangedTimestamp = reference
 
-                mutedStatus = Int(conversation.mutedMessageTypes.rawValue)
-                mutedReference = reference
+                self.mutedStatus = Int(conversation.mutedMessageTypes.rawValue)
+                self.mutedReference = reference
             }
 
             if conversation.hasLocalModifications(forKey: ZMConversationArchivedChangedTimeStampKey) {
                 let reference = conversation.archivedChangedTimestamp ?? Date()
                 conversation.archivedChangedTimestamp = reference
 
-                archived = conversation.isArchived
-                archivedReference = reference
+                self.archived = conversation.isArchived
+                self.archivedReference = reference
             }
         }
     }

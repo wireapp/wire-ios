@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,16 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)
     private let titleLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont, color: SemanticColors.Label.textDefault)
     private let timeLabel = DynamicFontLabel(fontSpec: .smallRegularFont, color: SemanticColors.Label.textDefault)
-    private let bitrateLabel = BitRateLabel(fontSpec: .smallRegularFont, color: SemanticColors.Label.textCollectionSecondary)
+    private let bitrateLabel = BitRateLabel(
+        fontSpec: .smallRegularFont,
+        color: SemanticColors.Label.textCollectionSecondary
+    )
     let minimalizeButton = UIButton()
 
     init() {
@@ -32,6 +36,7 @@ final class CallHeaderBar: UIView {
         setupConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -53,19 +58,22 @@ final class CallHeaderBar: UIView {
         verticalStackView.addArrangedSubview(bitrateLabel)
 
         bitrateLabel.accessibilityIdentifier = "bitrate-indicator"
-        timeLabel.accessibilityIdentifier = "time label"
+        timeLabel.accessibilityIdentifier = Locators.OngoingCallPage.timeLabel.rawValue
     }
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             verticalStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            verticalStackView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 10.0),
+            verticalStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 10.0),
             verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6.0),
             minimalizeButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
             minimalizeButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             minimalizeButton.widthAnchor.constraint(equalToConstant: 32.0),
             minimalizeButton.heightAnchor.constraint(equalToConstant: 32.0),
-            verticalStackView.leadingAnchor.constraint(greaterThanOrEqualTo: minimalizeButton.trailingAnchor, constant: 6.0),
+            verticalStackView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: minimalizeButton.trailingAnchor,
+                constant: 6.0
+            ),
             verticalStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32.0)
         ])
     }

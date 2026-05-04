@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ final class ImageContentView: UIView {
     var imageWidthConstraint: NSLayoutConstraint
 
     var mediaAsset: MediaAsset? {
-        return imageView.mediaAsset
+        imageView.mediaAsset
     }
 
     init() {
-        imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 140)
+        self.imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 140)
 
         super.init(frame: .zero)
 
@@ -44,7 +44,8 @@ final class ImageContentView: UIView {
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
 
     @available(*, unavailable)
@@ -61,7 +62,10 @@ final class ImageContentView: UIView {
         let contentSize = resource.contentSize
         imageAspectConstraint.map(imageView.removeConstraint)
         let imageAspectMultiplier = contentSize.width == 0 ? 1 : (contentSize.height / contentSize.width)
-        imageAspectConstraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: imageAspectMultiplier)
+        imageAspectConstraint = imageView.heightAnchor.constraint(
+            equalTo: imageView.widthAnchor,
+            multiplier: imageAspectMultiplier
+        )
         imageAspectConstraint?.isActive = true
 
         imageWidthConstraint.constant = contentSize.width

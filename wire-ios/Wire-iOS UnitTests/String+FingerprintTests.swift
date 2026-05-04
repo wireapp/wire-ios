@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class String_FingerprintTests: XCTestCase {
 
@@ -25,6 +25,7 @@ final class String_FingerprintTests: XCTestCase {
         let testText = ""
         XCTAssertEqual(testText, testText.splitStringIntoLines(charactersPerLine: 10))
     }
+
     func testGivenValidStringAndUsingFingerPrintSpacesWhenSplitStringIntoLinesThenValidIsReturned() {
         let testText = "ABCDEFGHIJKLMNOPQRST"
         let validText = "AB CD\nEF GH\nIJ KL\nMN OP\nQR ST"

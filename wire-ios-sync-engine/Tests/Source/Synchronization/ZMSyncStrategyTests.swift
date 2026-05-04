@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,11 @@ extension ZMSyncStrategyTests {
 
     func testThatItNotifiesTheOperationLoopOfNewOperation_WhenContextIsSaved() {
         // expect
-        customExpectation(forNotification: NSNotification.Name("RequestAvailableNotification"), object: nil, handler: nil)
+        customExpectation(
+            forNotification: NSNotification.Name("RequestAvailableNotification"),
+            object: nil,
+            handler: nil
+        )
 
         // when
         _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: uiMOC)

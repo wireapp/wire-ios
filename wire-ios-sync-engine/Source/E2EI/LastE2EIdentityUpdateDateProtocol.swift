@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 @objc
 public protocol LastE2EIdentityUpdateDateRepositoryInterface {
@@ -46,7 +46,7 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )
@@ -55,6 +55,7 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
     }
 
     // MARK: - Methods
+
     public func fetchLastAlertDate() -> Date? {
         storage.date(forKey: .lastE2EIdenityUpdateDate)
     }

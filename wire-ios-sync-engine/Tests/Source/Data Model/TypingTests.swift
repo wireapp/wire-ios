@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
     }
 
     private func createUser() -> ZMUser {
-        return ZMUser.insertNewObject(in: uiMOC)
+        ZMUser.insertNewObject(in: uiMOC)
     }
 
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType]) {

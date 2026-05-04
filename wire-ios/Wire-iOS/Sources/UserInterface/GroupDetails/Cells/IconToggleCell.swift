@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@ import UIKit
 class IconToggleCell: DetailsCollectionViewCell {
 
     // MARK: - Properties
+
     var isOn: Bool {
         get {
-            return toggle.isOn
+            toggle.isOn
         }
 
         set {
@@ -35,9 +36,10 @@ class IconToggleCell: DetailsCollectionViewCell {
     var action: ((Bool) -> Void)?
 
     // MARK: - Override accessibility properties
+
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -47,7 +49,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     override var accessibilityValue: String? {
         get {
-            return toggle.accessibilityValue
+            toggle.accessibilityValue
         }
 
         set {
@@ -57,7 +59,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     override var accessibilityTraits: UIAccessibilityTraits {
         get {
-            return toggle.accessibilityTraits
+            toggle.accessibilityTraits
         }
         set {
             super.accessibilityTraits = newValue
@@ -71,6 +73,7 @@ class IconToggleCell: DetailsCollectionViewCell {
     }
 
     // MARK: - Override setUp
+
     override func setUp() {
         super.setUp()
         isAccessibilityElement = true
@@ -79,6 +82,7 @@ class IconToggleCell: DetailsCollectionViewCell {
     }
 
     // MARK: Action method
+
     @objc
     func toggleChanged(_ sender: UISwitch) {
         action?(sender.isOn)

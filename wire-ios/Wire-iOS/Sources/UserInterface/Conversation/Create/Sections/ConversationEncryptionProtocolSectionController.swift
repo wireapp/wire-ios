@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,19 +22,21 @@ final class ConversationEncryptionProtocolSectionController: ConversationCreateS
 
     typealias Cell = ConversationCreateEncryptionProtocolCell
 
-    var tapAction: (() -> Void)?
+    var tapAction: (_ sender: UIView) -> Void = { _ in }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
-        headerHeight = 40
         footerText = L10n.Localizable.Conversation.Create.Mls.subtitle
     }
 }
 
 extension ConversationEncryptionProtocolSectionController {
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell
         cell.setUp()
@@ -43,6 +45,7 @@ extension ConversationEncryptionProtocolSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        tapAction?()
+        let cell = collectionView.cellForItem(at: indexPath)!
+        tapAction(cell)
     }
 }

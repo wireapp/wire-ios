@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ public typealias Conversation = ConversationLike & SwiftConversationLike
 // sourcery: AutoMockable
 @objc
 public protocol ConversationLike: AnyObject {
+
+    // Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
+
     var conversationType: ZMConversationType { get }
     var isSelfAnActiveMember: Bool { get }
     var teamRemoteIdentifier: UUID? { get }
@@ -34,7 +38,7 @@ public protocol ConversationLike: AnyObject {
     var displayName: String? { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
-    var allowServices: Bool { get }
+    var allowApps: Bool { get }
 
     var isUnderLegalHold: Bool { get }
 
@@ -49,11 +53,22 @@ public protocol ConversationLike: AnyObject {
     var lastMessage: ZMConversationMessage? { get }
     var firstUnreadMessage: ZMConversationMessage? { get }
 
-    var areServicesPresent: Bool { get }
+    var areAppsPresent: Bool { get }
     var domain: String? { get }
+    var isChannel: Bool { get }
+    var privateChannelPermission: PrivateChannelPermission { get }
+    var channelHistoryDepth: String? { get }
+    var hasMoreHistory: Bool { get }
+
+    /// The name of the `cell` used for Wire Drive file management.
+    var wireDriveCellName: String { get }
+
+    /// Whether Wire Drive is enabled for this conversation.
+    var isWireDriveEnabled: Bool { get }
 }
 
-// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
+// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
+// protocol to abstract Swift only properties
 public protocol SwiftConversationLike {
     var accessMode: ConversationAccessMode? { get }
     var accessRoles: Set<ConversationAccessRoleV2> { get }
@@ -62,13 +77,18 @@ public protocol SwiftConversationLike {
 
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
-    var sortedServiceUsers: [UserType] { get }
+    var sortedApps: [UserType] { get }
     var ciphersuite: MLSCipherSuite? { get }
 }
 
 extension ZMConversation: ConversationLike {
+
+    public var objectId: Any {
+        objectID
+    }
+
     public var localParticipantsCount: Int {
-        return localParticipants.count
+        localParticipants.count
     }
 
     public func localParticipantsContain(user: UserType) -> Bool {
@@ -77,18 +97,18 @@ extension ZMConversation: ConversationLike {
     }
 
     public var connectedUserType: UserType? {
-        return connectedUser
-	}
+        connectedUser
+    }
 
-	public var sortedOtherParticipants: [UserType] {
+    public var sortedOtherParticipants: [UserType] {
         localParticipants
-            .filter { !$0.isServiceUser }
+            .filter { !$0.isAppOrBot }
             .sortedAscendingPrependingNil(by: \.name)
-	}
+    }
 
-	public var sortedServiceUsers: [UserType] {
-		localParticipants
-            .filter { $0.isServiceUser }
+    public var sortedApps: [UserType] {
+        localParticipants
+            .filter(\.isAppOrBot)
             .sortedAscendingPrependingNil(by: \.name)
     }
 
@@ -98,5 +118,11 @@ extension ZMConversation: ConversationLike {
 
     public var isProteusConversationDegraded: Bool {
         securityLevel == .secureWithIgnored
+    }
+
+    public var wireDriveCellName: String {
+        guard let qualifiedID else { return "unknown" }
+
+        return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }
 }

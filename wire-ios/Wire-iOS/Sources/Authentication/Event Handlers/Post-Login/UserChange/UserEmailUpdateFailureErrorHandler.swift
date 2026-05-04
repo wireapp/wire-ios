@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles error when addding the e-mail to the user.
- */
+/// Handles error when addding the e-mail to the user.
 
 final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
 
@@ -42,7 +40,10 @@ final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
             actions.append(feedbackAction)
         }
 
-        let errorAlert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let errorAlert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         actions.append(.presentErrorAlert(errorAlert))
 
         return actions

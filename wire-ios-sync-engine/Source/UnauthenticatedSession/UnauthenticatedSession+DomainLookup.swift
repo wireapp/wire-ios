@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,14 +55,14 @@ public struct DomainInfo: Codable, Equatable {
     }
 }
 
-extension UnauthenticatedSession {
+public extension UnauthenticatedSession {
 
     /// Lookup a domain and fetch its configuration if it's registered in the Wire cloud.
     ///
     /// - parameter domain: Domain to look up (e.g. example.com)
     /// - parameter completion: The result closure will with the result of the lookup.
 
-    public func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
+    func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(DomainLookupError.noApiVersion))
         }

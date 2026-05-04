@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,21 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {
+
+    /// Updates the conversation's `mlsStatus`
+    ///
+    /// - Parameters:
+    ///   - conversation: The conversation to update.
+    ///   - fallbackGroupID: The groupd ID of the conversation found in the event payload.
+    ///   - context: The sync context.
+    ///
+    /// This method will update the conversation's `mlsStatus` to `.ready` if the underlying
+    /// MLS group already exists in core crypto's local storage.
+    /// Otherwise, it will update it to `.pendingJoin`.
 
     func updateConversationIfNeeded(
         conversation: ZMConversation,
@@ -28,11 +40,32 @@ public protocol MLSEventProcessing {
         context: NSManagedObjectContext
     ) async
 
+    /// Processes a welcome message event.
+    ///
+    /// - Parameters:
+    ///   - welcomeMessage: The welcome message.
+    ///   - conversationID: The qualified ID of the conversation.
+    ///   - context: The sync context.
+    ///
+    /// This method will notify the stale key material detector about the keying material update
+    /// and upload key packages if needed.
+    /// It will also sync the conversation if it's missing.
+    /// And if the conversation is a one to one conversation, it will be resolved.
+    ///
+    /// **Note:** The welcome message itself is not being processed in this method, but rather in the ``EventDecoder``.
+    /// We may want to consider removing the `welcomeMessage` parameter, as it isn't being used.
+
     func process(
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
     ) async
+
+    /// Wipes an MLS group.
+    ///
+    /// - Parameters:
+    ///   - conversation: The conversation for which we need to wipe the MLS group.
+    ///   - context: The sync context.
 
     func wipeMLSGroup(
         forConversation conversation: ZMConversation,
@@ -40,28 +73,38 @@ public protocol MLSEventProcessing {
     ) async
 }
 
+/// This class provides APIs to support processing of several events where MLS is involved.
+/// Such as updating the conversation's MLS status, handling welcome messages, or wiping MLS groups.
+
 public class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Properties
 
     private let conversationService: ConversationServiceInterface
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
-    convenience init(context: NSManagedObjectContext) {
+    convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
-            conversationService: ConversationService(context: context),
-            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context)
+            conversationService: ConversationService(context: context, localDomain: localDomain),
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
+            localDomain: localDomain
         )
     }
 
     init(
         conversationService: ConversationServiceInterface,
-        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
+        localDomain: String?
     ) {
         self.conversationService = conversationService
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
+        self.localDomain = localDomain
     }
 
     // MARK: - Update conversation
@@ -74,7 +117,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
         let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
-            return (
+            (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
@@ -91,7 +134,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         await context.perform {
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
-                WireLogger.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))")
+                WireLogger.mls
+                    .info(
+                        "MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))"
+                    )
             }
         }
 
@@ -99,18 +145,32 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
+        let conversationExists: Bool
+        do {
+            conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
+        } catch {
+            WireLogger.mls
+                .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
+            conversationExists = false
+        }
+        var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
             let previousStatus = conversation.mlsStatus
 
+            if previousStatus == .pendingJoinAfterReset {
+                // never override pendingJoinAferReset, this will be handle in re-establish group
+                newStatus = .pendingJoinAfterReset
+            }
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
 
             if newStatus != previousStatus {
-                WireLogger.mls.debug("conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))")
+                WireLogger.mls
+                    .debug(
+                        "conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))"
+                    )
             }
         }
     }
@@ -126,13 +186,18 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
         let migrator = OneOnOneMigrator(mlsService: mlsService)
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(migrator: migrator)
+            oneOnOneResolver: LegacyOneOnOneResolver(
+                migrator: migrator,
+                isMLSEnabled: mlsFeature
+                    .isEnabled
+            ) // note this is still used by ConversationEventProcessor (legacy processing)
         )
     }
 
@@ -177,7 +242,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
-                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+                let otherUserDomain = otherUser.domain ?? self.localDomain
             else {
                 WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
                 return nil
@@ -213,7 +278,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.info("MLS event processor is wiping conversation")
 
         let (messageProtocol, groupID, mlsService) = await context.perform {
-            return (
+            (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
@@ -235,7 +300,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             try await mlsService.wipeGroup(groupID)
         } catch {
-            WireLogger.mls.error("mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+            WireLogger.mls
+                .error(
+                    "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
+                )
         }
     }
 
@@ -264,13 +332,13 @@ public class MLSEventProcessor: MLSEventProcessing {
         var stringValue: String {
             switch self {
             case .conversationNotMLSCapable:
-                return "conversation is not MLS capable"
+                "conversation is not MLS capable"
             case .missingGroupID:
-                return "missing group ID"
+                "missing group ID"
             case .missingMLSService:
-                return "missing mlsService"
-            case .other(reason: let reason):
-                return reason
+                "missing mlsService"
+            case let .other(reason: reason):
+                reason
             }
         }
     }

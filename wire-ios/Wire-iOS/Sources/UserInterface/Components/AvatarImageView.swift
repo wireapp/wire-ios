@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIView {
@@ -38,21 +39,15 @@ class AvatarImageView: UIView {
         didSet { allowsInitials != oldValue ? updateAvatar() : () }
     }
 
-    /// The background color for the image.
-    var imageBackgroundColor: UIColor? {
-        get { return container.backgroundColor }
-        set { container.backgroundColor = newValue }
-    }
-
     /// The font to use of the initials label.
     var initialsFont: UIFont {
-        get { return initialsLabel.font }
+        get { initialsLabel.font }
         set { initialsLabel.font = newValue }
     }
 
     /// The color to use for the initials label.
     var initialsColor: UIColor {
-        get { return initialsLabel.textColor }
+        get { initialsLabel.textColor }
         set { initialsLabel.textColor = newValue }
     }
 
@@ -87,7 +82,7 @@ class AvatarImageView: UIView {
         imageView.isOpaque = false
         container.backgroundColor = .yellow
 
-        initialsLabel.textColor = .white
+        initialsLabel.textColor = SemanticColors.Button.textPrimaryEnabled
         initialsLabel.font = .systemFont(ofSize: 17)
 
         container.clipsToBounds = true
@@ -151,13 +146,13 @@ class AvatarImageView: UIView {
             imageView.isHidden = true
             initialsLabel.isHidden = true
 
-        case .image(let image):
+        case let .image(image):
             imageView.image = image
             initialsLabel.text = nil
             imageView.isHidden = false
             initialsLabel.isHidden = true
 
-        case .text(let text):
+        case let .text(text):
             imageView.image = nil
             initialsLabel.text = text
             imageView.isHidden = true
@@ -196,6 +191,8 @@ class AvatarImageView: UIView {
 
     /// The different shapes of avatars.
     enum Shape {
-        case rectangle, circle, relative
+        case rectangle
+        case circle
+        case relative
     }
 }

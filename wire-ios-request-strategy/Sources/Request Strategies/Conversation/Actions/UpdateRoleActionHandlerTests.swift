@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class UpdateRoleActionHandlerTests: MessagingTestBase {
 
@@ -49,7 +49,10 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             self.role = role
         }
 
-        sut = UpdateRoleActionHandler(context: syncMOC)
+        sut = UpdateRoleActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {
@@ -58,7 +61,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func testThatItCreatesAnExpectedRequestForUpdatingRole() throws {
+    func testThatItCreatesAnExpectedRequestForUpdatingRole_V0() throws {
         try syncMOC.performGroupedAndWait {
             // given
             let userID = self.user.remoteIdentifier!
@@ -69,7 +72,33 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v0))
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/members/\(userID.transportString())")
+            XCTAssertEqual(
+                request.path,
+                "/conversations/\(conversationID.transportString())/members/\(userID.transportString())"
+            )
+            let payload = Payload.ConversationUpdateRole(request)
+            XCTAssertEqual(payload?.role, self.role.name)
+        }
+    }
+
+    func testThatItCreatesAnExpectedRequestForUpdatingRole_V7() throws {
+        try syncMOC.performGroupedAndWait {
+            // given
+            let domain = "wire.com"
+            let userID = self.user.remoteIdentifier!
+            self.user.domain = domain
+            let conversationID = self.conversation.remoteIdentifier!
+            self.conversation.domain = domain
+            let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
+
+            // when
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v7))
+
+            // then
+            XCTAssertEqual(
+                request.path,
+                "/v7/conversations/\(domain)/\(conversationID.transportString())/members/\(domain)/\(userID.transportString())"
+            )
             let payload = Payload.ConversationUpdateRole(request)
             XCTAssertEqual(payload?.role, self.role.name)
         }
@@ -121,7 +150,12 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -135,7 +169,12 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
-            let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

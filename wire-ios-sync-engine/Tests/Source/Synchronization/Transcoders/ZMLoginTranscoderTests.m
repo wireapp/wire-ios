@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,8 +101,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 
     self.testEmailCredentials = [UserEmailCredentials credentialsWithEmail:TestEmail password:TestPassword];
     self.testEmailCredentialsWithVerificationCode = [UserEmailCredentials credentialsWithEmail:TestEmail password:TestPassword emailVerificationCode:TestEmailVerificationCode];
-
-    self.testPhoneNumberCredentials = [UserPhoneCredentials credentialsWithPhoneNumber:TestPhoneNumber verificationCode:TestPhoneCode];
 }
 
 - (void)tearDown {
@@ -229,27 +227,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     XCTAssertEqualObjects(request, expectedRequest);
 }
 
-- (void)testThatItGeneratesALoginRequestWhenTheUserSessionHasCredentialsWithPhoneNumberAndWeAreNotLoggedIn
-{
-    // given
-    NSDictionary *payload = @{@"phone": self.testPhoneNumberCredentials.phoneNumber,
-                              @"code": self.testPhoneNumberCredentials.phoneNumberVerificationCode,
-                              @"label": CookieLabel.current.value};
-    ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL
-                                                                            method:ZMTransportRequestMethodPost
-                                                                           payload:payload
-                                                                    authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken
-                                                                        apiVersion:0];
-
-    [self.authenticationStatus prepareForLoginWithCredentials:self.testPhoneNumberCredentials];
-
-    // when
-    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
-
-    // then
-    XCTAssertEqualObjects(request, expectedRequest);
-}
-
 - (void)testThatItGeneratesALoginRequestWhenTheUserSessionHasCredentialsWithEmailVerificationCodeAndWeAreNotLoggedIn
 {
     // GIVEN
@@ -277,9 +254,31 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 {
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     XCTAssertNil(request);
+}
+
+- (void)testThatItDoesNotGenerateADuplicateLoginRequestInTheRaceWindowWhileFirstIsInFlight
+{
+    // given
+    [self.authenticationStatus prepareForLoginWithCredentials:self.testEmailCredentials];
+    ZMTransportRequest *firstRequest = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    XCTAssertNotNil(firstRequest);
+
+    // Simulate the race window in ZMSingleRequestSync.processResponse: where currentRequest
+    // is set to nil before status transitions to Completed. On a concurrent thread,
+    // nextRequestForAPIVersion: can be called in this window. Without the fix, the former
+    // readyForNextRequestIfNotBusy call would see currentRequest == nil, force status back
+    // to Ready, and generate a second login request — causing the first response to be
+    // dropped via the requestUniqueCounter mismatch and the access token to be lost.
+    [self.sut.timedDownstreamSync setValue:nil forKey:@"currentRequest"];
+
+    // when
+    ZMTransportRequest *secondRequest = [self.sut nextRequestForAPIVersion:APIVersionV0];
+
+    // then
+    XCTAssertNil(secondRequest);
 }
 
 - (void)testThatItDoesNotGenerateALoginRequestWhenTheUserSessionIsLoggedIn
@@ -318,23 +317,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     }];
 }
 
--(void)testThatItCallsAuthenticationSucceededOnLoginSucceedsWithPhoneNumber
-{
-    // given
-    NSDictionary *content = @{@"access_token": @"61184561417968870ce708ed0c319206914bc56db444d01227a63f9b9849045f.1.1401213378.a.3bc5750a-b965-40f8-aff2-831e9b5ac2e9.846754296078244309",
-                              @"expires_in": @604800,
-                              @"token_type": @"Bearer"
-    };
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+49123456789" verificationCode:@"123456"]];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:200 transportSessionError:nil apiVersion:0];
-
-    // when
-    [self expectAuthenticationSucceedAfter:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-}
-
 -(void)testThatItCallsAuthenticationFailOnInvalidEmailCredentialsIfNotDuplicatedEmailRegistered
 {
     // given
@@ -345,7 +327,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidCredentials after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -361,7 +343,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingVerification after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingVerification after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -377,39 +359,8 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidEmailVerificationCode after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidEmailVerificationCode after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-}
-
--(void)testThatItCallsRegistrationFailOnInvalidPhoneNumberCredentialsIfNotDuplicatedPhoneNumberRegistered
-{
-    // given
-    NSDictionary *content = @{@"code":@403,
-                              @"message":@"Invalid login credentials",
-                              @"label":@"invalid-credentials"};
-
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
-
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+4912345678" verificationCode:@"123456"]];
-
-    // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-}
-
--(void)testThatItCallsAuthenticationFailOnErrorResponseWithoutPayload
-{
-    // given
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+4912345678" verificationCode:@"123456"]];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil apiVersion:0];
-
-    // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionUnknownError after:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
 }
@@ -425,29 +376,11 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingActivation after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingActivation after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
 }
-
-- (void)testThatItCallsAuthenticationFailOnPhoneLoginWithSuspendedAccount
-{
-    // given
-    NSDictionary *content = @{@"code":@403,
-                              @"message":@"Account suspended.",
-                              @"label":@"suspended"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+4912345678" verificationCode:@"123456"]];
-
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
-
-    // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountSuspended after:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-}
-
 
 - (void)testThatItCallsAuthenticationFailOnEmailLoginWithSuspendedAccount
 {
@@ -460,7 +393,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountSuspended after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountSuspended after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -476,7 +409,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
 
     // WHEN
-    [self expectAuthenticationFailedWithError:ZMUserSessionAccountIsPendingVerification after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeAccountIsPendingVerification after:^{
         [[self.sut nextRequestForAPIVersion:0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -495,7 +428,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     [self.authenticationStatus prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"12345678"]];
 
     // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
+    [self expectAuthenticationFailedWithError:ZMUserSessionErrorCodeInvalidCredentials after:^{
         [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
@@ -503,53 +436,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     // then
     XCTAssertEqual(self.authenticationStatus.currentPhase, ZMAuthenticationPhaseUnauthenticated);
     XCTAssertNil(self.authenticationStatus.loginCredentials);
-
-}
-
--(void)testThatItInvalidatesTheCredentialsOnLoginErrorWhenLoggingWithPhoneNumber
-{
-    // given
-    NSDictionary *content = @{@"code":@403,
-                              @"message":@"Invalid login credentials",
-                              @"label":@"invalid-credentials"};
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+49123456789" verificationCode:@"12345678"]];
-
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:403 transportSessionError:nil apiVersion:0];
-
-    // when
-    [self expectAuthenticationFailedWithError:ZMUserSessionInvalidCredentials after:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-
-    // then
-    XCTAssertEqual(self.authenticationStatus.currentPhase, ZMAuthenticationPhaseUnauthenticated);
-    XCTAssertNil(self.authenticationStatus.loginCredentials);
-}
-
-- (void)testThatItDoesNotDeleteCredentialsButSwitchesToStateAuthenticatedOnLoginSucceedsWithPhone
-{
-    // given
-    NSDictionary *content = @{@"access_token": @"61184561417968870ce708ed0c319206914bc56db444d01227a63f9b9849045f.1.1401213378.a.3bc5750a-b965-40f8-aff2-831e9b5ac2e9.846754296078244309",
-                              @"expires_in": @604800,
-                              @"token_type": @"Bearer"
-    };
-    [self.authenticationStatus prepareForLoginWithCredentials:[UserPhoneCredentials credentialsWithPhoneNumber:@"+49123456789" verificationCode:@"12345678"]];
-
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:content HTTPStatus:200 transportSessionError:nil apiVersion:0];
-
-    // when
-    [self expectAuthenticationSucceedAfter:^{
-        [[self.sut nextRequestForAPIVersion:APIVersionV0] completeWithResponse:response];
-        WaitForAllGroupsToBeEmpty(0.5);
-        [self.authenticationStatus continueAfterBackupImportStep];
-        [self.authenticationStatus setAuthenticationCookieData:[@"foo" dataUsingEncoding:NSUTF8StringEncoding]];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-
-    // then
-    XCTAssertEqual(self.authenticationStatus.currentPhase, ZMAuthenticationPhaseAuthenticated);
-    XCTAssertNotNil(self.authenticationStatus.loginCredentials);
 
 }
 

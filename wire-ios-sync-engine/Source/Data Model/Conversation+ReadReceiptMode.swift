@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum ReadReceiptModeError: Error {
     case invalidOperation
@@ -28,37 +29,55 @@ public enum ReadReceiptModeError: Error {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "access-denied"): self = .accessDenied
         case (404, "no-conversation"): self = .noConversation
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Enable or disable read receipts in a group conversation
-    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let apiVersion = BackendInfo.apiVersion else {
+    func setEnableReadReceipts(
+        _ enabled: Bool,
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
-        guard conversationType == .group else { return  completion(.failure(ReadReceiptModeError.invalidOperation))}
-        guard let conversationId = remoteIdentifier?.transportString() else { return completion(.failure(ReadReceiptModeError.noConversation)) }
+        guard conversationType == .group else { return  completion(.failure(ReadReceiptModeError.invalidOperation)) }
+        guard let conversationId = remoteIdentifier?.transportString()
+        else { return completion(.failure(ReadReceiptModeError.noConversation)) }
+
+        let path: String
+        if apiVersion >= .v8 {
+            if domain == nil {
+                WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
+            }
+            guard let domain = domain ?? userSession.resolvedBackendMetadata.domain else {
+                return completion(.failure(ReadReceiptModeError.unknown))
+            }
+            path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
+        } else {
+            path = "/conversations/\(conversationId)/receipt-mode"
+        }
 
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
-        let request = ZMTransportRequest(path: "/conversations/\(conversationId)/receipt-mode", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: path,
+            method: .put,
+            payload: payload,
+            apiVersion: apiVersion.rawValue
+        )
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
-                Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-                    // swiftlint:enable todo_requires_jira_link
-                    try? await userSession.updateEventProcessor?.processEvents([event])
+
+                userSession.processConversationEvents([event]) {
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
                     }
-                    userSession.syncContext.leaveAllGroups(groups)
                 }
             } else if response.httpStatus == 204 {
                 self.hasReadReceiptsEnabled = enabled

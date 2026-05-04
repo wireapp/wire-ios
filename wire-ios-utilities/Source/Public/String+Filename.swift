@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,11 @@
 import Foundation
 
 public extension String {
-    static private let transforms = [kCFStringTransformToLatin, kCFStringTransformStripCombiningMarks, kCFStringTransformToUnicodeName]
+    private static let transforms = [
+        kCFStringTransformToLatin,
+        kCFStringTransformStripCombiningMarks,
+        kCFStringTransformToUnicodeName
+    ]
 
     /// Convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
     /// Space will be converted to underscore first.
@@ -34,9 +38,7 @@ public extension String {
         characterSet.addCharacters(in: "_-.")
 
         let unsafeChars = characterSet.inverted
-        let strippedString = retString.components(separatedBy: unsafeChars).joined(separator: "")
-
-        return strippedString
+        return retString.components(separatedBy: unsafeChars).joined(separator: "")
     }
 
     /// return a filename with length <= 255 characters with additional number of characters to reserve
@@ -54,7 +56,7 @@ public extension String {
         let start = normalizedFilename.startIndex
 
         let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: offset)
-        let result = normalizedFilename[start..<end]
+        let result = normalizedFilename[start ..< end]
         return String(result)
     }
 }

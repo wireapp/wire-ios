@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,16 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handles client registration errors related to the lack of e-mail and password credentials.
- */
+/// Handles client registration errors related to the lack of e-mail and password credentials.
 
 final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle needsToRegisterEmailToRegisterClient errors
@@ -44,7 +45,7 @@ final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler 
         }
 
         // Verify the state and ask the user to add a password
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

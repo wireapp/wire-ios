@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,20 +27,22 @@ final class TopPeopleSectionController: SearchSectionController {
     var token: Any?
     weak var delegate: SearchSectionControllerDelegate?
 
-    init(topConversationsDirectory: TopConversationsDirectory!) {
+    init(topConversationsDirectory: TopConversationsDirectory!, userSession: UserSession) {
         self.topConversationsDirectory = topConversationsDirectory
 
         super.init()
+
+        innerCollectionViewController.userSession = userSession
 
         createInnerCollectionView()
 
         if let topConversationsDirectory {
             self.token = topConversationsDirectory.add(observer: self)
-            self.innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
+            innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
             topConversationsDirectory.refreshTopConversations()
         }
-        self.innerCollectionViewController.delegate = self
-        self.innerCollectionView.reloadData()
+        innerCollectionViewController.delegate = self
+        innerCollectionView.reloadData()
     }
 
     func createInnerCollectionView() {
@@ -67,31 +69,44 @@ final class TopPeopleSectionController: SearchSectionController {
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
 
-        collectionView?.register(CollectionViewContainerCell.self, forCellWithReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier)
+        collectionView?.register(
+            CollectionViewContainerCell.self,
+            forCellWithReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier
+        )
     }
 
     override var isHidden: Bool {
         if let topConversationsDirectory {
-            return topConversationsDirectory.topConversations.isEmpty
+            topConversationsDirectory.topConversations.isEmpty
         } else {
-            return true
+            true
         }
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.topPeople
+        L10n.Localizable.Peoplepicker.Header.topPeople
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 97)
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 97)
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier, for: indexPath) as! CollectionViewContainerCell
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! CollectionViewContainerCell
         cell.collectionView = innerCollectionView
         return cell
     }

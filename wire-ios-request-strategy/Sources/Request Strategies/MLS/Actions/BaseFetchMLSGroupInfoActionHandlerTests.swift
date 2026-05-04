@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,
@@ -32,6 +32,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itDoesntGenerateRequests_APIBelowV5() {
@@ -49,7 +50,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
     func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
+        let payload = try XCTUnwrap(String(decoding: groupState, as: UTF8.self)) as ZMTransportData
 
         // When
         let receivedGroupState = test_itHandlesSuccess(status: 200, payload: payload)

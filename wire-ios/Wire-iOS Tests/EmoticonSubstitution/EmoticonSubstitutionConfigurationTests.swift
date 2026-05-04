@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class EmoticonSubstitutionConfigurationTests: XCTestCase {
 
@@ -53,13 +53,13 @@ final class EmoticonSubstitutionConfigurationTests: XCTestCase {
 
         // Given
 
-        measure({
+        measure {
             // When
             let config = createEmoticonSubstitutionConfiguration(fileName: "emoticons.min.json")
 
             // Then
             XCTAssertNotNil(config)
-        })
+        }
     }
 
     func testThatShortcutsAreSortedCorrectly() {

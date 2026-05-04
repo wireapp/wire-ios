@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,9 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentCreatePasscodeModule(shouldInform: Bool) {
         let passcodeSetupViewController = PasscodeSetupViewController.createKeyboardAvoidingFullScreenView(
             context: shouldInform ? .forcedForTeam : .createPasscode,
-            delegate: view)
+            userSession: userSession,
+            delegate: view
+        )
 
         view.present(passcodeSetupViewController, animated: true)
     }
@@ -72,7 +74,8 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
 
         let unlockViewController = UnlockViewController(selfUser: selfUser, userSession: userSession)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: unlockViewController)
-        let navigationController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+        let navigationController = keyboardAvoidingViewController
+            .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
         navigationController.modalPresentationStyle = .fullScreen
         unlockViewController.delegate = view
         view.present(navigationController, animated: false)

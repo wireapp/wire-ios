@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ import UIKit
 extension CGSize {
     /// returns the longest length among width and height
     var longestLength: CGFloat {
-        return width > height ? width : height
+        width > height ? width : height
     }
 
     var shortestLength: CGFloat {
-        return width > height ? height : width
+        width > height ? height : width
     }
 }
 
@@ -40,7 +40,7 @@ extension CGFloat {
 extension UIImage {
     @objc
     func downsizedImage() -> UIImage? {
-        return downsized()
+        downsized()
     }
 
     /// downsize an image to the size which the longer side length equal to maxLength

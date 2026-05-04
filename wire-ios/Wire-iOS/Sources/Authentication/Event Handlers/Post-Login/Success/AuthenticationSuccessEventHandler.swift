@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,14 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handles the notification informing that the client has been registered after the client signed in.
- */
+/// Handles the notification informing that the client has been registered after the client signed in.
 
 final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
+        [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
 
 }

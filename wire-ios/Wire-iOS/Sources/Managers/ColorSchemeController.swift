@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,6 @@
 import Foundation
 import WireSyncEngine
 
-extension Notification.Name {
-    static let colorSchemeControllerDidApplyColorSchemeChange = Self("ColorSchemeControllerDidApplyColorSchemeChange")
-}
-
 final class ColorSchemeController: NSObject {
 
     var userObserverToken: Any?
@@ -30,17 +26,13 @@ final class ColorSchemeController: NSObject {
     init(userSession: UserSession) {
         super.init()
 
-        // When SelfUser.provider is nil, e.g. running tests, do not set up UserChangeInfo observer
-        if let user = SelfUser.provider?.providedSelfUser {
-            userObserverToken = userSession.addUserObserver(self, for: user)
-        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(settingsColorSchemeDidChange),
+            name: .SettingsColorSchemeChanged,
+            object: nil
+        )
 
-        NotificationCenter.default.addObserver(self, selector: #selector(settingsColorSchemeDidChange), name: .SettingsColorSchemeChanged, object: nil)
-
-    }
-
-    func notifyColorSchemeChange() {
-        NotificationCenter.default.post(name: .colorSchemeControllerDidApplyColorSchemeChange, object: self)
     }
 
     @objc
@@ -52,19 +44,5 @@ final class ColorSchemeController: NSObject {
         ColorScheme.default.variant = Settings.shared.colorSchemeVariant
 
         NSAttributedString.invalidateMarkdownStyle()
-
-        notifyColorSchemeChange()
-    }
-}
-
-extension ColorSchemeController: UserObserving {
-    func userDidChange(_ note: UserChangeInfo) {
-        guard note.accentColorValueChanged else { return }
-
-        let colorScheme = ColorScheme.default
-
-        if !colorScheme.isCurrentAccentColor(UIColor.accent()) {
-            notifyColorSchemeChange()
-        }
     }
 }

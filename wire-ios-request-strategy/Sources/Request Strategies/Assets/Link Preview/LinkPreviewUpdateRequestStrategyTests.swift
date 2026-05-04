@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import XCTest
 
+import WireTransport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
@@ -29,7 +30,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -41,40 +42,111 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             self.applicationStatus = MockApplicationStatus()
             self.mockMessageSender = MockMessageSenderInterface()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = LinkPreviewUpdateRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: self.mockMessageSender
-            )
+            makeSut()
         }
-
         apiVersion = .v0
     }
 
     override func tearDown() {
         applicationStatus = nil
         sut = nil
-        apiVersion = nil
         super.tearDown()
     }
 
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
+        sut = LinkPreviewUpdateRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender
+        )
+    }
+
     func testThatItDoesNotCreateARequestInState_Done() {
-        self.verifyThatItDoesNotScheduleMessageUpdate(for: .done)
+        verifyThatItDoesNotScheduleMessageUpdate(for: .done)
     }
 
     func testThatItDoesNotCreateARequestInState_WaitingToBeProcessed() {
-        self.verifyThatItDoesNotScheduleMessageUpdate(for: .waitingToBeProcessed)
+        verifyThatItDoesNotScheduleMessageUpdate(for: .waitingToBeProcessed)
     }
 
     func testThatItDoesNotCreateARequestInState_Downloaded() {
-        self.verifyThatItDoesNotScheduleMessageUpdate(for: .downloaded)
+        verifyThatItDoesNotScheduleMessageUpdate(for: .downloaded)
     }
 
     func testThatItDoesNotCreateARequestInState_Processed() {
-        self.verifyThatItDoesNotScheduleMessageUpdate(for: .processed)
+        verifyThatItDoesNotScheduleMessageUpdate(for: .processed)
+    }
+
+    func testThatItDoesSendLinkPreviewMessageInVisibleConversation() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendLinkPreviewMessageInHiddenConversation() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesNotSendMLSLinkPreviewMessageWhenMLSFeatureDisabled() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.conversation?.messageProtocol = .mls
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendMLSLinkPreviewMessageWhenMLSFeatureEnabled() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.conversation?.messageProtocol = .mls
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotScheduleMessageInState_Uploaded_ForOtherUser() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
@@ -92,23 +164,31 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesCreateARequestInState_Uploaded() {
         apiVersion = .v1
 
-        self.syncMOC.performGroupedAndWait {
+        var message: ZMClientMessage!
+
+        syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.insertMessage(with: .uploaded)
+            message = self.insertMessage(with: .uploaded)
 
             // When
             self.process(message)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        // THEN
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+
+        syncMOC.performGroupedAndWait {
+            XCTAssertEqual(message.linkPreviewState, .done)
+            XCTAssertNil(message.expirationDate)
+        }
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
         apiVersion = .v1
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             message = self.insertMessage(with: .uploaded)
@@ -116,7 +196,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // When
             self.process(message)
         }
@@ -127,7 +207,11 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func insertMessage(with state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) -> ZMClientMessage {
+    func insertMessage(
+        with state: ZMLinkPreviewState,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ZMClientMessage {
         let message = try! groupConversation.appendText(content: "Test message") as! ZMClientMessage
         message.linkPreviewState = state
         XCTAssert(syncMOC.saveOrRollback(), file: file, line: line)
@@ -135,8 +219,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         return message
     }
 
-    func verifyThatItDoesNotScheduleMessageUpdate(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
-        self.syncMOC.performGroupedAndWait {
+    func verifyThatItDoesNotScheduleMessageUpdate(
+        for state: ZMLinkPreviewState,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: state)

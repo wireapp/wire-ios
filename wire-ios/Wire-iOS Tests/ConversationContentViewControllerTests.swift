@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import XCTest
 
 @testable import Wire
@@ -23,15 +24,17 @@ import XCTest
 final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
-    var sut: ConversationContentViewController!
-    var mockConversation: ZMConversation!
-    var userSession: UserSessionMock!
-    var mockMessage: MockMessage!
+    private var sut: ConversationContentViewController!
+    private var mockConversation: ZMConversation!
+    private var userSession: UserSessionMock!
+    private var mockMessage: MockMessage!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         mockConversation = createTeamGroupConversation()
 
@@ -47,7 +50,10 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             conversation: mockConversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // Call the setup codes in viewDidLoad
@@ -60,8 +66,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         mockMessage = nil
         userSession = nil
         coreDataFixture = nil
-
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     func testThatDeletionDialogIsCreated() throws {
@@ -72,6 +77,10 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         let message = MockMessageFactory.textMessage(withText: "test")
         sut.messageAction(actionId: .delete, for: message, view: view)
 
-        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(message: mockMessage, sourceView: view, userSession: userSession))
+        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(
+            message: mockMessage,
+            sourceView: view,
+            userSession: userSession
+        ) { _, _ in })
     }
 }

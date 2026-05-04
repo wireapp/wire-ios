@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,24 +30,25 @@ public enum LegalHoldActivationError: Error, Equatable {
     case missingAPIVersion
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    /**
-     * Sends a request to accept a legal hold request for the specified user.
-     * - parameter request: The request that was accepted by the user.
-     * - parameter password: The password of the user to send in the payload, if it's not a SSO user.
-     * - parameter completionHandler: The block that will be called with the result of the request.
-     * - parameter error: The error that prevented the approval of legal hold.
-     */
+    /// Sends a request to accept a legal hold request for the specified user.
+    /// - parameter request: The request that was accepted by the user.
+    /// - parameter password: The password of the user to send in the payload, if it's not a SSO user.
+    /// - parameter completionHandler: The block that will be called with the result of the request.
+    /// - parameter error: The error that prevented the approval of legal hold.
 
-    public func accept(legalHoldRequest: LegalHoldRequest, password: String?, completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void) {
-
-        guard let apiVersion = BackendInfo.apiVersion else {
+    func accept(
+        legalHoldRequest: LegalHoldRequest,
+        password: String?,
+        completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void
+    ) {
+        guard let apiVersion = resolvedBackendMetadata.apiVersion else {
             return completionHandler(.missingAPIVersion)
         }
 
         // 1) Check the state
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let teamID = selfUser.team?.remoteIdentifier else {
             return completionHandler(.selfUserNotInTeam)
@@ -78,7 +79,12 @@ extension ZMUserSession {
             payload["password"] = password
 
             let path = "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())/approve"
-            let request = ZMTransportRequest(path: path, method: .put, payload: payload as NSDictionary, apiVersion: apiVersion.rawValue)
+            let request = ZMTransportRequest(
+                path: path,
+                method: .put,
+                payload: payload as NSDictionary,
+                apiVersion: apiVersion.rawValue
+            )
             let response = await self.transportSession.enqueue(request, queue: self.syncManagedObjectContext)
 
             if response.httpStatus == 200 {

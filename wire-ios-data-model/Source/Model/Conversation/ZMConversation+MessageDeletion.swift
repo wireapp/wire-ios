@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,18 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Appends a "message was delete" system message
-    @objc public func appendDeletedForEveryoneSystemMessage(at date: Date, sender: ZMUser) {
-        self.appendSystemMessage(type: .messageDeletedForEveryone,
-                                 sender: sender,
-                                 users: nil,
-                                 clients: nil,
-                                 timestamp: date)
+    @objc
+    func appendDeletedForEveryoneSystemMessage(at date: Date, sender: ZMUser) {
+        appendSystemMessage(
+            type: .messageDeletedForEveryone,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: date
+        )
 
     }
 }

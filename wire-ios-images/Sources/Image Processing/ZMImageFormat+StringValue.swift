@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,19 +42,19 @@ public extension ZMImageFormat {
     var stringValue: String {
         switch self {
         case .invalid:
-            return "invalid"
+            "invalid"
 
         case .preview:
-            return "preview"
+            "preview"
 
         case .medium:
-            return "medium"
+            "medium"
 
         case .original:
-            return "original"
+            "original"
 
         case .profile:
-            return "smallProfile"
+            "smallProfile"
         }
     }
 

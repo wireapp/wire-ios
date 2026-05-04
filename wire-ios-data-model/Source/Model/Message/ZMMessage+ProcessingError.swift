@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    public enum ProcessingError: LocalizedError {
+    enum ProcessingError: LocalizedError {
 
         case missingManagedObjectContext
         case failedToProcessMessageData(reason: String)
@@ -28,9 +28,9 @@ extension ZMMessage {
         public var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:
-                return "Missing managed object context."
-            case .failedToProcessMessageData(let reason):
-                return "Failed to process message data. Reason: \(reason)"
+                "Missing managed object context."
+            case let .failedToProcessMessageData(reason):
+                "Failed to process message data. Reason: \(reason)"
             }
         }
 

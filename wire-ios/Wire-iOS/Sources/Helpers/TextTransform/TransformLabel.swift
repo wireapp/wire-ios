@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
 
 import UIKit
 
-/**
- * A label that can automatically transform the text it presents.
- */
+/// A label that can automatically transform the text it presents.
 
 final class TransformLabel: UILabel {
 
     override var accessibilityValue: String? {
         get {
-            return attributedText?.string ?? text
+            attributedText?.string ?? text
         }
 
         set {
@@ -43,7 +41,7 @@ final class TransformLabel: UILabel {
 
     override var text: String? {
         get {
-            return super.text
+            super.text
         }
         set {
             super.text = newValue?.applying(transform: textTransform)
@@ -52,7 +50,7 @@ final class TransformLabel: UILabel {
 
     override var attributedText: NSAttributedString? {
         get {
-            return super.attributedText
+            super.attributedText
         }
         set {
             super.attributedText = newValue?.applying(transform: textTransform)

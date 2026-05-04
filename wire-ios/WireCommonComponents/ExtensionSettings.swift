@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,19 +21,12 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case disableCrashSharing
-    case disableAnalyticsSharing
     case disableLinkPreviews
 
     private var defaultValue: Any? {
         switch self {
-        // Always disable analytics by default.
-        case .disableCrashSharing:
-            return true
-        case .disableAnalyticsSharing:
-            return false
         case .disableLinkPreviews:
-            return false
+            false
         }
     }
 
@@ -64,19 +57,6 @@ public final class ExtensionSettings: NSObject {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
         }
-
-        // As we purposely crash afterwards we manually call synchronize.
-        defaults.synchronize()
-    }
-
-    public var disableAnalyticsSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
-    }
-
-    public var disableCrashSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {

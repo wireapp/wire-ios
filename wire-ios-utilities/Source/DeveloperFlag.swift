@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,50 +22,86 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case enableMLSSupport
-    case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
-    case nseV2
-    case forceDatabaseLoadingFailure
-    case ignoreIncomingEvents
+    case channelsHistory
+    case chatBubbles
+    case consumableNotifications
+    case createLegacyBackups
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
+    case disablePushChannelBatching
     case forceCRLExpiryAfterOneMinute
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case newRegistration
+    case showCreateMLSGroupToggle
+    case showUnreadConversationsFilter
+    case skipMLSMessagesDecryption
+    case useWireAuthentication
+    case wireMeetings
+    case lowKeyPackageCount
+    case enabledCCDebugLogs
 
     public var description: String {
         switch self {
-        case .enableMLSSupport:
-            return "Turn on to enable MLS support. This will cause the app to register an MLS client."
+        case .createLegacyBackups:
+            "Don't use the cross-platform library when creating backups."
 
         case .showCreateMLSGroupToggle:
-            return "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            return "Turn on to use CoreCrypto for proteus messaging."
-
-        case .nseV2:
-            return "Turn on to use the new implementation of the notification service extension."
+            "Turn on to show the MLS toggle when creating a new group."
 
         case .forceDatabaseLoadingFailure:
-            return "Turn on to force database loading failure in the process of database migration"
+            "Turn on to force database loading failure in the process of database migration"
 
         case .ignoreIncomingEvents:
-            return "Turn on to ignore incoming update events"
+            "Turn on to ignore incoming update events"
+
+        case .skipMLSMessagesDecryption:
+            "Turn on to skip MLS message decryption"
 
         case .debugDuplicateObjects:
-            return "Turn on to have actions to insert duplicate users, conversations, teams"
+            "Turn on to have actions to insert duplicate users, conversations, teams"
 
         case .decryptAndStoreEventsSleep:
-            return "Adds a delay when decrypting and storing events"
+            "Adds a delay when decrypting and storing events"
 
         case .forceCRLExpiryAfterOneMinute:
-            return "Turn on to force CRLs to expire after 1 minute"
+            "Turn on to force CRLs to expire after 1 minute"
+
+        case .useWireAuthentication:
+            "Use the new WireAuthentication feature module"
+
+        case .disablePushChannelBatching:
+            "Turn on to disable batching while app is live"
+
+        case .newRegistration:
+            "Turn on to use the new registration flow"
+
+        case .showUnreadConversationsFilter:
+            "Turn on to show the new conversation filter options"
+
+        case .channelsHistory:
+            "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
+
+        case .consumableNotifications:
+            "Turn on to enable consumable notifications"
+
+        case .wireMeetings:
+            "Turn on to enable Wire meetings"
+
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
+
+        case .enabledCCDebugLogs:
+            "Turn on to enable Core Crypto debug logs"
         }
     }
 
     public var isOn: Bool {
         get {
-            return Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
+            Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
         }
 
         set {
@@ -80,26 +116,24 @@ public enum DeveloperFlag: String, CaseIterable {
         return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
-    static public func clearAllFlags() {
+    public static func clearAllFlags() {
         allCases.forEach {
             storage.set(nil, forKey: $0.rawValue)
         }
     }
 
-    var bundleKey: String? {
+    private var bundleKey: String? {
         switch self {
-        case .enableMLSSupport:
-            return "MLSEnabled"
-        case .showCreateMLSGroupToggle:
-            return "CreateMLSGroupEnabled"
-        case .proteusViaCoreCrypto:
-            return "ProteusByCoreCryptoEnabled"
+        case .createLegacyBackups:
+            "CreateLegacyBackupsEnabled"
         case .forceDatabaseLoadingFailure:
-            return "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
-            return nil
+            "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
-            return "IgnoreIncomingEventsEnabled"
+            "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
+        default:
+            nil
         }
     }
 
@@ -118,12 +152,12 @@ public enum DeveloperFlag: String, CaseIterable {
 private final class DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
-        return Bundle(for: self).infoForKey(bundleKey) == "1"
+        Bundle(for: self).infoForKey(bundleKey) == "1"
     }
 }
 
 public extension Bundle {
     func infoForKey(_ key: String) -> String? {
-        return infoDictionary?[key] as? String
+        infoDictionary?[key] as? String
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 import Foundation
 
 @objcMembers
-public class FolderList: NSObject { // TODO jacob turn into struct and make generic
+public class FolderList: NSObject {
 
     var backingList: [Label]
 
     public init(labels: [Label]) {
-        backingList = labels.sorted(by: FolderList.comparator)
+        self.backingList = labels.sorted(by: FolderList.comparator)
     }
 
     private static var comparator: (Label, Label) -> Bool {
@@ -51,7 +51,7 @@ public class FolderList: NSObject { // TODO jacob turn into struct and make gene
             return
         }
 
-        let index = backingList.firstIndex(where: { return FolderList.comparator(label, $0) }) ?? backingList.count
+        let index = backingList.firstIndex(where: { FolderList.comparator(label, $0) }) ?? backingList.count
 
         backingList.insert(label, at: index)
     }

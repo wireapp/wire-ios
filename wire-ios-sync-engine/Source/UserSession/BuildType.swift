@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@ enum BuildType: Equatable {
     case production
     case alpha
     case beta
-    case development
-    case `internal`
-    case releaseCandidate
+    case playground
+    case edge
     case custom(bundleID: String)
 
     init(bundleID: String) {
@@ -39,14 +38,11 @@ enum BuildType: Equatable {
         case BuildType.beta.bundleID:
             self = .beta
 
-        case BuildType.development.bundleID:
-            self = .development
+        case BuildType.playground.bundleID:
+            self = .playground
 
-        case BuildType.internal.bundleID:
-            self = .internal
-
-        case BuildType.releaseCandidate.bundleID:
-            self = .releaseCandidate
+        case BuildType.edge.bundleID:
+            self = .edge
 
         default:
             self = .custom(bundleID: bundleID)
@@ -56,38 +52,35 @@ enum BuildType: Equatable {
     var certificateName: String {
         switch self {
         case .production:
-            return "com.wire"
+            "com.wire"
 
-        case .alpha, .beta, .development, .internal, .releaseCandidate:
-            return bundleID
+        case .alpha, .beta, .playground, .edge:
+            bundleID
 
-        case .custom(let bundleID):
-            return bundleID
+        case let .custom(bundleID):
+            bundleID
         }
     }
 
     var bundleID: String {
         switch self {
         case .production:
-            return "com.wearezeta.zclient.ios"
+            "com.wearezeta.zclient.ios"
 
         case .alpha:
-            return "com.wearezeta.zclient.alpha"
+            "com.wearezeta.zclient.alpha"
 
         case .beta:
-            return "com.wearezeta.zclient.ios.beta"
+            "com.wearezeta.zclient.ios.beta"
 
-        case .development:
-            return "com.wearezeta.zclient.development"
+        case .playground:
+            "com.wearezeta.zclient.development"
 
-        case .internal:
-            return "com.wearezeta.zclient.internal"
+        case .edge:
+            "com.wearezeta.zclient.ios.edge"
 
-        case .releaseCandidate:
-            return "com.wearezeta.zclient.rc"
-
-        case .custom(let bundleID):
-            return bundleID
+        case let .custom(bundleID):
+            bundleID
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,22 +19,109 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 public protocol MLSActionExecutorProtocol {
 
-    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
-    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
-    func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
+    /// Processes a welcome message.
+    ///
+    /// - Parameters:
+    ///     - message: The welcome message to process.
+    ///     - context: if provided, processing will happen within the existing transaction
+    /// - Returns: The group ID of the group the welcome message was for.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
+    func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID
+
+    /// Creates and sends a commit bundle to add the invitees to a group.
+    ///
+    /// - Parameters:
+    ///   - invitees: The key packages of the clients to add.
+    ///   - groupID: The group ID of the group to add members to.
+    /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
+    func addMembers(
+        _ invitees: [KeyPackage],
+        to groupID: MLSGroupID
+    ) async throws
+
+    /// Creates and sends a commit bundle to remove clients from a group.
+    ///
+    /// - Parameters:
+    ///   - clients: The IDs of the clients to remove.
+    ///   - groupID: The group ID of the group to remove clients from.
+    /// - Returns: Update events returned by the backend.
+
+    func removeClients(
+        _ clients: [ClientId],
+        from groupID: MLSGroupID
+    ) async throws
+
+    /// Creates and sends a commit bundle to update the key material for a group.
+    ///
+    /// - Parameter groupID: The group ID of the group to update key material for.
+    /// - Returns: Update events returned by the backend.
+
+    func updateKeyMaterial(for groupID: MLSGroupID) async throws
+
+    /// Creates and sends a commit bundle to commit the pending proposals for a group.
+    ///
+    /// - Parameter groupID: The group ID of the group to commit pending proposals for.
+    /// - Returns: Update events returned by the backend.
+    /// - Throws: `CommitError.noPendingProposals` if there are no proposals to commit.
+
+    func commitPendingProposals(in groupID: MLSGroupID) async throws
+
+    /// Creates and sends an **external** commit to join a group.
+    ///
+    /// - Parameters:
+    ///   - groupID: The group ID of the group to join.
+    ///   - groupInfo: The group info of the group to join.
+    /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published.
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
+    func joinGroup(
+        _ groupID: MLSGroupID,
+        groupInfo: Data
+    ) async throws
+
+    /// Decrypts a message for a group.
+    ///
+    /// - Parameters:
+    ///   - message: The message to decrypt.
+    ///   - groupID: The group ID of the group this message was for.
+    ///   - context: if provided, decryption will happen within the existing transaction
+    /// - Returns: The decrypted message.
+
+    func decryptMessage(
+        _ message: Data,
+        in groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> DecryptedMessage?
+
+    /// Returns a publisher that emits the new CRL distribution points when they are found
+
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
 }
 
+/// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
+
+let coreCryptoCommitForMissingProposalError =
+    "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
+
+    enum Failure: Error {
+        case bufferedDecryptedMessage
+    }
 
     // MARK: - Types
 
@@ -51,12 +138,11 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let commitSender: CommitSending
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -66,11 +152,9 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        commitSender: CommitSending,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
-        self.commitSender = commitSender
         self.featureRepository = featureRepository
     }
 
@@ -78,10 +162,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     /// Perform an non-rentrant operation on an MLS group.
     ///
-    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is scheduled
+    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is
+    /// scheduled
     /// they will be queued and executed in sequence.
     ///
-    /// This is used for operations where ordering is important. For example when sending a commit to add client to a group, this is a two-step operations:
+    /// This is used for operations where ordering is important. For example when sending a commit to add client to a
+    /// group, this is a two-step operations:
     ///
     /// 1. Create pending commit and send to distribution server
     /// 2. Merge pending commit when accepted by distribution server
@@ -89,7 +175,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     /// Here's it's critical that no other operation like `decryptMessage` is performed
     /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
     /// inside `performNonReentrant`
-    ///
+
     func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
         if continuationsByGroupID.keys.contains(groupID) {
             await withCheckedContinuation { continuation in
@@ -121,13 +207,24 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    public func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
-        let welcomeBundle = try await coreCrypto.perform { coreCrypto in
-            try await coreCrypto.processWelcomeMessage(
-                welcomeMessage: message,
-                customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
-            )
+    public func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
+        if let context {
+            try await processWelcomeMessageInternal(message, context: context)
+        } else {
+            try await coreCrypto.transaction { context in
+                try await self.processWelcomeMessageInternal(message, context: context)
+            }
         }
+    }
+
+    private func processWelcomeMessageInternal(
+        _ message: Data,
+        context: CoreCryptoContextProtocol
+    ) async throws -> MLSGroupID {
+        let welcomeBundle = try await context.processWelcomeMessage(
+            welcomeMessage: .init(bytes: message),
+            customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+        )
 
         if let newDistributionPoints = CRLsDistributionPoints(
             from: welcomeBundle.crlNewDistributionPoints
@@ -138,78 +235,120 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         return MLSGroupID(welcomeBundle.id)
     }
 
-    public func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func addMembers(_ invitees: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
-                let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
-                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
-                return result
+                WireLogger.mls.info("adding members to group...", attributes: groupID.safeAttributes)
+
+                let crlNewDistributionPoints = try await coreCrypto.transaction {
+                    try await $0.addClientsToConversation(
+                        conversationId: groupID.conversationId,
+                        keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
+                    )
+                }
+
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+                }
+
+                WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
             } catch {
-                WireLogger.mls.info("failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .error(
+                        "failed: adding members to group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
+                    )
                 throw error
             }
         }
     }
 
-    public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
-                let bundle = try await commitBundle(for: .removeClients(clients), in: groupID)
-                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
-                return result
+                WireLogger.mls.info("removing clients from group...", attributes: groupID.safeAttributes)
+                return try await coreCrypto.transaction {
+                    try await $0.removeClientsFromConversation(
+                        conversationId: groupID.conversationId,
+                        clients: clients
+                    )
+                }
             } catch {
-                WireLogger.mls.info("error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .error(
+                        "error: removing clients from group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
+                    )
                 throw error
             }
         }
     }
 
-    public func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func updateKeyMaterial(for groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
-                let bundle = try await commitBundle(for: .updateKeyMaterial, in: groupID)
-                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
-                return result
+                WireLogger.mls.info("updating key material for group...", attributes: groupID.safeAttributes)
+                return try await coreCrypto.transaction {
+                    try await $0.updateKeyingMaterial(conversationId: groupID.conversationId)
+                }
             } catch {
-                WireLogger.mls.info("error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .error(
+                        "error: updating key material for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
+                    )
                 throw error
             }
         }
     }
 
-    public func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
-                let bundle = try await commitBundle(for: .proposal, in: groupID)
-                let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
-                return result
-            } catch CommitError.noPendingProposals {
-                throw CommitError.noPendingProposals
+                WireLogger.mls.info("committing pending proposals for group", attributes: groupID.safeAttributes)
+                try await coreCrypto.transaction {
+                    try await $0.commitPendingProposals(conversationId: groupID.conversationId)
+                }
+                WireLogger.mls
+                    .info("success: committing pending proposals for group", attributes: groupID.safeAttributes)
             } catch {
-                WireLogger.mls.info("error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .error(
+                        "error: committing pending proposals for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
+                    )
                 throw error
             }
         }
     }
 
-    public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
+    public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
-                let bundle = try await commitBundle(for: .joinGroup(groupInfo), in: groupID)
-                let result = try await commitSender.sendExternalCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
-                return result
+                WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
+                let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
+                let conversationInitBundle = try await coreCrypto.transaction {
+                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                    return try await $0.joinByExternalCommit(
+                        groupInfo: GroupInfo(bytes: groupInfo),
+                        customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
+                        credentialType: e2eiIsEnabled ? .x509 : .basic
+                    )
+                }
+                if let newDistributionPoints = CRLsDistributionPoints(
+                    from: conversationInitBundle.crlNewDistributionPoints
+                ) {
+                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+                }
+                WireLogger.mls.info("success: joining group via external commit", attributes: groupID.safeAttributes)
             } catch {
-                WireLogger.mls.info("error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))")
+                WireLogger.mls
+                    .error(
+                        "error: joining group via external commit: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
+                    )
                 throw error
             }
         }
@@ -217,110 +356,46 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Decryption
 
-    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
-        try await performNonReentrant(groupID: groupID) {
-            try await coreCrypto.perform {
-                try await $0.decryptMessage(conversationId: groupID.data, payload: message)
+    public func decryptMessage(
+        _ message: Data,
+        in groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> DecryptedMessage? {
+        if let context {
+            try await decryptMessageInternal(message, in: groupID, context: context)
+        } else {
+            try await performNonReentrant(groupID: groupID) {
+                try await coreCrypto.transaction {
+                    try await self.decryptMessageInternal(message, in: groupID, context: $0)
+                }
             }
         }
     }
 
-    // MARK: - Commit generation
-
-    private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
+    private func decryptMessageInternal(
+        _ message: Data,
+        in groupID: MLSGroupID,
+        context: CoreCryptoContextProtocol
+    ) async throws -> DecryptedMessage? {
         do {
-            WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
-            switch action {
-            case .addMembers(let clients):
-                let memberAddMessages = try await coreCrypto.perform {
-                    try await $0.addClientsToConversation(
-                        conversationId: groupID.data,
-                        keyPackages: clients.compactMap(\.keyPackage.base64DecodedData)
-                    )
-                }
-
-                if let newDistributionPoints = CRLsDistributionPoints(
-                    from: memberAddMessages.crlNewDistributionPoints
-                ) {
-                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
-                }
-
-                return CommitBundle(
-                    welcome: memberAddMessages.welcome,
-                    commit: memberAddMessages.commit,
-                    groupInfo: memberAddMessages.groupInfo
-                )
-
-            case .removeClients(let clients):
-                return try await coreCrypto.perform {
-                    try await $0.removeClientsFromConversation(
-                        conversationId: groupID.data,
-                        clients: clients
-                    )
-                }
-
-            case .updateKeyMaterial:
-                return try await coreCrypto.perform {
-                    try await $0.updateKeyingMaterial(conversationId: groupID.data)
-                }
-
-            case .proposal:
-                guard let bundle = try await coreCrypto.perform({
-                    do {
-                        return try await $0.commitPendingProposals(conversationId: groupID.data)
-                    } catch {
-                        // if we already have a pending commit `commitPendingProposals()` will fail
-                        // and we must first clear it in order to generate the commit again.
-                        try? await $0.clearPendingCommit(conversationId: groupID.data)
-                        return try await $0.commitPendingProposals(conversationId: groupID.data)
-                    }
-                }) else {
-                    throw CommitError.noPendingProposals
-                }
-
-                return bundle
-
-            case .joinGroup(let groupInfo):
-                let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
-                let conversationInitBundle = try await coreCrypto.perform {
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
-                    return try await $0.joinByExternalCommit(
-                        groupInfo: groupInfo,
-                        customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
-                        credentialType: e2eiIsEnabled ? .x509 : .basic
-                    )
-                }
-
-                if let newDistributionPoints = CRLsDistributionPoints(
-                    from: conversationInitBundle.crlNewDistributionPoints
-                ) {
-                    onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
-                }
-
-                return CommitBundle(
-                    welcome: nil,
-                    commit: conversationInitBundle.commit,
-                    groupInfo: conversationInitBundle.groupInfo
-                )
+            return try await context.decryptMessage(conversationId: groupID.conversationId, payload: message)
+        } catch let CoreCryptoError.Mls(error) {
+            switch error {
+            case .BufferedFutureMessage, .BufferedCommit:
+                // ignore error so transaction is saved and message is saved too.
+                return nil
+            default:
+                throw CoreCryptoError.Mls(mlsError: error)
             }
-        } catch CommitError.noPendingProposals {
-            throw CommitError.noPendingProposals
         } catch {
-            WireLogger.mls.warn("failed: generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw CommitError.failedToGenerateCommit
+            throw error
         }
-    }
-
-    // MARK: - Epoch publisher
-
-    nonisolated
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        commitSender.onEpochChanged()
     }
 
     // MARK: - CRLs distribution points publisher
-    nonisolated
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+
+    public nonisolated
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
@@ -331,20 +406,26 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
     var debugDescription: String {
         switch self {
         case .addMembers:
-            return "addMembers"
+            "addMembers"
 
         case .removeClients:
-            return "removeClients"
+            "removeClients"
 
         case .updateKeyMaterial:
-            return "updateKeyMaterial"
+            "updateKeyMaterial"
 
         case .proposal:
-            return "proposal"
+            "proposal"
 
         case .joinGroup:
-            return "joinGroup"
+            "joinGroup"
         }
     }
 
+}
+
+extension MLSGroupID {
+    var safeAttributes: LogAttributes {
+        [.mlsGroupID: safeForLoggingDescription, .public: true]
+    }
 }

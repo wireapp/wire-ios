@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ extension ZClientViewController: AppLockChangeWarningViewControllerDelegate {
         guard userSession.shouldNotifyUserOfDisabledAppLock else { return }
         let viewController = AppLockChangeWarningViewController(isAppLockActive: false, userSession: userSession)
         viewController.modalPresentationStyle = .fullScreen
-        present(viewController, animated: false)
+        mainSplitViewController.present(viewController, animated: false)
     }
-
 }

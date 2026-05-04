@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension ZMUserSession {
-    public var notificationContext: any NotificationContext {
+public extension ZMUserSession {
+    var notificationContext: any NotificationContext {
         // Workaround to replace the core data dependency in future!
         coreDataStack.viewContext.persistentStoreCoordinator!
     }

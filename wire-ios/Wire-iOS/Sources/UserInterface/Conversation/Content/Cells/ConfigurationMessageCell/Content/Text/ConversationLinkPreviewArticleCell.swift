@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,35 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let textMessageData: ZMTextMessageData
+    struct Configuration: Equatable {
+        var textMessageData: TextMessageData
         let showImage: Bool
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            return message.isObfuscated
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.showImage == rhs.showImage &&
+                lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.textMessageData.messageText == rhs.textMessageData.messageText
         }
+
     }
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return articleView
+        articleView
     }
 
     var configuration: Configuration?
@@ -56,18 +64,20 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     private func configureSubviews() {
         articleView.delegate = self
+        articleView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(articleView)
     }
 
     private func configureConstraints() {
-        articleView.translatesAutoresizingMaskIntoConstraints = false
-        articleView.fitIn(view: self)
+        articleView.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
         configuration = object
-        articleView.configure(withTextMessageData: object.textMessageData,
-                              obfuscated: object.isObfuscated)
+        articleView.configure(
+            withTextMessageData: object.textMessageData,
+            obfuscated: object.isObfuscated
+        )
 
         updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
@@ -82,41 +92,58 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        updateImageLayout(isRegular: self.traitCollection.horizontalSizeClass == .regular)
+        updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
 
 }
 
 extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     var url: URL? {
-        return configuration?.textMessageData.linkPreview?.openableURL
+        configuration?.textMessageData.linkPreview?.openableURL
     }
 }
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
-    let configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    var configuration: View.Configuration
+
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                if let data = message.textMessageData {
+                    configuration.textMessageData = data
+                }
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
     }
 
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMTextMessageData) {
+    init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
+        self.configuration = View
+            .Configuration(
+                textMessageData: data,
+                showImage: showImage,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

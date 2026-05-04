@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 import Ziphy
+@testable import Wire
 
 final class GiphySearchViewControllerTests: XCTestCase {
 
@@ -49,9 +49,13 @@ final class GiphySearchViewControllerTests: XCTestCase {
     func testGiphySearchViewControllerIsNotRetainedAfterTimerIsScheduled() {
         autoreleasepool {
             // GIVEN
-            let searchTerm: String = "apple"
+            let searchTerm = "apple"
 
-            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
+            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(
+                searchTerm: searchTerm,
+                conversation: (mockConversation as Any) as! ZMConversation,
+                searchResultsController: resultsController
+            )
             sut = giphySearchViewController
 
             // WHEN

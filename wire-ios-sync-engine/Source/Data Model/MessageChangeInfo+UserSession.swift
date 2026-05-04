@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,34 +18,36 @@
 
 import WireDataModel
 
-extension MessageChangeInfo {
+public extension MessageChangeInfo {
 
     /// Adds a ZMMessageObserver to the specified message
     /// To observe messages and their users (senders, systemMessage users), observe the conversation window instead
     /// Messages observed with this call will not contain information about user changes
     /// You must hold on to the token and use it to unregister
-    public static func add(observer: ZMMessageObserver,
-                           for message: ZMConversationMessage,
-                           userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
+    static func add(
+        observer: ZMMessageObserver,
+        for message: ZMConversationMessage,
+        userSession: ZMUserSession
+    ) -> NSObjectProtocol {
+        add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
     }
 }
 
-extension NewUnreadMessagesChangeInfo {
+public extension NewUnreadMessagesChangeInfo {
 
     /// Adds a ZMNewUnreadMessagesObserver
     /// You must hold on to the token and use it to unregister
-    public static func add(observer: ZMNewUnreadMessagesObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
+    static func add(observer: ZMNewUnreadMessagesObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
+        add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
 
 }
 
-extension NewUnreadKnockMessagesChangeInfo {
+public extension NewUnreadKnockMessagesChangeInfo {
     /// Adds a ZMNewUnreadKnocksObserver
     /// You must hold on to the token and use it to unregister
-    public static func add(observer: ZMNewUnreadKnocksObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
+    static func add(observer: ZMNewUnreadKnocksObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
+        add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
 
 }

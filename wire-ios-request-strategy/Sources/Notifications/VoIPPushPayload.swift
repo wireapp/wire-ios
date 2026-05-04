@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 /// The payload of a push for call events.
 
@@ -71,7 +72,7 @@ public struct VoIPPushPayload: Codable {
 
     public init?(from event: ZMUpdateEvent, accountID: UUID, serverTimeDelta: TimeInterval) {
         guard
-            let message = GenericMessage(from: event),
+            let message = GenericMessage(from: event, validate: true),
             let data = message.calling.content.data(using: .utf8, allowLossyConversion: false),
             let conversationID = event.conversationUUID,
             let senderID = event.senderUUID,

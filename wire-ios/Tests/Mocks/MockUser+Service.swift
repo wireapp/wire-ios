@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@ import Foundation
 
 extension MockUser {
     var canSeeServices: Bool {
-        return self.hasTeam
+        hasTeam
     }
 
     // MARK: - clients
+
     @discardableResult
     func feature(withUserClients numClients: Int) -> [MockUserClient]? {
         var newClients: [AnyHashable] = []
-        for _ in 0..<numClients {
+        for _ in 0 ..< numClients {
             let mockClient = MockUserClient()
             mockClient.remoteIdentifier = "0011223344556677"
             mockClient.user = (self as Any as! ZMUser)

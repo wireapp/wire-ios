@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "AuthenticationReauthenticateInputHandler")
 
-/**
- * Handles input in the reauthentication phase.
- */
+/// Handles input in the reauthentication phase.
 
 final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler {
 
@@ -38,9 +36,15 @@ final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler
         if context is Void {
             // If we get `Void`, start the company login flow.
             return [.startCompanyLogin(code: nil)]
-        } else if let (emailAndPassword, proxyCredentials) = context as? (EmailPasswordInput, AuthenticationProxyCredentialsInput?) {
+        } else if let (emailAndPassword, proxyCredentials) = context as? (
+            EmailPasswordInput,
+            AuthenticationProxyCredentialsInput?
+        ) {
             // If we get `(EmailPasswordInput, AuthenticationProxyCredentialsInput?)`, start the email flow
-            let request = AuthenticationLoginRequest.email(address: emailAndPassword.email, password: emailAndPassword.password)
+            let request = AuthenticationLoginRequest.email(
+                address: emailAndPassword.email,
+                password: emailAndPassword.password
+            )
             return [.startLoginFlow(request, proxyCredentials)]
         } else {
             zmLog.error("Unable to handle context type: \(type(of: context))")

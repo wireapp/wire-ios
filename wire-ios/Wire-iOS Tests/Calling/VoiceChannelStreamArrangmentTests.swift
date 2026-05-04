@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,13 +70,18 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         mockUser1 = nil
         mockUser2 = nil
         mockUser3 = nil
-        CallingConfiguration.resetDefaultConfig()
+        CallingConfiguration.testHelper_resetDefaultConfig()
         super.tearDown()
     }
 
     private func participantStub(for user: ZMUser, videoEnabled: Bool) -> CallParticipant {
         let state: VideoState = videoEnabled ? .started : .stopped
-        return CallParticipant(user: user, clientId: UUID().transportString(), state: .connected(videoState: state, microphoneState: .unmuted), activeSpeakerState: .inactive)
+        return CallParticipant(
+            user: user,
+            clientId: UUID().transportString(),
+            state: .connected(videoState: state, microphoneState: .unmuted),
+            activeSpeakerState: .inactive
+        )
     }
 
     // MARK: - activeVideoStreams(from participants:)
@@ -93,12 +98,12 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(streams.count, 2)
-        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId1 }))
-        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId2 }))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier(isFederationEnabled: false) == avsId1 }))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier(isFederationEnabled: false) == avsId2 }))
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithVideo() {
-       testThatActiveStreams_ReturnsSteams_ForParticipantsWithVideo(enabled: true)
+        testThatActiveStreams_ReturnsSteams_ForParticipantsWithVideo(enabled: true)
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithoutVideo() {
@@ -214,7 +219,9 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         let sortedStreams = sut.sortByVideo(streamData: streams)
 
         // THEN
-        let userIds = sortedStreams.map(\.streamId.avsIdentifier)
+        let userIds = sortedStreams.map {
+            $0.streamId.avsIdentifier(isFederationEnabled: false)
+        }
         XCTAssertEqual(userIds.count, 3)
         XCTAssertEqual(userIds[0], avsId1)
         XCTAssertEqual(userIds[1], avsId3)

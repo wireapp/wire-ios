@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@ import WireSyncEngine
 
 extension Account {
     func userDefaultsKey() -> String {
-        return "account_\(self.userIdentifier.transportString())"
+        "account_\(userIdentifier.transportString())"
     }
 }
 
 extension Settings {
     private func payload(for account: Account) -> [String: Any] {
-        return defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
+        defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
     }
 
     /// Returns the value associated with the given account for the given key
@@ -43,7 +43,6 @@ extension Settings {
         if let rootValue = defaults.value(forKey: key) {
             setValue(rootValue, settingKey: settingKey, in: account)
             defaults.removeObject(forKey: key)
-            defaults.synchronize()
         }
 
         let accountPayload = payload(for: account)
@@ -56,20 +55,20 @@ extension Settings {
     ///   - value: value to set
     ///   - settingKey: the SettingKey enum
     ///   - account: account to set value
-    func setValue<T>(_ value: T?, settingKey: SettingKey, in account: Account) {
+    func setValue(_ value: (some Any)?, settingKey: SettingKey, in account: Account) {
         let key = settingKey.rawValue
-        var accountPayload = self.payload(for: account)
+        var accountPayload = payload(for: account)
         accountPayload[key] = value
         defaults.setValue(accountPayload, forKey: account.userDefaultsKey())
     }
 
-    func lastViewedConversation(for account: Account) -> ZMConversation? {
-        guard let conversationID: String = self.value(for: .lastViewedConversation, in: account) else {
+    func lastViewedConversation(for account: Account, in session: UserSession) -> ZMConversation? {
+        guard let conversationID: String = value(for: .lastViewedConversation, in: account) else {
             return nil
         }
 
         let conversationURI = URL(string: conversationID)
-        let session = ZMUserSession.shared()
+        let session = session as? ZMUserSession
         let objectID = ZMManagedObject.objectID(forURIRepresentation: conversationURI, inUserSession: session)
         return ZMConversation.existingObject(with: objectID, inUserSession: session)
     }
@@ -77,7 +76,6 @@ extension Settings {
     func setLastViewed(conversation: ZMConversation, for account: Account) {
         let conversationURI = conversation.objectID.uriRepresentation()
         setValue(conversationURI.absoluteString, settingKey: .lastViewedConversation, in: account)
-        defaults.synchronize()
     }
 
     func notifyDisableSendButtonChanged() {

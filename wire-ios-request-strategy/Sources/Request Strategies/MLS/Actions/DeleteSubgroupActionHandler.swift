@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,11 +46,14 @@ final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
             action.fail(with: .invalidParameters)
             return nil
         }
+        var payload: [String: Any] = [:]
+        payload["epoch"] = action.epoch
+        payload["group_id"] = action.groupID.data.base64EncodedString()
 
         return ZMTransportRequest(
             path: "/conversations/\(domain)/\(conversationID)/subconversations/\(subgroupType)",
             method: .delete,
-            payload: nil,
+            payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
     }

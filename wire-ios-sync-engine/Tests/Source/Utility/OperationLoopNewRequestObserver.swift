@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +22,15 @@ final class OperationLoopNewRequestObserver {
 
     var token: NSObjectProtocol?
     var notifications = [Notification]()
-    fileprivate var notificationCenter = NotificationCenter.default
-    fileprivate var newRequestNotification = "RequestAvailableNotification"
+    private var notificationCenter = NotificationCenter.default
+    private var newRequestNotification = "RequestAvailableNotification"
 
     init() {
-        token = notificationCenter.addObserver(forName: Notification.Name(rawValue: newRequestNotification), object: nil, queue: .main) { [weak self] note in
+        self.token = notificationCenter.addObserver(
+            forName: Notification.Name(rawValue: newRequestNotification),
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             self?.notifications.append(note)
         }
     }

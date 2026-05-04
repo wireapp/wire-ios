@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,22 +23,20 @@ import WireDataModel
 extension ZMConversationMessage {
 
     func copy(in pasteboard: UIPasteboard) {
-        if self.isText {
+        if isText {
             if let text = textMessageData?.messageText, !text.isEmpty {
                 pasteboard.string = text
             }
-        } else if isImage,
-                  let imageData = imageMessageData?.imageData {
+        } else if isImage, let imageData = imageMessageData?.imageData {
 
-            let mediaAsset: MediaAsset?
-            if imageMessageData?.isAnimatedGIF == true {
-                mediaAsset = FLAnimatedImage(animatedGIFData: imageData)
+            let mediaAsset: MediaAsset? = if imageMessageData?.isAnimatedGIF == true {
+                FLAnimatedImage(animatedGIFData: imageData)
             } else {
-                mediaAsset = UIImage(data: imageData)
+                UIImage(data: imageData)
             }
 
             UIPasteboard.general.setMediaAsset(mediaAsset)
-        } else if self.isLocation {
+        } else if isLocation {
             if let locationName = locationMessageData?.name {
                 pasteboard.string = locationName
             }

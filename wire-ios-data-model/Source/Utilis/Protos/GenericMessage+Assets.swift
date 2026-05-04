@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,81 +17,87 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-public extension WireProtos.Asset {
+public extension GenericMessageProtocol.Asset {
     init(_ metadata: ZMFileMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-            })
-        })
+            }
+        }
     }
 
     init(_ metadata: ZMAudioMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-                $0.audio = WireProtos.Asset.AudioMetaData.with({
+                $0.audio = GenericMessageProtocol.Asset.AudioMetaData.with {
                     let loudnessArray = metadata.normalizedLoudness.map { UInt8(roundf($0 * 255)) }
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
                     $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
-                })
-
-            })
-        })
+                }
+            }
+        }
     }
 
     init(_ metadata: ZMVideoMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-                $0.video = WireProtos.Asset.VideoMetaData.with({
+                $0.video = GenericMessageProtocol.Asset.VideoMetaData.with {
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
                     $0.width = Int32(metadata.dimensions.width)
                     $0.height = Int32(metadata.dimensions.height)
-                })
-            })
-        })
+                }
+            }
+        }
     }
 
-    init(imageSize: CGSize, mimeType: String, size: UInt64) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
-                $0.size = size
+    init(
+        name: String,
+        mimeType: String,
+        imageSize: CGSize,
+        size: UInt64
+    ) {
+        self = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
+                $0.name = name
                 $0.mimeType = mimeType
-                $0.image = WireProtos.Asset.ImageMetaData.with({
+                $0.size = size
+                $0.image = GenericMessageProtocol.Asset.ImageMetaData.with {
                     $0.width = Int32(imageSize.width)
                     $0.height = Int32(imageSize.height)
-                })
-            })
-        })
+                }
+            }
+        }
     }
 
-    init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
-        self = WireProtos.Asset.with({
+    init(original: GenericMessageProtocol.Asset.Original?, preview: GenericMessageProtocol.Asset.Preview?) {
+        self = GenericMessageProtocol.Asset.with {
             if let original {
                 $0.original = original
             }
             if let preview {
                 $0.preview = preview
             }
-        })
-    }
-
-    init(withUploadedOTRKey otrKey: Data, sha256: Data) {
-        self = WireProtos.Asset.with {
-            $0.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         }
     }
 
-    init(withNotUploaded notUploaded: WireProtos.Asset.NotUploaded) {
-        self = WireProtos.Asset.with {
+    init(withUploadedOTRKey otrKey: Data, sha256: Data) {
+        self = GenericMessageProtocol.Asset.with {
+            $0.uploaded = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+        }
+    }
+
+    init(withNotUploaded notUploaded: GenericMessageProtocol.Asset.NotUploaded) {
+        self = GenericMessageProtocol.Asset.with {
             $0.notUploaded = notUploaded
         }
     }
@@ -111,10 +117,15 @@ public extension WireProtos.Asset {
     }
 }
 
-public extension WireProtos.Asset.Original {
+public extension GenericMessageProtocol.Asset.Original {
 
-    init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: WireProtos.Asset.ImageMetaData? = nil) {
-        self = WireProtos.Asset.Original.with {
+    init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        imageMetaData: GenericMessageProtocol.Asset.ImageMetaData? = nil
+    ) {
+        self = GenericMessageProtocol.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
             if let name {
@@ -126,14 +137,20 @@ public extension WireProtos.Asset.Original {
         }
     }
 
-    init(withSize size: UInt64, mimeType: String, name: String?, audioDurationInMillis: UInt, normalizedLoudness: [Float]) {
-        self = WireProtos.Asset.Original.with {
+    init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        audioDurationInMillis: UInt,
+        normalizedLoudness: [Float]
+    ) {
+        self = GenericMessageProtocol.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
             if let name {
                 $0.name = name
             }
-            $0.audio = WireProtos.Asset.AudioMetaData.with {
+            $0.audio = GenericMessageProtocol.Asset.AudioMetaData.with {
                 $0.durationInMillis = UInt64(audioDurationInMillis)
                 let loudnessArray = normalizedLoudness.map { UInt8(roundf($0 * 255)) }
                 $0.normalizedLoudness = Data(bytes: loudnessArray, count: loudnessArray.count)
@@ -145,14 +162,14 @@ public extension WireProtos.Asset.Original {
     var normalizedLoudnessLevels: [Float] {
 
         guard audio.hasNormalizedLoudness else { return [] }
-        guard audio.normalizedLoudness.count > 0 else { return [] }
+        guard !audio.normalizedLoudness.isEmpty else { return [] }
 
         let data = audio.normalizedLoudness
-        let offsets = 0..<data.count
+        let offsets = 0 ..< data.count
         return offsets
             .map { offset -> UInt8 in
                 var number: UInt8 = 0
-                data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size + offset))
+                data.copyBytes(to: &number, from: (0 + offset) ..< (MemoryLayout<UInt8>.size + offset))
                 return number
             }
             .map {
@@ -161,32 +178,43 @@ public extension WireProtos.Asset.Original {
     }
 }
 
-public extension WireProtos.Asset.Preview {
+public extension GenericMessageProtocol.Asset.Preview {
 
-    init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
-        self = WireProtos.Asset.Preview.with({
+    init(
+        size: UInt64,
+        mimeType: String,
+        remoteData: GenericMessageProtocol.Asset.RemoteData?,
+        imageMetadata: GenericMessageProtocol.Asset.ImageMetaData
+    ) {
+        self = GenericMessageProtocol.Asset.Preview.with {
             $0.size = size
             $0.mimeType = mimeType
             $0.image = imageMetadata
             if let remoteData {
                 $0.remote = remoteData
             }
-        })
+        }
     }
 }
 
-public extension WireProtos.Asset.ImageMetaData {
+public extension GenericMessageProtocol.Asset.ImageMetaData {
     init(width: Int32, height: Int32) {
-        self = WireProtos.Asset.ImageMetaData.with {
+        self = GenericMessageProtocol.Asset.ImageMetaData.with {
             $0.width = width
             $0.height = height
         }
     }
 }
 
-public extension WireProtos.Asset.RemoteData {
-    init(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil, assetDomain: String? = nil) {
-        self = WireProtos.Asset.RemoteData.with {
+public extension GenericMessageProtocol.Asset.RemoteData {
+    init(
+        withOTRKey otrKey: Data,
+        sha256: Data,
+        assetId: String? = nil,
+        assetToken: String? = nil,
+        assetDomain: String? = nil
+    ) {
+        self = GenericMessageProtocol.Asset.RemoteData.with {
             $0.otrKey = otrKey
             $0.sha256 = sha256
             if let id = assetId {
@@ -206,28 +234,42 @@ public extension WireProtos.Asset.RemoteData {
 
 extension GenericMessage {
     mutating func updateAssetOriginal(withImageProperties imageProperties: ZMIImageProperties) {
-        let asset = WireProtos.Asset(imageSize: imageProperties.size, mimeType: imageProperties.mimeType, size: UInt64(imageProperties.length))
-        update(asset: asset)
+        updateAsset { existingAsset in
+            existingAsset.original.mimeType = imageProperties.mimeType
+            existingAsset.original.size = UInt64(imageProperties.length)
+            existingAsset.original.image = GenericMessageProtocol.Asset.ImageMetaData.with {
+                $0.width = Int32(imageProperties.size.width)
+                $0.height = Int32(imageProperties.size.height)
+            }
+        }
     }
 
     mutating func updateAssetPreview(withUploadedOTRKey otrKey: Data, sha256: Data) {
         guard var preview = assetData?.preview else { return }
 
-        preview.remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
-        let asset = WireProtos.Asset(original: nil, preview: preview)
+        preview.remote = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+        let asset = GenericMessageProtocol.Asset(original: nil, preview: preview)
 
         update(asset: asset)
     }
 
     mutating func updateAssetPreview(withImageProperties imageProperties: ZMIImageProperties) {
-        let imageMetaData = WireProtos.Asset.ImageMetaData(width: Int32(imageProperties.size.width), height: Int32(imageProperties.size.height))
-        let preview = WireProtos.Asset.Preview(size: UInt64(imageProperties.length), mimeType: imageProperties.mimeType, remoteData: nil, imageMetadata: imageMetaData)
-        let asset = WireProtos.Asset(original: nil, preview: preview)
+        let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData(
+            width: Int32(imageProperties.size.width),
+            height: Int32(imageProperties.size.height)
+        )
+        let preview = GenericMessageProtocol.Asset.Preview(
+            size: UInt64(imageProperties.length),
+            mimeType: imageProperties.mimeType,
+            remoteData: nil,
+            imageMetadata: imageMetaData
+        )
+        let asset = GenericMessageProtocol.Asset(original: nil, preview: preview)
         update(asset: asset)
     }
 
     mutating func updateAsset(withUploadedOTRKey otrKey: Data, sha256: Data) {
-        let asset = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256)
+        let asset = GenericMessageProtocol.Asset(withUploadedOTRKey: otrKey, sha256: sha256)
         update(asset: asset)
     }
 
@@ -243,11 +285,11 @@ extension GenericMessage {
         }
     }
 
-    public mutating func update(asset: WireProtos.Asset) {
+    public mutating func update(asset: GenericMessageProtocol.Asset) {
         updateAsset { $0 = asset }
     }
 
-    mutating func updateAsset(_ block: (inout WireProtos.Asset) -> Void) {
+    mutating func updateAsset(_ block: (inout GenericMessageProtocol.Asset) -> Void) {
         guard let content else {
             return
         }
@@ -265,7 +307,7 @@ extension GenericMessage {
     }
 }
 
-extension WireProtos.Asset.RemoteData {
+extension GenericMessageProtocol.Asset.RemoteData {
     mutating func update(assetId: String, token: String?, domain: String?) {
         assetID = assetId
 

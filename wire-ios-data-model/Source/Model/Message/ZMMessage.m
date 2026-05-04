@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 @import WireUtilities;
-@import WireProtos;
 @import MobileCoreServices;
 @import ImageIO;
 
@@ -32,8 +31,6 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
-#import <WireCryptobox/cbox.h>
-
 
 static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
 
@@ -95,7 +92,6 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
-
 
 @interface ZMMessage ()
 
@@ -252,11 +248,22 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return NO;
 }
 
-- (void)expire;
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
+    BOOL wasAlreadyExpired = self.isExpired;
+
     self.isExpired = YES;
+    if (!wasAlreadyExpired) {
+        // It is possible that multiple objects expire a message without the full context of why the message was
+        // originally expired. Don't overwrite the original reason.
+        self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
+    }
     [self removeExpirationDate];
-    self.conversation.hasUnreadUnsentMessage = YES;
+
+    if (self.visibleInConversation != nil) {
+        // Only warn for unsent messages if it's actually visible.
+        self.conversation.hasUnreadUnsentMessage = YES;
+    }
 }
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
@@ -334,7 +341,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         return conversation;
     }
 
-    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc];
+    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc setNeedsToBeUpdatedFromBackend: YES];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
@@ -618,112 +625,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 
 
 
-#pragma mark - Text message
-
-@implementation ZMTextMessage
-
-@dynamic text;
-
-+ (NSString *)entityName;
-{
-    return @"TextMessage";
-}
-
-- (NSString *)shortDebugDescription;
-{
-    return [[super shortDebugDescription] stringByAppendingFormat:@", \'%@\'", self.text];
-}
-
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent __unused *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext __unused *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult __unused *)prefetchResult
-{
-    return nil;
-}
-
-- (NSString *)messageText
-{
-    return self.text;
-}
-
-- (LinkMetadata *)linkPreview
-{
-    return nil;
-}
-
-- (id<ZMTextMessageData>)textMessageData
-{
-    return self;
-}
-
-- (NSData *)linkPreviewImageData
-{
-    return nil;
-}
-
-- (BOOL)linkPreviewHasImage
-{
-    return NO;
-}
-
-- (NSString *)linkPreviewImageCacheKey
-{
-    return nil;
-}
-
-- (NSArray<Mention *> *)mentions
-{
-    return @[];
-}
-
-- (ZMMessage *)quote
-{
-    return nil;
-}
-
--(NSSet<ZMMessage *> *)replies
-{
-    return [NSSet set];
-}
-
--(BOOL)hasQuote
-{
-    return NO;
-}
-
--(BOOL)isQuotingSelf
-{
-    return NO;
-}
-
-- (void)removeMessageClearingSender:(BOOL)clearingSender
-{
-    self.text = nil;
-    [super removeMessageClearingSender:clearingSender];
-}
-
-- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler
-{
-    NOT_USED(queue);
-    NOT_USED(completionHandler);
-}
-
-- (void)requestLinkPreviewImageDownload
-{
-    
-}
-
-- (void)editText:(NSString *)text mentions:(NSArray<Mention *> *)mentions fetchLinkPreview:(BOOL)fetchLinkPreview
-{
-    NOT_USED(text);
-    NOT_USED(mentions);
-    NOT_USED(fetchLinkPreview);
-}
-
-@end
-
-
-
 
 
 # pragma mark - Knock message
@@ -865,22 +766,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         self.needsUpdatingUsers = [self.addedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock] ||
                                   [self.removedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock];
     }
-}
-
-- (BOOL)isDecryptionErrorRecoverable {
-    if (self.decryptionErrorCode == nil) {
-        return NO;
-    }
-    
-    NSInteger errorCode = self.decryptionErrorCode.integerValue;
-    
-    if (errorCode == CBOX_TOO_DISTANT_FUTURE ||
-        errorCode == CBOX_DEGENERATED_KEY ||
-        errorCode == CBOX_PREKEY_NOT_FOUND) {
-        return YES;
-    }
-    
-    return NO;
 }
 
 + (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;

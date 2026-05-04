@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ public final class DeleteSubgroupAction: EntityAction {
     public let conversationID: UUID
     public let domain: String
     public let subgroupType: SubgroupType
+    public let epoch: Int
+    public let groupID: MLSGroupID
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
@@ -47,11 +49,15 @@ public final class DeleteSubgroupAction: EntityAction {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
         resultHandler: ResultHandler? = nil
     ) {
         self.conversationID = conversationID
         self.domain = domain
         self.subgroupType = subgroupType
+        self.epoch = epoch
+        self.groupID = groupID
         self.resultHandler = resultHandler
     }
 

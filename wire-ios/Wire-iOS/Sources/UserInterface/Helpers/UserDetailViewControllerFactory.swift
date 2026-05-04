@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 
 import Foundation
 import WireDataModel
+import WireMainNavigationUI
+import WireMessagingDomain
+import WireNetwork
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
@@ -28,37 +31,42 @@ enum UserDetailViewControllerFactory {
     ///   - user: user to show the details
     ///   - conversation: conversation currently displaying
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
-    ///   - viewControllerDismisser: a ViewControllerDismisser for returing UIViewController's dismiss action
-    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
+    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
+    /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
-        user: UserType,
+        user: WireDataModel.UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
-        viewControllerDismisser: ViewControllerDismisser,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
-        if user.isServiceUser, let serviceUser = user as? ServiceUser {
-            let serviceDetailViewController = ServiceDetailViewController(
-                serviceUser: serviceUser,
-                actionType: .removeService(conversation),
-                userSession: userSession
+        if user.isAppOrBot {
+
+            return ServiceDetailViewController(
+                user: user,
+                actionType: .removeParticipant(conversation),
+                userSession: userSession,
+                usersAPI: userSession.clientSessionComponent?.usersAPI,
+                completion: { _ in }
             )
-            serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
-            return serviceDetailViewController
 
         } else {
+
             let profileViewController = ProfileViewController(
                 user: user,
                 viewer: userSession.selfUser,
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = profileViewControllerDelegate
-            profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
+
         }
     }
 }

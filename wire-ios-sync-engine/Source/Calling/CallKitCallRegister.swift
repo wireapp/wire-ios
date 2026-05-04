@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,9 +37,7 @@ class CallKitCallRegister {
     // MARK: - Persistence
 
     private func persistStorage() {
-        VoIPPushHelper.knownCallHandles = storage.values.map {
-            $0.handle.encodedString
-        }
+        VoIPPushHelper.knownCallHandles = storage.values.map(\.handle.encodedString)
     }
 
     // MARK: - Registration
@@ -64,23 +62,23 @@ class CallKitCallRegister {
     // MARK: - Lookup
 
     var allCalls: [CallKitCall] {
-        return Array(storage.values)
+        Array(storage.values)
     }
 
     func callExists(for id: UUID) -> Bool {
-        return lookupCall(by: id) != nil
+        lookupCall(by: id) != nil
     }
 
     func lookupCall(by id: UUID) -> CallKitCall? {
-        return storage[id]
+        storage[id]
     }
 
     func callExists(for handle: CallHandle) -> Bool {
-        return lookupCall(by: handle) != nil
+        lookupCall(by: handle) != nil
     }
 
     func lookupCall(by handle: CallHandle) -> CallKitCall? {
-        return lookupCalls(by: handle).first
+        lookupCalls(by: handle).first
     }
 
     func lookupCalls(by handle: CallHandle) -> [CallKitCall] {

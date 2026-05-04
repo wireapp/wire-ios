@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,19 @@ import WireTransport
 
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: true)
+        let backendURL = backendURL.host!
+        return ZMPersistentCookieStorage(
+            forServerName: backendURL,
+            userIdentifier: account.userIdentifier,
+            useCache: true
+        )
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        let cookieStorage = self.cookieStorage(for: account)
-
-        if let expirationDate = cookieStorage.authenticationCookieExpirationDate {
-            return expirationDate.timeIntervalSinceNow > 0
-        } else {
-            return cookieStorage.authenticationCookieData != nil
+        guard let expirationDate = cookieStorage(for: account).authenticationCookieExpirationDate else {
+            return false
         }
+
+        return expirationDate.timeIntervalSinceNow > 0
     }
 }

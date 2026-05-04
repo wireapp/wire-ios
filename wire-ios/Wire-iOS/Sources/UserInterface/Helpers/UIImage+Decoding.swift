@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,13 +45,15 @@ extension UIImage {
 private extension CGContext {
 
     static func fromRawImage(_ rawImage: CGImage) -> CGContext? {
-        return CGContext(data: nil,
-                         width: rawImage.width,
-                         height: rawImage.height,
-                         bitsPerComponent: 8,
-                         bytesPerRow: rawImage.width * 4,
-                         space: CGColorSpaceCreateDeviceRGB(),
-                         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        CGContext(
+            data: nil,
+            width: rawImage.width,
+            height: rawImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: rawImage.width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )
     }
 
 }

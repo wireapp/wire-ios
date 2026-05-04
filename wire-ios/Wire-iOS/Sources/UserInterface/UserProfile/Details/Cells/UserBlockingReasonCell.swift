@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@ final class UserBlockingReasonCell: UITableViewCell {
     // MARK: - Properties
 
     private let titleLabel = WebLinkTextView()
-
-    private var title: String? {
-        didSet {
-            titleLabel.text = title
-        }
-    }
 
     // MARK: - Life cycle
 
@@ -70,9 +64,12 @@ final class UserBlockingReasonCell: UITableViewCell {
 
     private func configureLabel() {
         titleLabel.accessibilityIdentifier = "blocking_reason.label.title"
-        let markdownTitle = L10n.Localizable.Profile.Details.blockingReason(URL.wr_legalHoldLearnMore.absoluteString)
-        titleLabel.attributedText = .markdown(from: markdownTitle,
-                                              style: .labelStyle)
+        let markdownTitle = L10n.Localizable.Profile.Details
+            .blockingReason(WireURLs.shared.legalHoldInfo.absoluteString)
+        titleLabel.attributedText = .markdown(
+            from: markdownTitle,
+            style: .labelStyle
+        )
     }
 
 }

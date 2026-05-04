@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ extension UserStatus {
 
         if includeAvailability || includeVerificationStatus {
             return AvailabilityStringBuilder.titleForUser(
-                name: name,
+                name: displayName,
                 availability: includeAvailability ? availability : .none,
                 isE2EICertified: includeVerificationStatus && isE2EICertified,
                 isProteusVerified: includeVerificationStatus && isProteusVerified,
@@ -39,8 +39,8 @@ extension UserStatus {
                 color: color
             )
 
-        } else if !name.isEmpty {
-            return .init(string: name, attributes: [.foregroundColor: color])
+        } else if !displayName.isEmpty {
+            return .init(string: displayName, attributes: [.foregroundColor: color])
 
         } else {
             let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable

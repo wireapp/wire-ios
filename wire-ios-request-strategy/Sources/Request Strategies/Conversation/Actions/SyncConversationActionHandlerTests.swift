@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
 
@@ -28,7 +29,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V0() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -46,7 +51,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V1() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -64,7 +73,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V2() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -84,7 +97,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_InvalidPayload() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -112,7 +129,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_ConversationNotFound() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -143,11 +164,15 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
-        BackendInfo.apiVersion = .v2
-        let sut = SyncConversationActionHandler(context: syncMOC)
+        let apiVersion = APIVersion.v2
+        let sut = SyncConversationActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didSucceed = self.customExpectation(description: "did succeed")
+        let didSucceed = customExpectation(description: "did succeed")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .success = result else {
@@ -165,7 +190,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         )
 
         let payload = ResponsePayload(found: [conversation], failed: [], not_found: [])
-        let payloadString = try XCTUnwrap(payload.payloadString())
+        let payloadString = try XCTUnwrap(payload.payloadString(apiVersion: apiVersion))
 
         let response = ZMTransportResponse(
             payload: payloadString as ZMTransportData,
@@ -180,7 +205,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // When
         sut.handleResponse(response, action: action)
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -190,7 +215,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_400_InvalidBody() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -222,7 +251,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_UnknownError() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A pending legal hold client.
- */
+/// A pending legal hold client.
 
 public class MockPendingLegalHoldClient: NSManagedObject {
 
@@ -38,11 +36,11 @@ public class MockPendingLegalHoldClient: NSManagedObject {
 
 }
 
-extension MockUser {
+public extension MockUser {
 
     /// Requests a legal hold for the user.
-    public func requestLegalHold() -> Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+    func requestLegalHold() -> Bool {
+        guard let managedObjectContext else {
             return false
         }
 
@@ -50,41 +48,38 @@ extension MockUser {
             return false
         }
 
-        let pendingClient = NSEntityDescription.insertNewObject(forEntityName: "PendingLegalHoldClient", into: managedObjectContext) as! MockPendingLegalHoldClient
+        let pendingClient = NSEntityDescription.insertNewObject(
+            forEntityName: "PendingLegalHoldClient",
+            into: managedObjectContext
+        ) as! MockPendingLegalHoldClient
 
         pendingClient.user = self
 
         let identifier = String.randomClientIdentifier()
         pendingClient.identifier = identifier
 
-        // Generate the prekeys
-        let encryptionContext = MockUserClient.encryptionContext(for: self, clientId: identifier)
+        // Generate mock prekey strings
+        let prekeysStrings = (0 ..< 5).map { _ in UUID().uuidString }
 
-        var generatedPrekeys: [[String: Any]]?
-        var generatedLastPrekey: String?
+        let prekeys = MockPreKey.insertNewKeys(
+            withPayload: prekeysStrings,
+            context: managedObjectContext
+        )
+        pendingClient.prekeys = Set(prekeys)
 
-        encryptionContext.perform { session in
-            generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
-            generatedLastPrekey = try? session.generateLastPrekey()
-        }
-
-        guard let prekeys = generatedPrekeys, !prekeys.isEmpty, let lastPrekey = generatedLastPrekey else {
-            return false
-        }
-
-        let mockPrekey = MockPreKey.insertNewKeys(withPayload: prekeys.map { $0["prekey"] as! String }, context: managedObjectContext)
-        pendingClient.prekeys = Set(mockPrekey)
-
-        let mockLastPrekey = NSEntityDescription.insertNewObject(forEntityName: "PreKey", into: managedObjectContext) as! MockPreKey
-        mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
-        mockLastPrekey.value = lastPrekey
+        let mockLastPrekey = NSEntityDescription.insertNewObject(
+            forEntityName: "PreKey",
+            into: managedObjectContext
+        ) as! MockPreKey
+        mockLastPrekey.identifier = Int(UInt16.max)
+        mockLastPrekey.value = UUID().uuidString
 
         pendingClient.lastPrekey = mockLastPrekey
         return true
     }
 
     /// Accepts the legal hold for the user.
-    public func acceptLegalHold(with pendingClient: MockPendingLegalHoldClient) -> Bool {
+    func acceptLegalHold(with pendingClient: MockPendingLegalHoldClient) -> Bool {
         guard pendingClient == pendingLegalHoldClient else {
             return false
         }
@@ -93,7 +88,10 @@ extension MockUser {
             return false
         }
 
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: managedObjectContext) as! MockUserClient
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: managedObjectContext
+        ) as! MockUserClient
 
         newClient.user = self
         newClient.identifier = pendingClient.identifier

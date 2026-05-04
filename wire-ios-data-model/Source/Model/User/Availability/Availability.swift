@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,23 @@
 
 @objc(ZMAvailability)
 public enum Availability: Int, CaseIterable {
-    case none, available, busy, away
+    case none
+    case available
+    case busy
+    case away
 }
 
 extension Availability: CustomStringConvertible {
     public var description: String {
-          switch self {
-          case .none:
-              "none"
-          case .available:
-              "available"
-          case .busy:
-              "busy"
-          case .away:
-              "away"
-          }
-      }
+        switch self {
+        case .none:
+            "none"
+        case .available:
+            "available"
+        case .busy:
+            "busy"
+        case .away:
+            "away"
+        }
+    }
 }

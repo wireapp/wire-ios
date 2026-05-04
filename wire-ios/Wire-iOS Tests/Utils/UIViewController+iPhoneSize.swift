@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import UIKit
 
 extension CGSize {
     enum iPhoneSize {
-        static let iPhone4: CGSize = CGSize(width: 320, height: 568)
-        static let iPhone4_7: CGSize = CGSize(width: 375, height: 667)
+        static let iPhone4: CGSize = .init(width: 320, height: 568)
+        static let iPhone4_7: CGSize = .init(width: 375, height: 667)
     }
 }
 

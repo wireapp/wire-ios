@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2023 Wire Swiss GmbH
+# Copyright (C) 2026 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ set -Eeuo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
-SWIFTFORMAT="$SCRIPTS_DIR/.build/artifacts/scripts/swiftformat/swiftformat.artifactbundle/swiftformat-0.54.0-macos/bin/swiftformat"
+SWIFTFORMAT="$SCRIPTS_DIR/.build/artifacts/scripts/swiftformat/swiftformat.artifactbundle/swiftformat-0.58.3-macos/bin/swiftformat"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftFormat in CI environment"
@@ -32,4 +32,5 @@ if [[ ! -f "$SWIFTFORMAT" ]]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
 fi
 
+echo "$SWIFTFORMAT" --config "$REPO_ROOT/.swiftformat" "$@"
 "$SWIFTFORMAT" --config "$REPO_ROOT/.swiftformat" "$@"

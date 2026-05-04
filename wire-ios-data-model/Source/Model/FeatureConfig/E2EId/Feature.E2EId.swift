@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,13 +48,20 @@ public extension Feature {
 
             public let acmeDiscoveryUrl: String?
             public let verificationExpiration: UInt
+            public let crlProxy: String?
+            public let useProxyOnMobile: Bool?
 
             public init(
                 acmeDiscoveryUrl: String? = nil,
-                verificationExpiration: UInt = 86400) {
-                    self.acmeDiscoveryUrl = acmeDiscoveryUrl
-                    self.verificationExpiration = verificationExpiration
-                }
+                verificationExpiration: UInt = 86_400,
+                crlProxy: String? = nil,
+                useProxyOnMobile: Bool? = nil
+            ) {
+                self.acmeDiscoveryUrl = acmeDiscoveryUrl
+                self.verificationExpiration = verificationExpiration
+                self.crlProxy = crlProxy
+                self.useProxyOnMobile = useProxyOnMobile
+            }
 
         }
 
@@ -65,7 +72,7 @@ public extension Feature {
 public extension Feature.E2EI {
 
     var isEnabled: Bool {
-        return status == .enabled
+        status == .enabled
     }
 
 }

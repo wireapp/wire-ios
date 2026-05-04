@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,11 @@
 
 import UIKit
 
-/**
- * Represents a request for the user to input text in an alert.
- */
+/// Represents a request for the user to input text in an alert.
 
 struct UserInputRequest {
 
-    /**
-     * Represents the configuration of an alert text field.
-     */
+    /// Represents the configuration of an alert text field.
 
     struct InputConfiguration {
         /// The placeholder of the text field.
@@ -75,10 +71,8 @@ struct UserInputRequest {
 
 extension UIAlertController {
 
-    /**
-     * Creates an alert controller to ask the user for input.
-     * - parameter inputRequest: The description of the data the user needs to input.
-     */
+    /// Creates an alert controller to ask the user for input.
+    /// - parameter inputRequest: The description of the data the user needs to input.
 
     convenience init(inputRequest: UserInputRequest) {
         self.init(title: inputRequest.title, message: inputRequest.message, preferredStyle: .alert)
@@ -110,7 +104,11 @@ extension UIAlertController {
                 textField.isSecureTextEntry = inputConfiguration.isSecure
                 textField.textContentType = inputConfiguration.textContentType
 
-                token = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: .main) { _ in
+                token = NotificationCenter.default.addObserver(
+                    forName: UITextField.textDidChangeNotification,
+                    object: textField,
+                    queue: .main
+                ) { _ in
                     continueAction.isEnabled = textField.text.map(inputConfiguration.validator) ?? false
                 }
 

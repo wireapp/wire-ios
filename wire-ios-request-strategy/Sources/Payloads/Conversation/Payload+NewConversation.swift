@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ extension Payload {
             case conversationRole = "conversation_role"
             case creatorClient = "creator_client"
             case messageProtocol = "protocol"
+            case skipCreator = "skip_creator"
         }
 
         let users: [UUID]?
@@ -50,6 +51,9 @@ extension Payload {
         let creatorClient: String?
         let messageProtocol: String?
 
+        // API v10 optional
+        let skipCreator: Bool?
+
         init(
             users: [UUID]? = nil,
             qualifiedUsers: [QualifiedID]? = nil,
@@ -62,7 +66,8 @@ extension Payload {
             readReceiptMode: Int? = nil,
             conversationRole: String? = nil,
             creatorClient: String? = nil,
-            messageProtocol: String? = nil
+            messageProtocol: String? = nil,
+            skipCreator: Bool? = nil
         ) {
             self.users = users
             self.qualifiedUsers = qualifiedUsers
@@ -76,54 +81,63 @@ extension Payload {
             self.conversationRole = conversationRole
             self.creatorClient = creatorClient
             self.messageProtocol = messageProtocol
+            self.skipCreator = skipCreator
         }
 
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
             case .mls, .mixed:
-                messageProtocol = "mls"
-                creatorClient = action.creatorClientID
-                qualifiedUsers = nil
-                users = nil
+                self.messageProtocol = "mls"
+                self.creatorClient = action.creatorClientID
+                self.qualifiedUsers = nil
+                self.users = nil
 
             case .proteus:
-                messageProtocol = "proteus"
-                creatorClient = nil
-                qualifiedUsers = action.qualifiedUserIDs
-                users = action.unqualifiedUserIDs
+                self.messageProtocol = "proteus"
+                self.creatorClient = nil
+                self.qualifiedUsers = action.qualifiedUserIDs
+                self.users = action.unqualifiedUserIDs
             }
 
-            name = action.name
-            access = action.accessMode?.stringValue
-            legacyAccessRole = action.legacyAccessRole?.rawValue
-            accessRoles = action.accessRoles.map(\.rawValue)
-            conversationRole = ZMConversation.defaultMemberRoleName
-            team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
-            readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
-            messageTimer = nil
+            self.name = action.name
+            self.access = action.accessMode?.stringValue
+            self.legacyAccessRole = action.legacyAccessRole?.rawValue
+            self.accessRoles = action.accessRoles.map(\.rawValue)
+            self.conversationRole = ZMConversation.defaultMemberRoleName
+            self.team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
+            self.readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
+            self.messageTimer = nil
+            self.skipCreator = nil // until really used
         }
 
         init(from decoder: Decoder, apiVersion: WireTransport.APIVersion) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            users = try container.decodeIfPresent([UUID].self, forKey: .users)
-            qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
-            access = try container.decodeIfPresent([String].self, forKey: .access)
-            name = try container.decodeIfPresent(String.self, forKey: .name)
-            team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
-            messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-            readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-            conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
-            creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
-            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+            self.users = try container.decodeIfPresent([UUID].self, forKey: .users)
+            self.qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
+            self.access = try container.decodeIfPresent([String].self, forKey: .access)
+            self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            self.team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
+            self.messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+            self.readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            self.conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
+            self.creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
+            self.messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
 
             switch apiVersion {
             case .v0, .v1, .v2:
-                legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6:
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-                legacyAccessRole = nil
+                self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+                self.legacyAccessRole = nil
+            }
+
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+                self.skipCreator = nil
+            case .v10, .v11, .v12, .v13, .v14, .v15:
+                self.skipCreator = try container.decodeIfPresent(Bool.self, forKey: .skipCreator)
             }
         }
 
@@ -145,8 +159,15 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
+            }
+
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+                break
+            case .v10, .v11, .v12, .v13, .v14, .v15:
+                try container.encodeIfPresent(skipCreator, forKey: .skipCreator)
             }
         }
     }

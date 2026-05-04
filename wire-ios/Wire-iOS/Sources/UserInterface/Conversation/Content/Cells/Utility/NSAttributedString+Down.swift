@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,12 +24,10 @@ extension NSAttributedString {
     @objc
     static func markdown(from text: String, style: DownStyle) -> NSMutableAttributedString {
         let down = Down(markdownString: text)
-        let result: NSMutableAttributedString
-
-        if let attrStr = try? down.toAttributedString(using: style) {
-            result = .init(attributedString: attrStr)
+        let result: NSMutableAttributedString = if let attrStr = try? down.toAttributedString(using: style) {
+            .init(attributedString: attrStr)
         } else {
-            result = NSMutableAttributedString(string: text)
+            NSMutableAttributedString(string: text)
         }
 
         if result.string.last == "\n" {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -26,14 +26,16 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationSenderMessageDetailsCell!
-    var teamID = UUID()
-    var mockUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationSenderMessageDetailsCell!
+    private var teamID = UUID()
+    private var mockUser: MockUserType!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
         sut = ConversationSenderMessageDetailsCell()
@@ -47,6 +49,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockUser = nil
         super.tearDown()
@@ -58,138 +61,101 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.teamRole = .partner
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .externalPartner,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsFederated_InConversation() {
         // GIVEN
         mockUser.isFederated = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .federated,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsGuest_InConversation() {
         // GIVEN
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsBot_InConversation() {
         // GIVEN
-        mockUser.mockedIsServiceUser = true
+        mockUser.mockedIsApp = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .service,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .appOrBot,
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsTeamMember_InConversation() {
         // GIVEN
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_MessageHasBeenDeleted() {
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
             teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
-    }
-
-    func test_MessageHasBeenEdited() {
-        mockUser.teamRole = .member
-        let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
-            indicator: .edited,
-            teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
-        )
-
-        // WHEN
-        sut.configure(with: configuration, animated: false)
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    func test_SenderIsGuestWithALongName_AndMessageHasBeenEdited() {
-        // GIVEN
-        mockUser = MockUserType.createUser(
-            name: "Bruno with a really really really really really really really really really really long name",
-            inTeam: teamID
-        )
-        mockUser.isGuestInConversation = true
-        let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
-            indicator: .edited,
-            teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
-        )
-
-        // WHEN
-        sut.configure(with: configuration, animated: false)
-
-        // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsGuestWithALongName_AndMessageHasBeenDeleted() {
@@ -200,17 +166,17 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         )
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
             teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func test_SenderIsWithoutMetadata_GroupConversation() {
@@ -218,17 +184,17 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         mockUser.name = nil
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
+            userSession: UserSessionMock()
         )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

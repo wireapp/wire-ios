@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,11 +19,12 @@
 import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
+import WireFoundation
 import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
-        guard let imageData = self.pngData() else {
+        guard let imageData = pngData() else {
             return nil
         }
         return imageData.isJPEG ? imageData : UIImage(data: imageData)?.jpegData(compressionQuality: 1.0)
@@ -33,40 +34,72 @@ extension UIImage {
 class ImagePickerManager: NSObject {
 
     // MARK: - Properties
-    private weak var viewController: UIViewController?
-    private var sourceType: UIImagePickerController.SourceType?
+
+    let userSession: UserSession
     private var completion: ((UIImage) -> Void)?
-    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+    private let mediaShareRestrictionManager: MediaShareRestrictionManager
+    private let device = DeviceWrapper(device: .current)
 
-    // MARK: - Methods
-    func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-                         completion: @escaping (UIImage) -> Void) -> UIAlertController {
-        self.completion = completion
-        self.viewController = viewController
+    // MARK: - Initialization
 
-        let actionSheet = imagePickerAlert()
-        return actionSheet
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        self.mediaShareRestrictionManager = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        )
+        super.init()
     }
 
-    private func imagePickerAlert() -> UIAlertController {
+    // MARK: - Methods
+
+    func showActionSheet(
+        on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
+        popoverConfiguration: PopoverPresentationControllerConfiguration,
+        completion: @escaping (UIImage) -> Void
+    ) -> UIAlertController {
+        self.completion = completion
+
+        return imagePickerAlert(viewController: viewController, popoverConfiguration: popoverConfiguration)
+    }
+
+    private func imagePickerAlert(
+        viewController: UIViewController?,
+        popoverConfiguration: PopoverPresentationControllerConfiguration
+    ) -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
-        let actionSheet = UIAlertController(title: Alert.title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: Alert.title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
-                self?.sourceType = .photoLibrary
-                self?.getImage(fromSourceType: .photoLibrary)
+                guard let self, let viewController else { return }
+
+                Task { @MainActor in
+                    self.getImage(
+                        fromSourceType: .photoLibrary,
+                        viewController: viewController,
+                        popoverConfiguration: popoverConfiguration
+                    )
+                }
             }
             actionSheet.addAction(galleryAction)
         }
 
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
-            self?.sourceType = .camera
-            self?.getImage(fromSourceType: .camera)
+            guard let self, let viewController else { return }
+
+            Task { @MainActor in
+                self.getImage(
+                    fromSourceType: .camera,
+                    viewController: viewController,
+                    popoverConfiguration: popoverConfiguration
+                )
+            }
         }
         actionSheet.addAction(cameraAction)
 
@@ -76,11 +109,13 @@ class ImagePickerManager: NSObject {
         return actionSheet
     }
 
-    private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
-        guard UIImagePickerController.isSourceTypeAvailable(sourceType),
-              let viewController else {
-                  return
-              }
+    @MainActor
+    private func getImage(
+        fromSourceType sourceType: UIImagePickerController.SourceType,
+        viewController: UIViewController,
+        popoverConfiguration: PopoverPresentationControllerConfiguration
+    ) {
+        guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -96,11 +131,12 @@ class ImagePickerManager: NSObject {
             imagePickerController.cameraDevice = .front
             imagePickerController.modalTransitionStyle = .coverVertical
         case .photoLibrary, .savedPhotosAlbum:
-            if viewController.isIPadRegular() {
+            if device.userInterfaceIdiom == .pad {
+                // UIKit will crash if the photo library is not presented using a popoverPresentationController on iPad
+                // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
                 imagePickerController.modalPresentationStyle = .popover
-
-                let popover: UIPopoverPresentationController? = imagePickerController.popoverPresentationController
-                popover?.backgroundColor = UIColor.white
+                imagePickerController.popoverPresentationController?.backgroundColor = .white
+                imagePickerController.configurePopoverPresentationController(using: popoverConfiguration)
             }
         default:
             break
@@ -108,12 +144,14 @@ class ImagePickerManager: NSObject {
 
         viewController.present(imagePickerController, animated: true)
     }
-
 }
 
- extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
 
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
@@ -136,11 +174,13 @@ class ImagePickerManager: NSObject {
                 picker.dismiss(animated: true)
             }
 
-            let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                             onConfirm: onConfirm,
-                                                             onCancel: onCancel)
+            let context = ConfirmAssetViewController.Context(
+                asset: .image(mediaAsset: image),
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
 
-            let confirmImageViewController = ConfirmAssetViewController(context: context)
+            let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmImageViewController.modalPresentationStyle = .fullScreen
 
             picker.present(confirmImageViewController, animated: true)
@@ -149,6 +189,7 @@ class ImagePickerManager: NSObject {
         case .camera:
             picker.dismiss(animated: true)
             completion?(image)
+
         @unknown default:
             picker.dismiss(animated: true)
             completion?(image)

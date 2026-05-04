@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles button taps in the authentication flow.
- */
+/// Handles button taps in the authentication flow.
 
 final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
 
@@ -37,8 +35,8 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
         case .enrollE2EIdentity:
             return [.showLoadingView, .startE2EIEnrollment]
         case .noHistory:
-            return [.showLoadingView, .configureNotifications, .completeBackupStep]
-        case .clientManagement(let clients):
+            return [.showLoadingView, .configureNotifications, .completeBackupStep(didSucceed: nil)]
+        case let .clientManagement(clients):
             let nextStep = AuthenticationFlowStep.deleteClient(clients: clients)
             return [AuthenticationCoordinatorAction.transition(nextStep, mode: .normal)]
         case .pendingEmailLinkVerification:

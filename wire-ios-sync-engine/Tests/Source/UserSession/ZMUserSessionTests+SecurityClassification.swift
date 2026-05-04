@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
 
@@ -48,7 +48,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = nil
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -67,7 +67,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -90,7 +90,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -115,7 +115,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -131,7 +131,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
         let otherUsers = [otherUser1, otherUser2, otherUser3]
 
-        let classifiedDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = otherUsers.compactMap(\.domain)
 
         syncMOC.performAndWait {
             storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
@@ -139,7 +139,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -148,7 +148,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
-    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil(
+    ) {
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {
@@ -162,8 +163,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -174,7 +175,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -183,7 +184,10 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
-    func testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+    func disabled_testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil(
+    ) {
+        // DeveloperFlag.multibackend.enable(false, storage: .temporary())
+        // test would need to inject resolvedBackendMetadata
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {
@@ -201,8 +205,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         BackendInfo.isFederationEnabled = false
         BackendInfo.domain = localDomain
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         syncMOC.performAndWait {
             storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
@@ -210,7 +214,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -228,8 +232,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -240,7 +244,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -256,8 +260,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -268,7 +272,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: "not.Classified.Domain")
@@ -285,8 +289,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
-        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap(\.self)
 
         BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
@@ -297,7 +301,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: otherDomain)

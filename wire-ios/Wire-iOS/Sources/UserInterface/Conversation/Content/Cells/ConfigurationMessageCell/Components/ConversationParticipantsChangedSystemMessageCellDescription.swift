@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,14 +32,9 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
-    let accessibilityIdentifier: String? = nil
+    let accessibilityIdentifier: String?
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
@@ -54,14 +49,15 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
             message: message
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: model.image(),
             attributedText: model.attributedTitle(),
             showLine: true,
             warning: model.warning()
         )
 
-        accessibilityLabel = model.attributedTitle()?.string
-        actionController = nil
+        self.accessibilityLabel = model.attributedTitle()?.string
+        self.accessibilityIdentifier = model.accessibilityIdentifier
+        self.actionController = nil
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * Handles error related to e-mail login that were not caught by other handlers.
- * - warning: You need to register this handler after all e-mail error related handlers.
- */
+/// Handles error related to e-mail login that were not caught by other handlers.
+/// - warning: You need to register this handler after all e-mail error related handlers.
 
 final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler {
 
@@ -45,7 +43,10 @@ final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler 
             actions.append(.executeFeedbackAction(.showGuidanceDot))
         }
 
-        let alert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         actions.append(.presentErrorAlert(alert))
 
         return actions

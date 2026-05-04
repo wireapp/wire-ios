@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,15 +20,29 @@ import UIKit
 import WireDesign
 
 extension UITableViewCell {
-    func showDisclosureIndicator() {
+
+    func showDisclosureIndicatorAccessoryView() {
         let image = UIImage(systemName: "chevron.right")
-        let accessory = UIImageView(frame: CGRect(x: 0, y: 0, width: (image?.size.width)!, height: (image?.size.height)!))
+        let accessory = UIImageView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: (image?.size.width)!,
+            height: (image?.size.height)!
+        ))
         accessory.image = image
         accessory.tintColor = SemanticColors.Label.textDefault
         accessoryView = accessory
     }
 
-    func hideDisclosureIndicator() {
+    func showExternalLinkAccessoryView() {
+        let externalLinkImage = UIImage(resource: .externalLink)
+        let imageView = UIImageView(image: externalLinkImage)
+        imageView.tintColor = ColorTheme.Base.secondaryText
+        accessoryView = imageView
+    }
+
+    func hideAccessoryView() {
         accessoryView = nil
     }
+
 }

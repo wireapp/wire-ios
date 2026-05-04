@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -28,12 +27,14 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     var sut: PasscodeSetupViewController!
     private var snapshotHelper: SnapshotHelper!
+    private var userSession: UserSessionMock!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
+        userSession = UserSessionMock()
         accentColor = .blue
     }
 
@@ -41,6 +42,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
+        userSession = nil
         sut = nil
     }
 
@@ -54,36 +56,46 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .createPasscode,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            userSession: userSession,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitState_ifForcedApplock() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .forcedForTeam,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .forcedForTeam,
+            userSession: userSession,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme() {
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .createPasscode,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            userSession: userSession,
+            callback: nil
+        )
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme_ifForcedApplock() {
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .forcedForTeam,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .forcedForTeam,
+            userSession: userSession,
+            callback: nil
+        )
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
@@ -91,9 +103,12 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     func testForPasscodePassed() {
         // GIVEN
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .createPasscode,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            userSession: userSession,
+            callback: nil
+        )
         fillPasscode()
 
         // WHEN

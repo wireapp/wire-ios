@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 
 public enum UpdateRoleError: Error {
+    case missingDomains
     case unknown
 }
 
@@ -33,16 +34,18 @@ public class UpdateRoleAction: EntityAction {
     public let roleID: NSManagedObjectID
 
     public required init(user: ZMUser, conversation: ZMConversation, role: Role) {
-        userID = user.objectID
-        conversationID = conversation.objectID
-        roleID = role.objectID
+        self.userID = user.objectID
+        self.conversationID = conversation.objectID
+        self.roleID = role.objectID
     }
 }
 
-extension ZMConversation {
-    public func updateRole(of participant: UserType,
-                           to newRole: Role,
-                           completion: @escaping UpdateRoleAction.ResultHandler) {
+public extension ZMConversation {
+    func updateRole(
+        of participant: UserType,
+        to newRole: Role,
+        completion: @escaping UpdateRoleAction.ResultHandler
+    ) {
         guard
             let context = managedObjectContext,
             let user = participant as? ZMUser

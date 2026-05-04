@@ -1,10 +1,9 @@
-// swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 5.10
 
 import PackageDescription
 
 // How to add/update packages?
-// 
+//
 // 1. Go to GitHub repository, the latest release.
 // 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
 // 3. Download <*.artifactbundle.zip>, open terminal, go to the folder like '~/Downloads/'.
@@ -16,25 +15,38 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
+        .executableTarget(
+            name: "TrimStringCatalogs",
+            path: "./TrimStringCatalogs",
+            exclude: ["./Tests.swift", "./TestResources"],
+            sources: ["./main.swift"]
+        ),
+        .testTarget(
+            name: "TrimStringCatalogsTests",
+            dependencies: ["TrimStringCatalogs"],
+            path: "./TrimStringCatalogs",
+            exclude: ["./main.swift"],
+            sources: ["./Tests.swift"],
+            resources: [
+                .copy("./TestResources/Trimmed_xcstrings"),
+                .copy("./TestResources/Untrimmed_xcstrings")
+            ]
+        ),
+
         .binaryTarget(
             name: "LicensePlist",
-            url: "https://github.com/mono0926/LicensePlist/releases/download/3.25.1/LicensePlistBinary-macos.artifactbundle.zip",
-            checksum: "a80181eeed49396dae5d3ce6fc339f33a510299b068fd6b4f507483db78f7f30"
+            url: "https://github.com/mono0926/LicensePlist/releases/download/3.27.1/LicensePlistBinary-macos.artifactbundle.zip",
+            checksum: "24e066b23da58275a89a83cae05bf40cad8a48faacf10facbfa5c350efe02608"
         ),
         .binaryTarget(
             name: "SwiftLintBinary",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "963121d6babf2bf5fd66a21ac9297e86d855cbc9d28322790646b88dceca00f1"
-        ),
-        .binaryTarget(
-          name: "swiftgen",
-          url: "https://github.com/SwiftGen/SwiftGen/releases/download/6.6.2/swiftgen-6.6.2.artifactbundle.zip",
-          checksum: "7586363e24edcf18c2da3ef90f379e9559c1453f48ef5e8fbc0b818fbbc3a045"
+            url: "https://github.com/realm/SwiftLint/releases/download/0.61.0/SwiftLintBinary.artifactbundle.zip",
+            checksum: "b765105fa5c5083fbcd35260f037b9f0d70e33992d0a41ba26f5f78a17dc65e7"
         ),
         .binaryTarget(
             name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.0/swiftformat.artifactbundle.zip",
-            checksum: "edf4ed2f1664ad621ae71031ff915e0c6ef80ad66e87ea0e5a10c3580a27a6dd"
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.58.3/swiftformat.artifactbundle.zip",
+            checksum: "349130edf42691b1e94f0a5f9a7914bbd38a817d462a63e41a88178908ec6479"
         )
     ]
 )

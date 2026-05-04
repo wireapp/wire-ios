@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,11 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
     }
 
     func controller(_ controller: CompanyLoginController, showLoadingView: Bool) {
-        presenter?.isLoadingViewVisible = showLoadingView
+        if showLoadingView {
+            startActivityIndicator()
+        } else {
+            stopActivityIndicator()
+        }
     }
 
     func controllerDidStartBackendSwitch(_ controller: CompanyLoginController, toURL url: URL) {

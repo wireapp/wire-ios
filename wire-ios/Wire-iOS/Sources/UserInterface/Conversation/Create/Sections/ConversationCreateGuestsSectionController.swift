@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,13 +27,16 @@ final class ConversationCreateGuestsSectionController: ConversationCreateSection
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
-        headerHeight = 40
         footerText = L10n.Localizable.Conversation.Create.Guests.subtitle
     }
 }
 
 extension ConversationCreateGuestsSectionController {
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell
         cell.setUp()
@@ -41,4 +44,5 @@ extension ConversationCreateGuestsSectionController {
         cell.action = toggleAction
         return cell
     }
+
 }

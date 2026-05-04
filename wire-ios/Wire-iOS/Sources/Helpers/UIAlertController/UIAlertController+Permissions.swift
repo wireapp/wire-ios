@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ import WireCommonComponents
 
 extension UIAlertController {
 
-    class func cameraPermissionAlert(with completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
-        return permissionAlert(
+    class func cameraPermissionAlert(completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
+        permissionAlert(
             title: L10n.Localizable.Voice.Alert.CameraWarning.title,
             message: "NSCameraUsageDescription".infoPlistLocalized,
             completion: completion
@@ -30,14 +30,14 @@ extension UIAlertController {
     }
 
     class var microphonePermissionAlert: UIAlertController {
-        return permissionAlert(
+        permissionAlert(
             title: L10n.Localizable.Voice.Alert.MicrophoneWarning.title,
             message: "NSMicrophoneUsageDescription".infoPlistLocalized
         )
     }
 
     class var photoLibraryPermissionAlert: UIAlertController {
-        return permissionAlert(
+        permissionAlert(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,
             message: L10n.Localizable.Library.Alert.PermissionWarning.NotAllowed.explaination
         )

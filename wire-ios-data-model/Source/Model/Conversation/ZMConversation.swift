@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,33 +18,38 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
+
+    typealias ConversationID = UUID
 
     /// Whether the conversation was deleted on the backend.
 
-    @NSManaged
-    public var isDeletedRemotely: Bool
+    @NSManaged var isDeletedRemotely: Bool
 
-    /// Whether the converstion is marked as read only
+    /// Whether the conversation is marked as read only
 
-    @NSManaged
-    public var isForcedReadOnly: Bool
+    @NSManaged var isForcedReadOnly: Bool
 
     /// The other user of a one on one conversation.
 
-    @NSManaged
-    public var oneOnOneUser: ZMUser?
+    @NSManaged var oneOnOneUser: ZMUser?
 
     /// True until the metadata has been fetched for the first time
 
-    @NSManaged
-    public var isPendingInitialFetch: Bool
+    @NSManaged var isPendingInitialFetch: Bool
+
+    /// True if this mls conversation was migrated from another proteus conversation.
+    ///
+    /// This property is only relevant for mls 1-1 conversation where 1-1 proteus conversation's messages where moved
+    /// to.
+    /// - Note: This could be removed once the MLS migration is completed.
+    @NSManaged var migratedToMLS: Bool
 
     // MARK: - CoreData unique constraint
 
-    static let domainKey: String = "domain"
+    internal static let domainKey: String = "domain"
     @NSManaged private var primitiveDomain: String?
-    public var domain: String? {
+    var domain: String? {
         get {
             willAccessValue(forKey: Self.domainKey)
             let value = primitiveDomain
@@ -60,34 +65,86 @@ extension ZMConversation {
         }
     }
 
-    static let remoteIdentifierKey: String = "remoteIdentifier"
+    internal static let remoteIdentifierKey: String = "remoteIdentifier"
     @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
-    @objc
-    public var remoteIdentifier: UUID! {
+    @objc var remoteIdentifier: ConversationID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
-            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            let value = transientUUID(forKey: Self.remoteIdentifierKey)
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
 
         set {
             willChangeValue(forKey: Self.remoteIdentifierKey)
-            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
             didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
     }
 
     /// combination of domain and remoteIdentifier
-    @NSManaged private var primaryKey: String
+    @NSManaged internal private(set) var primaryKey: String
 
-    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+    // MARK: - WireCells
+
+    @NSManaged var cellName: String?
+    @NSManaged var wireCellsMessageAttachmentDrafts: Set<WireCellsMessageAttachmentDraftEntity>
+
+    private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {
             // trying to access primaryKey property from older model - tests
             return
         }
         primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
     }
+
+    /// Move message from otherConversation and other related properties
+    func migrateMessages(from otherConversation: ZMConversation) {
+
+        func assignIfNewer(newValue: inout Date?, oldValue: Date?) {
+            if let timeStamp = oldValue, newValue?.compare(timeStamp) == .orderedAscending || newValue == nil {
+                newValue = timeStamp
+            }
+        }
+
+        mutableMessages.union(otherConversation.allMessages)
+
+        assignIfNewer(
+            newValue: &lastReadServerTimeStamp,
+            oldValue: otherConversation.lastReadServerTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &pendingLastReadServerTimestamp,
+            oldValue: otherConversation.pendingLastReadServerTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &previousLastReadServerTimestamp,
+            oldValue: otherConversation.previousLastReadServerTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &lastServerTimeStamp,
+            oldValue: otherConversation.lastServerTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &clearedTimeStamp,
+            oldValue: otherConversation.clearedTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &archivedChangedTimestamp,
+            oldValue: otherConversation.archivedChangedTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &silencedChangedTimestamp,
+            oldValue: otherConversation.silencedChangedTimestamp
+        )
+    }
+
 }

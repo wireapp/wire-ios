@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,12 @@ class GridCell: UICollectionViewCell {
         super.init(frame: frame)
         accessibilityIdentifier = GridCell.reuseIdentifier
 
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     override func layoutSubviews() {
@@ -35,7 +40,8 @@ class GridCell: UICollectionViewCell {
         streamView?.layoutForOrientation()
     }
 
-    @objc func orientationDidChange() {
+    @objc
+    func orientationDidChange() {
         streamView?.layoutForOrientation()
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension UIAlertAction {
 
     static func cancel(_ completion: Completion? = nil) -> UIAlertAction {
-        return UIAlertAction(
+        UIAlertAction(
             title: L10n.Localizable.General.cancel,
             style: .cancel,
             handler: { _ in completion?() }
@@ -30,7 +31,7 @@ extension UIAlertAction {
     }
 
     static func confirm(style: Style = .cancel, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
-        return UIAlertAction(
+        UIAlertAction(
             title: L10n.Localizable.General.confirm,
             style: style,
             handler: handler
@@ -43,17 +44,20 @@ extension UIAlertAction {
         presenter: UIViewController?,
         onDismiss: (() -> Void)? = nil
     ) -> Self {
-        return .init(
+        .init(
             title: title,
             style: .default
         ) { [weak presenter] _ in
-            let browserViewController = BrowserViewController(url: url)
-            browserViewController.onDismiss = onDismiss
-            presenter?.present(browserViewController, animated: true)
+            url.open(from: presenter, onDismiss: onDismiss)
         }
     }
 
-    convenience init(icon: StyleKitIcon?, title: String, tintColor: UIColor, handler: ((UIAlertAction) -> Void)? = nil) {
+    convenience init(
+        icon: StyleKitIcon?,
+        title: String,
+        tintColor: UIColor,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
         self.init(title: title, style: .default, handler: handler)
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
@@ -61,6 +65,18 @@ extension UIAlertAction {
         if let icon {
             let image = UIImage.imageForIcon(icon, size: 24, color: tintColor)
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
+        }
+    }
+
+    convenience init(
+        title: String?,
+        style: UIAlertAction.Style,
+        accessibilityIdentifier: String?,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        self.init(title: title, style: style, handler: handler)
+        if let accessibilityIdentifier {
+            setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
         }
     }
 }

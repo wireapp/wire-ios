@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ final class ColorKnobView: UIView {
 
     // MARK: - Properties
 
+    let knobOuterDiameter: CGFloat = 18
+
     var isSelected = false {
         didSet {
             borderCircleLayer.borderColor = knobBorderColor?.cgColor
@@ -38,15 +40,17 @@ final class ColorKnobView: UIView {
         }
     }
 
-    var knobDiameter: CGFloat = 12
+    var knobDiameter: CGFloat
 
     /// The actual circle knob, filled with the color
-    private var innerCircleLayer: CALayer = CALayer()
+    private var innerCircleLayer: CALayer = .init()
     /// Just a layer, used for the thin border around the selected knob
-    private var borderCircleLayer: CALayer = CALayer()
+    private var borderCircleLayer: CALayer = .init()
 
     // MARK: - Init
-    init() {
+
+    init(knobDiameter: CGFloat) {
+        self.knobDiameter = knobDiameter
         super.init(frame: .zero)
 
         layer.addSublayer(innerCircleLayer)
@@ -63,27 +67,29 @@ final class ColorKnobView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let frame = self.frame
+        let frame = frame
         let centerPos = CGPoint(x: frame.size.width / 2, y: frame.size.height / 2)
 
-        let knobDiameter: CGFloat = self.knobDiameter + 1
+        let knobDiameter: CGFloat = knobDiameter + 1
         innerCircleLayer.bounds = CGRect(origin: .zero, size: CGSize(width: knobDiameter, height: knobDiameter))
         innerCircleLayer.position = centerPos
         innerCircleLayer.cornerRadius = knobDiameter / 2
         innerCircleLayer.borderWidth = 1
 
-        let knobBorderDiameter = knobDiameter + 12
         borderCircleLayer.bounds = CGRect(
             origin: .zero,
-            size: CGSize(width: knobBorderDiameter,
-            height: knobBorderDiameter)
+            size: CGSize(
+                width: knobOuterDiameter,
+                height: knobOuterDiameter
+            )
         )
         borderCircleLayer.position = centerPos
-        borderCircleLayer.cornerRadius = knobBorderDiameter / 2
+        borderCircleLayer.cornerRadius = knobOuterDiameter / 2
     }
 
     // MARK: - Helpers
+
     var knobBorderColor: UIColor? {
-        return knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
+        knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
     }
 }

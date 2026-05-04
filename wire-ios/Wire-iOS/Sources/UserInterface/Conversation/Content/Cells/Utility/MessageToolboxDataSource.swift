@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ import WireDesign
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
-    case sendFailure(NSAttributedString)
+    case sendFailure(String)
 
     /// Display list of calls
-    case callList(NSAttributedString)
+    case callList(String)
 
     /// Display the message details (timestamp and/or status and/or countdown).
-    case details(timestamp: NSAttributedString?, status: NSAttributedString?, countdown: NSAttributedString?)
+    case details(timestamp: String, status: MessageToolboxState?, countdown: String)
 }
 
 extension MessageToolboxContent: Comparable {
@@ -41,23 +41,29 @@ extension MessageToolboxContent: Comparable {
     static func < (lhs: MessageToolboxContent, rhs: MessageToolboxContent) -> Bool {
         switch (lhs, rhs) {
         case (.sendFailure, _):
-            return true
+            true
         case (.details, _):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
 }
 
+enum MessageToolboxState: Equatable {
+    case sending
+    case sent
+    case delivered
+    case seen
+    case seenByMultiple(Int)
+}
+
 // MARK: - Data Source
 
-/**
- * An object that determines what content to display for the given message.
- */
+/// An object that determines what content to display for the given message.
 
-typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
+typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
 
 final class MessageToolboxDataSource {
 
@@ -66,41 +72,35 @@ final class MessageToolboxDataSource {
     /// The displayed message.
     let message: ConversationMessage
 
+    var editedString: String? {
+        guard message.updatedAt != nil else { return nil }
+
+        return L10n.Localizable.Content.Message.edited
+    }
+
     /// The content to display for the message.
     private(set) var content: MessageToolboxContent
 
     // MARK: - Formatting Properties
 
-    private let statusTextColor = SemanticColors.Label.textMessageDetails
-    private let statusFont = FontSpec.smallRegularFont.font!
     private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
-
-    private var attributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: statusFont, .foregroundColor: statusTextColor]
-    }
 
     // MARK: - Initialization
 
     /// Creates a toolbox data source for the given message.
     init(message: ConversationMessage) {
         self.message = message
-        self.content = .details(timestamp: nil, status: nil, countdown: nil)
+        self.content = .details(timestamp: "", status: nil, countdown: "")
     }
 
     // MARK: - Content
 
-    /**
-     * Updates the contents of the message toolbox.
-     * - parameter widthConstraint: The width available to rend the toolbox contents.
-     * - Returns: A boolean to either update the content of the message toolbox or not
-     */
+    /// Updates the contents of the message toolbox.
+    /// - parameter widthConstraint: The width available to rend the toolbox contents.
+    /// - Returns: A boolean to either update the content of the message toolbox or not
     func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
-        typealias FailedToSendMessage = L10n.Localizable.Content.System.FailedtosendMessage
-
         // Compute the state
-        let isSentBySelfUser = message.senderUser?.isSelfUser == true
-        let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        let previousContent = self.content
+        let previousContent = content
 
         // Determine the content by priority
 
@@ -113,18 +113,8 @@ final class MessageToolboxDataSource {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
-        else if failedToSend && isSentBySelfUser {
-            var detailsString: String
-
-            switch message.failedToSendReason {
-            case .unknown, .none:
-                detailsString = FailedToSendMessage.generalReason
-            case .federationRemoteError:
-                detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                URL.wr_unreachableBackendLearnMore.absoluteString)
-            }
-
-            content = .sendFailure(detailsString && attributes)
+        else if let errorMessage = MessageErrorHelper.errorMessage(message) {
+            content = .sendFailure(errorMessage)
         }
 
         // 3) Timestamp
@@ -143,124 +133,97 @@ final class MessageToolboxDataSource {
 
     // MARK: - Details Text
 
-    /// Create a timestamp list for all calls associated with a call system message
-    private func makeCallList() -> NSAttributedString {
-        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
-
-            let childrenTimestamps = childMessages
-                .compactMap { $0 as? ZMConversationMessage }
-                .sortedAscendingPrependingNil(by: \.serverTimestamp)
-                .compactMap(timestampString)
-
-            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
-                return "\(text)\n\(current)"
-            }
-
-            return finalText && attributes
-        } else {
-            return timestampString(message) ?? "-" && attributes
-        }
-    }
-
     /// Creates a label that display the status of the message.
-    private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
+    private func makeDetailsString() -> (
+        String,
+        MessageToolboxState?,
+        String
+    ) {
         let countdownStatus = makeEphemeralCountdown()
-
-        let deliveryStateString = selfMessageStatus(for: message)
-
-        if let timestampString = self.timestampString(message), message.isSent {
-            if let deliveryStateString, message.shouldShowDeliveryState {
-                return (timestampString && attributes, deliveryStateString, countdownStatus)
-            } else {
-                return (timestampString && attributes, nil, countdownStatus)
-            }
-        } else {
-            return (nil, deliveryStateString, countdownStatus)
-        }
+        let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
+        let isTimestampVisible = message.isSent && message.deliveryState != .failedToSend
+        let timestampString = isTimestampVisible ? message.formattedReceivedTime() ?? "" : ""
+        return (timestampString, deliveryState, countdownStatus)
     }
 
-    private func makeEphemeralCountdown() -> NSAttributedString? {
+    private func makeEphemeralCountdown() -> String {
         let showDestructionTimer = message.isEphemeral &&
-        !message.isObfuscated &&
-        message.destructionDate != nil &&
-        message.deliveryState != .pending
+            !message.isObfuscated &&
+            message.destructionDate != nil &&
+            message.deliveryState != .pending
 
-        if let destructionDate = message.destructionDate, showDestructionTimer {
-            let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
+        guard let destructionDate = message.destructionDate, showDestructionTimer else { return "" }
 
-            if remaining > 0 {
-                if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
-                    return string && attributes
-                }
-            } else if message.isAudio {
-                // do nothing, audio messages are allowed to extend the timer
-                // past the destruction date.
+        // We need to add one second to start with the correct value
+        let remaining = destructionDate.timeIntervalSinceNow + 1
+
+        if remaining > 0 {
+            if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
+                return string
             }
+        } else if message.isAudio {
+            // do nothing, audio messages are allowed to extend the timer
+            // past the destruction date.
         }
-
-        return nil
+        return ""
     }
+
+    // MARK: - message delivery state
 
     /// Returns the status for the sender of the message.
-    private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
+    private func selfMessageState(for message: ZMConversationMessage) -> MessageToolboxState? {
         guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
         }
 
-        var deliveryStateString: String
-
         switch message.deliveryState {
         case .pending:
-            deliveryStateString = ContentSystem.pendingMessageTimestamp
-        case .read:
-            return selfStatusForReadDeliveryState(for: message)
+            return .sending
+        case .read where message.conversationLike?.conversationType == .group:
+            return .seenByMultiple(message.readReceipts.count)
+        case .read where message.conversationLike?.conversationType == .oneOnOne:
+            return .seen
         case .delivered:
-            deliveryStateString = ContentSystem.messageDeliveredTimestamp
+            return .delivered
         case .sent:
-            deliveryStateString = ContentSystem.messageSentTimestamp
-        case .invalid, .failedToSend:
+            return .sent
+        default:
             return nil
         }
-
-        return NSAttributedString(string: deliveryStateString) && attributes
-    }
-
-    private func seenTextAttachment() -> NSTextAttachment {
-        let imageIcon = NSTextAttachment.textAttachment(for: .eye, with: statusTextColor, verticalCorrection: -1)
-        imageIcon.accessibilityLabel = "seen"
-        return imageIcon
     }
 
     /// Creates the status for the read receipts.
-    fileprivate func selfStatusForReadDeliveryState(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let conversationType = message.conversationLike?.conversationType else {return nil}
+    private func readDeliveryStateAttributedString(for message: ZMConversationMessage) -> MessageToolboxState? {
+        guard let conversationType = message.conversationLike?.conversationType else { return nil }
 
         switch conversationType {
         case .group:
-            let attributes: [NSAttributedString.Key: AnyObject] = [
-                .font: UIFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold),
-                .foregroundColor: statusTextColor
-            ]
-
-            let imageIcon = seenTextAttachment()
-            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" && attributes
-            attributedString.accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
-            return attributedString
+            return .seenByMultiple(message.readReceipts.count)
 
         case .oneOnOne:
-            guard let timestamp = message.readReceipts.first?.serverTimestamp else {
-                return nil
-            }
-
-            let imageIcon = seenTextAttachment()
-
-            let timestampString = message.formattedDate(timestamp)
-            let attributedString = NSAttributedString(attachment: imageIcon) + " " + timestampString && attributes
-            attributedString.accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " " + timestampString
-            return attributedString
+            return .seen
 
         default:
             return nil
+        }
+    }
+
+    // MARK: - Call List
+
+    /// Create a timestamp list for all calls associated with a call system message
+    private func makeCallList() -> String {
+        guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+              let timestamp = timestampString(message) else {
+            return timestampString(message) ?? ""
+        }
+
+        let childrenTimestamps = childMessages
+            .compactMap { $0 as? ZMConversationMessage }
+            .sortedAscendingPrependingNil(by: \.serverTimestamp)
+            .compactMap(timestampString)
+
+        return childrenTimestamps.reduce(timestamp) { text, current in
+            "\(text)\n\(current)"
         }
     }
 
@@ -270,11 +233,9 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if
-            let dateTimeString = message.formattedReceivedDate(),
-            let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone
-        {
+        } else if let dateTimeString = message.formattedReceivedDateTime(),
+                  let systemMessage = message as? ZMSystemMessage,
+                  systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

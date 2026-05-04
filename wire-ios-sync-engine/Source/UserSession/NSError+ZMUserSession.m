@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireTransport;
-
 #import "NSError+ZMUserSession.h"
+#import "NSError+ZMUserSessionInternal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 NSString * const ZMClientsKey = @"clients";
 NSString * const ZMPhoneCredentialKey = @"phone";
 NSString * const ZMEmailCredentialKey = @"email";
-NSString * const ZMUserHasPasswordKey = @"has-password";
 NSString * const ZMUserUsesCompanyLoginCredentialKey = @"uses-company-login";
 NSString * const ZMUserLoginCredentialsKey = @"login-credentials";
 NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
@@ -34,7 +32,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 - (ZMUserSessionErrorCode)userSessionErrorCode
 {
     if (! [self.domain isEqualToString:NSError.ZMUserSessionErrorDomain]) {
-        return ZMUserSessionNoError;
+        return ZMUserSessionErrorCodeNoError;
     } else {
         return (ZMUserSessionErrorCode) self.code;
     }
@@ -46,23 +44,15 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 
 @implementation NSError (ZMUserSessionInteral)
 
-+ (instancetype)userSessionErrorWithErrorCode:(ZMUserSessionErrorCode)code userInfo:(NSDictionary *)userInfo
++ (instancetype)userSessionErrorWithCode:(ZMUserSessionErrorCode)code userInfo:(NSDictionary *)userInfo
 {
-    return [[NSError alloc] initWitUserSessionErrorWithErrorCode:code userInfo:userInfo];
+    return [[NSError alloc] initWithUserSessionErrorCode:code userInfo:userInfo];
 }
 
 + (instancetype)pendingLoginErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"pending-login"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionCodeRequestIsAlreadyPending userInfo:nil];
-    }
-    return nil;
-}
-
-+ (instancetype)unauthorizedErrorWithResponse:(ZMTransportResponse *)response
-{
-    if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeRequestIsAlreadyPending userInfo:nil];
     }
     return nil;
 }
@@ -70,15 +60,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionUnauthorizedEmail userInfo:nil];
-    }
-    return nil;
-}
-
-+ (instancetype)invalidPhoneVerificationCodeErrorWithResponse:(ZMTransportResponse *)response
-{
-    if (response.HTTPStatus == 404 && [[response payloadLabel] isEqualToString:@"invalid-code"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumberVerificationCode userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeUnauthorizedEmail userInfo:nil];
     }
     return nil;
 }
@@ -86,23 +68,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)invalidEmailVerificationCodeErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"code-authentication-failed"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmailVerificationCode userInfo:nil];
-    }
-    return nil;
-}
-
-+ (instancetype)invalidPhoneNumberErrorWithReponse:(ZMTransportResponse *)response // TODO [WPB-8822]: remove
-{
-    if (response.HTTPStatus == 400 && ([[response payloadLabel] isEqualToString:@"invalid-phone"] || [[response payloadLabel] isEqualToString:@"bad-request"])) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
-    }
-    return nil;
-}
-
-+ (instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response // TODO [WPB-8822]: remove
-{
-    if (response.HTTPStatus == 409) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionPhoneNumberIsAlreadyRegistered userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidEmailVerificationCode userInfo:nil];
     }
     return nil;
 }
@@ -110,7 +76,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)blacklistedEmailWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"blacklisted-email"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionBlacklistedEmail userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeBlacklistedEmail userInfo:nil];
     }
     return nil;
 }
@@ -118,7 +84,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)domainBlockedWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 451 && [[response payloadLabel] isEqualToString:@"domain-blocked-for-registration"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionDomainBlocked userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeDomainBlocked userInfo:nil];
     }
     return nil;
 }
@@ -126,7 +92,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)invalidEmailWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 400 && [[response payloadLabel] isEqualToString:@"invalid-email"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmail userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidEmail userInfo:nil];
     }
     return nil;
 }
@@ -134,7 +100,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (__nullable instancetype)emailAddressInUseErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 409 && [[response payloadLabel] isEqualToString:@"key-exists"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeEmailIsAlreadyRegistered userInfo:nil];
     }
     return nil;
 }
@@ -142,7 +108,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)keyExistsErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 409 && [[response payloadLabel] isEqualToString:@"key-exists"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeEmailIsAlreadyRegistered userInfo:nil];
     }
     return nil;
 }
@@ -150,7 +116,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)handleExistsErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 409 && [[response payloadLabel] isEqualToString:@"handle-exists"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeEmailIsAlreadyRegistered userInfo:nil];
     }
     return nil;
 }
@@ -158,7 +124,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)invalidInvitationCodeWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 400 && [[response payloadLabel] isEqualToString:@"invalid-invitation-code"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidInvitationCode userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidInvitationCode userInfo:nil];
     }
     return nil;
 }
@@ -166,7 +132,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)invalidActivationCodeWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 404 && [[response payloadLabel] isEqualToString:@"invalid-code"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidActivationCode userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidActivationCode userInfo:nil];
     }
     return nil;
 }
@@ -174,7 +140,7 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
 + (instancetype)lastUserIdentityCantBeRemovedWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"last-identity"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionLastUserIdentityCantBeDeleted userInfo:nil];
+        return [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeLastUserIdentityCantBeDeleted userInfo:nil];
     }
     return nil;
 }

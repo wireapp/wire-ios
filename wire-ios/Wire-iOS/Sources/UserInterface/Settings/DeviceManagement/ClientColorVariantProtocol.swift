@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ protocol ClientColorVariantProtocol {
 extension ClientColorVariantProtocol where Self: UIViewController {
 
     var headerFooterViewTextColor: UIColor {
-        return SemanticColors.Label.textSectionFooter
+        SemanticColors.Label.textSectionFooter
     }
 
     func setColor() {

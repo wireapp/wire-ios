@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,34 +18,47 @@
 
 import Foundation
 
-extension MockTransportSession {
+public extension MockTransportSession {
 
     @objc
-    public func processAPIVersionGetRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
+    func processAPIVersionGetRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
+
+        guard !isInternalError else {
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 500,
+                transportSessionError: nil,
+                apiVersion: request.apiVersion
+            )
+
+        }
+
         // /api-version is the only unversioned endpoint.
         guard
             isAPIVersionEndpointAvailable,
             request.apiVersion == APIVersion.v0.rawValue
         else {
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 404,
-                                       transportSessionError: nil,
-                                       apiVersion: request.apiVersion)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: request.apiVersion
+            )
         }
 
         let payload: NSDictionary
 
-        // development versions was added to the endpoint payload
-        // at a later date, so we need to be able to mock both
-        // the old and new response payloads.
-        if developmentAPIVersions.isEmpty {
-            payload = [
+            // development versions was added to the endpoint payload
+            // at a later date, so we need to be able to mock both
+            // the old and new response payloads.
+            = if developmentAPIVersions.isEmpty {
+            [
                 "supported": supportedAPIVersions,
                 "domain": domain,
                 "federation": federation
             ]
         } else {
-            payload = [
+            [
                 "supported": supportedAPIVersions,
                 "development": developmentAPIVersions,
                 "domain": domain,

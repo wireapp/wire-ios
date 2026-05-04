@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,28 +17,30 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 typealias ProfileImageSize = WireSyncEngine.ProfileImageSize
 
 class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol {
-    var allSizes: [ProfileImageSize] { return [.preview, .complete] }
+    var allSizes: [ProfileImageSize] { [.preview, .complete] }
 
     var assetIdsToDelete = Set<String>()
     func hasAssetToDelete() -> Bool {
-        return !assetIdsToDelete.isEmpty
+        !assetIdsToDelete.isEmpty
     }
+
     func consumeAssetToDelete() -> String? {
-        return assetIdsToDelete.removeFirst()
+        assetIdsToDelete.removeFirst()
     }
 
     var dataToConsume = [ProfileImageSize: Data]()
     func consumeImage(for size: ProfileImageSize) -> Data? {
-        return dataToConsume[size]
+        dataToConsume[size]
     }
+
     func hasImageToUpload(for size: ProfileImageSize) -> Bool {
-        return dataToConsume[size] != nil
+        dataToConsume[size] != nil
     }
 
     var uploadDoneForSize: ProfileImageSize?
@@ -64,14 +66,18 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
-        self.updateStatus = MockImageUpdateStatus()
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
+        updateStatus = MockImageUpdateStatus()
 
-        sut = self.syncMOC.performAndWait {
-            UserImageAssetUpdateStrategy(managedObjectContext: self.syncMOC,
-                                         applicationStatus: mockApplicationStatus,
-                                         imageUploadStatus: updateStatus)
+        sut = syncMOC.performAndWait {
+            UserImageAssetUpdateStrategy(
+                managedObjectContext: self.syncMOC,
+                applicationStatus: mockApplicationStatus,
+                imageUploadStatus: updateStatus,
+                localDomain: "wire.com",
+                isCloudDomain: false
+            )
         }
 
         let cache = UserImageLocalCache(location: nil)
@@ -84,9 +90,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     }
 
     override func tearDown() {
-        self.mockApplicationStatus = nil
-        self.updateStatus = nil
-        self.sut = nil
+        mockApplicationStatus = nil
+        updateStatus = nil
+        sut = nil
         syncMOC.performAndWait {
             self.syncMOC.zm_userImageCache = nil
         }
@@ -132,7 +138,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesRequestWhenThereIsData() {
         // WHEN
         updateStatus.dataToConsume.removeAll()
-        updateStatus.dataToConsume[.preview] = "Some".data(using: .utf8)
+        updateStatus.dataToConsume[.preview] = Data("Some".utf8)
 
         // THEN
         let previewRequest = sut.nextRequest(for: .v0)
@@ -142,7 +148,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
-        updateStatus.dataToConsume[.complete] = "Other".data(using: .utf8)
+        updateStatus.dataToConsume[.complete] = Data("Other".utf8)
 
         // THEN
         let completeRequest = sut.nextRequest(for: .v0)
@@ -155,10 +161,22 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesRequestWithExpectedData() {
         XCTExpectFailure("this could be flaky", strict: false)
         // GIVEN
-        let previewData = "--1--".data(using: .utf8)
-        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData!, shareable: true, retention: .eternal, apiVersion: .v0)
-        let completeData = "1111111".data(using: .utf8)
-        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData!, shareable: true, retention: .eternal, apiVersion: .v0)
+        let previewData = Data("--1--".utf8)
+        let previewRequest = sut.requestFactory.upstreamRequestForAsset(
+            withData: previewData,
+            shareable: true,
+            retention: .eternal,
+            assetAuditLogMetaData: nil,
+            apiVersion: .v0
+        )
+        let completeData = Data("1111111".utf8)
+        let completeRequest = sut.requestFactory.upstreamRequestForAsset(
+            withData: completeData,
+            shareable: true,
+            retention: .eternal,
+            assetAuditLogMetaData: nil,
+            apiVersion: .v0
+        )
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
@@ -178,7 +196,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesDeleteRequestIfThereAreAssetsToDelete() {
         // GIVEN
         let assetId = "12344"
-        let deleteRequest = ZMTransportRequest(path: "/assets/v3/\(assetId)", method: .delete, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let deleteRequest = ZMTransportRequest(
+            path: "/assets/v3/\(assetId)",
+            method: .delete,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         updateStatus.assetIdsToDelete = [assetId]
@@ -192,7 +215,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         // GIVEN
         let size = ProfileImageSize.preview
         let sync = sut.upstreamRequestSyncs[size]
-        let failedResponse = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let failedResponse = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 500,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         sut.didReceive(failedResponse, forSingleRequest: sync!)
@@ -207,7 +235,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         let sync = sut.upstreamRequestSyncs[size]
         let assetId = "123123"
         let payload: [String: String] = ["key": assetId]
-        let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let successResponse = ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         sut.didReceive(successResponse, forSingleRequest: sync!)
@@ -243,7 +276,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             return user
         }
 
-        let sync = self.sut.downstreamRequestSyncs[.preview]!
+        let sync = sut.downstreamRequestSyncs[.preview]!
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
@@ -268,7 +301,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             return user
         }
 
-        let sync = self.sut.downstreamRequestSyncs[.complete]!
+        let sync = sut.downstreamRequestSyncs[.complete]!
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
@@ -287,8 +320,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) throws {
         // GIVEN
-        let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        let domain = "wire.com"
         let assetId = "foo-bar"
 
         let userObjectId = try syncMOC.performAndWait {
@@ -318,17 +350,16 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let expectedPath: String
-        switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
-            expectedPath = "/assets/v3/\(assetId)"
+            "/assets/v3/\(assetId)"
         case .v1:
-            expectedPath = "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6:
-            expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
+            "/v1/assets/v4/\(domain)/\(assetId)"
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)
             XCTAssertNotNil(request)
             XCTAssertEqual(request?.path, expectedPath)
@@ -352,10 +383,16 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         try syncMOC.performAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.preview])
             user.previewProfileAssetIdentifier = "foo"
-            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                imageData: imageData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // WHEN
             self.sut.update(user, with: response, downstreamSync: sync)
@@ -369,10 +406,16 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         try syncMOC.performAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
-            let imageData = try XCTUnwrap("image".data(using: .utf8))
+            let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.complete])
             user.completeProfileAssetIdentifier = "foo"
-            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                imageData: imageData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // WHEN
             self.sut.update(user, with: response, downstreamSync: sync)
@@ -403,7 +446,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             XCTAssertEqual(request.method, .get)
 
             // Given
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
 
             // THEN
@@ -438,7 +486,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             XCTAssertEqual(request.method, .get)
 
             // Given
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
 
             // THEN

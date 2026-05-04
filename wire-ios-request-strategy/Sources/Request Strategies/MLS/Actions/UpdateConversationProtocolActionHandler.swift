@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         switch (statusCode, label, apiFailure) {
         case (200, _, _), (204, _, _):
             action.succeed()
-        case (_, _, .some(let apiFailure)):
+        case let (_, _, .some(apiFailure)):
             action.fail(with: .api(apiFailure))
         case (404, _, _): // edge case, where API doesn't return a label
             action.fail(with: .api(.conversationIdOrDomainNotFound))
@@ -75,9 +75,9 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
     }
 }
 
-extension UpdateConversationProtocolAction.Failure.APIFailure {
+private extension UpdateConversationProtocolAction.Failure.APIFailure {
 
-    fileprivate init?(_ statusCode: Int, _ label: String?) {
+    init?(_ statusCode: Int, _ label: String?) {
         guard let label else { return nil }
         self.init(rawValue: label)
         guard self.statusCode == statusCode else { return nil }

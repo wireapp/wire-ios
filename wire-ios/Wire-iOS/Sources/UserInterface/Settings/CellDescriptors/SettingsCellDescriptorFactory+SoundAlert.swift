@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,21 +22,24 @@ import Foundation
 extension SettingsCellDescriptorFactory {
 
     var soundAlertGroup: SettingsCellDescriptorType {
-        return SettingsGroupCellDescriptor(
+        SettingsGroupCellDescriptor(
             items: [alertsSection],
             title: title,
             identifier: .none,
             previewGenerator: alertPreviewGenerator,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
     private var title: String {
-        return L10n.Localizable.Self.Settings.SoundMenu.title
+        L10n.Localizable.Self.Settings.SoundMenu.title
     }
 
     private var soundAlertProperty: SettingsProperty {
-        return settingsPropertyFactory.property(.soundAlerts)
+        settingsPropertyFactory.property(.soundAlerts)
     }
 
     private var alertsSection: SettingsSectionDescriptorType {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 #import "MockTransportSessionTests.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 @import WireMockTransport;
 
 @interface MockTransportSessionRegistrationTests : MockTransportSessionTests
@@ -33,7 +34,7 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"email == %@", email];
         
-        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         if (users.count == 1) {
             user = users[0];
@@ -50,8 +51,8 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
         
-        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         if (users.count == 1) {
             user = users[0];
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ final class TopPeopleCell: UICollectionViewCell {
         }
     }
 
+    var userSession: UserSession? {
+        get { badgeUserImageView.userSession }
+        set { badgeUserImageView.userSession = newValue }
+    }
+
     private let badgeUserImageView = BadgeUserImageView()
     private let conversationImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -88,7 +93,6 @@ final class TopPeopleCell: UICollectionViewCell {
 
         badgeUserImageView.removeFromSuperview()
         badgeUserImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
-        badgeUserImageView.userSession = ZMUserSession.shared()
         badgeUserImageView.isUserInteractionEnabled = false
         badgeUserImageView.wr_badgeIconSize = 16
         badgeUserImageView.accessibilityIdentifier = "TopPeopleAvatar"
@@ -104,26 +108,34 @@ final class TopPeopleCell: UICollectionViewCell {
             }
 
             var constraints: [NSLayoutConstraint] = []
-            constraints.append(contentsOf: [contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                            contentView.topAnchor.constraint(equalTo: topAnchor),
-                                            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            constraints.append(contentsOf: [
+                contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                contentView.topAnchor.constraint(equalTo: topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
 
-            constraints.append(contentsOf: [badgeUserImageView.trailingAnchor.constraint(equalTo: avatarContainer.trailingAnchor),
-                                            badgeUserImageView.leadingAnchor.constraint(equalTo: avatarContainer.leadingAnchor),
-                                            badgeUserImageView.topAnchor.constraint(equalTo: avatarContainer.topAnchor),
-                                            badgeUserImageView.bottomAnchor.constraint(equalTo: avatarContainer.bottomAnchor)])
+            constraints.append(contentsOf: [
+                badgeUserImageView.trailingAnchor.constraint(equalTo: avatarContainer.trailingAnchor),
+                badgeUserImageView.leadingAnchor.constraint(equalTo: avatarContainer.leadingAnchor),
+                badgeUserImageView.topAnchor.constraint(equalTo: avatarContainer.topAnchor),
+                badgeUserImageView.bottomAnchor.constraint(equalTo: avatarContainer.bottomAnchor)
+            ])
 
             conversationImageViewSize = conversationImageView.widthAnchor.constraint(equalToConstant: 80)
             avatarViewSizeConstraint = avatarContainer.widthAnchor.constraint(equalToConstant: 80)
             constraints.append(conversationImageViewSize!)
             constraints.append(avatarViewSizeConstraint!)
 
-            constraints.append(contentsOf: [avatarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                            avatarContainer.topAnchor.constraint(equalTo: contentView.topAnchor)])
+            constraints.append(contentsOf: [
+                avatarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                avatarContainer.topAnchor.constraint(equalTo: contentView.topAnchor)
+            ])
 
-            constraints.append(contentsOf: [conversationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                            conversationImageView.topAnchor.constraint(equalTo: contentView.topAnchor)])
+            constraints.append(contentsOf: [
+                conversationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                conversationImageView.topAnchor.constraint(equalTo: contentView.topAnchor)
+            ])
 
             constraints.append(nameLabel.topAnchor.constraint(equalTo: avatarContainer.bottomAnchor, constant: 4))
 
@@ -149,5 +161,4 @@ final class TopPeopleCell: UICollectionViewCell {
         avatarViewSizeConstraint?.constant = squareImageWidth
         conversationImageViewSize?.constant = squareImageWidth
     }
-
 }

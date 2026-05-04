@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import Foundation
 
-extension Bundle {
-    public static var backendBundle: Bundle {
-        guard let backendBundlePath = Bundle.appMainBundle.path(forResource: "Backend", ofType: "bundle") else { fatalError("Could not find backend.bundle") }
+public extension Bundle {
+    static var backendBundle: Bundle {
+        guard let backendBundlePath = Bundle.appMainBundle.path(forResource: "Backend", ofType: "bundle")
+        else { fatalError("Could not find backend.bundle") }
         guard let bundle = Bundle(path: backendBundlePath) else { fatalError("Could not load backend.bundle") }
         return bundle
     }

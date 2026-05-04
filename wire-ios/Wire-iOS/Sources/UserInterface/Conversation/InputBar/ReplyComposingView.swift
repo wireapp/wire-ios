@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,21 @@
 
 import UIKit
 import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 private typealias ConversationInputBarMessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
 
 // MARK: - ReplyComposingViewDelegate
+
 protocol ReplyComposingViewDelegate: AnyObject {
     func composingViewDidCancel(composingView: ReplyComposingView)
     func composingViewWantsToShowMessage(composingView: ReplyComposingView, message: ZMConversationMessage)
 }
 
 // MARK: - ZMConversationMessage Extension
-fileprivate extension ZMConversationMessage {
+
+private extension ZMConversationMessage {
     var accessibilityDescription: String {
 
         let contentDescriptionText: String
@@ -40,38 +43,54 @@ fileprivate extension ZMConversationMessage {
         } else if isImage {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.imageMessage
         } else if let locationData = locationMessageData {
-            contentDescriptionText = locationData.name ?? ConversationInputBarMessagePreview.Accessibility.locationMessage
+            contentDescriptionText = locationData.name ?? ConversationInputBarMessagePreview.Accessibility
+                .locationMessage
         } else if isVideo {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.videoMessage
         } else if isAudio {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.audioMessage
         } else if let fileData = fileMessageData {
-            contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.fileMessage(fileData.filename ?? "")
+            contentDescriptionText = ConversationInputBarMessagePreview.Accessibility
+                .fileMessage(fileData.filename ?? "")
         } else {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.unknownMessage
         }
 
-        return ConversationInputBarMessagePreview.Accessibility.messageFrom(contentDescriptionText, senderDescriptionText)
+        return ConversationInputBarMessagePreview.Accessibility.messageFrom(
+            contentDescriptionText,
+            senderDescriptionText
+        )
     }
 }
 
 // MARK: - ReplyComposingView
+
 final class ReplyComposingView: UIView {
     // MARK: - Properties
+
     let message: ZMConversationMessage
     let closeButton = IconButton()
+    private let userSession: UserSession
     private let leftSideView = UIView(frame: .zero)
     private var messagePreviewContainer: ReplyRoundCornersView!
     private var previewView: UIView!
     weak var delegate: ReplyComposingViewDelegate?
     private var observerToken: Any?
+    private let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
 
     // MARK: - Init
-    init(message: ZMConversationMessage) {
+
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) {
         require(message.canBeQuoted)
         require(message.conversationLike != nil)
 
         self.message = message
+        self.userSession = userSession
+        self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
         super.init(frame: .zero)
 
         setupMessageObserver()
@@ -85,17 +104,22 @@ final class ReplyComposingView: UIView {
     }
 
     // MARK: - Setup Message Observer
+
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         }
     }
 
     // MARK: - Setup Views and Constraints
+
     private func setupSubviews() {
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
 
-        previewView = message.replyPreview()!
+        previewView = message.replyPreview(
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         previewView.isUserInteractionEnabled = false
         previewView.accessibilityIdentifier = "replyView"
         previewView.accessibilityLabel = buildAccessibilityLabel()
@@ -116,7 +140,7 @@ final class ReplyComposingView: UIView {
             self?.delegate?.composingViewDidCancel(composingView: self!)
         }
 
-        [leftSideView, messagePreviewContainer].forEach(self.addSubview)
+        [leftSideView, messagePreviewContainer].forEach(addSubview)
 
         leftSideView.addSubview(closeButton)
     }
@@ -147,17 +171,20 @@ final class ReplyComposingView: UIView {
     }
 
     // MARK: - Actions
-    @objc func onTap() {
-        self.delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
+
+    @objc
+    func onTap() {
+        delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
     }
 
 }
 
 // MARK: - ReplyComposingView Extension
+
 extension ReplyComposingView: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if changeInfo.message.hasBeenDeleted {
-            self.delegate?.composingViewDidCancel(composingView: self)
+            delegate?.composingViewDidCancel(composingView: self)
         }
     }
 }

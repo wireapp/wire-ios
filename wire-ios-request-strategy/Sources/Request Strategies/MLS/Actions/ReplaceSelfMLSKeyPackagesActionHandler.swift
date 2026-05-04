@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ final class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLS
         }
 
         return ZMTransportRequest(
-            path: "/mls/key-packages/self/\(action.clientID)",
+            path: "/mls/key-packages/self/\(action.clientID)?ciphersuites=\(action.ciphersuite.rawValue)",
             method: .put,
             payload: ["key_packages": action.keyPackages] as ZMTransportData,
             apiVersion: apiVersion.rawValue

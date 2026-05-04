@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,48 +18,31 @@
 
 import Foundation
 
-public struct PushToken: Equatable {
-
-    // MARK: - Types
-
-    public enum TokenType: Int, Codable {
-
-        case standard
-        case voip
-
-        public var transportType: String {
-            switch self {
-            case .standard: return "APNS"
-            case .voip: return "APNS_VOIP"
-            }
-        }
-    }
+/// Token from Apple Push Notification Service, only supporting standard type
+public struct PushToken: Equatable, Sendable {
 
     // MARK: - Properties
 
     public let deviceToken: Data
     public let appIdentifier: String
     public let transportType: String
-    public let tokenType: TokenType
 
     // MARK: - Life cycle
 
     public init(
         deviceToken: Data,
         appIdentifier: String,
-        transportType: String,
-        tokenType: TokenType
+        transportType: String
     ) {
         self.deviceToken = deviceToken
         self.appIdentifier = appIdentifier
         self.transportType = transportType
-        self.tokenType = tokenType
     }
 
     // MARK: - Methods
 
     public var deviceTokenString: String {
-        return deviceToken.zmHexEncodedString()
+        deviceToken.zmHexEncodedString()
     }
 
 }
@@ -70,12 +53,9 @@ extension PushToken: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        deviceToken = try container.decode(Data.self, forKey: .deviceToken)
-        appIdentifier = try container.decode(String.self, forKey: .appIdentifier)
-        transportType = try container.decode(String.self, forKey: .transportType)
-
-        // Property 'tokenType' was added to use two token types: voip (old) and apns (new). All old clients with voip token did not have this property, so we need to set it by default as .voip.
-        tokenType = try container.decodeIfPresent(TokenType.self, forKey: .tokenType) ?? .voip
+        self.deviceToken = try container.decode(Data.self, forKey: .deviceToken)
+        self.appIdentifier = try container.decode(String.self, forKey: .appIdentifier)
+        self.transportType = try container.decode(String.self, forKey: .transportType)
     }
 
     enum CodingKeys: String, CodingKey {
@@ -83,7 +63,6 @@ extension PushToken: Codable {
         case deviceToken
         case appIdentifier
         case transportType
-        case tokenType
 
     }
 

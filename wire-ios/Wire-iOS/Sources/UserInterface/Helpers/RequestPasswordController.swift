@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class RequestPasswordController {
 
@@ -36,21 +38,23 @@ final class RequestPasswordController {
     private let callback: Callback
     private let inputValidation: InputValidation?
     private weak var okAction: UIAlertAction?
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
     weak var passwordTextField: UITextField?
 
-    init(context: RequestPasswordContext,
-         callback: @escaping Callback,
-         inputValidation: InputValidation? = nil) {
+    init(
+        context: RequestPasswordContext,
+        callback: @escaping Callback,
+        inputValidation: InputValidation? = nil
+    ) {
 
         self.callback = callback
         self.inputValidation = inputValidation
 
-        let okTitle: String
-        switch context {
+        let okTitle: String = switch context {
         case .wiping:
-            okTitle = L10n.Localizable.WipeDatabase.Alert.confirm
+            L10n.Localizable.WipeDatabase.Alert.confirm
         default:
-            okTitle = L10n.Localizable.General.ok
+            L10n.Localizable.General.ok
         }
 
         let cancelTitle: String = L10n.Localizable.General.cancel
@@ -70,7 +74,7 @@ final class RequestPasswordController {
             message = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password
             okActionStyle = .destructive
-        case .unlock(let unlockMessage):
+        case let .unlock(unlockMessage):
             title = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
             message = unlockMessage
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password
@@ -82,7 +86,7 @@ final class RequestPasswordController {
             okActionStyle = .destructive
         }
 
-        alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        self.alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addTextField { textField in
             textField.placeholder = placeholder
 
@@ -96,9 +100,19 @@ final class RequestPasswordController {
             }
 
             // NOTE: `RequestPasswordController` must not be deallocated while this target/action is active
-            textField.addTarget(self, action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)), for: .editingChanged)
+            textField.addTarget(
+                self,
+                action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)),
+                for: .editingChanged
+            )
 
             self.passwordTextField = textField
+
+            let delegate = ClipboardRestrictedTextFieldDelegate(
+                isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            )
+            textField.delegate = delegate
+            self.clipboardDelegate = delegate
         }
 
         let okAction = UIAlertAction(title: okTitle, style: okActionStyle) { [weak self] _ in

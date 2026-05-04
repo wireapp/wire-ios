@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,20 @@
 import WireDataModel
 
 protocol ConversationListContentDelegate: AnyObject {
-    func conversationList(_ controller: ConversationListContentController?, didSelect conversation: ZMConversation?, focusOnView focus: Bool)
-    /// This is called after a delete when there is an item to select
-    func conversationList(_ controller: ConversationListContentController?, willSelectIndexPathAfterSelectionDeleted conv: IndexPath?)
-    func conversationListContentController(_ controller: ConversationListContentController?, wantsActionMenuFor conversation: ZMConversation?, fromSourceView sourceView: UIView?)
+
+    func conversationList(
+        _ controller: ConversationListContentController?,
+        didSelect conversation: ZMConversation?,
+        focusOnView focus: Bool
+    )
+
+    func conversationListContentController(
+        _ controller: ConversationListContentController?,
+        wantsActionMenuFor conversation: ZMConversation?,
+        fromSourceView sourceView: UIView?
+    )
+
+    func conversationListContentControllerDidReload(
+        _ controller: ConversationListContentController
+    )
 }

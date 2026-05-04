@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,16 +22,21 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
 
     var isServerTrusted = true
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return isServerTrusted
+        isServerTrusted
     }
+
     public var title: String = "Example"
-    public var backendURL: URL = URL(string: "http://example.com")!
-    public var backendWSURL: URL = URL(string: "http://example.com")!
-    public var blackListURL: URL = URL(string: "http://example.com")!
-    public var teamsURL: URL = URL(string: "http://example.com")!
-    public var accountsURL: URL = URL(string: "http://example.com")!
-    public var websiteURL: URL = URL(string: "http://example.com")!
+    public var backendURL: URL = .init(string: "http://example.com")!
+    public var backendWSURL: URL = .init(string: "http://example.com")!
+    public var blackListURL: URL = .init(string: "http://example.com")!
+    public var teamsURL: URL = .init(string: "http://example.com")!
+    public var accountsURL: URL = .init(string: "http://example.com")!
+    public var websiteURL: URL = .init(string: "http://example.com")!
     public var countlyURL: URL? = URL(string: "http://example.com")!
-    public var proxy: ProxySettingsProvider? = ProxySettings(host: "socks5.example.com", port: 8080, needsAuthentication: true)
-    public var environmentType: EnvironmentTypeProvider = EnvironmentTypeProvider(environmentType: .production)
+    public var proxy: ProxySettingsProvider? = ProxySettings(
+        host: "socks5.example.com",
+        port: 8080,
+        needsAuthentication: true
+    )
+    public var environmentType: EnvironmentTypeProvider = .init(environmentType: .default)
 }

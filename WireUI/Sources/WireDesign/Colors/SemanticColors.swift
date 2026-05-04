@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,7 +134,6 @@ public enum SemanticColors {
         public static let backgroundSeparatorCell = UIColor(light: .gray40, dark: .gray90)
         public static let backgroundSeparatorEditView = UIColor(light: .gray60, dark: .gray70)
         public static let backgroundConversationList = UIColor(light: .gray20, dark: .gray100)
-        public static let backgroundConversationListTableViewCell = UIColor(light: .white, dark: .gray95)
         public static let borderConversationListTableViewCell = UIColor(light: .gray40, dark: .gray90)
         public static let backgroundCollectionCell = UIColor(light: .white, dark: .gray90)
         public static let borderCollectionCell = UIColor(light: .gray30, dark: .gray80)
@@ -170,6 +169,14 @@ public enum SemanticColors {
         public static let backgroundAudioViewOverlay = UIColor(light: .gray20, dark: .gray100)
         public static let backgroundAudioViewOverlayActive = UIColor(light: .white, dark: .gray95)
 
+        // Conversation background based on primary color
+
+        public static let conversationBackgroundBlue = UIColor(light: .blue50Light, dark: .blue900Dark)
+        public static let conversationBackgroundGreen = UIColor(light: .green50Light, dark: .green900Dark)
+        public static let conversationBackgroundPurple = UIColor(light: .purple50Light, dark: .purple900Dark)
+        public static let conversationBackgroundAmber = UIColor(light: .amber50Light, dark: .amber900Dark)
+        public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red900Dark)
+        public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
     }
 
     public enum TabBar {
@@ -273,6 +280,12 @@ public enum SemanticColors {
         public static let amber = UIColor(light: .amber500Light, dark: .amber500Dark)
         public static let turquoise = UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
+    }
+
+    public enum ChatBubble {
+        public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray100)
+        public static let foregroundOwnMessage = UIColor(light: .white, dark: .black)
+        public static let foregroundOtherMessage = UIColor(light: .black, dark: .white)
     }
 }
 

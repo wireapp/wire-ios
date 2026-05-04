@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ private final class CallbackObject<T: Interactable>: NSObject {
         interactable.addTarget(self, action: #selector(CallbackObject.onEvent(_:)), for: event)
     }
 
-    @objc func onEvent(_ sender: Any!) {
+    @objc
+    func onEvent(_ sender: Any!) {
         callback(sender as! T)
     }
 }

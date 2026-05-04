@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #import "MockTransportSession+Clients.h"
 #import "MockTransportSession+internal.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 @implementation MockTransportSession (Clients)
@@ -55,7 +56,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
 - (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"UserClient"];
-    NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     if (existingClients.count == MaxUserClientsAllowed) {
         return [self errorResponseWithCode:403 reason:@"too-many-clients" apiVersion:apiVersion];
     }
@@ -84,7 +85,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
 {
     NSFetchRequest *request = [MockUserClient fetchRequestWithPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", identifier]];
     
-    NSArray *userClients = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *userClients = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     RequireString(userClients.count <= 1, "Too many user clients with one identifier");
     
     return userClients.firstObject;

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
 extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
 
     @MainActor
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController)
+        -> UIViewController {
         guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return UIViewController()
         }

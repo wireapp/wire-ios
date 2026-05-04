@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@ import WireDataModel
 
 private typealias AlertStrings = L10n.Localizable.Registration.Alert
 
-/**
- * Handles the case that the user tries to register an account with a phone/e-mail that is already registered.
- */
+/// Handles the case that the user tries to register an account with a phone/e-mail that is already registered.
 
 final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEventHandler {
 
@@ -50,9 +48,11 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
         }
 
         var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
-        let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
-                                                   message: AlertStrings.AccountExists.messageEmail,
-                                                   actions: [.changeEmail, .login(email: unverifiedEmail)])
+        let alert = AuthenticationCoordinatorAlert(
+            title: AlertStrings.AccountExists.title,
+            message: AlertStrings.AccountExists.messageEmail,
+            actions: [.changeEmail, .login(email: unverifiedEmail)]
+        )
         actions.append(.presentAlert(alert))
 
         return actions
@@ -63,22 +63,22 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 private extension AuthenticationCoordinatorAlertAction {
 
     static var changeEmail: Self {
-        Self.init(title: AlertStrings.changeEmailAction,
-                  coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
+        Self(
+            title: AlertStrings.changeEmailAction,
+            coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)]
+        )
     }
 
     static func login(email: String) -> Self {
         let credentials = LoginCredentials(
             emailAddress: email,
-            phoneNumber: .none,
-            hasPassword: true,
             usesCompanyLogin: false
         )
         let prefilledCredentials = AuthenticationPrefilledCredentials(
             credentials: credentials,
             isExpired: false
         )
-        return Self.init(
+        return Self(
             title: AlertStrings.changeSigninAction,
             coordinatorActions: [.transition(.provideCredentials(prefilledCredentials), mode: .replace)]
         )

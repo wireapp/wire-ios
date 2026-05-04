@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,10 +45,12 @@ public class UpdateAccessRolesAction: EntityAction {
 
     // MARK: - Life cycle
 
-    public init(conversation: ZMConversation,
-                accessMode: ConversationAccessMode,
-                accessRoles: Set<ConversationAccessRoleV2>,
-                resultHandler: ResultHandler? = nil) {
+    public init(
+        conversation: ZMConversation,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        resultHandler: ResultHandler? = nil
+    ) {
         self.conversationID = conversation.objectID
         self.accessMode = accessMode
         self.accessRoles = accessRoles

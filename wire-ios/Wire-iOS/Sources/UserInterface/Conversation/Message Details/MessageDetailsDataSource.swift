@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ import WireSyncEngine
 
 /// The way the details are displayed.
 enum MessageDetailsDisplayMode: Int {
-    case reactions, receipts, combined
+    case reactions
+    case receipts
+    case combined
 }
 
-/**
- * An object that observes changes in the message data source.
- */
+/// An object that observes changes in the message data source.
 
 protocol MessageDetailsDataSourceObserver: AnyObject {
     /// Called when the message details change.
@@ -37,9 +37,7 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource)
 }
 
-/**
- * The data source to present message details.
- */
+/// The data source to present message details.
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving {
 
@@ -76,6 +74,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     weak var observer: MessageDetailsDataSourceObserver?
 
     private let emojiRepository: EmojiRepositoryInterface
+    private let userSession: UserSession
 
     // MARK: - Initialization
 
@@ -83,27 +82,29 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     init(
         message: ZMConversationMessage,
+        userSession: UserSession,
         emojiRepository: EmojiRepositoryInterface = EmojiRepository()
     ) {
         self.message = message
+        self.userSession = userSession
         self.emojiRepository = emojiRepository
         self.conversation = message.conversation!
 
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
-        supportsReadReceipts = message.needsReadConfirmation
+        self.supportsReadReceipts = message.needsReadConfirmation
 
         switch (showLikesTab, showReceiptsTab) {
         case (true, true):
             self.displayMode = .combined
-            self.title = MessageDetails.combinedTitle.capitalized
+            self.title = MessageDetails.combinedTitle
         case (false, true):
             self.displayMode = .receipts
-            self.title = MessageDetails.receiptsTitle.capitalized
+            self.title = MessageDetails.receiptsTitle
         case (true, false):
             self.displayMode = .reactions
-            self.title = MessageDetails.reactionsTitle.capitalized
+            self.title = MessageDetails.reactionsTitle
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }
@@ -121,7 +122,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     // MARK: - Interface Properties
 
     private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDate() else {
+        guard let sentDate = message.formattedReceivedDateTime() else {
             return
         }
 
@@ -135,8 +136,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         }
 
         self.subtitle = subtitle
-        self.accessibilitySubtitle = message.formattedAccessibleMessageDetails()
-        self.observer?.detailsFooterDidChange(self)
+        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
+        observer?.detailsFooterDidChange(self)
     }
 
     // MARK: - Changes
@@ -175,7 +176,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
                 guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
                 let name = emoji.localizedName ?? emoji.name
                 return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(name.capitalizingFirstCharacterOnly) (\(users.count))",
+                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
                     items: MessageDetailsCellDescription.makeReactionCells(users)
                 )
             }
@@ -185,14 +186,17 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     func setupReadReceipts() {
         readReceipts = [
-            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+            MessageDetailsSectionDescription(
+                items: MessageDetailsCellDescription
+                    .makeReceiptCell(message.sortedReadReceipts)
+            )
         ].filter {
             !$0.items.isEmpty
         }
     }
 
     private func setupObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             let messageObserver = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
             let userObserver = UserChangeInfo.add(userObserver: self, in: userSession)
             observationTokens = [messageObserver, userObserver]

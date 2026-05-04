@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         let page1 = makePage1()
         let page2 = makePage2()
 
-        paginationController.updatePagination(page1, filter: { _ in return true })
+        paginationController.updatePagination(page1, filter: { _ in true })
 
         // WHEN
         var updateResult: ZiphyResult<[Ziph]>?
@@ -64,7 +64,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(page2, filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -99,7 +99,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(.failure(.noMorePages), filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -137,21 +137,37 @@ class ZiphyPaginationControllerTests: XCTestCase {
         _ = paginationController.fetchNewPage()
 
         // THEN
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Utilities
 
     private func makePage1() -> ZiphyResult<[Ziph]> {
-        let image1 = Ziph(identifier: "2WifJGUWMwGTdbcY15", images: ZiphyAnimatedImageList(images: [:]), title: "neil patrick harris")
-        let image2 = Ziph(identifier: "8qFOTu7r79Bzt7zMfT", images: ZiphyAnimatedImageList(images: [:]), title: "tired monday GIF")
-        let image3 = Ziph(identifier: "3oz8xEqn8AGAQbR0yY", images: ZiphyAnimatedImageList(images: [:]), title: "roxxxy andrews yes")
+        let image1 = Ziph(
+            identifier: "2WifJGUWMwGTdbcY15",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "neil patrick harris"
+        )
+        let image2 = Ziph(
+            identifier: "8qFOTu7r79Bzt7zMfT",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "tired monday GIF"
+        )
+        let image3 = Ziph(
+            identifier: "3oz8xEqn8AGAQbR0yY",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "roxxxy andrews yes"
+        )
 
         return .success([image1, image2, image3])
     }
 
     private func makePage2() -> ZiphyResult<[Ziph]> {
-        let image1 = Ziph(identifier: "JzOyy8vKMCwvK", images: ZiphyAnimatedImageList(images: [:]), title: "judge judy bored over it")
+        let image1 = Ziph(
+            identifier: "JzOyy8vKMCwvK",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "judge judy bored over it"
+        )
         return .success([image1])
     }
 

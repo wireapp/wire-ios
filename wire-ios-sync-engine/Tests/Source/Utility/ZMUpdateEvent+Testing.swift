@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,17 @@ import Foundation
 import WireTransport
 
 extension ZMUpdateEvent {
-    public convenience override init() {
-        self.init(uuid: nil, payload: ["type": "conversation.create"], transient: false, decrypted: false, source: .download)!
+    public override convenience init() {
+        self.init(
+            uuid: nil,
+            payload: ["type": "conversation.create"],
+            transient: false,
+            decrypted: false,
+            source: .download
+        )!
     }
 
     static func dummy() -> ZMUpdateEvent {
-        return ZMUpdateEvent()
+        ZMUpdateEvent()
     }
 }

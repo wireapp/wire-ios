@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -48,7 +49,7 @@ final class CollectionImageCell: CollectionCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.loadView()
+        loadView()
     }
 
     var isHeightCalculated: Bool = false
@@ -74,7 +75,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .photo
+        .photo
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
@@ -86,7 +87,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     private func updateViews() {
-        guard let message = self.message else { return }
+        guard let message else { return }
 
         if message.canBeShared {
             imageView.contentMode = .scaleAspectFill
@@ -103,8 +104,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     private func setup(_ view: UIView) {
-        view.clipsToBounds = true
-
+        containerView.clipsToBounds = true
         containerView.removeSubviews()
         containerView.addSubview(view)
 

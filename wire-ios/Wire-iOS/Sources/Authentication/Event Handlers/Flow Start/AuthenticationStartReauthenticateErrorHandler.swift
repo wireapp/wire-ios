@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,20 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
-/**
- * Handles reauthentication errors sent at the start of the flow.
- */
+/// Handles reauthentication errors sent at the start of the flow.
 
 final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
-        let (optionalError, numberOfAccounts) = context
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (BackendEnvironment2?, NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
+        let (environment, optionalError, numberOfAccounts) = context
 
         // Only handle errors on launch
         guard case .start = currentStep else {
@@ -41,7 +43,7 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         }
 
         // Only handle reauthentication errors
-        let supportedErrors: [ZMUserSessionErrorCode] = [
+        let supportedErrors: [UserSessionErrorCode] = [
             .clientDeletedRemotely,
             .accessTokenExpired,
             .needsAuthenticationAfterReboot,
@@ -61,8 +63,12 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         }
 
         // Prepare the next step
-        let nextStep = AuthenticationFlowStep.reauthenticate(credentials: loginCredentials, numberOfAccounts: numberOfAccounts, isSignedOut: true)
+        let nextStep = AuthenticationFlowStep.reauthenticate(
+            credentials: loginCredentials,
+            environment: environment,
+            numberOfAccounts: numberOfAccounts,
+            isSignedOut: true
+        )
         return [.transition(nextStep, mode: .reset)]
     }
-
 }

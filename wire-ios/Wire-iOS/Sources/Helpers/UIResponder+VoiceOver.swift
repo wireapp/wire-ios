@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,12 +20,10 @@ import UIKit
 
 extension UIResponder {
 
-    /**
-     * Makes the responder become the first responder if VoiceOver is not running,
-     * to allow screenreader users to discover the contents of the screen before
-     * prompting for input.
-     * - returns: Whether the object became the first responder.
-     */
+    /// Makes the responder become the first responder if VoiceOver is not running,
+    /// to allow screenreader users to discover the contents of the screen before
+    /// prompting for input.
+    /// - returns: Whether the object became the first responder.
 
     @discardableResult
     func becomeFirstResponderIfPossible() -> Bool {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 
 extension UIImage {
 
@@ -33,15 +34,24 @@ extension UIImage {
 final class ImagePickerConfirmationController: NSObject {
     var previewTitle: String?
     var imagePickedBlock: ((_ imageData: Data?) -> Void)?
+    private let userSession: UserSession
 
     /// We need to store this reference to close the @c SketchViewController
     private var presentingPickerController: UIImagePickerController?
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
 
 }
 
 extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
         presentingPickerController = picker
 
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
@@ -63,11 +73,13 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
                 picker.dismiss(animated: true)
             }
 
-            let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                             onConfirm: onConfirm,
-                                                             onCancel: onCancel)
+            let context = ConfirmAssetViewController.Context(
+                asset: .image(mediaAsset: image),
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
 
-            let confirmImageViewController = ConfirmAssetViewController(context: context)
+            let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmImageViewController.modalPresentationStyle = .fullScreen
             confirmImageViewController.previewTitle = previewTitle
 
@@ -77,6 +89,7 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
         case .camera:
             picker.dismiss(animated: true)
             imagePickedBlock?(image.pngData())
+
         @unknown default:
             picker.dismiss(animated: true)
             imagePickedBlock?(image.pngData())
@@ -84,6 +97,4 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
     }
 }
 
-extension ImagePickerConfirmationController: UINavigationControllerDelegate {
-
-}
+extension ImagePickerConfirmationController: UINavigationControllerDelegate {}

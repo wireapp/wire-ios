@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ import Foundation
 
 final class SoundPreviewPlayer {
 
-    fileprivate var mediaManager: AVSMediaManager
-    fileprivate var stopTimer: Timer?
+    private var mediaManager: AVSMediaManager
+    private var stopTimer: Timer?
 
     init(mediaManager: AVSMediaManager) {
         self.mediaManager = mediaManager

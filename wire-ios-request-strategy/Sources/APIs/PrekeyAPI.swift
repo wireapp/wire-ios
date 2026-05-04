@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ class PrekeyAPIV0: PrekeyAPI {
         self.httpClient = httpClient
     }
 
-    open var apiVersion: APIVersion {
-        return .v0
+    var apiVersion: APIVersion {
+        .v0
     }
 
     let httpClient: HttpClient
@@ -52,10 +52,12 @@ class PrekeyAPIV0: PrekeyAPI {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         let result: Payload.PrekeyByUserID = try mapResponse(response)
@@ -65,7 +67,7 @@ class PrekeyAPIV0: PrekeyAPI {
 
 class PrekeyAPIV1: PrekeyAPIV0 {
     override var apiVersion: APIVersion {
-        return .v1
+        .v1
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -76,10 +78,12 @@ class PrekeyAPIV1: PrekeyAPIV0 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         return try mapResponse(response)
@@ -88,19 +92,19 @@ class PrekeyAPIV1: PrekeyAPIV0 {
 
 class PrekeyAPIV2: PrekeyAPIV1 {
     override var apiVersion: APIVersion {
-        return .v2
+        .v2
     }
 }
 
 class PrekeyAPIV3: PrekeyAPIV2 {
     override var apiVersion: APIVersion {
-        return .v3
+        .v3
     }
 }
 
 class PrekeyAPIV4: PrekeyAPIV3 {
     override var apiVersion: APIVersion {
-        return .v4
+        .v4
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -111,10 +115,12 @@ class PrekeyAPIV4: PrekeyAPIV3 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
         let response = await httpClient.send(request)
 
         let result: Payload.PrekeyByQualifiedUserIDV4 = try mapResponse(response)
@@ -124,23 +130,59 @@ class PrekeyAPIV4: PrekeyAPIV3 {
 
 class PrekeyAPIV5: PrekeyAPIV4 {
     override var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 }
 
 class PrekeyAPIV6: PrekeyAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
 }
 
-extension Collection where Element == QualifiedClientID {
+class PrekeyAPIV7: PrekeyAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
+}
+
+class PrekeyAPIV8: PrekeyAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
+}
+
+class PrekeyAPIV9: PrekeyAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+class PrekeyAPIV10: PrekeyAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
+}
+
+class PrekeyAPIV11: PrekeyAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
+}
+
+class PrekeyAPIV12: PrekeyAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
+}
+
+class PrekeyAPIV13: PrekeyAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
+}
+
+class PrekeyAPIV14: PrekeyAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class PrekeyAPIV15: PrekeyAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
+}
+
+extension Collection<QualifiedClientID> {
 
     var clientListByUserID: Payload.ClientListByUserID {
 
         let initial: Payload.ClientListByUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
+        return reduce(into: initial) { result, client in
             result[client.userID.transportString(), default: []].append(client.clientID)
         }
     }
@@ -148,8 +190,9 @@ extension Collection where Element == QualifiedClientID {
     var clientListByDomain: Payload.ClientListByQualifiedUserID {
         let initial: Payload.ClientListByQualifiedUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
-            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []].append(client.clientID)
+        return reduce(into: initial) { result, client in
+            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []]
+                .append(client.clientID)
         }
     }
 

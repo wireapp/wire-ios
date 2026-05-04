@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
     private func updateContent() {
         defer { items = backing.array as! [Emoji] }
         guard backing.count > capacity else { return }
-        backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
+        backing.removeObjects(at: IndexSet(integersIn: capacity ..< backing.count))
     }
 
 }

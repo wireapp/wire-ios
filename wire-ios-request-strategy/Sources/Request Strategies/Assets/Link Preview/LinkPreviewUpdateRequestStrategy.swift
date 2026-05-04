@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -25,28 +26,36 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
     let messageSender: MessageSenderInterface
 
     static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
-        return NSPredicate(format: "%K == %@ AND %K == %d",
-                           #keyPath(ZMClientMessage.sender), ZMUser.selfUser(in: context),
-                           #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
+        NSPredicate(
+            format: "%K == %@ AND %K == %d",
+            #keyPath(ZMClientMessage.sender),
+            ZMUser.selfUser(in: context),
+            #keyPath(ZMClientMessage.linkPreviewState),
+            ZMLinkPreviewState.uploaded.rawValue
+        )
     }
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface
+    ) {
 
         let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
-        self.modifiedKeysSync = ModifiedKeyObjectSync(trackedKey: ZMClientMessage.linkPreviewStateKey,
-                                                      modifiedPredicate: modifiedPredicate)
+        self.modifiedKeysSync = ModifiedKeyObjectSync(
+            trackedKey: ZMClientMessage.linkPreviewStateKey,
+            modifiedPredicate: modifiedPredicate
+        )
 
         self.managedObjectContext = managedObjectContext
         self.messageSender = messageSender
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 
@@ -55,6 +64,17 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
+
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
+            return
+        }
+
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
@@ -64,7 +84,7 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
                 WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
             }
             await managedObjectContext.perform {
-                object.linkPreviewState = .done
+                object.markAsSent()
                 completion()
             }
             managedObjectContext.leaveAllGroups(groups)

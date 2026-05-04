@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handle e-mail login errors that occur for unknown errors.
- */
+/// Handle e-mail login errors that occur for unknown errors.
 
 final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHandler {
 
@@ -41,20 +39,28 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
         }
 
         // We try to validate the fields to detect an error
-        var detectedError: NSError
-
-        if !ZMUser.isValidEmailAddress(credentials.email) {
-            detectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.invalidEmail.rawValue), userInfo: nil)
+        let detectedError: NSError = if !ZMUser.isValidEmailAddress(credentials.email) {
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidEmail.rawValue,
+                userInfo: nil
+            )
         } else if !ZMUser.isValidPassword(credentials.password) {
-            detectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue), userInfo: nil)
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidCredentials.rawValue,
+                userInfo: nil
+            )
         } else {
-            detectedError = error
+            error
         }
 
         // Show the alert with a guidance dot
 
-        let alert = AuthenticationCoordinatorErrorAlert(error: detectedError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: detectedError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
 
         return [.hideLoadingView, .executeFeedbackAction(.showGuidanceDot), .presentErrorAlert(alert)]
     }

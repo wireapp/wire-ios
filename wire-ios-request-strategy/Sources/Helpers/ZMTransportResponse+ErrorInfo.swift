@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 public extension ZMTransportResponse {
 
     var errorInfo: (status: Int, label: String, message: String) {
-        let payload = self.payload?.asDictionary()
+        let payload = payload?.asDictionary()
         let label = payload?["label"] as? String
         let message = payload?["message"] as? String
         return (httpStatus, label ?? "?", message ?? "?")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,19 +37,19 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .emptyParameters:
-                return "Empty parameter(s)."
+                "Empty parameter(s)."
             case .endpointUnavailable:
-                return "Endpoint unavailable."
+                "Endpoint unavailable."
             case .mlsProtocolError:
-                return "MLS protocol error."
+                "MLS protocol error."
             case .invalidBody:
-                return "Invalid body."
+                "Invalid body."
             case .identityMismatch:
-                return "Prekey credential does not match qualified client ID."
+                "Prekey credential does not match qualified client ID."
             case .clientNotFound:
-                return "Client not found."
-            case .unknown(let status):
-                return "Unknown error (response status: \(status))"
+                "Client not found."
+            case let .unknown(status):
+                "Unknown error (response status: \(status))"
             }
         }
     }

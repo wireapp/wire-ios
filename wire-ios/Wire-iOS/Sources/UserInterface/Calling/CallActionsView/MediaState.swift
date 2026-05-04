@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ enum MediaState: Equatable {
         let isEnabled: Bool
         let canBeToggled: Bool
     }
+
     case sendingVideo(speakerState: SpeakerState), notSendingVideo(speakerState: SpeakerState)
 
     var isSendingVideo: Bool {
@@ -32,19 +33,19 @@ enum MediaState: Equatable {
 
     var isSpeakerEnabled: Bool {
         switch self {
-        case .notSendingVideo(let state):
-            return state.isEnabled
-        case .sendingVideo(let state):
-            return state.isEnabled
+        case let .notSendingVideo(state):
+            state.isEnabled
+        case let .sendingVideo(state):
+            state.isEnabled
         }
     }
 
     var canSpeakerBeToggled: Bool {
         switch self {
-        case .notSendingVideo(let state):
-            return state.canBeToggled
-        case .sendingVideo(let state):
-            return state.canBeToggled
+        case let .notSendingVideo(state):
+            state.canBeToggled
+        case let .sendingVideo(state):
+            state.canBeToggled
         }
     }
 }

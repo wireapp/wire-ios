@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,9 +37,7 @@ extension AppLockModule {
 
         /// The message to display on the OS authentication screen.
 
-        private let deviceAuthenticationDescription = {
-            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
-        }()
+        private let deviceAuthenticationDescription = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
 
         // MARK: - Life cycle
 
@@ -70,7 +68,7 @@ extension AppLockModule {
         }
 
         private var needsToNotifyUser: Bool {
-            return userSession.needsToNotifyUserOfAppLockConfiguration
+            userSession.needsToNotifyUserOfAppLockConfiguration
         }
 
         private var needsToCreateCustomPasscode: Bool {
@@ -80,7 +78,7 @@ extension AppLockModule {
         }
 
         private var isAuthenticationNeeded: Bool {
-            return passcodePreference != nil
+            passcodePreference != nil
         }
 
         private var applicationState: UIApplication.State {
@@ -97,9 +95,6 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     func executeRequest(_ request: AppLockModule.Request) {
         switch request {
-        case .initiateAuthentication(requireActiveApp: true) where applicationState != .active:
-            return
-
         case .initiateAuthentication where !isAuthenticationNeeded:
             openAppLock()
 
@@ -132,17 +127,17 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
             switch result {
             case .granted:
-                self.unlockDatabase()
-                self.openAppLock()
+                unlockDatabase()
+                openAppLock()
 
             case .denied:
-                self.presenter.handleResult(.authenticationDenied(self.authenticationType.current))
+                presenter.handleResult(.authenticationDenied(authenticationType.current))
 
             case .needCustomPasscode:
-                self.presenter.handleResult(.customPasscodeNeeded)
+                presenter.handleResult(.customPasscodeNeeded)
 
             case .unavailable:
-                self.presenter.handleResult(.authenticationUnavailable)
+                presenter.handleResult(.authenticationUnavailable)
             }
         }
     }

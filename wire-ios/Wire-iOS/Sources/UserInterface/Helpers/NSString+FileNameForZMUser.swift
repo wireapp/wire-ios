@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@ import Foundation
 import WireDataModel
 
 // MARK: - For Swift with suffix optional parameter support
+
 extension String {
 
-    /// Return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix) characters with a optional suffix
+    /// Return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix)
+    /// characters with a optional suffix
     ///
     /// - Parameter suffix: suffix of the file name.
     /// - Returns: a filename <= (214 + length of suffix) characters

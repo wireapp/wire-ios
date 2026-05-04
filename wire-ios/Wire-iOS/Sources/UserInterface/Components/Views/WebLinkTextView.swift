@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,13 +50,13 @@ final class WebLinkTextView: UITextView {
 
     /// non-selectable textview
     override var selectedTextRange: UITextRange? {
-        get { return nil }
+        get { nil }
         set { /* no-op */ }
     }
 
-    // Prevent double-tap to select 
+    // Prevent double-tap to select
     override var canBecomeFirstResponder: Bool {
-        return false
+        false
     }
 
     override func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
@@ -71,8 +71,11 @@ final class WebLinkTextView: UITextView {
 
 extension WebLinkTextView: UITextDragDelegate {
 
-    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
-        return []
+    func textDraggableView(
+        _ textDraggableView: UIView & UITextDraggable,
+        itemsForDrag dragRequest: UITextDragRequest
+    ) -> [UIDragItem] {
+        []
     }
 
 }

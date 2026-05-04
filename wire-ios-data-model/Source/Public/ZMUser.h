@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 @class ZMConversation;
 @class UserClient;
-@class ZMAddressBookContact;
 @class AddressBookEntry;
 @class Member;
 @class Team;
@@ -38,7 +37,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @interface ZMUser : ZMManagedObject
 
 @property (nonatomic, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, readonly, nullable) NSString *phoneNumber;
 @property (nonatomic, nullable) AddressBookEntry *addressBookEntry;
 
 @property (nonatomic, readonly) NSSet<UserClient *> * _Nonnull clients;
@@ -61,9 +59,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 /// whether this is the self user
 @property (nonatomic, readonly) BOOL isSelfUser;
-
-/// return true if this user is a serviceUser
-@property (nonatomic, readonly) BOOL isServiceUser;
 
 @property (nonatomic, readonly, nullable) NSString *smallProfileImageCacheKey;
 @property (nonatomic, readonly, nullable) NSString *mediumProfileImageCacheKey;
@@ -88,14 +83,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @end
 
 
-@protocol ZMEditableUserType;
-
-@interface ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ContextProvider> _Nonnull)session;
-
-@end
-
 
 
 @interface ZMUser (Connections)
@@ -114,14 +101,10 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 + (BOOL)validateName:(NSString * __nullable * __nullable)ioName error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validateEmailAddress:(NSString * __nullable * __nullable)ioEmailAddress error:(NSError * __nullable * __nullable)outError;
-+ (BOOL)validatePhoneNumber:(NSString *__nullable * __nullable)ioPhoneNumber error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validatePassword:(NSString * __nullable * __nullable)ioPassword error:(NSError * __nullable * __nullable)outError;
-+ (BOOL)validatePhoneVerificationCode:(NSString * __nullable * __nullable)ioVerificationCode error:(NSError * __nullable * __nullable)outError;
 
 + (BOOL)isValidName:(NSString * _Nullable)name;
 + (BOOL)isValidEmailAddress:(NSString * _Nullable)emailAddress;
 + (BOOL)isValidPassword:(NSString * _Nullable)password;
-+ (BOOL)isValidPhoneNumber:(NSString * _Nullable)phoneNumber;
-+ (BOOL)isValidPhoneVerificationCode:(NSString * _Nullable)phoneVerificationCode;
 
 @end

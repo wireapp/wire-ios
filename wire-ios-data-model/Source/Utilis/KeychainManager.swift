@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol KeychainItemProtocol {
 
     var id: String { get }
     var getQuery: [CFString: Any] { get }
-    func setQuery<T>(value: T) -> [CFString: Any]
+    func setQuery(value: some Any) -> [CFString: Any]
 
 }
 
@@ -30,7 +31,7 @@ public enum KeychainManager {
 
     // MARK: - Keychain access
 
-    static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
+    static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
         WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
@@ -63,9 +64,38 @@ public enum KeychainManager {
         }
     }
 
+    static func delete(query: CFDictionary) throws {
+        WireLogger.keychain.info("deleting item (query: \(query))")
+        let status = SecItemDelete(query)
+
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            WireLogger.keychain.error("deleting item (query: \(query)) failed: osstatus \(status)")
+            throw Error.failedToDeleteItemFromKeychain(status)
+        }
+    }
+
+    static func fetchAllItems(secClass: CFString) throws -> [[CFString: Any]] {
+        let query: [CFString: Any] = [
+            kSecClass: secClass,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecReturnAttributes: true,
+            kSecReturnRef: true
+        ]
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess, let items = result as? [[CFString: Any]] else {
+            WireLogger.keychain.error("fetching items (class: \(secClass)) failed: osstatus \(status)")
+            throw Error.failedToFetchItemBatch(status)
+        }
+
+        return items
+    }
+
     // MARK: - Key generation
 
-    static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
+    public static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
         let status = SecRandomCopyBytes(kSecRandomDefault, key.count, &key)
 
@@ -148,9 +178,9 @@ public enum KeychainManager {
 
     private static var isRunningOnSimulator: Bool {
         #if targetEnvironment(simulator)
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 
@@ -166,26 +196,30 @@ public extension KeychainManager {
         case failedToGenerateKey(OSStatus)
         case failedToGeneratePublicPrivateKey(underlyingError: Swift.Error?)
         case failedToCopyPublicKey
+        case failedToFetchItemBatch(OSStatus)
 
         public var errorDescription: String? {
             switch self {
-            case .failedToStoreItemInKeychain(let status):
-                return "failed to store item in keychain, OSStatus: \(status)"
+            case let .failedToStoreItemInKeychain(status):
+                "failed to store item in keychain, OSStatus: \(status)"
 
-            case .failedToFetchItemFromKeychain(let status):
-                return "failed to fetch item from keychain, OSStatus: \(status)"
+            case let .failedToFetchItemFromKeychain(status):
+                "failed to fetch item from keychain, OSStatus: \(status)"
 
-            case .failedToDeleteItemFromKeychain(let status):
-                return "failed to delete item from keychain, OSStatus: \(status)"
+            case let .failedToDeleteItemFromKeychain(status):
+                "failed to delete item from keychain, OSStatus: \(status)"
 
-            case .failedToGenerateKey(let status):
-                return "failed to generate key, OSStatus: \(status)"
+            case let .failedToGenerateKey(status):
+                "failed to generate key, OSStatus: \(status)"
 
-            case .failedToGeneratePublicPrivateKey(underlyingError: let error):
-                return "failed to generate public private key, underlying error: \(error?.localizedDescription ?? "?")"
+            case let .failedToGeneratePublicPrivateKey(underlyingError: error):
+                "failed to generate public private key, underlying error: \(error?.localizedDescription ?? "?")"
 
             case .failedToCopyPublicKey:
-                return "failed to copy public key"
+                "failed to copy public key"
+
+            case let .failedToFetchItemBatch(status):
+                "failed to fetch item batch, OSStatus: \(status)"
             }
         }
 

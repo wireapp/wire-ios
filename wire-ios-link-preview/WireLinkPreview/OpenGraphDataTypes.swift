@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ enum OpenGraphPropertyType: String {
     case userGeneratedImage = "og:image:user_generated"
 
     // MARK: Foursquare
+
     case latitudeFSQ = "playfoursquare:location:latitude"
     case longitudeFSQ = "playfoursquare:location:longitude"
 }
@@ -57,8 +58,8 @@ enum OpenGraphSiteName: String {
 }
 
 enum OpenGraphTypeType: String {
-    case article = "article"
-    case website = "website"
+    case article
+    case website
     case foursquare = "playfoursquare:venue"
     case instagram = "instapp:photo"
 }

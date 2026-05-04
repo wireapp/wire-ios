@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,20 @@ import Foundation
 import WireSystem
 
 @objcMembers
-public class FakeGroupContext: NSObject, ZMSGroupQueue {
+public class FakeGroupContext: NSObject, GroupQueue {
 
     public let dispatchGroup: ZMSDispatchGroup?
     fileprivate let queue: DispatchQueue!
 
     public static var main: FakeGroupContext {
-        return FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
+        FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
     }
 
     public static var sync: FakeGroupContext {
-         return FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+        FakeGroupContext(
+            queue: DispatchQueue(label: "FakeGroupContext syncContext"),
+            group: ZMSDispatchGroup(label: "FakeSyncContext")
+        )
     }
 
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {
@@ -39,7 +42,12 @@ public class FakeGroupContext: NSObject, ZMSGroupQueue {
     }
 
     public override convenience init() {
-        self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random() % 1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext")) // swiftlint:disable:this legacy_random
+        // swiftlint:disable legacy_random
+        self.init(
+            queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random() % 1000)"),
+            group: ZMSDispatchGroup(label: "FakeGroupContext")
+        )
+        // swiftlint:enable legacy_random
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {

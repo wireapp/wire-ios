@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,15 +21,17 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<ConversationLegalHoldCellDescription>,
+    ConversationMessageCell {
 
-    static let legalHoldURL: URL = .wr_legalHoldLearnMore
-    var conversation: ZMConversation?
+    static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
+
+    var conversation: ConversationLike?
 
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var conversation: ZMConversation?
+        var conversation: ConversationLike?
     }
 
     override init(frame: CGRect) {
@@ -55,28 +57,36 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLegalHoldSystemMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.conversation = message.conversationLike
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
     init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
-        configuration = ConversationLegalHoldCellDescription.configuration(for: systemMessageType, in: conversation)
-        accessibilityLabel = configuration.attributedText?.string
+        self.configuration = ConversationLegalHoldCellDescription.configuration(
+            for: systemMessageType,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
     }
 
-    private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
+    private static func configuration(
+        for systemMessageType: ZMSystemMessageType,
+        in conversation: ZMConversation
+    ) -> View.Configuration {
         let systemMessageTitle = title(for: systemMessageType)
         let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
@@ -88,35 +98,12 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold.enabled(View.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+            L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
-            return ""
+            ""
         }
-    }
-
-}
-
-extension ConversationLegalHoldSystemMessageCell {
-
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation,
-            let clientViewController = ZClientViewController.shared {
-
-            LegalHoldDetailsViewController.present(
-                in: clientViewController,
-                conversation: conversation,
-                userSession: clientViewController.userSession,
-                mainCoordinator: MainCoordinator(zClientViewController: clientViewController)
-            )
-
-            return true
-        }
-
-        return false
     }
 
 }

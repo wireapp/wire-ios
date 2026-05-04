@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,20 +27,23 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
     ///
     /// - Parameters:
     ///   - object: object which has been inserted
+    ///   - isFresh: whether the object was inserted during the current runtime
     ///   - completion: Completion handler which should be called when object has been created
     ///                 on the backend.
     ///
-    func insert(object: Object, completion: @escaping () -> Void)
+    func insert(
+        object: Object,
+        isFresh: Bool,
+        completion: @escaping () -> Void
+    )
 
 }
 
-/**
- InsertedObjectSync synchronizes objects which has been inserted locally but does yet exist on the backend.
-
- This only works for core data entities which inherit from `ZMManagedObject`. The rule for when an object does
- not yet exist on the backend is determined by the `predicateForObjectsThatNeedToBeInsertedUpstream()` or
- by the `insertPredicate` if supplied.
- */
+/// InsertedObjectSync synchronizes objects which has been inserted locally but does yet exist on the backend.
+///
+/// This only works for core data entities which inherit from `ZMManagedObject`. The rule for when an object does
+/// not yet exist on the backend is determined by the `predicateForObjectsThatNeedToBeInsertedUpstream()` or
+/// by the `insertPredicate` if supplied.
 class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
 
     let insertPredicate: NSPredicate
@@ -56,30 +59,30 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        var trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
+        var trackedObjects = objects.compactMap { $0 as? Transcoder.Object }
         let indexOfSecondPartition = trackedObjects.partition(by: insertPredicate.evaluate)
         let insertedObjects = trackedObjects[indexOfSecondPartition...]
         let removedObjects = trackedObjects[..<indexOfSecondPartition]
-        addInsertedObjects(Array(insertedObjects))
+        addInsertedObjects(Array(insertedObjects), isFresh: true)
         removeNoLongerMatchingObjects(Array(removedObjects))
     }
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return Transcoder.Object.sortedFetchRequest(with: insertPredicate)
+        Transcoder.Object.sortedFetchRequest(with: insertPredicate)
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let insertedObjects = objects.compactMap({ $0 as? Transcoder.Object })
+        let insertedObjects = objects.compactMap { $0 as? Transcoder.Object }
 
-        addInsertedObjects(insertedObjects)
+        addInsertedObjects(insertedObjects, isFresh: false)
     }
 
-    func addInsertedObjects(_ objects: [Transcoder.Object]) {
+    func addInsertedObjects(_ objects: [Transcoder.Object], isFresh: Bool) {
         for insertedObject in objects {
             guard !pending.contains(insertedObject) else { continue }
 
             pending.insert(insertedObject)
-            transcoder?.insert(object: insertedObject, completion: {
+            transcoder?.insert(object: insertedObject, isFresh: isFresh, completion: {
                 self.pending.remove(insertedObject)
             })
         }

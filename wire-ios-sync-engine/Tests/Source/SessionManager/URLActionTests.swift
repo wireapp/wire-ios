@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class URLActionTests: ZMTBaseTest {
+final class URLActionTests: ZMTBaseTest {
 
     // MARK: Company Login
 
@@ -96,7 +96,46 @@ class URLActionTests: ZMTBaseTest {
         let action = try URLAction(url: url)
 
         // then
-        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid))
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: nil))
+    }
+
+    func testThatItParsesOpenUserProfileLinkWithDomain() throws {
+        // given
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let domain = "wire.com"
+        let url = URL(string: "wire://user/\(domain)/\(uuidString)")!
+        let uuid = UUID(uuidString: uuidString)!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: domain))
+    }
+
+    func testThatItParsesOpenUserProfileLinkWithDomainAndLegacyFormat() throws {
+        // given
+        let domain = "wire.com"
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let url = URL(string: "wire://user/\(uuidString)@\(domain)")!
+        let uuid = UUID(uuidString: uuidString)!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: domain))
+    }
+
+    func testThatItParsesImportEventsLink() throws {
+        // given
+        let url = URL(string: "wire://import-events")!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.importEvents)
     }
 
     func testThatItDiscardsInvalidJoinConversationLink() throws {
@@ -131,6 +170,26 @@ class URLActionTests: ZMTBaseTest {
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .invalidConversationLink)
         }
+    }
+
+    func testThatURLConvertsToConnectBotAction() throws {
+        // given
+        let url =
+            URL(
+                string: "wire://connect?service=d554c310-8237-4f85-b3cc-b7ae5ec1e6cd&provider=d64af9ae-e0c5-4ce6-b38a-02fd9363b54c"
+            )!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(
+            action,
+            .connectBot(
+                providerID: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                serviceID: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!
+            )
+        )
     }
 
     func testThatItDiscardsInvalidWireURLs() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ open class BaseEARKeyDescription {
     ) {
         self.accountID = accountID.transportString()
         self.label = label
-        id = "com.wire.ear.\(self.label).\(self.accountID)"
-        tag = id.data(using: .utf8)!
+        self.id = "com.wire.ear.\(self.label).\(self.accountID)"
+        self.tag = id.data(using: .utf8)!
     }
 
 }

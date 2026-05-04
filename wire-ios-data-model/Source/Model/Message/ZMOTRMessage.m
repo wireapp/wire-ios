@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ NSString * const DeliveredKey = @"delivered";
     [self missesRecipients:[NSSet setWithObject:recipient]];
 }
 
-- (void)missesRecipients:(NSSet<UserClient *> *)recipients
+- (void)missesRecipients:(NSSet<UserClient *> * _Nonnull)recipients
 {
     [[self mutableSetValueForKey:ZMMessageMissingRecipientsKey] addObjectsFromArray:recipients.allObjects];
 }
@@ -104,9 +104,9 @@ NSString * const DeliveredKey = @"delivered";
     [super markAsSent];
 }
 
-- (void)expire
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
-    [super expire];
+    [super expireWithExpirationReason:expirationReason];
 }
 
 - (void)resend

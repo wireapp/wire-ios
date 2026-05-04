@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,77 +19,99 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
+    let isAppsFeatureEnabled: Bool
+    let areLegacyBotsAvailable: Bool
 
-    init(with context: AddParticipantsViewController.Context) {
+    init(
+        context: AddParticipantsViewController.Context,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
+    ) {
         self.context = context
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
     }
 
-    var botCanBeAdded: Bool {
+    var botCanBeAdded: Bool { // TODO: [WPB-20362] apps vs bots?
         switch context {
-        case .create: return false
-        case .add(let conversation): return conversation.botCanBeAdded
+        case .create:
+            return false
+        case let .add(conversation):
+            guard conversation.botCanBeAdded else { return false }
+
+            switch conversation.messageProtocol {
+            case .mls where isAppsFeatureEnabled:
+                return conversation.allowApps
+            case .proteus where areLegacyBotsAvailable:
+                return conversation.allowApps
+            default:
+                return false
+            }
         }
     }
 
     var selectedUsers: UserSet {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .oneOnOne:
-            return conversation.connectedUserType.map { [$0] } ?? []
-        case .create(let values): return values.participants
-        default: return []
+        case let .add(conversation) where conversation.conversationType == .oneOnOne:
+            conversation.connectedUserType.map { [$0] } ?? []
+        case let .create(values): values.participants
+        default: []
         }
     }
 
     func title(with users: UserSet) -> String {
-        return users.isEmpty
+        users.isEmpty
             ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
             : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
     }
 
     var filterConversation: ZMConversation? {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .group: return conversation as? ZMConversation
-        default: return nil
+        case let .add(conversation) where conversation.conversationType == .group: conversation as? ZMConversation
+        default: nil
         }
     }
 
     var showsConfirmButton: Bool {
         switch context {
-        case .add: return true
-        case .create: return false
+        case .add: true
+        case .create: false
         }
     }
 
     var confirmButtonTitle: String? {
         switch context {
-        case .create: return nil
-        case .add(let conversation):
+        case .create: nil
+        case let .add(conversation):
             if conversation.conversationType == .oneOnOne {
-                return L10n.Localizable.Peoplepicker.Button.createConversation.capitalized
+                L10n.Localizable.Peoplepicker.Button.createConversation.capitalized
             } else {
-                return L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
+                L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
             }
         }
     }
 
-    func rightNavigationItem(target: AnyObject, action: Selector) -> UIBarButtonItem {
+    func rightNavigationItem(action: UIAction) -> UIBarButtonItem {
         switch context {
         case .add:
-            let item = UIBarButtonItem(icon: .cross, target: target, action: action)
+            let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
-            item.accessibilityIdentifier = "close"
+            item.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
             return item
-        case .create(let values):
-            let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable.Peoplepicker.Group.done
-            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key,
-                                                                               systemImage: false,
-                                                                               target: target,
-                                                                               action: action)
+        case let .create(values):
+            let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
+                .Peoplepicker.Group.done
+            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
+                title: key,
+                action: action
+            )
             newItem.tintColor = UIColor.accent()
-            newItem.accessibilityIdentifier = values.participants.isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
+            newItem.accessibilityIdentifier = values.participants
+                .isEmpty ? Locators.SelectParticipantsPage.skip.rawValue : Locators.SelectParticipantsPage.done.rawValue
             return newItem
         }
     }

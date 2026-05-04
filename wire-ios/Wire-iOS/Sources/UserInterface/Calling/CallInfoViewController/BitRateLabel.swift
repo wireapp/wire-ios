@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,16 +25,18 @@ enum BitRateStatus: String {
 
     fileprivate var localizedText: String {
         switch self {
-        case BitRateStatus.constant:
-            return L10n.Localizable.Call.Status.constantBitrate
-        case BitRateStatus.variable:
-            return L10n.Localizable.Call.Status.variableBitrate
+        case .constant:
+            L10n.Localizable.Call.Status.constantBitrate
+
+        /// We don't need to display the `Variable Bit Rate` label, because it's the default.
+        case .variable:
+            ""
         }
 
     }
 
     fileprivate var accessibilityValue: String {
-        return rawValue
+        rawValue
     }
 
     init(_ isConstantBitRate: Bool) {

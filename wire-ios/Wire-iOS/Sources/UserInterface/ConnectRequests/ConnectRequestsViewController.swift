@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@ import WireDesign
 import WireSyncEngine
 
 final class ConnectRequestsViewController: UIViewController,
-                                           UITableViewDataSource,
-                                           UITableViewDelegate {
+    UITableViewDataSource,
+    UITableViewDelegate {
 
     var connectionRequests: [ConversationLike] = []
 
     private var userObserverToken: Any?
     private var pendingConnectionsListObserverToken: Any?
-    private let tableView: UITableView = UITableView(frame: .zero)
+    private let tableView: UITableView = .init(frame: .zero)
     private var lastLayoutBounds = CGRect.zero
     private var isAccepting = false
     private var isIgnoring = false
@@ -40,6 +40,7 @@ final class ConnectRequestsViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,7 +58,10 @@ final class ConnectRequestsViewController: UIViewController,
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
             connectionRequests = pendingConnectionsList.items
-            pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
+            pendingConnectionsListObserverToken = userSession.addConversationListObserver(
+                self,
+                for: pendingConnectionsList
+            )
             userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
         }
 
@@ -78,14 +82,17 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         if !lastLayoutBounds.size.equalTo(view.bounds.size) {
             lastLayoutBounds = view.bounds
             tableView.reloadData()
-            let yPos = tableView.contentSize.height - tableView.bounds.size.height + UIScreen.safeArea.bottom
+
+            let yPos = tableView.contentSize.height - tableView.bounds.size.height + view.safeAreaInsets.bottom
             tableView.contentOffset = CGPoint(x: 0, y: yPos)
         }
     }
@@ -106,8 +113,9 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDataSource
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return connectionRequests.count
+        connectionRequests.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -118,12 +126,13 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDelegate
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // If there are more than one request, reduce the cell height to give user a hint
 
         let inset: CGFloat = connectionRequests.count > 1 ? 48 : 0
 
-        return max(0, view.safeAreaLayoutGuideOrFallback.layoutFrame.size.height - inset)
+        return max(0, view.safeAreaLayoutGuide.layoutFrame.size.height - inset)
     }
 
     // MARK: - Helpers
@@ -137,19 +146,20 @@ final class ConnectRequestsViewController: UIViewController,
         // Get the user in reversed order, newer request is shown on top
         let request = connectionRequests[(connectionRequests.count - 1) - (indexPath.row)]
 
-        let user = request.connectedUserType
-        cell.user = user
+        guard let user = request.connectedUserType else { return }
+
+        cell.configure(user: user, userSession: userSession)
         cell.selectionStyle = .none
         cell.separatorInset = .zero
         cell.preservesSuperviewLayoutMargins = false
         cell.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
 
         cell.acceptBlock = { [weak self] in
-            self?.acceptConnectionRequest(from: cell.user)
+            self?.acceptConnectionRequest(from: user)
         }
 
         cell.ignoreBlock = { [weak self] in
-            self?.ignoreConnectionRequest(from: cell.user)
+            self?.ignoreConnectionRequest(from: user)
         }
 
     }
@@ -163,10 +173,14 @@ final class ConnectRequestsViewController: UIViewController,
             } else {
                 guard self?.connectionRequests.isEmpty == true else { return }
 
-                ZClientViewController.shared?.hideIncomingContactRequests {
-                    if let oneToOneConversation = user.oneToOneConversation {
-                        ZClientViewController.shared?.select(conversation: oneToOneConversation, focusOnView: true, animated: true)
-                    }
+                ZClientViewController.shared?.hideIncomingContactRequests() // TODO: [WPB-11994] test this flow manually
+
+                if let oneToOneConversation = user.oneToOneConversation {
+                    ZClientViewController.shared?.select(
+                        conversation: oneToOneConversation,
+                        focusOnView: true,
+                        animated: true
+                    )
                 }
             }
         }
@@ -202,7 +216,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         tableView.reloadData()
 
-        if !isAccepting && !isIgnoring {
+        if !isAccepting, !isIgnoring {
             hideRequestsOrShowNextRequest()
         }
     }
@@ -220,6 +234,8 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
 
 extension ConnectRequestsViewController: UserObserving {
     func userDidChange(_ change: UserChangeInfo) {
-        tableView.reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
+        tableView
+            .reloadData() // may need a slightly different approach, like enumerating through table cells of type
+        // FirstTimeTableViewCell and setting their bgColor property
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,19 @@
 
 import CoreData
 import Foundation
+import GenericMessageProtocol
 
-@objc public enum MessageConfirmationType: Int16 {
-    case delivered, read
+@objc
+public enum MessageConfirmationType: Int16 {
+    case delivered
+    case read
 
-    static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
+    public static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .delivered:
-            return .delivered
+            .delivered
         case .read:
-            return .read
+            .read
         }
     }
 }
@@ -41,50 +44,97 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     @NSManaged open var user: ZMUser
 
     public var userType: UserType {
-        return user
+        user
     }
 
-    override open class func entityName() -> String {
-        return "MessageConfirmation"
+    open override class func entityName() -> String {
+        "MessageConfirmation"
     }
 
     open override var modifiedKeys: Set<AnyHashable>? {
         get {
-            return Set()
+            Set()
         } set {
             // do nothing
         }
     }
 
-    /// Creates a ZMMessageConfirmation objects that holds a reference to a message that was confirmed and the user who confirmed it.
+    /// Creates a ZMMessageConfirmation objects that holds a reference to a message that was confirmed and the user who
+    /// confirmed it.
     /// It can have 2 types: Delivered and Read depending on the confirmation type
     @discardableResult
-    public static func createMessageConfirmations(_ confirmation: Confirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
-
-        let type = MessageConfirmationType.convert(confirmation.type)
+    public static func createMessageConfirmations(
+        _ confirmation: Confirmation,
+        conversation: ZMConversation,
+        updateEvent: ZMUpdateEvent
+    ) -> [ZMMessageConfirmation] {
 
         guard
-            let managedObjectContext = conversation.managedObjectContext,
             let senderUUID = updateEvent.senderUUID,
-            let serverTimestamp = updateEvent.timestamp
+            let timestamp = updateEvent.timestamp
         else {
             return []
         }
 
-        let sender = ZMUser.fetchOrCreate(with: senderUUID, domain: updateEvent.senderDomain, in: managedObjectContext)
+        return createMessageConfirmations(
+            confirmation,
+            conversation: conversation,
+            senderUUID: senderUUID,
+            senderDomain: updateEvent.senderDomain,
+            timestamp: timestamp
+        )
+    }
+
+    @discardableResult
+    public static func createMessageConfirmations(
+        _ confirmation: Confirmation,
+        conversation: ZMConversation,
+        senderUUID: UUID,
+        senderDomain: String?,
+        timestamp: Date
+    ) -> [ZMMessageConfirmation] {
+
+        let type = MessageConfirmationType.convert(confirmation.type)
+
+        guard
+            let managedObjectContext = conversation.managedObjectContext
+        else {
+            return []
+        }
+
+        let sender = ZMUser.fetchOrCreate(with: senderUUID, domain: senderDomain, in: managedObjectContext)
         let moreMessageIds = confirmation.moreMessageIds
-        let confirmedMesssageIds = ([confirmation.firstMessageID] + moreMessageIds).compactMap({ UUID(uuidString: $0) })
+        let confirmedMesssageIds = ([confirmation.firstMessageID] + moreMessageIds).compactMap { UUID(uuidString: $0) }
 
         return confirmedMesssageIds.compactMap { confirmedMessageId in
-            guard let message = ZMMessage.fetch(withNonce: confirmedMessageId, for: conversation, in: managedObjectContext),
+            guard let message = ZMMessage.fetch(
+                withNonce: confirmedMessageId,
+                for: conversation,
+                in: managedObjectContext
+            ),
                 !message.confirmations.contains(where: { $0.user == sender && $0.type == type }) else { return nil }
 
-            return ZMMessageConfirmation(type: type, message: message, sender: sender, serverTimestamp: serverTimestamp, managedObjectContext: managedObjectContext)
+            return ZMMessageConfirmation(
+                type: type,
+                message: message,
+                sender: sender,
+                serverTimestamp: timestamp,
+                managedObjectContext: managedObjectContext
+            )
         }
     }
 
-    convenience init(type: MessageConfirmationType, message: ZMMessage, sender: ZMUser, serverTimestamp: Date, managedObjectContext: NSManagedObjectContext) {
-        let entityDescription = NSEntityDescription.entity(forEntityName: ZMMessageConfirmation.entityName(), in: managedObjectContext)!
+    convenience init(
+        type: MessageConfirmationType,
+        message: ZMMessage,
+        sender: ZMUser,
+        serverTimestamp: Date,
+        managedObjectContext: NSManagedObjectContext
+    ) {
+        let entityDescription = NSEntityDescription.entity(
+            forEntityName: ZMMessageConfirmation.entityName(),
+            in: managedObjectContext
+        )!
         self.init(entity: entityDescription, insertInto: managedObjectContext)
         self.message = message
         self.user = sender

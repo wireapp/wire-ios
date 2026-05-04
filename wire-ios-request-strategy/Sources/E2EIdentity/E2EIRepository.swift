@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 public protocol E2EIRepositoryInterface {
 
@@ -50,6 +51,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger: WireLogger = .e2ei
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
@@ -59,7 +62,9 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         e2eiSetupService: E2EISetupServiceInterface,
         keyRotator: E2EIKeyPackageRotating,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
@@ -67,6 +72,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         self.keyRotator = keyRotator
         self.coreCryptoProvider = coreCryptoProvider
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
     }
 
     // MARK: - Interface
@@ -86,7 +93,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             do {
                 try await e2eiSetupService.registerFederationCertificate(certificate)
             } catch {
-                logger.warn("failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))")
+                logger
+                    .warn(
+                        "failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))"
+                    )
             }
         }
     }
@@ -101,7 +111,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             guard let userName = selfUser.name,
                   let userHandle = selfUser.handle,
                   let teamId = selfUser.teamIdentifier,
-                  let clientID = E2EIClientID(user: selfUser) else {
+                  let clientID = E2EIClientID(user: selfUser, localDomain: self.localDomain) else {
                 throw Error.failedToGetSelfUserInfo
             }
             return (userName, userHandle, teamId, clientID, isUpgradingClient)
@@ -129,7 +139,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             apiProvider: apiProvider,
             e2eiService: e2eiService,
             acmeDirectory: acmeDirectory,
-            keyRotator: keyRotator
+            keyRotator: keyRotator,
+            apiVersion: apiVersion
         )
     }
 

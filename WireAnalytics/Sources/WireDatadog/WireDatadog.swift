@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,37 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+public import WireLogging
+
 import CryptoKit
 import DatadogCore
-import DatadogCrashReporting
 import DatadogLogs
-import DatadogRUM
 import DatadogTrace
 import UIKit
 
 public final class WireDatadog {
 
     private let applicationID: String
+    private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: LogLevel = .debug
+    private let logLevel: WireLogLevel = .debug
 
     public private(set) var userIdentifier: String
-    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
+    private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
     public init(
         applicationID: String,
+        buildVersion: String,
         buildNumber: String,
         clientToken: String,
         identifierForVendor: UUID?,
         environmentName: String
     ) {
         self.applicationID = applicationID
+        self.buildVersion = buildVersion
         self.buildNumber = buildNumber
 
         if let identifierForVendor {
-            userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
+            self.userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
         } else {
-            userIdentifier = "none"
+            self.userIdentifier = "none"
         }
 
         // set up datadog
@@ -61,17 +65,15 @@ public final class WireDatadog {
             trackingConsent: .granted
         )
 
-        CrashReporting.enable()
-
         let logsConfiguration = Logs.Configuration()
         Logs.enable(with: logsConfiguration)
 
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: logLevel
+            remoteLogThreshold: logLevel.mapToDatadogLogLevel()
         )
-        logger = Logger.create(with: loggerConfiguration)
+        self.logger = Logger.create(with: loggerConfiguration)
     }
 
     public func enable() {
@@ -81,19 +83,10 @@ public final class WireDatadog {
         )
         Trace.enable(with: traceConfiguration)
 
-        let rumConfiguration = RUM.Configuration(
-            applicationID: applicationID,
-            sessionSampleRate: 100,
-            uiKitViewsPredicate: DefaultUIKitRUMViewsPredicate(),
-            uiKitActionsPredicate: DefaultUIKitRUMActionsPredicate(),
-            trackBackgroundEvents: true
-        )
-        RUM.enable(with: rumConfiguration)
-
         Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
-            level: logLevel,
+            level: logLevel.mapToDatadogLogLevel(),
             message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
@@ -101,13 +94,16 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: LogLevel,
+        level: WireLogLevel,
         message: String,
-        error: Error? = nil,
+        error: (any Error)? = nil,
         attributes: [String: any Encodable]
     ) {
         var finalAttributes = attributes
         finalAttributes["build_number"] = buildNumber
+        finalAttributes["version"] = buildVersion
+
+        let level = level.mapToDatadogLogLevel()
 
         logger?.log(
             level: level,
@@ -115,6 +111,14 @@ public final class WireDatadog {
             error: error,
             attributes: finalAttributes
         )
+    }
+
+    public func addAttribute(forKey key: String, value: String) {
+        logger?.addAttribute(forKey: key, value: value)
+    }
+
+    public func removeAttribute(forKey key: String) {
+        logger?.removeAttribute(forKey: key)
     }
 
     // MARK: Static Helpers
@@ -133,5 +137,24 @@ public final class WireDatadog {
             with: "",
             options: [.regularExpression]
         )
+    }
+}
+
+extension WireLogLevel {
+    func mapToDatadogLogLevel() -> LogLevel {
+        switch self {
+        case .debug:
+            .debug
+        case .info:
+            .info
+        case .notice:
+            .notice
+        case .warn:
+            .warn
+        case .error:
+            .error
+        case .critical:
+            .critical
+        }
     }
 }

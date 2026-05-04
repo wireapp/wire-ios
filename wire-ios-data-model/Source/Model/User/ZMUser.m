@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 @import WireImages;
 @import WireUtilities;
-@import WireCryptobox;
-@import WireProtos;
 @import WireTransport;
 @import Foundation;
 
@@ -33,7 +31,6 @@
 #import <CommonCrypto/CommonKeyDerivation.h>
 #import <CommonCrypto/CommonCryptoError.h>
 #import "NSPredicate+ZMSearch.h"
-#import "ZMAddressBookContact.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
 
@@ -54,7 +51,6 @@ static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
 static NSString *const OneOnOneConversationKey = @"oneOnOneConversation";
 static NSString *const EmailAddressKey = @"emailAddress";
-static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const NameKey = @"name";
 static NSString *const HandleKey = @"handle";
 static NSString *const SystemMessagesKey = @"systemMessages";
@@ -66,6 +62,8 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+static NSString *const TypeKey = @"typeValue";
+static NSString *const AppInfoKey = @"appInfo";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -91,7 +89,7 @@ static NSString *const NeedsToAcknowledgeLegalHoldStatusKey = @"needsToAcknowled
 static NSString *const NeedsToRefetchLabelsKey = @"needsToRefetchLabels";
 static NSString *const ParticipantRolesKey = @"participantRoles";
 
-static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
+NS_SWIFT_NAME(TrackingIDKey) static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
@@ -150,7 +148,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
-@property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
 @property (nonatomic, copy) NSString *managedBy;
 @property (nonatomic, readonly) UserClient *selfClient;
@@ -161,14 +158,19 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
-    return self.serviceIdentifier != nil && self.providerIdentifier != nil;
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsBot
 {
-    return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsAppOrBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
 - (BOOL)isSelfUser
@@ -204,7 +206,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @dynamic name;
 @dynamic normalizedEmailAddress;
 @dynamic normalizedName;
-@dynamic phoneNumber;
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
@@ -248,7 +249,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser || self.isWirelessUser) {
+    if (self.isAppOrBot || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -342,6 +343,7 @@ static NSString *const PrimaryKey = @"primaryKey";
                                            HandleKey, // this is not set on the user directly
                                            MembershipKey,
                                            CreatedTeamsKey,
+                                           AppInfoKey,
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,
@@ -389,26 +391,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     }
 }
 
-+ (nullable instancetype)userWithPhoneNumber:(NSString *)phoneNumber inContext:(NSManagedObjectContext *)context
-{
-    RequireString(0 != phoneNumber.length, "phoneNumber required");
-    
-    NSFetchRequest *usersWithPhoneFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
-    usersWithPhoneFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", PhoneNumberKey, phoneNumber];
-    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithPhoneFetch];
-    
-    RequireString(users.count <= 1, "More than one user with the same phone number");
-    
-    if (0 == users.count) {
-        return nil;
-    }
-    else if (1 == users.count) {
-        return users.firstObject;
-    }
-    else {
-        return nil;
-    }
-}
 
 + (NSSet <ZMUser *> *)usersWithRemoteIDs:(NSSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
 {
@@ -510,12 +492,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     if ([transportData objectForKey:@"email"] || authoritative) {
         self.emailAddress = email.stringByRemovingExtremeCombiningCharacters;
     }
-    
-    NSString *phone = [transportData optionalStringForKey:@"phone"];
-    if ([transportData objectForKey:@"phone"] || authoritative) {
-        self.phoneNumber = phone.stringByRemovingExtremeCombiningCharacters;
-    }
-    
+     
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
         self.accentColorValue = (ZMAccentColorRawValue) accentId.integerValue;
@@ -535,11 +512,11 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
     if (arrayProtocols != nil) {
         NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
-        [self setSupportedProtocols:supportedProtocols];
+        [self updateSupportedProtocols:supportedProtocols];
     } else {
         // fallback to proteus as default supported protocol,
         // we don't have swift constants here unfortunately.
-        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+        [self updateSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
     }
 
 
@@ -742,17 +719,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @end
 
 
-@implementation ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
-{
-    VerifyReturnNil(session != nil);
-    return [self selfUserInContext:session.viewContext];
-}
-
-@end
-
-
 
 
 @implementation ZMUser (Editable)
@@ -922,37 +888,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 {
     NSString *value = [password copy];
     return [self validatePassword:&value error:nil];
-}
-
-+ (BOOL)validatePhoneNumber:(NSString **)ioPhoneNumber error:(NSError **)outError
-{
-    if (ioPhoneNumber == NULL || [*ioPhoneNumber length] < 1) {
-        return NO;
-    }
-    else {
-        return [ZMPhoneNumberValidator validateValue:ioPhoneNumber error:outError];
-    }
-}
-
-+ (BOOL)isValidPhoneNumber:(NSString *)phoneNumber
-{
-    NSString *value = [phoneNumber copy];
-    return [self validatePhoneNumber:&value error:nil];
-}
-
-+ (BOOL)validatePhoneVerificationCode:(NSString **)ioVerificationCode error:(NSError **)outError
-{
-    return [StringLengthValidator validateValue:ioVerificationCode
-                            minimumStringLength:6
-                            maximumStringLength:6
-                              maximumByteLength:INT_MAX
-                                          error:outError];
-}
-
-+ (BOOL)isValidPhoneVerificationCode:(NSString *)phoneVerificationCode
-{
-    NSString *value = [phoneVerificationCode copy];
-    return [self validatePhoneVerificationCode:&value error:nil];
 }
 
 - (BOOL)validateValue:(id *)value forKey:(NSString *)key error:(NSError **)error

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,24 +59,24 @@ class BaseCallParticipantView: OrientableView {
     }
 
     var shouldFill: Bool {
-        return isMaximized ? false : videoKind.shouldFill
+        isMaximized ? false : videoKind.shouldFill
     }
 
     let userDetailsView = CallParticipantDetailsView()
     var scalableView: ScalableView?
     var avatarView = UserImageView(size: .normal)
-    var userSession = ZMUserSession.shared()
+    private let userSession: UserSession
 
     private var borderLayer = CALayer()
 
     // MARK: - Private Properties
 
-    private var delta: OrientationDelta = OrientationDelta()
+    private var delta: OrientationDelta = .init()
     private var detailsConstraints: UserDetailsConstraints?
     private var isCovered: Bool
 
     private var adjustedInsets: UIEdgeInsets {
-        safeAreaInsetsOrFallback.adjusted(for: delta)
+        safeAreaInsets.adjusted(for: delta)
     }
 
     private var userDetailsAlpha: CGFloat {
@@ -85,16 +85,20 @@ class BaseCallParticipantView: OrientableView {
 
     // MARK: - View Life Cycle
 
-    init(stream: Stream,
-         isCovered: Bool,
-         shouldShowActiveSpeakerFrame: Bool,
-         shouldShowBorderWhenVideoIsStopped: Bool,
-         pinchToZoomRule: PinchToZoomRule) {
+    init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule,
+        userSession: UserSession
+    ) {
         self.stream = stream
         self.isCovered = isCovered
         self.shouldShowActiveSpeakerFrame = shouldShowActiveSpeakerFrame
         self.shouldShowBorderWhenVideoIsStopped = shouldShowBorderWhenVideoIsStopped
         self.pinchToZoomRule = pinchToZoomRule
+        self.userSession = userSession
 
         super.init(frame: .zero)
 
@@ -105,7 +109,12 @@ class BaseCallParticipantView: OrientableView {
         updateBorderStyle()
         hideVideoViewsIfNeeded()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUserDetailsVisibility), name: .videoGridVisibilityChanged, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateUserDetailsVisibility),
+            name: .videoGridVisibilityChanged,
+            object: nil
+        )
         setupAccessibility()
     }
 
@@ -118,7 +127,10 @@ class BaseCallParticipantView: OrientableView {
 
     func updateUserDetails() {
         userDetailsView.name = stream.user?.name
-        userDetailsView.microphoneIconStyle = MicrophoneIconStyle(state: stream.microphoneState, shouldPulse: stream.activeSpeakerState.isSpeakingNow)
+        userDetailsView.microphoneIconStyle = MicrophoneIconStyle(
+            state: stream.microphoneState,
+            shouldPulse: stream.activeSpeakerState.isSpeakingNow
+        )
         userDetailsView.callState = stream.callParticipantState
         userDetailsView.alpha = userDetailsAlpha
     }
@@ -133,7 +145,8 @@ class BaseCallParticipantView: OrientableView {
         isAccessibilityElement = true
         accessibilityTraits = .button
         let microphoneState = userDetailsView.microphoneIconStyle.accessibilityLabel
-        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling.CameraOff.description
+        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling
+            .CameraOff.description
         let activeSpeaker = stream.isParticipantUnmutedAndSpeakingNow ? Calling.ActiveSpeaker.description : ""
         let screenSharing = stream.isScreenSharing ? Calling.SharesScreen.description : ""
         accessibilityLabel = "\(userName), \(microphoneState), \(cameraState), \(activeSpeaker), \(screenSharing)"
@@ -202,9 +215,9 @@ class BaseCallParticipantView: OrientableView {
     var shouldEnableScaling: Bool {
         switch pinchToZoomRule {
         case .enableWhenFitted:
-            return !shouldFill
+            !shouldFill
         case .enableWhenMaximized:
-            return isMaximized
+            isMaximized
         }
     }
 
@@ -250,8 +263,10 @@ class BaseCallParticipantView: OrientableView {
         borderLayer.frame = bounds
     }
 
-    func layout(forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
-                deviceOrientation: UIDeviceOrientation) {
+    func layout(
+        forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
+        deviceOrientation: UIDeviceOrientation
+    ) {
         guard let superview else { return }
 
         delta = .equal
@@ -263,7 +278,9 @@ class BaseCallParticipantView: OrientableView {
     }
 
     // MARK: - Visibility
-    @objc private func updateUserDetailsVisibility(_ notification: Notification?) {
+
+    @objc
+    private func updateUserDetailsVisibility(_ notification: Notification?) {
         guard let isCovered = notification?.userInfo?[CallGridViewController.isCoveredKey] as? Bool else {
             return
         }
@@ -274,10 +291,12 @@ class BaseCallParticipantView: OrientableView {
             options: [.curveEaseInOut, .beginFromCurrentState],
             animations: {
                 self.userDetailsView.alpha = self.userDetailsAlpha
-        })
+            }
+        )
     }
 
     // MARK: - Accessibility for automation
+
     override var accessibilityIdentifier: String? {
         get {
             let name = stream.user?.name ?? ""
@@ -291,6 +310,7 @@ class BaseCallParticipantView: OrientableView {
 }
 
 // MARK: - User Details Constraints
+
 private struct UserDetailsConstraints {
     private let bottom: NSLayoutConstraint
     private let leading: NSLayoutConstraint
@@ -299,9 +319,9 @@ private struct UserDetailsConstraints {
     private let margin: CGFloat = 8
 
     init(view: UIView, superview: UIView, safeAreaInsets insets: UIEdgeInsets) {
-        bottom = view.bottomAnchor.constraint(equalTo: superview.bottomAnchor)
-        leading = view.leadingAnchor.constraint(equalTo: superview.leadingAnchor)
-        trailing = view.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor)
+        self.bottom = view.bottomAnchor.constraint(equalTo: superview.bottomAnchor)
+        self.leading = view.leadingAnchor.constraint(equalTo: superview.leadingAnchor)
+        self.trailing = view.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor)
         updateEdges(with: insets)
         NSLayoutConstraint.activate([bottom, leading, trailing])
     }

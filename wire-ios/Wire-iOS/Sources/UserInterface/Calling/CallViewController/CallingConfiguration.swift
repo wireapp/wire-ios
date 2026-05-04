@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,9 +30,11 @@ struct CallingConfiguration {
 
     private static let `default` = Self.largeConferenceCalls
 
-    static func resetDefaultConfig() {
-        config = Self.default
-    }
+    #if DEBUG
+        static func testHelper_resetDefaultConfig() {
+            config = Self.default
+        }
+    #endif
 
     enum StreamLimit {
         case noLimit

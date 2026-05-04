@@ -5,5 +5,5 @@ templates:
 output:
   ./generated
 args:
-  autoMockableTestableImports: ["WireUtilities"]
   autoMockableImports: ["UserNotifications"]
+  autoMockableTestableImports: ["WireUtilities"]

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,16 +48,20 @@ final class WireLogoInfoView: UIView {
     }()
 
     let titleLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .largeSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .largeSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.accessibilityValue = label.text
         return label
     }()
 
     let subtitleLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.accessibilityValue = label.text
@@ -132,7 +136,8 @@ final class WireLogoInfoView: UIView {
             // subtitle label
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 14),
             subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)])
+            subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
     }
 
 }

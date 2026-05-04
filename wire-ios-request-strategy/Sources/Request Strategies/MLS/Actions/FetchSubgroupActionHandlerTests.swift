@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,6 +90,29 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             cipherSuite: 123,
             epoch: 1,
             epochTimestamp: Date.distantPast,
+            groupID: Data.secureRandomData(length: 8).base64String(),
+            members: [.init(
+                userID: UUID(),
+                clientID: UUID().transportString(),
+                domain: "domain.com"
+            )],
+            parentQualifiedID: .init(id: UUID(), domain: "domain.com"),
+            subconvID: UUID().transportString()
+        )
+
+        // When
+        let mlsSubgroup = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+
+        // Then
+        XCTAssertEqual(mlsSubgroup, payload.mlsSubgroup)
+    }
+
+    func test_itHandlesSuccess_WhenNoCipherSuiteOrEpochTimestamp() {
+        // Given
+        let payload = ResponsePayload(
+            cipherSuite: nil,
+            epoch: 0,
+            epochTimestamp: nil,
             groupID: Data.secureRandomData(length: 8).base64String(),
             members: [.init(
                 userID: UUID(),

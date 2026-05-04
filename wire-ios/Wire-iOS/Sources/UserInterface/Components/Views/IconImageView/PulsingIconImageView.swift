@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol PulsingIconImageStyle {
     var shouldPulse: Bool { get }
@@ -35,17 +36,21 @@ class PulsingIconImageView: IconImageView {
         )
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func applicationDidBecomeActive() {
+    @objc
+    func applicationDidBecomeActive() {
         refreshPulsing()
     }
 
-    func set(style: (IconImageStyle & PulsingIconImageStyle)? = nil,
-             size: StyleKitIcon.Size? = nil,
-             color: UIColor? = nil) {
+    func set(
+        style: (IconImageStyle & PulsingIconImageStyle)? = nil,
+        size: StyleKitIcon.Size? = nil,
+        color: UIColor? = nil
+    ) {
         super.set(style: style, size: size, color: color)
         refreshPulsing()
     }
@@ -58,7 +63,8 @@ class PulsingIconImageView: IconImageView {
             options: [.repeat, .autoreverse, .curveEaseInOut],
             animations: {
                 self.alpha = 0.2
-        })
+            }
+        )
     }
 
     func stopPulsing() {

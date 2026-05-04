@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,9 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
 
     private let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
-            fontSpec: .normalSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            style: .body2,
+            color: SemanticColors.Label.textDefault
+        )
 
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
@@ -108,8 +109,9 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         ])
     }
 
-    private func setupAccessibility() {
+    func setupAccessibility() {
         isAccessibilityElement = true
+        accessibilityValue = cellLinkLabel.text
         accessibilityTraits = .staticText
     }
 

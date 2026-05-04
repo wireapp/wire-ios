@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 import Foundation
 import WireDataModel
 
+/// A class responsible for setting up action handlers for MLS requests
+/// and for notifying them when a request is allowed.
+
 public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
@@ -27,25 +30,27 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Life cycle
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
-        entitySync = EntityActionSync(actionHandlers: [
-            SendMLSMessageActionHandler(context: managedObjectContext),
-            SendCommitBundleActionHandler(context: managedObjectContext),
+        self.entitySync = EntityActionSync(actionHandlers: [
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
-            ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
-            FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext),
+            ClaimMLSKeyPackageActionHandler(context: managedObjectContext, localDomain: localDomain),
             FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext),
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
-            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
-            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
+            SyncMLSOneToOneConversationActionHandler(
+                context: managedObjectContext,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         ])
 
         super.init(
@@ -54,17 +59,15 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileInBackground,
+            .allowsRequestsWhileOnline
         ]
     }
 
     // MARK: - Requests
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return entitySync.nextRequest(for: apiVersion)
+        entitySync.nextRequest(for: apiVersion)
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
@@ -29,31 +30,38 @@ extension ZMConversation: ShareDestination {
             return false
         }
         return selfUser.hasTeam &&
-            self.conversationType == .oneOnOne &&
-            self.localParticipants.first {
-                $0.isGuest(in: self) } != nil
+            conversationType == .oneOnOne &&
+            localParticipants.first { $0.isGuest(in: self) } != nil
     }
-
 }
 
-extension ShareDestination where Self: ConversationAvatarViewConversation {
+extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
+
     var avatarView: UIView? {
-        let avatarView = ConversationAvatarView()
-        avatarView.configure(context: .conversation(conversation: self))
+        let avatarView = ConversationGroupAvatarView()
+        avatarView.configure(
+            context: ConversationGroupAvatarView.Context(
+                conversation: self
+            )
+        )
         return avatarView
     }
+
+    var qualifiedID: WireDataModel.QualifiedID? {
+        nil
+    }
 }
 
-extension Array where Element == ZMConversation {
+extension [ZMConversation] {
 
     // Should be called inside ZMUserSession.shared().perform block
     func forEachNonEphemeral(_ block: (ZMConversation) -> Void) {
         forEach {
             guard let timeout = $0.activeMessageDestructionTimeoutValue,
                   let type = $0.activeMessageDestructionTimeoutType else {
-                      block($0)
-                      return
-                  }
+                block($0)
+                return
+            }
             $0.setMessageDestructionTimeoutValue(.init(rawValue: 0), for: type)
             block($0)
             $0.setMessageDestructionTimeoutValue(timeout, for: type)
@@ -64,57 +72,79 @@ extension Array where Element == ZMConversation {
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
 
-    func share<ZMConversation>(to: [ZMConversation]) {
-        forward(to: to as [AnyObject])
+    func share(to: [some Any], userSession: UserSession) {
+        forward(to: to as [AnyObject], userSession: userSession)
     }
 
-    func forward(to: [AnyObject]) {
+    func forward(to: [AnyObject], userSession: UserSession) {
 
         let conversations = to as! [ZMConversation]
 
         if isText {
             let fetchLinkPreview = !Settings.disableLinkPreviews
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         // We should not forward any mentions to other conversations
-                        try $0.appendText(content: self.textMessageData!.messageText!, mentions: [], fetchLinkPreview: fetchLinkPreview)
+                        try $0.appendText(
+                            content: self.textMessageData!.messageText!,
+                            mentions: [],
+                            fetchLinkPreview: fetchLinkPreview
+                        )
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn("Failed to append text message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
-        } else if isImage, let imageData = imageMessageData?.imageData {
-            ZMUserSession.shared()?.perform {
+        } else if isImage, let imageMessageData, let data = imageMessageData.imageData {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
-                        try $0.appendImage(from: imageData)
+                        let image = SendableImage(
+                            name: imageMessageData.name,
+                            utType: nil,
+                            data: data
+                        )
+                        try $0.appendImage(image, nonce: UUID())
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
-                ZMUserSession.shared()?.perform {
-                    conversations.forEachNonEphemeral {
-                        do {
-                            try $0.appendFile(with: fileMetadata)
-                        } catch {
-                            Logging.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
+            Task { [weak userSession] in
+                let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
+                if let userSession = userSession as? ZMUserSession {
+                    await userSession.managedObjectContext.perform {
+                        conversations.forEachNonEphemeral {
+                            do {
+                                try $0.appendFile(with: fileMetadata)
+                            } catch {
+                                WireLogger.messageProcessing
+                                    .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            }
                         }
+                        userSession.saveOrRollbackChanges()
                     }
                 }
             }
         } else if isLocation {
-            let locationData = LocationData.locationData(withLatitude: locationMessageData!.latitude, longitude: locationMessageData!.longitude, name: locationMessageData!.name, zoomLevel: locationMessageData!.zoomLevel)
-            ZMUserSession.shared()?.perform {
+            let locationData = LocationData.locationData(
+                withLatitude: locationMessageData!.latitude,
+                longitude: locationMessageData!.longitude,
+                name: locationMessageData!.name,
+                zoomLevel: locationMessageData!.zoomLevel
+            )
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -126,27 +156,15 @@ extension ZMMessage: Shareable {
 }
 
 extension ZMConversationMessage {
-    func previewView() -> UIView? {
-        let view = preparePreviewView(shouldDisplaySender: false)
+    func previewView(userSession: UserSession) -> UIView? {
+        let view = preparePreviewView(userSession: userSession, shouldDisplaySender: false)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SemanticColors.View.backgroundUserCell
         return view
     }
 }
 
-// swiftlint:disable:next todo_requires_jira_link
-extension ConversationList { // TODO: mv to DM
-
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        items.filter { conversation in
-            (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
-    }
-}
-
-// MARK: - popover apperance update
+// MARK: - popover appearance update
 
 extension ConversationContentViewController {
 
@@ -155,66 +173,33 @@ extension ConversationContentViewController {
 
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
-        if let keyboardAvoidingViewController = self.presentedViewController as? KeyboardAvoidingViewController,
-           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
+        if let keyboardAvoidingViewController = presentedViewController as? KeyboardAvoidingViewController,
+           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<
+               ZMConversation,
+               ZMMessage
+           > {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
-
-        updatePopoverSourceRect()
     }
 
-    func updatePopover() {
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController else { return }
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
 
-        rootViewController.updatePopoverSourceRect()
+        // TODO: [WPB-16431] this is to update the cells on iPad when sidebar
+        // is hidden or shown. This is a quick fix for now. To improve later
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.dataSource.resetSectionControllers()
+        }
     }
+
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func showForwardFor(message: ZMConversationMessage?, from view: UIView?) {
-        guard let userSession = ZMUserSession.shared(),
-              let message else { return }
-
-        endEditing()
-
-        let conversations = ConversationList.conversationsIncludingArchived(inUserSession: userSession)
-            .shareableConversations(excluding: message.conversationLike)
-
-        let shareViewController = ShareViewController<ZMConversation, ZMMessage>(
-            shareable: message as! ZMMessage,
-            destinations: conversations,
-            showPreview: traitCollection.horizontalSizeClass != .regular
-        )
-
-        let keyboardAvoiding = KeyboardAvoidingViewController(viewController: shareViewController)
-        keyboardAvoiding.disabledWhenInsidePopover = true
-        keyboardAvoiding.preferredContentSize = CGSize.IPadPopover.preferredContentSize
-        keyboardAvoiding.modalPresentationCapturesStatusBarAppearance = true
-
-        let presenter: PopoverPresenterViewController? = (presentedViewController ?? UIApplication.shared.firstKeyWindow) as? PopoverPresenterViewController
-
-        if let presenter,
-           let pointToView = (view as? SelectableView)?.selectionView ?? view ?? self.view {
-            keyboardAvoiding.configPopover(pointToView: pointToView, popoverPresenter: presenter)
-        }
-
-        if let popoverPresentationController = keyboardAvoiding.popoverPresentationController {
-            popoverPresentationController.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        }
-
-        keyboardAvoiding.presentationController?.delegate = self
-
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
-            weak var presentingViewController = shareController.presentingViewController
-
-            presentingViewController?.dismiss(animated: true)
-        }
-
-        (presenter ?? self).present(keyboardAvoiding, animated: true)
-    }
-
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection
+    ) -> UIModalPresentationStyle {
+        traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

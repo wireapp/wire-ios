@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ enum AspectRatio {
 
 extension UIDeviceOrientation {
     var aspectRatio: AspectRatio {
-        return isLandscape ? .landscape : .portrait
+        isLandscape ? .landscape : .portrait
     }
 }
 
@@ -35,28 +35,16 @@ extension CGSize {
 
     var aspectRatio: AspectRatio {
         if width < height {
-            return .portrait
+            .portrait
         } else if width > height {
-            return .landscape
+            .landscape
         } else {
-            return .square
+            .square
         }
     }
 
-    var isLandscape: Bool {
-        return aspectRatio == .landscape
-    }
-
-    var isPortrait: Bool {
-        return aspectRatio == .portrait
-    }
-
-    var isSquare: Bool {
-        return aspectRatio == .square
-    }
-
     func flipped() -> CGSize {
-        return CGSize(width: height, height: width)
+        CGSize(width: height, height: width)
     }
 
     func withOrientation(_ orientation: UIDeviceOrientation) -> CGSize {

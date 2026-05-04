@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Represents an animated image provided by Giphy.
- */
+/// Represents an animated image provided by Giphy.
 
 public struct ZiphyAnimatedImage: Codable {
 
@@ -31,10 +29,10 @@ public struct ZiphyAnimatedImage: Codable {
 
     public var description: String {
         let values = [
-            ("url = \(url.absoluteString)"),
-            ("width = \(width)"),
-            ("height = \(height)"),
-            ("fileSize = \(fileSize)")
+            "url = \(url.absoluteString)",
+            "width = \(width)",
+            "height = \(height)",
+            "fileSize = \(fileSize)"
         ]
 
         return "<< " + values.joined(separator: ", ") + ">>"
@@ -52,9 +50,9 @@ public struct ZiphyAnimatedImage: Codable {
     // MARK: - Codable
 
     public enum CodingKeys: String, CodingKey {
-        case url = "url"
-        case width = "width"
-        case height = "height"
+        case url
+        case width
+        case height
         case fileSize = "size"
     }
 

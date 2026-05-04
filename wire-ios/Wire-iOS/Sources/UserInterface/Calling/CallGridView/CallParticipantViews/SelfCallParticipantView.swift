@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override var stream: Stream {
         didSet {
-            guard stream.callParticipantState.videoState != self.videoState else { return }
+            guard stream.callParticipantState.videoState != videoState else { return }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
     }
@@ -85,14 +85,14 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func updateCaptureState(with newVideoState: VideoState?) {
-        guard newVideoState != self.videoState else { return }
+        guard newVideoState != videoState else { return }
 
         if newVideoState == .some(.started) {
             startCapture()
         } else {
             stopCapture()
         }
-        self.videoState = newVideoState
+        videoState = newVideoState
     }
 
     func startCapture() {

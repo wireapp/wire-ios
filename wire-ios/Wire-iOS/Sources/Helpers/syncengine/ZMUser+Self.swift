@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,39 +20,39 @@ import Foundation
 import WireSyncEngine
 
 #if targetEnvironment(simulator)
-typealias EditableUser = ZMUser & EditableUserType
+    typealias EditableUser = EditableUserType & ZMUser
 
-protocol SelfUserProviderUI {
-    static var selfUser: EditableUser { get }
-}
+    protocol SelfUserProviderUI {
+        static var selfUser: EditableUser { get }
+    }
 
-extension ZMUser {
+    extension ZMUser {
 
-    /// Return self's User object
-    /// Notice: This should be replaced with SelfUser.current
-    ///
-    /// - Returns: a ZMUser<ZMEditableUserType> object for app target, or a MockUser object for test.
-    static func selfUser() -> EditableUser? {
+        /// Return self's User object
+        /// Notice: This should be replaced with SelfUser.current
+        ///
+        /// - Returns: a ZMUser<ZMEditableUserType> object for app target, or a MockUser object for test.
+        static func selfUser() -> EditableUser? {
 
-        if let mockUserClass = NSClassFromString("MockUser") as? SelfUserProviderUI.Type {
-            return mockUserClass.selfUser
-        } else {
-            guard let session = ZMUserSession.shared() else { return nil }
+            if let mockUserClass = NSClassFromString("MockUser") as? SelfUserProviderUI.Type {
+                return mockUserClass.selfUser
+            } else {
+                guard let session = ZMUserSession.shared() else { return nil }
 
-            return ZMUser.selfUser(inUserSession: session)
+                return ZMUser.selfUser(in: session.viewContext)
+            }
         }
     }
-}
 #else
-extension ZMUser {
+    extension ZMUser {
 
-    /// Return self's User object
-    ///
-    /// - Returns: a ZMUser object for app target
-    static func selfUser() -> ZMUser? {
-        guard let session = ZMUserSession.shared() else { return nil }
+        /// Return self's User object
+        ///
+        /// - Returns: a ZMUser object for app target
+        static func selfUser() -> ZMUser? {
+            guard let session = ZMUserSession.shared() else { return nil }
 
-        return ZMUser.selfUser(inUserSession: session)
+            return ZMUser.selfUser(in: session.viewContext)
+        }
     }
-}
 #endif

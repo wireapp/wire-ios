@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Foundation
 
-class ButtonState: ZMManagedObject {
-    @NSManaged var stateValue: Int16
+final class ButtonState: ZMManagedObject {
+    @NSManaged private(set) var stateValue: Int16
     @NSManaged var message: ZMMessage?
     @NSManaged var remoteIdentifier: String?
     @NSManaged var isExpired: Bool
@@ -34,40 +34,44 @@ class ButtonState: ZMManagedObject {
     }
 
     override static func entityName() -> String {
-        return String(describing: ButtonState.self)
+        String(describing: ButtonState.self)
     }
 
     override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
-    enum State: Int16 {
-        case unselected
-        case selected
-        case confirmed
-    }
-
-    var state: State {
+    var state: ButtonMessageState {
         get {
-            return State(rawValue: stateValue) ?? .unselected
+            ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
+            guard newValue.rawValue != stateValue else { return }
             stateValue = newValue.rawValue
         }
     }
 }
 
+public enum ButtonMessageState: Int16 {
+    case unselected
+    case selected
+    case confirmed
+}
+
 extension Set where Element: ButtonState {
-    func confirmButtonState(withId id: String) {
+    func confirmButtonState(buttonID: String?) {
         for button in self {
-            button.state = button.remoteIdentifier == id ?
-                .confirmed :
+            let newState: ButtonMessageState = if let buttonID, button.remoteIdentifier == buttonID {
+                .confirmed
+            } else {
                 .unselected
+            }
+            button.state = newState
         }
     }
 
     func resetExpired() {
-        for button in self {
+        for button in self where button.isExpired {
             button.isExpired = false
         }
     }

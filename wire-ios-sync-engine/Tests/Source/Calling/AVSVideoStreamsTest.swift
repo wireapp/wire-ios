@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AVSVideoStreamsTest: XCTestCase {
     func testThatJSONStringValue_ConformsToAVSAPI() {
@@ -28,18 +28,19 @@ class AVSVideoStreamsTest: XCTestCase {
         let clientId = UUID()
 
         let client = AVSClient(userId: userId, clientId: clientId.transportString())
+        let stream = AVSClientVideoStream(client: client, quality: .low)
 
         let expectedJson = """
         {\
         "clients":[\
-        \(client.jsonString(sortedKeys: true)!)\
+        \(stream.jsonString(sortedKeys: true)!)\
         ],\
         "convid":"\(conversationId.transportString())"\
         }
         """
 
         // when
-        let sut = AVSVideoStreams(conversationId: conversationId.transportString(), clients: [client])
+        let sut = AVSVideoStreams(conversationId: conversationId.transportString(), clients: [stream])
 
         // then
         XCTAssertEqual(sut.jsonString(sortedKeys: true), expectedJson)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 extension NetworkQuality {
@@ -25,9 +26,17 @@ extension NetworkQuality {
             return nil
         } else {
             let attachment = NSTextAttachment.textAttachment(for: .networkCondition, with: color, iconSize: .tiny)
-            attachment.bounds = CGRect(x: 0.0, y: -4, width: attachment.image!.size.width, height: attachment.image!.size.height)
+            attachment.bounds = CGRect(
+                x: 0.0,
+                y: -4,
+                width: attachment.image!.size.width,
+                height: attachment.image!.size.height
+            )
             let text = L10n.Localizable.Conversation.Status.poorConnection.localizedUppercase
-            let attributedText = text.attributedString.adding(font: FontSpec(.small, .semibold).font!, to: text).adding(color: color, to: text)
+            let attributedText = text.attributedString.adding(font: FontSpec(.small, .semibold).font!, to: text).adding(
+                color: color,
+                to: text
+            )
             return NSAttributedString(attachment: attachment) + " " + attributedText
         }
     }
@@ -35,9 +44,9 @@ extension NetworkQuality {
     var isNormal: Bool {
         switch self {
         case .normal:
-            return true
+            true
         case .medium, .poor, .problem:
-            return false
+            false
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ final class CallSystemMessageGenerator: NSObject {
         case .established:
             log.info("Setting call connect date for \(conversation.displayName ?? "")")
             connectDateByConversation[conversation] = Date()
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             systemMessage = appendCallEndedSystemMessage(
                 reason: reason,
                 conversation: conversation,
@@ -65,11 +65,15 @@ final class CallSystemMessageGenerator: NSObject {
     ) -> ZMSystemMessage? {
         var systemMessage: ZMSystemMessage?
 
-        if connectDateByConversation[conversation] == nil, !caller.isSelfUser, reason.isOne(of: .canceled, .timeout, .normal) {
+        if connectDateByConversation[conversation] == nil, !caller.isSelfUser, reason.isOne(
+            of: .canceled,
+            .timeout,
+            .normal
+        ) {
             log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
             var isRelevant = true
-            if case .incoming(video: _, shouldRing: false, degraded: _)? = previousCallState {
+            if case .incoming(isVideo: _, shouldRing: false, degraded: _)? = previousCallState {
                 // Call was ignored by recipient
                 isRelevant = false
             }

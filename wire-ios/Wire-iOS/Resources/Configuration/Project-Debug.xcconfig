@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
 
 #include "../../../Configuration/Debug.xcconfig"
 #include "./Project-Base.xcconfig"
-
-// Architectures
-//
-ONLY_ACTIVE_ARCH = YES
 
 // Build Options
 //
@@ -54,5 +50,4 @@ DEVELOPER_MODE_ENABLED=1
 GCC_PREPROCESSOR_DEFINITIONS = $(SHARED_CUSTOM_VALUES) $(OTHER_PREPROCESSOR_FLAGS) DEBUG=1
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(OTHER_PREPROCESSOR_FLAGS)
 
-// WIRESTAN - Enabled the fake country in the phone number selection
-OTHER_SWIFT_FLAGS = -Xfrontend -warn-long-function-bodies=10000 -Xfrontend -warn-long-expression-type-checking=10000 -DWIRESTAN -DDEBUG
+OTHER_SWIFT_FLAGS = -Xfrontend -warn-long-function-bodies=10000 -Xfrontend -warn-long-expression-type-checking=10000 -DDEBUG

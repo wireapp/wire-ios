@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 enum MicrophoneIconStyle: String {
@@ -31,29 +32,29 @@ extension MicrophoneIconStyle: IconImageStyle {
     var icon: StyleKitIcon? {
         switch self {
         case .muted:
-            return .microphoneOff
+            .microphoneOff
         case .unmuted, .unmutedPulsing:
-            return .microphone
+            .microphone
         case .hidden:
-            return .none
+            .none
         }
     }
 
     var tintColor: UIColor? {
         switch self {
         case .unmutedPulsing:
-            return .accent()
+            .accent()
         default:
-            return nil
+            nil
         }
     }
 
     var accessibilityPrefix: String {
-        return "img.microphone"
+        "img.microphone"
     }
 
     var accessibilitySuffix: String {
-        return rawValue
+        rawValue
     }
 
     var accessibilityLabel: String {
@@ -69,7 +70,7 @@ extension MicrophoneIconStyle: IconImageStyle {
 }
 
 extension MicrophoneIconStyle: PulsingIconImageStyle {
-    var shouldPulse: Bool { return self == .unmutedPulsing }
+    var shouldPulse: Bool { self == .unmutedPulsing }
 }
 
 extension MicrophoneIconStyle {

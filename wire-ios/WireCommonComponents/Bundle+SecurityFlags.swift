@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@ public enum SecurityFlags {
     case forceConstantBitRateCalls
     case customBackend
     case cameraRoll
-    case backup
     case maxNumberAccounts
     case fileSharing
+    case locationSharing
     case forceCallKitDisabled
     case clipboard
+    case collapseOwnMessages
+    case openLinksExternally
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -38,30 +40,40 @@ public enum SecurityFlags {
 
     case minTLSVersion
 
+    /// Whether an embedded user agent should be used for IDP authentication.
+
+    case useEmbeddedIDPUserAgent
+
     var bundleKey: String {
         switch self {
         case .maxNumberAccounts:
-            return "MaxNumberAccounts"
+            "MaxNumberAccounts"
         case .generateLinkPreviews:
-            return "GenerateLinkPreviewEnabled"
+            "GenerateLinkPreviewEnabled"
         case .forceConstantBitRateCalls:
-            return "ForceCBREnabled"
+            "ForceCBREnabled"
         case .customBackend:
-            return "CustomBackendEnabled"
+            "CustomBackendEnabled"
         case .cameraRoll:
-            return "CameraRollEnabled"
-        case .backup:
-            return "BackupEnabled"
+            "CameraRollEnabled"
         case .forceEncryptionAtRest:
-            return "ForceEncryptionAtRestEnabled"
+            "ForceEncryptionAtRestEnabled"
         case .fileSharing:
-            return "FileSharingEnabled"
+            "FileSharingEnabled"
+        case .locationSharing:
+            "LocationSharingEnabled"
         case .forceCallKitDisabled:
-            return "ForceCallKitDisabled"
+            "ForceCallKitDisabled"
         case .minTLSVersion:
-            return "MinTLSVersion"
+            "MinTLSVersion"
         case .clipboard:
-            return "ClipboardEnabled"
+            "ClipboardEnabled"
+        case .collapseOwnMessages:
+            "CollapseOwnMessages"
+        case .useEmbeddedIDPUserAgent:
+            "UseEmbeddedIDPUserAgent"
+        case .openLinksExternally:
+            "OpenLinksExternally"
         }
     }
 
@@ -71,11 +83,11 @@ public enum SecurityFlags {
     }
 
     public var stringValue: String? {
-        return Bundle.appMainBundle.infoForKey(bundleKey)
+        Bundle.appMainBundle.infoForKey(bundleKey)
     }
 
     public var isEnabled: Bool {
-        return stringValue == "1"
+        stringValue == "1"
     }
 
 }

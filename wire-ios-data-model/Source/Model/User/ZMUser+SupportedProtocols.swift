@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
 
 import Foundation
 
-extension ZMUser {
+public extension ZMUser {
 
-    @objc
-    public static let supportedProtocolsKey = "supportedProtocols"
+    @objc static let supportedProtocolsKey = "supportedProtocols"
 
-    @NSManaged
-    private var primitiveSupportedProtocols: [Int16]?
+    @NSManaged private var primitiveSupportedProtocols: [Int16]?
 
     /// Objc-C helper method because enum 'MessageProtocol' is not available.
-    @objc(setSupportedProtocols:)
-    func _setSupportedProtocols(_ protocols: Set<String>) {
+    @objc(updateSupportedProtocols:)
+    internal func _updateSupportedProtocols(_ protocols: Set<String>) {
         supportedProtocols = Set(protocols.compactMap {
             guard let messageProtocol = MessageProtocol(rawValue: $0) else {
                 assertionFailure("can not map value \($0) as MessageProtocol!")
@@ -39,7 +37,7 @@ extension ZMUser {
     }
 
     /// The messaging protocols that this user can communicate with.
-    public var supportedProtocols: Set<MessageProtocol> {
+    var supportedProtocols: Set<MessageProtocol> {
         get {
             willAccessValue(forKey: Self.supportedProtocolsKey)
             let result = primitiveSupportedProtocols ?? []
@@ -52,7 +50,7 @@ extension ZMUser {
             guard newValue != currentValue else { return }
 
             // We can't drop support for MLS once we've adopted it.
-            if currentValue.contains(.mls) && !newValue.contains(.mls) {
+            if currentValue.contains(.mls), !newValue.contains(.mls) {
                 return
             }
 

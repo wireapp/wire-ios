@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,17 +18,20 @@
 
 import Foundation
 
-@objcMembers public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
+@objcMembers
+public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
 
-    private let requestFactory = AssetDownloadRequestFactory()
+    private let requestFactory: AssetDownloadRequestFactory
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationToken: Any?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
@@ -48,7 +51,7 @@ import Foundation
             return preview.image.uploaded.hasAssetID
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+        self.assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: ZMClientMessage.entityName(),
             predicateForObjectsToDownload: downloadFilter,
@@ -59,9 +62,11 @@ import Foundation
     }
 
     func registerForWhitelistingNotification() {
-        self.notificationToken = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
-                                                                   context: self.managedObjectContext.notificationContext,
-                                                                   object: nil) { [weak self] note in
+        notificationToken = NotificationInContext.addObserver(
+            name: ZMClientMessage.linkPreviewImageDownloadNotification,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didWhitelistAssetDownload(objectID)
         }
@@ -70,14 +75,15 @@ import Foundation
     func didWhitelistAssetDownload(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = try? self.managedObjectContext.existingObject(with: objectID) as? ZMClientMessage else { return }
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            guard let message = try? managedObjectContext.existingObject(with: objectID) as? ZMClientMessage
+            else { return }
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     func handleResponse(
@@ -128,15 +134,20 @@ import Foundation
 extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 
 }
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard let message = object as? ZMClientMessage
+        else { fatal("Unable to generate request for \(object.safeForLoggingDescription)") }
         guard let linkPreview = message.underlyingMessage?.linkPreviews.first else {
             return nil
         }
@@ -145,7 +156,12 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
         // Protobuf initializes the token to an empty string when set to nil
         let token = remoteData.hasAssetToken && remoteData.assetToken != "" ? remoteData.assetToken : nil
         let domain = remoteData.assetDomain
-        let request = requestFactory.requestToGetAsset(withKey: remoteData.assetID, token: token, domain: domain, apiVersion: apiVersion)
+        let request = requestFactory.requestToGetAsset(
+            withKey: remoteData.assetID,
+            token: token,
+            domain: domain,
+            apiVersion: apiVersion
+        )
         request?.add(ZMCompletionHandler(on: managedObjectContext) { response in
             self.handleResponse(response, forMessage: message)
         })

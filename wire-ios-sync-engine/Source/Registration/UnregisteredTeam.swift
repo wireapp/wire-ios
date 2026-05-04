@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireUtilities
 
 /// An object containing the details required to create a team.
@@ -30,7 +31,14 @@ public struct UnregisteredTeam: Equatable {
     public let locale: String
     public let label: UUID?
 
-    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: AccentColor) {
+    public init(
+        teamName: String,
+        email: String,
+        emailCode: String,
+        fullName: String,
+        password: String,
+        accentColor: AccentColor
+    ) {
         self.teamName = teamName
         self.email = email
         self.emailCode = emailCode
@@ -42,7 +50,7 @@ public struct UnregisteredTeam: Equatable {
     }
 
     var payload: ZMTransportData {
-        return [
+        [
             "email": email,
             "email_code": emailCode,
             "team": [

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockTeamConversationEvent: NSObject {
+@objcMembers
+public class MockTeamConversationEvent: NSObject {
 
     public enum Kind: String {
         case create = "team.conversation-create"
@@ -36,7 +37,8 @@ import Foundation
         let oldConversations = team.committedValues(forKeys: [conversationsKey])
 
         guard let currentConversations = changedValues[conversationsKey] as? Set<MockConversation> else { return [] }
-        guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation> else { return [] }
+        guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation>
+        else { return [] }
 
         let removedConversationsEvents = previousConversations
             .subtracting(currentConversations)
@@ -58,8 +60,8 @@ import Foundation
         ]
     }
 
-    @objc public var payload: ZMTransportData {
-        return [
+    public var payload: ZMTransportData {
+        [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
@@ -68,6 +70,6 @@ import Foundation
     }
 
     public override var debugDescription: String {
-        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

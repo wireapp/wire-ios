@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class ZiphyRequestGeneratorTests: XCTestCase {
 
     private func verifyURL(_ potentialResult: ZiphyResult<URLRequest>, expected: String) {
         switch potentialResult {
-        case .success(let request):
+        case let .success(request):
             guard let url = request.url else {
                 XCTFail("The generated requests did not contain a URL.")
                 return
@@ -66,7 +66,7 @@ class ZiphyRequestGeneratorTests: XCTestCase {
 
             XCTAssertEqual(url.absoluteString, expected)
 
-        case .failure(let error):
+        case let .failure(error):
             XCTFail("URL generation failed with error: \(error)")
         }
     }

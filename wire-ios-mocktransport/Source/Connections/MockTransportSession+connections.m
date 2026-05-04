@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #import "MockTransportSession.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockConnection.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (ConnectionsHelper)
 
@@ -118,7 +118,7 @@
     
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     
     if(start != nil) {
         NSUInteger index = [connections indexOfObjectPassingTest:^BOOL(MockConnection *obj, NSUInteger idx, BOOL *stop) {

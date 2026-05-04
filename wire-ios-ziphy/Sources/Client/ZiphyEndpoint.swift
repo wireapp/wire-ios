@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The endpoints of the Giphy V1 REST API.
- */
+/// The endpoints of the Giphy V1 REST API.
 
 enum ZiphyEndpoint: String {
 
@@ -32,18 +30,18 @@ enum ZiphyEndpoint: String {
     var resourcePath: String {
         switch self {
         case .gifs:
-            return gifsEndpoint
+            gifsEndpoint
         default:
-            return gifsEndpoint + "/" + rawValue
+            gifsEndpoint + "/" + rawValue
         }
     }
 
     private var gifsEndpoint: String {
-        return "/gifs"
+        "/gifs"
     }
 
     static var version: String {
-        return "v1"
+        "v1"
     }
 
 }

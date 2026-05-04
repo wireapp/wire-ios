@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ extension FetchSubgroupActionHandler {
             case subconvID = "subconv_id"
         }
 
-        let cipherSuite: Int
+        let cipherSuite: Int?
         let epoch: Int
         let epochTimestamp: Date?
         let groupID: String
@@ -110,7 +110,7 @@ extension FetchSubgroupActionHandler {
         enum CodingKeys: String, CodingKey {
             case userID = "user_id"
             case clientID = "client_id"
-            case domain = "domain"
+            case domain
         }
 
         let userID: UUID

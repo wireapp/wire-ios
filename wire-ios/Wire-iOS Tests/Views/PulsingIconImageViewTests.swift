@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
 import WireCommonComponents
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing: Bool = false
@@ -36,12 +37,12 @@ private class MockPulsingIconImageView: PulsingIconImageView {
 private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var _shouldPulse = false
     var shouldPulse: Bool {
-        return _shouldPulse
+        _shouldPulse
     }
 
-    var icon: StyleKitIcon? { return .cake }
-    var accessibilitySuffix: String { return "" }
-    var accessibilityLabel: String { return "" }
+    var icon: StyleKitIcon? { .cake }
+    var accessibilitySuffix: String { "" }
+    var accessibilityLabel: String { "" }
 }
 
 class PulsingIconImageViewTests: XCTestCase {

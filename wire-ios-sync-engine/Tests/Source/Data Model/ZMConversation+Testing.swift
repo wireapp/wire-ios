@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 extension ZMConversation {
     @objc var isFullyMuted: Bool {
         get {
-            return mutedMessageTypes == .all
+            mutedMessageTypes == .all
         }
         set {
             mutedMessageTypes = newValue ? .all : .none
@@ -30,7 +30,7 @@ extension ZMConversation {
 
     @objc var isMutedDisplayingMentions: Bool {
         get {
-            return mutedMessageTypes == .regular
+            mutedMessageTypes == .regular
         }
         set {
             mutedMessageTypes = newValue ? .regular : .none

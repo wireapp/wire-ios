@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
     typealias ResponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
 
     func payload(from response: ZMTransportResponse) throws -> ResponsePayload? {
-        return ResponsePayload(response)
+        ResponsePayload(response)
     }
 
     // MARK: - Request generation
@@ -119,7 +119,8 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
             // When
             sut.didReceive(
                 response: response,
-                for: identifiers) { }
+                for: identifiers
+            ) {}
 
             // Then all clients are marked as updated, even if response was empty.
             XCTAssertFalse(otherClient.needsToBeUpdatedFromBackend)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,87 +18,85 @@
 
 import UIKit
 import WireDesign
+import WireLogging
+import WireNetwork
 import WireSyncEngine
 
-extension ConversationLike where Self: SwiftConversationLike {
+extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
-        return conversationType != .oneOnOne &&
-               teamType != nil &&
-               allowServices
+        conversationType != .oneOnOne && teamType != nil
     }
 }
 
 struct Service {
-    let serviceUser: ServiceUser
+
+    let user: any WireDataModel.UserType
+    let isLegacyBot: Bool
     var serviceUserDetails: ServiceDetails?
     var provider: ServiceProvider?
-}
 
-extension Service {
-    init(serviceUser: ServiceUser) {
-        self.serviceUser = serviceUser
-        self.serviceUserDetails = nil
-        self.provider = nil
+    init(user: any WireDataModel.UserType) {
+        self.user = user
+        self.isLegacyBot = user.isBot
     }
+
 }
 
 final class ServiceDetailViewController: UIViewController {
 
-    typealias Completion = (AddBotResult?) -> Void
-
     enum ActionType {
-        case addService(ZMConversation), removeService(ZMConversation), openConversation
+        case addApp(ZMConversation)
+        case addBot(ZMConversation)
+        case removeParticipant(ZMConversation)
+        case openConversation
     }
 
     var service: Service {
         didSet {
-            self.detailView.service = service
+            detailView.service = service
         }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
-    let completion: Completion?
-    weak var viewControllerDismisser: ViewControllerDismisser?
+    let completion: (AddBotResult) -> Void
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
+    private let usersAPI: (any UsersAPI)?
 
-    /// init method with ServiceUser, destination conversation and customized UI.
-    ///
-    /// - Parameters:
-    ///   - serviceUser: a ServiceUser to show
-    ///   - destinationConversation: the destination conversation of the serviceUser
-    ///   - actionType: Enum ActionType to choose the actiion add or remove the service user
-    ///   - selfUser: self user, for inject mock user for testing
-    ///   - completion: completion handler
     init(
-        serviceUser: ServiceUser,
+        user: any WireDataModel.UserType,
         actionType: ActionType,
         userSession: UserSession,
-        completion: Completion? = nil
+        usersAPI: (any UsersAPI)?,
+        completion: @escaping (AddBotResult) -> Void
     ) {
-        self.service = Service(serviceUser: serviceUser)
+        self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
+        self.usersAPI = usersAPI
 
-        detailView = ServiceDetailView(service: service)
+        self.detailView = ServiceDetailView(
+            service: service,
+            userSession: userSession
+        )
 
         let selfUser = userSession.selfUser
 
         switch actionType {
-        case let .addService(conversation):
-            actionButton = .createAddServiceButton()
+        case let .addApp(conversation), let .addBot(conversation):
+            self.actionButton = .createAddAppButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
-        case let .removeService(conversation):
-            actionButton = .createDestructiveServiceButton()
+        case let .removeParticipant(conversation):
+            self.actionButton = .createDestructiveAppButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
-            actionButton = .openServiceConversationButton()
+            self.actionButton = .openAppConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
         }
 
@@ -117,19 +115,29 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let title = self.service.serviceUser.name {
-            setupNavigationBarTitle(title.capitalized)
+        if let title = service.user.name {
+            setupNavigationBarTitle(title)
         }
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,
-                                                                 target: self,
-                                                                 action: #selector(ServiceDetailViewController.dismissButtonTapped(_:)))
-        self.navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
-        self.navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton.description
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            icon: .cross,
+            target: self,
+            action: #selector(ServiceDetailViewController.dismissButtonTapped(_:))
+        )
+        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton
+            .description
     }
 
     private func setupViews() {
-        actionButton.addCallback(for: .touchUpInside, callback: callback(for: actionType, completion: self.completion))
+        actionButton.addCallback(
+            for: .primaryActionTriggered,
+            callback: callback(
+                for: actionType,
+                sender: actionButton,
+                completion: completion
+            )
+        )
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -137,17 +145,7 @@ final class ServiceDetailViewController: UIViewController {
 
         createConstraints()
 
-        guard let userSession = userSession as? ZMUserSession else {
-            return
-        }
-
-        self.service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
-            self?.detailView.service.provider = provider
-        }
-
-        self.service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
-            self?.detailView.service.serviceUserDetails = details
-        }
+        fetchDetails()
     }
 
     private func createConstraints() {
@@ -158,94 +156,263 @@ final class ServiceDetailViewController: UIViewController {
             detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
-            detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
+            actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48)
         ])
     }
 
-    @objc
-    func backButtonTapped(_ sender: AnyObject!) {
-        self.navigationController?.popViewController(animated: true)
+    private func fetchDetails() {
+        if
+            !service.isLegacyBot,
+            let teamID = service.user.teamIdentifier,
+            let appID = service.user.remoteIdentifier {
+            fetchAppDetails(for: teamID, with: appID)
+        } else {
+            fetchBotDetails()
+        }
     }
 
-    @objc
-    func dismissButtonTapped(_ sender: AnyObject!) {
-        self.navigationController?.dismiss(animated: true, completion: { [weak self] in
-            self?.completion?(nil)
-        })
-    }
+    private func fetchAppDetails(
+        for teamID: WireNetwork.Team.ID,
+        with appID: UUID
+    ) {
+        let appInfo = service.user.appInfo
+        detailView.service.serviceUserDetails = ServiceDetails(
+            serviceIdentifier: "",
+            providerIdentifier: "",
+            name: service.user.name ?? "",
+            category: appInfo?.category ?? "",
+            serviceDescription: appInfo?.appDescription ?? ""
+        )
+        detailView.service.provider = ServiceProvider(
+            identifier: "",
+            name: service.user.teamName ?? "",
+            email: "",
+            url: "",
+            providerDescription: ""
+        )
+        let localDomain = userSession.resolvedBackendMetadata.domain
+        if let usersAPI, let userID = service.user.qualifiedID(localDomain: localDomain) {
+            Task { @MainActor [weak self] in
+                do {
+                    guard let self, let appInfo = try await usersAPI.getUser(for: .init(userID)).app else { return }
 
-    func callback(for type: ActionType, completion: Completion?) -> Callback<LegacyButton> {
-        return { [weak self] _ in
-            guard let `self`, let userSession = userSession as? ZMUserSession else {
-                return
-            }
-            let serviceUser = self.service.serviceUser
-            switch type {
-            case let .addService(conversation):
-                conversation.add(serviceUser: serviceUser, in: userSession) { result in
-
-                    switch result {
-                    case .success:
-                        Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
-                        completion?(.success(conversation: conversation))
-                    case .failure(let error):
-                        completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                    }
-                }
-            case let .removeService(conversation):
-                self.presentRemoveDialogue(for: serviceUser, from: conversation, dismisser: self.viewControllerDismisser)
-            case .openConversation:
-                if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
-                    completion?(.success(conversation: existingConversation))
-                } else {
-                    serviceUser.createConversation(in: userSession, completionHandler: { result in
-                        if case let .success(conversation) = result {
-                            Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
-                        }
-
-                        switch result {
-                        case .success(let conversation):
-                            completion?(.success(conversation: conversation))
-                        case .failure(let error):
-                            completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                        }
-                    })
+                    detailView.service.serviceUserDetails = ServiceDetails(
+                        serviceIdentifier: "",
+                        providerIdentifier: "",
+                        name: service.user.name ?? "",
+                        category: appInfo.category,
+                        serviceDescription: appInfo.description
+                    )
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("Failed to fetch app info: \(String(describing: errorType))")
                 }
             }
         }
     }
+
+    private func fetchBotDetails() {
+        guard let userSession = userSession as? ZMUserSession else { return }
+
+        service.user.fetchProvider(in: userSession) { [weak self] provider in
+            self?.detailView.service.provider = provider
+        }
+        service.user.fetchDetails(in: userSession) { [weak self] details in
+            self?.detailView.service.serviceUserDetails = details
+        }
+    }
+
+    @objc
+    func backButtonTapped(_ sender: AnyObject!) {
+        navigationController?.popViewController(animated: true)
+    }
+
+    @objc
+    func dismissButtonTapped(_ sender: AnyObject!) {
+        navigationController?.dismiss(animated: true) { [weak self] in
+            self?.completion(.cancelled)
+        }
+    }
+
+    func callback(
+        for type: ActionType,
+        sender: UIView,
+        completion: @escaping (AddBotResult) -> Void
+    ) -> Callback<LegacyButton> {
+        { [weak self] _ in
+            guard let self, let userSession = userSession as? ZMUserSession else { return }
+
+            switch type {
+
+            case let .addApp(conversation):
+                addApp(to: conversation, contextProvider: userSession, completion: completion)
+
+            case let .addBot(conversation):
+                addBot(to: conversation, userSession: userSession, completion: completion)
+
+            case let .removeParticipant(conversation):
+                presentRemoveDialogue(
+                    for: service.user,
+                    from: conversation,
+                    sender: sender
+                )
+
+            case .openConversation:
+                if !service.isLegacyBot {
+                    openConversationWithBot(completion: completion)
+                } else {
+                    openConversationWithApp(userSession: userSession, completion: completion)
+                }
+            }
+        }
+    }
+
+    private func addApp(
+        to conversation: ZMConversation,
+        contextProvider: some ContextProvider,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        guard let user = service.user as? ZMUser else {
+            return completion(.failure(error: .general))
+        }
+
+        Task { @MainActor [weak self] in
+            do {
+                guard let self else { return }
+
+                let syncContext = contextProvider.syncContext
+                let conversationParticipantsService = ConversationParticipantsService(
+                    context: syncContext,
+                    localDomain: userSession.resolvedBackendMetadata.domain
+                )
+                let user = try await syncContext.perform { [objectID = user.objectID] in
+                    try ZMUser.existingObject(for: objectID, in: syncContext)
+                }
+                let conversation_ = try await syncContext.perform { [objectID = conversation.objectID] in
+                    return try ZMConversation.existingObject(for: objectID, in: syncContext)
+                }
+
+                try await conversationParticipantsService.addParticipants([user], to: conversation_)
+                try await syncContext.perform {
+                    try syncContext.save()
+                }
+                completion(.success(conversation: conversation))
+            } catch {
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+            }
+        }
+    }
+
+    private func addBot(
+        to conversation: ZMConversation,
+        userSession: ZMUserSession,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        conversation.add(bot: service.user, in: userSession) { result in
+            switch result {
+            case .success:
+                completion(.success(conversation: conversation))
+            case let .failure(error):
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+            }
+        }
+    }
+
+    private func openConversationWithApp(
+        userSession: ZMUserSession,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        if let existingConversation = ZMConversation.existingConversation(
+            in: userSession.managedObjectContext,
+            service: service.user,
+            team: userSession.selfUser.membership?.team
+        ) {
+            completion(.success(conversation: existingConversation))
+        } else {
+            service.user.createConversation(in: userSession) { result in
+                switch result {
+                case let .success(conversation):
+                    completion(.success(conversation: conversation))
+                case let .failure(error):
+                    completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                }
+            }
+        }
+    }
+
+    private func openConversationWithBot(
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        let user = service.user
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            guard let userID = user.qualifiedID(
+                localDomain: userSession.resolvedBackendMetadata.domain
+            ) else {
+                return completion(.failure(error: AddBotError.general))
+            }
+
+            let conversation = user.oneToOneConversation
+            do {
+                let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+                if isReady {
+                    guard let conversation else {
+                        return completion(.failure(error: AddBotError.general))
+                    }
+                    completion(.success(conversation: conversation))
+                } else {
+                    userSession.createTeamOneOnOne(with: user) { result in
+                        switch result {
+                        case let .success(conversation):
+                            completion(.success(conversation: conversation))
+                        case let .failure(error):
+                            WireLogger.conversation
+                                .warn("failed to create team one on one from search result: \(error)")
+                            completion(.failure(error: AddBotError.general))
+                        }
+                    }
+                }
+            } catch {
+                WireLogger.conversation
+                    .warn("failed to check if one on one conversation is ready: \(error)")
+                completion(.failure(error: AddBotError.general))
+            }
+        }
+    }
+
 }
 
-fileprivate extension ZMButton {
+private extension ZMButton {
 
-    typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
+    typealias PeoplePickerApps = L10n.Localizable.Peoplepicker.Apps
 
-    static func openServiceConversationButton() -> Self {
+    static func openAppConversationButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
-            title: PeoplePickerServices.OpenConversation.item.capitalized
+            title: PeoplePickerApps.OpenConversation.item.capitalized
         )
     }
 
-    static func createAddServiceButton() -> Self {
+    static func createAddAppButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
-            title: PeoplePickerServices.AddService.button.capitalized
+            title: PeoplePickerApps.AddApp.button.capitalized
         )
     }
 
-    static func createDestructiveServiceButton() -> Self {
+    static func createDestructiveAppButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
-            title: L10n.Localizable.Participants.Services.RemoveIntegration.button.capitalized
+            title: L10n.Localizable.Participants.Apps.RemoveIntegration.button.capitalized
         )
     }
 
     convenience init(style: ButtonStyle, title: String) {
         self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-        self.setTitle(title, for: .normal)
+        setTitle(title, for: .normal)
     }
 }

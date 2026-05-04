@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,26 +26,26 @@ enum CallInfoViewControllerAccessoryType: Equatable {
 
     var showParticipantList: Bool {
         if case .participantsList = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var showAvatar: Bool {
         if case .avatar = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var participants: CallParticipantsList {
         switch self {
-        case .participantsList(let participants):
-            return participants
+        case let .participantsList(participants):
+            participants
         default:
-            return []
+            []
         }
     }
 

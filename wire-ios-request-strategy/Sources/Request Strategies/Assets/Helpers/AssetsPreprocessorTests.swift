@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class AssetsPreprocessorTests: MessagingTestBase {
 
@@ -41,7 +41,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItPreprocessAssetMessage() {
         // given
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         let asset = message.assets.first!
         let messageSet: Set<NSManagedObject> = [message]
 
@@ -56,7 +59,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItPreprocessAssetMessageWithMultipleAssets() {
         // given
-        let message = try! conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         let messageSet: Set<NSManagedObject> = [message]
         let assets = message.assets
         XCTAssertEqual(assets.count, 2)
@@ -77,7 +83,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItMarksTheTransferStateAsModifiedAfterItsDoneProcessing() {
         // given
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         let messageSet: Set<NSManagedObject> = [message]
 
         // when

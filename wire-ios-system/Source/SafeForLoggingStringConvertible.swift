@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,21 +28,23 @@ public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStr
     public init(_ value: T) {
         self.value = value
     }
+
     public var safeForLoggingDescription: String {
-        return value.description
+        value.description
     }
 }
 
 extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return String(describing: map { $0.safeForLoggingDescription })
+        String(describing: map(\.safeForLoggingDescription))
     }
 }
 
-extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible, Value: SafeForLoggingStringConvertible {
+extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible,
+    Value: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         let result = enumerated().map { _, element in
-            return (element.key.safeForLoggingDescription, element.value.safeForLoggingDescription)
+            (element.key.safeForLoggingDescription, element.value.safeForLoggingDescription)
         }
 
         let dictionary = [String: String](uniqueKeysWithValues: result)

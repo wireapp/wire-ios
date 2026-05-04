@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,17 @@
 //
 
 import Foundation
-import WireCryptobox
+import GenericMessageProtocol
+import WireLogging
 
 @objc(ZMGenericMessageData)
-@objcMembers public class ZMGenericMessageData: ZMManagedObject {
+@objcMembers
+public class ZMGenericMessageData: ZMManagedObject {
 
     // MARK: - Static
 
-    override open class func entityName() -> String {
-        return "GenericMessageData"
+    open override class func entityName() -> String {
+        "GenericMessageData"
     }
 
     public static let dataKey = "data"
@@ -57,7 +59,7 @@ import WireCryptobox
 
     public var underlyingMessage: GenericMessage? {
         do {
-            return try GenericMessage(serializedData: getProtobufData())
+            return try GenericMessage(serializedBytes: getProtobufData())
         } catch {
             Logging.messageProcessing.warn("Could not retrieve GenericMessage: \(error.localizedDescription)")
             return nil
@@ -67,11 +69,11 @@ import WireCryptobox
     /// Whether the Protobuf data is encrypted in the database.
 
     public var isEncrypted: Bool {
-        return nonce != nil
+        nonce != nil
     }
 
     public override var modifiedKeys: Set<AnyHashable>? {
-        get { return Set() }
+        get { Set() }
         set { /* do nothing */ }
     }
 
@@ -97,7 +99,6 @@ import WireCryptobox
         guard let protobufData = try? message.serializedData() else {
             throw ProcessingError.failedToSerializeMessage
         }
-
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext
         }
@@ -111,8 +112,14 @@ import WireCryptobox
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
 
         do {
-            return try moc.encryptData(data: data)
-        } catch let error as NSManagedObjectContext.EncryptionError {
+            let service = try moc.getEarMessageEncryptionService()
+            let contextData = try service.getContextData(from: moc)
+            let (ciphertext, nonce) = try service.encrypt(data: data, contextData: contextData)
+            return (ciphertext, nonce)
+        } catch let error as NSManagedObjectContext.EARError {
+            WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
+            throw ProcessingError.failedToEncrypt(reason: error)
+        } catch let error as EARMessageEncryptionService.EncryptionError {
             WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
             throw ProcessingError.failedToEncrypt(reason: error)
         }
@@ -122,8 +129,13 @@ import WireCryptobox
         guard let nonce else { return data }
 
         do {
-            return try moc.decryptData(data: data, nonce: nonce)
-        } catch let error as NSManagedObjectContext.EncryptionError {
+            let service = try moc.getEarMessageEncryptionService()
+            let contextData = try service.getContextData(from: moc)
+            return try service.decrypt(data: data, nonce: nonce, contextData: contextData)
+        } catch let error as NSManagedObjectContext.EARError {
+            WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
+            throw ProcessingError.failedToDecrypt(reason: error)
+        } catch let error as EARMessageEncryptionService.EncryptionError {
             WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
             throw ProcessingError.failedToDecrypt(reason: error)
         }
@@ -139,19 +151,19 @@ extension ZMGenericMessageData {
 
         case missingManagedObjectContext
         case failedToSerializeMessage
-        case failedToEncrypt(reason: NSManagedObjectContext.EncryptionError)
-        case failedToDecrypt(reason: NSManagedObjectContext.EncryptionError)
+        case failedToEncrypt(reason: LocalizedError)
+        case failedToDecrypt(reason: LocalizedError)
 
         var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:
-                return "A managed object context is required to process the message data."
+                "A managed object context is required to process the message data."
             case .failedToSerializeMessage:
-                return "The message data couldn't not be serialized."
-            case .failedToEncrypt(reason: let encryptionError):
-                return "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
-            case .failedToDecrypt(reason: let encryptionError):
-                return "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
+                "The message data couldn't not be serialized."
+            case let .failedToEncrypt(reason: error):
+                "The message data could not be encrypted. \(error.errorDescription ?? "")"
+            case let .failedToDecrypt(reason: error):
+                "The message data could not be decrypted. \(error.errorDescription ?? "")"
             }
         }
     }
@@ -163,33 +175,34 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
-        let (ciphertext, nonce) = try context.encryptData(
+
+        let (ciphertext, nonce) = try messageEncryptionService.encrypt(
             data: data,
-            key: key
+            contextData: contextData,
         )
 
-        self.data = ciphertext
+        data = ciphertext
         self.nonce = nonce
     }
 
     func migrateAwayFromEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
         guard let nonce else {
             return
         }
 
-        let plaintext = try context.decryptData(
+        let plaintext = try messageEncryptionService.decrypt(
             data: data,
             nonce: nonce,
-            key: key
+            contextData: contextData,
         )
 
-        self.data = plaintext
+        data = plaintext
         self.nonce = nil
     }
 

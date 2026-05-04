@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,15 @@ import WireSyncEngine
 
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
-        private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
         private(set) var clients: [UserClient] = []
 
         init(clientsList: [UserClient]) {
-            self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
-
             super.init()
-            self.initalizeProperties(clientsList)
+            initalizeProperties(clientsList)
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList
+            clients = clientsList
                 .filter { !$0.isSelfClient() }
                 .sorted(by: {
                     guard
@@ -45,16 +42,25 @@ extension RemoveClientsViewController {
                 })
         }
 
-        func removeUserClient(_ userClient: UserClient, password: String) async throws {
+        @MainActor
+        func removeUserClient(_ userClient: UserClient, password: String?) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
-                return userClient.remoteIdentifier
+                userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
 
-            try await removeUserClientUseCase?.invoke(clientId: clientId,
-                                                      password: password)
+            // There's a race condition where we need to remove a client after
+            // login and the user session doesn't exist yet (at init of this view).
+            // So create the use case as late as possible. (Ideally we don't use
+            // this static accessor).
+            let useCase = ZMUserSession.shared()?.removeUserClient
+
+            try await useCase?.invoke(
+                clientId: clientId,
+                password: password
+            )
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,15 +49,20 @@
 
     [super setUp];
 
-    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                       inMemoryStore:YES];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
     self.basePath = @"/base-path";
     self.pageSize = 20;
     self.transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [self verifyMockLater:self.transcoder];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:self.transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext transcoder:self.transcoder];
 
     self.singleRequestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     [self verifyMockLater:self.singleRequestSync];
@@ -90,7 +95,7 @@
 - (void)testThatItCreatesASingleRequestSyncByDefault
 {
     // when
-    ZMSimpleListRequestPaginator *sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:@"foo" startKey:@"bar" pageSize:10 managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:nil];
+    ZMSimpleListRequestPaginator *sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:@"foo" startKey:@"bar" pageSize:10 managedObjectContext:self.coreDataStack.syncContext transcoder:nil];
 
     // then
     XCTAssertNotNil(sut.singleRequestSync);
@@ -217,7 +222,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[[transcoder expect] andReturn:startUUID] startUUID];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:startKey pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:startKey pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
 
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
@@ -238,8 +243,9 @@
     [self.coreDataStack.syncContext performGroupedBlock:^{
         // given
         NSString *selfClientID = [self createSelfClient].remoteIdentifier;
+        [[[self.transcoder expect] andReturn:selfClientID] selfClientID];
 
-        self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"foo" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext includeClientID:YES transcoder:nil];
+        self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"foo" pageSize:self.pageSize managedObjectContext:self.coreDataStack.syncContext  transcoder:self.transcoder];
 
         [[self.singleRequestSync stub] readyForNextRequest];
         [self.sut resetFetching];
@@ -424,7 +430,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[transcoder reject] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
@@ -445,7 +451,7 @@
     id transcoder = [OCMockObject niceMockForProtocol:@protocol(ZMSimpleListRequestPaginatorSync)];
     [[transcoder expect] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext  transcoder:transcoder];
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
@@ -520,7 +526,7 @@
     [[[transcoder expect] andReturn:[self returnFullPageWithLastIdentifier:lastIdentifier]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
     [[[transcoder expect] andReturn:startIdentifier] startUUID];
 
-    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext includeClientID:NO transcoder:transcoder];
+    self.sut = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:self.basePath startKey:@"start" pageSize:self.pageSize  managedObjectContext:self.coreDataStack.syncContext transcoder:transcoder];
     self.sut.singleRequestSync = self.singleRequestSync;
 
     [self.sut resetFetching];

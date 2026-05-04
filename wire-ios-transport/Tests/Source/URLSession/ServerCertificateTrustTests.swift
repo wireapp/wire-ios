@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/* 
- To export a certificate in ascii PEM format, run:
- 
- openssl s_client -connect wire.com:443 -showcerts
- 
- */
+// To export a certificate in ascii PEM format, run:
+//
+// openssl s_client -connect wire.com:443 -showcerts
+//
 
 import Foundation
-@testable import WireTransport
+import WireFoundationSupport
 import XCTest
+
+@testable import WireTransport
 
 struct CertificateData: Decodable {
     var production: [Data]
@@ -39,29 +39,45 @@ struct PinnedKeysData: Decodable {
 
 extension SecTrust {
 
-    static func trustWithChain(certificateData: [Data], file: StaticString = #file, line: UInt = #line) -> SecTrust? {
+    static func trustWithChain(
+        certificateData: [Data],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> SecTrust? {
         let policy = SecPolicyCreateBasicX509()
         let certificates: [SecCertificate] = certificateData.compactMap {
-            guard let cert = SecCertificateCreateWithData(nil, $0 as CFData) else { XCTFail("Failed to create certificate from data", file: file, line: line); return nil }
+            guard let cert = SecCertificateCreateWithData(nil, $0 as CFData) else { XCTFail(
+                "Failed to create certificate from data",
+                file: file,
+                line: line
+            ); return nil }
             return cert
         }
         var trust: SecTrust?
-        guard SecTrustCreateWithCertificates(certificates as CFTypeRef, policy, &trust) == 0 else { XCTFail("Failed to create trust from certificate chain", file: file, line: line); return nil }
+        guard SecTrustCreateWithCertificates(certificates as CFTypeRef, policy, &trust) == 0 else { XCTFail(
+            "Failed to create trust from certificate chain",
+            file: file,
+            line: line
+        ); return nil }
 
         return trust
     }
 
 }
 
-class BackendTrustProviderTests: XCTestCase {
+final class BackendTrustProviderTests: XCTestCase {
 
     var pinnedHosts: [String]!
     var certificates: CertificateData!
     var pinnedKeys: PinnedKeysData!
+    private var mockDateProvider: CurrentDateProvidingMock!
     var sut: ServerCertificateTrust!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+
+        mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
+
         // Do not run tests if setup fails
         continueAfterFailure = false
         pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com"]
@@ -69,15 +85,19 @@ class BackendTrustProviderTests: XCTestCase {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         let mainBundle = Bundle(for: type(of: self))
-        guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle") else { XCTFail("Could not find backend.bundle"); return }
-        guard let backendBundle = Bundle(path: backendBundlePath) else { XCTFail("Could not load backend.bundle"); return }
+        guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle")
+        else { XCTFail("Could not find backend.bundle"); return }
+        guard let backendBundle = Bundle(path: backendBundlePath)
+        else { XCTFail("Could not load backend.bundle"); return }
 
-        guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json") else { XCTFail("Could find certificates.json"); return }
-        guard let trustDataURL = backendBundle.url(forResource: "production", withExtension: "json") else { XCTFail("Could find trust_data.json"); return }
+        guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json")
+        else { XCTFail("Could find certificates.json"); return }
+        guard let trustDataURL = backendBundle.url(forResource: "default", withExtension: "json")
+        else { XCTFail("Could find trust_data.json"); return }
 
         do {
             let certsData = try Data(contentsOf: certificatesURL)
-            self.certificates = try decoder.decode(CertificateData.self, from: certsData)
+            certificates = try decoder.decode(CertificateData.self, from: certsData)
         } catch {
             XCTFail("Error reading certs: \(error)")
         }
@@ -85,13 +105,13 @@ class BackendTrustProviderTests: XCTestCase {
         do {
             let trustData = try Data(contentsOf: trustDataURL)
 
-            self.pinnedKeys = try decoder.decode(PinnedKeysData.self, from: trustData)
+            pinnedKeys = try decoder.decode(PinnedKeysData.self, from: trustData)
         } catch {
             XCTFail("Error reading pinned keys: \(error)")
 
         }
 
-        sut = ServerCertificateTrust(trustData: pinnedKeys.pinnedKeys)
+        sut = ServerCertificateTrust(trustData: pinnedKeys.pinnedKeys, currentDateProvider: mockDateProvider)
         // If setup worked fine, run all tests
         continueAfterFailure = false
     }
@@ -101,13 +121,14 @@ class BackendTrustProviderTests: XCTestCase {
         certificates = nil
         pinnedKeys = nil
         sut = nil
-        super.tearDown()
+        mockDateProvider = nil
     }
 
     func testThatItVerifiesWithNoPinnedKeys() {
         // given
         let trustExpectation = expectation(description: "It should verify server trust")
-        let trustProvider = ServerCertificateTrust(trustData: [])
+        // We use a real date provider as this tests downloads a real live certificate
+        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         let trustVerificator = TestTrustVerificator(trustProvider: trustProvider) { trusted in
             if trusted {
                 trustExpectation.fulfill()
@@ -120,12 +141,13 @@ class BackendTrustProviderTests: XCTestCase {
         trustVerificator.verify(url: URL(string: "https://www.youtube.com")!)
 
         // then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 5)
     }
 
     func testThatVerificationFailsWithNoHost() {
         // given
-        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
 
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: nil))
     }
@@ -140,7 +162,8 @@ class BackendTrustProviderTests: XCTestCase {
     ///
     func testPinnedHostsWithValidCertificateIsTrustedAreTrusted() {
         // given
-        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
 
         // then
         for host in pinnedHosts {
@@ -150,7 +173,8 @@ class BackendTrustProviderTests: XCTestCase {
 
     func testPinnedHostsAreNotTrustedWithWrongCertificate() {
         // given
-        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.external) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.external)
+        else { XCTFail("Failed to create trust"); return }
 
         // then
         for host in pinnedHosts {
@@ -173,15 +197,65 @@ class BackendTrustProviderTests: XCTestCase {
         trustVerificator.verify(url: URL(string: "https://www.youtube.com")!)
 
         // then
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 5)
     }
 
     func testExternalHostWithInvalidCertificateIsNotTrusted() {
         // given
-        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.invalid) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.invalid)
+        else { XCTFail("Failed to create trust"); return }
 
         // then
         let host = "www.youtube.com"
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should NOT be trusted")
     }
+
+    func testValidate_beforeExpiration_UTC() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertTrue(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should be trusted")
+        }
+    }
+
+    func testValidate_beforeExpiration_localTime() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T01:59:59+02:00")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertTrue(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should be trusted")
+        }
+    }
+
+    func testValidate_afterExpiration_UTC() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T00:00:00Z")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should not be trusted")
+        }
+    }
+
+    func testValidate_afterExpiration_localTime() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T02:00:00+02:00")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should not be trusted")
+        }
+    }
+
 }

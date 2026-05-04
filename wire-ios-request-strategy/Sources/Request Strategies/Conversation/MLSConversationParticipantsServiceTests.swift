@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,8 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         sut = MLSConversationParticipantsService(
             context: syncMOC,
             mlsService: mockMLSService,
-            clientIDsProvider: mockClientIDsProvider
+            clientIDsProvider: mockClientIDsProvider,
+            localDomain: "wire.com"
         )
     }
 
@@ -76,7 +77,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Succeeds() async throws {
         // GIVEN
         let expectedUsers = await syncMOC.perform { [self] in
-            [MLSUser(from: user)]
+            [MLSUser(from: user, localDomain: "wire.com")]
         }
 
         // WHEN
@@ -109,7 +110,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Throws_FailedToClaimKeyPackages() async {
         // GIVEN
         let mlsUser = await syncMOC.perform { [self] in
-            MLSUser(from: user)
+            MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
@@ -127,11 +128,11 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         // GIVEN
         let unreachableDomains = Set(["example.com"])
         await syncMOC.perform { [self] in
-            _ = MLSUser(from: user)
+            _ = MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
-            throw SendCommitBundleAction.Failure.unreachableDomains(unreachableDomains)
+            throw SendMLSMessageFailure.unreachableDomains(unreachableDomains)
         }
 
         // THEN
@@ -145,11 +146,11 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         // GIVEN
         let unreachableDomains = Set(["example"])
         await syncMOC.perform { [self] in
-            _ = MLSUser(from: user)
+            _ = MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
-            throw SendCommitBundleAction.Failure.nonFederatingDomains(unreachableDomains)
+            throw SendMLSMessageFailure.nonFederatingDomains(unreachableDomains)
         }
 
         // THEN
@@ -179,7 +180,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         let clientIDs = [MLSClientID.random()]
 
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return clientIDs
+            clientIDs
         }
 
         // WHEN
@@ -223,7 +224,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_RemoveParticipant_RethrowsErrors() async {
         // GIVEN
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return [MLSClientID.random()]
+            [MLSClientID.random()]
         }
 
         mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in

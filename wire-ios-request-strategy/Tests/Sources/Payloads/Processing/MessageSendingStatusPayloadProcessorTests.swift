@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
@@ -49,15 +49,18 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let deleted: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: [:],
-                                                       deleted: deleted,
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: [:],
+                deleted: deleted,
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
         }
 
         // when
@@ -82,15 +85,18 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             clientID = UUID().transportString()
             let missing: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: missing,
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: missing,
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
         }
 
         // when
@@ -106,29 +112,36 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async {
+    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async throws {
         // given
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
+        var userClient: UserClient!
 
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
-            let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
-                                                        forUser: self.otherUser,
-                                                        createIfNeeded: true)!
-            self.establishSessionFromSelf(to: userClient)
+            userClient = UserClient.fetchUserClient(
+                withRemoteId: clientID,
+                forUser: self.otherUser,
+                createIfNeeded: true
+            )!
             let missing: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: missing,
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: missing,
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
         }
+
+        try await proteusClientSimulator.establishSessionFromSelf(to: userClient)
 
         // when
         await sut.updateClientsChanges(
@@ -150,15 +163,18 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                   missing: [:],
-                                                   redundant: redundant,
-                                                   deleted: [:],
-                                                   failedToSend: [:],
-                                                   failedToConfirm: [:])
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: redundant,
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
         }
 
         // when
@@ -181,15 +197,18 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                   missing: [:],
-                                                   redundant: redundant,
-                                                   deleted: [:],
-                                                   failedToSend: [:],
-                                                   failedToConfirm: [:])
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: redundant,
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
         }
 
         // when
@@ -213,15 +232,18 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
-            [self.domain:
-                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-            ]
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                   missing: [:],
-                                                   redundant: [:],
-                                                   deleted: [:],
-                                                   failedToSend: [:],
-                                                   failedToConfirm: failedToConfirm)
+                [
+                    self.domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: failedToConfirm
+            )
         }
 
         // when
@@ -242,7 +264,8 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var payload: Payload.MessageSendingStatus!
 
         try await syncMOC.performGrouped {
-            guard let textMessage = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
+            guard let textMessage = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage
+            else {
                 XCTFail("Failed to add message")
                 return
             }
@@ -251,17 +274,20 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             let domain = "example.com"
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
-            [domain:
-                [self.otherUser.remoteIdentifier.transportString(): [clientID]]
-            ]
+                [
+                    domain:
+                        [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
             XCTAssertEqual(message.failedToSendRecipients?.count, 0)
 
-            payload = Payload.MessageSendingStatus(time: Date(),
-                                                   missing: [:],
-                                                   redundant: [:],
-                                                   deleted: [:],
-                                                   failedToSend: [:],
-                                                   failedToConfirm: failedToConfirm)
+            payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: [:],
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: failedToConfirm
+            )
         }
 
         // when
@@ -292,12 +318,14 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
                 thirdDomain: [self.thirdUser.remoteIdentifier.transportString(): expectedThirdUserClientList]
             ]
 
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: missing,
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
+            let payload = Payload.MessageSendingStatus(
+                time: Date(),
+                missing: missing,
+                redundant: [:],
+                deleted: [:],
+                failedToSend: [:],
+                failedToConfirm: [:]
+            )
 
             // when
             let clientListByUser = self.sut.missingClientListByUser(
@@ -324,12 +352,14 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             domain: [userID.transportString(): [clientID]]
         ]
 
-        let payload = Payload.MessageSendingStatus(time: Date(),
-                                                   missing: missing,
-                                                   redundant: [:],
-                                                   deleted: [:],
-                                                   failedToSend: [:],
-                                                   failedToConfirm: [:])
+        let payload = Payload.MessageSendingStatus(
+            time: Date(),
+            missing: missing,
+            redundant: [:],
+            deleted: [:],
+            failedToSend: [:],
+            failedToConfirm: [:]
+        )
 
         // when
         var clientListByUser = Payload.ClientListByUser()

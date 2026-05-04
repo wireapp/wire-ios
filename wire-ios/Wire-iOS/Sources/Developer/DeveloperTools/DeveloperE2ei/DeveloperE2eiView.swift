@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,15 +21,14 @@ import WireUtilities
 
 struct DeveloperE2eiView: View {
 
-    @StateObject
-    var viewModel: DeveloperE2eiViewModel
+    @StateObject var viewModel: DeveloperE2eiViewModel
 
     var body: some View {
 
         List {
             Section("E2EI Certificate Details") {
                 HStack {
-                    Text("Valid from")
+                    Text(String("Valid from"))
                     Spacer()
                     Text(viewModel.certificateValidFrom)
                         .lineLimit(1)
@@ -38,7 +37,7 @@ struct DeveloperE2eiView: View {
                 }
 
                 HStack {
-                    Text("Valid to")
+                    Text(String("Valid to"))
                     Spacer()
                     Text(viewModel.certificateValidTo)
                         .lineLimit(1)
@@ -49,27 +48,48 @@ struct DeveloperE2eiView: View {
             }
 
             Section("Enroll E2EI Certificate") {
-                TextField("Certificate expiration time (in seconds)", text: $viewModel.certificateExpirationTime)
+                Stepper(
+                    value: $viewModel.certificateExpirationTime,
+                    in: DeveloperE2eiViewModel.minimumCertificateExpirationTime ... Int.max,
+                    step: 60
+                ) {
+                    HStack {
+                        Text(String("Expiration time"))
+                        Spacer()
+                        Text("\(viewModel.certificateExpirationTime) s")
+                            .foregroundColor(.secondary)
+                    }
+                }
 
-                Button("Enroll", action: { viewModel.enrollCertificate() })
+                Button(String("Enroll"), action: { viewModel.enrollCertificate() })
             }
 
             Section("Certificate Revocation Lists") {
+                footNote(
+                    "a Certificate Revocation List (CRL) lists all the certificates that have been revoked for a given domain. They have an expiration time, after which they will be refetched."
+                )
+
                 toggleRow(
                     title: "Force CRL expiry after 1 minute",
-                    description: "Sets the CRL expiration time to 1 minute. Enable to force refresh the CRLs when the app comes to the foreground (at least one minute after the CRL has been fetched the 1st time).",
+                    description: "Sets the CRL expiration time to 1 minute. Enable to force refresh the CRLs when the app comes to the foreground (at least one minute after the CRL has been fetched the 1st time). -  Best to enable before login.",
                     binding: binding(for: .forceCRLExpiryAfterOneMinute)
                 )
                 VStack(alignment: .leading) {
-                    Button("Clear CRL expiration dates", action: { viewModel.removeAllExpirationDates() })
-                    footNote("Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points")
+                    Button(String("Clear CRL expiration dates"), action: { viewModel.removeAllExpirationDates() })
+                    footNote(
+                        "Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points"
+                    )
                 }
             }
 
             Section("CRLs expiration dates") {
 
+                footNote(
+                    "A CRL (Certificate Revocation List) has an expiration date. When the date is reached, the CRL will be refetched."
+                )
+
                 if viewModel.storedCRLExpirationDatesByURL.isEmpty {
-                    Text("There are no stored expiration dates")
+                    Text(String("There are no stored expiration dates"))
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(Array(viewModel.storedCRLExpirationDatesByURL.keys), id: \.self) { url in
@@ -82,7 +102,7 @@ struct DeveloperE2eiView: View {
                     }
                 }
 
-                Button("Refresh", action: { viewModel.refreshCRLExpirationDates() })
+                Button(String("Refresh"), action: { viewModel.refreshCRLExpirationDates() })
             }
         }
     }
@@ -116,5 +136,5 @@ struct DeveloperE2eiView: View {
 // MARK: - Previews
 
 #Preview {
-    DeveloperE2eiView(viewModel: DeveloperE2eiViewModel())
+    DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: nil))
 }

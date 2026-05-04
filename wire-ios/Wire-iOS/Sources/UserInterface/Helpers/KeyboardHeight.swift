@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,12 +32,19 @@ final class KeyboardHeight: NSObject {
     }
 
     private static func phoneKeyboardHeight() -> CGFloat {
+        let bottomInset = getSafeAreaBottomInset() ?? 0
         switch UIScreen.main.bounds.height {
         case 667: return 258
         case 736: return 271
-        case 812: return 253 + UIScreen.safeArea.bottom
+        case 812: return 253 + bottomInset
         default: return 253
         }
     }
 
+    private static func getSafeAreaBottomInset() -> CGFloat? {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return nil
+        }
+        return windowScene.windows.first?.safeAreaInsets.bottom
+    }
 }

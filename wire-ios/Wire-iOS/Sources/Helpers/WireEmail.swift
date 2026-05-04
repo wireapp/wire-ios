@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,8 @@ import Foundation
 
 struct WireEmail: Codable {
     let supportEmail: String
-    let callingSupportEmail: String
 
-    static var shared: WireEmail = {
-        return WireEmail(forResource: "email", withExtension: "json")!
-    }()
+    static var shared: WireEmail = .init(forResource: "email", withExtension: "json")!
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         do {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,79 +17,81 @@
 //
 
 import Foundation
+import WireFoundation
 import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious: Bool = false
-    var isTimeIntervalSinceLastMessageSignificant: Bool = false
     var isTimestampInSameMinuteAsPreviousMessage: Bool = false
     var isFirstMessageOfTheDay: Bool = false
     var isFirstUnreadMessage: Bool = false
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var spacing: Float = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
-    func messageSectionController(_ controller: ConversationMessageSectionController, didRequestRefreshForMessage message: ZMConversationMessage)
+
+    func messageSectionController(
+        _ controller: ConversationMessageSectionController,
+        didRequestRefreshForMessage message: ZMConversationMessage,
+        animated: Bool
+    )
+
 }
 
 extension ZMConversationMessage {
     var isComposite: Bool {
-        return (self as? ConversationCompositeMessage)?.isComposite == true
+        (self as? ConversationCompositeMessage)?.isComposite == true
     }
 }
 
-/**
- * An object that provides an interface to build list sections for a single message.
- *
- * A message will be represented as a table/collection section, and the components that make
- * the view of the message (timestamp, reply, content...) will be displayed as individual cells,
- * to reduce the number of cells that are instanciated at a given time.
- *
- * To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
- * the cells from the table or collection view and configuring them with a message.
- */
+/// An object that provides an interface to build list sections for a single message.
+///
+/// A message will be represented as a table/collection section, and the components that make
+/// the view of the message (timestamp, reply, content...) will be displayed as individual cells,
+/// to reduce the number of cells that are instantiated at a given time.
+///
+/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeuing
+/// the cells from the table or collection view and configuring them with a message.
 
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptor of the section.
-    var cellDescriptions: [AnyConversationMessageCellDescription] = []
+    private var cellDescriptions = [AnyConversationMessageCellDescription]()
+
+    #if DEBUG
+        var cellDescriptionsForTesting: [AnyConversationMessageCellDescription] {
+            get { cellDescriptions }
+            set { cellDescriptions = newValue }
+        }
+    #endif
 
     /// The view descriptors in the order in which the tableview displays them.
     var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
-        return useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
+        useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
     }
 
-    var context: ConversationMessageContext
+    private(set) var context: ConversationMessageContext
 
     /// Whether we need to use inverted indices. This is `true` when the table view is upside down.
-    var useInvertedIndices = false
+    private let useInvertedIndices: Bool
 
     /// The object that controls actions for the cell.
-    var actionController: ConversationMessageActionController? {
-        didSet {
-            updateDelegates()
-        }
-    }
+    var actionController: ConversationMessageActionController?
 
     /// The message that is being presented.
-    var message: ConversationMessage {
+    private(set) var message: ConversationMessage {
         didSet {
-            updateDelegates()
+            changeObservers.removeAll()
+            startObservingChanges(for: message)
         }
     }
+
+    var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.
-    weak var cellDelegate: ConversationMessageCellDelegate? {
-        didSet {
-            updateDelegates()
-        }
-    }
-
-    /// The index of the first cell that is displaying the message
-    var messageCellIndex: Int = 0
+    weak var cellDelegate: ConversationMessageCellDelegate?
 
     /// The object that receives informations from the section.
     weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
@@ -98,24 +100,52 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var selected: Bool
 
     /// Whether this section is collapsed
-    private var isCollapsed: Bool
+    private(set) var isCollapsed: Bool = false {
+        didSet {
+            actionController?.isCollapsed = isCollapsed
+        }
+    }
 
     private var changeObservers: [Any] = []
 
-    let userSession: UserSession
+    private let userSession: UserSession
+    private let privateDefaults: PrivateUserDefaults<CollapseKey>
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
+
+    /// width of a container view to calculate whether message should be collapsed
+    var contentWidth: CGFloat
 
     deinit {
         changeObservers.removeAll()
     }
 
-    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false, userSession: UserSession) {
+    init(
+        message: ConversationMessage,
+        context: ConversationMessageContext,
+        selfUser: any UserType,
+        selected: Bool = false,
+        userSession: UserSession,
+        useInvertedIndices: Bool,
+        contentWidth: CGFloat,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
+    ) {
         self.message = message
         self.context = context
+        self.selfUser = selfUser
         self.selected = selected
-        self.isCollapsed = true
         self.userSession = userSession
+        self.useInvertedIndices = useInvertedIndices
+        self.contentWidth = contentWidth
+        self.privateDefaults = PrivateUserDefaults<CollapseKey>(
+            userID: selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init()
+
+        self.isCollapsed = isCollapsedInitialValue()
 
         createCellDescriptions(in: context)
 
@@ -126,93 +156,271 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
 
-    // MARK: - Content Types
+    private var collapseOwnMessagesEnabled: Bool {
+        false
+        // Temporarily disabling collapsing own messages,
+        // because it conflicts with chat bubbles.
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+        //
+        // privateDefaults.bool(forKey: .collapseOwnMessages)
+    }
 
-    private func addContent(context: ConversationMessageContext, isSenderVisible: Bool) {
+    private func isCollapsedInitialValue() -> Bool {
 
-        messageCellIndex = cellDescriptions.count
-
-        let contentCellDescriptions: [AnyConversationMessageCellDescription]
-
-        if message.isKnock {
-            contentCellDescriptions = addPingMessageCells()
-        } else if message.isComposite {
-            contentCellDescriptions = addCompositeMessageCells
-        } else if message.isText {
-            contentCellDescriptions = ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
-        } else if message.isImage {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(message: message, image: message.imageMessageData!))]
-        } else if message.isLocation {
-            contentCellDescriptions = addLocationMessageCells()
-        } else if message.isAudio {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
-        } else if message.isVideo {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
-        } else if message.isFile {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
-        } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message,
-                                                                                     isCollapsed: isCollapsed,
-                                                                                     buttonAction: buttonAction)
-        } else {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
+        // cases when isCollapsed should be true by default
+        if isMessageWithCollapsedByDefault() {
+            return true
         }
 
-        if let topContentCellDescription = contentCellDescriptions.first {
-            topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated
+        // then if in settings user allowed to collapse own messages
+        guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
+            return false
+        }
 
-            if isSenderVisible && topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
-                topContentCellDescription.topMargin = 0 // We only do this for text content since the text label already contains the spacing
+        if privateDefaults.wasMessagedUncollapsedBefore(message) {
+            return false
+        }
+
+        if message.isTextWithNoLinks {
+
+            guard let textMessage = message.textMessageData?.messageText else {
+                return false
             }
+
+            return willTextExceedLines(
+                text: textMessage,
+                availableWidth: contentWidth,
+                numberOfLines: 3
+            )
+        } else {
+            return message.isSentBySelfUser && message.isCollapsingSupported
+        }
+    }
+
+    // MARK: - Content Types
+
+    private func addContent(
+        context: ConversationMessageContext,
+        isBurstTimestampVisible: Bool,
+        isSenderVisible: Bool,
+        to cellDescriptions: inout [AnyConversationMessageCellDescription]
+    ) {
+        let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
+            addPingMessageCells()
+        } else if message.isComposite {
+            addCompositeMessageCells()
+        } else if message.isText, message.isMultipart {
+            addTextMessageCells() + addMultipartMessageCells()
+        } else if message.isText {
+            addTextMessageCells()
+        } else if message.isMultipart {
+            addMultipartMessageCells()
+        } else if message.isImage {
+            addImageMessageCell()
+        } else if message.isLocation {
+            addLocationMessageCells()
+        } else if message.isAudio {
+            addAudioMessageCell()
+        } else if message.isVideo {
+            addVideoMessageCell()
+        } else if message.isFile {
+            addFileMessageCell()
+        } else if message.isSystem {
+            addSystemMessageCell()
+        } else {
+            addUnknownMessageCell()
         }
 
         cellDescriptions.append(contentsOf: contentCellDescriptions)
     }
 
     private func buttonAction() {
-        self.isCollapsed = !self.isCollapsed
-        self.cellDelegate?.conversationMessageShouldUpdate()
+        isCollapsed = !isCollapsed
+        cellDelegate?.conversationMessageShouldUpdate()
+    }
+
+    private func handleCollapseExpand() {
+        isCollapsed = !isCollapsed
+        if isCollapsed {
+            privateDefaults.removeWasUncollapsed(message)
+        } else {
+            privateDefaults.saveWasUncollapsed(message)
+        }
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
+    }
+
+    func collapse() {
+        handleCollapseExpand()
     }
 
     // MARK: - Content Cells
 
-    private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
-        guard let sender = message.senderUser else {
-            return []
+    private func addMultipartMessageCells() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
         }
 
-        return [AnyConversationMessageCellDescription(ConversationPingCellDescription(message: message, sender: sender))]
+        let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
+            multipartMessage: message.multipartMessageData!,
+            isSentBySelfUser: message.isSentBySelfUser
+        )
+        return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
+    }
+
+    private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
+        guard let sender = message.senderUser else { return [] }
+
+        let pingCellDescription = ConversationPingCellDescription(message: message, sender: sender)
+        return [AnyConversationMessageCellDescription(pingCellDescription)]
+    }
+
+    private func addImageMessageCell() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+        guard let imageMessageData = message.imageMessageData else {
+            return []
+        }
+        let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
+            message: message,
+            image: imageMessageData
+        )
+        return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
+    }
+
+    private func shouldCollapseCell() -> Bool {
+        // There are system type of messages are collapsed by default
+        guard !isMessageWithCollapsedByDefault() else {
+            return false
+        }
+        // Collapse if it was set to be collapsed
+        if isCollapsed {
+            return true
+        }
+        // Then there are cases when we receive live update that fits criteria to be collapsed
+        // for example if messages has links previews or attachments
+        // when cell is refreshed, we recalculate
+        if collapseOwnMessagesEnabled, message.isSentBySelfUser, message.hasLinks,
+           !privateDefaults.wasMessagedUncollapsedBefore(message) {
+            return true
+        }
+
+        return false
+    }
+
+    private func addCollapsedCell() -> [AnyConversationMessageCellDescription] {
+        let cellDescriptions = ConversationCollapsedMessageCellDescription(
+            message: message,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+            userSession: userSession,
+            collapseExpandAction: { [weak self] in
+                self?.handleCollapseExpand()
+            }
+        )
+        return [AnyConversationMessageCellDescription(cellDescriptions)]
+    }
+
+    private func addTextMessageCells() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+
+        return ConversationTextMessageCellDescription
+            .cells(
+                for: message,
+                searchQueries: context.searchQueries,
+                selfUser: selfUser,
+                userSession: userSession,
+                wireMessagingFactory: wireMessagingFactory
+            )
     }
 
     private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
-        guard let locationMessageData = message.locationMessageData else {
-            return []
+        if shouldCollapseCell() {
+            return addCollapsedCell()
         }
+
+        guard let locationMessageData = message.locationMessageData else { return [] }
 
         let locationCell = ConversationLocationMessageCellDescription(message: message, location: locationMessageData)
         return [AnyConversationMessageCellDescription(locationCell)]
     }
 
-    private var addCompositeMessageCells: [AnyConversationMessageCellDescription] {
+    private func addAudioMessageCell() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+        let cellDescription = ConversationAudioMessageCellDescription(message: message, userSession: userSession)
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addVideoMessageCell() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+        let cellDescription = ConversationVideoMessageCellDescription(message: message)
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addFileMessageCell() -> [AnyConversationMessageCellDescription] {
+        guard !shouldCollapseCell() else {
+            return addCollapsedCell()
+        }
+
+        let cellDescriptions = ConversationFileMessageCellDescription(message: message)
+        return [AnyConversationMessageCellDescription(cellDescriptions)]
+    }
+
+    private func addSystemMessageCell() -> [AnyConversationMessageCellDescription] {
+        ConversationSystemMessageCellDescription.cells(
+            for: message,
+            isCollapsed: isCollapsed,
+            buttonAction: buttonAction,
+            selfUser: selfUser,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor.uiColor,
+            userSession: userSession
+        )
+    }
+
+    private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
+        let cellDescription = UnknownStoredMessageCellDescription()
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addCompositeMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let compositeMessage = message as? ConversationCompositeMessage else { return [] }
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
-            case .text(let data):
-                let textCells = ConversationTextMessageCellDescription.cells(textMessageData: data, message: message, searchQueries: context.searchQueries)
 
-                cells += textCells
-            case .button(let data):
+            case let .text(data):
 
-                let button = AnyConversationMessageCellDescription(ConversationButtonMessageCellDescription(text: data.title,
-                                                                                                            state: data.state,
-                                                                                                            hasError: data.isExpired,
-                                                                                                            buttonAction: {
-                    data.touchAction()
-                }))
-                cells.append(button)
+                cells += ConversationTextMessageCellDescription.cells(
+                    textMessageData: data,
+                    message: message,
+                    searchQueries: context.searchQueries,
+                    selfUser: selfUser,
+                    userSession: userSession,
+                    wireMessagingFactory: wireMessagingFactory
+                )
+
+            case let .button(data):
+                let button = ConversationButtonMessageCellDescription(
+                    text: data.title,
+                    state: data.state,
+                    hasError: data.isExpired,
+                    userSession: userSession,
+                    buttonAction: {
+                        data.touchAction()
+                    }
+                )
+                cells.append(AnyConversationMessageCellDescription(button))
             }
         }
 
@@ -221,14 +429,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Composition
 
-    /**
-     * Adds a cell description to the section.
-     * - parameter description: The cell to add to the message section.
-     */
+    #if DEBUG
+        /// Adds a cell description to the section.
+        /// - parameter description: The cell to add to the message section.
 
-    func add<T: ConversationMessageCellDescription>(description: T) {
-        cellDescriptions.append(AnyConversationMessageCellDescription(description))
-    }
+        func addForTesting(description: some ConversationMessageCellDescription) {
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        }
+    #endif
 
     func didSelect() {
         selected = true
@@ -239,56 +447,93 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func createCellDescriptions(in context: ConversationMessageContext) {
-        cellDescriptions.removeAll()
+        var cellDescriptions = [AnyConversationMessageCellDescription]()
 
-        let isSenderVisible = self.shouldShowSenderDetails(in: context)
+        let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
+        let isSenderVisible = shouldShowSenderDetails(in: context)
 
-        if isBurstTimestampVisible(in: context) {
-            add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context, accentColor: userSession.selfUser.accentColor))
+        if let conversation = message.conversationLike,
+           conversation.isChannel == true,
+           conversation.channelHistoryDepth != nil {
+            let description = ConversationChannelHistoryAvailableCellDescription(
+                hasMoreHistory: conversation.hasMoreHistory
+            )
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
-            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, timestamp: timestamp))
+        if isBurstTimestampVisible {
+            let description = BurstTimestampSenderMessageCellDescription(
+                message: message,
+                context: context,
+                accentColor: selfUser.accentColor
+            )
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        addContent(context: context, isSenderVisible: isSenderVisible)
-
-        if isToolboxVisible(in: context) {
-            add(description: ConversationMessageToolboxCellDescription(message: message))
+        if isSenderVisible, let sender = message.senderUser {
+            let description = ConversationSenderMessageCellDescription(
+                sender: sender,
+                selfUser: selfUser,
+                message: message,
+                userSession: userSession
+            )
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-            add(description: MessageReactionsCellDescription(message: message))
+        addContent(
+            context: context,
+            isBurstTimestampVisible: isBurstTimestampVisible,
+            isSenderVisible: isSenderVisible,
+            to: &cellDescriptions
+        )
+
+        func addToolbox() {
+            if isToolboxVisible(in: context) {
+                let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
         }
+
+        func addReactions() {
+            if !message.isSystem, !message.isEphemeral, message.hasReactions() {
+                let description = MessageReactionsCellDescription(message: message, userSession: userSession)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
+        }
+
+        addReactions()
+        addToolbox()
 
         if isFailedRecipientsVisible(in: context) {
-            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedUsers: message.failedToSendUsers,
-                                                                                     isCollapsed: isCollapsed,
-                                                                                     buttonAction: { self.buttonAction() })
-            add(description: cellDescription)
+            let description = ConversationMessageFailedRecipientsCellDescription(
+                failedUsers: message.failedToSendUsers,
+                isCollapsed: isCollapsed,
+                buttonAction: { self.buttonAction() }
+            )
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        if let topCelldescription = cellDescriptions.first {
-            topCelldescription.topMargin = context.spacing
-        }
+        self.cellDescriptions = cellDescriptions
     }
 
-    private func updateDelegates() {
-        cellDescriptions.forEach({
-            $0.message = message
-            $0.actionController = actionController
-            $0.delegate = cellDelegate
-        })
+    func updateMessage(_ message: ConversationMessage) {
+        self.message = message
+        actionController?.message = message
+        cellDescriptions.forEach { cellDescription in
+            cellDescription.message = message
+            cellDescription.actionController = actionController
+            cellDescription.delegate = cellDelegate
+        }
     }
 
     func recreateCellDescriptions(in context: ConversationMessageContext) {
         self.context = context
         createCellDescriptions(in: context)
-        updateDelegates()
+        updateMessage(message)
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        return context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+        context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
@@ -296,11 +541,29 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        return message.deliveryState == .failedToSend || message.isSentBySelfUser
+        // for all messages that support collapsing and is collapsed
+        if shouldCollapseCell() {
+            // if message failed, always show footer with error message and retry button
+            if message.deliveryState == .failedToSend {
+                return true
+            }
+            // then do not show footer if sent but show when sending
+            return !message.isSent
+        }
+
+        return true
+    }
+
+    private func isMessageWithCollapsedByDefault() -> Bool {
+        message.isSystem || !message.failedToSendUsers.isEmpty
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
+            return false
+        }
+
+        if shouldCollapseCell() {
             return false
         }
 
@@ -323,13 +586,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return true
         }
 
-        // We see the self deleting countdown.
+        // A time divider / unread indicator is shown before the actual message.
         if isBurstTimestampVisible(in: context) {
             return true
         }
 
         // This message is from the same sender but in a different minute.
-        if context.isSameSenderAsPrevious && !context.isTimestampInSameMinuteAsPreviousMessage {
+        if !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
 
@@ -347,7 +610,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Highlight
 
-    @objc func highlight(in tableView: UITableView, sectionIndex: Int) {
+    @objc
+    func highlight(in tableView: UITableView, sectionIndex: Int) {
         let cellDescriptions = tableViewCellDescriptions
 
         let highlightableCells: [HighlightableView] = cellDescriptions.indices.compactMap {
@@ -381,22 +645,22 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     // MARK: - Changes
 
     private func startObservingChanges(for message: ZMConversationMessage) {
-        if let userSession = ZMUserSession.shared() {
-            let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+        guard let userSession = userSession as? ZMUserSession else { return }
+
+        let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+        changeObservers.append(observer)
+
+        if let sender = message.senderUser {
+            let observer = UserChangeInfo.add(observer: self, for: sender, in: userSession)!
             changeObservers.append(observer)
+        }
 
-            if let sender = message.senderUser {
-                let observer = UserChangeInfo.add(observer: self, for: sender, in: userSession)!
-                changeObservers.append(observer)
-            }
-
-            if let users = message.systemMessageData?.users {
-                for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
-                    if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {
-                        changeObservers.append(observer)
-                    } else {
-                        assertionFailure("Failed to add observer for user \(user)")
-                    }
+        if let users = message.systemMessageData?.users {
+            for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
+                if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {
+                    changeObservers.append(observer)
+                } else {
+                    assertionFailure("Failed to add observer for user \(user)")
                 }
             }
         }
@@ -407,12 +671,56 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
+        var animated = true
+        if changeInfo.buttonStatesChanged, changeInfo.changedKeys.isEmpty, changeInfo.changeInfos.count == 1 {
+            // WPB-24283: prevent flickering of composite messages
+            // When only button states changed, skip animation.
+            // The NSFetchedResultsController will handle the update via
+            // controllerDidChangeContent, which is already debounced.
+            // Firing both paths causes duplicate reloads and visible flickering.
+            animated = false
+        }
+
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: animated
+        )
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
+        sectionDelegate?.messageSectionController(
+            self,
+            didRequestRefreshForMessage: message,
+            animated: true
+        )
+    }
+
+}
+
+extension ConversationMessageSectionController {
+
+    // TODO: [WPB-16627] https://wearezeta.atlassian.net/browse/WPB-16627
+    // improve by having one place to calculate width and for actual view to present text
+    func willTextExceedLines(text: String, availableWidth: CGFloat, numberOfLines: Int) -> Bool {
+        let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
+
+        let font = UIFont.normalLightFont
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+
+        let boundingBox = text.boundingRect(
+            with: textSize,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attributes,
+            context: nil
+        )
+
+        let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+        let maxHeight = singleLineHeight * CGFloat(numberOfLines)
+
+        return boundingBox.height > maxHeight
     }
 }

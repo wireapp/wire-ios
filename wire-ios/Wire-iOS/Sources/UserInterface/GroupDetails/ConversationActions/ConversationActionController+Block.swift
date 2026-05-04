@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum BlockResult {
-    case block(isBlocked: Bool), cancel
+    case block(isBlocked: Bool)
+    case cancel
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.Profile.BlockDialog.buttonCancel
-        case .block(isBlocked: false): return L10n.Localizable.Profile.blockButtonTitleAction
-        case .block(isBlocked: true): return L10n.Localizable.Profile.unblockButtonTitleAction
+        case .cancel: L10n.Localizable.Profile.BlockDialog.buttonCancel
+        case .block(isBlocked: false): L10n.Localizable.Profile.blockButtonTitleAction
+        case .block(isBlocked: true): L10n.Localizable.Profile.unblockButtonTitleAction
         }
     }
 
@@ -36,7 +38,14 @@ enum BlockResult {
     }
 
     func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        if case .block = self {
+            action.setValue(
+                Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
+        }
+        return action
     }
 
     static func title(for user: UserType) -> String? {
@@ -49,7 +58,7 @@ enum BlockResult {
     }
 
     static func all(isBlocked: Bool) -> [BlockResult] {
-        return [.block(isBlocked: isBlocked), .cancel]
+        [.block(isBlocked: isBlocked), .cancel]
     }
 }
 
@@ -57,8 +66,18 @@ extension ConversationActionController {
 
     func requestBlockResult(for conversation: ZMConversation, handler: @escaping (BlockResult) -> Void) {
         guard let user = conversation.connectedUser else { return }
-        let controller = UIAlertController(title: BlockResult.title(for: user), message: nil, preferredStyle: .actionSheet)
+        let controller = UIAlertController(
+            title: BlockResult.title(for: user),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
         BlockResult.all(isBlocked: user.isBlocked).map { $0.action(handler) }.forEach(controller.addAction)
+
+        if let sourceView, let superView = sourceView.superview,
+           let popover = controller.popoverPresentationController {
+            currentContext = .sourceView(superView, sourceView.frame)
+            popover.permittedArrowDirections = .left
+        }
         present(controller)
     }
 

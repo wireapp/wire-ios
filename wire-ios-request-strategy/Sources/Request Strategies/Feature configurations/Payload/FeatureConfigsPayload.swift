@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,25 +28,35 @@ struct FeatureConfigsPayload: Decodable {
     let fileSharing: FeatureStatus?
     let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+    let allowedGlobalOperations: FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
 
 }
 
-// MARK: -
+struct FeatureConfigsPayloadAPIV6: Decodable {
 
-extension FeatureConfigsPayload {
-    struct FeatureStatus: Decodable {
-        let status: Feature.Status
-    }
+    let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
+    let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
+    let conferenceCalling: FeatureStatusWithConfig<Feature.ConferenceCalling.Config>?
+    let conversationGuestLinks: FeatureStatus?
+    let digitalSignatures: FeatureStatus?
+    let fileSharing: FeatureStatus?
+    let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
+    let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
+    let allowedGlobalOperations: FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>?
+    let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
+    let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
+    let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
+    let consumableNotifications: FeatureStatus?
+    let chatBubbles: FeatureStatus?
 }
 
-// MARK: -
+struct FeatureStatus: Decodable {
+    let status: Feature.Status
+}
 
-extension FeatureConfigsPayload {
-
-    struct FeatureStatusWithConfig<Config: Codable>: Decodable {
-        let status: Feature.Status
-        let config: Config
-    }
+struct FeatureStatusWithConfig<Config: Codable>: Decodable {
+    let status: Feature.Status
+    let config: Config
 }

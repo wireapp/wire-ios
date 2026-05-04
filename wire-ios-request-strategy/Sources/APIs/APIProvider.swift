@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public struct APIProvider: APIProviderInterface {
     }
 
     public func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: PrekeyAPIV0(httpClient: httpClient)
         case .v1: PrekeyAPIV1(httpClient: httpClient)
         case .v2: PrekeyAPIV2(httpClient: httpClient)
@@ -43,11 +43,20 @@ public struct APIProvider: APIProviderInterface {
         case .v4: PrekeyAPIV4(httpClient: httpClient)
         case .v5: PrekeyAPIV5(httpClient: httpClient)
         case .v6: PrekeyAPIV6(httpClient: httpClient)
+        case .v7: PrekeyAPIV7(httpClient: httpClient)
+        case .v8: PrekeyAPIV8(httpClient: httpClient)
+        case .v9: PrekeyAPIV9(httpClient: httpClient)
+        case .v10: PrekeyAPIV10(httpClient: httpClient)
+        case .v11: PrekeyAPIV11(httpClient: httpClient)
+        case .v12: PrekeyAPIV12(httpClient: httpClient)
+        case .v13: PrekeyAPIV13(httpClient: httpClient)
+        case .v14: PrekeyAPIV14(httpClient: httpClient)
+        case .v15: PrekeyAPIV15(httpClient: httpClient)
         }
     }
 
     public func messageAPI(apiVersion: APIVersion) -> MessageAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: MessageAPIV0(httpClient: httpClient)
         case .v1: MessageAPIV1(httpClient: httpClient)
         case .v2: MessageAPIV2(httpClient: httpClient)
@@ -55,19 +64,37 @@ public struct APIProvider: APIProviderInterface {
         case .v4: MessageAPIV4(httpClient: httpClient)
         case .v5: MessageAPIV5(httpClient: httpClient)
         case .v6: MessageAPIV6(httpClient: httpClient)
+        case .v7: MessageAPIV7(httpClient: httpClient)
+        case .v8: MessageAPIV8(httpClient: httpClient)
+        case .v9: MessageAPIV9(httpClient: httpClient)
+        case .v10: MessageAPIV10(httpClient: httpClient)
+        case .v11: MessageAPIV11(httpClient: httpClient)
+        case .v12: MessageAPIV12(httpClient: httpClient)
+        case .v13: MessageAPIV13(httpClient: httpClient)
+        case .v14: MessageAPIV14(httpClient: httpClient)
+        case .v15: MessageAPIV15(httpClient: httpClient)
         }
     }
 
     public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0, .v1, .v2, .v3, .v4: nil
         case .v5: E2eIAPIV5(httpClient: httpClient)
         case .v6: E2eIAPIV6(httpClient: httpClient)
+        case .v7: E2eIAPIV7(httpClient: httpClient)
+        case .v8: E2eIAPIV8(httpClient: httpClient)
+        case .v9: E2eIAPIV9(httpClient: httpClient)
+        case .v10: E2eIAPIV10(httpClient: httpClient)
+        case .v11: E2eIAPIV11(httpClient: httpClient)
+        case .v12: E2eIAPIV12(httpClient: httpClient)
+        case .v13: E2eIAPIV13(httpClient: httpClient)
+        case .v14: E2eIAPIV14(httpClient: httpClient)
+        case .v15: E2eIAPIV15(httpClient: httpClient)
         }
     }
 
     public func userClientAPI(apiVersion: APIVersion) -> UserClientAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: UserClientAPIV0(httpClient: httpClient)
         case .v1: UserClientAPIV1(httpClient: httpClient)
         case .v2: UserClientAPIV2(httpClient: httpClient)
@@ -75,6 +102,15 @@ public struct APIProvider: APIProviderInterface {
         case .v4: UserClientAPIV4(httpClient: httpClient)
         case .v5: UserClientAPIV5(httpClient: httpClient)
         case .v6: UserClientAPIV6(httpClient: httpClient)
+        case .v7: UserClientAPIV7(httpClient: httpClient)
+        case .v8: UserClientAPIV8(httpClient: httpClient)
+        case .v9: UserClientAPIV9(httpClient: httpClient)
+        case .v10: UserClientAPIV10(httpClient: httpClient)
+        case .v11: UserClientAPIV11(httpClient: httpClient)
+        case .v12: UserClientAPIV12(httpClient: httpClient)
+        case .v13: UserClientAPIV13(httpClient: httpClient)
+        case .v14: UserClientAPIV14(httpClient: httpClient)
+        case .v15: UserClientAPIV15(httpClient: httpClient)
         }
     }
 }

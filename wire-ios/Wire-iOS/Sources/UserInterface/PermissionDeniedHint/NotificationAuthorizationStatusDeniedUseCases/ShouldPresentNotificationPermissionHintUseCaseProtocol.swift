@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 protocol ShouldPresentNotificationPermissionHintUseCaseProtocol {
 
     /// Determines if the user should be presented a hint to grant notification permissions.
-    /// - Returns: `true` if the user should be presented a screen for granting notification permissions. `false` will be returned if the permission is already granted or the hint has been presented already within 24 hours.
+    /// - Returns: `true` if the user should be presented a screen for granting notification permissions. `false` will
+    /// be returned if the permission is already granted or the hint has been presented already within 24 hours.
     func invoke() async -> Bool
 }

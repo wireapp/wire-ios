@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import MobileCoreServices
 import WireSystem
 import WireUtilities
@@ -30,27 +31,32 @@ open class ZMFileMetadata: NSObject {
     public let thumbnail: Data?
     public let filename: String
 
-    required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = {
-            if let thumbnail, !thumbnail.isEmpty {
-                return thumbnail
-            } else {
-                return nil
-            }
-        }()
-        let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
+        self.thumbnail = if let thumbnail, !thumbnail.isEmpty {
+            thumbnail
+        } else {
+            nil
+        }
+
+        let endName: String = if let name {
+            name
+        } else if !fileURL.lastPathComponent.isEmpty {
+            fileURL.lastPathComponent
+        } else {
+            "file"
+        }
 
         self.filename = endName.removingExtremeCombiningCharacters
         super.init()
     }
 
-    convenience public init(fileURL: URL, thumbnail: Data? = nil) {
+    public convenience init(fileURL: URL, thumbnail: Data? = nil) {
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+    var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 }
 
@@ -59,21 +65,26 @@ open class ZMAudioMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let normalizedLoudness: [Float]
 
-    required public init(fileURL: URL, duration: TimeInterval, normalizedLoudness: [Float] = [], thumbnail: Data? = nil) {
+    public required init(
+        fileURL: URL,
+        duration: TimeInterval,
+        normalizedLoudness: [Float] = [],
+        thumbnail: Data? = nil
+    ) {
         self.duration = duration
         self.normalizedLoudness = normalizedLoudness
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.normalizedLoudness = []
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }
@@ -83,30 +94,30 @@ open class ZMVideoMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let dimensions: CGSize
 
-    required public init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
+    public required init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
         self.duration = duration
         self.dimensions = dimensions
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.dimensions = CGSize.zero
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }
 
-extension ZMFileMetadata {
+public extension ZMFileMetadata {
 
     var mimeType: String {
-        return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
+        UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }
 
     var size: UInt64 {

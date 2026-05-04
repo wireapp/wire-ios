@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Accept: application/json" \
+	--cookie "zuid=some value" \
+	"https://www.example.com/access?client_id=abc123"

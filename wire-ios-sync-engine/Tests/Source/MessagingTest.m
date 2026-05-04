@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@
 #import "MockModelObjectContextFactory.h"
 
 #import "ZMSelfStrategy.h"
-#import "ZMMissingUpdateEventsTranscoder.h"
-#import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
@@ -122,7 +120,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setUp;
 {
     [super setUp];
-    [self setDefaults];
+    [self setBackendInfoDefaults];
     BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
     [BackgroundActivityFactory.sharedFactory resume];
     
@@ -132,9 +130,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.userIdentifier = [NSUUID UUID];
     self.sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
     self.mockCallNotificationStyle = CallNotificationStylePushNotifications;
-    
-    NSURL *otrFolder = [NSFileManager keyStoreURLForAccountInDirectory:self.accountDirectory createParentIfNeeded:NO];
-    [fm removeItemAtURL:otrFolder error: nil];
     
     _application = [[ApplicationMock alloc] init];
     
@@ -148,11 +143,15 @@ static ZMReachability *sharedReachabilityMock = nil;
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    self.coreDataStack = [self createCoreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithCompletionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
-    [self setupKeyStore];
     [self setupCaches];
-
 
     if (self.shouldUseRealKeychain) {
         [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
@@ -176,16 +175,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 
     self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
                                                             sharedUserDefaults:self.sharedUserDefaults];
-}
-
-- (void)setupKeyStore
-{
-    [self performPretendingUiMocIsSyncMoc:^{
-        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
-                                                  applicationContainer:self.sharedContainerURL];
-        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
-                                   applicationContainer:self.sharedContainerURL];
-    }];
 }
 
 - (void)setupCaches
@@ -222,11 +211,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     return self.coreDataStack.syncContext;
 }
 
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
-}
-
 - (NSManagedObjectContext *)eventMOC
 {
     return self.coreDataStack.eventContext;
@@ -260,8 +244,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.groupIdentifier = nil;
     self.sharedContainerURL = nil;
 
-    [self unsetDefaultAPIVersion];
-
     [self.lastEventIDRepository storeLastEventID:nil];
 
     [super tearDown];
@@ -288,9 +270,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     if (self.syncMOC != nil) {
         [result addObject:self.syncMOC];
     }
-    if (self.searchMOC != nil) {
-        [result addObject:self.searchMOC];
-    }
     if (self.mockTransportSession.managedObjectContext != nil) {
         [result addObject:self.mockTransportSession.managedObjectContext];
     }
@@ -315,11 +294,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setEmailAddress:(NSString *)emailAddress onUser:(ZMUser *)user;
 {
     user.emailAddress = emailAddress;
-}
-
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
-{
-    user.phoneNumber = phoneNumber;
 }
 
 @end
@@ -360,16 +334,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     [moc saveOrRollback];
     
     return client;
-}
-
-- (UserClient *)createSelfClient
-{
-    UserClient *selfClient = [self setupSelfClientInMoc:self.syncMOC];
-    NSDictionary *payload = @{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]};
-    NOT_USED([UserClient createOrUpdateSelfUserClient:payload context:self.syncMOC]);
-    [self.syncMOC saveOrRollback];
-    
-    return selfClient;
 }
 
 @end

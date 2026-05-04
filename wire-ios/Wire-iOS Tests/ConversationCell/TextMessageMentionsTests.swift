@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import Wire
@@ -31,7 +30,7 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
     var selfUser: MockUserType!
 
     /// "Saturday, February 14, 2009 at 12:20:30 AM Central European Standard Time"
-    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1234567230)
+    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1_234_567_230)
 
     // MARK: - setUp
 
@@ -70,8 +69,10 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         let messageText = "@Bruno"
         let mention = Mention(range: NSRange(location: 0, length: 6), user: otherUser)
 
-        verify(message: createMessage(messageText: messageText, mentions: [mention]),
-               allColorSchemes: true)
+        verify(
+            message: createMessage(messageText: messageText, mentions: [mention]),
+            allColorSchemes: true
+        )
     }
 
     func testThatItRendersMentions() {
@@ -108,9 +109,9 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
 
     func testThatItRendersMentions_SelfMention_LongText() {
         let messageText =
-        """
-        She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
-        """
+            """
+            She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
+            """
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"
@@ -122,17 +123,21 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         setColorScheme(.dark)
 
         let messageText =
-        """
-        She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
-        """
+            """
+            She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
+            """
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"
         let mention = Mention(range: NSRange(location: 219, length: 6), user: selfUser)
-        verify(message: createMessage(messageText: messageText,
-                                      mentions: [mention]),
-                                      waitForTextViewToLoad: true,
-                                      snapshotBackgroundColor: .black)
+        verify(
+            message: createMessage(
+                messageText: messageText,
+                mentions: [mention]
+            ),
+            waitForTextViewToLoad: true,
+            snapshotBackgroundColor: .black
+        )
     }
 
     func testThatItRendersMentions_InMarkdown() {

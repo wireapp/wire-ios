@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 // Creating and configuring date formatters is insanely expensive.
 // This is why there’s a bunch of statically configured ones here that are reused.
-final class WRDateFormatter {
+enum WRDateFormatter {
     static let NSTimeIntervalOneMinute = 60.0
     static let NSTimeIntervalOneHour = 3600.0
     static let DayMonthYearUnits = Set<Calendar.Component>([.day, .month, .year])
@@ -39,6 +39,7 @@ final class WRDateFormatter {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         formatter.dateTimeStyle = .named
+        formatter.formattingContext = .beginningOfSentence
         return formatter
     }()
 
@@ -96,15 +97,24 @@ extension Date {
         let gregorian = Calendar(identifier: .gregorian)
         // Today's date
         let today = Date()
-        let todayDateComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: today)
+        let todayDateComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.DayMonthYearUnits,
+            from: today
+        )
         // Yesterday
         var componentsToSubtract = DateComponents()
         componentsToSubtract.day = -1
 
         let yesterday = gregorian.date(byAdding: componentsToSubtract, to: today)
-        let yesterdayComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: yesterday!)
+        let yesterdayComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.DayMonthYearUnits,
+            from: yesterday!
+        )
         // This week
-        let thisWeekComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.WeekMonthYearUnits, from: today)
+        let thisWeekComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.WeekMonthYearUnits,
+            from: today
+        )
         // Received date
         let dateComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: self)
         let weekComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.WeekMonthYearUnits, from: self)
@@ -126,9 +136,10 @@ extension Date {
             WRDateFormatter.todayYesterdayFormatter.dateStyle = dateStyle
             dateString = WRDateFormatter.todayYesterdayFormatter.string(from: self)
         } else if isThisWeek {
-            dateString = "\(WRDateFormatter.thisWeekFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
+            dateString =
+                "\(WRDateFormatter.thisWeekFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
         } else {
-            let dateFormatter = self.olderThanOneWeekdateFormatter
+            let dateFormatter = olderThanOneWeekdateFormatter
             dateString = "\(dateFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
         }
 

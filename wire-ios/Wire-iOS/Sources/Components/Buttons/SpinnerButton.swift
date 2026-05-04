@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,23 +17,27 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
+import WireSyncEngine
+import WireUtilities
 
 extension UIColor {
     enum AlarmButton {
-        static let alarmRed = UIColor(rgb: 0xfb0807)
+        static let alarmRed = UIColor(rgb: 0xFB0807)
     }
 }
 
 /// A button with spinner at the trailing side. Title text is non truncated.
 final class SpinnerButton: LegacyButton {
 
-    private lazy var spinner: Spinner = {
+    private lazy var spinner = {
         let spinner = Spinner()
 
         // the spinner covers the text with alpha BG
-        spinner.backgroundColor = UIColor.from(scheme: .contentBackground).withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
-        spinner.color = UIColor.AlarmButton.alarmRed
+        spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
+            .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
+        spinner.color = .accent()
         spinner.iconSize = CGFloat.SpinnerButton.iconSize
 
         addSubview(spinner)
@@ -44,7 +48,8 @@ final class SpinnerButton: LegacyButton {
             spinner.trailingAnchor.constraint(equalTo: trailingAnchor),
             spinner.widthAnchor.constraint(equalToConstant: 48),
             spinner.topAnchor.constraint(equalTo: topAnchor),
-            spinner.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            spinner.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
 
         return spinner
     }()
@@ -77,20 +82,31 @@ final class SpinnerButton: LegacyButton {
         titleLabel.numberOfLines = 0
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: CGFloat.SpinnerButton.contentInset),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: CGFloat.SpinnerButton.contentInset)])
+            titleLabel.topAnchor.constraint(
+                greaterThanOrEqualTo: topAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            ),
+            titleLabel.leadingAnchor.constraint(
+                greaterThanOrEqualTo: leadingAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            )
+        ])
     }
 
     /// custom full style with accent color for disabled state.
     override func updateFullStyle() {
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .disabled)
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .normal)
+        setBackgroundImageColor(.accent(), for: .disabled)
+        setBackgroundImageColor(.accent(), for: .normal)
 
         setTitleColor(.white, for: .normal)
         setTitleColor(.white, for: .highlighted)
         setTitleColor(.white, for: .disabled)
 
         setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
+
+        setBorderColor(UIColor.accent(), for: .normal)
+        setBorderColor(UIColor.accentDarken, for: .highlighted)
+        setBorderColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
     }
 
     /// custom empty style with accent color for disabled state.
@@ -103,21 +119,27 @@ final class SpinnerButton: LegacyButton {
 
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
         states.forEach {
-            let color: UIColor
-            switch variant {
+            let color: UIColor = switch variant {
             case .dark:
-                color = .white
+                .white
             case .light:
-                color = UIColor.AlarmButton.alarmRed
+                .accent()
             }
 
             setTitleColor(color, for: $0)
-            setBorderColor(UIColor.AlarmButton.alarmRed, for: $0)
+            setBorderColor(.accent(), for: $0)
         }
     }
 
     // MARK: - factory method
+
     static func alarmButton() -> SpinnerButton {
-        return SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
+        let cornerRadius: CGFloat = ConversationMessageContainerView.bubbleCornerRadius
+        return SpinnerButton(legacyStyle: .empty, cornerRadius: cornerRadius, fontSpec: .smallSemiboldFont)
+    }
+
+    func updateAlarmButtonColor(color: ZMAccentColor?) {
+        let variant: ColorSchemeVariant = ColorScheme.default.variant
+        updateStyle(variant: variant)
     }
 }

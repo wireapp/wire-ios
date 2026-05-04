@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,27 +28,28 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
 
         linkCell.linkText = link && .lineSpacing(8)
         linkCell.titleText = title
+        linkCell.setupAccessibility()
     }
 
     // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return L10n.Localizable.Self.Settings.AccountSection.ProfileLink.title
+        L10n.Localizable.Self.Settings.AccountSection.ProfileLink.title
     }
 
     private var link: String {
-        return URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         // no-op
     }
 }

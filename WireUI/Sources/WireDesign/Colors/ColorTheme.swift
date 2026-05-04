@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-// The structure of this type corresponds to the Wire design system.
+import SwiftUI
+import WireFoundation
 
 public enum ColorTheme {
 
     public enum Base {
 
-        public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)
+        public static func primary(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue500Light, dark: .blue500Dark)
+            case .green:
+                UIColor(light: .green500Light, dark: .green500Dark)
+            case .red:
+                UIColor(light: .red500Light, dark: .red500Dark)
+            case .amber:
+                UIColor(light: .amber500Light, dark: .amber500Dark)
+            case .turquoise:
+                UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+            case .purple:
+                UIColor(light: .purple500Light, dark: .purple500Dark)
+            }
+        }
+
         public static let onPrimary = UIColor(light: .white, dark: .black)
 
-        public static let primaryVariant = UIColor(light: .blue50Light, dark: .blue800Dark)
+        public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue50Light, dark: .blue800Dark)
+            case .green:
+                UIColor(light: .green50Light, dark: .green800Dark)
+            case .red:
+                UIColor(light: .red50Light, dark: .red800Dark)
+            case .amber:
+                UIColor(light: .amber50Light, dark: .amber800Dark)
+            case .turquoise:
+                UIColor(light: .turquoise50Light, dark: .turquoise800Dark)
+            case .purple:
+                UIColor(light: .purple50Light, dark: .purple800Dark)
+            }
+        }
+
         public static let onPrimaryVariant = UIColor(light: .blue500Light, dark: .blue300Dark)
 
         public static let error = UIColor(light: .red500Light, dark: .red500Dark)
@@ -37,12 +68,18 @@ public enum ColorTheme {
         public static let onWarning = UIColor(light: .white, dark: .black)
 
         public static let positive = UIColor(light: .green500Light, dark: .green500Dark)
+        public static let onPositive = UIColor(light: .white, dark: .black)
         public static let onSuccess = UIColor(light: .white, dark: .black)
 
         public static let highlight = UIColor(light: .amber200Dark, dark: .amber300Dark)
         public static let onHighlight = UIColor(light: .black, dark: .black)
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
+
+        public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
+
+        public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
+        public static let onDisabled = UIColor(light: .gray80, dark: .gray50)
     }
 
     public enum Backgrounds {
@@ -61,6 +98,13 @@ public enum ColorTheme {
 
         public static let inverted = UIColor(light: .black, dark: .white)
         public static let onInverted = UIColor(light: .white, dark: .black)
+
+        public static let onTransparentDark = UIColor(light: .white, dark: .white)
+    }
+
+    public enum Banners {
+        public static let background = Base.primaryVariant
+        public static let border = Base.primary
     }
 
     public enum Buttons {
@@ -68,16 +112,16 @@ public enum ColorTheme {
         public enum Primary {
 
             public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
-            public static let onEnabled = UIColor(light: .white, dark: .black)
+            static let onEnabled = UIColor(light: .white, dark: .black)
 
-            public static let disabled = UIColor(light: .gray50, dark: .gray80)
-            public static let onDisabled = UIColor(light: .gray80, dark: .gray50)
+            static let disabled = UIColor(light: .gray50, dark: .gray80)
+            static let onDisabled = UIColor(light: .gray80, dark: .gray50)
 
-            public static let focus = UIColor(light: .blue700Light, dark: .blue400Dark)
-            public static let onFocus = UIColor(light: .white, dark: .black)
+            static let focus = UIColor(light: .blue700Light, dark: .blue400Dark)
+            static let onFocus = UIColor(light: .white, dark: .black)
 
-            public static let selected = UIColor(light: .blue700Light, dark: .blue400Dark)
-            public static let onSelected = UIColor(light: .white, dark: .black)
+            static let selected = UIColor(light: .blue700Light, dark: .blue400Dark)
+            static let onSelected = UIColor(light: .white, dark: .black)
         }
 
         public enum Secondary {
@@ -90,36 +134,54 @@ public enum ColorTheme {
             public static let onDisabled = UIColor(light: .gray70, dark: .gray50)
             public static let disabledOutline = UIColor(light: .gray40, dark: .gray95)
 
-            public static let focus = UIColor(light: .gray30, dark: .blue800Dark)
-            public static let onFocus = UIColor(light: .black, dark: .white)
-            public static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
+            static let focus = UIColor(light: .gray30, dark: .blue800Dark)
+            static let onFocus = UIColor(light: .black, dark: .white)
+            static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
 
-            public static let selected = UIColor(light: .blue50Light, dark: .blue800Dark)
-            public static let onSelected = UIColor(light: .blue500Light, dark: .white)
-            public static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
+            static let selected = UIColor(light: .blue50Light, dark: .blue800Dark)
+            static let onSelected = UIColor(light: .blue500Light, dark: .white)
+            static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
 
-        public enum Tertiary {
+        enum Tertiary {
 
-            public static let enabled = UIColor.clear
+            static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
+            static let enabledOutline = UIColor(light: .gray40, dark: .gray100)
 
-            public static let disabled = UIColor.clear
-            public static let onDisabled = UIColor(light: .gray60, dark: .gray60)
+            static let disabled = UIColor(light: .gray20, dark: .gray95)
+            static let onDisabled = UIColor(light: .gray70, dark: .gray50)
+            static let disabledOutline = UIColor(light: .gray40, dark: .gray95)
 
-            public static let focus = UIColor(light: .gray30, dark: .gray90)
-            public static let onFocus = UIColor(light: .black, dark: .white)
-            public static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
+            static let focus = UIColor(light: .gray30, dark: .blue800Dark)
+            static let onFocus = UIColor(light: .black, dark: .white)
+            static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
 
-            public static let selected = UIColor(light: .blue50Light, dark: .gray95)
-            public static let onSelected = UIColor(light: .blue500Light, dark: .blue500Dark)
-            public static let selectedOutline = UIColor(light: .blue300Light, dark: .gray90)
+            static let selected = UIColor(light: .blue50Light, dark: .blue800Dark)
+            static let onSelected = UIColor(light: .blue500Light, dark: .white)
+            static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
+
+        enum Link {
+            public static let onEnabled = Backgrounds.onSurface
+
+            static let onDisabled = Base.secondaryText
+
+            static let onFocus = Base.primary
+
+            static let onSelected = Base.primary
+        }
+    }
+
+    public enum Checkbox {
+        public static let enabled = UIColor(light: .gray50, dark: .gray80)
+        public static let selected = UIColor(light: .blue500Light, dark: .blue500Dark)
     }
 
     public enum Strokes {
 
         public static let outline = UIColor(light: .gray40, dark: .gray90)
+        public static let disabledOutline = UIColor(light: .gray50, dark: .gray80)
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 
@@ -135,6 +197,10 @@ public enum ColorTheme {
     public enum Backdrop {
         public static let background = UIColor.black.withAlphaComponent(0.55)
     }
+
+    public enum NotificationBadge {
+        public static let fill = ColorTheme.Base.error
+    }
 }
 
 private extension UIColor {
@@ -143,5 +209,11 @@ private extension UIColor {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
         }
+    }
+}
+
+public extension UIColor {
+    var color: Color {
+        Color(self)
     }
 }

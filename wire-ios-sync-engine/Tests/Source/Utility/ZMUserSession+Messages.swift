@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,11 +19,13 @@
 import Foundation
 
 extension ZMUserSession {
-    @discardableResult func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation) -> ZMSystemMessage {
+    @discardableResult
+    func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation)
+        -> ZMSystemMessage {
         let newTime = conversation.lastServerTimeStamp?.addingTimeInterval(5) ?? Date()
 
-        let user = ZMUser.insertNewObject(in: self.managedObjectContext)
-        let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: self.managedObjectContext)
+        let user = ZMUser.insertNewObject(in: managedObjectContext)
+        let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext)
         message.serverTimestamp = newTime
         message.systemMessageType = .missedCall
         message.sender = user
@@ -32,11 +34,12 @@ extension ZMUserSession {
         return message
     }
 
-    @discardableResult func insertConversationWithUnreadMessage() -> ZMConversation {
+    @discardableResult
+    func insertConversationWithUnreadMessage() -> ZMConversation {
         let conversation = ZMConversation.insertGroupConversation(session: self, participants: [])!
         conversation.remoteIdentifier = UUID()
 
-        self.insertUnreadDotGeneratingMessageMessage(in: conversation)
+        insertUnreadDotGeneratingMessageMessage(in: conversation)
         // then
         XCTAssertNotNil(conversation.firstUnreadMessage)
         return conversation

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import WireSyncEngine
 
 // MARK: - AppLock helper
+
 extension SettingsPropertyFactory {
 
     var isAppLockActive: Bool {
@@ -27,15 +28,15 @@ extension SettingsPropertyFactory {
     }
 
     var timeout: UInt {
-        return userSession?.appLockTimeout ?? .max
+        userSession?.appLockTimeout ?? .max
     }
 
     var isAppLockForced: Bool {
-        return userSession?.isAppLockForced ?? false
+        userSession?.isAppLockForced ?? false
     }
 
     var isAppLockAvailable: Bool {
-        return userSession?.isAppLockAvailable ?? false
+        userSession?.isAppLockAvailable ?? false
     }
 
 }

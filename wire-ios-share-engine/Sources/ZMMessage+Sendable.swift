@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 private extension ZMMessage {
 
     var reportsProgress: Bool {
-        return fileMessageData != nil || imageMessageData != nil
+        fileMessageData != nil || imageMessageData != nil
     }
 
 }
@@ -33,7 +34,7 @@ extension ZMMessage: Sendable {
         guard let message = self as? ZMOTRMessage else {
             return false
         }
-        return self.deliveryState == .failedToSend && message.causedSecurityLevelDegradation
+        return deliveryState == .failedToSend && message.causedSecurityLevelDegradation
     }
 
     public var isSent: Bool {
@@ -56,15 +57,16 @@ extension ZMMessage: Sendable {
 
     public func cancel() {
 
-        if let asset = self.fileMessageData {
+        if let asset = fileMessageData {
             asset.cancelTransfer()
             return
         }
 
-        let attributes: LogAttributes = [.nonce: nonce?.safeForLoggingDescription ?? "<nil>"].merging(.safePublic, uniquingKeysWith: { _, new in new })
+        let attributes: LogAttributes = [.nonce: nonce?.safeForLoggingDescription ?? "<nil>"]
+            .merging(.safePublic, uniquingKeysWith: { _, new in new })
 
         WireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
-        self.expire()
+        expire(withReason: .cancelled)
     }
 
 }

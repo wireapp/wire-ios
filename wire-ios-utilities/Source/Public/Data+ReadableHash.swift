@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import Foundation
 
-extension Data {
-    /// Produces a hash that is 8 characters long. It can be used to obfuscate sensitive data but still allow matching it e.g. in logs.
-    public var readableHash: String {
+public extension Data {
+    /// Produces a hash that is 8 characters long. It can be used to obfuscate sensitive data but still allow matching
+    /// it e.g. in logs.
+    var readableHash: String {
         let hash = zmSHA256Digest().zmHexEncodedString()
         return String(hash.prefix(8))
     }

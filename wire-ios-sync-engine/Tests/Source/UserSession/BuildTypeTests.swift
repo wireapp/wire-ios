@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@ final class BuildTypeTests: ZMTBaseTest {
 
     func testThatItParsesKnownBundleIDs() {
         // GIVEN
-        let bundleIdsToTypes: [String: WireSyncEngine.BuildType] = ["com.wearezeta.zclient.ios": .production,
-                                                                    "com.wearezeta.zclient.alpha": .alpha,
-                                                                    "com.wearezeta.zclient.development": .development,
-                                                                    "com.wearezeta.zclient.rc": .releaseCandidate,
-                                                                    "com.wearezeta.zclient.internal": .internal,
-                                                                    "com.wearezeta.zclient.ios.beta": .beta]
+        let bundleIdsToTypes: [String: WireSyncEngine.BuildType] = [
+            "com.wearezeta.zclient.ios": .production,
+            "com.wearezeta.zclient.alpha": .alpha,
+            "com.wearezeta.zclient.development": .playground,
+            "com.wearezeta.zclient.ios.edge": .edge,
+            "com.wearezeta.zclient.ios.beta": .beta
+        ]
 
         bundleIdsToTypes.forEach { bundleId, expectedType in
             // WHEN
@@ -51,11 +52,12 @@ final class BuildTypeTests: ZMTBaseTest {
 
     func testThatInternalAppsReturnsBundleIdsForTheCertName() {
         // GIVEN
-        let suts: [BuildType] = [.alpha,
-                                 .beta,
-                                 .internal,
-                                 .releaseCandidate,
-                                 .development]
+        let suts: [BuildType] = [
+            .alpha,
+            .beta,
+            .playground,
+            .edge
+        ]
 
         suts.forEach { type in
 

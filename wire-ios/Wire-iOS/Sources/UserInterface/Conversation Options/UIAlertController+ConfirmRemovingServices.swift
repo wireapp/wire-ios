@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ import UIKit
 extension UIAlertController {
 
     static func confirmRemovingServices(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
-            title: L10n.Localizable.ServicesOptions.RemoveServices.message,
-            confirmTitle: L10n.Localizable.ServicesOptions.RemoveServices.action,
+        confirmController(
+            title: L10n.Localizable.AppsOptions.RemoveApps.message,
+            confirmTitle: L10n.Localizable.AppsOptions.RemoveApps.action,
             completion: completion
         )
     }

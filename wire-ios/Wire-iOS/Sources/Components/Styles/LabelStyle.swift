@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,22 +25,28 @@ struct LabelStyle {
 
     static let footerLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textSectionFooter)
+        textColor: SemanticColors.Label.textSectionFooter
+    )
     static let headerLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textSectionHeader)
+        textColor: SemanticColors.Label.textSectionHeader
+    )
     static let primaryCellLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textDefault)
+        textColor: SemanticColors.Label.textDefault
+    )
     static let secondaryCellLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textCellSubtitle)
+        textColor: SemanticColors.Label.textCellSubtitle
+    )
     static let dateInConversationLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textDefault)
+        textColor: SemanticColors.Label.textDefault
+    )
     static let searchBarPlaceholder: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.SearchBar.textInputViewPlaceholder)
+        textColor: SemanticColors.SearchBar.textInputViewPlaceholder
+    )
 }
 
 extension UILabel: Stylable {

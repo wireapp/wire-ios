@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
 
-class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelfMLSKeyPackagesAction, CountSelfMLSKeyPackagesActionHandler> {
+@testable import WireRequestStrategy
+
+class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
+    CountSelfMLSKeyPackagesAction,
+    CountSelfMLSKeyPackagesActionHandler
+> {
 
     let clientID = "clientID"
     let requestPath = "/v5/mls/key-packages/self/clientID/count"
@@ -28,7 +32,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
     override func setUp() {
         super.setUp()
-        action = CountSelfMLSKeyPackagesAction(clientID: clientID)
+        action = CountSelfMLSKeyPackagesAction(clientID: clientID, ciphersuite: nil)
         handler = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
@@ -40,6 +44,31 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
             expectedPath: requestPath,
             expectedMethod: .get,
             apiVersion: .v5
+        )
+    }
+
+    func test_itGeneratesValidRequestWithCiphersuite_APIV5() throws {
+        // Given
+        action = CountSelfMLSKeyPackagesAction(
+            clientID: clientID,
+            ciphersuite: .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        )
+        let expectedPath = "/v5/mls/key-packages/self/clientID/count?ciphersuite=0x0003"
+
+        // When, Then
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: expectedPath,
+            expectedMethod: .get,
+            apiVersion: .v5
+        )
+    }
+
+    func test_itRequiresCiphersuite_APIV8() throws {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v8,
+            expectedError: .ciphersuiteNotProvided
         )
     }
 
@@ -55,7 +84,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
         // When the client ID is invalid
         test_itDoesntGenerateARequest(
-            action: CountSelfMLSKeyPackagesAction(clientID: ""),
+            action: CountSelfMLSKeyPackagesAction(clientID: "", ciphersuite: nil),
             apiVersion: .v5,
             expectedError: .invalidClientID
         )
@@ -65,7 +94,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
     func test_itHandlesSuccess() {
         // Given
-        let payload = Payload(count: 123456789)
+        let payload = Payload(count: 123_456_789)
 
         // When
         let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))

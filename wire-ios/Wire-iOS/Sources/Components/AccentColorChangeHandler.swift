@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,27 +21,31 @@ import WireSyncEngine
 
 final class AccentColorChangeHandler: UserObserving {
 
-    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
+    typealias AccentColorChangeHandlerBlock = (_ newColor: ZMAccentColor?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
-    private var observer: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
-    class func addObserver(_ observer: NSObjectProtocol?, userSession: UserSession, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
-        return self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
+    static func addObserver(
+        userSession: UserSession,
+        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock
+    ) -> Self {
+        self.init(handlerBlock: changeHandler, userSession: userSession)
     }
 
-    init(observer: NSObjectProtocol?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock, userSession: UserSession) {
-        handlerBlock = changeHandler
-        self.observer = observer
+    init(
+        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock,
+        userSession: UserSession
+    ) {
+        self.handlerBlock = changeHandler
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
-            userObserverToken = userSession.addUserObserver(self, for: selfUser)
+            self.userObserverToken = userSession.addUserObserver(self, for: selfUser)
         }
     }
 
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
-            handlerBlock?(change.user.accentColor, observer)
+            handlerBlock?(change.user.zmAccentColor)
         }
     }
 }

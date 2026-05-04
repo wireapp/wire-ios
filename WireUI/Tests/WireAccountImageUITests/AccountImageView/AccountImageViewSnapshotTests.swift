@@ -1,0 +1,95 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SwiftUI
+import WireTestingPackage
+import XCTest
+
+@testable import WireAccountImageUI
+
+final class AccountImageViewSnapshotTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testImageModeAllAccountTypesAndAvailabilities() {
+        typealias Previews = AccountImageView_Previews
+
+        for showNotificationBadge in [true, false] {
+            let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
+
+            for availability in Availability.allCases + [Availability?.none] {
+                // Given
+                let rootView = Previews.previewWithNavigationBar(
+                    .image(Previews.accountImage),
+                    availability,
+                    showNotificationBadge
+                )
+                let hostingControllerView = UIHostingController(rootView: rootView).view!
+                hostingControllerView.frame = UIScreen.main.bounds
+
+                var testName = if let availability { "imageMode_\(availability)" } else { "imageMode_noAvailability" }
+                testName += showNotificationBadgeSuffix
+
+                // Then
+                snapshotHelper
+                    .withUserInterfaceStyle(.light)
+                    .verify(matching: hostingControllerView, named: "light", testName: testName)
+                snapshotHelper
+                    .withUserInterfaceStyle(.dark)
+                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
+            }
+        }
+    }
+
+    @MainActor
+    func testTextModeAllAccountTypesAndAvailabilities() {
+        typealias Previews = AccountImageView_Previews
+
+        for showNotificationBadge in [true, false] {
+            let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
+
+            for availability in Availability.allCases + [Availability?.none] {
+                // Given
+                let rootView = Previews.previewWithNavigationBar(.text("CA"), availability, showNotificationBadge)
+                let hostingControllerView = UIHostingController(rootView: rootView).view!
+                hostingControllerView.frame = UIScreen.main.bounds
+
+                var testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
+                testName += showNotificationBadgeSuffix
+
+                // Then
+                snapshotHelper
+                    .withUserInterfaceStyle(.light)
+                    .verify(matching: hostingControllerView, named: "light", testName: testName)
+                snapshotHelper
+                    .withUserInterfaceStyle(.dark)
+                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
+            }
+        }
+    }
+}

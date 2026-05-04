@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,50 +17,38 @@
 //
 
 import Foundation
-import WireAPI
+import WireLogging
+import WireNetwork
 
-/// Process update events.
-
-protocol UpdateEventProcessorProtocol {
-
-    /// Process an update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: An update event.
-
-    func processEvent(_ event: UpdateEvent) async throws
-
-}
-
-struct UpdateEventProcessor {
+struct UpdateEventProcessor: UpdateEventProcessorProtocol {
 
     let conversationEventProcessor: any ConversationEventProcessorProtocol
-    let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
+    let featureConfigEventProcessor: any FeatureConfigEventProcessorProtocol
     let federationEventProcessor: any FederationEventProcessorProtocol
     let userEventProcessor: any UserEventProcessorProtocol
     let teamEventProcessor: any TeamEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
+        WireLogger.eventProcessing.info("process event", attributes: [.eventType: event.name], .safePublic)
+
         switch event {
-        case .conversation(let event):
+        case let .conversation(event):
             try await conversationEventProcessor.processEvent(event)
 
-        case .featureConfig(let event):
-            try await featureconfigEventProcessor.processEvent(event)
+        case let .featureConfig(event):
+            await featureConfigEventProcessor.processEvent(event)
 
-        case .federation(let event):
+        case let .federation(event):
             try await federationEventProcessor.processEvent(event)
 
-        case .user(let event):
+        case let .user(event):
             try await userEventProcessor.processEvent(event)
 
-        case .team(let event):
+        case let .team(event):
             try await teamEventProcessor.processEvent(event)
 
-        case .unknown(let event):
-            print("can not process unknown event: \(event)")
+        case let .unknown(event):
+            WireLogger.eventProcessing.warn("can not process unknown event: \(event)")
         }
     }
 

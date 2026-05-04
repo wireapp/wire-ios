@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,23 +26,23 @@ final class PhotoPermissionsControllerStrategy: PhotoPermissionsController {
 
     var isCameraAuthorized: Bool {
         switch AVCaptureDevice.authorizationStatus(for: AVMediaType.video) {
-        case .authorized: return true
-        default: return false
+        case .authorized: true
+        default: false
         }
     }
 
     var isPhotoLibraryAuthorized: Bool {
         switch PHPhotoLibrary.authorizationStatus() {
-        case .authorized: return true
-        default: return false
+        case .authorized: true
+        default: false
         }
     }
 
     var areCameraOrPhotoLibraryAuthorized: Bool {
-        return isCameraAuthorized || isPhotoLibraryAuthorized
+        isCameraAuthorized || isPhotoLibraryAuthorized
     }
 
     var areCameraAndPhotoLibraryAuthorized: Bool {
-        return isCameraAuthorized && isPhotoLibraryAuthorized
+        isCameraAuthorized && isPhotoLibraryAuthorized
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,14 +25,20 @@ public final class ManagedObjectContextChangesMerger: NSObject {
         self.managedObjectContexts = managedObjectContexts
         super.init()
         managedObjectContexts.forEach { moc in
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(ManagedObjectContextChangesMerger.contextDidSave(_:)),
-                                                   name: NSNotification.Name.NSManagedObjectContextDidSave,
-                                                   object: moc)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(
+                    ManagedObjectContextChangesMerger
+                        .contextDidSave(_:)
+                ),
+                name: NSNotification.Name.NSManagedObjectContextDidSave,
+                object: moc
+            )
         }
     }
 
-    @objc func contextDidSave(_ notification: Notification) {
+    @objc
+    func contextDidSave(_ notification: Notification) {
         let mocThatSaved = notification.object as! NSManagedObjectContext
         managedObjectContexts.subtracting([mocThatSaved]).forEach { moc in
             moc.perform {

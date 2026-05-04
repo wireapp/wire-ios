@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,16 +21,21 @@ public extension NSManagedObjectContext {
 
     private static let PackagingFeatureConfigKey = "PackagingFeatureConfigKey"
 
-    @objc
-    var zm_usePackagingFeatureConfig: Bool {
+    @objc var zm_usePackagingFeatureConfig: Bool {
 
         get {
-            precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
+            precondition(
+                zm_isUserInterfaceContext,
+                "zm_usePackagingFeatureConfig can only be accessed on the ui context"
+            )
             return userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] as? Bool ?? false
         }
 
         set {
-            precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
+            precondition(
+                zm_isUserInterfaceContext,
+                "zm_usePackagingFeatureConfig can only be accessed on the ui context"
+            )
             userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] = newValue
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@
 {
     NSError *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:5 userInfo:nil];
     XCTAssertNotNil(error);
-    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionNoError);
+    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionErrorCodeNoError);
 }
 
 - (void)testNeedsCredentials;
 {
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionNeedsCredentials userInfo:nil];
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeNeedsCredentials userInfo:nil];
     XCTAssertNotNil(error);
-    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionNeedsCredentials);
+    XCTAssertEqual(error.userSessionErrorCode, ZMUserSessionErrorCodeNeedsCredentials);
 }
 
 @end

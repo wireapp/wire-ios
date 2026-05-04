@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,10 @@ import Foundation
 extension Data {
     var isJPEG: Bool {
         let array = withUnsafeBytes { (unsafeRawBufferPointer: UnsafeRawBufferPointer) in
-            [UInt8](UnsafeBufferPointer(start: unsafeRawBufferPointer.bindMemory(to: UInt8.self).baseAddress!, count: 3))
+            [UInt8](UnsafeBufferPointer(
+                start: unsafeRawBufferPointer.bindMemory(to: UInt8.self).baseAddress!,
+                count: 3
+            ))
         }
 
         let JPEGHeader: [UInt8] = [0xFF, 0xD8, 0xFF]

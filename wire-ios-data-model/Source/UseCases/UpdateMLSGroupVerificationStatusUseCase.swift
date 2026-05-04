@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
     // MARK: - Life cycle
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         syncContext: NSManagedObjectContext,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
         self.context = syncContext
@@ -49,7 +49,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let isE2EIEnabled = await context.perform {
-            return self.featureRepository.fetchE2EI().isEnabled
+            self.featureRepository.fetchE2EI().isEnabled
         }
         guard isE2EIEnabled else { return }
 
@@ -89,11 +89,11 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
     ) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
-            return .degraded
+            .degraded
         case(.notVerified, .degraded):
-            return .degraded
+            .degraded
         default:
-            return newStatusFromCC
+            newStatusFromCC
         }
     }
 

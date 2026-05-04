@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class MediaPreviewViewSnapshotTests: XCTestCase {
 
-    var sut: MediaPreviewView!
+    private var sut: MediaPreviewView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = .init()
         sut = MediaPreviewView()
         sut.titleLabel.text = "Demo Media"
         sut.previewImageView.image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -35,11 +38,12 @@ final class MediaPreviewViewSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

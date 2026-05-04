@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -241,6 +241,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
 {
     VerifyReturnNil(key.length == kCCKeySizeAES256);
 
+    // The encrypted payload is IV + ciphertext, so a valid
+    // payload must be larger than the IV.
+    VerifyReturnNil(self.length > kCCBlockSizeAES128);
+
     size_t copiedBytes = 0;
     NSMutableData *decryptedData = [NSMutableData dataWithLength:self.length+kCCBlockSizeAES128];
     NSData *dataWithoutIV = [NSData dataWithBytes:self.bytes+kCCBlockSizeAES128 length:self.length-kCCBlockSizeAES128];
@@ -248,18 +252,20 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
     
     ZMLogDebug(@"Decrypt: IV is %@. Data : %lu, Data w/out IV: %lu", [IV base64EncodedStringWithOptions:0], (unsigned long)self.length, (unsigned long)dataWithoutIV.length);
     
-    CCCryptorStatus status = CCCrypt(kCCDecrypt,                    // basic operation kCCEncrypt or kCCDecrypt
-                                     kCCAlgorithmAES,               // encryption algorithm
-                                     kCCOptionPKCS7Padding,         // flags defining encryption
-                                     key.bytes,      // Raw key material
-                                     kCCKeySizeAES256,     // Length of key material
-                                     IV.bytes,                      // Initialization vector for Cipher Block Chaining (CBC) mode (first 16 bytes)
-                                     dataWithoutIV.bytes,           // Data to encrypt or decrypt
-                                     dataWithoutIV.length,          // Length of data to encrypt or decrypt
-                                     decryptedData.mutableBytes,    // Result is written here
-                                     decryptedData.length,          // The size of the dataOut buffer in bytes
-                                     &copiedBytes);                    // On successful return, the number of bytes written to dataOut.
-    
+    CCCryptorStatus status = CCCrypt(
+        kCCDecrypt,                    // basic operation kCCEncrypt or kCCDecrypt
+        kCCAlgorithmAES,               // encryption algorithm
+        kCCOptionPKCS7Padding,         // flags defining encryption
+        key.bytes,                     // Raw key material
+        kCCKeySizeAES256,              // Length of key material
+        IV.bytes,                      // Initialization vector for Cipher Block Chaining (CBC) mode (first 16 bytes)
+        dataWithoutIV.bytes,           // Data to encrypt or decrypt
+        dataWithoutIV.length,          // Length of data to encrypt or decrypt
+        decryptedData.mutableBytes,    // Result is written here
+        decryptedData.length,          // The size of the dataOut buffer in bytes
+        &copiedBytes                   // On successful return, the number of bytes written to dataOut.
+    );
+
     if(status != kCCSuccess) {
         ZMLogError(@"Error in decryption: %d", status);
         return nil;

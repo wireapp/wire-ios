@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ protocol CallActionsViewInputType: CallTypeProvider {
     var mediaState: MediaState { get }
     var permissions: CallPermissionsConfiguration { get }
     var cameraType: CaptureDevice { get }
-    var networkQuality: NetworkQuality { get }
     var callState: CallStateExtending { get }
     var videoGridPresentationMode: VideoGridPresentationMode { get }
     var allowPresentationModeUpdates: Bool { get }

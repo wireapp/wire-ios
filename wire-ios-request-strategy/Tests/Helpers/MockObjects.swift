@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ import WireRequestStrategy
 public class MockApplicationStatus: NSObject, ApplicationStatus {
 
     public var requestCancellation: ZMRequestCancellation {
-        return self.mockTaskCancellationDelegate
+        mockTaskCancellationDelegate
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.mockClientRegistrationStatus
+        mockClientRegistrationStatus
     }
 
     public var mockSynchronizationState: SynchronizationState = .unauthenticated
@@ -35,21 +35,21 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
     public var mockClientRegistrationStatus = MockClientRegistrationStatus()
 
     public var synchronizationState: SynchronizationState {
-        return mockSynchronizationState
+        mockSynchronizationState
     }
 
     public var mockOperationState: OperationState = .foreground
 
     public var operationState: OperationState {
-        return mockOperationState
+        mockOperationState
     }
 
     public var cancelledIdentifiers: [ZMTaskIdentifier] {
-        return mockTaskCancellationDelegate.cancelledIdentifiers
+        mockTaskCancellationDelegate.cancelledIdentifiers
     }
 
     public var deletionCalls: Int {
-        return mockClientRegistrationStatus.deletionCalls
+        mockClientRegistrationStatus.deletionCalls
     }
 
     public var resyncResourcesWasRequested = false
@@ -77,7 +77,7 @@ public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate 
     }
 
     public var clientIsReadyForRequests: Bool {
-        return true
+        true
     }
 }
 

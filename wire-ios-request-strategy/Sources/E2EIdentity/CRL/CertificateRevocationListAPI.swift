@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol 
         }
 
         switch httpResponse.statusCode {
-        case 200...299:
+        case 200 ... 299:
             return data
         default:
             throw NetworkError.invalidStatusCode(httpResponse.statusCode)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,20 +43,27 @@ final class CallParticipantView: BaseCallParticipantView {
         color: .white
     )
     private var snapshotView: UIView?
+    private let isFederationEnabled: Bool
 
     // MARK: - Initialization
 
-    override init(stream: Stream,
-                  isCovered: Bool,
-                  shouldShowActiveSpeakerFrame: Bool,
-                  shouldShowBorderWhenVideoIsStopped: Bool,
-                  pinchToZoomRule: PinchToZoomRule) {
+    init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule,
+        isFederationEnabled: Bool,
+        userSession: UserSession
+    ) {
+        self.isFederationEnabled = isFederationEnabled
         super.init(
             stream: stream,
             isCovered: isCovered,
             shouldShowActiveSpeakerFrame: shouldShowActiveSpeakerFrame,
             shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-            pinchToZoomRule: pinchToZoomRule
+            pinchToZoomRule: pinchToZoomRule,
+            userSession: userSession
         )
 
         updateState()
@@ -151,9 +158,11 @@ final class CallParticipantView: BaseCallParticipantView {
         self.snapshotView = snapshotView
     }
 
-    private func executeAnimations(animated: Bool,
-                                   animationBlock: @escaping () -> Void,
-                                   completionBlock: @escaping (Bool) -> Void) {
+    private func executeAnimations(
+        animated: Bool,
+        animationBlock: @escaping () -> Void,
+        completionBlock: @escaping (Bool) -> Void
+    ) {
         if animated {
             UIView.animate(withDuration: 0.2, animations: animationBlock, completion: completionBlock)
         } else {
@@ -171,7 +180,7 @@ final class CallParticipantView: BaseCallParticipantView {
     private func makeVideoView() -> AVSVideoView {
         let videoView = AVSVideoView()
         videoView.backgroundColor = .clear
-        videoView.userid = stream.streamId.avsIdentifier.serialized
+        videoView.userid = stream.streamId.avsIdentifier(isFederationEnabled: isFederationEnabled).serialized
         videoView.clientid = stream.streamId.clientId
         videoView.shouldFill = shouldFill
 

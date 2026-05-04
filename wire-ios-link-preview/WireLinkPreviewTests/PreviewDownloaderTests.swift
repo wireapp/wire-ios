@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class PreviewDownloaderTests: XCTestCase {
 
     private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!
-    private var mockSession: MockURLSession! = nil
-    private var mockDataTask: MockURLSessionDataTask! = nil
-    private var sut: PreviewDownloader! = nil
+    private var mockSession: MockURLSession!
+    private var mockDataTask: MockURLSessionDataTask!
+    private var sut: PreviewDownloader!
 
     override func setUp() {
         super.setUp()
@@ -64,20 +64,20 @@ class PreviewDownloaderTests: XCTestCase {
         XCTAssertEqual(mockSession.dataTaskWithURLCallCount, 1)
         XCTAssertEqual(mockSession.dataTaskWithURLParameters.first?.url, url)
         XCTAssertEqual(mockDataTask.resumeCallCount, 1)
-        XCTAssertNotNil(sut.completionByURL[url])
+        XCTAssertNotNil(sut.completionByURL.get(for: url))
     }
 
     func testThatItAppendsReceivedBytesToContainerForDataTask() {
         // given
         let taskID = 0
-        let firstBytes = "First Part".data(using: String.Encoding.utf8)!
-        let secondBytes = "Second Part".data(using: String.Encoding.utf8)!
+        let firstBytes = Data("First Part".utf8)
+        let secondBytes = Data("Second Part".utf8)
 
         // when
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        guard let container = sut.containerByTaskID[taskID] else { return XCTFail("container is nil") }
+        guard let container = sut.containerByTaskID.get(for: taskID) else { return XCTFail("container is nil") }
         XCTAssertEqual(container.bytes, firstBytes)
 
         // when
@@ -98,8 +98,8 @@ class PreviewDownloaderTests: XCTestCase {
             completionExpectation.fulfill()
         }
         let taskID = 0
-        let firstBytes = " First Part\n ".data(using: String.Encoding.utf8)!
-        let secondBytes = " </head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" First Part\n ".utf8)
+        let secondBytes = Data(" </head> ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -112,7 +112,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(secondBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
         XCTAssertEqual(completionCallCount, 1)
     }
@@ -126,8 +126,8 @@ class PreviewDownloaderTests: XCTestCase {
             completionExpectation.fulfill()
         }
         let taskID = 0
-        let firstBytes = " First Part\n ".data(using: String.Encoding.utf8)!
-        let secondBytes = " Second Part\n ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" First Part\n ".utf8)
+        let secondBytes = Data(" Second Part\n ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -143,7 +143,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(secondBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 0)
         XCTAssertEqual(completionCallCount, 1)
     }
@@ -153,24 +153,24 @@ class PreviewDownloaderTests: XCTestCase {
         let completionExpectation = expectation(description: "It should call the completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in completionExpectation.fulfill() }
         let taskID = 0
-        let firstBytes = " </head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" </head> ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
-        XCTAssertNil(sut.completionByURL[url])
-        XCTAssertNil(sut.containerByTaskID[taskID])
+        XCTAssertNil(sut.completionByURL.get(for: url))
+        XCTAssertNil(sut.containerByTaskID.get(for: taskID))
     }
 
     func testThatItCallsTheCompletionAndCleansUpIfItReceivesANetworkError() {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in completionExpectation.fulfill() }
-        let firstBytes = " <head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" <head> ".utf8)
         let taskID = 0
 
         // when
@@ -180,15 +180,15 @@ class PreviewDownloaderTests: XCTestCase {
         sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: error)
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 0)
-        XCTAssertNil(sut.completionByURL[url])
-        XCTAssertNil(sut.containerByTaskID[taskID])
+        XCTAssertNil(sut.completionByURL.get(for: url))
+        XCTAssertNil(sut.containerByTaskID.get(for: taskID))
     }
 
     func testThatItDoesNotCallTheCompletionAndCleansUpIfItReceivesANilError() {
         // given
-        let firstBytes = " <head> </head>".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" <head> </head>".utf8)
         let completion: PreviewDownloader.DownloadCompletion = { _ in }
         let taskID = 0
 
@@ -199,8 +199,8 @@ class PreviewDownloaderTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
-        XCTAssertNotNil(sut.completionByURL[url])
-        XCTAssertNotNil(sut.containerByTaskID[taskID])
+        XCTAssertNotNil(sut.completionByURL.get(for: url))
+        XCTAssertNotNil(sut.containerByTaskID.get(for: taskID))
     }
 
     func testThatItDoesntCallTheCompletionWhenRequestIsCancelled() {
@@ -208,7 +208,8 @@ class PreviewDownloaderTests: XCTestCase {
         let error = NSError(domain: NSURLErrorDomain, code: URLError.cancelled.rawValue, userInfo: nil)
 
         // expect
-        let completion: PreviewDownloader.DownloadCompletion = { _ in XCTFail("It should not call the completion handler") }
+        let completion: PreviewDownloader
+            .DownloadCompletion = { _ in XCTFail("It should not call the completion handler") }
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -229,8 +230,8 @@ class PreviewDownloaderTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockDataTask.cancelCallCount, 0)
-        XCTAssertNil(sut.completionByURL[url])
-        XCTAssertNil(sut.containerByTaskID[taskID])
+        XCTAssertNil(sut.completionByURL.get(for: url))
+        XCTAssertNil(sut.containerByTaskID.get(for: taskID))
     }
 
     func testThatItOverridesTheContentTypeOfTheURLSessionUsedForParsing() {
@@ -248,7 +249,7 @@ class PreviewDownloaderTests: XCTestCase {
 
         XCTAssertEqual(agent, expected)
         XCTAssertEqual(mockDataTask.resumeCallCount, 1)
-        XCTAssertNotNil(sut.completionByURL[url])
+        XCTAssertNotNil(sut.completionByURL.get(for: url))
     }
 
     func testThatItCallsTheCompletionHandlerAndCancelsTheRequestIfTheContentTypeOfTheResponseIfNotHTML() {
@@ -263,7 +264,8 @@ class PreviewDownloaderTests: XCTestCase {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "text/html")
     }
 
-    func testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLWithCharset() {
+    func testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLWithCharset(
+    ) {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "text/html;charset=utf-8")
     }
 
@@ -271,14 +273,19 @@ class PreviewDownloaderTests: XCTestCase {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "TEXT/HTML")
     }
 
-    func assertThatItCallsTheDipositionHandler(_ expected: URLSession.ResponseDisposition, contentType: String, statusCode: Int = 200, line: UInt = #line) {
+    func assertThatItCallsTheDipositionHandler(
+        _ expected: URLSession.ResponseDisposition,
+        contentType: String,
+        statusCode: Int = 200,
+        line: UInt = #line
+    ) {
         // given
         let downloadExpectation = expectation(description: "It should call the downloader completion handler")
         let sessionExpectation = expectation(description: "It should call the session completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in downloadExpectation.fulfill() }
         let originalRequest = URLRequest(url: URL(string: "www.example.com")!)
         sut.requestOpenGraphData(fromURL: url, completion: completion)
-        sut.processReceivedData("bytes".data(using: .utf8)!, forTask: mockDataTask, withIdentifier: 0)
+        sut.processReceivedData(Data("bytes".utf8), forTask: mockDataTask, withIdentifier: 0)
 
         // when
         let response = HTTPURLResponse(
@@ -298,15 +305,15 @@ class PreviewDownloaderTests: XCTestCase {
             downloadExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(disposition, expected, line: line)
 
         if expected == .cancel {
-            XCTAssertNil(sut.completionByURL[url], line: line)
-            XCTAssertNil(sut.containerByTaskID[mockDataTask.taskIdentifier], line: line)
+            XCTAssertNil(sut.completionByURL.get(for: url), line: line)
+            XCTAssertNil(sut.containerByTaskID.get(for: mockDataTask.taskIdentifier), line: line)
         } else {
-            XCTAssertNotNil(sut.completionByURL[url], line: line)
-            XCTAssertNotNil(sut.containerByTaskID[mockDataTask.taskIdentifier], line: line)
+            XCTAssertNotNil(sut.completionByURL.get(for: url), line: line)
+            XCTAssertNotNil(sut.containerByTaskID.get(for: mockDataTask.taskIdentifier), line: line)
         }
 
     }

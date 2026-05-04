@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ class ResizingTextView: DragInteractionRestrictionTextView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return sizeThatFits(CGSize(width: bounds.size.width, height: UIView.noIntrinsicMetric))
+        sizeThatFits(CGSize(width: bounds.size.width, height: UIView.noIntrinsicMetric))
     }
 
     override func paste(_ sender: Any?) {

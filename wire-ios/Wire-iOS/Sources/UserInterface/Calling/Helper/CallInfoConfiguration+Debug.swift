@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,15 @@
 
 extension CallInfoViewControllerInput {
     var debugDescription: String {
-        return """
+        """
         <\(type(of: self))>
         accessoryType: \(accessoryType.showAvatar ? "avatar" : "participants (\(accessoryType.participants.count))")
         degradationState: \(degradationState)
         videoPlaceholderState: \(videoPlaceholderState)
-        permissions: \(permissions.canAcceptAudioCalls) \(permissions.isPendingAudioPermissionRequest) \(permissions.canAcceptVideoCalls) \(permissions.isPendingVideoPermissionRequest)
+        permissions: \(permissions.canAcceptAudioCalls) \(permissions.isPendingAudioPermissionRequest) \(
+            permissions
+                .canAcceptVideoCalls
+        ) \(permissions.isPendingVideoPermissionRequest)
         disableIdleTimer: \(disableIdleTimer)
         canToggleMediaType: \(canToggleMediaType)
         isMuted: \(isMuted)

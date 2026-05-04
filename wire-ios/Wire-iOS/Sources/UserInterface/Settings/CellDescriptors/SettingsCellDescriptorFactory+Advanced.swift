@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -25,9 +27,12 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Advanced group
 
-    var advancedGroup: SettingsCellDescriptorType {
+    func advancedGroup(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> any SettingsCellDescriptorType {
         let items = [
-            troubleshootingSection,
+            troubleshootingSection(userSession: userSession, mainCoordinator: mainCoordinator),
             debuggingToolsSection,
             pushSection
         ]
@@ -36,17 +41,39 @@ extension SettingsCellDescriptorFactory {
             items: items,
             title: SelfSettingsAdvancedLocale.title,
             icon: .settingsAdvanced,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: .advanced,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
     // MARK: - Sections
-    private var troubleshootingSection: SettingsSectionDescriptor {
+
+    private func troubleshootingSection(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                return SettingsTechnicalReportViewController()
-        })
+                let router = SettingsDebugReportRouter(userSession: userSession, mainCoordinator: mainCoordinator)
+                let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(
+                    contextProvider: userSession
+                        .contextProvider
+                )
+                let viewModel = SettingsDebugReportViewModel(
+                    router: router,
+                    shareFile: shareFile,
+                    fetchShareableConversations: fetchShareableConversations,
+                    fileMetaDataGenerator: FileMetaDataGenerator()
+                )
+                let viewController = SettingsDebugReportViewController(viewModel: viewModel)
+                router.viewController = viewController
+                return viewController
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [submitDebugButton],
@@ -59,19 +86,21 @@ extension SettingsCellDescriptorFactory {
         let pushButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
-            presentationAction: { () -> (UIViewController?) in
-                ZMUserSession.shared()?.validatePushToken()
+            presentationStyle: .modal,
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
+                (userSession as? ZMUserSession)?.validatePushToken()
                 return self.pushButtonAlertController
-        })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [pushButton],
             header: .none,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                return true
-        })
+                true
+            }
+        )
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {
@@ -80,17 +109,18 @@ extension SettingsCellDescriptorFactory {
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
-            ),
-            SettingsButtonCellDescriptor(
-                title: SelfSettingsAdvancedLocale.DebuggingTools.ShowUserId.title,
-                isDestructive: false,
-                selectAction: DebugActions.showUserId
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
+                }
             ),
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
-                selectAction: DebugActions.enterDebugCommand
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.enterDebugCommand(userSession: session)
+                }
             )
         ])
 
@@ -98,7 +128,10 @@ extension SettingsCellDescriptorFactory {
         let debuggingToolsGroup = SettingsGroupCellDescriptor(
             items: [findUnreadConversationSection],
             title: L10n.Localizable.Self.Settings.Advanced.DebuggingTools.title,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
 
         // Section
@@ -106,6 +139,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Helpers
+
     private var pushButtonAlertController: UIAlertController {
         let alert = UIAlertController(
             title: SelfSettingsAdvancedLocale.ResetPushTokenAlert.title,

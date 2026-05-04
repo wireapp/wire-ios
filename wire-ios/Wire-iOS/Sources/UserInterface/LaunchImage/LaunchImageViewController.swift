@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 /// Replicates the launch screen to prevent the black screen being visible, cause of later UI initialization
 class LaunchImageViewController: UIViewController {
@@ -27,17 +28,12 @@ class LaunchImageViewController: UIViewController {
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
-    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning animation
+    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
+    /// animation
     func showLoadingScreen() {
         shouldShowLoadingScreenOnViewDidLoad = true
         loadingScreenLabel.isHidden = false
         activityIndicator.startAnimation()
-    }
-
-    /// Convenience method for hiding all the animation related functionality
-    func hideLoadingScreen() {
-        activityIndicator.stopAnimation()
-        loadingScreenLabel.isHidden = true
     }
 
     override func viewDidLoad() {

@@ -1,2 +1,0 @@
-# used by Wire-Proto, this is not compiled but just checked out by Carthage.
-github "wireapp/generic-message-proto" "v1.44.0"

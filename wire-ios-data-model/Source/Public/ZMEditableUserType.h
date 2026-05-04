@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ NS_SWIFT_NAME(EditableUserType)
 @property (nonatomic, copy, nullable) NSString *name;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
 @property (nonatomic) BOOL readReceiptsEnabled;
 @property (nonatomic) BOOL needsRichProfileUpdate;
 

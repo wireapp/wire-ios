@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ extension AppLockModule {
 
     enum Event: Equatable {
 
-        case viewDidAppear
+        case viewDidFirstAppear
         case applicationWillEnterForeground
         case unlockButtonTapped
         case openDeviceSettingsButtonTapped
@@ -58,7 +58,7 @@ extension AppLockModule {
 
     enum Request: Equatable {
 
-        case initiateAuthentication(requireActiveApp: Bool)
+        case initiateAuthentication
         case evaluateAuthentication
         case openAppLock
 

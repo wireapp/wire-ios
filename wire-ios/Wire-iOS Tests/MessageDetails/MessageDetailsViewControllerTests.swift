@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,16 +26,21 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var conversation: SwiftMockConversation!
-    var mockSelfUser: MockUserType!
-    var otherUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var conversation: SwiftMockConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
@@ -48,13 +54,11 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         snapshotHelper = nil
         SelfUser.provider = nil
         conversation = nil
-
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Snapshot Tests
 
-    // MARK: - Seen
     func testThatItShowsReceipts_ShortList_11() {
         // GIVEN
         conversation = createGroupConversation()
@@ -65,15 +69,21 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 5).map({
+        let users = MockUserType.usernames.prefix(upTo: 5).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -91,16 +101,22 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 5).map({
+        let users = MockUserType.usernames.prefix(upTo: 5).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
 
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -118,15 +134,21 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 20).map({
+        let users = MockUserType.usernames.prefix(upTo: 20).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -143,17 +165,23 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users: [UserType] = MockUserType.usernames.prefix(upTo: 6).map({
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 6).map {
             let user = MockUserType.createUser(name: $0)
             user.handle = nil
             return user
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -170,11 +198,11 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map({
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map {
             let user = MockUserType.createUser(name: $0)
             user.handle = nil
             return user
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [
@@ -184,7 +212,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         ]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -204,7 +238,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -223,7 +263,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -242,7 +288,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -263,7 +315,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN: creating the controller
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -284,7 +342,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -300,7 +364,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -316,7 +386,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -332,7 +408,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -349,15 +431,21 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message.senderUser = SelfUser.provider?.providedSelfUser
             message.conversationLike = conversation
 
-            let users = MockUserType.usernames.prefix(upTo: 5).map({
+            let users = MockUserType.usernames.prefix(upTo: 5).map {
                 MockUserType.createUser(name: $0)
-            })
+            }
 
             message.readReceipts = createReceipts(users: users)
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+            let detailsViewController = MessageDetailsViewController(
+                message: message,
+                userSession: userSession,
+                mainCoordinator: mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+            )
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController
         }
@@ -374,26 +462,28 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     }
 
     private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
-        let receipts: [MockReadReceipt] = users.map({ user in
+        users.map { user in
             let receipt = MockReadReceipt(user: ZMUser())
             receipt.userType = user
             return receipt
-        })
-
-        return receipts
+        }
     }
 
     private func verify(
         _ detailsViewController: MessageDetailsViewController,
         configuration: ((MessageDetailsViewController) -> Void)? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let navigationController = UINavigationController(rootViewController: detailsViewController)
+
         detailsViewController.reloadData()
         configuration?(detailsViewController)
+
+        // Verify the snapshot
         snapshotHelper.verify(
-            matching: detailsViewController,
+            matching: navigationController,
             file: file,
             testName: testName,
             line: line

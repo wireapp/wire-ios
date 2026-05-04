@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,47 +27,12 @@ private let monospaceAttribute = [
     UIFontDescriptor.AttributeName.featureSettings: [monospacedFeatureSettingsAttribute]
 ]
 
-private let smallCapsFeatureSettingsAttributeLowerCase = [
-    UIFontDescriptor.FeatureKey.type: kLowerCaseType,
-    UIFontDescriptor.FeatureKey.selector: kLowerCaseSmallCapsSelector
-]
-
-private let smallCapsFeatureSettingsAttributeUpperCase = [
-    UIFontDescriptor.FeatureKey.type: kUpperCaseType,
-    UIFontDescriptor.FeatureKey.selector: kUpperCaseSmallCapsSelector
-]
-
-private let proportionalNumberSpacingFeatureSettingAttribute = [
-    UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
-    UIFontDescriptor.FeatureKey.selector: kProportionalNumbersSelector
-]
-
-private let smallCapsAttribute = [
-    UIFontDescriptor.AttributeName.featureSettings: [smallCapsFeatureSettingsAttributeLowerCase, smallCapsFeatureSettingsAttributeUpperCase]
-]
-
-private let proportionalNumberSpacingAttribute = [
-    UIFontDescriptor.AttributeName.featureSettings: [proportionalNumberSpacingFeatureSettingAttribute]
-]
-
 extension UIFont {
 
-    @objc func monospaced() -> UIFont {
+    func monospaced() -> UIFont {
         let descriptor = fontDescriptor
         let monospaceFontDescriptor = descriptor.addingAttributes(monospaceAttribute)
         return UIFont(descriptor: monospaceFontDescriptor, size: 0.0)
-    }
-
-    func smallCaps() -> UIFont {
-        let descriptor = fontDescriptor
-        let allCapsDescriptor = descriptor.addingAttributes(smallCapsAttribute)
-        return UIFont(descriptor: allCapsDescriptor, size: 0.0)
-    }
-
-    func proportionalNumberSpacing() -> UIFont {
-        let descriptor = fontDescriptor
-        let propertionalNumberSpacingDescriptor = descriptor.addingAttributes(proportionalNumberSpacingAttribute)
-        return UIFont(descriptor: propertionalNumberSpacingDescriptor, size: 0.0)
     }
 
 }

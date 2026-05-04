@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import Foundation
 
 class MockSyncStatus: SyncStatusProtocol {
 
+    var isLive: Bool = false
+
     var mockForceSlowSync: (() -> Void)?
     func forceSlowSync() {
         guard let mock = mockForceSlowSync else {
@@ -36,6 +38,24 @@ class MockSyncStatus: SyncStatusProtocol {
         }
 
         await mock()
+    }
+
+    var mockResyncResources: (() -> Void)?
+    func resyncResources() {
+        guard let mock = mockResyncResources else {
+            fatalError("no mock for `resyncResources`")
+        }
+
+        mock()
+    }
+
+    var mockRecoverWithQuickSync: (() -> Void)?
+    func recoverWithQuickSync() {
+        guard let mock = mockRecoverWithQuickSync else {
+            fatalError("no mock for `recoverWithQuickSync`")
+        }
+
+        mock()
     }
 
 }

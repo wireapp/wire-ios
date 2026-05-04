@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: GroupDetailsViewController!
     private var mockConversation: MockGroupDetailsConversation!
     private var mockSelfUser: MockUserType!
@@ -31,10 +32,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
-        mockMainCoordinator = .init()
+    override func setUp() {
         snapshotHelper = SnapshotHelper()
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
@@ -78,6 +81,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
     }
 
+    private func createChannelConversation() {
+        mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
+        mockConversation.isChannel = true
+        mockConversation.groupType = .channel
+    }
+
     func testForOptionsForTeamUserInNonTeamConversation() {
         // GIVEN & WHEN
 
@@ -97,7 +106,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -117,7 +130,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -126,6 +143,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     func testForOptionsForTeamUserInTeamConversation() {
         // GIVEN
+        DeveloperFlag.channelsHistory.enable(true, storage: .temporary())
         setSelfUserInTeam()
         mockSelfUser.teamRole = .member
 
@@ -133,18 +151,25 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyEphemeralSettingsInConversation = true
         mockSelfUser.canModifyNotificationSettingsInConversation = true
         mockSelfUser.canModifyReadReceiptSettingsInConversation = true
-        mockSelfUser.canModifyAccessControlSettings = true
+        mockSelfUser.canModifyGuestsAccessControlSettings = true
+        mockSelfUser.canModifyChannelAccessLevelSettings = true
+        mockSelfUser.canModifyChannelHistorySettings = true
 
         createGroupConversation()
+        mockConversation.teamType = MockTeam()
         mockConversation.teamRemoteIdentifier = mockSelfUser.teamIdentifier
         mockConversation.allowGuests = true
-        mockConversation.allowServices = true
+        mockConversation.allowApps = true
 
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -164,7 +189,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -183,7 +212,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -204,7 +237,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         snapshotHelper.verify(matching: sut)
@@ -223,7 +260,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -243,7 +284,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -263,10 +308,64 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
+
+    func testChannel() {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.canAddUserToConversation = false
+
+        mockSelfUser.teamRole = .partner
+
+        createChannelConversation()
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testWireDriveEnabled() throws {
+        // GIVEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockSelfUser.canModifyEphemeralSettingsInConversation = true
+        mockSelfUser.canModifyTitleInConversation = true
+
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+        mockConversation.displayName = "Empty group conversation"
+        mockConversation.isWireDriveEnabled = true
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
+        )
+
+        snapshotHelper.verify(matching: sut)
+    }
+
 }

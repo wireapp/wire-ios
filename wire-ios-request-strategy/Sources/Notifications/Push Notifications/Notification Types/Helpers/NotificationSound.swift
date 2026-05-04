@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,29 +25,31 @@ public enum NotificationSound {
 
     public static var storage: UserDefaults = .standard
 
-    case call, ping, newMessage
+    case call
+    case ping
+    case newMessage
 
     /// The name of the song.
     public var name: String {
-        return defaultFileName
+        defaultFileName
     }
 
     // MARK: - Utilities
 
     private var defaultFileName: String {
         switch self {
-        case .call: return "ringing_from_them_long.caf"
-        case .ping: return "ping_from_them.caf"
-        case .newMessage: return "default"
+        case .call: "ringing_from_them_long.caf"
+        case .ping: "ping_from_them.caf"
+        case .newMessage: "default"
         }
     }
 
     // Unused - leaving this here in case we need to support custom sounds again in the future.
     private var preferenceKey: String {
         switch self {
-        case .call: return "ZMCallSoundName"
-        case .ping: return "ZMPingSoundName"
-        case .newMessage: return "ZMMessageSoundName"
+        case .call: "ZMCallSoundName"
+        case .ping: "ZMPingSoundName"
+        case .newMessage: "ZMMessageSoundName"
         }
     }
 }

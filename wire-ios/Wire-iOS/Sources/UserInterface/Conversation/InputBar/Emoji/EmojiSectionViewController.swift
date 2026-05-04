@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol EmojiSectionViewControllerDelegate: AnyObject {
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool)
@@ -48,7 +49,7 @@ final class EmojiSectionViewController: UIViewController {
         setupViews()
         createConstraints()
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan)))
-        selectedType = typesByButton.values.first
+        self.selectedType = typesByButton.values.first
     }
 
     @available(*, unavailable)
@@ -93,12 +94,14 @@ final class EmojiSectionViewController: UIViewController {
         selectedType = type
     }
 
-    @objc private func didTappButton(_ sender: IconButton) {
+    @objc
+    private func didTappButton(_ sender: IconButton) {
         guard let type = typesByButton[sender] else { return }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
     }
 
-    @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
         case .began:

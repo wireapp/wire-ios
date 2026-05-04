@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,16 +20,24 @@ import Foundation
 import WireDataModel
 
 extension ConversationListViewController.ViewModel: ConversationListContentDelegate {
-    func conversationList(_ controller: ConversationListContentController?, didSelect conversation: ZMConversation?, focusOnView focus: Bool) {
+    func conversationList(
+        _ controller: ConversationListContentController?,
+        didSelect conversation: ZMConversation?,
+        focusOnView focus: Bool
+    ) {
         selectedConversation = conversation
     }
 
-    func conversationList(_ controller: ConversationListContentController?, willSelectIndexPathAfterSelectionDeleted conv: IndexPath?) {
-        ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
+    func conversationListContentController(
+        _ controller: ConversationListContentController?,
+        wantsActionMenuFor conversation: ZMConversation?,
+        fromSourceView sourceView: UIView?
+    ) {
+        showActionMenu(for: conversation, from: sourceView)
     }
 
-    func conversationListContentController(_ controller: ConversationListContentController?, wantsActionMenuFor conversation: ZMConversation?, fromSourceView sourceView: UIView?) {
-        showActionMenu(for: conversation, from: sourceView)
+    func conversationListContentControllerDidReload(_ controller: ConversationListContentController) {
+        viewController?.conversationListViewControllerViewModelDidReloadContent(self)
     }
 }
 
@@ -37,7 +45,12 @@ extension ConversationListViewController.ViewModel {
     func showActionMenu(for conversation: ZMConversation!, from view: UIView!) {
         guard let viewController = viewController as? UIViewController else { return }
 
-        actionsController = ConversationActionController(conversation: conversation, target: viewController, sourceView: view, userSession: self.userSession)
+        actionsController = ConversationActionController(
+            conversation: conversation,
+            target: viewController,
+            sourceView: view,
+            userSession: userSession
+        )
         actionsController?.presentMenu(from: view, context: .list)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,10 +25,6 @@
 typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
     ZMRegistrationNotificationEmailVerificationDidSucceed,
     ZMRegistrationNotificationEmailVerificationDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationDidSucceed,
-    ZMRegistrationNotificationPhoneNumberVerificationDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidFail,
-    ZMRegistrationNotificationPhoneNumberVerificationCodeRequestDidSucceed,
     ZMRegistrationNotificationRegistrationDidFail
 };
 
@@ -41,12 +37,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
 
 /// Notifies all @c ZMAuthenticationObserver that the authentication failed
 + (void)notifyRegistrationDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationCodeRequestDidFail:(NSError *)error context:(ZMAuthenticationStatus *)authenticationStatus;
 
 + (void)notifyEmailVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
-+ (void)notifyPhoneNumberVerificationCodeRequestDidSucceedInContext:(ZMAuthenticationStatus *)authenticationStatus;
 
 + (id)addObserverInSession:(UnauthenticatedSession *)session withBlock:(void(^)(ZMUserSessionRegistrationNotificationType event, NSError *error))block ZM_MUST_USE_RETURN;
 + (id)addObserverInContext:(ZMAuthenticationStatus *)context withBlock:(void(^)(ZMUserSessionRegistrationNotificationType event, NSError *error))block ZM_MUST_USE_RETURN;

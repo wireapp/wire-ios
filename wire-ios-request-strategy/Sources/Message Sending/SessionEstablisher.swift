@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,13 +60,13 @@ public class SessionEstablisher: SessionEstablisherInterface {
 
         let prekeys = try await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
 
-            _ = await processor.establishSessions(from: prekeys, with: selfClient, context: self.context)
+        _ = await processor.establishSessions(from: prekeys, with: selfClient, context: context)
     }
 }
 
 private extension Array {
     func chunked(into size: Int) -> [[Element]] {
-        return stride(from: 0, to: count, by: size).map {
+        stride(from: 0, to: count, by: size).map {
             Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }

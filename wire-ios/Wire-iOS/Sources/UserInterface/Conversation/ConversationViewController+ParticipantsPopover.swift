@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,12 @@ import UIKit
 
 extension ConversationViewController: UIPopoverPresentationControllerDelegate {
 
-    func createAndPresentParticipantsPopoverController(with rect: CGRect,
-                                                       from view: UIView,
-                                                       contentViewController controller: UIViewController) {
-        endEditing()
+    func createAndPresentParticipantsPopoverController(
+        with rect: CGRect,
+        from view: UIView,
+        contentViewController controller: UIViewController
+    ) {
+        self.view.window?.endEditing(true)
 
         controller.presentationController?.delegate = self
         present(controller, animated: true)
@@ -37,11 +39,5 @@ extension ConversationViewController: UIAdaptivePresentationControllerDelegate {
         }
 
         return .formSheet
-    }
-}
-
-extension ConversationViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        dismiss(animated: true, completion: completion)
     }
 }

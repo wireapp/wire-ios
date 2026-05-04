@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,10 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell<
+    ConversationRenamedSystemMessageCellDescription
+>,
+    ConversationMessageCell {
 
     private typealias IconColors = SemanticColors.Icon
 
@@ -29,7 +32,6 @@ final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Con
         let newConversationName: NSAttributedString
     }
 
-    private var nameLabelFont: UIFont? = .normalSemiboldFont
     private let nameLabel = UILabel()
 
     override func configureSubviews() {

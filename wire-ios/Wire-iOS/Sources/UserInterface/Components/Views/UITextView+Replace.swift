@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +23,18 @@ extension UITextView {
         guard
             range.lowerBound >= attributedText.wholeRange.lowerBound,
             range.upperBound <= attributedText.wholeRange.upperBound
-            else { return }
+        else { return }
         let updatedString = NSMutableAttributedString(attributedString: attributedText)
         updatedString.replaceCharacters(in: range, with: replacement)
 
         let selectionOffset = range.location + replacement.length
         attributedText = updatedString
 
-        guard let cursorPosition = position(from: beginningOfDocument, offset:
-            selectionOffset) else { return }
+        guard let cursorPosition = position(
+            from: beginningOfDocument,
+            offset:
+            selectionOffset
+        ) else { return }
         guard let updatedSelection = textRange(from: cursorPosition, to: cursorPosition) else { return }
         selectedTextRange = updatedSelection
     }

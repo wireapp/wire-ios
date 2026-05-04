@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         selfUserInTeam = true
-        super.setUp()
+        try await super.setUp()
     }
 
     override var needsCaches: Bool {
-        return true
+        true
     }
 
     enum UnreadMessageType {
@@ -37,15 +38,16 @@ final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
     }
 
     func conversationWithUnread(_ messageType: UnreadMessageType, muted: MutedMessageTypes) -> ZMConversation {
-        let conversation = self.otherUserConversation!
+        let conversation = otherUserConversation!
         conversation.mutedMessageTypes = muted
 
         switch messageType {
         case .text:
-            (try! conversation.appendText(content: "test") as! ZMMessage).sender = self.otherUser
+            (try! conversation.appendText(content: "test") as! ZMMessage).sender = otherUser
         case .mention:
-            let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-            (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+            let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+            (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage)
+                .sender = otherUser
             conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,51 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
-class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
-    var stableRandomParticipants: [UserType] = []
+@testable import Wire
 
-    required override init() {
-
-    }
-
-    static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
-        SelfUser.setupMockSelfUser()
-        let otherUserConversation = T()
-
-        // avatar
-        otherUserConversation.stableRandomParticipants = [otherUser]
-        otherUserConversation.conversationType = .oneOnOne
-
-        // title
-        otherUserConversation.displayName = otherUser.name!
-
-        // subtitle
-        otherUserConversation.connectedUserType = otherUser
-
-        return otherUserConversation
-    }
-}
-
-final class ConversationAvatarViewModeTests: XCTestCase {
-    var sut: ConversationAvatarView!
+final class ConversationConnectAvatarViewModeTests: XCTestCase {
+    var sut: ConversationConnectAvatarView!
     var otherUser: MockUserType!
-    var mockConversation: MockStableRandomParticipantsConversation!
+    var users: [any UserType]!
 
     override func setUp() {
         super.setUp()
 
-        mockConversation = MockStableRandomParticipantsConversation()
+        users = []
 
         otherUser = MockUserType.createDefaultOtherUser()
-        sut = ConversationAvatarView()
+        sut = ConversationConnectAvatarView()
     }
 
     override func tearDown() {
         sut = nil
-        mockConversation = nil
+        users = []
         otherUser = nil
 
         super.tearDown()
@@ -68,36 +44,28 @@ final class ConversationAvatarViewModeTests: XCTestCase {
 
     func testThatModeIsOneWhenGroupConversationWithOneServiceUser() {
         // GIVEN
-        let mockServiceUser = MockServiceUserType()
-        mockServiceUser.serviceIdentifier = "serviceIdentifier"
-        mockServiceUser.providerIdentifier = "providerIdentifier"
-        XCTAssert(mockServiceUser.isServiceUser)
+        let mockServiceUser = MockUserType()
+        mockServiceUser.mockedIsBot = true
+        XCTAssert(mockServiceUser.isAppOrBot)
 
-        mockConversation.stableRandomParticipants = [mockServiceUser]
+        users = [mockServiceUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
+        sut.configure(context: ConversationConnectAvatarView.Context(
+            users: users
+        ))
 
         // THEN
         XCTAssertEqual(sut.mode, .one(serviceUser: true))
-    }
-
-    func testThatModeIsFourWhenGroupConversationWithOneUser() {
-        // GIVEN
-        mockConversation.stableRandomParticipants = [otherUser]
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
-
-        // THEN
-        XCTAssertEqual(sut.mode, .four)
     }
 
     func testThatModeIsNoneWhenGroupConversationIsEmpty() {
         // GIVEN
 
         // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
+        sut.configure(context: ConversationConnectAvatarView.Context(
+            users: users
+        ))
 
         // THEN
         XCTAssertEqual(sut.mode, .none)

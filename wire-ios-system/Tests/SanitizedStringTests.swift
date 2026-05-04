@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Foundation
 
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 struct Item {
     var name: String
@@ -30,7 +30,7 @@ extension Item: SafeForLoggingStringConvertible {
     static var redacted = "<redacted>"
 
     var safeForLoggingDescription: String {
-        return Item.redacted
+        Item.redacted
     }
 }
 
@@ -103,7 +103,7 @@ extension SanitizedStringTests {
     }
 
     func testDouble() {
-        let sut: Double = 12.1
+        let sut = 12.1
         let value = SafeValueForLogging(sut)
         let result: SanitizedString = "\(value)"
         XCTAssertEqual(String(sut), result.value)

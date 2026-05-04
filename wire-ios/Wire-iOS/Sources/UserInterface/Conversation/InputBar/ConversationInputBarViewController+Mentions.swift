@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ import WireDataModel
 
 extension ConversationInputBarViewController {
     var isInMentionsFlow: Bool {
-        return mentionsHandler != nil
+        mentionsHandler != nil
     }
 
     var canInsertMention: Bool {
-        guard isInMentionsFlow, let mentionsView, mentionsView.users.count > 0 else {
+        guard isInMentionsFlow, let mentionsView, !mentionsView.users.isEmpty else {
             return false
         }
         return true
@@ -48,13 +48,17 @@ extension ConversationInputBarViewController {
 
         let (range, attributedText) = handler.replacement(forMention: user, in: text)
 
-        inputBar.textView.replace(range, withAttributedText: (attributedText && inputBar.textView.typingAttributes))
+        inputBar.textView.replace(range, withAttributedText: attributedText && inputBar.textView.typingAttributes)
         playInputHapticFeedback()
         dismissMentionsIfNeeded()
     }
 
     func configureMentionButton() {
-        mentionButton.addTarget(self, action: #selector(ConversationInputBarViewController.mentionButtonTapped(sender:)), for: .touchUpInside)
+        mentionButton.addTarget(
+            self,
+            action: #selector(ConversationInputBarViewController.mentionButtonTapped(sender:)),
+            for: .touchUpInside
+        )
     }
 
     @objc
@@ -101,7 +105,10 @@ extension ConversationInputBarViewController {
     func registerForTextFieldSelectionChange() {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
-        textfieldObserverToken = inputBar.textView.observe(\MarkdownTextView.selectedTextRange, options: [.new]) { [weak self] (textView: MarkdownTextView, change: NSKeyValueObservedChange<UITextRange?>) in
+        textfieldObserverToken = inputBar.textView.observe(
+            \MarkdownTextView.selectedTextRange,
+            options: [.new]
+        ) { [weak self] (textView: MarkdownTextView, change: NSKeyValueObservedChange<UITextRange?>) in
             let newValue = change.newValue ?? nil
             self?.triggerMentionsIfNeeded(from: textView, with: newValue)
         }

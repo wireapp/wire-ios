@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 @objc
 public class Mention: NSObject {
@@ -24,7 +25,7 @@ public class Mention: NSObject {
     public let range: NSRange
     public let user: UserType
 
-    init?(_ protobuf: WireProtos.Mention, context: NSManagedObjectContext) {
+    init?(_ protobuf: GenericMessageProtocol.Mention, context: NSManagedObjectContext) {
         let userRemoteID = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.id : protobuf.userID
         let domain = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.domain : nil
 
@@ -55,43 +56,49 @@ public class Mention: NSObject {
 }
 
 extension Mention {
-    static func mentions(from protos: [WireProtos.Mention]?, messageText: String?, moc: NSManagedObjectContext?) -> [Mention] {
+    static func mentions(
+        from protos: [GenericMessageProtocol.Mention]?,
+        messageText: String?,
+        moc: NSManagedObjectContext?
+    ) -> [Mention] {
         guard let protos,
-            let messageText,
-            let managedObjectContext = moc else { return [] }
+              let messageText,
+              let managedObjectContext = moc else { return [] }
 
-        let mentions = Array(protos.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))
+        let mentions = Array(protos.compactMap { Mention($0, context: managedObjectContext) }.prefix(500))
         var mentionRanges = IndexSet()
         let messageRange = NSRange(messageText.startIndex ..< messageText.endIndex, in: messageText)
 
-        return mentions.filter({ mention  in
+        return mentions.filter { mention  in
             let range = mention.range.range
 
-            guard !mentionRanges.intersects(integersIn: range), range.upperBound <= messageRange.upperBound else { return false }
+            guard !mentionRanges.intersects(integersIn: range),
+                  range.upperBound <= messageRange.upperBound else { return false }
 
             mentionRanges.insert(integersIn: range)
 
             return true
-        })
+        }
     }
 }
 
 // MARK: - Helper
 
-fileprivate extension NSRange {
+private extension NSRange {
     var range: Range<Int> {
-        return lowerBound..<upperBound
+        lowerBound ..< upperBound
     }
 }
 
-@objc public extension Mention {
+@objc
+public extension Mention {
     var isForSelf: Bool {
-        return user.isSelfUser
+        user.isSelfUser
     }
 }
 
-public extension ZMTextMessageData {
+public extension TextMessageData {
     var isMentioningSelf: Bool {
-        return mentions.any(\.isForSelf)
+        mentions.any(\.isForSelf)
     }
 }

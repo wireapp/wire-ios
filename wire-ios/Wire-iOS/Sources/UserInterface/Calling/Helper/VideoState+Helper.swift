@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,20 +21,20 @@ import WireSyncEngine
 extension VideoState {
 
     var toggledState: VideoState {
-        return isSending ? .stopped : .started
+        isSending ? .stopped : .started
     }
 
     var isSending: Bool {
         switch self {
-        case .started, .paused, .badConnection, .screenSharing: return true
-        case .stopped: return false
+        case .started, .paused, .badConnection, .screenSharing: true
+        case .stopped: false
         }
     }
 
     var isPaused: Bool {
         switch self {
-        case .paused: return true
-        default: return false
+        case .paused: true
+        default: false
         }
     }
 }

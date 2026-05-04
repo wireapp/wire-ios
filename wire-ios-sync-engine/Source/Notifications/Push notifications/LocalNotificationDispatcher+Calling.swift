@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,12 @@ extension LocalNotificationDispatcher {
     }
 
     func processMissedCall(in conversation: ZMConversation, caller: ZMUser) {
-        let note = ZMLocalNotification(callState: .terminating(reason: .canceled), conversation: conversation, caller: caller, moc: syncMOC)
+        let note = ZMLocalNotification(
+            callState: .terminating(reason: .canceled),
+            conversation: conversation,
+            caller: caller,
+            moc: syncMOC
+        )
         callingNotifications.cancelNotifications(conversation)
         note.map(scheduleLocalNotification)
         note.map(callingNotifications.addObject)

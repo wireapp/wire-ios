@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ final class MediaBar: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 44)
+        CGSize(width: UIView.noIntrinsicMetric, height: 44)
     }
 
     override func updateConstraints() {
@@ -110,12 +110,14 @@ final class MediaBar: UIView {
         playPauseButton.widthAnchor.constraint(equalToConstant: iconSize).isActive = true
         playPauseButton.heightAnchor.constraint(equalToConstant: iconSize).isActive = true
         playPauseButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        playPauseButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: buttonInsets).isActive = true
+        playPauseButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: buttonInsets)
+            .isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: iconSize).isActive = true
         closeButton.heightAnchor.constraint(equalToConstant: iconSize).isActive = true
 
         closeButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        closeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: buttonInsets).isActive = true
+        closeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: buttonInsets)
+            .isActive = true
 
         titleLabel.leftAnchor.constraint(equalTo: playPauseButton.rightAnchor, constant: 8).isActive = true
         closeButton.leftAnchor.constraint(equalTo: titleLabel.rightAnchor, constant: 8).isActive = true

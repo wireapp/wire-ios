@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ extension ZMSystemMessage {
 
         // FUTUREWORK: OCMock no longer work after XCFramework is used. We should remove the OCMock dependency in the tests SQPIT-601
         #if targetEnvironment(simulator)
-        guard updateEvent.description != "OCMockObject(WireTransport.ZMUpdateEvent)" else {
-            return .none
-        }
+            guard updateEvent.description != "OCMockObject(WireTransport.ZMUpdateEvent)" else {
+                return .none
+            }
         #endif
 
         return updateEvent.participantsRemovedReason

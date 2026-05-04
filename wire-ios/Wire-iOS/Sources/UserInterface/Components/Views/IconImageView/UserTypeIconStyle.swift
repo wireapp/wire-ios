@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum UserTypeIconStyle: String, IconImageStyle {
     case guest
@@ -28,18 +29,18 @@ enum UserTypeIconStyle: String, IconImageStyle {
     var icon: StyleKitIcon? {
         switch self {
         case .guest:
-            return .guest
+            .guest
         case .external:
-            return .externalPartner
+            .externalPartner
         case .member:
-            return .none
+            .none
         case .federated:
-            return .federated
+            .federated
         }
     }
 
     var accessibilitySuffix: String {
-        return rawValue
+        rawValue
     }
 
     var accessibilityLabel: String {
@@ -72,9 +73,9 @@ extension UserTypeIconStyle {
         } else if let conversation {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
-            self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser
-            ? .member
-            : .guest
+            self = !selfUserHasTeam || user.isTeamMember || user.isAppOrBot
+                ? .member
+                : .guest
         }
     }
 }

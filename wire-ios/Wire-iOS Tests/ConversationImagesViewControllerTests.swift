@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 extension SelfUser {
 
@@ -36,26 +39,30 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationImagesViewController! = nil
-    var navigatorController: UINavigationController! = nil
-    var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConversationImagesViewController!
+    private var navigatorController: UINavigationController!
+    private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
-    override var needsCaches: Bool {
-        return true
-    }
+    override var needsCaches: Bool { true }
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
 
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
-        let initialMessage = try! otherUserConversation.appendImage(from: image.imageData!)
+        let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").imageData)
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData)
+        let initialMessage = try otherUserConversation.appendImage(image, nonce: UUID())
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
-        let collection = MockCollection(messages: [ imagesCategoryMatch: [initialMessage] ])
+        let collection = MockCollection(messages: [imagesCategoryMatch: [initialMessage]])
         let delegate = AssetCollectionMulticastDelegate()
 
         let assetWrapper = AssetCollectionWrapper(
@@ -70,33 +77,43 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             initialMessage: initialMessage,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+
+        snapshotHelper = .init()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
-        verify(matching: navigatorController.view)
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Normal() {
+        // GIVEN & WHEN
         sut.setBoundsSizeAsIPhone4_7Inch()
 
-        verify(matching: navigatorController.view)
+        // THEN
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        // GIVEN & WHEN
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.isEphemeral = true
         sut.currentMessage = message
@@ -106,15 +123,17 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // Calls viewWillAppear
         sut.beginAppearanceTransition(true, animated: false)
 
-        verify(matching: navigatorController.view)
+        // THEN
+        snapshotHelper.verify(matching: navigatorController.view)
     }
 
     // MARK: - Unit Tests
+
     // Update toolbar buttons for switching between ephemeral/normal messages
 
     func testThatToolBarIsUpdateAfterScollToAnEphemeralImage() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.isEphemeral = false
         sut.currentMessage = message
@@ -123,14 +142,29 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
+        XCTAssertEqual(
+            sut.buttonsBar.buttons.map(\.accessibilityLabel),
+            [
+                "Sketch over picture",
+                "Sketch emoji over picture",
+                "Copy picture",
+                "Save picture",
+                "Reveal in conversation",
+                "Delete picture"
+            ]
+        )
+        print(sut.buttonsBar.buttons.map(\.accessibilityLabel))
 
         // WHEN
         message.isEphemeral = true
-        sut.pageViewController(UIPageViewController(), didFinishAnimating: true, previousViewControllers: [], transitionCompleted: true)
+        sut.pageViewController(
+            UIPageViewController(),
+            didFinishAnimating: true,
+            previousViewControllers: [],
+            transitionCompleted: true
+        )
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)
-
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,9 +27,12 @@ extension ConversationInputBarViewController {
         guard let text = message.textMessageData?.messageText else { return }
         mode = .textInput
         editingMessage = message
-        updateRightAccessoryView()
+        updateButtonStates()
 
-        inputBar.setInputBarState(.editing(originalText: text, mentions: message.textMessageData?.mentions ?? []), animated: true)
+        inputBar.setInputBarState(
+            .editing(originalText: text, mentions: message.textMessageData?.mentions ?? []),
+            animated: true
+        )
         updateMarkdownButton()
 
         NotificationCenter.default.addObserver(
@@ -67,7 +70,7 @@ extension ConversationInputBarViewController {
     func updateWritingState(animated: Bool) {
         guard editingMessage == nil else { return }
         inputBar.setInputBarState(.writing(ephemeral: ephemeralState), animated: animated)
-        updateRightAccessoryView()
+        updateButtonStates()
         updateMarkdownButton()
     }
 

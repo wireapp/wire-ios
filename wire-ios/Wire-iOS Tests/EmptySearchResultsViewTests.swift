@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,14 +26,17 @@ final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: EmptySearchResultsView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: EmptySearchResultsView!
+
+    // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: true
         )
     }
@@ -40,14 +44,14 @@ final class EmptySearchResultsViewTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
     func testNoResultsForUsers() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForUsers_WhenFederationIsEnabled() {
@@ -55,12 +59,12 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: true,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: true
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForUsers_WhenEveryoneHaveBeenAdded() {
@@ -68,12 +72,12 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: false
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testNoResultsForServices() {
@@ -81,12 +85,12 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: true,
+            searchingForBots: true,
             hasFilter: true
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testServicesNotEnabled() {
@@ -94,12 +98,12 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: true,
+            searchingForBots: true,
             hasFilter: false
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testServicesNotEnabled_WhenAdmin() {
@@ -107,12 +111,12 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: true,
             isFederationEnabled: false,
-            searchingForServices: true,
+            searchingForBots: true,
             hasFilter: false
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helpers
@@ -120,7 +124,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     func setupEmptySearchResultsView(
         isSelfUserAdmin: Bool,
         isFederationEnabled: Bool,
-        searchingForServices: Bool,
+        searchingForBots: Bool,
         hasFilter: Bool
     ) -> EmptySearchResultsView {
 
@@ -130,7 +134,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         sut.overrideUserInterfaceStyle = .dark
         sut.updateStatus(
-            searchingForServices: searchingForServices,
+            searchingForBots: searchingForBots,
             hasFilter: hasFilter
         )
         configureBounds(for: sut)

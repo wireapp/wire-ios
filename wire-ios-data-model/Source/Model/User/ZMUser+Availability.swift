@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-/// Describes how the user should be notified about a change.
-public struct NotificationMethod: OptionSet {
-
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    /// Alert user by local notification
-    public static let notification = NotificationMethod(rawValue: 1 << 0)
-    /// Alert user by alert dialogue
-    public static let alert = NotificationMethod(rawValue: 1 << 1)
-
-    public static let all: NotificationMethod = [.notification, .alert]
-
-}
-
-extension ZMUser {
+public extension ZMUser {
 
     /// The set of all users to receive an availability status broadcast message.
     ///
@@ -48,7 +31,10 @@ extension ZMUser {
     ///     - context: The context to search in.
     ///     - maxCount: The maximum number of recipients to return.
 
-    public static func recipientsForAvailabilityStatusBroadcast(in context: NSManagedObjectContext, maxCount: Int) -> Set<ZMUser> {
+    static func recipientsForAvailabilityStatusBroadcast(
+        in context: NSManagedObjectContext,
+        maxCount: Int
+    ) -> Set<ZMUser> {
         var recipients: Set = [selfUser(in: context)]
         var remainingSlots = maxCount - recipients.count
 
@@ -80,14 +66,14 @@ extension ZMUser {
     ///
     /// Note: the self user is not included.
 
-    static func knownTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
+    internal static func knownTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
         let selfUser = ZMUser.selfUser(in: context)
 
         guard selfUser.hasTeam else { return Set() }
 
         let teamMembersInConversationWithSelfUser = selfUser.conversations.lazy
-            .flatMap { $0.participantRoles }
-            .compactMap { $0.user }
+            .flatMap(\.participantRoles)
+            .compactMap(\.user)
             .filter { $0.isOnSameTeam(otherUser: selfUser) && !$0.isSelfUser }
 
         return Set(teamMembersInConversationWithSelfUser)
@@ -95,8 +81,9 @@ extension ZMUser {
 
     /// The set of all users from another team who are connected with the self user.
 
-    static func knownTeamUsers(in context: NSManagedObjectContext) -> Set<ZMUser> {
-        let connectedPredicate = ZMUser.predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+    internal static func knownTeamUsers(in context: NSManagedObjectContext) -> Set<ZMUser> {
+        let connectedPredicate = ZMUser
+            .predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
         let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
         request.predicate = connectedPredicate
 
@@ -106,42 +93,31 @@ extension ZMUser {
         return Set(result)
     }
 
-    @objc public var availability: Availability {
+    @objc var availability: Availability {
         get {
-            self.willAccessValue(forKey: AvailabilityKey)
-            let value = (self.primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
-            self.didAccessValue(forKey: AvailabilityKey)
+            willAccessValue(forKey: AvailabilityKey)
+            let value = (primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
+            didAccessValue(forKey: AvailabilityKey)
 
             return .init(rawValue: value.intValue) ?? .none
         }
 
         set {
-            guard isSelfUser else { return } // TODO move this setter to ZMEditableUserType
+            // swiftlint:disable:next todo_requires_jira_link
+            guard isSelfUser else { return } // TODO: move this setter to ZMEditableUserType
 
             updateAvailability(newValue)
         }
     }
 
-    public func updateAvailability(_ newValue: Availability) {
-        self.willChangeValue(forKey: AvailabilityKey)
-        self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
-        self.didChangeValue(forKey: AvailabilityKey)
+    func updateAvailability(_ newValue: Availability) {
+        willChangeValue(forKey: AvailabilityKey)
+        setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
+        didChangeValue(forKey: AvailabilityKey)
     }
 
-    public func updateAvailability(from genericMessage: GenericMessage) {
+    func updateAvailability(from genericMessage: GenericMessage) {
         updateAvailability(.init(proto: genericMessage.availability))
     }
 
-    private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
-
-    /// Returns an option set describing how we should notify the user about the change in behaviour for the availability feature
-    public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
-        get {
-            guard let rawValue = managedObjectContext?.persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int else { return [] }
-            return NotificationMethod(rawValue: rawValue)
-        }
-        set {
-            managedObjectContext?.setPersistentStoreMetadata(newValue.rawValue, key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey)
-        }
-    }
 }

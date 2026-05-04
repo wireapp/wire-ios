@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@ import Foundation
 
 extension String {
     func appendingPathExtension(_ pathExtension: String) -> String? {
-        return (self as NSString).appendingPathExtension(pathExtension)
+        (self as NSString).appendingPathExtension(pathExtension)
     }
 }
 
 extension CFString {
     var string: String {
-        return self as String
+        self as String
     }
 }

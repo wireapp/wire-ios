@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,18 +35,6 @@ final class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
         invokedCallbacks.append(.emailDidSendVerification)
     }
 
-    func phoneNumberVerificationCodeRequestDidFail(_ error: Error!) {
-        invokedCallbacks.append(.phoneNumberVerificationCodeRequestDidFail(error: error))
-    }
-
-    func phoneNumberVerificationCodeRequestDidSucceed() {
-        invokedCallbacks.append(.phoneNumberVerificationCodeRequestDidSucceed)
-    }
-
-    func phoneNumberChangeDidFail(_ error: Error!) {
-        invokedCallbacks.append(.phoneNumberChangeDidFail(error: error))
-    }
-
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {
         invokedCallbacks.append(.didCheckAvailabilityOfHandle(handle: handle, available: available))
     }
@@ -72,7 +60,7 @@ final class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
     }
 
     func clearReceivedCallbacks() {
-        self.invokedCallbacks = []
+        invokedCallbacks = []
     }
 
 }

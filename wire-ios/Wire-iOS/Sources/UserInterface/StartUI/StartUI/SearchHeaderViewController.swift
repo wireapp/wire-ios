@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 protocol SearchHeaderViewControllerDelegate: AnyObject {
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String)
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    )
     func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController)
 }
 
@@ -36,7 +40,7 @@ final class SearchHeaderViewController: UIViewController {
 
     weak var delegate: SearchHeaderViewControllerDelegate?
     var query: String {
-        return tokenField.filterText
+        tokenField.filterText
     }
 
     @available(*, unavailable)
@@ -46,7 +50,7 @@ final class SearchHeaderViewController: UIViewController {
 
     init(userSelection: UserSelection) {
         self.userSelection = userSelection
-        clearButton = IconButton(style: .default)
+        self.clearButton = IconButton(style: .default)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -68,9 +72,9 @@ final class SearchHeaderViewController: UIViewController {
         clearButton.isHidden = true
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
 
-        tokenField.textView.accessibilityIdentifier = "textViewSearch"
+        tokenField.textView.accessibilityIdentifier = Locators.SelectParticipantsPage.searchByNameOrUsername.rawValue
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
-        tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder.capitalizingFirstCharacterOnly
+        tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         tokenField.textView.keyboardAppearance = .default
         tokenField.textView.returnKeyType = .done
         tokenField.textView.autocorrectionType = .no
@@ -88,29 +92,29 @@ final class SearchHeaderViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-          searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
+            searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+            searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
 
-          clearButton.widthAnchor.constraint(equalToConstant: 16),
-          clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
-          clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-          clearButton.trailingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -16),
+            clearButton.widthAnchor.constraint(equalToConstant: 16),
+            clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
+            clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+            clearButton.trailingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -16),
 
-          tokenField.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-          tokenField.topAnchor.constraint(greaterThanOrEqualTo: tokenFieldContainer.topAnchor, constant: 8),
-          tokenField.bottomAnchor.constraint(lessThanOrEqualTo: tokenFieldContainer.bottomAnchor, constant: -8),
-          tokenField.leadingAnchor.constraint(equalTo: tokenFieldContainer.leadingAnchor, constant: 8),
-          tokenField.trailingAnchor.constraint(equalTo: tokenFieldContainer.trailingAnchor, constant: -8),
-          tokenField.centerYAnchor.constraint(equalTo: tokenFieldContainer.centerYAnchor),
+            tokenField.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            tokenField.topAnchor.constraint(greaterThanOrEqualTo: tokenFieldContainer.topAnchor, constant: 8),
+            tokenField.bottomAnchor.constraint(lessThanOrEqualTo: tokenFieldContainer.bottomAnchor, constant: -8),
+            tokenField.leadingAnchor.constraint(equalTo: tokenFieldContainer.leadingAnchor, constant: 8),
+            tokenField.trailingAnchor.constraint(equalTo: tokenFieldContainer.trailingAnchor, constant: -8),
+            tokenField.centerYAnchor.constraint(equalTo: tokenFieldContainer.centerYAnchor),
 
-        // pin to the bottom of the navigation bar
+            // pin to the bottom of the navigation bar
 
-        tokenFieldContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tokenFieldContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 
-          tokenFieldContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          tokenFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          tokenFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56)
+            tokenFieldContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tokenFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tokenFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
 

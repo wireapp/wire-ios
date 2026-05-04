@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
-#import "ZMWebSocket.h"
 #import <WireTransport/WireTransport-Swift.h>
 
 NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited = NSIntegerMax;
@@ -38,7 +37,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 @property (nonatomic, readonly) ZMExponentialBackoff *backoff;
 @property (nonatomic, readonly, weak) id<ZMTransportRequestSchedulerSession> session;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
-@property (nonatomic, readonly) ZMSDispatchGroup *group;
 @property (nonatomic, readonly) dispatch_queue_t countIsolation;
 @property (nonatomic, readonly) NSMutableArray *backoffItemQueue;
 @property (nonatomic, readwrite) id<ReachabilityProvider> reachability;
@@ -277,19 +275,6 @@ ZM_EMPTY_ASSERTING_INIT();
 {
     NSHTTPURLResponse * const response = (id) task.response;
     [self processCompletedURLResponse:response URLError:task.error];
-}
-
-- (void)processWebSocketError:(NSError *)error
-{
-    NSInteger const errorCode = error.code;
-    ZMLogDebug(@"%@: errorCode %ld", NSStringFromSelector(_cmd), (long) errorCode);
-    
-    CheckString((error == nil) || [error.domain isEqualToString:ZMWebSocketErrorDomain], "Invalid error domain.");
-    
-    if (errorCode == ZMWebSocketErrorCodeLostConnection && !self.reachability.mayBeReachable) {
-        ZMLogDebug(@"Scheduler is Offline");
-        self.schedulerState = ZMTransportRequestSchedulerStateOffline;
-    }
 }
 
 - (void)processCompletedURLResponse:(NSHTTPURLResponse *)response URLError:(NSError *)error;

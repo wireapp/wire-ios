@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,43 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
-public struct SearchOptions: OptionSet {
+public struct SearchOptions: OptionSet, CustomDebugStringConvertible {
+
     public let rawValue: Int
 
     /// Users you are connected to via connection request.
 
     public static let contacts = SearchOptions(rawValue: 1 << 0)
 
-    /// Users found in your address book.
-
-    public static let addressBook = SearchOptions(rawValue: 1 << 1)
-
     /// Users which are a member of the same team as you.
 
-    public static let teamMembers = SearchOptions(rawValue: 1 << 2)
+    public static let teamMembers = SearchOptions(rawValue: 1 << 1)
 
     /// Exclude team members which aren't in an active conversation with you.
 
-    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 3)
+    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 2)
 
     /// Exclude team members with the role .partner which aren't in an active conversation with you.
 
-    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 4)
+    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 3)
 
     /// Users from the public directory.
 
-    public static let directory = SearchOptions(rawValue: 1 << 5)
+    public static let directory = SearchOptions(rawValue: 1 << 4)
 
     /// Group conversations you are or were a participant of.
 
-    public static let conversations = SearchOptions(rawValue: 1 << 6)
+    public static let conversations = SearchOptions(rawValue: 1 << 5)
 
-    /// Services which are enabled in your team.
+    /// Apps (new-style services for MLS).
 
-    public static let services = SearchOptions(rawValue: 1 << 7)
+    public static let apps = SearchOptions(rawValue: 1 << 6)
+
+    /// Bots (old-style services for Proteus).
+
+    public static let bots = SearchOptions(rawValue: 1 << 7)
 
     /// Users from federated servers.
 
@@ -66,10 +66,30 @@ public struct SearchOptions: OptionSet {
         self.rawValue = rawValue
     }
 
+    public var debugDescription: String {
+        let allOptions: [(SearchOptions, String)] = [
+            (.contacts, "contacts"),
+            (.teamMembers, "teamMembers"),
+            (.excludeNonActiveTeamMembers, "excludeNonActiveTeamMembers"),
+            (.excludeNonActivePartners, "excludeNonActivePartners"),
+            (.directory, "directory"),
+            (.conversations, "conversations"),
+            (.apps, "apps"),
+            (.bots, "bots"),
+            (.federated, "federated"),
+            (.localResultsOnly, "localResultsOnly")
+        ]
+        let names = allOptions
+            .filter { contains($0.0) }
+            .map(\.1)
+        return "[\(names.joined(separator: ", "))]"
+    }
+
 }
 
-extension SearchOptions {
-    public mutating func updateForSelfUserTeamRole(selfUser: UserType) {
+public extension SearchOptions {
+
+    mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
             remove(.directory)
@@ -77,6 +97,7 @@ extension SearchOptions {
             insert(.excludeNonActivePartners)
         }
     }
+
 }
 
 public struct SearchRequest {
@@ -88,18 +109,18 @@ public struct SearchRequest {
         var isHandleQuery: Bool {
             switch self {
             case .exactHandle:
-                return true
+                true
             case .fullTextSearch:
-                return false
+                false
             }
         }
 
         var string: String {
             switch self {
-            case .exactHandle(let handle):
-                return handle
-            case .fullTextSearch(let text):
-                return text
+            case let .exactHandle(handle):
+                handle
+            case let .fullTextSearch(text):
+                text
             }
         }
 
@@ -110,10 +131,20 @@ public struct SearchRequest {
     let searchDomain: String?
     let searchOptions: SearchOptions
 
-    public init(query: String, searchOptions: SearchOptions, team: Team? = nil) {
-        let (query, searchDomain) = Self.parseQuery(query)
-        self.query = query
-        self.searchDomain = searchDomain
+    public init(
+        query: String,
+        searchDomain: String? = nil,
+        searchOptions: SearchOptions,
+        team: Team? = nil
+    ) {
+        if let searchDomain {
+            self.query = .fullTextSearch(query)
+            self.searchDomain = searchDomain
+        } else {
+            let (query, parsedDomain) = Self.parseQuery(query)
+            self.query = query
+            self.searchDomain = parsedDomain
+        }
         self.searchOptions = searchOptions
         self.team = team
     }
@@ -135,11 +166,16 @@ private extension SearchRequest {
             .map { String($0).trimmingCharacters(in: .whitespaces).lowercased() }
             .filter { !$0.isEmpty }
 
-        guard let text = components.element(atIndex: 0) else {
+        guard !components.isEmpty else {
             return (.fullTextSearch(""), domain: nil)
         }
 
-        let domain = components.element(atIndex: 1)
+        let text = components[0]
+        let domain = if components.indices.contains(1) {
+            components[1]
+        } else {
+            String?.none
+        }
 
         if searchString.hasPrefix("@") {
             return (.exactHandle(text), domain)
@@ -150,9 +186,10 @@ private extension SearchRequest {
 
 }
 
-fileprivate extension String {
+private extension String {
 
     func normalizedAndTrimmed() -> String {
+        // swiftformat:disable:next redundantSelf
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }

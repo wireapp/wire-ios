@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDesign
 
 enum OutgoingConnectionBottomBarAction: UInt {
-    case cancel, archive
+    case cancel
+    case archive
 }
 
 final class OutgoingConnectionViewController: UIViewController {
@@ -45,7 +46,7 @@ final class OutgoingConnectionViewController: UIViewController {
     }
 
     private func setupViews() {
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationView
+        view.backgroundColor = SemanticColors.View.backgroundConversationView
         setupCancelButton()
         setupArchiveButton()
         [cancelButton, archiveButton].forEach(view.addSubview)
@@ -74,15 +75,16 @@ final class OutgoingConnectionViewController: UIViewController {
     private func createConstraints() {
         [cancelButton, archiveButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-          cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
-          cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
-          archiveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
-          archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
+            archiveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
+            archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
         ])
     }
 
-    @objc private func buttonTapped(sender: IconButton) {
+    @objc
+    private func buttonTapped(sender: IconButton) {
         switch sender {
         case cancelButton: buttonCallback?(.cancel)
         case archiveButton: buttonCallback?(.archive)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@ class EntityActionSync: NSObject, ZMRequestGenerator {
     init(actionHandlers: [ZMRequestGenerator]) {
         self.actionHandlers = actionHandlers
     }
+
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return actionHandlers.nextRequest(for: apiVersion)
+        actionHandlers.nextRequest(for: apiVersion)
     }
 
 }

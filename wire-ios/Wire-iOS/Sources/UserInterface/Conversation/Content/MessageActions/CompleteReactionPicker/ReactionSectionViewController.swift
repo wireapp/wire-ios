@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
+import WireFoundation
 
 final class ReactionSectionViewController: UIViewController {
 
@@ -25,6 +27,8 @@ final class ReactionSectionViewController: UIViewController {
     private var sectionButtons = [ReactionCategoryButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
     private var ignoreSelectionUpdates = false
+
+    private let currentDevice = DeviceWrapper(device: .current)
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
@@ -46,7 +50,10 @@ final class ReactionSectionViewController: UIViewController {
     }
 
     private let types: [EmojiSectionType]
-    private let panGestureRecognizer = UIPanGestureRecognizer(target: ReactionSectionViewController.self, action: #selector(didPan))
+    private let panGestureRecognizer = UIPanGestureRecognizer(
+        target: ReactionSectionViewController.self,
+        action: #selector(didPan)
+    )
     weak var sectionDelegate: EmojiSectionViewControllerDelegate?
 
     init(types: [EmojiSectionType]) {
@@ -55,13 +62,23 @@ final class ReactionSectionViewController: UIViewController {
         createButtons(types)
 
         setupViews()
-        createConstraints()
+        if currentDevice.userInterfaceIdiom == .phone {
+            createConstraints()
+        }
         view.addGestureRecognizer(panGestureRecognizer)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        guard currentDevice.userInterfaceIdiom == .pad else { return }
+
+        sectionButtons.forEach { $0.removeConstraints($0.constraints) }
+        createConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -99,12 +116,14 @@ final class ReactionSectionViewController: UIViewController {
         selectedType = type
     }
 
-    @objc private func didTappButton(_ sender: ReactionCategoryButton) {
+    @objc
+    private func didTappButton(_ sender: ReactionCategoryButton) {
         guard let type = typesByButton[sender] else { return }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: false)
     }
 
-    @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
         case .began:

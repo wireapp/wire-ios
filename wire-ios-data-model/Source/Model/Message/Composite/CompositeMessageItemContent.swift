@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-class CompositeMessageItemContent: NSObject {
+final class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage
     private let item: Composite.Item
 
@@ -38,45 +39,50 @@ class CompositeMessageItemContent: NSObject {
     }
 }
 
-// MARK: - ZMTextMessageData
-extension CompositeMessageItemContent: ZMTextMessageData {
+// MARK: - TextMessageData
+
+extension CompositeMessageItemContent: TextMessageData {
+
     var messageText: String? {
-        return text?.content.removingExtremeCombiningCharacters
+        text?.content.removingExtremeCombiningCharacters
     }
 
     var linkPreview: LinkMetadata? {
-        return nil
+        nil
     }
 
     var mentions: [Mention] {
-        return Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
+        Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
     }
 
     var quote: ZMMessage? {
-        return nil
+        nil
     }
 
     var quoteMessage: ZMConversationMessage? {
-        return quote
+        quote
     }
 
     var linkPreviewHasImage: Bool {
-        return false
+        false
     }
 
     var linkPreviewImageCacheKey: String? {
-        return nil
+        nil
     }
 
     var isQuotingSelf: Bool {
-        return false
+        false
     }
 
     var hasQuote: Bool {
-        return false
+        false
     }
 
-    func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
         // no op
     }
 
@@ -87,55 +93,64 @@ extension CompositeMessageItemContent: ZMTextMessageData {
     func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         // no op
     }
+
+    var multipartMessageData: MultipartMessageData? {
+        nil
+    }
 }
 
 // MARK: - ButtonMessageData
+
 extension CompositeMessageItemContent: ButtonMessageData {
+
     var title: String? {
-        return button?.text
+        button?.text
     }
 
     var state: ButtonMessageState {
-        return ButtonMessageState(from: buttonState?.state)
+        buttonState?.state ?? .unselected
     }
 
     var isExpired: Bool {
-        return buttonState?.isExpired ?? false
+        buttonState?.isExpired ?? false
     }
 
     func touchAction() {
-        guard let moc = parentMessage.managedObjectContext,
-            let buttonId = button?.id,
-            let messageId = parentMessage.nonce,
-            !hasSelectedButton else { return }
+        guard let context = parentMessage.managedObjectContext else { return }
 
-        moc.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            let buttonState = self.buttonState ??
-                ButtonState.insert(with: buttonId, message: self.parentMessage, inContext: moc)
-            self.parentMessage.buttonStates?.resetExpired()
-            guard self.parentMessage.isSenderInConversation else {
+        context.performGroupedBlock { [weak self] in
+            guard let self, let messageID = parentMessage.nonce, let buttonID = button?.id,
+                  !hasSelectedButton else { return }
+
+            let buttonState = buttonState ??
+                ButtonState.insert(with: buttonID, message: parentMessage, inContext: context)
+            parentMessage.buttonStates?.resetExpired()
+            guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
-                moc.saveOrRollback()
+                context.saveOrRollback()
                 return
             }
 
             do {
-                try self.parentMessage.conversation?.appendButtonAction(havingId: buttonId, referenceMessageId: messageId)
-                buttonState.state = .selected
+                try parentMessage.conversation?.appendButtonAction(havingId: buttonID, referenceMessageId: messageID)
+                parentMessage.buttonStates?.confirmButtonState(buttonID: buttonID)
             } catch {
                 Logging.messageProcessing.warn("Failed to append button action. Reason: \(error.localizedDescription)")
             }
 
-            moc.saveOrRollback()
+            context.saveOrRollback()
         }
     }
 }
 
 // MARK: - Helpers
+
 extension CompositeMessageItemContent {
+
+    /// Returns `true` if there is a button which has been selected but hasn't been confirmed, `false` otherwise.
+
     private var hasSelectedButton: Bool {
-        return parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
+        parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
     }
 
     private var buttonState: ButtonState? {

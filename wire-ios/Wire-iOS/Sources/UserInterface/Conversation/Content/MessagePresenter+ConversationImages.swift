@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,23 +18,28 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 extension MessagePresenter {
 
-    /// return a view controller for viewing image messge
+    /// return a view controller for viewing image message
     ///
     /// - Parameters:
     ///   - message: a message with image data
     ///   - actionResponder: a action responder
     ///   - isPreviewing: is peeking with 3D touch?
-    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
+    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in
+    /// navigation controller
     func imagesViewController(
         for message: ZMConversationMessage,
         actionResponder: MessageActionResponder,
         isPreviewing: Bool,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {
@@ -47,15 +52,19 @@ extension MessagePresenter {
 
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
 
-        let collection = AssetCollectionWrapper(conversation: conversation,
-                                                matchingCategories: [imagesCategoryMatch])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [imagesCategoryMatch]
+        )
 
         let imagesController = ConversationImagesViewController(
             collection: collection,
             initialMessage: message,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         imagesController.isPreviewing = isPreviewing
 
@@ -75,17 +84,21 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        let closeButton = CollectionsView.closeButton()
-        closeButton.addTarget(self, action: #selector(MessagePresenter.closeImagesButtonPressed(_:)), for: .touchUpInside)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.modalTargetController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
         imagesController.dismissAction = { [weak self] completion in
             self?.modalTargetController?.dismiss(animated: true, completion: completion)
         }
 
-        return isPreviewing ? imagesController : imagesController.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+        return isPreviewing ? imagesController : imagesController
+            .wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
 
     @objc

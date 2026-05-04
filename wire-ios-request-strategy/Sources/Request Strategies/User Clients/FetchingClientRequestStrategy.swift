@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireSystem
 import WireTransport
@@ -25,19 +24,23 @@ import WireUtilities
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
-@objc public extension ZMUser {
+@objc
+public extension ZMUser {
 
     func fetchUserClients() {
-        NotificationInContext(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-                              context: self.managedObjectContext!.notificationContext,
-                              object: self.objectID).post()
+        NotificationInContext(
+            name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+            context: managedObjectContext!.notificationContext,
+            object: objectID
+        ).post()
     }
 }
 
 @objc
 public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
+    fileprivate static let needsToUpdateUserClientsNotificationName = Notification
+        .Name("ZMNeedsToUpdateUserClientsNotification")
 
     fileprivate var userClientsObserverToken: Any?
     fileprivate var userClientsByUserID: IdentifierObjectSync<UserClientByUserIDTranscoder>
@@ -49,35 +52,59 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
 
     private let entitySync: EntityActionSync
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
+    ) {
 
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
-        self.userClientByUserClientIDTranscoder = UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
-        self.userClientByQualifiedUserIDTranscoder = UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
+        self
+            .userClientByUserClientIDTranscoder =
+            UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
+        self
+            .userClientByQualifiedUserIDTranscoder =
+            UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
 
-        self.userClientsByUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserIDTranscoder)
-        self.userClientsByUserClientID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserClientIDTranscoder)
-        self.userClientsByQualifiedUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByQualifiedUserIDTranscoder)
+        self.userClientsByUserID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByUserIDTranscoder
+        )
+        self.userClientsByUserClientID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByUserClientIDTranscoder
+        )
+        self.userClientsByQualifiedUserID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByQualifiedUserIDTranscoder
+        )
 
-        entitySync = EntityActionSync(actionHandlers: [
+        self.entitySync = EntityActionSync(actionHandlers: [
             FetchUserClientsActionHandler(context: managedObjectContext)
         ])
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringQuickSync,
-                              .allowsRequestsWhileWaitingForWebsocket,
-                              .allowsRequestsWhileInBackground]
-        self.userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
-        self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-                                                                          context: self.managedObjectContext.notificationContext,
-                                                                          object: nil) { [weak self] note in
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileInBackground
+        ]
+        userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
+        self.userClientsObserverToken = NotificationInContext.addObserver(
+            name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
-                    let apiVersion = BackendInfo.apiVersion,
+                    let apiVersion,
                     let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser,
                     let userID = user.remoteIdentifier
                 else {
@@ -98,8 +125,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3, .v4, .v5, .v6:
-                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -133,27 +160,27 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = objects.compactMap({ $0 as? UserClient })
+        let clientsNeedingToBeUpdated = objects.compactMap { $0 as? UserClient }
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = object.compactMap({ $0 as? UserClient }).filter(\.needsToBeUpdatedFromBackend)
+        let clientsNeedingToBeUpdated = object.compactMap { $0 as? UserClient }.filter(\.needsToBeUpdatedFromBackend)
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
 
     private func fetch(userClients: [UserClient]) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { result, userClient in
             switch apiVersion {
@@ -169,7 +196,8 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
-            case .v2, .v3, .v4, .v5, .v6:
+
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -203,7 +231,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
-        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { localDomain }
         guard let userID = userClient.user?.remoteIdentifier, let domain else { return nil }
 
         return .init(uuid: userID, domain: domain)
@@ -228,7 +256,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UserClientID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -238,14 +266,22 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UserClientID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard
             let identifier = identifiers.first,
-            let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId,
-                                                    forUser: ZMUser.fetchOrCreate(with: identifier.userId,
-                                                                                 domain: nil,
-                                                                                 in: managedObjectContext),
-                                                    createIfNeeded: true)
+            let client = UserClient.fetchUserClient(
+                withRemoteId: identifier.clientId,
+                forUser: ZMUser.fetchOrCreate(
+                    with: identifier.userId,
+                    domain: nil,
+                    in: managedObjectContext
+                ),
+                createIfNeeded: true
+            )
         else {
             Logging.network.warn("Can't process response, aborting.")
             return completionHandler()
@@ -287,7 +323,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     var fetchLimit: Int {
-        return 100
+        100
     }
 
     struct RequestPayload: Codable, Equatable {
@@ -311,7 +347,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -360,14 +396,18 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
         switch apiVersion {
         case .v0:
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 completionHandler()
@@ -379,7 +419,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
-            let selfClient = await managedObjectContext.perform({ ZMUser.selfUser(in: self.managedObjectContext).selfClient() })
+            let selfClient = await managedObjectContext
+            .perform({ ZMUser.selfUser(in: self.managedObjectContext).selfClient() })
         else {
             Logging.network.warn("Can't process response, aborting.")
             await managedObjectContext.perform {
@@ -398,7 +439,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                     with: userID,
                     domain: domain,
                     in: self.managedObjectContext
-                )}
+                ) }
 
                 await processor.createOrUpdateClients(
                     from: clientPayloads,
@@ -445,7 +486,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -455,7 +496,11 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard
             let rawData = response.rawData,
             let payload = Payload.UserClients(rawData, decoder: decoder),

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,21 +18,44 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
+import WireFoundation
+import WireMainNavigationUI
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderProtocol {
 
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
+    var analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
-    func build() -> SelfProfileViewController {
-        .init(
+    init(
+        selfUser: SettingsSelfUser,
+        userRightInterfaceType: UserRightInterface.Type,
+        userSession: UserSession,
+        accountSelector: AccountSelector?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?
+    ) {
+        self.selfUser = selfUser
+        self.userRightInterfaceType = userRightInterfaceType
+        self.userSession = userSession
+        self.accountSelector = accountSelector
+        self.analyticsEventTracker = analyticsEventTracker
+    }
+
+    func build(mainCoordinator: AnyMainCoordinator) -> ViewController {
+        SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
-            accountSelector: accountSelector
+            accountSelector: accountSelector,
+            mainCoordinator: mainCoordinator,
+            analyticsEventTracker: analyticsEventTracker(),
+            accountManager: SessionManager.shared?.accountManager
         )
     }
 }
+
+extension AccountManager: SelfProfileAccountManager {}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles input during the incremental user creation.
- */
+/// Handles input during the incremental user creation.
 
 final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
 
@@ -28,7 +26,7 @@ final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEve
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
         // Only handle input during the incremental user creation.
-        guard case .incrementalUserCreation(_, let step) = currentStep else {
+        guard case let .incrementalUserCreation(_, step) = currentStep else {
             return nil
         }
 

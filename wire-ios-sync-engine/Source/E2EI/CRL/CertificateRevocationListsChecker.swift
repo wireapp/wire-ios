@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
@@ -32,9 +34,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
+    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -49,6 +52,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -57,6 +61,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: fetchE2EIFeatureConfig,
             coreCryptoProvider: coreCryptoProvider,
             context: context
         )
@@ -67,6 +72,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
+        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -74,6 +80,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
+        self.fetchE2EIFeatureConfig = fetchE2EIFeatureConfig
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
@@ -108,14 +115,23 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
+        let e2eiFeatureConfig = await context.perform {
+            self.fetchE2EIFeatureConfig()
+        }
+        let crlURLBuilder = CRLURLBuilder(
+            shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
+            proxyURLString: e2eiFeatureConfig?.crlProxy
+        )
+
         var shouldNotifyAboutRevokedCertificate = false
+
         for distributionPoint in distributionPoints {
             do {
-                // fetch the CRL from the distribution point
-                let crlData = try await crlAPI.getRevocationList(from: distributionPoint)
+                let crlURL = crlURLBuilder.getURL(from: distributionPoint)
+                let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
-                let registration = try await coreCrypto.perform {
+                let registration = try await coreCrypto.transaction {
                     try await $0.e2eiRegisterCrl(crlDp: distributionPoint.absoluteString, crlDer: crlData)
                 }
 
@@ -134,7 +150,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
                 }
             } catch {
-                logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
+                logger
+                    .warn(
+                        "failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))"
+                    )
             }
         }
 

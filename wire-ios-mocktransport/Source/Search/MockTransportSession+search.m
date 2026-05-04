@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 @import WireTransport;
 @import WireTesting;
-@import WireProtos;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (Search)
 
@@ -37,8 +37,8 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
         fetchRequest.fetchLimit = limit;
         
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         NSMutableArray *userPayload = [NSMutableArray array];
         for (MockUser *user in users) {
             
@@ -64,39 +64,5 @@
     
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
-
-// handles /onboarding
-- (ZMTransportResponse *)processOnboardingRequest:(ZMTransportRequest *)request
-{
-    if(request.method == ZMTransportRequestMethodPost) {
-        NSArray *selfEmailArray = [[request.payload asDictionary] arrayForKey:@"self"];
-        if(selfEmailArray.count == 0) {
-            return [self errorResponseWithCode:400 reason:@"no self email" apiVersion:request.apiVersion];
-        }
-        NSArray *cards = [[request.payload asDictionary] arrayForKey:@"cards"];
-        if(cards == nil) {
-            return [self errorResponseWithCode:400 reason:@"missing contacts" apiVersion:request.apiVersion];
-        }
-        
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
-        // This method is just a simulation, it does not do any actual matching, it just returns all users
-        NSMutableArray *results = [NSMutableArray array];
-        for (MockUser *user in users) {
-            if (user == self.selfUser) {
-                continue;
-            }
-            [results addObject:@{
-                                @"id" : user.identifier,
-                                @"cards" : @[]
-                                }];
-        }
-        return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
-        
-    }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
-}
-
 
 @end

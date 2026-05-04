@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,10 +34,10 @@ public enum PushTokenStorage {
 
         set {
             guard
-               let value = newValue,
-               let data = try? JSONEncoder().encode(value)
+                let value = newValue,
+                let data = try? JSONEncoder().encode(value)
             else {
-               return storage.set(nil, forKey: Keys.pushToken.rawValue)
+                return storage.set(nil, forKey: Keys.pushToken.rawValue)
             }
             storage.set(data, forKey: Keys.pushToken.rawValue)
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,10 +30,14 @@ class MockUserTests: MockTransportSessionTests {
         sut.performRemoteChanges { session in
             self.selfUser = session.insertSelfUser(withName: "me")
             self.team = session.insertTeam(withName: "A Team", isBound: true)
-            self.conversation = session.insertTeamConversation(to: self.team, with: [session.insertUser(withName: "some")], creator: self.selfUser)
+            self.conversation = session.insertTeamConversation(
+                to: self.team,
+                with: [session.insertUser(withName: "some")],
+                creator: self.selfUser
+            )
 
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testImageAccessorsReturnsCorrectImages() {

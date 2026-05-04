@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,18 +20,18 @@ import Foundation
 
 public extension Dictionary {
     func string(forKey key: String) -> String? {
-        return (self as NSDictionary).string(forKey: key)
+        (self as NSDictionary).string(forKey: key)
     }
 
     func optionalString(forKey key: String) -> String? {
-        return (self as NSDictionary).optionalString(forKey: key)
+        (self as NSDictionary).optionalString(forKey: key)
     }
 
     func dictionary(forKey key: String) -> [String: AnyObject]? {
-        return (self as NSDictionary).dictionary(forKey: key)
+        (self as NSDictionary).dictionary(forKey: key)
     }
 
     func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
-        return (self as NSDictionary).optionalDictionary(forKey: key)
+        (self as NSDictionary).optionalDictionary(forKey: key)
     }
 }

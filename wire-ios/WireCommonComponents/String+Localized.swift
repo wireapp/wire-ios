@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import Foundation
 
-extension String {
+public extension String {
     /// Returns the NSLocalizedString version of self
-    public var localized: String {
-        return NSLocalizedString(self, comment: "")
+    @available(*, deprecated, message: "Use NSLocalizedString(_:comment:) directly instead")
+    var localized: String {
+        NSLocalizedString(self, comment: "")
     }
 }

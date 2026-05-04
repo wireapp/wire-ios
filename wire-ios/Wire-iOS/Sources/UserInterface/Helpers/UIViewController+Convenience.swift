@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ extension UIViewController {
     ///
     /// - Parameter viewController: viewController to add
     func addToSelf(_ viewController: UIViewController) {
-        add(viewController, to: view)
+        addChild(viewController)
+        view.addSubview(viewController.view)
+        viewController.didMove(toParent: self)
     }
 
     /// remove a child view controller to self and add its view from the paramenter's view

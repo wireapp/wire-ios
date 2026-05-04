@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,8 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
         sut = RemoveUserClientUseCase(
             userClientAPI: mockApiProvider.userClientAPIApiVersion_MockValue!,
-            syncContext: stack.syncContext)
+            syncContext: stack.syncContext
+        )
 
     }
 
@@ -53,7 +54,7 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         let clientId = "222"
         try await createSelfClient(clientId: clientId)
         let expectation = XCTestExpectation(description: "should call deleteUserClient")
-        userClientAPI.deleteUserClientClientIdPassword_MockMethod = {_, _ in
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = { _, _ in
             // Then
             expectation.fulfill()
         }
@@ -95,6 +96,29 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.invalidCredentials) {
+            try await sut.invoke(clientId: clientId, password: "")
+        }
+    }
+
+    func testThatItDoesNotRemoveUserClient_WhenTooManyRequests() async throws {
+        // Given
+        let clientId = "222"
+        try await createSelfClient(clientId: clientId)
+        let tooManyRequestsResponseCode = 429
+        let mockResponseFailure = Payload.ResponseFailure(
+            code: tooManyRequestsResponseCode,
+            label: .unknown,
+            message: "Please try again later.",
+            data: nil
+        )
+
+        userClientAPI.deleteUserClientClientIdPassword_MockError = NetworkError.invalidRequestError(
+            mockResponseFailure,
+            ZMTransportResponse()
+        )
+
+        // When / Then
+        await assertItThrows(error: RemoveUserClientError.tooManyRequests) {
             try await sut.invoke(clientId: clientId, password: "")
         }
     }

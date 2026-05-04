@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
@@ -25,13 +26,11 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        sut = ConnectionPayloadProcessor()
-        BackendInfo.storage = .temporary()
+        sut = ConnectionPayloadProcessor(isFederationEnabled: false)
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -93,8 +92,8 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     func testThatANonExistingConversationIsCreatedAndLinkedToTheConnection() {
         syncMOC.performGroupedAndWait {
             // given
-            BackendInfo.isFederationEnabled = true
-            let conversationID: QualifiedID = .randomID()
+            self.sut = ConnectionPayloadProcessor(isFederationEnabled: true)
+            let conversationID = QualifiedID(uuid: UUID(), domain: "wire.com")
 
             let payload = self.createConnectionPayload(
                 to: self.otherUser.qualifiedID!,

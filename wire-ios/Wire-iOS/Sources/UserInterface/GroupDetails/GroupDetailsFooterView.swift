@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 
 protocol GroupDetailsFooterViewDelegate: AnyObject {
     func footerView(_ view: GroupDetailsFooterView, shouldPerformAction action: GroupDetailsFooterView.Action)
@@ -28,25 +29,25 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     weak var delegate: GroupDetailsFooterViewDelegate?
 
     enum Action {
-        case more, invite
+        case more
+        case invite
     }
 
-    func update(for conversation: GroupDetailsConversationType) {
-        guard let user = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
-            return
-        }
-
-        leftButton.isHidden = !user.canAddUser(to: conversation)
+    func update(
+        for conversation: GroupDetailsConversationType,
+        user: any UserType
+    ) {
+        let shouldShow = user.canAddUser(to: conversation)
+        leftButton.isHidden = !shouldShow
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }
 
     override func setupButtons() {
         leftIcon = .plus
         leftButton.setTitle(L10n.Localizable.Participants.Footer.addTitle, for: .normal)
-        leftButton.accessibilityIdentifier = "OtherUserMetaControllerLeftButton"
+        leftButton.accessibilityIdentifier = Locators.ConversationDetailsPage.addParticipantsButton.rawValue
         rightIcon = .ellipsis
-        rightButton.accessibilityIdentifier = "OtherUserMetaControllerRightButton"
+        rightButton.accessibilityIdentifier = Locators.ConversationDetailsPage.moreOptionsButton.rawValue
         rightButton.accessibilityLabel = L10n.Accessibility.ConversationDetails.MoreButton.description
     }
 

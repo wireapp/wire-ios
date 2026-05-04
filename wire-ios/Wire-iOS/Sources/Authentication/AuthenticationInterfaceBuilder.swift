@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import SwiftUI
 import UIKit
+import WireAuthentication
+import WireAuthenticationAPI
+import WireCommonComponents
+import WireCountly
 import WireDataModel
+import WireDesign
+import WireFoundation
+import WireNetwork
+import WireSyncEngine
 
-/**
- * A type of view controller that can be managed by an authentication coordinator.
- */
+/// A type of view controller that can be managed by an authentication coordinator.
 
-typealias AuthenticationStepViewController = UIViewController & AuthenticationCoordinatedViewController
+typealias AuthenticationStepViewController = AuthenticationCoordinatedViewController & UIViewController
 
-/**
- * An object that builds view controllers for authentication steps.
- */
+/// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
 
@@ -40,73 +46,124 @@ final class AuthenticationInterfaceBuilder {
         backendEnvironmentProvider()
     }
 
+    let defaultEnvironment: BackendEnvironment2
+
+    private var accountSelector: AccountSelector?
+
     // MARK: - Initialization
 
-    /**
-     * Creates an interface builder with the specified set of features.
-     * - parameter featureProvider: The object to use when checking for features
-     */
+    /// Creates an interface builder with the specified set of features.
+    /// - parameter featureProvider: The object to use when checking for features
 
     init(
         featureProvider: AuthenticationFeatureProvider,
-        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+        accountSelector: AccountSelector?,
+        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared },
+        defaultEnvironment: BackendEnvironment2
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+        self.accountSelector = accountSelector
+        self.defaultEnvironment = defaultEnvironment
     }
 
     // MARK: - Interface Building
 
-    /**
-     * Returns the view controller that displays the interface of the authentication step.
-     *
-     * - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
-     * add a case to handle them here, otherwise the method will return `nil`.
-     *
-     * - parameter step: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface of the authentication step.
+    ///
+    /// - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
+    /// add a case to handle them here, otherwise the method will return `nil`.
+    ///
+    /// - parameter step: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
-    func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
+    @MainActor
+    func makeViewController(
+        for step: AuthenticationFlowStep,
+        authenticationCoordinator: AuthenticationCoordinator?
+    ) -> AuthenticationStepViewController? {
         switch step {
+        case .wireAuthenticationModule:
+            let environment: BackendEnvironment2 = defaultEnvironment
+
+            let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+            let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
+                RegistrationAnalyticsTracker(
+                    analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .standard
+                )
+            }
+
+            let (rootView, bridge) = wireAuthenticationAssembly(
+                authenticationType: .new,
+                environment: environment,
+                registrationAnalyticsTracker: registrationAnalyticsTracker
+            )
+
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
             return landingViewController
 
-        case .reauthenticate(let credentials, _, let isSignedOut):
-            let viewController: AuthenticationStepController
-
-            if credentials?.usesCompanyLogin == true && credentials?.hasPassword == false {
-                // Is the user has SSO enabled, show the screen to log in with SSO
-                let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
-                viewController = makeViewController(for: companyLoginStep)
-
-            } else {
-                let prefill: AuthenticationPrefilledCredentials?
-                if let credentials, credentials.emailAddress != nil {
-                    prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
-                } else {
-                    prefill = nil
-                }
-
-                viewController = makeCredentialsViewController(for: .reauthentication(prefill))
+        case let .reauthenticate(credentials, environment, _, _):
+            let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+            let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
+                RegistrationAnalyticsTracker(
+                    analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .standard
+                )
             }
 
-            // Add the bar button item to sign out
-            viewController.setRightItem(
-                L10n.Localizable.Registration.Signin.TooManyDevices.SignOutButton.title,
-                withAction: .signOut(warn: true),
-                accessibilityID: "signOutButton"
-            )
-            return viewController
+            let authenticationType: WireAuthenticationAPI.AuthenticationType
+            if credentials?.usesCompanyLogin == true {
+                authenticationType = .reauthSSO
+            } else if let email = credentials?.emailAddress {
+                authenticationType = .reauthEmail(email)
+            } else {
+                assertionFailure("invalid state: reauthentication without email credentials")
+                authenticationType = .new
+            }
 
-        case .provideCredentials(let prefill):
+            // If there's no environment, then it probably means that the user
+            // hasn't yet migrated to multibackend support yet. Fallback to the
+            // legacy environment to allow them to reauthenticate.
+            let (rootView, bridge) = wireAuthenticationAssembly(
+                authenticationType: authenticationType,
+                environment: environment ?? BackendEnvironment2(BackendEnvironment.shared),
+                registrationAnalyticsTracker: registrationAnalyticsTracker
+            )
+
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
+
+        case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()
@@ -118,14 +175,14 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .deleteClient(let clients):
+        case let .deleteClient(clients):
             return RemoveClientStepViewController(clients: clients)
 
-        case .noHistory(_, let context):
-            let backupStep = BackupRestoreStepDescription(context: context)
+        case let .noHistory(_, context):
+            let backupStep = NoHistoryHintStepDescription(context: context)
             return makeViewController(for: backupStep)
 
-        case .enterEmailVerificationCode(let email, _, _):
+        case let .enterEmailVerificationCode(email, _, _):
             let verifyEmailStep = VerifyEmailStepDescription(email: email, canChangeEmail: false)
             return makeViewController(for: verifyEmailStep)
 
@@ -141,14 +198,13 @@ final class AuthenticationInterfaceBuilder {
 
         case .addUsername:
             let addUsernameStep = AddUsernameStepDescription()
-            let viewController = makeViewController(for: addUsernameStep)
-            return viewController
+            return makeViewController(for: addUsernameStep)
 
-        case .enterActivationCode(let unverifiedEmail, _):
+        case let .enterActivationCode(unverifiedEmail, _):
             let step = VerifyEmailStepDescription(email: unverifiedEmail)
             return makeViewController(for: step)
 
-        case .pendingEmailLinkVerification(let emailCredentials):
+        case let .pendingEmailLinkVerification(emailCredentials):
             let verifyEmailStep = EmailLinkVerificationStepDescription(emailAddress: emailCredentials.email!)
 
             let viewController = makeViewController(for: verifyEmailStep)
@@ -159,10 +215,10 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .incrementalUserCreation(let user, let registrationStep):
+        case let .incrementalUserCreation(user, registrationStep):
             return makeRegistrationStepViewController(for: registrationStep, user: user)
 
-        case .switchBackend(let url):
+        case let .switchBackend(url):
             let viewController = PreBackendSwitchViewController()
             viewController.backendURL = url
             return viewController
@@ -171,29 +227,31 @@ final class AuthenticationInterfaceBuilder {
             let viewController = EnrollE2EIdentityStepDescription()
             return makeViewController(for: viewController)
 
-        case .enrollE2EIdentitySuccess(let certificateDetails):
+        case let .enrollE2EIdentitySuccess(certificateDetails):
             let viewController = SuccessfulCertificateEnrollmentViewController()
             viewController.certificateDetails = certificateDetails
             viewController.onOkTapped = { viewController in
                 viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)
             }
             return viewController
+
         default:
             return nil
         }
     }
 
-    /**
-     * Returns the view controller that displays the interface for the given intermediate
-     * registration step.
-     *
-     * - parameter step: The step to create an interface for.
-     * - parameter user: The unregistered user that is being created.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface for the given intermediate
+    /// registration step.
+    ///
+    /// - parameter step: The step to create an interface for.
+    /// - parameter user: The unregistered user that is being created.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
-    private func makeRegistrationStepViewController(for step: IntermediateRegistrationStep, user: UnregisteredUser) -> AuthenticationStepViewController? {
+    private func makeRegistrationStepViewController(
+        for step: IntermediateRegistrationStep,
+        user: UnregisteredUser
+    ) -> AuthenticationStepViewController? {
         switch step {
         case .setName:
             let nameStep = SetFullNameStepDescription()
@@ -206,13 +264,11 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Creates a view controller for a step view description.
-     *
-     * - parameter description: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Creates a view controller for a step view description.
+    ///
+    /// - parameter description: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeViewController(for description: AuthenticationStepDescription) -> AuthenticationStepController {
         let controller = AuthenticationStepController(description: description)
@@ -230,13 +286,53 @@ final class AuthenticationInterfaceBuilder {
         return controller
     }
 
-    /**
-     * Creates and configures an authentication credentials view controller for the specified flow type.
-     * - parameter flowType: The type of flow to use in the view controller.
-     * - returns: A credentials input view controller configured with the feature provider.
-     */
+    /// Creates and configures an authentication credentials view controller for the specified flow type.
+    /// - parameter flowType: The type of flow to use in the view controller.
+    /// - returns: A credentials input view controller configured with the feature provider.
 
-    private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
+    private func makeCredentialsViewController(
+        for flowType: AuthenticationCredentialsViewController
+            .FlowType
+    ) -> AuthenticationCredentialsViewController {
         .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
+    }
+
+    @MainActor
+    private func wireAuthenticationAssembly(
+        authenticationType: WireAuthenticationAPI.AuthenticationType,
+        environment: BackendEnvironment2,
+        registrationAnalyticsTracker: RegistrationAnalyticsTracker?
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
+        let assembly = WireAuthenticationAssembly()
+        let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+            .map { account in
+                account.toUIModel { [weak self] in
+                    self?.accountSelector?.switchTo(account: account)
+                }
+            }
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+        }
+
+        let (view, bridge) = assembly.assemble(
+            authenticationType: authenticationType,
+            environment: environment,
+            minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+            preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
+            howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+            howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+            privacyPolicyURL: WireURLs.shared.privacyPolicy,
+            termsOfUseURL: WireURLs.shared.legal,
+            passwordValidator: AuthenticationPasswordValidator(),
+            ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+            appStoreURL: WireURLs.shared.appOnItunes,
+            accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
+            registrationAnalyticsTracker: registrationAnalyticsTracker
+        )
+
+        return (
+            view: view.environment(\.isClipboardEnabled, SecurityFlags.clipboard.isEnabled),
+            bridge: bridge
+        )
     }
 }

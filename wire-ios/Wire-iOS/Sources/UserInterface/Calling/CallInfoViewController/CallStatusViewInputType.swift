@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ extension CallStatusViewInputType {
     var overlayBackgroundColor: UIColor {
         switch (isVideoCall, state, callingConfig.isAudioCallColorSchemable) {
         case (true, .ringingOutgoing, _), (true, .ringingIncoming, _):
-            return UIColor.black.withAlphaComponent(0.4)
+            UIColor.black.withAlphaComponent(0.4)
         case (true, _, _), (false, _, false):
-            return UIColor.black.withAlphaComponent(0.64)
+            UIColor.black.withAlphaComponent(0.64)
         case (false, _, true):
-            return UIColor.black.withAlphaComponent(0.64)
+            UIColor.black.withAlphaComponent(0.64)
         }
     }
 

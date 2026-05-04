@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,12 +28,13 @@ public protocol E2EISetupServiceInterface {
     func registerFederationCertificate(_ certificate: String) async throws
 
     /// Setup enrollment for a client
-    /// 
+    ///
     /// - parameter clientID: qualifed client ID.
     /// - parameter userName: fullname of the user owning the client.
     /// - parameter handle: handle of the user owning the client.
     /// - parameter teamId: team ID of the team the user belongs to.
-    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
+    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are
+    /// registering a new MLS client.
     /// - parameter expirySec: optional custom expiration time for the enrollment certificate
 
     func setupEnrollment(
@@ -52,9 +53,9 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -62,7 +63,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: FeatureRepositoryInterface) {
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: LegacyFeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
     }
@@ -70,20 +71,20 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     // MARK: - Public interface
 
     public func isTrustAnchorRegistered() async throws -> Bool {
-        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
-            await coreCrypto.e2eiIsPkiEnvSetup()
+        try await coreCryptoProvider.coreCrypto().transaction { context in
+            try await context.e2eiIsPkiEnvSetup()
         }
     }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
-        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
-            try await coreCrypto.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
+        try await coreCryptoProvider.coreCrypto().transaction { context in
+            try await context.e2eiRegisterAcmeCa(trustAnchorPem: trustAnchor)
         }
     }
 
     public func registerFederationCertificate(_ certificate: String) async throws {
-        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
-            _ = try await coreCrypto.e2eiRegisterIntermediateCa(certPem: certificate)
+        try await coreCryptoProvider.coreCrypto().transaction { context in
+            try await context.e2eiRegisterIntermediateCa(certPem: certificate)
         }
     }
 
@@ -117,10 +118,10 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         isUpgradingClient: Bool,
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
-        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
-        return try await coreCrypto.perform {
+        return try await coreCrypto.transaction {
             if isUpgradingClient {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 if e2eiIsEnabled {

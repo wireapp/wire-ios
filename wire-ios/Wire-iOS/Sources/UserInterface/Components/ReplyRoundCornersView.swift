@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,12 @@
 
 import UIKit
 import WireDesign
+import WireSyncEngine
+import WireUtilities
 
 final class ReplyRoundCornersView: UIControl {
     // MARK: - Properties
+
     typealias ViewColors = SemanticColors.View
 
     let containedView: UIView
@@ -28,6 +31,7 @@ final class ReplyRoundCornersView: UIControl {
     private let highlightLayer = UIView()
 
     // MARK: - Init
+
     init(containedView: UIView) {
         self.containedView = containedView
         super.init(frame: .zero)
@@ -41,8 +45,9 @@ final class ReplyRoundCornersView: UIControl {
     }
 
     // MARK: Setup Subviews and Constraints
+
     private func setupSubviews() {
-        layer.cornerRadius = 8
+        layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         layer.borderWidth = 1
         layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
         layer.masksToBounds = true
@@ -79,6 +84,7 @@ final class ReplyRoundCornersView: UIControl {
     }
 
     // MARK: - UIControl
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         setHighlighted(true, animated: false)
         sendActions(for: .touchDown)

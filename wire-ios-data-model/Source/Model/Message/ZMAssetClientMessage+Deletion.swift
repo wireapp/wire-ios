@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ extension ZMAssetClientMessage {
         managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
 
         if let url = temporaryDirectoryURL,
-            FileManager.default.fileExists(atPath: url.path) {
+           FileManager.default.fileExists(atPath: url.path) {
             try? FileManager.default.removeItem(at: url)
         }
 
@@ -45,7 +45,7 @@ extension ZMAssetClientMessage {
         preprocessedSize = CGSize.zero
     }
 
-    override public func removeClearingSender(_ clearingSender: Bool) {
+    public override func removeClearingSender(_ clearingSender: Bool) {
         if !clearingSender {
             markRemoteAssetToBeDeleted()
         }

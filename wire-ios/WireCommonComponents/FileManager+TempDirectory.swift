@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 import Foundation
 
-extension FileManager {
-    public static func createTmpDirectory(fileName: String? = nil) throws -> URL {
+public extension FileManager {
+    static func createTmpDirectory(fileName: String? = nil) throws -> URL {
         let fileManager = FileManager.default
-        let tmp = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(fileName ?? UUID().uuidString) // temp subdir
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent(fileName ?? UUID().uuidString) // temp subdir
         if !fileManager.fileExists(atPath: tmp.absoluteString) {
             try fileManager.createDirectory(at: tmp, withIntermediateDirectories: true)
         }
@@ -29,9 +30,9 @@ extension FileManager {
         return tmp
     }
 
-    public func removeTmpIfNeededAndCopy(fileURL: URL, tmpURL: URL) throws {
+    func removeTmpIfNeededAndCopy(fileURL: URL, tmpURL: URL) throws {
         if fileExists(atPath: tmpURL.path) {
-                try FileManager.default.removeItem(at: tmpURL)
+            try FileManager.default.removeItem(at: tmpURL)
         }
 
         try copyItem(at: fileURL, to: tmpURL)

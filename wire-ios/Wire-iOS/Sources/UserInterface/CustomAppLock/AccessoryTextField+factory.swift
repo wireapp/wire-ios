@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,22 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension ValidatedTextField {
-    static func createPasscodeTextField(kind: ValidatedTextField.Kind,
-                                        delegate: ValidatedTextFieldDelegate & TextFieldValidationDelegate,
-                                        setNewColors: Bool) -> ValidatedTextField {
-        let textField = ValidatedTextField(kind: kind,
-                                           leftInset: 0,
-                                           accessoryTrailingInset: 0,
-                                           cornerRadius: 16,
-                                           setNewColors: setNewColors, style: .default)
+    static func createPasscodeTextField(
+        kind: ValidatedTextField.Kind,
+        delegate: ValidatedTextFieldDelegate & TextFieldValidationDelegate,
+        setNewColors: Bool
+    ) -> ValidatedTextField {
+        let textField = ValidatedTextField(
+            kind: kind,
+            leftInset: 0,
+            accessoryTrailingInset: 0,
+            cornerRadius: 16,
+            setNewColors: setNewColors,
+            style: .default
+        )
 
         textField.overrideButtonIcon = StyleKitIcon.AppLock.reveal
         textField.validatedTextFieldDelegate = delegate

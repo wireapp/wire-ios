@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
 //
 
 import Foundation
+import WireFoundation
 
 public enum EnvironmentType: Equatable {
-    case production
+    case `default`
     case staging
-    case qaDemo
-    case qaDemo2
     case anta
     case bella
     case chala
@@ -33,28 +32,24 @@ public enum EnvironmentType: Equatable {
 
     var stringValue: String {
         switch self {
-        case .production:
-            return "production"
+        case .default:
+            "default"
         case .staging:
-            return "staging"
-        case .qaDemo:
-            return "qa-demo"
-        case .qaDemo2:
-            return "qa-demo-2"
+            "staging"
         case .anta:
-            return "anta"
+            "anta"
         case .bella:
-            return "bella"
+            "bella"
         case .chala:
-            return "chala"
+            "chala"
         case .diya:
-            return "diya"
+            "diya"
         case .elna:
-            return "elna"
+            "elna"
         case .foma:
-            return "foma"
-        case .custom(url: let url):
-            return "custom-\(url.absoluteString)"
+            "foma"
+        case let .custom(url: url):
+            "custom-\(url.absoluteString)"
         }
     }
 
@@ -62,10 +57,6 @@ public enum EnvironmentType: Equatable {
         switch stringValue {
         case EnvironmentType.staging.stringValue:
             self = .staging
-        case EnvironmentType.qaDemo.stringValue:
-            self = .qaDemo
-        case EnvironmentType.qaDemo2.stringValue:
-            self = .qaDemo2
         case EnvironmentType.anta.stringValue:
             self = .anta
         case EnvironmentType.bella.stringValue:
@@ -83,40 +74,44 @@ public enum EnvironmentType: Equatable {
             if let url = URL(string: String(urlString)) {
                 self = .custom(url: url)
             } else {
-                self = .production
+                self = .default
             }
         default:
-            self = .production
+            self = .default
         }
     }
 }
 
-extension EnvironmentType {
-    static let defaultsKey = "ZMBackendEnvironmentType"
+public extension EnvironmentType {
+    internal static let defaultsKey = "ZMBackendEnvironmentType"
 
-    public init(userDefaults: UserDefaults) {
+    init(userDefaults: UserDefaults) {
         if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {
             self.init(stringValue: value)
         } else {
-            Logging.backendEnvironment.error("Could not load environment type from user defaults, falling back to production")
-            self = .production
+            Logging.backendEnvironment
+                .error("Could not load environment type from user defaults, falling back to default")
+            self = .default
         }
     }
 
-    public func save(in userDefaults: UserDefaults) {
-        userDefaults.setValue(self.stringValue, forKey: EnvironmentType.defaultsKey)
+    func save(in userDefaults: UserDefaults) {
+        userDefaults.setValue(stringValue, forKey: EnvironmentType.defaultsKey)
     }
 }
 
 public final class BackendEnvironment: NSObject {
     public let title: String
+    public let trustData: [TrustData]
+
     let endpoints: BackendEndpointsProvider
     let proxySettings: ProxySettingsProvider?
     let certificateTrust: BackendTrustProvider
     let type: EnvironmentType
 
-    init(
+    public init(
         title: String,
+        trustData: [TrustData],
         environmentType: EnvironmentType,
         endpoints: BackendEndpointsProvider,
         proxySettings: ProxySettingsProvider?,
@@ -127,6 +122,7 @@ public final class BackendEnvironment: NSObject {
         self.endpoints = endpoints
         self.proxySettings = proxySettings
         self.certificateTrust = certificateTrust
+        self.trustData = trustData
     }
 
     convenience init?(environmentType: EnvironmentType, data: Data) {
@@ -142,9 +138,13 @@ public final class BackendEnvironment: NSObject {
         do {
             let backendData = try decoder.decode(SerializedData.self, from: data)
             let pinnedKeys = backendData.pinnedKeys ?? []
-            let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
+            let certificateTrust = ServerCertificateTrust(
+                trustData: pinnedKeys,
+                currentDateProvider: .system
+            )
             self.init(
                 title: backendData.title,
+                trustData: pinnedKeys,
                 environmentType: environmentType,
                 endpoints: backendData.endpoints,
                 proxySettings: backendData.apiProxy,
@@ -159,42 +159,42 @@ public final class BackendEnvironment: NSObject {
 
 extension BackendEnvironment: BackendEnvironmentProvider {
     public var environmentType: EnvironmentTypeProvider {
-        return EnvironmentTypeProvider(environmentType: type)
+        EnvironmentTypeProvider(environmentType: type)
     }
 
     public var backendURL: URL {
-        return endpoints.backendURL
+        endpoints.backendURL
     }
 
     public var backendWSURL: URL {
-        return endpoints.backendWSURL
+        endpoints.backendWSURL
     }
 
     public var blackListURL: URL {
-        return endpoints.blackListURL
+        endpoints.blackListURL
     }
 
     public var teamsURL: URL {
-        return endpoints.teamsURL
+        endpoints.teamsURL
     }
 
     public var accountsURL: URL {
-        return endpoints.accountsURL
+        endpoints.accountsURL
     }
 
     public var websiteURL: URL {
-        return endpoints.websiteURL
+        endpoints.websiteURL
     }
 
     public var countlyURL: URL? {
-        return endpoints.countlyURL
+        endpoints.countlyURL
     }
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return certificateTrust.verifyServerTrust(trust: trust, host: host)
+        certificateTrust.verifyServerTrust(trust: trust, host: host)
     }
 
     public var proxy: ProxySettingsProvider? {
-        return proxySettings
+        proxySettings
     }
 }

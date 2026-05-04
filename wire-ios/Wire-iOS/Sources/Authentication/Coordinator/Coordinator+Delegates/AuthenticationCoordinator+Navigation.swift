@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,23 +17,29 @@
 //
 
 import UIKit
+import WireAuthentication
 
 extension AuthenticationCoordinator: UINavigationControllerDelegate {
 
-    /**
-     * Called when the navigation stack changes.
-     *
-     * There are three scenarios where this method can be called: pushing, popping and setting view controllers.
-     *
-     * When a new view controller is **pushed** or the stack is set, the state has already been updated, and the `currentViewController`
-     * is equal to the view controller being pushed. We don't need to change the state.
-     *
-     * When the current view controller is **popped**, the state hasn't been updated (because it comes from user interaction),
-     * so we need to unwind the state and update the current view controller to the one that is currently visible. In this case,
-     * the view controller passed by the navigation controller is not equal to the `currentViewController`.
-     */
+    /// Called when the navigation stack changes.
+    ///
+    /// There are three scenarios where this method can be called: pushing, popping and setting view controllers.
+    ///
+    /// When a new view controller is **pushed** or the stack is set, the state has already been updated, and the
+    /// `currentViewController`
+    /// is equal to the view controller being pushed. We don't need to change the state.
+    ///
+    /// When the current view controller is **popped**, the state hasn't been updated (because it comes from user
+    /// interaction),
+    /// so we need to unwind the state and update the current view controller to the one that is currently visible. In
+    /// this case,
+    /// the view controller passed by the navigation controller is not equal to the `currentViewController`.
 
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
         defer {
             detectSSOCodeIfPossible()
         }
@@ -41,7 +47,7 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
         // Detect if we are popping the durrent view controller
 
         guard
-            let currentViewController = self.currentViewController,
+            let currentViewController,
             let authenticationViewController = viewController as? AuthenticationStepViewController else {
             return
         }
@@ -52,6 +58,7 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
         }
 
         self.currentViewController = authenticationViewController
+        self.currentViewController?.didRewindToThisView()
         stateController.unwindState()
     }
 

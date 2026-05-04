@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,45 +19,49 @@
 import Foundation
 import WireDataModel
 
-/**
- * Creates call centers.
- */
+/// Creates call centers.
 
-@objcMembers public class WireCallCenterV3Factory: NSObject {
+public enum WireCallCenterV3Factory {
 
     /// The class to use when creating a call center,
     public static var wireCallCenterClass: WireCallCenterV3.Type = WireCallCenterV3.self
 
     /// The class to use when creating a voice channel.
-    public static var voiceChannelClass: VoiceChannel.Type = VoiceChannelV3.self
+    public static var voiceChannelClass: VoiceChannelV3.Type = VoiceChannelV3.self
 
-    /**
-     * Creates a call center with the specified information.
-     * - parameter userId: The identifier of the current signed-in user.
-     * - parameter clientId: The identifier of the current client on the user's account.
-     * - parameter uiMOC: The Core Data context to use to coordinate events.
-     * - parameter flowManager: The object that controls media flow.
-     * - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
-     * - parameter transport: The object that performs network requests when the call center requests them.
-     * - returns: The call center to use for the given configuration.
-     */
+    /// The notification center used for posting notifications.
+    public static var notificationCenter: NotificationCenter = .default
 
-    public class func callCenter(withUserId userId: AVSIdentifier,
-                                 clientId: String,
-                                 uiMOC: NSManagedObjectContext,
-                                 flowManager: FlowManagerType,
-                                 analytics: AnalyticsType? = nil,
-                                 transport: WireCallCenterTransport) -> WireCallCenterV3 {
+    /// Creates a call center with the specified information.
+    /// - parameter userId: The identifier of the current signed-in user.
+    /// - parameter clientId: The identifier of the current client on the user's account.
+    /// - parameter uiMOC: The Core Data context to use to coordinate events.
+    /// - parameter flowManager: The object that controls media flow.
+    /// - parameter transport: The object that performs network requests when the call center requests them.
+    /// - returns: The call center to use for the given configuration.
 
+    public static func callCenter(
+        withUserId userId: AVSIdentifier,
+        clientId: String,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        transport: WireCallCenterTransport,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) -> WireCallCenterV3 {
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
         } else {
-            let newInstance = WireCallCenterV3Factory.wireCallCenterClass.init(userId: userId,
-                                                                               clientId: clientId,
-                                                                               uiMOC: uiMOC,
-                                                                               flowManager: flowManager,
-                                                                               analytics: analytics,
-                                                                               transport: transport)
+            let newInstance = WireCallCenterV3Factory.wireCallCenterClass.init(
+                userId: userId,
+                clientId: clientId,
+                uiMOC: uiMOC,
+                flowManager: flowManager,
+                transport: transport,
+                notificationCenter: notificationCenter,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio
             newInstance.usePackagingFeatureConfig = uiMOC.zm_usePackagingFeatureConfig

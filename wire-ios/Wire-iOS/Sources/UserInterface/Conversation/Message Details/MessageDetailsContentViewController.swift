@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
@@ -31,9 +33,7 @@ struct MessageDetailsSectionDescription {
 
 }
 
-/**
- * Displays the list of users for a specified message detail content type.
- */
+/// Displays the list of users for a specified message detail content type.
 
 final class MessageDetailsContentViewController: UIViewController {
 
@@ -41,7 +41,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     /// The type of the displayed content.
     enum ContentType {
-        case reactions, receipts(enabled: Bool)
+        case reactions
+        case receipts(enabled: Bool)
     }
 
     // MARK: - Configuration
@@ -55,7 +56,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details.
     var subtitle: String? {
         get {
-            return subtitleLabel.text
+            subtitleLabel.text
         }
         set {
             subtitleLabel.text = newValue
@@ -66,7 +67,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details in Voice Over.
     var accessibleSubtitle: String? {
         get {
-            return subtitleLabel.accessibilityValue
+            subtitleLabel.accessibilityValue
         }
         set {
             subtitleLabel.accessibilityValue = newValue
@@ -76,7 +77,9 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -90,20 +93,22 @@ final class MessageDetailsContentViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a view controller to display message details of a certain type.
-     */
+    /// Creates a view controller to display message details of a certain type.
 
     init(
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.contentType = contentType
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
@@ -182,7 +187,7 @@ final class MessageDetailsContentViewController: UIViewController {
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         collectionView.fitIn(view: view)
-        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         subtitleBottom?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
@@ -207,17 +212,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .receipts:
             if sections.isEmpty {
-                title = MessageDetails.receiptsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.receiptsTitle
             } else {
-                title = MessageDetails.Tabs.seen(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.seen(count)
 
             }
 
         case .reactions:
             if sections.isEmpty {
-                title = MessageDetails.reactionsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.reactionsTitle
             } else {
-                title = MessageDetails.Tabs.reactions(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.reactions(count)
             }
         }
     }
@@ -235,16 +240,17 @@ final class MessageDetailsContentViewController: UIViewController {
         // Update the bottom cell padding to fit the text
         collectionView.contentInset.bottom = footerRegionHeight
 
-        /*
-         We calculate the distance between the bottom of the last cell and the bottom of the view.
-
-         We use this height to move the status label offscreen if needed, and move it up alongside the
-         content if the user scroll up.
-         */
+        // We calculate the distance between the bottom of the last cell and the bottom of the view.
+        //
+        // We use this height to move the status label offscreen if needed, and move it up alongside the
+        // content if the user scroll up.
 
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
-        let visibleOnScreen = min(scrollableContentHeight - offset, scrollView.bounds.height - scrollView.contentInset.top)
+        let visibleOnScreen = min(
+            scrollableContentHeight - offset,
+            scrollView.bounds.height - scrollView.contentInset.top
+        )
         let bottomSpace = scrollableContentHeight - (visibleOnScreen + offset)
 
         let constant = bottomSpace - padding
@@ -255,39 +261,37 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .reactions:
             noResultsView.label.accessibilityIdentifier = "placeholder.no_likes"
-            noResultsView.placeholderText = MessageDetails.emptyLikes.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyLikes
             noResultsView.icon = .like
 
         case .receipts(enabled: true):
             noResultsView.label.accessibilityIdentifier = "placeholder.no_read_receipts"
-            noResultsView.placeholderText = MessageDetails.emptyReadReceipts.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyReadReceipts
             noResultsView.icon = .eye
 
         case .receipts(enabled: false):
             noResultsView.label.accessibilityIdentifier = "placeholder.read_receipts_disabled"
-            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled
             noResultsView.icon = .eye
         }
     }
 
     // MARK: - Updating the Data
 
-    /**
-     * Updates the list of users for the details.
-     * - parameter sections: The new list of sections to display.
-     */
+    /// Updates the list of users for the details.
+    /// - parameter sections: The new list of sections to display.
 
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
         noResultsView.isHidden = !sections.isEmpty
         self.sections = sections
-        self.updateTitle()
+        updateTitle()
 
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return
         }
 
         collectionView.reloadData()
-        self.updateFooterPosition(for: collectionView)
+        updateFooterPosition(for: collectionView)
     }
 
 }
@@ -297,11 +301,11 @@ final class MessageDetailsContentViewController: UIViewController {
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return sections[section].items.count
+        sections[section].items.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func collectionView(
@@ -353,7 +357,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             assertionFailure("expected available 'user'!")
         }
 
-        cell.showSeparator = indexPath.item != (sections.endIndex - 1)
+        cell.showSeparator = indexPath.item != (sections[indexPath.section].items.count - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
 
@@ -365,7 +369,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     /// When the user selects a cell, show the details for this user.
@@ -384,10 +388,11 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             viewer: viewer,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.delegate = self
-        profileViewController.viewControllerDismisser = self
 
         presentDetailsViewController(profileViewController, above: cell)
     }
@@ -396,14 +401,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         updateFooterPosition(for: scrollView)
     }
 
-}
-
-// MARK: - ViewControllerDismisser
-
-extension MessageDetailsContentViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        viewController.dismiss(animated: true, completion: nil)
-    }
 }
 
 // MARK: - ProfileViewControllerDelegate
@@ -421,10 +418,10 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
 
 // MARK: - Adaptive Presentation
 
-extension MessageDetailsContentViewController {
+private extension MessageDetailsContentViewController {
 
     /// Presents a profile view controller as a popover or a modal depending on the context.
-    fileprivate func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
+    func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
         let presentedController = controller.wrapInNavigationController()
         presentedController.modalPresentationStyle = .formSheet
 

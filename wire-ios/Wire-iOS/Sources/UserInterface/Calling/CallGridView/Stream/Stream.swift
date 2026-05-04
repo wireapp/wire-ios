@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,28 +27,27 @@ struct Stream: Equatable {
     let callParticipantState: CallParticipantState
     let activeSpeakerState: ActiveSpeakerState
     let isPaused: Bool
-
 }
 
 extension Stream: Differentiable {
     var differenceIdentifier: AVSClient {
-        return streamId
+        streamId
     }
 
     var microphoneState: MicrophoneState? {
-        guard case .connected(_, let state) = callParticipantState else { return nil }
+        guard case let .connected(_, state) = callParticipantState else { return nil }
         return state
     }
 
     var videoState: VideoState? {
-        guard case .connected(let state, _) = callParticipantState else { return nil }
+        guard case let .connected(state, _) = callParticipantState else { return nil }
         return state
     }
 }
 
 extension Stream {
     static func == (lhs: Stream, rhs: Stream) -> Bool {
-        return lhs.streamId == rhs.streamId
+        lhs.streamId == rhs.streamId
             && lhs.callParticipantState == rhs.callParticipantState
             && lhs.activeSpeakerState == rhs.activeSpeakerState
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The types of image provided by the Giphy API.
- */
+/// The types of image provided by the Giphy API.
 
 public enum ZiphyImageType: String, CodingKey {
 
@@ -30,17 +28,17 @@ public enum ZiphyImageType: String, CodingKey {
     case fixedWidth = "fixed_width"
     case fixedWidthDownsampled = "fixed_width_downsampled"
     case fixedWidthSmall = "fixed_width_small"
-    case downsized = "downsized"
+    case downsized
     case downsizedLarge = "downsized_large"
     case downsizedMedium = "downsized_medium"
     case downsizedSmall = "downsized_small"
-    case original = "original"
+    case original
     case preview = "preview_gif"
 
 }
 
 extension ZiphyImageType {
     static var previewFallbackList: [ZiphyImageType] {
-        return [.fixedWidthDownsampled, .fixedWidth, .downsized, .original]
+        [.fixedWidthDownsampled, .fixedWidth, .downsized, .original]
     }
 }

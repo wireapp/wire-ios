@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 
 let IsTypingKey = "isTyping"
@@ -24,13 +25,14 @@ let StatusKey = "status"
 let StoppedKey = "stopped"
 let StartedKey = "started"
 
-@objc extension ZMConversation {
+@objc
+public extension ZMConversation {
 
     // Used for handling remote notifications
-    public static let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
+    static let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
 
     // Used for handling local notifications
-    public static let typingChangeNotificationName = Notification.Name(rawValue: "ZMTypingChangeNotification")
+    static let typingChangeNotificationName = Notification.Name(rawValue: "ZMTypingChangeNotification")
 
 }
 
@@ -40,9 +42,11 @@ public struct TypingEvent {
     let objectID: NSManagedObjectID
     let isTyping: Bool
 
-    static func typingEvent(with objectID: NSManagedObjectID,
-                            isTyping: Bool,
-                            ifDifferentFrom other: TypingEvent?) -> TypingEvent? {
+    static func typingEvent(
+        with objectID: NSManagedObjectID,
+        isTyping: Bool,
+        ifDifferentFrom other: TypingEvent?
+    ) -> TypingEvent? {
         let newEvent = TypingEvent(date: Date(), objectID: objectID, isTyping: isTyping)
         if let other, newEvent.isEqual(other: other) {
             return nil
@@ -51,9 +55,9 @@ public struct TypingEvent {
     }
 
     func isEqual(other: TypingEvent) -> Bool {
-        return isTyping == other.isTyping &&
-               objectID.isEqual(other.objectID) &&
-               fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
+        isTyping == other.isTyping &&
+            objectID.isEqual(other.objectID) &&
+            fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
     }
 
 }
@@ -92,7 +96,11 @@ class TypingEventQueue {
         var event: TypingEvent?
 
         while event == nil, let (convObjectID, isTyping) = conversations.popFirst() {
-            event = TypingEvent.typingEvent(with: convObjectID, isTyping: isTyping, ifDifferentFrom: lastSentTypingEvent)
+            event = TypingEvent.typingEvent(
+                with: convObjectID,
+                isTyping: isTyping,
+                ifDifferentFrom: lastSentTypingEvent
+            )
         }
         if let anEvent = event {
             lastSentTypingEvent = anEvent
@@ -105,48 +113,77 @@ class TypingEventQueue {
     }
 }
 
-public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
+public class TypingStrategy: AbstractRequestStrategy, TearDownCapable {
 
     fileprivate var typing: Typing!
     fileprivate let typingEventQueue = TypingEventQueue()
     fileprivate var tornDown: Bool = false
     fileprivate var observers: [Any] = []
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
-    @available (*, unavailable)
+    @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    public convenience init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
-        self.init(applicationStatus: applicationStatus, syncContext: managedObjectContext, uiContext: managedObjectContext.zm_userInterface, typing: nil)
+    public convenience init(
+        applicationStatus: ApplicationStatus,
+        managedObjectContext: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.init(
+            applicationStatus: applicationStatus,
+            syncContext: managedObjectContext,
+            uiContext: managedObjectContext.zm_userInterface,
+            typing: nil,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
-    init(applicationStatus: ApplicationStatus, syncContext: NSManagedObjectContext, uiContext: NSManagedObjectContext, typing: Typing?) {
+    init(
+        applicationStatus: ApplicationStatus,
+        syncContext: NSManagedObjectContext,
+        uiContext: NSManagedObjectContext,
+        typing: Typing?,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.typing = typing ?? Typing(uiContext: uiContext, syncContext: syncContext)
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
 
         observers.append(
-            NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
-                                              context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
+            NotificationInContext.addObserver(
+                name: ZMConversation.typingNotificationName,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in self?.addConversationForNextRequest(note: $0) }
             )
-
-        observers.append(
-            NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
-                                              context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
         )
 
         observers.append(
-            NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
-                                              context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.shouldClearTypingForConversation(note: $0) })
+            NotificationInContext.addObserver(
+                name: ZMConversation.typingChangeNotificationName,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in self?.addConversationForNextRequest(note: $0) }
+            )
+        )
+
+        observers.append(
+            NotificationInContext.addObserver(
+                name: ZMConversation.clearTypingNotificationName,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in
+                    self?.shouldClearTypingForConversation(note: $0)
+                }
+            )
         )
     }
 
@@ -154,7 +191,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         assert(tornDown, "Need to tearDown TypingStrategy")
     }
 
-    @objc fileprivate func addConversationForNextRequest(note: NotificationInContext) {
+    @objc
+    fileprivate func addConversationForNextRequest(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
         else { return }
 
@@ -163,7 +201,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         }
     }
 
-    @objc fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
+    @objc
+    fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
         else { return }
 
@@ -196,14 +235,19 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
 
         let payload = [StatusKey: typingEvent.isTyping ? StartedKey : StoppedKey]
-        let request = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
         request.setDebugInformationTranscoder(self)
 
         return request
@@ -217,71 +261,28 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         tornDown = true
         observers = []
     }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        guard liveEvents else { return }
-
-        events.forEach { event in
-            process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
-        }
-    }
-
-    func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
-        guard
-            event.type.isOne(of: [.conversationTyping, .conversationOtrMessageAdd, .conversationMLSMessageAdd, .conversationMemberLeave]),
-            let userID = event.senderUUID,
-            let conversationID = event.conversationUUID
-        else { return }
-
-        let user = ZMUser.fetchOrCreate(with: userID, domain: event.senderDomain, in: managedObjectContext)
-        let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(with: conversationID, domain: event.conversationDomain, in: managedObjectContext)
-
-        if event.type == .conversationTyping {
-            guard let payloadData = event.payload["data"] as? [String: String],
-                let status = payloadData[StatusKey]
-                else { return }
-            processIsTypingUpdateEvent(for: user, in: conversation, with: status)
-        } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
-            if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        } else if event.type == .conversationMemberLeave {
-            let users = event.users(in: managedObjectContext, createIfNeeded: false)
-            users.forEach { user in
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        }
-    }
-
-    func processIsTypingUpdateEvent(for user: ZMUser, in conversation: ZMConversation, with status: String) {
-        let startedTyping = (status == StartedKey)
-        let stoppedTyping = (status == StoppedKey)
-        if startedTyping || stoppedTyping {
-            typing.setIsTyping(startedTyping, for: user, in: conversation)
-        }
-    }
 }
 
-extension TypingStrategy {
+public extension TypingStrategy {
 
-    public static func notifyTranscoderThatUser(isTyping: Bool, in conversation: ZMConversation) {
+    static func notifyTranscoderThatUser(isTyping: Bool, in conversation: ZMConversation) {
         let userInfo = [IsTypingKey: NSNumber(value: isTyping)]
         NotificationInContext(
             name: ZMConversation.typingChangeNotificationName,
             context: conversation.managedObjectContext!.notificationContext,
             object: conversation,
-            userInfo: userInfo)
+            userInfo: userInfo
+        )
         .post()
     }
 
-    public static func clearTranscoderStateForTyping(in conversation: ZMConversation) {
+    static func clearTranscoderStateForTyping(in conversation: ZMConversation) {
         NotificationInContext(
             name: ZMConversation.clearTypingNotificationName,
             context: conversation.managedObjectContext!.notificationContext,
             object: conversation,
-            userInfo: nil)
-            .post()
+            userInfo: nil
+        )
+        .post()
     }
 }

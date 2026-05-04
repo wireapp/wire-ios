@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public final class UnownedObject<T: AnyObject> {
         self.unbox = o
     }
 
-    public var isValid: Bool { return self.unbox != nil }
+    public var isValid: Bool { unbox != nil }
 }
 
 @objcMembers
@@ -36,5 +36,5 @@ public final class UnownedNSObject: NSObject {
         self.unbox = unbox
     }
 
-    public var isValid: Bool { return self.unbox != nil }
+    public var isValid: Bool { unbox != nil }
 }

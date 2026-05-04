@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension Message {
     static func dayFormatter(date: Date) -> DateFormatter {
-        return date.olderThanOneWeekdateFormatter
+        date.olderThanOneWeekdateFormatter
     }
 }
 
@@ -29,7 +29,11 @@ extension XCTestCase {
 
     class func resetDayFormatter() {
         let locale = Locale(identifier: "en_US")
-        WRDateFormatter.thisYearFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEEdMMMM", options: 0, locale: locale)
+        WRDateFormatter.thisYearFormatter.dateFormat = DateFormatter.dateFormat(
+            fromTemplate: "EEEEdMMMM",
+            options: 0,
+            locale: locale
+        )
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full

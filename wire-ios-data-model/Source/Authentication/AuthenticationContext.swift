@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireLogging
 
 // sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.
@@ -49,7 +50,11 @@ public struct AuthenticationContext: AuthenticationContextProtocol {
         storedContext().canEvaluatePolicy(policy, error: error)
     }
 
-    public func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void) {
+    public func evaluatePolicy(
+        _ policy: LAPolicy,
+        localizedReason: String,
+        reply: @escaping (Bool, (any Error)?) -> Void
+    ) {
         WireLogger.ear.info("AuthenticationContext: evaluatePolicy")
         storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }

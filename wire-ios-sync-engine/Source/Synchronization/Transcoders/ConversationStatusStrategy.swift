@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,10 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         conv.resetLocallyModifiedKeys(lastReadKeySet)
                         didUpdateConversation = true
                     } catch {
-                        Logging.messageProcessing.warn("Failed to update last read in self conversation. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn(
+                                "Failed to update last read in self conversation. Reason: \(error.localizedDescription)"
+                            )
                         return
                     }
                 }
@@ -49,7 +52,10 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         conv.deleteOlderMessages()
                         didUpdateConversation = true
                     } catch {
-                        Logging.messageProcessing.warn("Failed to update cleared in self conversation. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn(
+                                "Failed to update cleared in self conversation. Reason: \(error.localizedDescription)"
+                            )
                         return
                     }
                 }
@@ -57,13 +63,12 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
         }
 
         if didUpdateConversation {
-            self.managedObjectContext?.enqueueDelayedSave()
+            managedObjectContext?.enqueueDelayedSave()
         }
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        return request
+        NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {

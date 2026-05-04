@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ protocol AppLocationManagerProtocol: AnyObject {
 
 /// The AppLocationManager class is responsible for handling location-related services using CoreLocation.
 /// It conforms to the AppLocationManagerProtocol and CLLocationManagerDelegate protocols,
-/// providing an interface for requesting location authorization, updating locations, and managing location authorization status.
+/// providing an interface for requesting location authorization, updating locations, and managing location
+/// authorization status.
 final class AppLocationManager: NSObject, AppLocationManagerProtocol {
 
     // MARK: - Properties
@@ -56,7 +57,7 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     weak var delegate: AppLocationManagerDelegate?
 
     var authorizationStatus: CLAuthorizationStatus {
-        return locationManager.authorizationStatus
+        locationManager.authorizationStatus
     }
 
     var userLocationAuthorized: Bool {
@@ -67,7 +68,7 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     // MARK: - Init
 
     override init() {
-        locationManager = CLLocationManager()
+        self.locationManager = CLLocationManager()
         super.init()
         locationManager.delegate = self
     }

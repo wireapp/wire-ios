@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,18 @@
 //
 
 import avs
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AVURLAsset_conversionTests: XCTestCase {
-
-    override class func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override class func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
 
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN
         let videoURL = urlForResource(inTestBundleNamed: "video.mp4")
-        let originalAsset: AVURLAsset = AVURLAsset(url: videoURL, options: nil)
+        let originalAsset = AVURLAsset(url: videoURL, options: nil)
 
         // WHEN
-        let expectation = self.expectation(description: "Video converted")
+        let expectation = expectation(description: "Video converted")
 
         AVURLAsset.convertVideoToUploadFormat(
             at: videoURL,

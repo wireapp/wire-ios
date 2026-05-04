@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@ struct SwitchBackendConfirmationView: View {
 
     let viewModel: SwitchBackendConfirmationViewModel
 
-    @Environment(\.dismiss)
-    var dismiss
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(spacing: 24) {
@@ -37,15 +36,13 @@ struct SwitchBackendConfirmationView: View {
         .interactiveDismissDisabled()
     }
 
-    @ViewBuilder
-    private var title: some View {
+    @ViewBuilder private var title: some View {
         Text(Strings.title)
-            .font(.textStyle(.h2))
+            .font(for: .h2)
             .foregroundStyle(Color.primaryText)
     }
 
-    @ViewBuilder
-    private var backendDetails: some View {
+    @ViewBuilder private var backendDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
@@ -111,34 +108,31 @@ struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder
-    private var buttons: some View {
+    @ViewBuilder private var buttons: some View {
         VStack(spacing: 6) {
             cancelButton
             proceedButton
         }
     }
 
-    @ViewBuilder
-    private var cancelButton: some View {
+    @ViewBuilder private var cancelButton: some View {
         Button {
             viewModel.handleEvent(.userDidCancel)
             dismiss()
         } label: {
             Text(L10n.Localizable.General.cancel)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .buttonStyle(SecondaryButtonStyle())
     }
 
-    @ViewBuilder
-    private var proceedButton: some View {
+    @ViewBuilder private var proceedButton: some View {
         Button {
             viewModel.handleEvent(.userDidConfirm)
             dismiss()
         } label: {
             Text(Strings.proceed)
-                .font(.textStyle(.buttonBig))
+                .font(for: .buttonBig)
         }
         .buttonStyle(PrimaryButtonStyle())
     }

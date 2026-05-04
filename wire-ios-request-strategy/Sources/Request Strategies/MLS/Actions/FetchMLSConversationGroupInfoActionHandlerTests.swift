@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,13 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSConversationGroupInfoAction, FetchMLSConversationGroupInfoActionHandler> {
+class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<
+    FetchMLSConversationGroupInfoAction,
+    FetchMLSConversationGroupInfoActionHandler
+> {
 
     override func setUp() {
         super.setUp()

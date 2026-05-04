@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,13 @@
 
 import Foundation
 
-extension ZMAssetClientMessage {
+public extension ZMAssetClientMessage {
 
     /// Name of notification fired when requesting a download of an image
-    public static let imageDownloadNotificationName = NSNotification.Name(rawValue: "ZMAssetClientMessageImageDownloadNotification")
+    static let imageDownloadNotificationName = NSNotification
+        .Name(rawValue: "ZMAssetClientMessageImageDownloadNotification")
 
     /// Name of notification fired when requesting a download of an asset
-    public static let assetDownloadNotificationName = NSNotification.Name(rawValue: "ZMAssetClientMessageAssetDownloadNotification")
+    static let assetDownloadNotificationName = NSNotification
+        .Name(rawValue: "ZMAssetClientMessageAssetDownloadNotification")
 }

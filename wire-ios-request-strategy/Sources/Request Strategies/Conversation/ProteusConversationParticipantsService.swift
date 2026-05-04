@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,9 +50,9 @@ struct ProteusConversationParticipantsService: ProteusConversationParticipantsSe
 
         do {
             try await action.perform(in: context.notificationContext)
-        } catch AddParticipantAction.Failure.nonFederatingDomains(let domains) {
+        } catch let AddParticipantAction.Failure.nonFederatingDomains(domains) {
             throw FederationError.nonFederatingDomains(domains)
-        } catch AddParticipantAction.Failure.unreachableDomains(let domains) {
+        } catch let AddParticipantAction.Failure.unreachableDomains(domains) {
             throw FederationError.unreachableDomains(domains)
         }
     }

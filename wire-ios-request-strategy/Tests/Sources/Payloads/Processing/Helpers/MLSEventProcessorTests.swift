@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
-    let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
+    let groupIdString = Data("identifier".utf8).base64EncodedString()
 
     override func setUp() {
         super.setUp()
@@ -42,8 +42,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         mlsServiceMock = .init()
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
-        mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
-        mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
+        mlsServiceMock.processWelcomeMessageWelcomeMessageContext_MockValue = .random()
+        mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = {}
 
         oneOnOneResolverMock = .init()
         oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
@@ -66,7 +66,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         sut = MLSEventProcessor(
             conversationService: conversationServiceMock,
-            staleKeyMaterialDetector: staleKeyMaterialDetectorMock
+            staleKeyMaterialDetector: staleKeyMaterialDetectorMock,
+            localDomain: "wire.com"
         )
     }
 
@@ -234,7 +235,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
     func internalTest_wipeMLSGroupWithProtocol(
         _ messageProtocol: MessageProtocol,
         shouldWipe: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given
@@ -279,9 +280,9 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         // When
         await sut.updateConversationIfNeeded(
-            conversation: self.conversation,
+            conversation: conversation,
             fallbackGroupID: .init(base64Encoded: groupIdString),
-            context: self.syncMOC
+            context: syncMOC
         )
 
         await syncMOC.perform {

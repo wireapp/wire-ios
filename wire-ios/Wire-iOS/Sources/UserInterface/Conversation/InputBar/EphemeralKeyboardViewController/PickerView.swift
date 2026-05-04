@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,14 +29,14 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     // MARK: - Properties
 
     var selectorColor: UIColor?
-    var tapRecognizer: UIGestureRecognizer! = nil
+    var tapRecognizer: UIGestureRecognizer!
     var didTapViewClosure: (() -> Void)?
 
     // MARK: - Initialization
 
     init() {
         super.init(frame: .zero)
-        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        self.tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
         tapRecognizer.delegate = self
         addGestureRecognizer(tapRecognizer)
     }
@@ -85,21 +85,21 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+        gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return true
+        true
     }
 
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+        otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
 }

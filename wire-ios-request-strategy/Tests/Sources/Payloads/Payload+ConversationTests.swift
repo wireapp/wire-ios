@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class Payload_ConversationTests: MessagingTestBase {
 
@@ -138,7 +138,7 @@ class Payload_ConversationTests: MessagingTestBase {
 
         // THEN
         XCTAssertNotNil(conversation)
-        XCTAssertEqual(conversation?.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
+        XCTAssertEqual(conversation?.epochTimestamp, Date(timeIntervalSince1970: 1_620_816_722.671))
     }
 
     // MARK: -

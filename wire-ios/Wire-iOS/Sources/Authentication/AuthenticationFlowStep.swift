@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
 /// The context that caused the user to not have a complete history.
@@ -34,8 +35,16 @@ indirect enum AuthenticationFlowStep: Equatable {
 
     // Initial Steps
     case start
+    // New WireAuthentication feature module
+    case wireAuthenticationModule
+    // Legacy authentication flow
     case landingScreen
-    case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
+    case reauthenticate(
+        credentials: LoginCredentials?,
+        environment: BackendEnvironment2?,
+        numberOfAccounts: Int,
+        isSignedOut: Bool
+    )
 
     // Sign-In
     case provideCredentials(AuthenticationPrefilledCredentials?)
@@ -73,39 +82,100 @@ indirect enum AuthenticationFlowStep: Equatable {
     var needsInterface: Bool {
         switch self {
         // Initial Steps
-        case .start: return false
-        case .landingScreen: return true
-        case .reauthenticate: return true
-
+        case .start: false
+        case .wireAuthenticationModule: true
+        case .landingScreen: true
+        case .reauthenticate: true
         // Sign-In
-        case .provideCredentials: return true
-        case .enterEmailVerificationCode: return true
-        case .authenticateEmailCredentials: return false
-        case .registerEmailCredentials: return false
-        case .companyLogin: return false
-        case .switchBackend: return true
-
+        case .provideCredentials: true
+        case .enterEmailVerificationCode: true
+        case .authenticateEmailCredentials: false
+        case .registerEmailCredentials: false
+        case .companyLogin: false
+        case .switchBackend: true
         // Post Sign-In
-        case .noHistory: return true
-        case .clientManagement: return true
-        case .deleteClient: return true
-        case .addEmailAndPassword: return true
-        case .enrollE2EIdentity: return true
-        case .enrollE2EIdentitySuccess: return true
-        case .addUsername: return true
-        case .pendingInitialSync: return false
-        case .pendingEmailLinkVerification: return true
-
+        case .noHistory: true
+        case .clientManagement: true
+        case .deleteClient: true
+        case .addEmailAndPassword: true
+        case .enrollE2EIdentity: true
+        case .enrollE2EIdentitySuccess: true
+        case .addUsername: true
+        case .pendingInitialSync: false
+        case .pendingEmailLinkVerification: true
         // Registration
-        case .createCredentials: return true
-        case .sendActivationCode: return false
-        case .enterActivationCode: return true
-        case .activateCredentials: return false
-        case .incrementalUserCreation(_, let intermediateStep): return intermediateStep.needsInterface
-        case .createUser: return false
-
+        case .createCredentials: true
+        case .sendActivationCode: false
+        case .enterActivationCode: true
+        case .activateCredentials: false
+        case let .incrementalUserCreation(_, intermediateStep): intermediateStep.needsInterface
+        case .createUser: false
         // Configuration
-        case .configureDevice: return false
+        case .configureDevice: false
+        }
+    }
+
+}
+
+extension AuthenticationFlowStep: CustomStringConvertible {
+
+    // Don't include any of the associated values as they may be
+    // sensitive and it's know everywhere we log steps.
+
+    var description: String {
+        switch self {
+        case .start:
+            "start"
+        case .wireAuthenticationModule:
+            "wireAuthenticationModule"
+        case .landingScreen:
+            "landingScreen"
+        case .reauthenticate:
+            "reauthenticate"
+        case .provideCredentials:
+            "provideCredentials"
+        case .enterEmailVerificationCode:
+            "enterEmailVerificationCode"
+        case .authenticateEmailCredentials:
+            "authenticateEmailCredentials"
+        case .companyLogin:
+            "companyLogin"
+        case .switchBackend:
+            "switchBackend"
+        case .noHistory:
+            "noHistory"
+        case .clientManagement:
+            "clientManagement"
+        case .deleteClient:
+            "deleteClient"
+        case .addEmailAndPassword:
+            "addEmailAndPassword"
+        case .enrollE2EIdentity:
+            "enrollE2EIdentity"
+        case .enrollE2EIdentitySuccess:
+            "enrollE2EIdentitySuccess"
+        case .addUsername:
+            "addUsername"
+        case .registerEmailCredentials:
+            "registerEmailCredentials"
+        case .pendingEmailLinkVerification:
+            "pendingEmailLinkVerification"
+        case .pendingInitialSync:
+            "pendingInitialSync"
+        case .createCredentials:
+            "createCredentials"
+        case .sendActivationCode:
+            "sendActivationCode"
+        case .enterActivationCode:
+            "enterActivationCode"
+        case .activateCredentials:
+            "activateCredentials"
+        case .incrementalUserCreation:
+            "incrementalUserCreation"
+        case .createUser:
+            "createUser"
+        case .configureDevice:
+            "configureDevice"
         }
     }
 
@@ -115,13 +185,14 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
-    case start, provideMarketingConsent, setName, setPassword
+    case start
+    case setName
+    case setPassword
 
     var needsInterface: Bool {
         switch self {
-        case .start: return false
-        case .provideMarketingConsent: return false
-        default: return true
+        case .start: false
+        default: true
         }
     }
 }

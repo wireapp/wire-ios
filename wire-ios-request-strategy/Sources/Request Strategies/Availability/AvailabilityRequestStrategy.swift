@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+import WireLogging
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -32,11 +34,11 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 
@@ -46,9 +48,17 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     func synchronize(key: String, for object: ZMUser, completion: @escaping () -> Void) {
         guard object.isSelfUser else { return completion() }
 
-        let message = GenericMessage(content: WireProtos.Availability(object.availability))
-        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
-        let proteusMessage = GenericMessageEntity(message: message, context: context, targetRecipients: .users(recipients), completionHandler: nil)
+        let message = GenericMessage(content: GenericMessageProtocol.Availability(object.availability))
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(
+            in: context,
+            maxCount: maximumBroadcastRecipients
+        )
+        let proteusMessage = GenericMessageEntity(
+            message: message,
+            context: context,
+            targetRecipients: .users(recipients),
+            completionHandler: nil
+        )
 
         WaitingGroupTask(context: context) { [self] in
             do {
@@ -63,25 +73,4 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             }
         }
     }
-}
-
-extension AvailabilityRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard
-                let senderUUID = event.senderUUID, event.isGenericMessageEvent,
-                let message = GenericMessage(from: event), message.hasAvailability
-            else {
-                continue
-            }
-
-            guard let user = ZMUser.fetch(with: senderUUID, in: context) else {
-                assertionFailure("User not found to updateAvailability")
-                continue
-            }
-            user.updateAvailability(from: message)
-        }
-    }
-
 }

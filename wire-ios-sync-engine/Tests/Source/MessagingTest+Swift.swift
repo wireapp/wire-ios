@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,36 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireNetwork
+import WireTransport
+
 @testable import WireSyncEngine
 
-extension MessagingTest {
+public extension MessagingTest {
 
     @discardableResult
-    func createSelfUser() -> ZMUser {
+    internal func createSelfUser() -> ZMUser {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier = UUID()
         syncMOC.saveOrRollback()
         return selfUser
     }
 
-    func createClient(for user: ZMUser) -> UserClient {
+    internal func createClient(for user: ZMUser) -> UserClient {
         let client = UserClient.insertNewObject(in: syncMOC)
         client.user = user
         client.remoteIdentifier = UUID().transportString()
         return client
     }
 
-    public func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessageWith(text: self.name)
+    func createClientTextMessage() -> ZMClientMessage? {
+        createClientTextMessageWith(text: name)
     }
 
-    public func createClientTextMessageWith(text: String) -> ZMClientMessage? {
+    func createClientTextMessageWith(text: String) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.syncMOC)
-        let textMessage = GenericMessage(content: Text(content: text,
-                                                       mentions: [],
-                                                       linkPreviews: [],
-                                                       replyingTo: nil), nonce: nonce)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: syncMOC)
+        let textMessage = GenericMessage(content: Text(
+            content: text,
+            mentions: [],
+            linkPreviews: [],
+            replyingTo: nil
+        ), nonce: nonce)
         do {
             try message.setUnderlyingMessage(textMessage)
         } catch {
@@ -55,7 +61,7 @@ extension MessagingTest {
     }
 
     @discardableResult
-    func createMLSSelfConversation() -> ZMConversation {
+    internal func createMLSSelfConversation() -> ZMConversation {
         let selfConversation = ZMConversation.insertNewObject(in: syncMOC)
         selfConversation.conversationType = .`self`
         selfConversation.remoteIdentifier = UUID.create()
@@ -66,31 +72,56 @@ extension MessagingTest {
     }
 
     @objc
-    public func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL,
-                                  inMemoryStore: shouldUseInMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: shouldUseInMemoryStore,
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
 
-        stack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
-
+        try await stack.load()
         return stack
     }
 
     @objc
-    public func setDefaults() {
-        setCurrentAPIVersion(.v0)
+    func setBackendInfoDefaults() {
+        BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
-
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = false
     }
 
     @objc
-    public func unsetDefaultAPIVersion() {
-        resetCurrentAPIVersion()
+    @discardableResult
+    func createSelfClient() -> UserClient {
+        createSelfClient(capabilities: [])
     }
+
+    func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
+        let selfClient = setupSelfClient(inMoc: syncMOC)
+        let time = Date().transportString()
+        var payload: [String: AnyObject] = [
+            "id": selfClient.remoteIdentifier as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": time as AnyObject
+        ]
+
+        if capabilities.isEmpty == false {
+            let rawCapabilities: [String] = capabilities.map {
+                switch $0 {
+                case .consumableNotifications:
+                    "consumable-notifications"
+                case .legalholdConsent:
+                    "legalhold-implicit-consent"
+                }
+            }
+            payload["capabilities"] = rawCapabilities as AnyObject
+        }
+        _ = UserClient.createOrUpdateSelfUserClient(payload, context: syncMOC)
+        syncMOC.saveOrRollback()
+        return selfClient
+    }
+
 }

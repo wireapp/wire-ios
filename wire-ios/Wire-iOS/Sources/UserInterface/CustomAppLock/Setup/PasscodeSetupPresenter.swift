@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,34 +17,39 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 final class PasscodeSetupPresenter {
     private weak var userInterface: PasscodeSetupUserInterface?
     private var interactorInput: PasscodeSetupInteractorInput
 
     private var passcodeValidationResult: PasswordValidationResult?
-    private let passcodeCharacterClasses: [PasswordCharacterClass] = [.uppercase,
-                                                                      .lowercase,
-                                                                      .special,
-                                                                      .digits]
+    private let passcodeCharacterClasses: [PasswordCharacterClass] = [
+        .uppercase,
+        .lowercase,
+        .special,
+        .digits
+    ]
 
     var isPasscodeValid: Bool {
         switch passcodeValidationResult {
         case .valid:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
-    convenience init(userInterface: PasscodeSetupUserInterface) {
-        let interactor = PasscodeSetupInteractor()
+    convenience init(userInterface: PasscodeSetupUserInterface, userSession: UserSession) {
+        let interactor = PasscodeSetupInteractor(userSession: userSession)
         self.init(userInterface: userInterface, interactorInput: interactor)
         interactor.interactorOutput = self
     }
 
-    init(userInterface: PasscodeSetupUserInterface,
-         interactorInput: PasscodeSetupInteractorInput) {
+    init(
+        userInterface: PasscodeSetupUserInterface,
+        interactorInput: PasscodeSetupInteractorInput
+    ) {
         self.userInterface = userInterface
         self.interactorInput = interactorInput
     }
@@ -79,7 +84,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
         case .valid:
             userInterface?.createButtonEnabled = true
             resetValidationLabels(errors: Set(PasscodeError.allCases), passed: true)
-        case .invalid(let violations):
+        case let .invalid(violations):
             userInterface?.createButtonEnabled = false
 
             resetValidationLabels(errors: Set(PasscodeError.allCases), passed: true)
@@ -97,7 +102,7 @@ extension PasscodeSetupPresenter {
             switch violation {
             case .tooShort:
                 passcodeErrors.insert(.tooShort)
-            case .missingRequiredClasses(let passwordCharacterClass):
+            case let .missingRequiredClasses(passwordCharacterClass):
                 passcodeErrors = passcodeErrors.union(passcodeError(from: passwordCharacterClass))
             default:
                 break

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ private struct LegalHoldParticipantsSectionViewModel {
 
     var sectionAccesibilityIdentifier = "label.groupdetails.participants"
     var sectionTitle: String {
-        return L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
+        L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
     }
 
     init(participants: [UserType]) {
@@ -44,7 +44,10 @@ typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
 private extension ConversationLike {
     func createViewModel() -> LegalHoldParticipantsSectionViewModel {
-        return LegalHoldParticipantsSectionViewModel(participants: sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
+        LegalHoldParticipantsSectionViewModel(
+            participants: sortedActiveParticipantsUserTypes
+                .filter(\.isUnderLegalHold)
+        )
     }
 }
 
@@ -53,22 +56,20 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     fileprivate weak var collectionView: UICollectionView?
     private var viewModel: LegalHoldParticipantsSectionViewModel
     private let conversation: LegalHoldDetailsConversation
+    private let userSession: UserSession
     private var token: AnyObject?
 
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
-    init(conversation: LegalHoldDetailsConversation) {
-        viewModel = conversation.createViewModel()
+    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
+        self.viewModel = conversation.createViewModel()
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
-            token = UserChangeInfo.add(userObserver: self, in: userSession)
+        if let userSession = userSession as? ZMUserSession {
+            self.token = UserChangeInfo.add(userObserver: self, in: userSession)
         }
-    }
-
-    private func setupViewModel() {
-        viewModel = LegalHoldParticipantsSectionViewModel(participants: conversation.sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -78,20 +79,26 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     }
 
     override var sectionTitle: String {
-        return viewModel.sectionTitle
+        viewModel.sectionTitle
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccesibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.participants.count
+        viewModel.participants.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let participant = viewModel.participants[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
@@ -122,7 +129,8 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }
+        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged
+        else { return }
 
         viewModel = conversation.createViewModel()
         collectionView?.reloadData()

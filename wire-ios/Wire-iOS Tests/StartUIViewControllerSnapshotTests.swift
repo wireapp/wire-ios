@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,55 +17,43 @@
 //
 
 import WireDesign
+import WireMessagingAssembly
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
-
-    var isAddressBookAccessDisabled: Bool = false
-
-    var accessStatusDidChangeToGranted: Bool = true
-
-    static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
-
-    func persistCurrentAccessStatus() {
-
-    }
-
-    var isAddressBookAccessGranted: Bool {
-        return false
-    }
-
-    var isAddressBookAccessUnknown: Bool {
-        return true
-    }
-
-    func requestPermissions(_ callback: ((Bool) -> Void)?) {
-        // no-op
-        callback?(false)
-    }
-}
-
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
-    private var mockMainCoordinator: MockMainCoordinator!
-    var sut: StartUIViewController!
-    var mockAddressBookHelper: MockAddressBookHelper!
-    var userSession: UserSessionMock!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockMainCoordinator: AnyMainCoordinator!
+    private var sut: StartUIViewController!
+    private var userSession: UserSessionMock!
+
+    // MARK: - setUp
+
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
         super.setUp()
-
-        mockMainCoordinator = .init()
-        mockAddressBookHelper = MockAddressBookHelper()
+        snapshotHelper = SnapshotHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
-        mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
         mockMainCoordinator = nil
@@ -73,58 +61,144 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Helper Methods
+
     func setupSut() {
         sut = StartUIViewController(
-            addressBookHelperType: MockAddressBookHelper.self,
+            areLegacyBotsAvailable: true,
+            isAppsFeatureEnabled: true,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+            ),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
-        sut.overrideUserInterfaceStyle = .dark
 
         // Set the size for the SUT to match iPhone 14 dimensions
         let screenSize = CGSize(width: 390, height: 844)
         sut.view.frame = CGRect(origin: .zero, size: screenSize)
     }
 
-    func testForWrappedInNavigationViewController() {
+    func setupNavigationController() -> UINavigationController {
+        setupSut()
+        let navigationController = UINavigationController(rootViewController: sut)
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.overrideUserInterfaceStyle = .dark
+        return navigationController
+    }
+
+    // MARK: - Snapshot Tests
+
+    func testStartUIViewControllerNoContact() {
         nonTeamTest {
-            setupSut()
-
-            let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
-            navigationController.overrideUserInterfaceStyle = .dark
-
-            navigationController.pushViewController(sut, animated: false)
-
-            verify(matching: sut.view)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 
-    func testForNoContact() {
-        nonTeamTest {
-            setupSut()
-
-            verify(matching: sut.view)
-        }
-    }
-
-    /// has create group and create guest room rows
-    func testForNoContactWhenSelfIsTeamMember() {
+    func testStartUIViewControllerNoContactWhenSelfIsTeamMember() {
         teamTest {
-            setupSut()
-
-            verify(matching: sut.view)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
 
-    /// has no create group and create guest room rows, and no group selector tab
-    func testForNoContactWhenSelfIsPartner() {
+    func testStartUIViewControllerNoContactWhenSelfIsPartner() {
         teamTest {
             selfUser.membership?.setTeamRole(.partner)
-
-            setupSut()
-
-            verify(matching: sut.view)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
         }
     }
+
+    func testStartUIViewControllerShowsUsersAppsSelector() {
+        teamTest {
+
+            // user is in a team, it's a requirement for apps
+            let mockUserType = MockUserType()
+            mockUserType.hasTeam = true
+            mockUserType.teamRole = .member
+            userSession.selfUser = mockUserType
+
+            // selfUser.membership?.setTeamRole(.partner)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
+    func testStartUIViewControllerDoesNotShowNewChannelOptionForPersonalUser() {
+        // Given, channels are supported and user is a personal user
+        // Note this has been changed for WPB-20233
+        userSession.apiVersion = .v8
+        userSession.isBackendMLSEnabled = true
+
+        nonTeamTest {
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
+    func testStartUIViewControllerShowNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        userSession.apiVersion = .v8
+        userSession.isBackendMLSEnabled = true
+        // channels are enabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .enabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+        // user is in a team and is allowed to create a channel
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        mockUserType.teamRole = .member
+        userSession.selfUser = mockUserType
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
+    }
+
+    func testStartUIViewControllerHideNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+
+        // user is in a team
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        userSession.selfUser = mockUserType
+
+        // but channels are disabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .disabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
+    }
+
 }

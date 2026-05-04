@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@ class MarkdownTextStorage: NSTextStorage {
 
     private let storage = NSTextStorage()
 
-    override var string: String { return storage.string }
+    override var string: String { storage.string }
 
     var currentMarkdown: Markdown = .none
     private var needsCheck: Bool = false
 
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key: Any] {
-        return storage.attributes(at: location, effectiveRange: range)
+        storage.attributes(at: location, effectiveRange: range)
     }
 
     override func setAttributes(_ attrs: [NSAttributedString.Key: Any]?, range: NSRange) {

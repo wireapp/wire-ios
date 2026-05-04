@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,15 +20,26 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
+import WireFoundation
+import WireLocators
+import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
+    @MainActor
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
     )
 
+    @MainActor
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    )
 }
 
 final class ConversationCreationController: UIViewController {
@@ -38,11 +49,10 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
-    static let mainViewHeight: CGFloat = 56
+    private let isAppsFeatureEnabled: Bool
+    private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
-
-    fileprivate var navBarBackgroundView = UIView()
 
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
@@ -51,21 +61,29 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Sections
 
-    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
+    private lazy var nameSection = ConversationCreateNameSectionController(
+        selfUser: userSession.selfUser,
+        isChannel: values.isChannel,
+        delegate: self
+    )
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
-    private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
-        let section = ConversationCreateOptionsSectionController(values: values)
-        section.tapHandler = optionsTapped
-        return section
-    }()
+    private var optionsSections: [ConversationCreateSectionController] {
+        let sections = [
+            guestsSection,
+            (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
+            // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
+            values.encryptionProtocol != .mls ? receiptsSection : nil,
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
+            userSession.isWireDriveEnabled ? fileManagementSection : nil
+        ].compactMap(\.self)
 
-    private lazy var optionsSections = [
-        guestsSection,
-        servicesSection,
-        receiptsSection,
-        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-    ].compactMap { $0 }
+        if let firstSection = sections.first {
+            firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title
+        }
+
+        return sections
+    }
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {
@@ -76,70 +94,100 @@ final class ConversationCreationController: UIViewController {
             return true
         }
 
-        return userSession.selfUser.canCreateMLSGroups
+        return userSession.isBackendMLSEnabled && userSession.selfUser.canCreateMLSGroups
     }
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
         let section = ConversationCreateGuestsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] allowGuests in
-            self.values.allowGuests = allowGuests
-            self.updateOptions()
+            values.allowGuests = allowGuests
+            updateOptions()
         }
 
         return section
     }()
 
-    private lazy var servicesSection: ConversationCreateServicesSectionController = {
-        let section = ConversationCreateServicesSectionController(values: values)
-        section.isHidden = true
+    private lazy var appsSection: ConversationCreateAllowAppsSectionController = {
+        let section = ConversationCreateAllowAppsSectionController(values: values)
 
-        section.toggleAction = { [unowned self] allowServices in
-            self.values.allowServices = allowServices
-            self.updateOptions()
+        section.wireAccentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
+        section.toggleAction = { [unowned self] allowApps in
+            values.allowApps = allowApps
+            updateOptions()
         }
         return section
     }()
 
     private lazy var receiptsSection: ConversationCreateReceiptsSectionController = {
         let section = ConversationCreateReceiptsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] enableReceipts in
-            self.values.enableReceipts = enableReceipts
-            self.updateOptions()
+            values.enableReceipts = enableReceipts
+            updateOptions()
         }
 
         return section
     }()
 
-    private lazy var encryptionProtocolSection: ConversationEncryptionProtocolSectionController = {
+    private lazy var encryptionProtocolSection = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
-        section.isHidden = true
 
-        section.tapAction = {
-            self.presentEncryptionProtocolPicker { [weak self] encryptionProtocol in
-                self?.values.encryptionProtocol = encryptionProtocol
-                self?.updateOptions()
+        section.tapAction = { sender in
+            self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
+                guard let self else { return }
+
+                values.encryptionProtocol = encryptionProtocol
+                updateOptions()
+
+                reloadOptionsSections()
             }
         }
+        return section
+    }()
+
+    private lazy var fileManagementSection = {
+        let section = ConversationCreateFileManagementSectionController(values: values)
+
+        section.toggleAction = { [unowned self] enableFileManagement in
+            values.enableFileManagement = enableFileManagement
+            updateOptions()
+        }
 
         return section
     }()
+
+    private func reloadOptionsSections() {
+        guard let collectionView = collectionViewController.collectionView else { return }
+        updateSections()
+
+        // ignoring the conversation name so we don't loose the info while testing
+        let excludedSectionIndex = collectionViewController.sections.startIndex
+        let endIndex = collectionView.numberOfSections
+        let sectionsToReload = IndexSet(integersIn: (excludedSectionIndex + 1) ..< endIndex)
+
+        collectionView.performBatchUpdates {
+            collectionView.reloadSections(sectionsToReload)
+        }
+    }
 
     // MARK: - Life cycle
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol,
+            isChannel: false,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
 
@@ -148,7 +196,7 @@ final class ConversationCreationController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -158,10 +206,6 @@ final class ConversationCreationController: UIViewController {
 
         setupViews()
 
-        // try to overtake the first responder from the other view
-        if UIResponder.currentFirst != nil {
-            nameSection.becomeFirstResponder()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -169,15 +213,10 @@ final class ConversationCreationController: UIViewController {
         setupNavigationBar()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        nameSection.becomeFirstResponder()
-    }
-
     // MARK: - Methods
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -187,9 +226,8 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupViews() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: if keyboard is open, it should scroll.
-        // swiftlint:enable todo_requires_jira_link
         let collectionView = UICollectionView(forGroupedSections: ())
 
         collectionView.contentInsetAdjustmentBehavior = .never
@@ -197,55 +235,47 @@ final class ConversationCreationController: UIViewController {
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         collectionViewController.collectionView = collectionView
+        updateSections()
+    }
+
+    private func updateSections() {
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
-            collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
+            collectionViewController.sections.append(contentsOf: optionsSections)
         }
-
-        navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
-        view.addSubview(navBarBackgroundView)
-
-        navBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
-            navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
-        ])
     }
 
     private func setupNavigationBar() {
-        setupNavigationBarTitle(CreateGroupName.title.capitalized)
-        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
+
+        setupNavigationBarTitle(CreateGroupName.title)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
         }
-
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: L10n.Localizable.General.next.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(tryToProceed)
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: L10n.Localizable.General.next,
+            action: UIAction { [weak self] _ in
+                self?.tryToProceed()
+            }
         )
-        nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
-        nextButtonItem.tintColor = UIColor.accent()
-        nextButtonItem.isEnabled = false
-        navigationItem.rightBarButtonItem = nextButtonItem
 
+        nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
+        nextButtonItem.tintColor = UIColor.accent()
+        nextButtonItem.isEnabled = isGroupNameValid()
+        navigationItem.rightBarButtonItem = nextButtonItem
     }
 
-    func proceedWith(value: SimpleTextField.Value) {
+    func proceedWith(value: WireTextField.Value) {
         switch value {
         case let .error(error):
             errorSection.displayError(error)
@@ -261,25 +291,38 @@ final class ConversationCreationController: UIViewController {
 
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
+            if let participantsController {
+                participantsController.conversationCreationDelegate = self
+                navigationController?.pushViewController(participantsController, animated: true)
+            } else {
+                WireLogger.ui.error("failed to present participants VC, it is nil", attributes: .safePublic)
+            }
         }
     }
 
-    @objc
     private func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
     }
 
+    private func isGroupNameValid() -> Bool {
+        switch nameSection.value {
+        case let .valid(name)? where !name.isEmpty:
+            true
+        default:
+            false
+        }
+    }
+
     private func updateOptions() {
-        self.optionsToggle.configure(with: values)
-        self.guestsSection.configure(with: values)
-        self.servicesSection.configure(with: values)
-        self.encryptionProtocolSection.configure(with: values)
+        guestsSection.configure(with: values)
+        appsSection.configure(with: values)
+        encryptionProtocolSection.configure(with: values)
+        fileManagementSection.configure(with: values)
     }
 }
 
@@ -287,59 +330,122 @@ final class ConversationCreationController: UIViewController {
 
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
 
-    func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction) {
+    func addParticipantsViewController(
+        _ addParticipantsViewController: AddParticipantsViewController,
+        didPerform action: AddParticipantsViewController.CreateAction
+    ) {
         switch action {
-        case .updatedUsers(let users):
+        case let .updatedUsers(users):
             values.participants = users
 
         case .create:
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-            // swiftlint:enable todo_requires_jira_link
             guard let userSession = userSession as? ZMUserSession else { return }
 
             addParticipantsViewController.setLoadingView(isVisible: true)
-            let service = ConversationService(context: userSession.viewContext)
 
             let users = values.participants
                 .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
 
-            let messageProtocol: MessageProtocol = values.encryptionProtocol == .mls ? .mls : .proteus
+            // Switching to sync context
+            let syncedUsers = userSession.syncContext.performAndWait {
+                let objectIDs = users.map(\.objectID)
 
-            service.createGroupConversation(
-                name: values.name,
-                users: Set(users),
-                allowGuests: values.allowGuests,
-                allowServices: values.allowServices,
-                enableReceipts: values.enableReceipts,
-                messageProtocol: messageProtocol
-            ) { [weak self] result in
-                guard let self else {
-                    assertionFailure("expect ConversationCreationController not to be <nil>")
-                    return
-                }
-
-                addParticipantsViewController.setLoadingView(isVisible: false)
-
-                switch result {
-                case .success(let conversation):
-                    delegate?.conversationCreationController(
-                        self,
-                        didCreateConversation: conversation
-                    )
-
-                case .failure(.networkError(.missingLegalholdConsent)):
-                    showMissingLegalholdConsentAlert()
-
-                case .failure(.networkError(.nonFederatingDomains(let domains))):
-                    showNonFederatingDomainsAlert(domains: domains)
-
-                case .failure(let error):
-                    WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
-                    showGenericErrorAlert()
+                return objectIDs.compactMap {
+                    try? userSession.syncContext.existingObject(with: $0) as? ZMUser
                 }
             }
+
+            let team = userSession.syncContext.performAndWait {
+                let selfUser = ZMUser.selfUser(in: userSession.syncContext)
+                return selfUser.teamIdentifier
+            }
+
+            Task { @MainActor in
+                await createGroupConversation(
+                    teamID: team,
+                    session: userSession,
+                    users: syncedUsers
+                )
+
+                addParticipantsViewController.setLoadingView(isVisible: false)
+            }
+        }
+    }
+
+    private func createGroupConversation(
+        teamID: UUID?,
+        session: ZMUserSession,
+        users: [ZMUser]
+    ) async {
+        guard let groupConversationUseCase = session.createGroupConversationUseCase else {
+            return
+        }
+
+        let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessRoles = ConversationAccessRoleV2.from(
+            allowGuests: values.allowGuests,
+            allowApps: (values.isAppsFeatureEnabled || values.areLegacyBotsAvailable) ? values.allowApps : false
+        ).compactMap {
+            $0.toNetworkModel()
+        }
+
+        let conversationMessageProtocol: WireNetwork.ConversationMessageProtocol = switch values.encryptionProtocol {
+        case .mls:
+            .mls
+        case .proteus:
+            .proteus
+        case .mixed:
+            .mixed
+        }
+
+        do {
+            let conversation = try await groupConversationUseCase.invoke(
+                teamID: teamID,
+                messageProtocol: conversationMessageProtocol,
+                name: values.name,
+                users: Set(users),
+                accessMode: Set(accessMode),
+                accessRoles: Set(accessRoles),
+                enableReceipts: values.enableReceipts,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
+                isMLSEnabled: session.isBackendMLSEnabled
+            )
+
+            // Switching back to UI context
+            let syncedConversation = try session.viewContext.performAndWait {
+                try session.viewContext.existingObject(with: conversation.objectID) as? ZMConversation
+            }
+
+            guard let syncedConversation else { return }
+
+            delegate?.conversationCreationController(
+                self,
+                didCreateConversation: syncedConversation
+            )
+
+        } catch let error as CreateGroupConversationUseCase.Failure {
+
+            switch error {
+            case .missingLegalholdConsent:
+                showMissingLegalholdConsentAlert()
+
+            case let .nonFederatingDomains(domains):
+                showNonFederatingDomainsAlert(domains: Set(domains))
+
+            default:
+                WireLogger.conversation.error(
+                    "failed to create conversation: \(String(describing: error))"
+                )
+                showGenericErrorAlert()
+            }
+        } catch {
+            WireLogger.conversation.error(
+                "failed to create conversation: \(String(describing: error))"
+            )
+            showGenericErrorAlert()
         }
     }
 
@@ -403,7 +509,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         alert.addAction(.link(
             title: Strings.learnMore,
-            url: .wr_FederationLearnMore,
+            url: WireURLs.shared.federationInfo,
             presenter: self
         ))
 
@@ -419,87 +525,53 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
 }
 
-// MARK: - SimpleTextFieldDelegate
+// MARK: - WireTextFieldDelegate
 
-extension ConversationCreationController: SimpleTextFieldDelegate {
+extension ConversationCreationController: WireTextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: WireTextField) {}
 
-    func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
-        errorSection.clearError()
-        switch value {
-        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
-        }
+    func textFieldDidBeginEditing(_ textField: WireTextField) {}
 
-    }
-
-    func textFieldReturnPressed(_ textField: SimpleTextField) {
+    func textFieldReturnPressed(_ textField: WireTextField) {
         tryToProceed()
     }
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-
-    }
-
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
-    }
-}
-
-// MARK: - Handlers
-
-extension ConversationCreationController {
-
-    private func optionsTapped(expanded: Bool) {
-        guard let collectionView = collectionViewController.collectionView else {
-            return
+    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value) {
+        errorSection.clearError()
+        switch value {
+        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
+        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
 
-        let changes: () -> Void
-        let indexSet = IndexSet(integersIn: 3..<(3 + optionsSections.count))
-
-        if expanded {
-            nameSection.resignFirstResponder()
-            expandOptions()
-            changes = { collectionView.insertSections(indexSet) }
-        } else {
-            collapseOptions()
-            changes = { collectionView.deleteSections(indexSet) }
-        }
-
-        collectionView.performBatchUpdates(changes)
-    }
-
-    func expandOptions() {
-        optionsSections.forEach {
-            $0.isHidden = false
-        }
-    }
-
-    func collapseOptions() {
-        optionsSections.forEach {
-            $0.isHidden = true
-        }
     }
 
 }
 
 extension ConversationCreationController {
 
-    func presentEncryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) {
-        let alertViewController = encryptionProtocolPicker { type in
+    func presentEncryptionProtocolPicker(
+        sender: UIView,
+        _ completion: @escaping (WireDataModel.MessageProtocol) -> Void
+    ) {
+        let alertController = encryptionProtocolPicker { type in
             completion(type)
         }
 
-        alertViewController.configPopover(pointToView: view)
-        present(alertViewController, animated: true)
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sender.superview!
+            popoverPresentationController.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
+        }
+        present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+    func encryptionProtocolPicker(_ completion: @escaping (WireDataModel.MessageProtocol) -> Void)
+        -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection.proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable.ProtocolSelection.mls
+        let proteus = userSession.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+            .proteusDefault : Localizable.ProtocolSelection.proteus
+        let mls = userSession.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+            .ProtocolSelection.mls
 
         let alert = UIAlertController(
             title: Localizable.Mls.pickerTitle,
@@ -530,5 +602,20 @@ extension ConversationCreationController {
         ]
 
         return alert
+    }
+}
+
+extension ConversationAccessRoleV2 {
+    func toNetworkModel() -> WireNetwork.ConversationAccessRole {
+        switch self {
+        case .teamMember:
+            .teamMember
+        case .nonTeamMember:
+            .nonTeamMember
+        case .guest:
+            .guest
+        case .app:
+            .app
+        }
     }
 }

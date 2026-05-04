@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,16 +34,16 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint unavailable"
+                "Endpoint unavailable"
 
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
 
             case .mlsNotEnabled:
-                return "MLS not enabled"
+                "MLS not enabled"
 
             case let .unknown(status, label, message):
-                return "Unknown error response status: \(status), label: \(label), message: \(message)"
+                "Unknown error response status: \(status), label: \(label), message: \(message)"
             }
         }
     }

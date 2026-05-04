@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+
+@testable import WireRequestStrategy
 
 class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
@@ -53,12 +54,18 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
-        sut = RemoveParticipantActionHandler(context: syncMOC)
+        sut = RemoveParticipantActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {
         sut = nil
-
+        service = nil
+        user = nil
+        conversation = nil
         super.tearDown()
     }
 
@@ -102,8 +109,24 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItParsesAllKnownRemoveParticipantErrorResponses() {
 
         let errorResponses: [(ConversationRemoveParticipantError, ZMTransportResponse)] = [
-            (ConversationRemoveParticipantError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationRemoveParticipantError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (
+                ConversationRemoveParticipantError.invalidOperation,
+                ZMTransportResponse(
+                    payload: ["label": "invalid-op"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                ConversationRemoveParticipantError.conversationNotFound,
+                ZMTransportResponse(
+                    payload: ["label": "no-conversation"] as ZMTransportData,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            )
         ]
 
         for (expectedError, response) in errorResponses {
@@ -122,35 +145,39 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItProcessMemberLeaveEventInTheResponse() throws {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: user, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier!],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
-            let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
+            let waitForHandler = customExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
                 waitForHandler.fulfill()
             }
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
             XCTAssertFalse(conversation.localParticipants.contains(user))
         }
@@ -164,20 +191,24 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: service, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [service.remoteIdentifier!],
                 qualifiedUserIDs: [service.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
 
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             let waitForHandler = XCTestExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
@@ -200,19 +231,19 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
         let memberLeaveTimestamp = Date().addingTimeInterval(1000)
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.serverTimestamp = Date()
             self.conversation.mutableMessages.add(message)
             self.conversation.lastServerTimeStamp = message.serverTimestamp?.addingTimeInterval(5)
-
-            self.conversation.clearMessageHistory()
+            self.conversation.clearedTimeStamp = self.conversation.lastServerTimeStamp
+            syncMOC.delete(message)
             self.syncMOC.saveOrRollback()
 
             let action = RemoveParticipantAction(user: selfUser, conversation: self.conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier!],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .left
@@ -221,12 +252,15 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 from: memberLeave,
                 conversationID: self.conversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
-                timestamp: memberLeaveTimestamp)
+                timestamp: memberLeaveTimestamp
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                           httpStatus: 200,
-                                           transportSessionError: nil,
-                                           apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -235,39 +269,46 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
-            XCTAssertEqual(self.conversation.clearedTimeStamp?.transportString(), memberLeaveTimestamp.transportString())
+            XCTAssertEqual(
+                self.conversation.clearedTimeStamp?.transportString(),
+                memberLeaveTimestamp.transportString()
+            )
         }
     }
 
     func testThatItCallsResultHandler_On200() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             var action = RemoveParticipantAction(user: user, conversation: conversation)
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
             }
 
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier!],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
@@ -279,19 +320,21 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
             }
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 204,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 204,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -303,20 +346,22 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }
             }
 
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 404,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

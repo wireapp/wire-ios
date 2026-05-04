@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@ import Combine
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
-/// A customized hosting controller for `DeviceDetailsView` and `OtherUserDeviceDetailsView` in order to allow displaying
+/// A customized hosting controller for `DeviceDetailsView` and `OtherUserDeviceDetailsView` in order to allow
+/// displaying
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ class RightIconDetailsCell: DetailsCollectionViewCell {
     private let accessoryIconView = UIImageView()
 
     var accessory: UIImage? {
-        get { return accessoryIconView.image }
+        get { accessoryIconView.image }
         set { updateAccessory(newValue) }
     }
 
     var accessoryColor: UIColor {
-        get { return accessoryIconView.tintColor }
+        get { accessoryIconView.tintColor }
         set { accessoryIconView.tintColor = newValue }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,39 @@
 //
 
 import Foundation
+import XCTest
 
 @testable import WireSyncEngine
-import XCTest
 
 extension ZMUserSessionTestsBase {
 
     @objc
-    public func createCallCenter() -> WireCallCenterV3Mock {
-        let selfUser = ZMUser.selfUser(in: self.syncMOC)
-        return WireCallCenterV3Factory.callCenter(withUserId: selfUser.avsIdentifier, clientId: selfUser.selfClient()!.remoteIdentifier!, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock()) as! WireCallCenterV3Mock
+    func createCallCenter(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) -> WireCallCenterV3Mock {
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        return WireCallCenterV3Factory.callCenter(
+            withUserId: selfUser.avsIdentifier,
+            clientId: selfUser.selfClient()!.remoteIdentifier!,
+            uiMOC: uiMOC,
+            flowManager: FlowManagerMock(),
+            transport: WireCallCenterTransportMock(),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        ) as! WireCallCenterV3Mock
     }
 
     @objc
-    public func simulateIncomingCall(fromUser user: ZMUser, conversation: ZMConversation) {
-        guard let callCenter = user.managedObjectContext?.zm_callCenter as? WireCallCenterV3Mock else { XCTFail(); return }
-        callCenter.setMockCallState(.incoming(video: false, shouldRing: true, degraded: false), conversationId: conversation.avsIdentifier!, callerId: user.avsIdentifier, isVideo: false)
+    func simulateIncomingCall(fromUser user: ZMUser, conversation: ZMConversation) {
+        guard let callCenter = user.managedObjectContext?.zm_callCenter as? WireCallCenterV3Mock
+        else { XCTFail(); return }
+        callCenter.setMockCallState(
+            .incoming(isVideo: false, shouldRing: true, degraded: false),
+            conversationId: conversation.avsIdentifier!,
+            callerId: user.avsIdentifier,
+            isVideo: false
+        )
     }
 
 }

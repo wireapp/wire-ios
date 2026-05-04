@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,7 @@ import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
-    typealias LabelColors = SemanticColors.Label
+    typealias View = ConversationSystemMessageCell<ConversationVerifiedSystemMessageSectionDescription>
 
     let configuration: View.Configuration
 
@@ -32,26 +31,24 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
+        let title = NSAttributedString.markdown(
+            from: L10n.Localizable.Content.System.Mls.conversationIsVerified(WireURLs.shared.endToEndIdentityInfo),
+            style: .systemMessage
+        )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: .init(resource: .certificateValid),
             attributedText: title,
             showLine: true
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,21 +18,26 @@
 
 import Foundation
 
-extension ZMConversation {
-    @objc public func deleteOlderMessages() {
+public extension ZMConversation {
+    @objc
+    func deleteOlderMessages() {
 
-        guard let managedObjectContext = self.managedObjectContext,
-              let clearedTimeStamp = self.clearedTimeStamp,
+        guard let managedObjectContext,
+              let clearedTimeStamp,
               managedObjectContext.zm_isSyncContext else {
             return
         }
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "(%K == %@ OR %K == %@) AND %K <= %@",
-                                             ZMMessageConversationKey, self,
-                                             ZMMessageHiddenInConversationKey, self,
-                                             #keyPath(ZMMessage.serverTimestamp),
-                                             clearedTimeStamp as CVarArg)
+        fetchRequest.predicate = NSPredicate(
+            format: "(%K == %@ OR %K == %@) AND %K <= %@",
+            ZMMessageConversationKey,
+            self,
+            ZMMessageHiddenInConversationKey,
+            self,
+            #keyPath(ZMMessage.serverTimestamp),
+            clearedTimeStamp as CVarArg
+        )
 
         let result = try! managedObjectContext.fetch(fetchRequest) as! [ZMMessage]
 

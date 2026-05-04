@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handles the event that informs the app when the email login verification code is available.
- */
+/// Handles the event that informs the app when the email login verification code is available.
 
 final class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
 

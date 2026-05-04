@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,15 @@
 //
 
 import Foundation
+import WireDataModel
 
+/// Data Structure containing contextual information currently displayed view
+struct DeveloperToolsContext {
+    var currentUserClient: UserClient?
+    var currentConversation: ZMConversation?
+}
+
+/// Provides debug actions for a specific context
 protocol DeveloperToolsContextItemsProvider {
     init?(context: DeveloperToolsContext)
     func getActionItems() -> [DeveloperToolsViewModel.Item]

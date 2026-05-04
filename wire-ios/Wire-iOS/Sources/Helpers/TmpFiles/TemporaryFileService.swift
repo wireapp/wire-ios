@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 protocol TemporaryFileServiceInterface {
@@ -29,7 +30,11 @@ final class TemporaryFileService: TemporaryFileServiceInterface {
         let manager = FileManager.default
 
         try? manager
-            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .contentsOfDirectory(
+                at: tmpDirectoryPath,
+                includingPropertiesForKeys: nil,
+                options: .skipsSubdirectoryDescendants
+            )
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }

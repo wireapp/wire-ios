@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public extension Feature {
 
@@ -62,7 +63,7 @@ public extension Feature {
 
             public let defaultCipherSuite: MLSCipherSuite
 
-            /// The list of supported message protocols
+            /// The list of supported message protocols.
 
             public let supportedProtocols: Set<MessageProtocol>
 
@@ -78,6 +79,33 @@ public extension Feature {
                 self.allowedCipherSuites = allowedCipherSuites
                 self.defaultCipherSuite = defaultCipherSuite
                 self.supportedProtocols = supportedProtocols
+            }
+
+            public init(from decoder: any Decoder) throws {
+                let container: KeyedDecodingContainer<Feature.MLS.Config.CodingKeys> = try decoder
+                    .container(keyedBy: Feature.MLS.Config.CodingKeys.self)
+                self.protocolToggleUsers = try container.decode(
+                    [UUID].self,
+                    forKey: Feature.MLS.Config.CodingKeys.protocolToggleUsers
+                )
+                self.defaultProtocol = try container.decode(
+                    Feature.MLS.Config.MessageProtocol.self,
+                    forKey: Feature.MLS.Config.CodingKeys.defaultProtocol
+                )
+                self.allowedCipherSuites = try container.decode(
+                    [Feature.MLS.Config.MLSCipherSuite].self,
+                    forKey: Feature.MLS.Config.CodingKeys.allowedCipherSuites
+                )
+                self.defaultCipherSuite = try container.decode(
+                    Feature.MLS.Config.MLSCipherSuite.self,
+                    forKey: Feature.MLS.Config.CodingKeys.defaultCipherSuite
+                )
+
+                // Supported protocols was added in v4 so we decode if present and provide a default if it's not there.
+                self.supportedProtocols = try container.decodeIfPresent(
+                    Set<Feature.MLS.Config.MessageProtocol>.self,
+                    forKey: Feature.MLS.Config.CodingKeys.supportedProtocols
+                ) ?? [.proteus]
             }
 
             public enum MessageProtocol: String, Codable {
@@ -103,4 +131,33 @@ public extension Feature {
 
     }
 
+}
+
+public extension Feature.MLS {
+
+    var isEnabled: Bool {
+        status == .enabled
+    }
+
+}
+
+public extension  Feature.MLS.Config.MLSCipherSuite {
+    var coreCryptoCipherSuite: WireCoreCryptoUniffi.Ciphersuite {
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+            .mls128Dhkemx25519Aes128gcmSha256Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            .mls128Dhkemp256Aes128gcmSha256P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+            .mls256Dhkemx448Aes256gcmSha512Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            .mls256Dhkemp521Aes256gcmSha512P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            .mls256Dhkemx448Chacha20poly1305Sha512Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            .mls256Dhkemp384Aes256gcmSha384P384
+        }
+    }
 }

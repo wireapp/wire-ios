@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModelSupport
 import WireTesting
+import WireTestingPackage
 import XCTest
 
 @testable import WireSyncEngine
@@ -46,7 +47,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             removalTimeout: 0.4
         )
 
-        selfUserID = AVSIdentifier(identifier: UUID(), domain: domain)
+        selfUserID = AVSIdentifier(identifier: UUID(), domain: domain, isFederationEnabled: false)
     }
 
     override func tearDown() {
@@ -214,14 +215,12 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
     private func expectations(
         from participants: [MLSParticipant]
     ) -> [MLSClientID: XCTestExpectation] {
-        return participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
-            var expectation: XCTestExpectation
-
-            switch participant.callParticipant.state {
+        participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
+            let expectation = switch participant.callParticipant.state {
             case .connecting:
-                expectation = XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
+                XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
             default:
-                expectation = XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
+                XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
             }
 
             expectations[participant.mlsClientID] = expectation
@@ -267,7 +266,7 @@ private class MLSParticipant {
     }
 
     func updateState(_ state: CallParticipantState) {
-        self.callParticipant = CallParticipant(
+        callParticipant = CallParticipant(
             user: callParticipant.user as! ZMUser,
             clientId: callParticipant.clientId,
             state: state,

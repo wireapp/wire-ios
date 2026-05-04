@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
+import WireLogging
 
 struct ConferenceParticipantsInfo {
     let participants: [CallParticipant]
@@ -33,6 +34,11 @@ struct MLSConferenceParticipantsInfo {
 
 extension WireCallCenterV3 {
 
+    /// Publishes an event when the participants in a MLS call change.
+    ///
+    /// - Parameter subconversationID: The ID of the subconversation the call is taking place in.
+    /// - Returns: A publisher that generates an event when the participants in the call change.
+
     func onMLSConferenceParticipantsChanged(
         subconversationID: MLSGroupID
     ) -> AnyPublisher<MLSConferenceParticipantsInfo, Never> {
@@ -44,6 +50,18 @@ extension WireCallCenterV3 {
             )
         }.eraseToAnyPublisher()
     }
+
+    /// Updates the MLS conference state based on the call state.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The ID of the conversation.
+    ///   - callState: The current state of the call.
+    ///   - callSnapshot: The snapshot of the call.
+    ///
+    /// If the call is `.terminating`: cancels any pending stale participants removals
+    /// and leaves the stale conference subgroup.
+    ///
+    /// If the call is `.incoming`: leaves the stale conference subgroup.
 
     func updateMLSConferenceIfNeeded(
         conversationID: AVSIdentifier,
@@ -64,14 +82,20 @@ extension WireCallCenterV3 {
         }
     }
 
+    /// Leaves the stale conference subgroup after missing a call.
+    ///
+    /// - Parameter conversationID: The ID of the conversation.
+
     func updateMLSConferenceIfNeededForMissedCall(conversationID: AVSIdentifier) {
         leaveStaleConferenceIfNeeded(conversationID: conversationID)
     }
 
+    /// Returns the `QualifiedID` and `MLSGroupID` of the conversation associated with the `callID``
+
     func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
         guard
             let context = uiMOC,
-            let domain = callID.domain ?? BackendInfo.domain,
+            let domain = callID.domain ?? localDomain,
             let conversation = ZMConversation.fetch(
                 with: callID.identifier,
                 domain: domain,
@@ -87,20 +111,37 @@ extension WireCallCenterV3 {
         return (qualifiedID, groupID)
     }
 
+    /// Cancels pending removals of stale participants.
+    ///
+    /// - Parameter callSnapshot: The snapshot of the call.
+
     func cancelPendingStaleParticipantsRemovals(
         callSnapshot: CallSnapshot?
     ) {
         callSnapshot?.mlsConferenceStaleParticipantsRemover?.cancelPendingRemovals()
     }
 
-    // Leaves the possibles subconversation for the mls conference.
+    /// Leaves the conference subconversation if it exists locally or if the self client is a member.
+    ///
+    /// - Parameter conversationID: The `AVSIdentifier` of the parent conversation.
 
     private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
         guard
             let viewContext = uiMOC,
+            let conversation = ZMConversation.fetch(
+                with: conversationID.identifier,
+                domain: conversationID.domain,
+                in: viewContext
+            ),
+            conversation.conversationType == .group
+        else {
+            return
+        }
+
+        guard
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
-            let selfClientID = MLSClientID(userClient: selfClient),
+            let selfClientID = MLSClientID(userClient: selfClient, localDomain: localDomain),
             let parentIDs = mlsParentIDS(for: conversationID)
         else {
             return
@@ -126,7 +167,11 @@ extension WireCallCenterV3 {
         }
     }
 
-    // Leaves the subconversation for the mls conference.
+    /// Leaves the conference subconversation associated with a parent conversation.
+    ///
+    /// - Parameters:
+    ///   - parentQualifiedID: The qualified ID of the parent conversation
+    ///   - parentGroupID: The group ID of the parent conversation
 
     func leaveSubconversation(
         parentQualifiedID: QualifiedID,
@@ -167,9 +212,9 @@ extension CallParticipantState {
     var isConnected: Bool {
         switch self {
         case .connected:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

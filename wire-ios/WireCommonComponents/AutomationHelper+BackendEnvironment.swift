@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,19 @@
 
 import Foundation
 
-extension AutomationHelper {
+public extension AutomationHelper {
     private static let backendEnvironmentTypeOverrideKey = "BackendEnvironmentTypeOverrideKey"
-    public func backendEnvironmentTypeOverride() -> String? {
-        return UserDefaults.applicationGroupCombinedWithStandard.string(forKey: AutomationHelper.backendEnvironmentTypeOverrideKey)
+    func backendEnvironmentTypeOverride() -> String? {
+        UserDefaults.applicationGroupCombinedWithStandard
+            .string(forKey: AutomationHelper.backendEnvironmentTypeOverrideKey)
     }
-    public func persistBackendTypeOverrideIfNeeded(with type: String?) {
+
+    func persistBackendTypeOverrideIfNeeded(with type: String?) {
         guard shouldPersistBackendType else { return }
         UserDefaults.applicationGroup.set(type, forKey: AutomationHelper.backendEnvironmentTypeOverrideKey)
     }
-    func disableBackendTypeOverride() {
+
+    internal func disableBackendTypeOverride() {
         UserDefaults.applicationGroup.removeObject(forKey: AutomationHelper.backendEnvironmentTypeOverrideKey)
     }
 }

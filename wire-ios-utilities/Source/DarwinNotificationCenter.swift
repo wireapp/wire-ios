@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public enum DarwinNotification: String {
     case shareExtDidSaveNote = "darwin-notification.share-ext-did-save-note"
 
     var name: CFNotificationName {
-        return CFNotificationName(rawValue: self.rawValue as CFString)
+        CFNotificationName(rawValue: rawValue as CFString)
     }
 
     func observe(using block: @escaping CFNotificationCallback) {

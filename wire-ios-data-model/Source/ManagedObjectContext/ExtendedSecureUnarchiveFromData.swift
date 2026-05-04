@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ import Foundation
 @objc(ExtendedSecureUnarchiveFromData) @objcMembers
 public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransformer {
 
-    /// The name of the transformer. This is the name used to register the transformer using ValueTransformer.setValueTrandformer(_"forName:)`.
+    /// The name of the transformer. This is the name used to register the transformer using
+    /// ValueTransformer.setValueTrandformer(_"forName:)`.
     static let name = NSValueTransformerName(rawValue: String(describing: ExtendedSecureUnarchiveFromData.self))
 
     /// Registers the transformer.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,22 +27,10 @@ final class BrowserViewController: SFSafariViewController {
 
     // MARK: - Tint Color
 
-    private var overrider = TintColorOverrider()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         preferredControlTintColor = SemanticColors.Label.textDefault
         delegate = self
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        overrider.override()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        overrider.restore()
     }
 
     override func dismiss(animated flag: Bool, completion defaultBlock: (() -> Void)? = nil) {

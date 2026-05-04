@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireLinkPreview
 import WireUtilities
 
-@objcMembers public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
+@objcMembers
+public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
 
     fileprivate let linkPreviewDetector: LinkPreviewDetectorType
 
@@ -32,7 +34,11 @@ import WireUtilities
     }
 
     public override func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let predicate = NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.waitingToBeProcessed.rawValue)
+        let predicate = NSPredicate(
+            format: "%K == %d",
+            ZMClientMessage.linkPreviewStateKey,
+            ZMLinkPreviewState.waitingToBeProcessed.rawValue
+        )
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }
 
@@ -44,7 +50,8 @@ import WireUtilities
     override func processLinks(in message: ZMClientMessage, text: String, excluding excludedRanges: [NSRange]) {
         linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excludedRanges) { [weak self] linkPreviews in
             self?.managedObjectContext.performGroupedBlock {
-                self?.zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
+                self?.zmLog
+                    .debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
                 self?.didProcessMessage(message, result: linkPreviews)
             }
         }
@@ -68,7 +75,10 @@ import WireUtilities
             let mentions = message.textMessageData?.mentions,
             !message.isObfuscated
         else {
-            zmLog.debug("no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
+            zmLog
+                .debug(
+                    "no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")"
+                )
             message.linkPreviewState = .done
             return
         }
@@ -89,13 +99,19 @@ import WireUtilities
         do {
             try message.setUnderlyingMessage(updatedMessage)
         } catch {
-            zmLog.warn("Failed to set link preview on client message. Reason: \(error.localizedDescription) Resetting state to try again later.")
+            zmLog
+                .warn(
+                    "Failed to set link preview on client message. Reason: \(error.localizedDescription) Resetting state to try again later."
+                )
             message.linkPreviewState = .waitingToBeProcessed
             return
         }
 
         if let imageData = preview.imageData.first {
-            zmLog.debug("image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")")
+            zmLog
+                .debug(
+                    "image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")"
+                )
             managedObjectContext.zm_fileAssetCache.storeOriginalImage(
                 data: imageData,
                 for: message

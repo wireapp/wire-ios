@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,27 +48,27 @@ public struct Logger {
 
             self.logger = logger
 
-            onDebug = { message in
+            self.onDebug = { message in
                 logger.debug("\(message, privacy: .public)")
             }
 
-            onInfo = { message in
+            self.onInfo = { message in
                 logger.info("\(message, privacy: .public)")
             }
 
-            onTrace = { message in
+            self.onTrace = { message in
                 logger.trace("\(message, privacy: .public)")
             }
 
-            onWarning = { message in
+            self.onWarning = { message in
                 logger.warning("\(message, privacy: .public)")
             }
 
-            onError = { message in
+            self.onError = { message in
                 logger.error("\(message, privacy: .public)")
             }
 
-            onCritical = { message in
+            self.onCritical = { message in
                 logger.critical("\(message, privacy: .public)")
             }
         }

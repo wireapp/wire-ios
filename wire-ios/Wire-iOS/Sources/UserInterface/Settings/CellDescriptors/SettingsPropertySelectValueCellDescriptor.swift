@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,14 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
 
-    init(settingsProperty: SettingsProperty, value: SettingsPropertyValue, title: String, identifier: String? = .none, selectAction: SelectActionType? = .none, backgroundColor: UIColor? = .none) {
+    init(
+        settingsProperty: SettingsProperty,
+        value: SettingsPropertyValue,
+        title: String,
+        identifier: String? = .none,
+        selectAction: SelectActionType? = .none,
+        backgroundColor: UIColor? = .none
+    ) {
         self.settingsProperty = settingsProperty
         self.value = value
         self.title = title
@@ -45,15 +52,15 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
         if let valueCell = cell as? SettingsValueCell {
-            valueCell.accessoryType = self.settingsProperty.value() == self.value ? .checkmark : .none
+            valueCell.accessoryType = settingsProperty.value() == value ? .checkmark : .none
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         do {
-            try settingsProperty.set(newValue: self.value)
+            try settingsProperty.set(newValue: self.value, resultHandler: { _ in })
         } catch {
             zmLog.error("Cannot set property: \(error)")
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModelSupport
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+
+@testable import WireDataModelSupport
+@testable import WireSyncEngine
 
 class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
 
     private var sut: CheckOneOnOneConversationIsReadyUseCase!
     private var coreDataStack: CoreDataStack!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var syncMOC: NSManagedObjectContext!
     private var user: ZMUser!
@@ -37,9 +39,11 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         syncMOC = coreDataStack.syncContext
 
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
         mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,
@@ -53,6 +57,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         sut = nil
         coreDataStack = nil
         mockCoreCryptoProvider = nil
+        mockCoreCryptoContext = nil
         mockCoreCrypto = nil
         syncMOC = nil
         user = nil
@@ -87,7 +92,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     func test_ItReturnsTrue_WhenConversationExists_MLS_Established() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
-        mockCoreCrypto.conversationExistsConversationId_MockValue = true
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
         let isReady = try await sut.invoke(userID: userID)
@@ -99,7 +104,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     func test_ItReturnsFalse_WhenConversationExists_MLS_NotEstablished() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
-        mockCoreCrypto.conversationExistsConversationId_MockValue = false
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
 
         // When
         let isReady = try await sut.invoke(userID: userID)
@@ -133,7 +138,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         }
     }
 
-    private func setupOneOnOne(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) async {
+    private func setupOneOnOne(messageProtocol: WireDataModel.MessageProtocol, groupID: MLSGroupID? = nil) async {
         await syncMOC.perform { [self] in
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.messageProtocol = messageProtocol

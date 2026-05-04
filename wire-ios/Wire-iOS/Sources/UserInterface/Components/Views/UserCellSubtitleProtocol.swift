@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,11 +46,16 @@ extension UserCellSubtitleProtocol where Self: UIView {
 
         if let user = user as? ZMUser, let addressBookName = user.addressBookEntry?.cachedName {
             let color = SemanticColors.Label.textDefault
-            let formatter = AddressBookCorrelationFormatter(lightFont: Self.lightFont, boldFont: Self.boldFont, color: color)
+            let formatter = AddressBookCorrelationFormatter(
+                lightFont: Self.lightFont,
+                boldFont: Self.boldFont,
+                color: color
+            )
             components.append(formatter.correlationText(for: user, addressBookName: addressBookName))
         }
 
-        return components.compactMap({ $0 }).joined(separator: " " + String.MessageToolbox.middleDot + " " && UserCell.lightFont.font!)
+        return components.compactMap(\.self)
+            .joined(separator: " " + String.MessageToolbox.middleDot + " " && UserCell.lightFont.font!)
     }
 
 }

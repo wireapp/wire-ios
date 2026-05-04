@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ public protocol Conversation: SharingTarget {
     var legalHoldStatus: ZMConversationLegalHoldStatus { get }
 
     /// Adds an observer for when the conversation verification status degrades
-    func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable
+    func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void)
+        -> TearDownCapable
 
     /// Accept the privacy warning, and resend the messages that caused them if wanted.
     func acknowledgePrivacyWarningAndResendMessages()

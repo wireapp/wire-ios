@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,48 @@ extension Payload.Conversation {
         messageTimer: TimeInterval? = nil,
         readReceiptMode: Int? = nil,
         messageProtocol: String? = "proteus",
-        mlsGroupID: String? = "id".data(using: .utf8)?.base64EncodedString()
+        mlsGroupID: String? = Data("id".utf8).base64EncodedString()
+    ) -> Self {
+        self.init(
+            qualifiedID: qualifiedID,
+            id: id,
+            type: type?.rawValue,
+            creator: creator,
+            access: access,
+            legacyAccessRole: accessRole,
+            accessRoles: accessRoles,
+            name: name,
+            members: members,
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime,
+            teamID: teamID,
+            messageTimer: messageTimer,
+            readReceiptMode: readReceiptMode,
+            messageProtocol: messageProtocol,
+            mlsGroupID: mlsGroupID
+        )
+
+    }
+}
+
+extension Payload.CreatedConversation {
+    static func stub(
+        qualifiedID: QualifiedID? = nil,
+        id: UUID? = nil,
+        type: BackendConversationType? = nil,
+        creator: UUID? = nil,
+        access: [String]? = nil,
+        accessRole: String? = nil,
+        accessRoles: [String]? = nil,
+        name: String? = nil,
+        members: Payload.ConversationMembers? = nil,
+        lastEvent: String? = nil,
+        lastEventTime: String? = nil,
+        teamID: UUID? = nil,
+        messageTimer: TimeInterval? = nil,
+        readReceiptMode: Int? = nil,
+        messageProtocol: String? = "proteus",
+        mlsGroupID: String? = Data("id".utf8).base64EncodedString()
     ) -> Self {
         self.init(
             qualifiedID: qualifiedID,

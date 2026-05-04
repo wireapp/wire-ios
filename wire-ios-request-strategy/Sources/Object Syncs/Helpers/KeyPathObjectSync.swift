@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,16 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
 
     associatedtype T: Hashable
 
-    /// Called when a object needs to be synchronized. It's the transcoder's responsibillity to call the `completion` handler when the synchronization is successfull or cancel.
+    /// Called when a object needs to be synchronized. It's the transcoder's responsibillity to call the `completion`
+    /// handler when the synchronization is successfull or cancel.
     ///
     /// - parameters:
     ///   - object: Object which should be synchronized
     ///   - completion: called when the object as been synchronized
     func synchronize(_ object: T, completion: @escaping () -> Void)
 
-    /// Called when a object was previously requested to be synchronized but the the condition for synchronizing stop being fulfilled before the object finished synchronizing.
+    /// Called when a object was previously requested to be synchronized but the the condition for synchronizing stop
+    /// being fulfilled before the object finished synchronizing.
     ///
     /// - parameters:
     ///   - object: Object which no longer needs be synchronized.
@@ -37,12 +39,11 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
 
 }
 
-/**
- KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object needs to synced.
- 
- Note this is only supported for managed objects and for properties which are stored in Core Data.
- 
- */
+/// KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object
+/// needs to synced.
+///
+/// Note this is only supported for managed objects and for properties which are stored in Core Data.
+///
 class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
 
     // MARK: - Life Cycle
@@ -63,7 +64,7 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     // MARK: - ZMContextChangeTracker
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        let objects = objects.compactMap({ $0 as? Transcoder.T })
+        let objects = objects.compactMap { $0 as? Transcoder.T }
 
         objects.forEach { object in
             var mutableObject = object
@@ -85,10 +86,12 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let keypathExpression = NSExpression(forKeyPath: keyPath)
         let valueExpression = NSExpression(forConstantValue: true)
-        let predicate = NSComparisonPredicate(leftExpression: keypathExpression,
-                              rightExpression: valueExpression,
-                              modifier: .direct,
-                              type: .equalTo)
+        let predicate = NSComparisonPredicate(
+            leftExpression: keypathExpression,
+            rightExpression: valueExpression,
+            modifier: .direct,
+            type: .equalTo
+        )
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         fetchRequest.predicate = predicate

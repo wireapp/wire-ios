@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -29,9 +29,7 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
     private var snapshotHelper: SnapshotHelper!
 
-    lazy var kCertificate: String = {
-        return .mockCertificate
-    }()
+    lazy var kCertificate: String = .mockCertificate
 
     override func setUp() {
         super.setUp()

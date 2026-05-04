@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ import Foundation
 public extension UUID {
 
     func create() -> UUID {
-        return UUID.create()
+        UUID.create()
     }
 
     static func create() -> UUID {
-        return NSUUID.create() as UUID
+        NSUUID.create() as UUID
     }
 
     static func reseed(testName: String) {

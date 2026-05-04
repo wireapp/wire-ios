@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@
 import Foundation
 import UserNotifications
 
-/**
- * The categories of notifications supported by the app.
- */
+/// The categories of notifications supported by the app.
 
 public enum PushNotificationCategory: String, CaseIterable {
 
@@ -47,31 +45,31 @@ public enum PushNotificationCategory: String, CaseIterable {
     var actions: [NotificationAction] {
         switch self {
         case .incomingCall:
-            return [CallNotificationAction.ignore]
+            [CallNotificationAction.ignore]
         case .missedCall:
-            return [CallNotificationAction.callBack]
+            [CallNotificationAction.callBack]
         case .conversation:
-            return []
+            []
         case .conversationWithMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         case .conversationWithLike:
-            return []
+            []
         case .conversationWithLikeAndMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         case .connect:
-            return [ConversationNotificationAction.connect]
+            [ConversationNotificationAction.connect]
         case .alert:
-            return []
+            []
         case .conversationUnderEncryptionAtRest:
-            return []
+            []
         case .conversationUnderEncryptionAtRestWithMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         }
     }
 
     /// The representation of the category that can be used with `UserNotifications` API.
     var userNotificationCategory: UNNotificationCategory {
-        let userActions = self.actions.map(\.userAction)
+        let userActions = actions.map(\.userAction)
         return UNNotificationCategory(identifier: rawValue, actions: userActions, intentIdentifiers: [], options: [])
     }
 

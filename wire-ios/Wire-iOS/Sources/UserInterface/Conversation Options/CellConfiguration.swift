@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,36 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)
 }
 
 enum CellConfiguration {
-    typealias Action = (UIView?) -> Void
+    typealias Action = (UIView) -> Void
     case linkHeader
     case secureLinkHeader
-    case leadingButton(title: String, identifier: String, action: Action)
+    case leadingButton(
+        title: String,
+        identifier: String,
+        action: Action
+    )
     case loading
     case text(String)
+    case titleAndBody(title: String, body: String)
     case info(String)
-    case iconAction(title: String,
-                    icon: StyleKitIcon,
-                    color: UIColor?,
-                    action: Action)
+    case iconAction(
+        title: String,
+        icon: StyleKitIcon,
+        color: UIColor?,
+        action: Action
+    )
     case appearance(title: String)
 
     /// For toggle without icon, leave icon and color nil
-    case iconToggle(title: String,
+    case iconToggle(
+        title: String,
         subtitle: String,
         identifier: String,
         titleIdentifier: String,
@@ -46,19 +55,21 @@ enum CellConfiguration {
         color: UIColor?,
         isEnabled: Bool,
         get: () -> Bool,
-        set: (Bool, UIView?) -> Void)
+        set: (Bool, UIView) -> Void
+    )
 
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
-        case .iconToggle: return IconToggleSubtitleCell.self
-        case .linkHeader: return LinkHeaderCell.self
-        case .secureLinkHeader: return SecureLinkHeaderCell.self
-        case .leadingButton: return ActionCell.self
-        case .loading: return LoadingIndicatorCell.self
-        case .text: return TextCell.self
-        case .info: return GuestLinkInfoCell.self
-        case .iconAction: return IconActionCell.self
-        case .appearance: return SettingsAppearanceCell.self
+        case .iconToggle: IconToggleSubtitleCell.self
+        case .linkHeader: LinkHeaderCell.self
+        case .secureLinkHeader: SecureLinkHeaderCell.self
+        case .leadingButton: ActionCell.self
+        case .loading: LoadingIndicatorCell.self
+        case .text: TextCell.self
+        case .titleAndBody: TitleBodyCell.self
+        case .info: GuestLinkInfoCell.self
+        case .iconAction: IconActionCell.self
+        case .appearance: SettingsAppearanceCell.self
         }
     }
 
@@ -69,24 +80,25 @@ enum CellConfiguration {
              .secureLinkHeader,
              .loading,
              .text,
+             .titleAndBody,
              .info,
-             .appearance: return nil
-        case let .leadingButton(_, _, action: action): return action
-        case let .iconAction(_, _, _, action: action): return action
-
+             .appearance: nil
+        case let .leadingButton(_, _, action: action): action
+        case let .iconAction(_, _, _, action: action): action
         }
     }
 
     // MARK: - Convenience
 
     static var allCellTypes: [UITableViewCell.Type] {
-        return [
+        [
             IconToggleSubtitleCell.self,
             LinkHeaderCell.self,
             SecureLinkHeaderCell.self,
             ActionCell.self,
             LoadingIndicatorCell.self,
             TextCell.self,
+            TitleBodyCell.self,
             GuestLinkInfoCell.self,
             IconActionCell.self,
             SettingsAppearanceCell.self
@@ -98,5 +110,4 @@ enum CellConfiguration {
             tableView.register($0, forCellReuseIdentifier: $0.reuseIdentifier)
         }
     }
-
 }

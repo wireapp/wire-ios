@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)
@@ -65,7 +66,7 @@ final class UserNameDetailViewModel: NSObject {
     private let correlationText: NSAttributedString?
 
     var firstSubtitle: NSAttributedString? {
-        return handleText ?? correlationText
+        handleText ?? correlationText
     }
 
     var secondSubtitle: NSAttributedString? {
@@ -75,7 +76,7 @@ final class UserNameDetailViewModel: NSObject {
 
     var firstAccessibilityIdentifier: String? {
         if handleText != nil {
-            return "username"
+            return Locators.ConnectionRequestsPage.username.rawValue
         } else if correlationText != nil {
             return "correlation"
         }
@@ -84,24 +85,27 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard handleText != nil && correlationText != nil else { return nil }
+        guard handleText != nil, correlationText != nil else { return nil }
         return "correlation"
     }
 
-    static var formatter: AddressBookCorrelationFormatter = {
-        AddressBookCorrelationFormatter(lightFont: smallLightFont,
-                                        boldFont: smallBoldFont,
-                                        color: SemanticColors.Label.textDefault)
-    }()
+    static var formatter: AddressBookCorrelationFormatter = .init(
+        lightFont: smallLightFont,
+        boldFont: smallBoldFont,
+        color: SemanticColors.Label.textDefault
+    )
 
     init(user: UserType?, fallbackName fallback: String, addressBookName: String?) {
-        title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
-        handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
-        correlationText = UserNameDetailViewModel.attributedCorrelationText(for: user, addressBookName: addressBookName)
+        self.title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
+        self.handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
+        self.correlationText = UserNameDetailViewModel.attributedCorrelationText(
+            for: user,
+            addressBookName: addressBookName
+        )
     }
 
     static func attributedTitle(for user: UserType?, fallback: String) -> NSAttributedString {
-        return (user?.name ?? fallback) && normalBoldFont.font! && SemanticColors.Label.textDefault
+        (user?.name ?? fallback) && normalBoldFont.font! && SemanticColors.Label.textDefault
     }
 
     static func attributedSubtitle(for user: UserType?) -> NSAttributedString? {
@@ -116,15 +120,18 @@ final class UserNameDetailViewModel: NSObject {
 }
 
 // MARK: - UserNameDetailView
+
 final class UserNameDetailView: UIView, DynamicTypeCapable {
 
     // MARK: - Properties
+
     private var model: UserNameDetailViewModel?
 
     let subtitleLabel = UILabel()
     let correlationLabel = UILabel()
 
     // MARK: - Initialization
+
     init() {
         super.init(frame: .zero)
         setupViews()
@@ -137,6 +144,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Configure
+
     func configure(with model: UserNameDetailViewModel) {
         self.model = model
         subtitleLabel.attributedText = model.firstSubtitle
@@ -147,6 +155,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Layout - Private Methods
+
     private func setupViews() {
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = SemanticColors.View.backgroundDefault

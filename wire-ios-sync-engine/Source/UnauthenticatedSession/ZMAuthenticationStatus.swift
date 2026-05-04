@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ extension ZMAuthenticationStatus: NotificationContext {}
 extension ZMAuthenticationStatus: ZMCredentialProvider {
 
     public func credentialsMayBeCleared() {
-        if self.currentPhase == ZMAuthenticationPhase.authenticated {
-            self.resetLoginAndRegistrationStatus()
+        if currentPhase == ZMAuthenticationPhase.authenticated {
+            resetLoginAndRegistrationStatus()
         }
     }
 
     public func emailCredentials() -> UserEmailCredentials? {
-        guard let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail else {
+        guard let loginCredentials, loginCredentials.credentialWithEmail else {
             return nil
         }
         return UserEmailCredentials.credentials(

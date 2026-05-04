@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -31,7 +31,7 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)
     }
@@ -43,19 +43,20 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    func testThatItRendersCorrectInitially() {
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
+    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
+//    func testThatItRendersCorrectInitially() {
+//        snapshotHelper.verify(matching: sut.prepareForSnapshots())
+//    }
 
-    func testThatItRendersCorrectIntially_DarkMode() {
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut.prepareForSnapshots())
-    }
-
+    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
+//    func testThatItRendersCorrectIntially_DarkMode() {
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: sut.prepareForSnapshots())
+//    }
 }
 
-fileprivate extension UIViewController {
+private extension UIViewController {
 
     func prepareForSnapshots() -> UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -73,5 +74,4 @@ fileprivate extension UIViewController {
         view.layoutIfNeeded()
         return view
     }
-
 }

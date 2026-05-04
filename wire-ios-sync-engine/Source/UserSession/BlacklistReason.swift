@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum BlacklistReason {
+public enum BlacklistReason: Equatable {
     /// The app version is too old to be supported or has been explicitly blacklisted
     case appVersionBlacklisted
 
@@ -27,4 +27,28 @@ public enum BlacklistReason {
 
     /// The API versions supported by the backend are too old in comparison to the ones supported by the client
     case backendAPIVersionObsolete
+
+    /// The session failed to load due to network issues.
+    case networkError(code: Int)
+
+    /// Some reason that the session couldn't be loaded.
+    case genericError
+
+    public static func == (lhs: BlacklistReason, rhs: BlacklistReason) -> Bool {
+        switch (lhs, rhs) {
+        case (.appVersionBlacklisted, .appVersionBlacklisted):
+            true
+        case (.clientAPIVersionObsolete, .clientAPIVersionObsolete):
+            true
+        case (.backendAPIVersionObsolete, .backendAPIVersionObsolete):
+            true
+        case let (.networkError(lhsCode), .networkError(rhsCode)):
+            lhsCode == rhsCode
+        case (.genericError, .genericError):
+            true
+        default:
+            false
+        }
+    }
+
 }

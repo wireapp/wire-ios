@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,30 +21,29 @@ import WireDataModel
 
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationWarningSystemMessageCell
+    typealias View = ConversationWarningSystemMessageCell<ConversationEncryptionInfoSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 26.0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init() {
+    init(isWireDriveEnabled: Bool) {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
-        configuration = View.Configuration(topText: connectionView.encryptionInfo,
-                                           bottomText: connectionView.sensitiveInformationWarning)
+        self.configuration = View.Configuration(
+            icon: nil,
+            topText: isWireDriveEnabled ? NSAttributedString(string: connectionView.WireCells.encryptionInfo) :
+                NSAttributedString(string: connectionView.encryptionInfo),
+            bottomText: NSAttributedString(string: connectionView.sensitiveInformationWarning)
+        )
 
-        accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
-        actionController = nil
+        self.accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
+        self.actionController = nil
     }
 }

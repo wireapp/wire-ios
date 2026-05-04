@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,24 @@
 //
 
 import UIKit
+import WireFoundation
 
 extension UITraitEnvironment {
+
     var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
+        traitCollection.horizontalSizeClass == .regular
     }
 
-    func isIPadRegular(device: DeviceProtocol = UIDevice.current) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
+    func isIPadRegular(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
+        device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
     }
 
-    func isIPadRegularPortrait(device: DeviceProtocol = UIDevice.current, application: ApplicationProtocol = UIApplication.shared) -> Bool {
-        return isIPadRegular(device: device) && application.statusBarOrientation.isPortrait
+    func isIPadRegularPortrait(
+        device: DeviceAbstraction = DeviceWrapper(device: .current)
+    ) -> Bool {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return false
+        }
+        return isIPadRegular(device: device) && windowScene.interfaceOrientation.isPortrait
     }
 }

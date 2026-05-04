@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum AppState: Equatable {
@@ -24,40 +26,43 @@ enum AppState: Equatable {
     case headless
     case locked(UserSession)
     case authenticated(UserSession)
-    case unauthenticated(error: NSError?)
+    case unauthenticated(accountID: UUID?, environment: BackendEnvironment2?, error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
     case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
+    case syncFailure(error: any Error, onRetry: () -> Void)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
         case (.headless, .headless):
-            return true
+            true
         case (.locked, .locked):
-            return true
+            true
         case (.authenticated, .authenticated):
-            return true
-        case let (.unauthenticated(error1), .unauthenticated(error2)):
-            return error1 === error2
+            true
+        case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
+            id1 == id2 &&
+                env1 == env2 &&
+                error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
-            return reason1 == reason2
+            reason1 == reason2
         case (jailbroken, jailbroken):
-            return true
+            true
         case (certificateEnrollmentRequired, certificateEnrollmentRequired):
-            return true
+            true
         case (databaseFailure, databaseFailure):
-            return true
+            true
         case (migrating, migrating):
-            return true
+            true
         case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            return accountTo1 == accountTo2 && accountFrom1 == accountFrom2
+            accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -74,20 +79,22 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated: \(error.debugDescription)"
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
         case .jailbroken:
             "jailbroken"
         case .certificateEnrollmentRequired:
             "certificateEnrollmentRequired"
-        case .databaseFailure(reason: let reason):
+        case let .databaseFailure(reason: reason):
             "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
         case .loading:
             "loading"
+        case let .syncFailure(error, _):
+            "syncFailure: \(error.localizedDescription)"
         }
     }
 }
@@ -96,27 +103,29 @@ extension AppState: SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String {
         switch self {
         case .retryStart:
-            return "retryStart"
+            "retryStart"
         case .headless:
-            return "headless"
+            "headless"
         case .locked:
-            return "locked"
+            "locked"
         case .authenticated:
-            return "authenticated"
-        case .unauthenticated(let error):
-            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
-        case .blacklisted(let reason):
-            return "blacklisted \(reason)"
+            "authenticated"
+        case let .unauthenticated(_, _, error):
+            "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+        case let .blacklisted(reason):
+            "blacklisted \(reason)"
         case .jailbroken:
-            return "jailbroken"
+            "jailbroken"
         case .certificateEnrollmentRequired:
-            return "certificateEnrollmentRequired"
-        case .databaseFailure(let reason):
-            return "databaseFailure \(reason)"
+            "certificateEnrollmentRequired"
+        case let .databaseFailure(reason):
+            "databaseFailure \(reason)"
         case .migrating:
-            return "migrating"
-        case .loading(let account, let from):
-            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+            "migrating"
+        case let .loading(account, from):
+            "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        case let .syncFailure(error, _):
+            "syncFailure \(error.localizedDescription)"
         }
     }
 
@@ -142,10 +151,12 @@ final class AppStateCalculator {
     }
 
     // MARK: - Public Property
+
     weak var delegate: AppStateCalculatorDelegate?
     var wasUnauthenticated: Bool = false
 
     // MARK: - Private Set Property
+
     private(set) var pendingAppState: AppState?
     private(set) var appState: AppState = .headless {
         willSet {
@@ -158,14 +169,18 @@ final class AppStateCalculator {
     }
 
     // MARK: - Private Property
+
     private var observerTokens: [NSObjectProtocol] = []
     private var hasEnteredForeground: Bool = false
 
     // MARK: - Private Implementation
+
     private func transition(
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        let appState = validAppState(from: appState)
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -177,22 +192,30 @@ final class AppStateCalculator {
             return
         }
 
-        if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            completion?()
-            return
-        }
-
         self.appState = appState
-        self.pendingAppState = nil
+        pendingAppState = nil
 
-        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
+        WireLogger.appState.info(
+            "transitioning to app state \(appState.safeForLoggingDescription)",
+            attributes: .safePublic
+        )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
+        }
+    }
+
+    private func validAppState(from appState: AppState) -> AppState {
+        switch appState {
+        case let .authenticated(session) where session.isBuildBlacklisted:
+            .blacklisted(reason: .appVersionBlacklisted)
+        default:
+            appState
         }
     }
 }
 
 // MARK: - ApplicationStateObserving
+
 extension AppStateCalculator: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
@@ -209,36 +232,60 @@ extension AppStateCalculator: ApplicationStateObserving {
 }
 
 // MARK: - SessionManagerDelegate
+
 extension AppStateCalculator: SessionManagerDelegate {
     var isInAuthenticatedAppState: Bool {
         switch appState {
         case .authenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
+
     var isInUnathenticatedAppState: Bool {
         switch appState {
         case .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     func sessionManagerWillLogout(
+        accountID: UUID?,
+        environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
         transition(
-            to: .unauthenticated(error: error as NSError?),
+            to: .unauthenticated(
+                accountID: accountID,
+                environment: environment,
+                error: error as NSError?
+            ),
             completion: userSessionCanBeTornDown
         )
     }
 
-    func sessionManagerDidFailToLogin(error: Error?) {
-        transition(to: .unauthenticated(error: error as NSError?))
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    ) {
+        switch error {
+        case .buildIsBlacklisted:
+            transition(to: .blacklisted(reason: .appVersionBlacklisted))
+        case .backendIsObsolete:
+            transition(to: .blacklisted(reason: .backendAPIVersionObsolete))
+        case .clientIsObsolete:
+            transition(to: .blacklisted(reason: .clientAPIVersionObsolete))
+        case let .networkError(code):
+            transition(to: .blacklisted(reason: .networkError(code: code)))
+        case .genericError:
+            transition(to: .blacklisted(reason: .genericError))
+        case let .databaseError(error):
+            transition(to: .databaseFailure(reason: error))
+        }
     }
 
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {
@@ -267,13 +314,19 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
     }
 
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void) {
-        let appState: AppState = .loading(account: account,
-                                          from: selectedAccount)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    ) {
+        let appState: AppState = .loading(
+            account: account,
+            from: selectedAccount
+        )
+        transition(
+            to: appState,
+            completion: userSessionCanBeTornDown
+        )
     }
 
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
@@ -292,8 +345,8 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(error: error))
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -301,8 +354,8 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         } else {
-            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(error: error))
+            let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -315,9 +368,18 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         }
     }
+
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        transition(to: .syncFailure(error: error, onRetry: retryHandler))
+    }
+
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
+
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(userSession: UserSession) {
         if userSession.isLocked {

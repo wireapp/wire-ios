@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,12 @@ final class StreamStubProvider {
         muted: Bool = false,
         videoState: VideoState = .started,
         activeSpeakerState: ActiveSpeakerState = .inactive,
-        paused: Bool = false) -> Wire.Stream {
-        var callParticipantState: CallParticipantState = .connected(videoState: videoState,
-                                                             microphoneState: muted ? .muted : .unmuted)
+        paused: Bool = false
+    ) -> Wire.Stream {
+        var callParticipantState: CallParticipantState = .connected(
+            videoState: videoState,
+            microphoneState: muted ? .muted : .unmuted
+        )
 
         return Wire.Stream(
             streamId: client,

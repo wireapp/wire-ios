@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,15 +49,15 @@ final class TextSearchResultsView: UIView {
     private func createConstraints() {
         [tableView, noResultsView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          tableView.topAnchor.constraint(equalTo: topAnchor),
-          tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-          tableView.leftAnchor.constraint(equalTo: leftAnchor),
-          tableView.rightAnchor.constraint(equalTo: rightAnchor),
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: rightAnchor),
 
-          noResultsView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 12),
-          noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
-          noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
-          noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            noResultsView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 12),
+            noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
+            noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
 

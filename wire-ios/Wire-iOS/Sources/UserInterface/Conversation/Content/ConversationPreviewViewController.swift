@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 //
 
 import UIKit
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
-final class ConversationPreviewViewController: TintColorCorrectedViewController {
+final class ConversationPreviewViewController: UIViewController {
 
     let conversation: ZMConversation
     let actionController: ConversationActionController
@@ -28,24 +30,32 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
     init(
         conversation: ZMConversation,
         presentingViewController: UIViewController,
-        sourceView: UIView?,
+        sourceView: UIView,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
-        actionController = ConversationActionController(
+        self.actionController = ConversationActionController(
             conversation: conversation,
             target: presentingViewController,
             sourceView: sourceView,
             userSession: userSession
         )
 
-        contentViewController = ConversationContentViewController(
+        self.contentViewController = ConversationContentViewController(
             conversation: conversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
+            wireMessagingFactory: wireMessagingFactory
         )
+        DeveloperToolsViewModel.context.currentConversation = conversation
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -73,25 +83,35 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
         conversationView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          conversationView.topAnchor.constraint(equalTo: view.topAnchor),
-          conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            conversationView.topAnchor.constraint(equalTo: view.topAnchor),
+            conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
 
     // MARK: Preview Actions
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     override var previewActionItems: [UIPreviewActionItem] {
-        return conversation.listActions.map(makePreviewAction)
+        conversation.listActions.map(makePreviewAction)
     }
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
-        return action.previewAction { [weak self] in
+        action.previewAction { [weak self] in
             guard let self else { return }
-            self.actionController.handleAction(action)
+            actionController.handleAction(action)
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,10 +37,10 @@ final class GiphyCollectionViewCell: UICollectionViewCell {
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
         ])
     }
 

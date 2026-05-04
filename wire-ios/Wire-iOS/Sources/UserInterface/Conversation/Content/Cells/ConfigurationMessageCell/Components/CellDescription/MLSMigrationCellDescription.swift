@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,21 +22,16 @@ import WireDesign
 
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<MLSMigrationCellDescription>
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_mlsLearnMore
+        .link: WireURLs.shared.mlsInfo
     ]
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -50,8 +45,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(messageType: messageType)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        accessibilityLabel = content?.string
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
     }
 
     // MARK: Attributed Strings
@@ -71,7 +66,9 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         case .mlsMigrationPotentialGap:
             return makePotentialGapAttributedString()
         default:
-            assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
+            assertionFailure(
+                "MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!"
+            )
             return nil
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,18 +50,12 @@ public struct ProteusSessionID: Hashable, Equatable {
         self.domain = domain
     }
 
-    /// Use when migrating from old session identifier to new session identifier.
-
-    init(fromLegacyV1Identifier clientID: String) {
-        self.init(userID: "", clientID: clientID)
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }
 
     public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {
-        return lhs.rawValue == rhs.rawValue
+        lhs.rawValue == rhs.rawValue
     }
 
 }
@@ -69,7 +63,7 @@ public struct ProteusSessionID: Hashable, Equatable {
 extension ProteusSessionID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        return "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
+        "<\(domain)>_<\(userID)>_<\(clientID)>"
     }
 
 }

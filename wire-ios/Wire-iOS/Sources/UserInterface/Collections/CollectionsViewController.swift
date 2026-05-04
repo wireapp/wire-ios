@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,22 @@
 //
 
 import UIKit
+import WireFoundation
+import WireLogging
+import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
-    func collectionsViewController(_ viewController: CollectionsViewController, performAction: MessageAction, onMessage: ZMConversationMessage)
+    func collectionsViewController(
+        _ viewController: CollectionsViewController,
+        performAction: MessageAction,
+        onMessage: ZMConversationMessage
+    )
+
+    func collectionsViewControllerDidRequestOpenSearchFiles(
+        _ viewController: CollectionsViewController
+    )
 }
 
 final class CollectionsViewController: UIViewController {
@@ -28,19 +40,20 @@ final class CollectionsViewController: UIViewController {
     let sections: CollectionsSectionSet
     weak var delegate: CollectionsViewControllerDelegate?
     var isShowingSearchResults: Bool {
-        return !textSearchController.resultsView.isHidden
+        !textSearchController.resultsView.isHidden
     }
 
     var shouldTrackOnNextOpen = false
 
     var currentTextSearchQuery: [String] {
-        return textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
+        textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
     }
 
     private var contentView: CollectionsView! {
-        return view as? CollectionsView
+        view as? CollectionsView
     }
-    private let messagePresenter = MessagePresenter()
+
+    private let messagePresenter: MessagePresenter
     private weak var selectedMessage: ZMConversationMessage? = .none
 
     private var imageMessages: [ZMConversationMessage] = []
@@ -54,7 +67,11 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    var collectionsSectionSet: [CollectionsSectionSet]
+    let isCellsEnabled: Bool
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -68,56 +85,81 @@ final class CollectionsViewController: UIViewController {
     }
 
     private var inOverviewMode: Bool {
-        return sections == .all
+        sections == .all
     }
 
-    private lazy var textSearchController = TextSearchViewController(conversation: collection.conversation, userSession: userSession)
+    private lazy var textSearchController = TextSearchViewController(
+        conversation: collection.conversation,
+        userSession: userSession
+    )
 
     convenience init(
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
         let matchVideo = CategoryMatch(including: .video, excluding: .none)
         let matchLink = CategoryMatch(including: .linkPreview, excluding: .none)
 
-        let holder = AssetCollectionWrapper(conversation: conversation, matchingCategories: [matchImages, matchFiles, matchVideo, matchLink])
+        let holder = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [matchImages, matchFiles, matchVideo, matchLink]
+        )
 
-        self.init(collection: holder, userSession: userSession, mainCoordinator: mainCoordinator)
+        self.init(
+            collection: holder,
+            isCellsEnabled: conversation.isWireDriveEnabled,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
+        )
     }
 
     init(
         collection: AssetCollectionWrapper,
         sections: CollectionsSectionSet = .all,
         messages: [ZMConversationMessage] = [],
+        isCellsEnabled: Bool,
         fetchingDone: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
+        self.isCellsEnabled = isCellsEnabled
+
+        self.collectionsSectionSet = isCellsEnabled ? CollectionsSectionSet
+            .visibleWithSearchFiles : CollectionsSectionSet.visible
 
         switch sections {
         case CollectionsSectionSet.images:
-            imageMessages = messages
+            self.imageMessages = messages
         case CollectionsSectionSet.filesAndAudio:
-            fileAndAudioMessages = messages
+            self.fileAndAudioMessages = messages
         case CollectionsSectionSet.videos:
-            videoMessages = messages
+            self.videoMessages = messages
         case CollectionsSectionSet.links:
-            linkMessages = messages
+            self.linkMessages = messages
         default: break
         }
 
         self.fetchingDone = fetchingDone
+        self.messagePresenter = MessagePresenter(userSession: userSession)
 
         super.init(nibName: .none, bundle: .none)
         collection.assetCollectionDelegate.add(self)
-        deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: self)
+        self.deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: self)
     }
 
     deinit {
@@ -135,7 +177,10 @@ final class CollectionsViewController: UIViewController {
         videoMessages = []
         linkMessages = []
         fileAndAudioMessages = []
-        collection = AssetCollectionWrapper(conversation: collection.conversation, matchingCategories: collection.matchingCategories)
+        collection = AssetCollectionWrapper(
+            conversation: collection.conversation,
+            matchingCategories: collection.matchingCategories
+        )
         collection.assetCollectionDelegate.add(self)
         contentView.collectionView.reloadData()
     }
@@ -159,10 +204,12 @@ final class CollectionsViewController: UIViewController {
 
         updateNoElementsState()
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -193,22 +240,12 @@ final class CollectionsViewController: UIViewController {
 
     // MARK: - device orientation
 
-    /// Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (.regular in iOS11).
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        switch traitCollection.horizontalSizeClass {
-        case .compact:
-            return false
-        default:
-            return true
-        }
+        wr_supportedInterfaceOrientations
     }
 
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .portrait
+        .portrait
     }
 
     private func flushLayout() {
@@ -225,7 +262,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func trackOpeningIfNeeded() {
-        guard shouldTrackOnNextOpen && fetchingDone else { return }
+        guard shouldTrackOnNextOpen, fetchingDone else { return }
 
         shouldTrackOnNextOpen = false
     }
@@ -235,8 +272,9 @@ final class CollectionsViewController: UIViewController {
         UIView.performWithoutAnimation {
             contentView.collectionView.performBatchUpdates({
                 for section in [CollectionsSectionSet.images, CollectionsSectionSet.videos]
-                where numberOfElements(for: section) != 0 {
-                    contentView.collectionView.reloadSections(IndexSet(integer: (CollectionsSectionSet.visible.firstIndex(of: section))!))
+                    where numberOfElements(for: section) != 0 {
+                    contentView.collectionView
+                        .reloadSections(IndexSet(integer: (collectionsSectionSet.firstIndex(of: section))!))
                 }
             }, completion: { _ in
                 self.contentView.collectionView.reloadData()
@@ -274,7 +312,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     private func updateNoElementsState() {
@@ -303,23 +341,21 @@ final class CollectionsViewController: UIViewController {
 
         navigationItem.titleView = titleViewWrapper
 
-        let button = CollectionsView.closeButton()
-        button.accessibilityLabel = L10n.Accessibility.ConversationSearch.CloseButton.description
-        button.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
         if !inOverviewMode,
            let count = navigationController?.viewControllers.count,
            count > 1 {
             let backButton = CollectionsView.backButton()
-            backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
+            backButton.addTarget(
+                self,
+                action: #selector(CollectionsViewController.backButtonPressed(_:)),
+                for: .touchUpInside
+            )
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         }
-    }
-
-    @objc
-    private func closeButtonPressed(_ button: UIButton) {
-        onDismiss?(self)
     }
 
     @objc
@@ -329,7 +365,11 @@ final class CollectionsViewController: UIViewController {
 }
 
 extension CollectionsViewController: AssetCollectionDelegate {
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
 
         for messageCategory in messages {
             let conversationMessages = messageCategory.value
@@ -362,18 +402,19 @@ extension CollectionsViewController: AssetCollectionDelegate {
     }
 }
 
-extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource,
+    UICollectionViewDelegateFlowLayout {
 
     private func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
         switch section {
         case CollectionsSectionSet.images:
-            return imageMessages
+            imageMessages
         case CollectionsSectionSet.filesAndAudio:
-            return fileAndAudioMessages
+            fileAndAudioMessages
         case CollectionsSectionSet.videos:
-            return videoMessages
+            videoMessages
         case CollectionsSectionSet.links:
-            return linkMessages
+            linkMessages
         default: fatal("Unknown section")
         }
     }
@@ -396,7 +437,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             let max = inOverviewMode ? maxOverviewElementsInTable : Int.max
             return min(linkMessages.count, max)
 
-        case CollectionsSectionSet.loading:
+        case CollectionsSectionSet.loading, .searchFiles:
             return 1
 
         default: fatal("Unknown section")
@@ -405,17 +446,15 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
     private func totalNumberOfElements() -> Int {
         // Empty collection contains one element (loading cell)
-        return CollectionsSectionSet.visible.map { numberOfElements(for: $0) }.reduce(0, +) - 1
+        collectionsSectionSet.map { numberOfElements(for: $0) }.reduce(0, +) - 1
     }
 
     private func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
-        return elements(for: section).count > numberOfElements(for: section)
+        elements(for: section).count > numberOfElements(for: section)
     }
 
     private func message(for indexPath: IndexPath) -> ZMConversationMessage {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         return elements(for: section)[indexPath.row]
     }
@@ -423,36 +462,36 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     private func gridElementSize(in section: CollectionsSectionSet) -> CGSize {
         let sectionHorizontalInset = horizontalInset(in: section)
 
-        let size = (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(elementsPerLine(in: section))
+        let size = (contentView.collectionView.bounds.size.width - sectionHorizontalInset) /
+            CGFloat(elementsPerLine(in: section))
 
         return CGSize(width: size - 1, height: size - 1)
     }
 
     private func elementsPerLine(in section: CollectionsSectionSet) -> Int {
-        var count: Int = 1
+        var count = 1
         let sectionHorizontalInset = horizontalInset(in: section)
 
         repeat {
             count += 1
-        } while ((contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) > CollectionImageCell.maxCellSize)
+        } while (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) >
+            CollectionImageCell.maxCellSize
 
         return count
     }
 
     private func maxOverviewElementsInGrid(in section: CollectionsSectionSet) -> Int {
-        return elementsPerLine(in: section) * 2 // 2 lines of elements
+        elementsPerLine(in: section) * 2 // 2 lines of elements
     }
 
     private var maxOverviewElementsInTable: Int {
-        return 3
+        3
     }
 
     private func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
-        let gridElementSize = self.gridElementSize(in: section)
+        let gridElementSize = gridElementSize(in: section)
 
         var desiredWidth: CGFloat?
         var desiredHeight: CGFloat?
@@ -480,6 +519,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 desiredHeight = fetchingDone ? 24 : 88
             }
 
+        case CollectionsSectionSet.searchFiles:
+            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
+            if !CollectionsView.useAutolayout {
+                desiredHeight = 50
+            }
+
         default: fatal("Unknown section")
         }
 
@@ -492,7 +537,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func sectionInsets(in section: CollectionsSectionSet) -> UIEdgeInsets {
-        if section == CollectionsSectionSet.loading {
+        if section == CollectionsSectionSet.loading || section == .searchFiles {
             return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
 
@@ -502,56 +547,92 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     // MARK: - Data Source
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return CollectionsSectionSet.visible.count
+        collectionsSectionSet.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: section)
 
         return numberOfElements(for: section)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         let (width, height) = sizeForCell(at: indexPath)
         return CGSize(width: width ?? 0, height: height ?? 0)
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let section = collectionSection(for: indexPath.section)
 
         let resultCell: CollectionCell
 
         switch section {
         case CollectionsSectionSet.images:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionImageCell.reuseIdentifier, for: indexPath) as! CollectionImageCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionImageCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionImageCell
 
         case CollectionsSectionSet.filesAndAudio:
             if message(for: indexPath).fileMessageData?.isAudio == true {
-                resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionAudioCell.reuseIdentifier, for: indexPath) as! CollectionAudioCell
+                let audioCell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CollectionAudioCell.reuseIdentifier,
+                    for: indexPath
+                ) as! CollectionAudioCell
+                audioCell.setUserSession(userSession: userSession)
+                resultCell = audioCell
             } else {
-                resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionFileCell.reuseIdentifier, for: indexPath) as! CollectionFileCell
+                resultCell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CollectionFileCell.reuseIdentifier,
+                    for: indexPath
+                ) as! CollectionFileCell
             }
 
         case CollectionsSectionSet.videos:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionVideoCell.reuseIdentifier, for: indexPath) as! CollectionVideoCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionVideoCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionVideoCell
 
         case CollectionsSectionSet.links:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionLinkCell.reuseIdentifier, for: indexPath) as! CollectionLinkCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionLinkCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionLinkCell
 
         case CollectionsSectionSet.loading:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionLoadingCell.reuseIdentifier, for: indexPath) as! CollectionLoadingCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionLoadingCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionLoadingCell
             cell.collapsed = fetchingDone
             cell.containerWidth = collectionView.bounds.size.width - horizontalInset(in: section)
+            return cell
+
+        case CollectionsSectionSet.searchFiles:
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionSearchFilesCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionSearchFilesCell
+            let accentColor = WireAccentColor(
+                rawValue: userSession.selfUser.accentColorValue
+            )
+            cell.configure(accentColor: accentColor) { [weak self] in
+                self?.showSearchFilesAlert()
+            }
             return cell
 
         default: fatal("Unknown section")
         }
 
-        let message = self.message(for: indexPath)
+        let message = message(for: indexPath)
         resultCell.message = message
         resultCell.delegate = self
         resultCell.messageChangeDelegate = self
@@ -566,14 +647,20 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return resultCell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let section = collectionSection(for: indexPath.section)
 
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeaderView.reuseIdentifier, for: indexPath) as! CollectionHeaderView
+            let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: CollectionHeaderView.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionHeaderView
             header.section = section
             header.totalItemsCount = UInt(moreElementsToSee(in: section) ? elements(for: section).count : 0)
             header.selectionAction = { [weak self] section in
@@ -581,18 +668,25 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     return
                 }
                 let collectionController = CollectionsViewController(
-                    collection: self.collection,
+                    collection: collection,
                     sections: section,
-                    messages: self.elements(for: section),
-                    fetchingDone: self.fetchingDone,
+                    messages: elements(for: section),
+                    isCellsEnabled: isCellsEnabled,
+                    fetchingDone: fetchingDone,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
-                collectionController.onDismiss = self.onDismiss
-                collectionController.delegate = self.delegate
-                self.navigationController?.pushViewController(collectionController, animated: true)
+                collectionController.onDismiss = onDismiss
+                collectionController.delegate = delegate
+                navigationController?.pushViewController(collectionController, animated: true)
             }
-            let size = self.collectionView(collectionView, layout: self.contentView.collectionView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
+            let size = self.collectionView(
+                collectionView,
+                layout: contentView.collectionView.collectionViewLayout,
+                referenceSizeForHeaderInSection: indexPath.section
+            )
             header.desiredWidth = size.width
             header.desiredHeight = size.height
             return header
@@ -603,42 +697,85 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
     // MARK: - Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        let section = collectionSection(for: section)
 
-        if section == CollectionsSectionSet.loading {
+        if section == CollectionsSectionSet.loading || section == CollectionsSectionSet.searchFiles {
             return .zero
         }
         return elements(for: section).isEmpty ? .zero : CGSize(width: collectionView.bounds.size.width, height: 48)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return .zero
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
-        return sectionInsets(in: section)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        sectionInsets(in: collectionSection(for: section))
+    }
+
+    private func collectionSection(for section: Int) -> CollectionsSectionSet {
+        guard let section = CollectionsSectionSet(
+            index: UInt(section),
+            isCellsEnabled: isCellsEnabled
+        ) else { fatal("Unknown section") }
+
+        return section
     }
 
     // MARK: - Delegate
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section for indexPath = \(indexPath)")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         if section == .loading {
             return
         }
 
-        let message = self.message(for: indexPath)
+        if section == .searchFiles {
+            delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
+            return
+        }
 
-        perform(.present, for: message, source: nil)
+        let message = message(for: indexPath)
+        perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
+    }
+
+    private func showSearchFilesAlert() {
+        typealias SearchFiles = L10n.Localizable.Collections.Section.SearchFiles
+        let alertController = UIAlertController(
+            title: SearchFiles.Alert.title,
+            message: SearchFiles.Alert.message,
+            preferredStyle: .alert
+        )
+
+        let searchFilesAction = UIAlertAction(
+            title: SearchFiles.description,
+            style: .default
+        ) { [weak self] _ in
+            guard let self else { return }
+            delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
+        }
+
+        let cancelAction = UIAlertAction(
+            title: L10n.Localizable.General.close,
+            style: .cancel
+        ) { _ in }
+
+        [searchFilesAction, cancelAction].forEach(alertController.addAction)
+        present(alertController, animated: true)
     }
 
 }
@@ -646,9 +783,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 extension CollectionsViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-                fatal("Unknown section")
-            }
+            let section = collectionSection(for: indexPath.section)
 
             guard section != .loading else {
                 continue
@@ -669,8 +804,8 @@ extension CollectionsViewController: CollectionCellMessageChangeDelegate {
               fileMessageData.downloadState == .downloaded,
               messagePresenter.waitingForFileDownload,
               message.isFile || message.isVideo || message.isAudio else {
-                  return
-              }
+            return
+        }
 
         messagePresenter.openFileMessage(message, targetView: cell)
     }
@@ -682,21 +817,22 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if navigationController?.interactivePopGestureRecognizer == gestureRecognizer {
             if let count = navigationController?.viewControllers.count, count > 1 {
-                return true
+                true
             } else {
-                return false
+                false
             }
         } else {
-            return true
+            true
         }
     }
 }
 
 // MARK: - Actions
+
 extension CollectionsViewController: MessageActionResponder {
 
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
-        perform(action, for: message, source: view as? CollectionCell)
+        perform(action, for: message, source: view)
     }
 }
 
@@ -710,17 +846,21 @@ extension CollectionsViewController: CollectionCellDelegate {
         perform(action, for: message, source: cell)
     }
 
-    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: CollectionCell?) {
+    func perform(_ action: MessageAction, for message: ZMConversationMessage, source: UIView) {
         switch action {
         case .copy:
-            if let cell = source {
+            if let cell = source as? CollectionCell {
                 cell.copyDisplayedContent(in: .general)
             } else {
                 message.copy(in: .general)
             }
 
         case .delete:
-            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source, userSession: userSession) { [weak self] deleted in
+            deletionDialogPresenter?.presentDeletionAlertController(
+                forMessage: message,
+                source: source,
+                userSession: userSession
+            ) { [weak self] deleted, _ in
                 guard deleted else { return }
                 _ = self?.navigationController?.popViewController(animated: true)
                 self?.refetchCollection()
@@ -734,18 +874,24 @@ extension CollectionsViewController: CollectionCellDelegate {
                     collection: collection,
                     initialMessage: message,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
 
                 let backButton = CollectionsView.backButton()
-                backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
+                backButton.addTarget(
+                    self,
+                    action: #selector(CollectionsViewController.backButtonPressed(_:)),
+                    for: .touchUpInside
+                )
                 backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
 
-                let closeButton = CollectionsView.closeButton()
-                closeButton.addTarget(self, action: #selector(CollectionsViewController.closeButtonPressed(_:)), for: .touchUpInside)
+                navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                    self?.presentingViewController?.dismiss(animated: true)
+                }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
                 imagesController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-                imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeButton)
                 imagesController.swipeToDismiss = false
                 imagesController.messageActionDelegate = self
                 navigationController?.pushViewController(imagesController, animated: true)
@@ -755,20 +901,34 @@ extension CollectionsViewController: CollectionCellDelegate {
                     targetView: view,
                     actionResponder: self,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
             }
 
         case .save:
             if message.isImage {
-                guard let imageMessageData = message.imageMessageData, let imageData = imageMessageData.imageData else { return }
+                guard let imageMessageData = message.imageMessageData,
+                      let imageData = imageMessageData.imageData else { return }
 
                 let saveableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
                 saveableImage.saveToLibrary()
 
+            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
+                let activityViewController = UIActivityViewController(
+                    activityItems: [fileURL],
+                    applicationActivities: nil
+                )
+                if let popoverPresentationController = activityViewController.popoverPresentationController {
+                    let sourceView = (source as? CollectionCell)?.selectionView ?? view as UIView
+                    popoverPresentationController.sourceView = sourceView.superview
+                    popoverPresentationController.sourceRect = sourceView.frame
+                }
+                present(activityViewController, animated: true)
             } else {
-                guard let saveController = UIActivityViewController(message: message, from: view) else { return }
-                present(saveController, animated: true, completion: nil)
+                WireLogger.conversation
+                    .warn("Saving a message of any type other than image or file is currently not handled.")
             }
 
         case .download:
@@ -785,13 +945,17 @@ extension CollectionsViewController: CollectionCellDelegate {
             let detailsViewController = MessageDetailsViewController(
                 message: message,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
-            present(detailsViewController, animated: true)
+            let navigationController = UINavigationController(rootViewController: detailsViewController)
+            navigationController.modalPresentationStyle = .formSheet
+
+            present(navigationController, animated: true)
 
         default:
             delegate?.collectionsViewController(self, performAction: action, onMessage: message)
         }
     }
-
 }

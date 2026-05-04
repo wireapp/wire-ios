@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,17 +19,27 @@
 import UIKit
 import WireUtilities
 
-extension Bundle {
+public extension Bundle {
 
-    public var appInfo: Bundle.Info {
-        return Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
+    var appInfo: Bundle.Info {
+        Info(
+            version: shortVersionString ?? "-",
+            build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-"
+        )
     }
 
-    public var shortVersionString: String? {
-        return Bundle.main.infoForKey("CFBundleShortVersionString")
+    var shortVersionString: String? {
+        Bundle.main.infoForKey("CFBundleShortVersionString")
     }
 
-    public static var appMainBundle: Bundle {
+    var appInternalName: String? {
+        guard let name = Bundle.main.infoForKey("WireInternalName"), !name.isEmpty else {
+            return nil
+        }
+        return name
+    }
+
+    static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
@@ -42,7 +52,7 @@ extension Bundle {
         return mainBundle
     }
 
-    public struct Info: SafeForLoggingStringConvertible {
+    struct Info: SafeForLoggingStringConvertible {
         var version: String
         var build: String
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,17 +34,9 @@ protocol ConversationListViewModelDelegate: AnyObject {
 
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool)
 
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool)
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int)
-
     func reload<C>(
-    using stagedChangeset: StagedChangeset<C>,
-    interrupt: ((Changeset<C>) -> Bool)?,
-    setData: (C?) -> Void
+        using stagedChangeset: StagedChangeset<C>,
+        interrupt: ((Changeset<C>) -> Bool)?,
+        setData: (C?) -> Void
     )
-}
-
-protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool)
 }

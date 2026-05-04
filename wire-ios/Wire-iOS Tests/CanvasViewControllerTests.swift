@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,32 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class CanvasViewControllerTests: XCTestCase {
 
-    var sut: CanvasViewController!
+    // MARK: - Properties
+
+    private var sut: CanvasViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        sut = CanvasViewController()
+        snapshotHelper = SnapshotHelper()
+        sut = CanvasViewController(userSession: UserSessionMock())
 
         sut.loadViewIfNeeded()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForSendButtonEnabled() {
         sut.sendButton.isEnabled = true
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testForEmojiKeyboard() {
         sut.emojiButton.sendActions(for: .touchUpInside)
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,20 +25,31 @@ enum GuestLinkFeatureStatus {
 }
 
 extension ZMConversation {
-    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration, ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
+    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration,
+        ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
 
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
+        var messageProtocol: MessageProtocol { conversation.messageProtocol }
+        let areLegacyBotsAvailable: Bool
+        let isAppsFeatureEnabled: Bool
         var allowGuestsChangedHandler: ((Bool) -> Void)?
-        var allowServicesChangedHandler: ((Bool) -> Void)?
+        var allowAppsChangedHandler: ((Bool) -> Void)?
         var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
 
-        init(conversation: ZMConversation, userSession: ZMUserSession) {
+        init(
+            conversation: ZMConversation,
+            userSession: ZMUserSession,
+            areLegacyBotsAvailable: Bool,
+            isAppsFeatureEnabled: Bool
+        ) {
             self.conversation = conversation
             self.userSession = userSession
+            self.areLegacyBotsAvailable = areLegacyBotsAvailable
+            self.isAppsFeatureEnabled = isAppsFeatureEnabled
             super.init()
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             conversation.canGenerateGuestLink(in: userSession) { [weak self] result in
                 switch result {
@@ -54,17 +65,17 @@ extension ZMConversation {
         }
 
         var isConversationFromSelfTeam: Bool {
-            let selfUser = ZMUser.selfUser(inUserSession: userSession)
+            let selfUser = ZMUser.selfUser(in: userSession.viewContext)
 
             return conversation.teamRemoteIdentifier == selfUser.teamIdentifier
         }
 
         var allowGuests: Bool {
-            return conversation.allowGuests
+            conversation.allowGuests
         }
 
-        var allowServices: Bool {
-            return conversation.allowServices
+        var allowApps: Bool {
+            conversation.allowApps
         }
 
         var guestLinkFeatureStatus: GuestLinkFeatureStatus = .unknown {
@@ -74,45 +85,51 @@ extension ZMConversation {
         }
 
         var isCodeEnabled: Bool {
-            return conversation.accessMode?.contains(.code) ?? false
+            conversation.accessMode?.contains(.code) ?? false
         }
 
         var areGuestPresent: Bool {
-            return conversation.areGuestsPresent
+            conversation.areGuestsPresent
         }
 
-        var areServicePresent: Bool {
-            return conversation.areServicesPresent
+        var areAppsPresent: Bool {
+            conversation.areAppsPresent
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
+            let context = conversation.managedObjectContext!
 
-            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
-                conversation: conversation,
-                allowGuests: allowGuests,
-                allowServices: conversation.allowServices
-            ) { result in
-                switch result {
-                case .success:
+            Task { [conversation] in
+                do {
+                    let allowApps = await context.perform { conversation.allowApps }
+                    try await setConversationGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: allowGuests,
+                        allowApps: allowApps
+                    )
                     completion(.success(()))
-                case .failure(let error):
+                } catch {
                     completion(.failure(error))
                 }
             }
 
         }
 
-        func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
+            let context = conversation.managedObjectContext!
 
-            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
-                conversation: conversation,
-                allowGuests: conversation.allowGuests,
-                allowServices: allowServices
-            ) { result in
-                switch result {
-                case .success:
+            Task { [conversation] in
+                do {
+                    let allowGuests = await context.perform { conversation.allowGuests }
+                    try await setConversationGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: allowGuests,
+                        allowApps: allowApps
+                    )
                     completion(.success(()))
-                case .failure(let error):
+                } catch {
                     completion(.failure(error))
                 }
             }
@@ -125,8 +142,8 @@ extension ZMConversation {
                 allowGuestsChangedHandler?(allowGuests)
             }
 
-            if changeInfo.allowServicesChanged {
-                allowServicesChangedHandler?(allowServices)
+            if changeInfo.allowAppsChanged {
+                allowAppsChangedHandler?(allowApps)
             }
         }
 

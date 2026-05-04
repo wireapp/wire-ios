@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,16 +20,17 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-/**
- * Handles client registration errors related to the expiration of the auth token, which requires
- * the user to reauthenticate.
- */
+/// Handles client registration errors related to the expiration of the auth token, which requires
+/// the user to reauthenticate.
 
 final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle needsPasswordToRegisterClient errrors
@@ -37,7 +38,7 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
             return nil
         }
 
-        var isSignedOut: Bool = true
+        var isSignedOut = true
 
         // If the error comes from the "no history" step, it means that we show
         // the "password needed" screen, and that we should hide the "your session
@@ -49,11 +50,18 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
         let numberOfAccounts = statusProvider?.numberOfAccounts ?? 0
         let credentials = error.userInfo[ZMUserLoginCredentialsKey] as? LoginCredentials
 
-        let nextStep = AuthenticationFlowStep.reauthenticate(credentials: credentials, numberOfAccounts: numberOfAccounts, isSignedOut: isSignedOut)
+        let nextStep = AuthenticationFlowStep.reauthenticate(
+            credentials: credentials,
+            environment: nil,
+            numberOfAccounts: numberOfAccounts,
+            isSignedOut: isSignedOut
+        )
 
-        let alert = AuthenticationCoordinatorAlert(title: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-                                                   message: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.message,
-                                                   actions: [.ok])
+        let alert = AuthenticationCoordinatorAlert(
+            title: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
+            message: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.message,
+            actions: [.ok]
+        )
 
         return [.hideLoadingView, .transition(nextStep, mode: .reset), .presentAlert(alert)]
     }

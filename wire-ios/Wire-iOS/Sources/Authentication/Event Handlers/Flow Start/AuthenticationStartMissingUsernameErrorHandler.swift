@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,19 @@
 //
 
 import Foundation
+import WireNetwork
 
-/**
- * Handles client registration errors related to the lack of a username
- */
+/// Handles client registration errors related to the lack of a username
 
 final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
-        let (error, _) = context
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (BackendEnvironment2?, NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
+        let (_, error, _) = context
 
         // Only handle errors on start
         guard case .start = currentStep else {
@@ -40,7 +42,7 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
         }
 
         // Verify the state
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

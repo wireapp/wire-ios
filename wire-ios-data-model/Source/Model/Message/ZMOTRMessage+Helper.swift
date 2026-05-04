@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 import Foundation
 
-extension ZMOTRMessage {
-    public var dataSetDebugInformation: String {
+public extension ZMOTRMessage {
+    var dataSetDebugInformation: String {
         let debugDescription = dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage.debugDescription }
             .joined(separator: "\n")
-        return String.init(format: "<%@>: %@", NSStringFromClass(ZMGenericMessageData.self), debugDescription)
+        return String(format: "<%@>: %@", NSStringFromClass(ZMGenericMessageData.self), debugDescription)
     }
 }

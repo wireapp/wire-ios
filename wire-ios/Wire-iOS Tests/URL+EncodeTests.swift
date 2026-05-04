@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class URL_EncodeTests: XCTestCase {
 
@@ -37,11 +37,17 @@ final class URL_EncodeTests: XCTestCase {
 
     func testThatURLIsEncodedForFirefox() {
         // WHEN & THEN
-        XCTAssertEqual(sut.firefoxURL, URL(string: "firefox://open-url?url=https%3A%2F%2Fen%2Ewikipedia%2Eorg%2Fwiki%2FWire%5FSwiss%23History"))
+        XCTAssertEqual(
+            sut.firefoxURL,
+            URL(string: "firefox://open-url?url=https%3A%2F%2Fen%2Ewikipedia%2Eorg%2Fwiki%2FWire%5FSwiss%23History")
+        )
     }
 
     func testThatURLIsEncodedForBrave() {
         // WHEN & THEN
-        XCTAssertEqual(sut.braveURL, URL(string: "brave://open-url?url=https%3A%2F%2Fen%2Ewikipedia%2Eorg%2Fwiki%2FWire%5FSwiss%23History"))
+        XCTAssertEqual(
+            sut.braveURL,
+            URL(string: "brave://open-url?url=https%3A%2F%2Fen%2Ewikipedia%2Eorg%2Fwiki%2FWire%5FSwiss%23History")
+        )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request
 
@@ -47,8 +57,11 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             return nil
         }
 
+        let path = apiVersion >= .v7
+            ? "/one2one-conversations/\(domain)/\(userID)"
+            : "/conversations/one2one/\(domain)/\(userID)"
         return ZMTransportRequest(
-            getFromPath: "/conversations/one2one/\(domain)/\(userID)",
+            getFromPath: path,
             apiVersion: apiVersion.rawValue
         )
     }
@@ -63,7 +76,11 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _):
-            guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            guard
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let data = response.rawData,
+                !data.isEmpty
+            else {
                 action.fail(with: .invalidResponse)
                 return
             }
@@ -71,36 +88,34 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             let decoder = JSONDecoder.defaultDecoder
             decoder.setAPIVersion(apiVersion)
 
-            guard
-                let data = response.rawData,
-                let payload = Payload.Conversation(
-                    data,
-                    decoder: decoder
-                )
-            else {
-                action.fail(with: .invalidResponse)
-                return
-            }
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4:
+                action.fail(with: .endpointUnavailable)
 
-            Task { [action] in
-                var action = action
-
-                // TODO: [WPB-7415] backend doesn't always include the other member
-                var payload = payload
-                payload.addMissingMember(userID: QualifiedID(uuid: action.userID, domain: action.domain))
-
-                guard
-                    let conversation = await processor.updateOrCreateConversation(
-                        from: payload,
-                        in: context
-                    ),
-                    let groupID = await context.perform({ conversation.mlsGroupID })
-                else {
-                    action.fail(with: .failedToProcessResponse)
+            case .v5:
+                guard let payload = Payload.Conversation(data, decoder: decoder) else {
+                    action.fail(with: .invalidResponse)
                     return
                 }
+                updateOrCreateConversation(
+                    action: action,
+                    payload: payload
+                )
 
-                action.succeed(with: groupID)
+            case .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+                guard
+                    let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
+                    let payload = result.conversation
+                else {
+                    action.fail(with: .invalidResponse)
+                    return
+                }
+                let publicKeys = result.publicKeys?.toBackendMLSPublicKeys()
+                updateOrCreateConversation(
+                    action: action,
+                    payload: payload,
+                    publicKeys: publicKeys
+                )
             }
 
         case (400, "mls-not-enabled"):
@@ -113,6 +128,35 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             let errorInfo = response.errorInfo
             action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
         }
+    }
+
+    private func updateOrCreateConversation(
+        action: SyncMLSOneToOneConversationAction,
+        payload: Payload.Conversation,
+        publicKeys: BackendMLSPublicKeys? = nil
+    ) {
+        Task { [action] in
+            var action = action
+
+            // TODO: [WPB-7415] backend doesn't always include the other member
+            var payload = payload
+            payload.addMissingMember(userID: QualifiedID(uuid: action.userID, domain: action.domain))
+
+            guard
+                let conversation = await processor.updateOrCreateConversation(
+                    from: payload,
+                    in: context
+                ),
+                let groupID = await context.perform({ conversation.mlsGroupID }),
+                let conversationID = await context.perform({ conversation.qualifiedID })
+            else {
+                action.fail(with: .failedToProcessResponse)
+                return
+            }
+
+            action.succeed(with: (conversationID: conversationID, groupID: groupID, publicKeys: publicKeys))
+        }
+
     }
 }
 
@@ -142,4 +186,36 @@ private extension Payload.Conversation {
             )]
         )
     }
+}
+
+extension Payload {
+
+    struct ConversationWithRemovalKeys: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case conversation
+            case publicKeys = "public_keys"
+        }
+
+        let conversation: Payload.Conversation?
+        let publicKeys: ExternalSenderKeys?
+
+    }
+
+}
+
+private extension Payload.ExternalSenderKeys {
+
+    func toBackendMLSPublicKeys() -> BackendMLSPublicKeys? {
+        BackendMLSPublicKeys(
+            removal: .init(
+                ed25519: removal.ed25519?.base64DecodedData,
+                ed448: removal.ed448?.base64DecodedData,
+                p256: removal.p256?.base64DecodedData,
+                p384: removal.p384?.base64DecodedData,
+                p521: removal.p521?.base64DecodedData
+            )
+        )
+    }
+
 }

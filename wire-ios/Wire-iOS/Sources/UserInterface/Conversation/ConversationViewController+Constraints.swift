@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension ConversationViewController {
     func updateOutgoingConnectionVisibility() {
 
         let outgoingConnection: Bool = conversation.relatedConnectionState == .sent
-        contentViewController.tableView.isScrollEnabled = !outgoingConnection
+        contentViewController?.tableView.isScrollEnabled = !outgoingConnection
 
         if outgoingConnection {
             if outgoingConnectionViewController != nil {
@@ -45,25 +45,28 @@ extension ConversationViewController {
             outgoingConnectionViewController?.willMove(toParent: nil)
             outgoingConnectionViewController?.view.removeFromSuperview()
             outgoingConnectionViewController?.removeFromParent()
-            self.outgoingConnectionViewController = nil
+            outgoingConnectionViewController = nil
         }
     }
 
     func createConstraints() {
-        [conversationBarController.view,
-         contentViewController.view,
-         inputBarController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            conversationBarController.view,
+            exchangeableContentViewController.view,
+            inputBarController.view
+        ].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             conversationBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             conversationBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            contentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            exchangeableContentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            exchangeableContentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            exchangeableContentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         ])
 
-        contentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
+        exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)
+            .isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -79,14 +82,19 @@ extension ConversationViewController {
     func keyboardFrameWillChange(_ notification: Notification) {
         // We only respond to keyboard will change frame if the first responder is not the input bar
         if invisibleInputAccessoryView.window == nil {
-            UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrameInView in
-                guard let self else { return }
-                inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
-            })
+            UIView.animate(
+                withKeyboardNotification: notification,
+                in: view,
+                animations: { [weak self] keyboardFrameInView in
+                    guard let self else { return }
+                    inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
+                }
+            )
         } else {
-            if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
+                .cgRectValue,
                 let currentFirstResponder = UIResponder.currentFirst,
-            let height = currentFirstResponder.inputAccessoryView?.bounds.size.height {
+                let height = currentFirstResponder.inputAccessoryView?.bounds.size.height {
 
                 let keyboardSize = CGSize(width: screenRect.size.width, height: height)
                 UIView.setLastKeyboardSize(keyboardSize)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,15 +26,22 @@ extension Data {
         return string.fingerprintStringWithSpaces
     }
 
-    func attributedFingerprint(attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString? {
+    func attributedFingerprint(
+        attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool = false
+    ) -> NSAttributedString? {
 
-        var fingerprintString = self.fingerprintString
+        var fingerprintString = fingerprintString
 
         if uppercase {
             fingerprintString = fingerprintString.uppercased()
         }
 
-        let attributedRemoteIdentifier = fingerprintString.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = fingerprintString.fingerprintString(
+            attributes: attributes,
+            boldAttributes: boldAttributes
+        )
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10

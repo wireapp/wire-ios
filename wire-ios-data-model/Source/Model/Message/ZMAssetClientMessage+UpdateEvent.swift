@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMAssetClientMessage {
-    override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = GenericMessage(from: updateEvent) else { return }
+
+    open override func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
+        guard let message = GenericMessage(from: updateEvent, validate: true) else { return }
 
         do {
             try setUnderlyingMessage(message)
@@ -39,7 +41,7 @@ extension ZMAssetClientMessage {
         }
 
         switch status {
-        case .uploaded(let data) where data.hasAssetID:
+        case let .uploaded(data) where data.hasAssetID:
             updateTransferState(.uploaded, synchronize: false)
         case .notUploaded where transferState != .uploaded:
             switch assetData.notUploaded {
@@ -51,4 +53,5 @@ extension ZMAssetClientMessage {
         default: break
         }
     }
+
 }

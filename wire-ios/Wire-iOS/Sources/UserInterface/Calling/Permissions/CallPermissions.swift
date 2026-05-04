@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ final class CallPermissions: CallPermissionsConfiguration {
     }
 
     var isPendingVideoPermissionRequest: Bool {
-        return AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .notDetermined
+        AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .notDetermined
     }
 
     var canAcceptAudioCalls: Bool {
@@ -43,7 +43,7 @@ final class CallPermissions: CallPermissionsConfiguration {
     }
 
     var canAcceptVideoCalls: Bool {
-        return AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
+        AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
     }
 
     func requestVideoPermissionWithoutWarning(resultHandler: @escaping (Bool) -> Void) {

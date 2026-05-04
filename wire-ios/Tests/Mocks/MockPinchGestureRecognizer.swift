@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,24 +24,24 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
     var mockView: UIView?
 
     init(location: CGPoint?, view: UIView?, state: UIGestureRecognizer.State, scale: CGFloat) {
-        mockLocation = location
-        mockState = state
-        mockView = view
+        self.mockLocation = location
+        self.mockState = state
+        self.mockView = view
 
         super.init(target: nil, action: nil)
         self.scale = scale
     }
 
     override func location(in view: UIView?) -> CGPoint {
-        return mockLocation ?? super.location(in: view)
+        mockLocation ?? super.location(in: view)
     }
 
     override var view: UIView? {
-        return mockView ?? super.view
+        mockView ?? super.view
     }
 
     override var state: UIGestureRecognizer.State {
         get { mockState }
-        set { }
+        set {}
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,7 +71,10 @@ struct ModifiedObjects {
             return managedObjects
 
         case let nsObjects as Set<NSObject>:
-            NotificationDispatcher.log.warn("Unable to cast userInfo content to Set of ZMManagedObject. Is there a new entity that does not inherit form it?")
+            NotificationDispatcher.log
+                .warn(
+                    "Unable to cast userInfo content to Set of ZMManagedObject. Is there a new entity that does not inherit form it?"
+                )
             let managedObjects = nsObjects.compactMap { $0 as? ZMManagedObject }
             return Set(managedObjects)
 

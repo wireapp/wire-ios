@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,13 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<PushSupportedProtocolsAction, PushSupportedProtocolsActionHandler> {
+final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<
+    PushSupportedProtocolsAction,
+    PushSupportedProtocolsActionHandler
+> {
 
     // MARK: - Properties
 
@@ -28,14 +31,14 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Push
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        self.handler = PushSupportedProtocolsActionHandler(context: syncContext)
-        self.action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
+        handler = PushSupportedProtocolsActionHandler(context: syncContext)
+        action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
     }
 
     override func tearDown() async throws {

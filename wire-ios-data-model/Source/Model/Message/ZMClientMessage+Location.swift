@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreLocation
 import Foundation
+import GenericMessageProtocol
 
 @objc(ZMLocationMessageData)
 public protocol LocationMessageData: NSObjectProtocol {
@@ -36,7 +37,7 @@ extension ZMClientMessage: LocationMessageData {
         switch content {
         case .location:
             return self
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
             case .location?:
                 return self
@@ -49,26 +50,26 @@ extension ZMClientMessage: LocationMessageData {
     }
 
     @objc public var latitude: Float {
-        return self.underlyingMessage?.locationData?.latitude ?? 0
+        underlyingMessage?.locationData?.latitude ?? 0
     }
 
     @objc public var longitude: Float {
-        return self.underlyingMessage?.locationData?.longitude ?? 0
+        underlyingMessage?.locationData?.longitude ?? 0
     }
 
     @objc public var name: String? {
-        return self.underlyingMessage?.locationData?.name
+        underlyingMessage?.locationData?.name
     }
 
     @objc public var zoomLevel: Int32 {
-        return self.underlyingMessage?.locationData?.zoom ?? 0
+        underlyingMessage?.locationData?.zoom ?? 0
     }
 }
 
 public extension LocationMessageData {
 
     var coordinate: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(
+        CLLocationCoordinate2D(
             latitude: CLLocationDegrees(latitude),
             longitude: CLLocationDegrees(longitude)
         )

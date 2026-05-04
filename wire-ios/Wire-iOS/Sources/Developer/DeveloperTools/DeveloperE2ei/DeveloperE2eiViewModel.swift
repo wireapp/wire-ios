@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,29 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
 
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
+    private let userSession: ZMUserSession?
     private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
         guard let userSession else { return nil }
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 
-    @Published
-    var certificateExpirationTime = ""
+    static let minimumCertificateExpirationTime = 360
 
-    @Published
-    var storedCRLExpirationDatesByURL = [String: String]()
+    @Published var certificateExpirationTime = minimumCertificateExpirationTime
 
-    @Published
-    var certificateValidFrom = ""
+    @Published var storedCRLExpirationDatesByURL = [String: String]()
 
-    @Published
-    var certificateValidTo = ""
+    @Published var certificateValidFrom = ""
 
-    init() {
+    @Published var certificateValidTo = ""
+
+    init(userSession: UserSession?) {
+        self.userSession = userSession as? ZMUserSession
         refreshCRLExpirationDates()
         Task {
             await fetchSelfClientCertificate()
@@ -55,7 +55,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
         else { return }
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
 
         Task {
             do {

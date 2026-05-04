@@ -1,8 +1,8 @@
 name: Test Pull Request Changes
 
-on: 
+on:
   pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
   merge_group:
     types: [checks_requested]
 
@@ -15,100 +15,150 @@ jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
-    if: github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    name: Detect PR Changes
+    if: ${{ github.event.pull_request.draft != true }}
+    runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
     outputs:
-      wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
-      wire-reusable-ui-components: ${{ steps.filter.outputs.wire-reusable-ui-components }}
-      wire-design: ${{ steps.filter.outputs.wire-design }}
-      wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
-      wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
-      wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
-      wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
-      wire-api: ${{ steps.filter.outputs.wire-api }}
-      wire-domain: ${{ steps.filter.outputs.wire-domain }}
-      wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
-      wire-ios-share-engine: ${{ steps.filter.outputs.wire-ios-share-engine }}
-      wire-ios-cryptobox: ${{ steps.filter.outputs.wire-ios-cryptobox }}
-      wire-ios-mocktransport: ${{ steps.filter.outputs.wire-ios-mocktransport }}
-      wire-ios-notification-engine: ${{ steps.filter.outputs.wire-ios-notification-engine }}
-      wire-ios-protos: ${{ steps.filter.outputs.wire-ios-protos }}
-      wire-ios-images: ${{ steps.filter.outputs.wire-ios-images }}
-      wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
-      wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
-      wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
+      folders: ${{ steps.filter.outputs.changes }}
 
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+        if: ${{ github.event_name == 'merge_group' }} # on PR, paths-filter can access list of changed files from event payload
+        with:
+          lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
+            WireAnalytics:
+              - 'WireAnalytics/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAnalyticsAll.xcscheme'
+            WireAuthentication:
+              - 'WireAuthentication/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAuthenticationAll.xcscheme'
+            WireBackup:
+              - 'WireBackup/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireBackupAll.xcscheme'
+            WireCalling:
+              - 'WireCalling/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCallingAll.xcscheme'
+            WireData:
+              - 'WireData/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireDataAll.xcscheme'
+            WireDomain:
+              - 'WireDomain/**'
+            WireFoundation:
+              - 'WireFoundation/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireFoundationAll.xcscheme'
+            WireLogging:
+              - 'WireLogging/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireLoggingAll.xcscheme'
+            WireMessaging:
+              - 'WireMessaging/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireMessagingAll.xcscheme'
+            WireNetwork:
+              - 'WireNetwork/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireNetworkAll.xcscheme'
+            WireUI:
+              - 'WireUI/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireUIAll.xcscheme'
+            carthage:
+              - 'Cartfile.resolved'
+            fastlane:
+              - 'fastlane/**'
+            scripts:
+              - 'scripts/**'
             wire-ios:
               - 'wire-ios/**'
-            wire-reusable-ui-components:
-              - 'WireUI/Sources/WireReusableUIComponents/**'
-              - 'WireUI/Tests/WireReusableUIComponentsTests/**'
-            wire-design:
-              - 'WireUI/Sources/WireDesign/**'
-              - 'WireUI/Tests/WireDesignTests/**'
-            wire-ios-share-engine:
-              - 'wire-ios-share-engine/**'
-            wire-ios-notification-engine:
-              - 'wire-ios-notification-engine/**'
-            wire-ios-sync-engine:
-              - 'wire-ios-sync-engine/**'
-            wire-ios-request-strategy:
-              - 'wire-ios-request-strategy/**'
-            wire-api:
-              - 'WireAPI/**'
-            wire-domain:
-              - 'WireDomain/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
-            wire-ios-transport:
-              - 'wire-ios-transport/**'
-            wire-ios-cryptobox:
-              - 'wire-ios-cryptobox/**'
-            wire-ios-mocktransport:
-              - 'wire-ios-mocktransport/**'
-            wire-ios-protos:
-              -  'wire-ios-protos/**'
             wire-ios-images:
               - 'wire-ios-images/**'
             wire-ios-link-preview:
               - 'wire-ios-link-preview/**'
-            wire-ios-utilities:
-              - 'wire-ios-utilities/**'
+            wire-ios-mocktransport:
+              - 'wire-ios-mocktransport/**'
+            wire-ios-request-strategy:
+              - 'wire-ios-request-strategy/**'
+            wire-ios-share-engine:
+              - 'wire-ios-share-engine/**'
+            wire-ios-sync-engine:
+              - 'wire-ios-sync-engine/**'
+            wire-ios-system:
+              - 'wire-ios-system/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
-            wire-ios-system:
-              - 'wire-ios-system/**'  
-            carthage:
-              - 'Cartfile.resolved'
+            wire-ios-transport:
+              - 'wire-ios-transport/**'
+            wire-ios-utilities:
+              - 'wire-ios-utilities/**'
 
-  trigger_tests_pr:
+  # ── Strategy decision ──────────────────────────────────────────────────────
+  # Decides whether to run tests sequentially or in parallel.
+  # Parallel is used when:
+  #   - the `parallel-testing` label is on the PR, OR
+  #   - SMART_TESTING_ENABLED=1 (repo variable) AND the number of frameworks
+  #     to test is >= 4 (number of available macOS runners).
+  # Set SMART_TESTING_ENABLED in Settings → Variables → Actions.
+  decide-strategy:
+    name: Decide test strategy
     needs: detect-changes
+    if: ${{ github.event.pull_request.draft != true }}
+    runs-on: ubuntu-24.04
+    outputs:
+      use_parallel: ${{ steps.decide.outputs.use_parallel }}
+    steps:
+      - name: Decide parallel vs sequential
+        id: decide
+        env:
+          FOLDERS: ${{ needs.detect-changes.outputs.folders }}
+          SMART_TESTING_ENABLED: ${{ vars.SMART_TESTING_ENABLED }}
+          HAS_PARALLEL_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'parallel-testing') }}
+        run: |
+          if [ "$HAS_PARALLEL_LABEL" = "true" ]; then
+            echo "use_parallel=true" >> "$GITHUB_OUTPUT"
+            echo "Parallel: parallel-testing label is set"
+          elif [ "$SMART_TESTING_ENABLED" = "1" ]; then
+            COUNT=$(echo "$FOLDERS" | jq '[.[] | select(. != "fastlane" and . != "scripts" and . != "carthage")] | length')
+            echo "Framework count: $COUNT (threshold: 4 runners)"
+            if [ "$COUNT" -ge 4 ]; then
+              echo "use_parallel=true" >> "$GITHUB_OUTPUT"
+              echo "Parallel: $COUNT frameworks >= 4 runners"
+            else
+              echo "use_parallel=false" >> "$GITHUB_OUTPUT"
+              echo "Sequential: $COUNT frameworks < 4 runners, setup overhead not worth it"
+            fi
+          else
+            echo "use_parallel=false" >> "$GITHUB_OUTPUT"
+            echo "Sequential: smart testing not enabled"
+          fi
+
+  # ── Sequential ──────────────────────────────────────────────────────────────
+  trigger_tests_pr:
+    needs: [detect-changes, decide-strategy]
+    name: PR Tests
+    if: ${{ needs.decide-strategy.outputs.use_parallel != 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
-      wire-reusable-ui-components: ${{ needs.detect-changes.outputs.wire-reusable-ui-components == 'true' }}
-      wire-design: ${{ needs.detect-changes.outputs.wire-design == 'true' }}
-      wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
-      wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
-      wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
-      wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
-      wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
-      wire-domain: ${{ needs.detect-changes.outputs.wire-domain == 'true' }}
-      wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
-      wire-ios-share-engine: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
-      wire-ios-cryptobox: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
-      wire-ios-mocktransport: ${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
-      wire-ios-notification-engine: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
-      wire-ios-protos: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
-      wire-ios-images: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
-      wire-ios-link-preview: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
-      wire-ios-utilities: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
-      wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      notify_secret: WIRE_IOS_CI_WEBHOOK
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
+      run_critical_flows: false # separate workflow
+      notify: failure
     secrets: inherit
+
+  # ── Parallel ────────────────────────────────────────────────────────────────
+  trigger_tests_pr_parallel:
+    needs: [detect-changes, decide-strategy]
+    name: PR Tests
+    if: ${{ needs.decide-strategy.outputs.use_parallel == 'true' }}
+    uses: ./.github/workflows/_reusable_run_tests_parallel.yml
+    with:
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
+      notify: failure
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

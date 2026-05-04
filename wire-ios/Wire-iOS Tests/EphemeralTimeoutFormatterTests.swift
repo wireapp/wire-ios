@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class EphemeralTimeoutFormatterTests: XCTestCase {
 
-    let secondsInYear: TimeInterval = 31536000
+    let secondsInYear: TimeInterval = 31_536_000
 
     var sut: EphemeralTimeoutFormatter!
 
@@ -45,7 +45,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor1WeekLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 604800)
+        let formattedString = sut.string(from: 604_800)
 
         // THEN
         XCTAssertEqual(formattedString, "1 week left")
@@ -53,7 +53,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor4WeeksLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 2419200)
+        let formattedString = sut.string(from: 2_419_200)
 
         // THEN
         XCTAssertEqual(formattedString, "4 weeks left")
@@ -61,7 +61,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor27days23HoursLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 2419199)
+        let formattedString = sut.string(from: 2_419_199)
 
         // THEN
         XCTAssertEqual(formattedString, "3 weeks, 6 days 23:59 left")
@@ -69,7 +69,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor1dayLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 86400)
+        let formattedString = sut.string(from: 86_400)
 
         // THEN
         XCTAssertEqual(formattedString, "1 day left")
@@ -77,7 +77,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor1dayAnd1MinuteLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 86501)
+        let formattedString = sut.string(from: 86_501)
 
         // THEN
         XCTAssertEqual(formattedString, "1 day 00:01 left")
@@ -85,7 +85,7 @@ final class EphemeralTimeoutFormatterTests: XCTestCase {
 
     func testFor23hours59minutesLeft() {
         // GIVEN & WHEN
-        let formattedString = sut.string(from: 86399)
+        let formattedString = sut.string(from: 86_399)
 
         // THEN
         XCTAssertEqual(formattedString, "23:59:59 left")

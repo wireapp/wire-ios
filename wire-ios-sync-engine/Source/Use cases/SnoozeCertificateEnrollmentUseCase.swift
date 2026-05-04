@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -28,7 +29,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let featureRepositoryContext: NSManagedObjectContext
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
@@ -36,20 +37,22 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Life cycle
 
     init(
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
-        accountId: UUID) {
-            self.featureRepository = featureRepository
-            self.featureRepositoryContext = featureRepositoryContext
-            self.recurringActionService = recurringActionService
-            self.actionId = "\(accountId).enrollCertificate"
-        }
+        accountId: UUID
+    ) {
+        self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
+        self.recurringActionService = recurringActionService
+        self.actionId = "\(accountId).enrollCertificate"
+    }
 
     // MARK: - Methods
 
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
-    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
+    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating
+    /// certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
     func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
         let timeProvider = SnoozeTimeProvider()
@@ -58,6 +61,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     }
 
     // MARK: - Helpers
+
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
         let isE2EIEnabled = await featureRepositoryContext.perform {
             self.featureRepository.fetchE2EI().isEnabled
@@ -71,9 +75,11 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
-                NotificationCenter.default.post(name: .featureDidChangeNotification,
-                                                object: notificationObject)
+                let notificationObject = LegacyFeatureRepository.FeatureChange.e2eIEnabled
+                NotificationCenter.default.post(
+                    name: .featureDidChangeNotification,
+                    object: notificationObject
+                )
             }
         }
 

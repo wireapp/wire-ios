@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationMissingMessagesSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 
@@ -33,24 +33,25 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let title = ConversationMissingMessagesSystemMessageCellDescription.makeAttributedString(systemMessageData: data)
-        configuration = View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
-                                                                                         color: IconColors.foregroundExclamationMarkInSystemMessage),
-                                            attributedText: title,
-                                            showLine: true)
-        accessibilityLabel = title.string
-        actionController = nil
+        let title = ConversationMissingMessagesSystemMessageCellDescription
+            .makeAttributedString(systemMessageData: data)
+        self.configuration = View.Configuration(
+            icon: StyleKitIcon.exclamationMark.makeImage(
+                size: .tiny,
+                color: IconColors
+                    .foregroundExclamationMarkInSystemMessage
+            ),
+            attributedText: title,
+            showLine: true
+        )
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {

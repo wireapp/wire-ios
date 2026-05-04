@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockTeamEvent: NSObject {
+@objcMembers
+public class MockTeamEvent: NSObject {
 
     public enum Kind: String {
         case delete = "team.delete"
@@ -56,7 +57,7 @@ import Foundation
     }
 
     public static func deleted(team: MockTeam) -> MockTeamEvent {
-        return MockTeamEvent(kind: .delete, team: team, data: [:])
+        MockTeamEvent(kind: .delete, team: team, data: [:])
     }
 
     public init(kind: Kind, team: MockTeam, data: [String: Any?]) {
@@ -65,8 +66,8 @@ import Foundation
         self.data = data
     }
 
-    @objc public var payload: ZMTransportData {
-        return [
+    public var payload: ZMTransportData {
+        [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
@@ -75,6 +76,6 @@ import Foundation
     }
 
     public override var debugDescription: String {
-        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
     }
 }

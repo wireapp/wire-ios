@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 protocol MLSConversationParticipantsServiceInterface {
@@ -46,10 +47,14 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
     private let context: NSManagedObjectContext
     private let clientIDsProvider: MLSClientIDsProviding
     private let mlsService: MLSServiceInterface
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
-    init?(context: NSManagedObjectContext) {
+    init?(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
 
         guard let syncContext = context.performAndWait({ context.zm_sync }) else {
             return nil
@@ -62,18 +67,21 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         self.init(
             context: context,
             mlsService: mlsService,
-            clientIDsProvider: MLSClientIDsProvider()
+            clientIDsProvider: MLSClientIDsProvider(),
+            localDomain: localDomain
         )
     }
 
     init(
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
-        clientIDsProvider: MLSClientIDsProviding
+        clientIDsProvider: MLSClientIDsProviding,
+        localDomain: String?
     ) {
         self.context = context
         self.mlsService = mlsService
         self.clientIDsProvider = clientIDsProvider
+        self.localDomain = localDomain
     }
 
     // MARK: - Interface
@@ -90,33 +98,45 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         WireLogger.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID else {
-            WireLogger.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID")
+            WireLogger.mls
+                .warn(
+                    "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
+                )
             throw MLSConversationParticipantsError.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from: )) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
 
         do {
 
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
 
-        } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
 
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
-        } catch SendCommitBundleAction.Failure.nonFederatingDomains(domains: let domains) {
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
 
             throw FederationError.nonFederatingDomains(domains)
 
-        } catch SendCommitBundleAction.Failure.unreachableDomains(domains: let domains) {
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
 
             throw FederationError.unreachableDomains(domains)
 
         } catch {
-            WireLogger.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            WireLogger.mls
+                .warn(
+                    "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -133,7 +153,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         WireLogger.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID, let userID else {
-            WireLogger.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
+            WireLogger.mls
+                .warn(
+                    "failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation"
+                )
             throw MLSConversationParticipantsError.invalidOperation
         }
 
@@ -148,7 +171,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
                 for: groupID
             )
         } catch {
-            WireLogger.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            WireLogger.mls
+                .warn(
+                    "failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
+                )
             throw error
         }
     }

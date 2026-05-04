@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,24 +23,28 @@ let ZMParticipantRoleRoleValueKey = #keyPath(ParticipantRole.role)
 @objcMembers
 public final class ParticipantRole: ZMManagedObject {
 
-    /// - Note: conversation is optional dbut we should make sure it's always created with one using `create(managedObjectContext:user:conversation:)`
+    /// - Note: conversation is optional dbut we should make sure it's always created with one using
+    /// `create(managedObjectContext:user:conversation:)`
     @NSManaged public var conversation: ZMConversation?
-    /// - Note: user is optional but we should make sure it's always created with one using `create(managedObjectContext:user:conversation:)`
+    /// - Note: user is optional but we should make sure it's always created with one using
+    /// `create(managedObjectContext:user:conversation:)`
     @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 
     public override static func entityName() -> String {
-        return "ParticipantRole"
+        "ParticipantRole"
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return true
+        true
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
-                              user: ZMUser,
-                              conversation: ZMConversation) -> ParticipantRole {
+    public static func create(
+        managedObjectContext: NSManagedObjectContext,
+        user: ZMUser,
+        conversation: ZMConversation
+    ) -> ParticipantRole {
         let entry = ParticipantRole.insertNewObject(in: managedObjectContext)
         entry.user = user
         entry.conversation = conversation

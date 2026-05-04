@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,16 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSError (ZMUserSessionInternal)
 
-+ (instancetype)userSessionErrorWithErrorCode:(ZMUserSessionErrorCode)code userInfo:(nullable NSDictionary *)userInfo;
++ (instancetype)userSessionErrorWithCode:(ZMUserSessionErrorCode)code userInfo:(nullable NSDictionary *)userInfo NS_SWIFT_NAME(userSessionError(code:userInfo:));
 
 + (__nullable instancetype)pendingLoginErrorWithResponse:(ZMTransportResponse *)response;
-+ (__nullable instancetype)unauthorizedErrorWithResponse:(ZMTransportResponse *)response;
 + (__nullable instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response;
-
-+ (__nullable instancetype)invalidPhoneNumberErrorWithReponse:(ZMTransportResponse *)response;
-+ (__nullable instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response;
-
-+ (__nullable instancetype)invalidPhoneVerificationCodeErrorWithResponse:(ZMTransportResponse *)response;
 
 + (__nullable instancetype)invalidEmailVerificationCodeErrorWithResponse:(ZMTransportResponse *)response;
 

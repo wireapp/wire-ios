@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 import Security
+import WireLogging
 
 public protocol KeychainItem {
     associatedtype Value
@@ -64,7 +65,7 @@ public enum Keychain {
         return valueCasted
     }
 
-    public static func deleteItem<T: KeychainItem>(_ item: T) throws {
+    public static func deleteItem(_ item: some KeychainItem) throws {
         WireLogger.keychain.info("deleting item (\(item))")
 
         let status = SecItemDelete(item.queryForGettingValue as CFDictionary)

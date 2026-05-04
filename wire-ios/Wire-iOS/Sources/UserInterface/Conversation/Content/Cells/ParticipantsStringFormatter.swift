@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,16 +23,20 @@ import WireDesign
 private typealias Attributes = [NSAttributedString.Key: AnyObject]
 
 private extension ConversationActionType {
-    func formatKey(senderIsSelfUser: Bool) -> String {
+    func formatKey(senderIsSelfUser: Bool, isChannel: Bool) -> String {
         switch self {
-        case .left: return localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
-        case .added(herself: true): return "content.system.conversation.guest.joined"
-        case .added(herself: false): return localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
-        case .removed(reason: .legalHoldPolicyConflict): return (localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold")
-        case .removed: return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .some): return "content.system.conversation.with_name.participants"
-        case .teamMemberLeave: return "content.system.conversation.team.member-leave"
+        case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
+        case .added(herself: true):
+            isChannel ? "content.system.channel.guest.joined" : "content.system.conversation.guest.joined"
+        case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
+        case .removed(reason: .legalHoldPolicyConflict): localizationKey(
+                with: "removed",
+                senderIsSelfUser: senderIsSelfUser
+            ) + ".legalhold"
+        case .removed: localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
+        case .started(name: .none), .none: localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
+        case .started(name: .some): "content.system.conversation.with_name.participants"
+        case .teamMemberLeave: "content.system.conversation.team.member-leave"
         }
     }
 
@@ -84,7 +88,7 @@ final class ParticipantsStringFormatter {
         let selfIncluded: Bool
 
         var totalUsers: Int {
-            return names.count + collapsed
+            names.count + collapsed
         }
     }
 
@@ -93,19 +97,15 @@ final class ParticipantsStringFormatter {
     private let textColor: UIColor
 
     private var normalAttributes: Attributes {
-        return [.font: font, .foregroundColor: textColor]
+        [.font: font, .foregroundColor: textColor]
     }
 
     private var boldAttributes: Attributes {
-        return [.font: font, .foregroundColor: textColor]
-    }
-
-    private var largeAttributes: Attributes {
-        return [.font: largeFont, .foregroundColor: textColor]
+        [.font: font, .foregroundColor: textColor]
     }
 
     private var linkAttributes: Attributes {
-        return [.link: ParticipantsCellViewModel.showMoreLinkURL]
+        [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
 
     init(
@@ -124,10 +124,21 @@ final class ParticipantsStringFormatter {
     func heading(
         senderName: String,
         senderIsSelf: Bool,
-        convName: String
+        convName: String,
+        isChannel: Bool
     ) -> NSAttributedString {
-        // "You/Bob started the conversation"
-        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n.Localizable.Content.System.Conversation.WithName.title(senderName)
+        let key: String
+        // swiftformat:disable:next conditionalAssignment
+        if isChannel {
+            // "You/Bob started the channel"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Channel.WithName.title(senderName)
+        } else {
+            // "You/Bob started the conversation"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Conversation.WithName.title(senderName)
+        }
+
         let text = key && font
 
         // "Italy Trip"
@@ -136,15 +147,16 @@ final class ParticipantsStringFormatter {
     }
 
     /// Title when the subject (sender) is performing the action alone.
-    func title(senderName: String, senderIsSelf: Bool) -> NSAttributedString? {
+    func title(senderName: String, senderIsSelf: Bool, isChannel: Bool) -> NSAttributedString? {
         switch message.actionType {
         case .added(herself: true) where senderIsSelf:
-            return L10n.Localizable.Content.System.Conversation.Guest.youJoined && font && textColor
+            typealias System = L10n.Localizable.Content.System
+            let text = isChannel ? System.Channel.Guest.youJoined : System.Conversation.Guest.youJoined
+            return text && font && textColor
 
         case .left, .teamMemberLeave, .added(herself: true):
             let formatKey = message.actionType.formatKey
-            let title = formatKey(senderIsSelf).localized(args: senderName) && font && textColor
-            return title
+            return formatKey(senderIsSelf, isChannel).localized(args: senderName) && font && textColor
 
         default:
             return nil
@@ -152,7 +164,13 @@ final class ParticipantsStringFormatter {
     }
 
     /// Title when the subject (sender) performing the action on objects (names).
-    func title(senderName: String, senderIsSelf: Bool, names: NameList, isSelfIncludedInUsers: Bool = false) -> NSAttributedString? {
+    func title(
+        senderName: String,
+        senderIsSelf: Bool,
+        names: NameList,
+        isSelfIncludedInUsers: Bool = false,
+        isChannel: Bool
+    ) -> NSAttributedString? {
         guard !names.names.isEmpty else { return nil }
 
         var result: NSAttributedString
@@ -170,23 +188,31 @@ final class ParticipantsStringFormatter {
             let formatString = "content.system.conversation.\(senderPath).removed.legalhold"
             result = formatString.localized(args: nameSequence.string) && font && textColor
 
-            let learnMore = NSAttributedString(string: L10n.Localizable.Content.System.MessageLegalHold.learnMore.uppercased(),
-                                               attributes: [.font: font,
-                                                            .link: URL.wr_legalHoldLearnMore.absoluteString as AnyObject,
-                                                            .foregroundColor: SemanticColors.Label.textDefault])
+            let learnMore = NSAttributedString(
+                string: L10n.Localizable.Content.System.MessageLegalHold.learnMore.uppercased(),
+                attributes: [
+                    .font: font,
+                    .link: WireURLs.shared.legalHoldInfo
+                        .absoluteString as AnyObject,
+                    .foregroundColor: SemanticColors.Label.textDefault
+                ]
+            )
             return result += " " + learnMore
 
         case .removed(reason: .federationTermination):
-            let formatString = "content.system.federation_termination.participants_removed".localized(args: names.totalUsers, nameSequence.string)
+            let formatString = "content.system.federation_termination.participants_removed"
+                .localized(args: names.totalUsers, nameSequence.string)
             result = .markdown(from: formatString, style: .systemMessage)
 
             return result
 
-        case .removed, .added(herself: false), .started(withName: .none):
-            result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
+        case .removed, .added(herself: false), .started(name: .none):
+            result = formatKey(senderIsSelf, isChannel)
+                .localized(args: senderName, nameSequence.string) && font && textColor
 
-        case .started(withName: .some):
-            result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" && font && textColor
+        case .started(name: .some):
+            result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" &&
+                font && textColor
 
         default: return nil
         }
@@ -228,7 +254,8 @@ final class ParticipantsStringFormatter {
                 // "you/z, "
                 result.append(names.last! + ", ", with: attrsForLastName)
                 // "and X others
-                let linkText = L10n.Localizable.Content.System.StartedConversation.TruncatedPeople.others(nameList.collapsed)
+                let linkText = L10n.Localizable.Content.System.StartedConversation.TruncatedPeople
+                    .others(nameList.collapsed)
                 let linkPart = L10n.Localizable.Content.System.StartedConversation.truncatedPeople(linkText)
                 result.append(linkPart, with: normalAttributes)
                 result.define(linkAttributes, forComponent: linkText)
@@ -247,7 +274,7 @@ final class ParticipantsStringFormatter {
         guard
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.allTeamUsersAdded,
-            (message.conversationLike as? CanManageAccessProvider)?.canManageAccess ?? false
+            (message.conversationLike as? CanManageGuestsAccessProvider)?.canManageGuestsAccess ?? false
         else { return nil }
 
         // we only collapse whole team if there are more than 10 participants
@@ -256,7 +283,8 @@ final class ParticipantsStringFormatter {
         }
 
         if systemMessage.numberOfGuestsAdded > 0 {
-            return L10n.Localizable.Content.System.StartedConversation.CompleteTeam.guests(String(systemMessage.numberOfGuestsAdded))
+            return L10n.Localizable.Content.System.StartedConversation.CompleteTeam
+                .guests(String(systemMessage.numberOfGuestsAdded))
         } else {
             return L10n.Localizable.Content.System.StartedConversation.completeTeam
         }

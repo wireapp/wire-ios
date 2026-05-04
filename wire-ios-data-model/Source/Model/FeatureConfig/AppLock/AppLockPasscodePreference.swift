@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,27 +42,27 @@ public enum AppLockPasscodePreference {
     var policy: LAPolicy {
         switch self {
         case .deviceThenCustom, .deviceOnly:
-            return .deviceOwnerAuthentication
+            .deviceOwnerAuthentication
         case .customOnly:
-            return .deviceOwnerAuthenticationWithBiometrics
+            .deviceOwnerAuthenticationWithBiometrics
         }
     }
 
     var allowsCustomPasscode: Bool {
         switch self {
         case .customOnly, .deviceThenCustom:
-            return true
+            true
         case .deviceOnly:
-            return false
+            false
         }
     }
 
     var allowsDevicePasscode: Bool {
         switch self {
         case .deviceOnly, .deviceThenCustom:
-            return true
+            true
         case .customOnly:
-            return false
+            false
         }
     }
 

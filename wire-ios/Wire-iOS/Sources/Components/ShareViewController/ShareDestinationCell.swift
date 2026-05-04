@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -178,9 +178,12 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        checkImageView.image = selected ? StyleKitIcon.checkmark.makeImage(size: 12, color: .white).withRenderingMode(.alwaysTemplate) : nil
+        checkImageView.image = selected ? StyleKitIcon.checkmark.makeImage(size: 12, color: .white)
+            .withRenderingMode(.alwaysTemplate) : nil
         checkImageView.tintColor = selected ? SemanticColors.Icon.foregroundCheckMarkSelected : .clear
-        checkImageView.backgroundColor = selected ? SemanticColors.Icon.backgroundCheckMarkSelected : SemanticColors.Icon.backgroundCheckMark
-        checkImageView.layer.borderColor = selected ? UIColor.clear.cgColor : SemanticColors.Icon.borderCheckMark.cgColor
+        checkImageView.backgroundColor = selected ? SemanticColors.Icon.backgroundCheckMarkSelected : SemanticColors
+            .Icon.backgroundCheckMark
+        checkImageView.layer.borderColor = selected ? UIColor.clear.cgColor : SemanticColors.Icon.borderCheckMark
+            .cgColor
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 
 protocol ProfileFooterViewDelegate: AnyObject {
 
@@ -28,9 +29,7 @@ protocol ProfileFooterViewDelegate: AnyObject {
 
 }
 
-/**
- * The footer of to use in the profile details screen.
- */
+/// The footer of to use in the profile details screen.
 
 final class ProfileFooterView: ConversationDetailFooterView {
 
@@ -46,15 +45,13 @@ final class ProfileFooterView: ConversationDetailFooterView {
     // MARK: - Configuration
 
     override func setupButtons() {
-        leftButton.accessibilityIdentifier = "left_button"
-        rightButton.accessibilityIdentifier = "right_button"
+        leftButton.accessibilityIdentifier = Locators.UserDetailsPage.connectLeftButton.rawValue
+        rightButton.accessibilityIdentifier = Locators.UserDetailsPage.moreOptionRightButton.rawValue
         rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
-    /**
-     * Configures the footer to display the specified actions.
-     * - parameter actions: The actions to display in the footer.
-     */
+    /// Configures the footer to display the specified actions.
+    /// - parameter actions: The actions to display in the footer.
 
     func configure(with actions: [ProfileAction]) {
         // Separate the last and first actions
@@ -92,12 +89,12 @@ final class ProfileFooterView: ConversationDetailFooterView {
     // MARK: - Events
 
     override func leftButtonTapped(_ sender: IconButton) {
-        guard let leftAction = self.leftAction else { return }
+        guard let leftAction else { return }
         delegate?.footerView(self, shouldPerformAction: leftAction)
     }
 
     override func rightButtonTapped(_ sender: IconButton) {
-        guard let rightActions = self.rightActions else { return }
+        guard let rightActions else { return }
         delegate?.footerView(self, shouldPresentMenuWithActions: rightActions)
     }
 

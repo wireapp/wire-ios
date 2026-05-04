@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 #import "MockTransportSessionTests.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 @import WireMockTransport;
 
 @interface MockTransportSessionConnectionsTests : MockTransportSessionTests
@@ -256,7 +257,7 @@
         NSFetchRequest *fetchRequest = [MockConnection sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"to.identifier == %@", userID.transportString];
         
-        NSArray* result = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray* result = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         XCTAssertEqual(result.count, 1u);
         
         MockConnection *connection = result.firstObject;

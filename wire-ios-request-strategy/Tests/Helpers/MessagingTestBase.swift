@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCryptobox
+import GenericMessageProtocol
+import WireCoreCrypto
 import WireDataModel
-@testable import WireRequestStrategy
+import WireDataModelSupport
+import WireLogging
 import WireTesting
+
+@testable import WireRequestStrategy
 
 class MessagingTestBase: ZMTBaseTest {
 
@@ -30,9 +34,35 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var otherUser: ZMUser!
     fileprivate(set) var thirdUser: ZMUser!
     fileprivate(set) var otherClient: UserClient!
-    fileprivate(set) var otherEncryptionContext: EncryptionContext!
     fileprivate(set) var coreDataStack: CoreDataStack!
     fileprivate(set) var accountIdentifier: UUID!
+
+    // Lazy Proteus/CoreCrypto properties - only initialized when accessed
+    private var _coreCrypto: CoreCrypto?
+    private var _proteusService: ProteusServiceInterface?
+    private var _proteusClientSimulator: ProteusClientSimulator?
+    private var _isProteusInitialized = false
+
+    var coreCrypto: CoreCrypto {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _coreCrypto!
+        }
+    }
+
+    var proteusService: ProteusServiceInterface {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _proteusService!
+        }
+    }
+
+    var proteusClientSimulator: ProteusClientSimulator {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _proteusClientSimulator!
+        }
+    }
 
     let owningDomain = "example.com"
 
@@ -41,207 +71,116 @@ class MessagingTestBase: ZMTBaseTest {
     }
 
     var syncMOC: NSManagedObjectContext! {
-        return self.coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     var uiMOC: NSManagedObjectContext! {
-        return self.coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var eventMOC: NSManagedObjectContext! {
-        return self.coreDataStack.eventContext
+        coreDataStack.eventContext
     }
 
-    override class func setUp() {
-        super.setUp()
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
 
-        self.deleteAllOtherEncryptionContexts()
-        self.deleteAllFilesInCache()
-        self.accountIdentifier = UUID()
-        self.coreDataStack = createCoreDataStack(userIdentifier: accountIdentifier,
-                                                 inMemoryStore: useInMemoryStore)
-        setupCaches(in: coreDataStack)
-        setupTimers()
+        // Set up core data stack
 
-        self.syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
+        accountIdentifier = UUID()
+        try await coreDataStack = createCoreDataStack(
+            userIdentifier: accountIdentifier,
+            inMemoryStore: useInMemoryStore
+        )
 
-            self.setupUsersAndClients()
-            self.groupConversation = self.createGroupConversation(with: self.otherUser)
-            self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)
-            self.oneToOneConnection = self.otherUser.connection
-            self.syncMOC.saveOrRollback()
+        // Caches and timers (lightweight setup)
+
+        await setupCaches(in: coreDataStack)
+        await setupTimers()
+
+        // Set up managed objects
+
+        await syncMOC.perform { [self] in
+            setupUsersAndClients()
+            groupConversation = createGroupConversation(with: otherUser)
+            oneToOneConversation = setupOneToOneConversation(with: otherUser)
+            oneToOneConnection = otherUser.connection
+            syncMOC.saveOrRollback()
         }
+
+        // Note: Proteus/CoreCrypto initialization is now lazy - it will be set up
+        // automatically when tests first access proteusService, coreCrypto, or
+        // proteusClientSimulator properties
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
+        // Wait for all async tasks (WaitingGroupTask) to complete before tearing down
+        // This prevents tasks from accessing contexts after they've been torn down
+        if let syncGroup = syncMOC?.dispatchGroup {
+            _ = syncGroup.wait(forInterval: 2.0)
+        }
+        if let uiGroup = uiMOC?.dispatchGroup {
+            _ = uiGroup.wait(forInterval: 2.0)
+        }
+
         BackgroundActivityFactory.shared.activityManager = nil
 
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
-
-        self.syncMOC.performGroupedAndWait {
+        await syncMOC.perform { [syncMOC] in
+            syncMOC?.proteusService = nil
             self.otherUser = nil
             self.otherClient = nil
             self.selfClient = nil
             self.groupConversation = nil
         }
-        self.stopEphemeralMessageTimers()
+        await stopEphemeralMessageTimers()
 
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
+        // Only clean up Proteus if it was initialized
+        if _isProteusInitialized {
+            _proteusClientSimulator?.cleanup()
+        }
 
-        deleteAllFilesInCache()
-        deleteAllOtherEncryptionContexts()
-
+        _proteusService = nil
+        _coreCrypto = nil
+        _proteusClientSimulator = nil
+        _isProteusInitialized = false
         accountIdentifier = nil
         coreDataStack = nil
 
-        super.tearDown()
+        try await super.tearDown()
     }
 }
 
-// MARK: - Messages 
+// MARK: - Messages
+
 extension MessagingTestBase {
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(
-        text: String,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-        return try await decryptedUpdateEventFromOtherClient(
-            message: GenericMessage(content: Text(content: text)),
-            conversation: conversation,
-            source: source,
-            eventDecoder: eventDecoder
-        )
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(
-        message: GenericMessage,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-
-        let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
-        let innerPayload = await syncMOC.perform { [self] in
-            ["recipient": selfClient.remoteIdentifier!,
-             "sender": otherClient.remoteIdentifier!,
-             "text": cyphertext.base64String()
-            ]
-        }
-
-        return try await decryptedUpdateEventFromOtherClient(
-            innerPayload: innerPayload,
-            conversation: conversation,
-            source: source,
-            type: "conversation.otr-message-add",
-            eventDecoder: eventDecoder
-        )
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedAssetUpdateEventFromOtherClient(
-        message: GenericMessage,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-
-        let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
-        // Note: [F] added info to make it ZMSLog SafeTypes happy - this event conversation.otr-asset-add is deprecated
-        let innerPayload = await syncMOC.perform { [self] in
-            [
-                "recipient": selfClient.remoteIdentifier!,
-                "sender": otherClient.remoteIdentifier!,
-                "id": UUID.create().transportString(),
-                "key": cyphertext.base64String(),
-                "info": cyphertext.base64String()
-            ]
-        }
-        return try await decryptedUpdateEventFromOtherClient(
-            innerPayload: innerPayload,
-            conversation: conversation,
-            source: source,
-            type: "conversation.otr-asset-add",
-            eventDecoder: eventDecoder
-        )
-    }
 
     func encryptedUpdateEventToSelfFromOtherClient(
         message: GenericMessage,
         conversation: ZMConversation? = nil,
         source: ZMUpdateEventSource = .pushNotification
-    ) -> ZMUpdateEvent {
-        let cyphertext = encryptedMessageToSelf(
+    ) async throws -> ZMUpdateEvent {
+        let cyphertext = try await proteusClientSimulator.encryptedMessageToSelf(
             message: message,
             from: otherClient
         )
 
-        let innerPayload = [
-            "recipient": selfClient.remoteIdentifier!,
-            "sender": otherClient.remoteIdentifier!,
-            "text": cyphertext.base64String()
-        ]
+        return await syncMOC.perform { [self] in
+            let innerPayload = [
+                "recipient": selfClient.remoteIdentifier!,
+                "sender": otherClient.remoteIdentifier!,
+                "text": cyphertext.base64String()
+            ]
 
-        return encryptedUpdateEventFromOtherClient(
-            innerPayload: innerPayload,
-            conversation: conversation,
-            source: source,
-            type: "conversation.otr-message-add"
-        )
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    private func decryptedUpdateEventFromOtherClient(
-        innerPayload: [String: Any],
-        conversation: ZMConversation?,
-        source: ZMUpdateEventSource,
-        type: String,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-        let event = await syncMOC.perform {
-            self.encryptedUpdateEventFromOtherClient(
+            return encryptedUpdateEventFromOtherClient(
                 innerPayload: innerPayload,
                 conversation: conversation,
                 source: source,
-                type: type
+                type: "conversation.otr-message-add"
             )
         }
-
-        var decryptedEvent: ZMUpdateEvent?
-        let proteusProvider = await syncMOC.perform { self.syncMOC.proteusProvider }
-        await proteusProvider.performAsync(withProteusService: { proteusService in
-
-            decryptedEvent = await eventDecoder.decryptProteusEventAndAddClient(
-                event,
-                in: self.syncMOC
-            ) { sessionID, encryptedData in
-                let result = try await proteusService.decrypt(data: encryptedData, forSession: sessionID)
-                return (didCreateNewSession: result.didCreateNewSession, decryptedData: result.decryptedData)
-            }
-        }, withKeyStore: { keyStore in
-            await keyStore.encryptionContext.performAsync { session in
-                decryptedEvent = await eventDecoder.decryptProteusEventAndAddClient(
-                    event,
-                    in: self.syncMOC
-                ) { sessionID, encryptedData in
-                    try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
-                }
-            }
-        })
-        return try XCTUnwrap(decryptedEvent)
     }
 
     private func encryptedUpdateEventFromOtherClient(
@@ -267,9 +206,11 @@ extension MessagingTestBase {
     }
 
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
-    func outgoingMessageWrapper(from request: ZMTransportRequest,
-                                file: StaticString = #file,
-                                line: UInt = #line) -> Proteus_NewOtrMessage? {
+    func outgoingMessageWrapper(
+        from request: ZMTransportRequest,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Proteus_NewOtrMessage? {
         guard let data = request.binaryData else {
             XCTFail("No binary data", file: file, line: line)
             return nil
@@ -278,18 +219,19 @@ extension MessagingTestBase {
     }
 
     /// Extract encrypted payload from a request
-    func outgoingEncryptedMessage(from request: ZMTransportRequest,
-                                  for client: UserClient,
-                                  line: UInt = #line,
-                                  file: StaticString = #file
-        ) -> GenericMessage? {
+    func outgoingEncryptedMessage(
+        from request: ZMTransportRequest,
+        for client: UserClient,
+        line: UInt = #line,
+        file: StaticString = #filePath
+    ) async throws -> GenericMessage? {
 
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
 
-        let userEntries = protobuf.recipients.compactMap { $0 }
+        let userEntries = protobuf.recipients.compactMap(\.self)
         guard let userEntry = userEntries.first(where: { $0.user == client.user?.userId }) else {
             XCTFail("User not found", file: file, line: line)
             return nil
@@ -301,35 +243,38 @@ extension MessagingTestBase {
         }
 
         // text content
-        guard let plaintext = self.decryptMessageFromSelf(cypherText: clientEntry.text, to: self.otherClient) else {
+        guard let plaintext = try await proteusClientSimulator.decryptMessageFromSelf(
+            cypherText: clientEntry.text,
+            to: otherClient
+        ) else {
             XCTFail("failed to decrypt", file: file, line: line)
             return nil
         }
 
-        let receivedMessage = try? GenericMessage.init(serializedData: plaintext)
-        return receivedMessage
+        return try? GenericMessage(serializedData: plaintext)
     }
 }
 
 // MARK: - Internal data provisioning
+
 extension MessagingTestBase {
 
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.domain = owningDomain
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()
-        user.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+        user.connection = ZMConnection.insertNewObject(in: syncMOC)
         user.connection?.status = .accepted
         user.oneOnOneConversation = conversation
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
         return conversation
     }
 
     /// Creates a user and a client
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
-        return createUser(
+        createUser(
             alsoCreateClient: alsoCreateClient,
             in: syncMOC
         )
@@ -345,7 +290,7 @@ extension MessagingTestBase {
         user.domain = owningDomain
 
         if alsoCreateClient {
-            _ = self.createClient(
+            _ = createClient(
                 user: user,
                 in: context
             )
@@ -356,7 +301,7 @@ extension MessagingTestBase {
 
     /// Creates a new client for a user
     func createClient(user: ZMUser) -> UserClient {
-        return createClient(
+        createClient(
             user: user,
             in: syncMOC
         )
@@ -376,7 +321,7 @@ extension MessagingTestBase {
 
     /// Creates a group conversation with a user
     func createGroupConversation(with user: ZMUser) -> ZMConversation {
-        return createGroupConversation(
+        createGroupConversation(
             with: user,
             in: syncMOC
         )
@@ -413,7 +358,7 @@ extension MessagingTestBase {
 
     @discardableResult
     func createTeam() -> Team {
-        return createTeam(in: syncMOC)
+        createTeam(in: syncMOC)
     }
 
     @discardableResult
@@ -435,106 +380,90 @@ extension MessagingTestBase {
         return team
     }
 
-    /// Creates an encryption context in a temp folder and creates keys
-    fileprivate func setupUsersAndClients() {
+    /// Creates users and clients
+    private func setupUsersAndClients() {
 
-        self.otherUser = self.createUser(alsoCreateClient: true)
-        self.otherClient = self.otherUser.clients.first!
-        self.thirdUser = self.createUser(alsoCreateClient: true)
-        self.selfClient = self.createSelfClient()
-
-        self.syncMOC.saveOrRollback()
-
-        self.establishSessionFromSelf(to: self.otherClient)
+        otherUser = createUser(alsoCreateClient: true)
+        otherClient = otherUser.clients.first!
+        thirdUser = createUser(alsoCreateClient: true)
+        selfClient = createSelfClient()
     }
 
     /// Creates self client and user
-    fileprivate func createSelfClient() -> UserClient {
-        let user = ZMUser.selfUser(in: self.syncMOC)
+    private func createSelfClient() -> UserClient {
+        let user = ZMUser.selfUser(in: syncMOC)
         user.remoteIdentifier = UUID.create()
         user.domain = owningDomain
 
-        let selfClient = UserClient.insertNewObject(in: self.syncMOC)
+        let selfClient = UserClient.insertNewObject(in: syncMOC)
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
 
-        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+        syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         selfClient.type = .permanent
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
         return selfClient
     }
 }
 
 // MARK: - Internal helpers
+
 extension MessagingTestBase {
 
-    func setupTimers() {
-        syncMOC.performGroupedAndWait {
+    func setupTimers() async {
+        await syncMOC.perform { [syncMOC] in
             syncMOC.zm_createMessageObfuscationTimer()
         }
-        uiMOC.zm_createMessageDeletionTimer()
+        await uiMOC.perform { [uiMOC] in
+            uiMOC.zm_createMessageDeletionTimer()
+        }
     }
 
-    func stopEphemeralMessageTimers() {
-        self.syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_teardownMessageObfuscationTimer()
+    func stopEphemeralMessageTimers() async {
+        await syncMOC.perform { [syncMOC] in
+            syncMOC.zm_teardownMessageObfuscationTimer()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.uiMOC.performGroupedAndWait {
-            self.uiMOC.zm_teardownMessageDeletionTimer()
+        await uiMOC.perform { [uiMOC] in
+            uiMOC.zm_teardownMessageDeletionTimer()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }
 
 // MARK: - Contexts
+
 extension MessagingTestBase {
 
     override var allDispatchGroups: [ZMSDispatchGroup] {
-        return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
+        super.allDispatchGroups + [syncMOC?.dispatchGroup, uiMOC?.dispatchGroup].compactMap(\.self)
     }
 
     func performPretendingUiMocIsSyncMoc(block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()
     }
 }
 
-// MARK: - Cache cleaning
-extension MessagingTestBase {
-
-    private var cacheFolder: URL {
-        return FileManager.default.randomCacheURL!
-    }
-
-    fileprivate func deleteAllFilesInCache() {
-        let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
-        files?.forEach {
-            do {
-                try FileManager.default.removeItem(at: $0)
-            } catch {
-                WireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
-            }
-        }
-    }
-}
-
 // MARK: - Payload for message
+
 extension MessagingTestBase {
-    public func payloadForMessage(in conversation: ZMConversation?,
-                                  type: String,
-                                  data: Any) -> NSMutableDictionary? {
-        return payloadForMessage(in: conversation!, type: type, data: data, time: nil)
+    public func payloadForMessage(
+        in conversation: ZMConversation?,
+        type: String,
+        data: Any
+    ) -> NSMutableDictionary? {
+        payloadForMessage(in: conversation!, type: type, data: data, time: nil)
     }
 
-    public func payloadForMessage(in conversation: ZMConversation,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?) -> NSMutableDictionary? {
+    public func payloadForMessage(
+        in conversation: ZMConversation,
+        type: String,
+        data: Any,
+        time: Date?
+    ) -> NSMutableDictionary? {
         //      {
         //         "conversation" : "8500be67-3d7c-4af0-82a6-ef2afe266b18",
         //         "data" : {
@@ -552,37 +481,106 @@ extension MessagingTestBase {
         return payloadForMessage(in: conversation, type: type, data: data, time: time, from: user)
     }
 
-    public func payloadForMessage(in conversation: ZMConversation,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?,
-                                  from: ZMUser) -> NSMutableDictionary? {
+    public func payloadForMessage(
+        in conversation: ZMConversation,
+        type: String,
+        data: Any,
+        time: Date?,
+        from: ZMUser
+    ) -> NSMutableDictionary? {
 
-        return ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
-                "data": data,
-                "from": from.remoteIdentifier.transportString(),
-                "time": time?.transportString() ?? "",
-                "type": type
+        [
+            "conversation": conversation.remoteIdentifier?.transportString() ?? "",
+            "data": data,
+            "from": from.remoteIdentifier.transportString(),
+            "time": time?.transportString() ?? "",
+            "type": type
         ]
     }
 
-    public func payloadForMessage(conversationID: UUID,
-                                  domain: String?,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?,
-                                  fromID: UUID) -> NSMutableDictionary? {
+    public func payloadForMessage(
+        conversationID: UUID,
+        domain: String?,
+        type: String,
+        data: Any,
+        time: Date?,
+        fromID: UUID
+    ) -> NSMutableDictionary? {
 
-        return ["conversation": conversationID.transportString(),
-                "qualified_conversation": [
-                    "id": conversationID.transportString(),
-                    "domain": domain
-                ],
-                "data": data,
-                "from": fromID.transportString(),
-                "time": time?.transportString() ?? "",
-                "type": type
+        [
+            "conversation": conversationID.transportString(),
+            "qualified_conversation": [
+                "id": conversationID.transportString(),
+                "domain": domain
+            ],
+            "data": data,
+            "from": fromID.transportString(),
+            "time": time?.transportString() ?? "",
+            "type": type
         ]
+    }
+
+}
+
+// MARK: - ProteusService Setup
+
+extension MessagingTestBase {
+
+    /// Ensures Proteus/CoreCrypto is initialized - call this before accessing proteus properties
+    private func ensureProteusInitialized() async throws {
+        guard !_isProteusInitialized else { return }
+
+        // Set up proteus client simulator
+        let cacheFolder = try XCTUnwrap(FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first)
+        let storageURL = cacheFolder.appendingPathComponent("OtherClients")
+        try? FileManager.default.removeItem(at: storageURL)
+
+        _proteusClientSimulator = ProteusClientSimulator(
+            syncMOC: syncMOC,
+            owningDomain: owningDomain,
+            storageURL: storageURL
+        )
+
+        // Set up Proteus service and CoreCrypto
+        try await setupProteusService()
+
+        // Establish session after users/clients are created
+        if let otherClient {
+            try await _proteusClientSimulator!.establishSessionFromSelf(to: otherClient)
+        }
+
+        _isProteusInitialized = true
+    }
+
+    func setupProteusService() async throws {
+        let accountDir = coreDataStack.accountContainer
+
+        let mockKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
+        mockKeyMigrationManager.isKeyRotationNeeded = false
+        mockKeyMigrationManager.isMigrationToBytesNeeded = false
+        mockKeyMigrationManager.isMigrationToScopedKeyNeeded = false
+
+        // Create CoreCryptoProvider which handles proper initialization
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: accountDir,
+            sharedUserDefaults: UserDefaults.standard,
+            syncContext: syncMOC,
+            coreCryptoKeyMigrationManager: mockKeyMigrationManager,
+            allowCreation: true,
+            localDomain: owningDomain
+        )
+
+        // Initialize CoreCrypto (this calls proteusInit internally)
+        _coreCrypto = try await coreCryptoProvider.coreCrypto() as? CoreCrypto
+
+        // Create ProteusService with the provider
+        _proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
+
+        await syncMOC.perform { [syncMOC, service = self._proteusService] in
+            syncMOC.proteusService = service
+        }
     }
 
 }

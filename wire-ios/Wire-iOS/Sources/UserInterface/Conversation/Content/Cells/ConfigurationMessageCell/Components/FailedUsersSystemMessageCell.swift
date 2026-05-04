@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
+final class FailedUsersSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell {
 
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
@@ -37,6 +39,8 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
+
     var isSelected: Bool = true
 
     private var isCollapsed: Bool = true
@@ -48,8 +52,10 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     private let usersView = WebLinkTextView()
     private let imageContainer = UIView()
     private var imageView = UIImageView()
-    private let button = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                      insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private let button = SecondaryTextButton(
+        fontSpec: FontSpec.buttonSmallSemibold,
+        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    )
 
     private var config: Configuration? {
         didSet {
@@ -73,7 +79,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     // MARK: - Setup UI
 
     func configure(with object: Configuration, animated: Bool) {
-        self.config = object
+        config = object
     }
 
     private func updateUI() {
@@ -137,7 +143,10 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            stackView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 

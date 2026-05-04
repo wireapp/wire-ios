@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public struct E2EIClientID: Equatable, Hashable {
     // The string representation of the id.
 
     public var rawValue: String {
-        return "\(self.userID):\(self.clientID)@\(self.domain)"
+        "\(userID):\(clientID)@\(domain)"
     }
 
     public init(
@@ -42,11 +42,14 @@ public struct E2EIClientID: Equatable, Hashable {
         self.domain = domain.lowercased()
     }
 
-    public init?(user: ZMUser) {
+    public init?(
+        user: ZMUser,
+        localDomain: String?
+    ) {
         guard let selfClient = user.selfClient(),
               let userID = selfClient.user?.remoteIdentifier.transportString(),
               let clientID = selfClient.remoteIdentifier,
-              let domain = selfClient.user?.domain ?? BackendInfo.domain
+              let domain = selfClient.user?.domain ?? localDomain
         else {
             return nil
         }

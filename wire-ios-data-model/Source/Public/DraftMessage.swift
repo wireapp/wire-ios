@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireCryptobox
 
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
-@objcMembers public final class DraftMessage: NSObject {
+@objcMembers
+public final class DraftMessage: NSObject {
 
     /// The text of the message.
     public let text: String
@@ -64,10 +64,15 @@ private final class StorableDraftMessage: NSObject, Codable {
 
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.
-    fileprivate func draftMessage(in context: NSManagedObjectContext, for conversation: ZMConversation) -> DraftMessage {
-        return .init(text: text,
-                     mentions: mentions.compactMap { $0.mention(in: context) },
-                     quote: quote?.quote(in: context, for: conversation))
+    fileprivate func draftMessage(
+        in context: NSManagedObjectContext,
+        for conversation: ZMConversation
+    ) -> DraftMessage {
+        .init(
+            text: text,
+            mentions: mentions.compactMap { $0.mention(in: context) },
+            quote: quote?.quote(in: context, for: conversation)
+        )
     }
 }
 
@@ -107,7 +112,8 @@ private struct StorableQuote: Codable {
 
 // MARK: - Conversation Accessors
 
-@objc extension ZMConversation {
+@objc
+extension ZMConversation {
 
     private static let log = ZMSLog(tag: "EAR")
 
@@ -160,51 +166,46 @@ private struct StorableQuote: Codable {
     @nonobjc
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
-        return try moc.encryptData(data: data)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.encrypt(data: data, contextData: contextData)
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
         guard let nonce = draftMessageNonce else { return data }
-        return try moc.decryptData(data: data, nonce: nonce)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.decrypt(data: data, nonce: nonce, contextData: contextData)
     }
 
 }
 
 // MARK: - Storable Helper
 
-fileprivate extension UserType {
-
-    // Private helper to get the user identifier for a `UserType`.
-    var userIdentifier: UUID? {
-        if let user = self as? ZMUser {
-            return user.remoteIdentifier
-        } else if let user = self as? ServiceUser {
-            return user.userIdentifier
-        }
-
-        return nil
-    }
-
-}
-
-fileprivate extension Mention {
+private extension Mention {
 
     /// The storable version of the object.
     var storable: StorableMention? {
-        return user.userIdentifier.map {
+        user.remoteIdentifier.map {
             StorableMention(range: range, userIdentifier: $0)
         }
     }
 
 }
 
-fileprivate extension DraftMessage {
+private extension DraftMessage {
 
     /// The storable version of the object.
     var storable: StorableDraftMessage {
-        return .init(text: text,
-                     mentions: mentions.compactMap(\.storable),
-                     quote: StorableQuote(nonce: quote?.nonce))
+        .init(
+            text: text,
+            mentions: mentions.compactMap(\.storable),
+            quote: StorableQuote(nonce: quote?.nonce)
+        )
     }
 
 }

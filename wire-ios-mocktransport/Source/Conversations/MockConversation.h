@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, nonnull) NSString *selfIdentifier; // Identifier of self user, used to filter out self from participants in the payload
 @property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic) ZMTConversationType type;
+@property (nonatomic, strong, nullable) NSString *domain;
 /**
   participants that are not self
   mocks ZMConversation.activeParticipants
@@ -79,11 +80,6 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 + (nonnull instancetype)conversationInMoc:(nonnull NSManagedObjectContext *)moc withCreator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 
 - (nonnull MockEvent *)insertClientMessageFromUser:(nonnull MockUser *)fromUser data:(nonnull NSData *)data;
-
-/// Encrypts and inserts a OTR message using the gerneric message data sent from the given client to the given client
-- (nonnull MockEvent *)encryptAndInsertDataFromClient:(nonnull MockUserClient *)fromClient
-                                             toClient:(nonnull MockUserClient *)toClient
-                                                 data:(nonnull NSData *)data;
 
 - (nonnull MockEvent *)insertOTRMessageFromClient:(nonnull MockUserClient *)fromClient
                                          toClient:(nonnull MockUserClient *)toClient

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,31 +17,59 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
 
 protocol ConversationContentViewControllerDelegate: AnyObject {
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, willDisplayActiveMediaPlayerFor message: ZMConversationMessage?)
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        willDisplayActiveMediaPlayerFor message: ZMConversationMessage?
+    )
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage)
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage
+    )
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerResending message: ZMConversationMessage)
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didTriggerEditing message: ZMConversationMessage
+    )
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerEditing message: ZMConversationMessage)
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didTriggerReplyingTo message: ZMConversationMessage
+    )
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerReplyingTo message: ZMConversationMessage)
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        performImageSaveAnimation snapshotView: UIView?,
+        sourceRect: CGRect
+    )
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, performImageSaveAnimation snapshotView: UIView?, sourceRect: CGRect)
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentGuestOptionsFrom sourceView: UIView
+    )
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView) -> Bool
-
-    func conversationContentViewControllerWants(toDismiss controller: ConversationContentViewController)
-
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentGuestOptionsFrom sourceView: UIView)
-
-    func conversationContentViewController(_ controller: ConversationContentViewController,
-                                           presentServicesOptionFrom sourceView: UIView)
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType], from sourceView: UIView)
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
+        from sourceView: UIView
+    )
 
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)
+
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    )
 }

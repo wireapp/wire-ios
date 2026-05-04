@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
     /// Create a new team one on one with another user.
     ///
@@ -27,7 +28,7 @@ extension ZMUserSession {
     ///   - user: the other user.
     ///   - completion: a result handler.
 
-    public func createTeamOneOnOne(
+    func createTeamOneOnOne(
         with user: UserType,
         completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     ) {
@@ -46,8 +47,15 @@ extension ZMUserSession {
                     }
 
                     let migrator = syncContext.mlsService.map(OneOnOneMigrator.init(mlsService:))
-                    let service = ConversationService(context: syncContext)
-                    let useCase = CreateTeamOneOnOneConversationUseCase(migrator: migrator, service: service)
+                    let service = ConversationService(
+                        context: syncContext,
+                        localDomain: self.resolvedBackendMetadata.domain
+                    )
+                    let useCase = CreateTeamOneOnOneConversationUseCase(
+                        migrator: migrator,
+                        service: service,
+                        localDomain: self.resolvedBackendMetadata.domain
+                    )
 
                     return (useCase, syncUser)
                 }
@@ -58,7 +66,8 @@ extension ZMUserSession {
                 )
 
                 try await self.viewContext.perform {
-                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation else {
+                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation
+                    else {
                         throw CreateTeamOneOnOneConversationError.conversationNotFound
                     }
 

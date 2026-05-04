@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,11 @@ import WireSyncEngine
 
 extension SelfProfileViewController {
 
-    @discardableResult func presentUserSettingChangeControllerIfNeeded() -> Bool {
+    @discardableResult
+    func presentUserSettingChangeControllerIfNeeded() -> Bool {
         if ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely ?? false {
             let currentValue = ZMUser.selfUser()!.readReceiptsEnabled
-            self.presentReadReceiptsChangedAlert(with: currentValue)
+            presentReadReceiptsChangedAlert(with: currentValue)
 
             return true
         } else {
@@ -33,14 +34,19 @@ extension SelfProfileViewController {
         }
     }
 
-    fileprivate func presentReadReceiptsChangedAlert(with newValue: Bool) {
-        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self.ReadReceiptsDisabled.title
+    // TODO: [WPB-11951] ensure this alert does not conflict with the alert about new devices having been added.
+    private func presentReadReceiptsChangedAlert(with newValue: Bool) {
+        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self
+            .ReadReceiptsDisabled.title
         let description = L10n.Localizable.Self.ReadReceiptsDescription.title
 
         let settingsChangedAlert = UIAlertController(title: title, message: description, preferredStyle: .alert)
 
-        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak settingsChangedAlert] _ in
-            ZMUserSession.shared()?.perform {
+        let okAction = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ) { [weak userSession, weak settingsChangedAlert] _ in
+            userSession?.perform {
                 ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely = false
             }
             settingsChangedAlert?.dismiss(animated: true)
@@ -48,7 +54,7 @@ extension SelfProfileViewController {
 
         settingsChangedAlert.addAction(okAction)
 
-        self.present(settingsChangedAlert, animated: true)
+        present(settingsChangedAlert, animated: true)
     }
 
 }

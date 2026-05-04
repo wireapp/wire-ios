@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,17 @@
 import UIKit
 
 final class GradientView: UIView {
-    override class var layerClass: AnyClass {
-        return CAGradientLayer.self
+
+    override static var layerClass: AnyClass {
+        CAGradientLayer.self
     }
 
     var gradientLayer: CAGradientLayer {
-        if let gradientLayer = self.layer as? CAGradientLayer {
+        if let gradientLayer = layer as? CAGradientLayer {
             return gradientLayer
         }
 
-        fatalError("gradientLayer is missing: \(self.layer)")
+        fatalError("gradientLayer is missing: \(layer)")
     }
 
     func setStartPoint(_ startPoint: CGPoint, endPoint: CGPoint, locations: [CGFloat]) {

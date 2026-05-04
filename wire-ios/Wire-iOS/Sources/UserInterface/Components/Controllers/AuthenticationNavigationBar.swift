@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ extension AuthenticationNavigationBar {
         let button = IconButton(style: .default)
         button.setIcon(UIApplication.isLeftToRightLayout ? .backArrow : .forwardArrow, size: .tiny, for: .normal)
 
-            button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-            button.setIconColor(SemanticColors.Icon.foregroundDefault.withAlphaComponent(0.4), for: .highlighted)
+        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        button.setIconColor(SemanticColors.Icon.foregroundDefault.withAlphaComponent(0.4), for: .highlighted)
 
         button.contentHorizontalAlignment = UIApplication.isLeftToRightLayout ? .left : .right
         button.frame = CGRect(x: 0, y: 0, width: 32, height: 20)

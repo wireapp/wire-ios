@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 @import WireTransport;
 @import WireTesting;
-@import WireProtos;
+@import WireTransportSupport;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7REFVR2hCk6r9AtUXtUX1YpC3NFdrA-KjztS6AgxgrnZSgcyFIHrULCw==.1403273423.a.39562cc3-717d-4395-979c-5387ae17f5c3.6885777252650447174";
 
@@ -68,8 +69,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
         }
         
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         if (users.count < 1) {
             return [self errorResponseWithCode:403 reason:@"invalid-credentials" apiVersion:request.apiVersion];
         }
@@ -84,12 +85,12 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             [self.phoneNumbersWaitingForVerificationForLogin removeObject:phone];
         }
         
-        NSString *cookiesValue = @"fake cookie";
+        NSString *cookiesValue = @"zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure";
 
         if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
+            self.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieDataWithString:cookiesValue];
         }
-        
+
         self.selfUser = user;
         self.clientCompletedLogin = YES;
         
@@ -100,7 +101,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                          @"user": user.identifier
         };
 
-        NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
+        NSDictionary *headers = @{ @"Set-Cookie": cookiesValue };
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
     }
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
@@ -118,7 +119,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         if (users.count < 1) {
             return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];

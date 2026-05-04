@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,17 +25,18 @@ final class ReactionCategoryButton: UIButton {
     private let defaultTintColor = SemanticColors.Icon.emojiCategoryDefault
 
     override var isSelected: Bool {
-            didSet {
-                selectionIndicator.isHidden = !isSelected
-                imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
-            }
+        didSet {
+            selectionIndicator.isHidden = !isSelected
+            imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
         }
+    }
 
     init() {
         super.init(frame: .zero)
         setupViews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

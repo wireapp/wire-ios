@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,18 @@
 import Foundation
 import WireUtilities
 
-extension BackendEnvironment {
+public extension BackendEnvironment {
 
-    static let defaultsKey = "ZMBackendEnvironmentData"
+    internal static let defaultsKey = "ZMBackendEnvironmentData"
 
-    public convenience init?(userDefaults: UserDefaults, configurationBundle: Bundle, environmentType type: EnvironmentType? = nil) {
+    convenience init?(
+        userDefaults: UserDefaults,
+        configurationBundle: Bundle,
+        environmentType type: EnvironmentType? = nil
+    ) {
         let environmentType = type ?? EnvironmentType(userDefaults: userDefaults)
         switch environmentType {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
+        case .default, .staging, .anta, .bella, .chala, .diya, .elna, .foma:
             guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
                 Logging.backendEnvironment.error("Could not find configuration for \(environmentType.stringValue)")
                 return nil
@@ -45,7 +49,7 @@ extension BackendEnvironment {
         }
     }
 
-    public func save(in userDefaults: UserDefaults) {
+    func save(in userDefaults: UserDefaults) {
         type.save(in: userDefaults)
 
         switch type {
@@ -66,15 +70,14 @@ extension BackendEnvironment {
                 countlyURL: endpoints.countlyURL
             )
 
-            let proxy: ProxySettings?
-            if let proxySettings {
-                proxy = ProxySettings(
+            let proxy: ProxySettings? = if let proxySettings {
+                ProxySettings(
                     host: proxySettings.host,
                     port: proxySettings.port,
                     needsAuthentication: proxySettings.needsAuthentication
                 )
             } else {
-                proxy = nil
+                nil
             }
 
             let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy)
@@ -85,7 +88,7 @@ extension BackendEnvironment {
         }
     }
 
-    public static func migrate(from: UserDefaults, to: UserDefaults) {
+    static func migrate(from: UserDefaults, to: UserDefaults) {
         [EnvironmentType.defaultsKey, BackendEnvironment.defaultsKey].forEach { key in
             UserDefaults.moveValue(forKey: key, from: from, to: to)
         }
@@ -93,7 +96,7 @@ extension BackendEnvironment {
 
 }
 
-fileprivate extension UserDefaults {
+private extension UserDefaults {
 
     static func moveValue(forKey key: String, from: UserDefaults, to: UserDefaults) {
         guard let value = from.value(forKey: key) else { return }

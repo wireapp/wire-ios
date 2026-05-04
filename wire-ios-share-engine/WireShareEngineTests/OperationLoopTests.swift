@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,40 +19,56 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import XCTest
 
+@testable import WireShareEngine
+
 final class OperationLoopTests: ZMTBaseTest {
 
-    var coreDataStack: CoreDataStack! = nil
-    var sut: OperationLoop! = nil
+    var coreDataStack: CoreDataStack!
+    var sut: OperationLoop!
 
     var uiMoc: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var syncMoc: NSManagedObjectContext {
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
-    override func setUp() {
-        super.setUp()
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMoc.dispatchGroupContext?.groups ?? []) + (syncMoc.dispatchGroupContext?.groups ?? [])
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
         let accountId = UUID()
-        let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let directoryURL = try! FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         let account = Account(userName: "", userIdentifier: accountId)
 
-        let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: directoryURL,
-                                          inMemoryStore: true,
-                                          dispatchGroup: dispatchGroup)
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: directoryURL,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
+
+        try await coreDataStack.load()
 
         self.coreDataStack = coreDataStack
-        self.sut = OperationLoop(userContext: coreDataStack.viewContext,
-                                 syncContext: coreDataStack.syncContext, callBackQueue: OperationQueue())
+        sut = OperationLoop(
+            userContext: coreDataStack.viewContext,
+            syncContext: coreDataStack.syncContext,
+            callBackQueue: OperationQueue()
+        )
     }
 
     override func tearDown() {
@@ -68,12 +84,12 @@ extension OperationLoopTests {
 
         let userID = UUID()
 
-        var syncUser: ZMUser! = nil
+        var syncUser: ZMUser!
         syncMoc.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
-            self.syncMoc.saveOrRollback()
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: syncMoc)
+            syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
@@ -84,7 +100,7 @@ extension OperationLoopTests {
             XCTAssertNotNil(uiUser)
             self.uiMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(syncUser.name, "Jean Claude YouKnowWho")
     }
@@ -92,28 +108,28 @@ extension OperationLoopTests {
     func testThatItMergesSyncContextInUIContext() {
         let userID = UUID()
 
-        var syncUser: ZMUser! = nil
+        var syncUser: ZMUser!
         coreDataStack.syncContext.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
-            self.syncMoc.saveOrRollback()
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: syncMoc)
+            syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
 
-        var uiUser: ZMUser! = nil
+        var uiUser: ZMUser!
         uiMoc.performGroupedBlock {
             uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             XCTAssertNotNil(uiUser)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMoc.performGroupedAndWait {
             syncUser.name = "Jean Claude YouKnowWho"
             self.syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(uiUser.name, syncUser.name)
     }

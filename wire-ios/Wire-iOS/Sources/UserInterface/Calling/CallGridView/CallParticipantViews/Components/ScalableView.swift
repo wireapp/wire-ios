@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,8 +76,8 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
     func handlePinchGesture(_ gestureRecognizer: UIPinchGestureRecognizer) {
         guard
             gestureRecognizer.state == .began
-                || gestureRecognizer.state == .changed
-                || gestureRecognizer.state == .ended
+            || gestureRecognizer.state == .changed
+            || gestureRecognizer.state == .ended
         else { return }
 
         guard let view = gestureRecognizer.view else { return }
@@ -124,8 +124,11 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
         gestureRecognizer.setTranslation(.zero, in: view)
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
     }
 
 }

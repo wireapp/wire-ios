@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,29 +20,33 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Request Configuration")
 
-@objcMembers open class AbstractRequestStrategy: NSObject, RequestStrategy {
+@objcMembers
+open class AbstractRequestStrategy: NSObject, RequestStrategy {
 
-    weak public var applicationStatus: ApplicationStatus?
+    public weak var applicationStatus: ApplicationStatus?
 
     public let managedObjectContext: NSManagedObjectContext
     public var configuration: ZMStrategyConfigurationOption = [
         .allowsRequestsWhileOnline
     ]
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         self.managedObjectContext = managedObjectContext
         self.applicationStatus = applicationStatus
 
         super.init()
     }
 
-    /// Subclasses should override this method. 
+    /// Subclasses should override this method.
     open func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fatal("you must override this method")
     }
 
     open func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let applicationStatus = self.applicationStatus else {
+        guard let applicationStatus else {
             zmLog.error("applicationStatus is missing")
             return nil
         }
@@ -52,32 +56,23 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
         if prerequisites.isSubset(of: configuration) {
             return nextRequestIfAllowed(for: apiVersion)
         } else {
-            zmLog.debug("Not performing requests since option: \(prerequisites.subtracting(configuration)) is not configured for (\(String(describing: type(of: self))))")
+            zmLog
+                .debug(
+                    "Not performing requests since option: \(prerequisites.subtracting(configuration)) is not configured for (\(String(describing: type(of: self))))"
+                )
         }
 
         return nil
     }
 
-    public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus) -> ZMStrategyConfigurationOption {
+    public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus)
+        -> ZMStrategyConfigurationOption {
         var prerequisites: ZMStrategyConfigurationOption = []
 
-        if applicationStatus.synchronizationState == .unauthenticated {
+        switch applicationStatus.synchronizationState {
+        case .unauthenticated:
             prerequisites.insert(.allowsRequestsWhileUnauthenticated)
-        }
-
-        if applicationStatus.synchronizationState == .slowSyncing {
-            prerequisites.insert(.allowsRequestsDuringSlowSync)
-        }
-
-        if applicationStatus.synchronizationState == .establishingWebsocket {
-            prerequisites.insert(.allowsRequestsWhileWaitingForWebsocket)
-        }
-
-        if applicationStatus.synchronizationState == .quickSyncing {
-            prerequisites.insert(.allowsRequestsDuringQuickSync)
-        }
-
-        if applicationStatus.synchronizationState == .online {
+        case .online:
             prerequisites.insert(.allowsRequestsWhileOnline)
         }
 

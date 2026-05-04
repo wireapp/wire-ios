@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
 
 import Foundation
 
-extension Bundle {
-    public var applicationGroupIdentifier: String? {
+public extension Bundle {
+    var applicationGroupIdentifier: String? {
         guard let groupId = infoDictionary?["WireGroupId"] as? String else { return nil }
         return "group.\(groupId)"
     }
-    public var hostBundleIdentifier: String? {
-        return infoDictionary?["HostBundleIdentifier"] as? String
+
+    var hostBundleIdentifier: String? {
+        infoDictionary?["HostBundleIdentifier"] as? String
     }
 }

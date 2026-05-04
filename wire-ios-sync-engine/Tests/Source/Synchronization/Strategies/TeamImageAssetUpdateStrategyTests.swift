@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class TeamImageAssetUpdateStrategyTests: MessagingTest {
 
@@ -29,10 +29,14 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
 
-        sut = TeamImageAssetUpdateStrategy(withManagedObjectContext: uiMOC, applicationStatus: mockApplicationStatus)
+        sut = TeamImageAssetUpdateStrategy(
+            withManagedObjectContext: uiMOC,
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {
@@ -78,14 +82,20 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItStoresTeamImageAsset_OnSuccessfulResponse() {
         // GIVEN
         let team = createTeamWithImage()
-        let imageData = "image".data(using: .utf8)!
+        let imageData = Data("image".utf8)
 
         team.requestImage()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("nil request generated") }
 
         // WHEN
-        request.complete(with: ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: ZMTransportResponse(
+            imageData: imageData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -100,7 +110,12 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("nil request generated") }
 
         // WHEN
-        request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: ZMTransportResponse(
+            payload: nil,
+            httpStatus: 404,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

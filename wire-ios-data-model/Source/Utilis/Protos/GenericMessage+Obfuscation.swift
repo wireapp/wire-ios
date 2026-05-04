@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension String {
 
@@ -30,7 +31,7 @@ public extension String {
 
     func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
-        for char in self.unicodeScalars {
+        for char in unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
                 obfuscatedVersion.append(char)
             } else {
@@ -45,15 +46,19 @@ public extension GenericMessage {
 
     func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
-        guard case .ephemeral? = self.content else { return nil }
+        guard case .ephemeral? = content else { return nil }
 
         if let someText = textData {
             let content = someText.content
             let obfuscatedContent = content.obfuscated()
             var obfuscatedLinkPreviews: [LinkPreview] = []
-            if linkPreviews.count > 0 {
+            if !linkPreviews.isEmpty {
                 let offset = linkPreviews.first!.urlOffset
-                let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: Int(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
+                let offsetIndex = obfuscatedContent.index(
+                    obfuscatedContent.startIndex,
+                    offsetBy: Int(offset),
+                    limitedBy: obfuscatedContent.endIndex
+                ) ?? obfuscatedContent.startIndex
                 let originalURL = obfuscatedContent[offsetIndex...]
                 obfuscatedLinkPreviews = linkPreviews.map { $0.obfuscated(originalURL: String(originalURL)) }
             }
@@ -81,7 +86,7 @@ public extension GenericMessage {
 
 extension ImageAsset {
     func obfuscated() -> ImageAsset {
-        return WireProtos.ImageAsset.with({
+        GenericMessageProtocol.ImageAsset.with {
             $0.tag = tag
             $0.width = width
             $0.height = height
@@ -89,7 +94,7 @@ extension ImageAsset {
             $0.originalHeight = originalHeight
             $0.mimeType = mimeType
             $0.size = 1
-        })
+        }
     }
 }
 
@@ -125,22 +130,22 @@ extension Tweet {
     func obfuscated() -> Tweet {
         let obfAuthorName = hasAuthor ? author.obfuscated() : ""
         let obfUserName = hasUsername ? username.obfuscated() : ""
-        return Tweet.with({
+        return Tweet.with {
             $0.author = obfAuthorName
             $0.username = obfUserName
-        })
+        }
     }
 }
 
-extension WireProtos.Asset {
-    func obfuscated() -> WireProtos.Asset {
-        var assetOriginal: WireProtos.Asset.Original?
-        var assetPreview: WireProtos.Asset.Preview?
+extension GenericMessageProtocol.Asset {
+    func obfuscated() -> GenericMessageProtocol.Asset {
+        var assetOriginal: GenericMessageProtocol.Asset.Original?
+        var assetPreview: GenericMessageProtocol.Asset.Preview?
 
         if hasOriginal {
-            assetOriginal = WireProtos.Asset.Original()
+            assetOriginal = GenericMessageProtocol.Asset.Original()
             if original.hasRasterImage {
-                let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+                let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData.with {
                     $0.tag = original.image.tag
                     $0.width = original.image.width
                     $0.height = original.image.height
@@ -156,9 +161,9 @@ extension WireProtos.Asset {
             let metaData = original.metaData
             switch metaData {
             case .audio?:
-                assetOriginal?.audio = WireProtos.Asset.AudioMetaData()
+                assetOriginal?.audio = GenericMessageProtocol.Asset.AudioMetaData()
             case .video?:
-                assetOriginal?.video = WireProtos.Asset.VideoMetaData()
+                assetOriginal?.video = GenericMessageProtocol.Asset.VideoMetaData()
             default:
                 break
             }
@@ -167,8 +172,8 @@ extension WireProtos.Asset {
         }
 
         if hasPreview {
-            assetPreview = WireProtos.Asset.Preview()
-            let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+            assetPreview = GenericMessageProtocol.Asset.Preview()
+            let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData.with {
                 $0.tag = preview.image.tag
                 $0.width = preview.image.width
                 $0.height = preview.image.height
@@ -177,6 +182,6 @@ extension WireProtos.Asset {
             assetPreview?.size = 10
             assetPreview?.mimeType = preview.mimeType
         }
-        return WireProtos.Asset(original: assetOriginal, preview: assetPreview)
+        return GenericMessageProtocol.Asset(original: assetOriginal, preview: assetPreview)
     }
 }

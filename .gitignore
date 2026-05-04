@@ -50,6 +50,10 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+# Ignore Package.resolved files in packages and projects, only track the one in the workspace.
+**/Package.resolved
+!wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved
+**/*-Package.xcscheme
 
 # CocoaPods
 #
@@ -94,3 +98,15 @@ vendor/*
 # LicensePlist in Settings
 /wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist.latest_result.txt
 /wire-ios/Wire-iOS/Resources/Settings.bundle/com.mono0926.LicensePlist
+
+# Failing Snapshot Tests
+SnapshotResults
+artifacts/
+
+# Allure Report
+allure-report/
+allure-results/
+.allure/ 
+
+# AI
+.claude

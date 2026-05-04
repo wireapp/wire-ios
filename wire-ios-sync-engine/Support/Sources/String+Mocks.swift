@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public extension String {
 
     static var mockCertificate: String {
         "BEGIN CERTIFICATE\n-----------\n"
-        + String(repeating: "abcdefghijklmno", count: 100)
-        + "\n-----------\nEND CERTIFICATE"
+            + String(repeating: "abcdefghijklmno", count: 100)
+            + "\n-----------\nEND CERTIFICATE"
     }
 }

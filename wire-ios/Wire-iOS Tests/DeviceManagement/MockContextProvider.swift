@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,23 +23,23 @@ import Foundation
 
 final class MockContextProvider: ContextProvider {
     var account: WireDataModel.Account {
-        return Account(userName: "abcd", userIdentifier: UUID.create())
+        Account(userName: "abcd", userIdentifier: UUID.create())
     }
 
     var viewContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        viewContext
     }
 
     var syncContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-    }
-
-    var searchContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
     var eventContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
 }

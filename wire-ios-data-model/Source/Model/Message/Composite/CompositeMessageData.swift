@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - CompositeMessageData protocol
 
@@ -25,10 +26,10 @@ public protocol CompositeMessageData {
 }
 
 public enum CompositeMessageItem {
-    case text(ZMTextMessageData)
+    case text(TextMessageData)
     case button(ButtonMessageData)
 
-    internal init?(with protoItem: Composite.Item, message: ZMClientMessage) {
+    init?(with protoItem: Composite.Item, message: ZMClientMessage) {
         guard let content = protoItem.content else { return nil }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
         switch content {
@@ -40,9 +41,9 @@ public enum CompositeMessageItem {
     }
 }
 
-extension CompositeMessageItem {
-    public var textData: ZMTextMessageData? {
-        guard case .text(let data) = self else { return nil }
+public extension CompositeMessageItem {
+    var textData: TextMessageData? {
+        guard case let .text(data) = self else { return nil }
         return data
     }
 }
@@ -54,29 +55,4 @@ public protocol ButtonMessageData {
     var state: ButtonMessageState { get }
     var isExpired: Bool { get }
     func touchAction()
-}
-
-public enum ButtonMessageState {
-    case unselected
-    case selected
-    case confirmed
-
-    init(from state: ButtonState.State?) {
-        guard let state else {
-            self = .unselected
-            return
-        }
-        self = ButtonMessageState(from: state)
-    }
-
-    init(from state: ButtonState.State) {
-        switch state {
-        case .unselected:
-            self = .unselected
-        case .selected:
-            self = .selected
-        case .confirmed:
-            self = .confirmed
-        }
-    }
 }

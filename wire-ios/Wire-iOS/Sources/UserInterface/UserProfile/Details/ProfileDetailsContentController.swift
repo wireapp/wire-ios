@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-/**
- * An object that receives notifications from a profile details content controller.
- */
+/// An object that receives notifications from a profile details content controller.
 
 protocol ProfileDetailsContentControllerDelegate: AnyObject {
 
@@ -33,18 +31,14 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
     func profileGroupRoleDidChange(isAdminRole: Bool)
 }
 
-/**
- * An object that controls the content to display in the user details screen.
- */
+/// An object that controls the content to display in the user details screen.
 
 final class ProfileDetailsContentController: NSObject,
-                                             UITableViewDataSource,
-                                             UITableViewDelegate,
-                                             UserObserving {
+    UITableViewDataSource,
+    UITableViewDelegate,
+    UserObserving {
 
-    /**
-     * The type of content that can be displayed in the profile details.
-     */
+    /// The type of content that can be displayed in the profile details.
 
     enum Content: Equatable {
         /// Display rich profile data from SCIM.
@@ -86,32 +80,35 @@ final class ProfileDetailsContentController: NSObject,
     // MARK: - Properties
 
     private var observerToken: Any?
+    private let userSession: UserSession
     private let userPropertyCellID = "UserPropertyCell"
     private let messageProtocolCellID = "MessageProtocolCell"
 
     // MARK: - Initialization
 
-    /**
-     * Creates the controller to display the profile details for the specified user,
-     * in the scope of the given conversation.
-     * - parameter user: The user to display the details of.
-     * - parameter viewer: The user that will see the details. Most commonly, the self user.
-     * - parameter conversation: The conversation where the profile details will be displayed.
-     */
+    /// Creates the controller to display the profile details for the specified user,
+    /// in the scope of the given conversation.
+    /// - parameter user: The user to display the details of.
+    /// - parameter viewer: The user that will see the details. Most commonly, the self user.
+    /// - parameter conversation: The conversation where the profile details will be displayed.
 
-    init(user: UserType,
-         viewer: UserType,
-         conversation: ZMConversation?) {
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        userSession: UserSession
+    ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
+        self.userSession = userSession
 
-        isAdminState = conversation.map(user.isGroupAdmin) ?? false
+        self.isAdminState = conversation.map(user.isGroupAdmin) ?? false
 
         super.init()
         configureObservers()
         updateContent()
-        ZMUserSession.shared()?.perform {
+        userSession.perform {
             user.refreshRichProfile()
         }
     }
@@ -120,12 +117,12 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Whether the viewer can access the rich profile data of the displayed user.
     private var viewerCanAccessRichProfile: Bool {
-        return viewer.canAccessCompanyInformation(of: user)
+        viewer.canAccessCompanyInformation(of: user)
     }
 
     /// Starts observing changes in the user profile.
     private func configureObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
     }
@@ -135,7 +132,7 @@ final class ProfileDetailsContentController: NSObject,
 
         // If viewer can't access rich profile information,
         // delete all rich profile info just for displaying purposes.
-        if !viewerCanAccessRichProfile && !richProfile.isEmpty {
+        if !viewerCanAccessRichProfile, !richProfile.isEmpty {
             richProfile.removeAll()
         }
 
@@ -143,7 +140,10 @@ final class ProfileDetailsContentController: NSObject,
             richProfile.insert(UserRichProfileField(type: L10n.Localizable.Email.placeholder, value: email), at: 0)
         }
         if let domain = user.domain {
-            richProfile.append(UserRichProfileField(type: L10n.Localizable.Self.Settings.AccountSection.Domain.title, value: domain))
+            richProfile.append(UserRichProfileField(
+                type: L10n.Localizable.Self.Settings.AccountSection.Domain.title,
+                value: domain
+            ))
         }
 
         return richProfile.isEmpty ? nil : .richProfile(richProfile)
@@ -163,7 +163,7 @@ final class ProfileDetailsContentController: NSObject,
                 let viewerCanChangeOtherRoles = viewer.canModifyOtherMember(in: conversation)
                 let userCanHaveRoleChanged = !user.isWirelessUser && !user.isFederated
 
-                if viewerCanChangeOtherRoles && userCanHaveRoleChanged {
+                if viewerCanChangeOtherRoles, userCanHaveRoleChanged {
                     items.append(.groupAdminStatus(enabled: groupAdminEnabled))
                 }
             }
@@ -173,7 +173,7 @@ final class ProfileDetailsContentController: NSObject,
                 items.append(richProfile)
             }
 
-            if user.isBlocked && user.blockState == .blockedMissingLegalholdConsent {
+            if user.isBlocked, user.blockState == .blockedMissingLegalholdConsent {
                 items.append(.blockingReason)
             }
 
@@ -182,7 +182,8 @@ final class ProfileDetailsContentController: NSObject,
         case .oneOnOne:
             let readReceiptsEnabled = viewer.readReceiptsEnabled
             if let richProfile = richProfileInfoWithEmailAndDomain {
-                // If there is rich profile data and the user is allowed to see it, display it and the read receipts status.
+                // If there is rich profile data and the user is allowed to see it, display it and the read receipts
+                // status.
                 contents = [richProfile, .readReceiptsStatus(enabled: readReceiptsEnabled)]
             } else {
                 // If there is no rich profile data, show the read receipts.
@@ -208,21 +209,21 @@ final class ProfileDetailsContentController: NSObject,
     // MARK: - Table View
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return contents.count
+        contents.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch contents[section] {
-        case .richProfile(let fields):
-            return fields.count
+        case let .richProfile(fields):
+            fields.count
         case .readReceiptsStatus:
-            return 0
+            0
         case .groupAdminStatus:
-            return 1
+            1
         case .blockingReason:
-            return 1
+            1
         case .messageProtocol:
-            return 1
+            1
         }
     }
 
@@ -236,7 +237,7 @@ final class ProfileDetailsContentController: NSObject,
         case .richProfile:
             header.titleLabel.text = L10n.Localizable.Profile.ExtendedMetadata.header.uppercased()
             header.accessibilityIdentifier = "InformationHeader"
-        case .readReceiptsStatus(let enabled):
+        case let .readReceiptsStatus(enabled):
             header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
                 header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsEnabledMemo.header.uppercased()
@@ -246,7 +247,6 @@ final class ProfileDetailsContentController: NSObject,
         case .blockingReason:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
-
         case .messageProtocol:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
@@ -257,21 +257,29 @@ final class ProfileDetailsContentController: NSObject,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch contents[indexPath.section] {
-        case .groupAdminStatus(let groupAdminEnabled):
-            let cell = tableView.dequeueReusableCell(withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier, for: indexPath) as! IconToggleSubtitleCell
+        case let .groupAdminStatus(groupAdminEnabled):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! IconToggleSubtitleCell
 
-            cell.configure(with: CellConfiguration.groupAdminToogle(get: {
-                return groupAdminEnabled
-            }, set: {_, _ in
+            cell.configure(with: CellConfiguration.groupAdminToggle(get: {
+                groupAdminEnabled
+            }, set: { _, _ in
                 self.isAdminState.toggle()
                 self.delegate?.profileGroupRoleDidChange(isAdminRole: self.isAdminState)
                 self.updateConversationRole()
             }))
 
             return cell
-        case .richProfile(let fields):
+
+        case let .richProfile(fields):
             let field = fields[indexPath.row]
-            let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
+            let cell = tableView
+                .dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(
+                    style: .default,
+                    reuseIdentifier: userPropertyCellID
+                )
             cell.propertyName = field.type
             cell.propertyValue = field.value
             return cell
@@ -280,17 +288,19 @@ final class ProfileDetailsContentController: NSObject,
             fatalError("We do not create cells for the readReceiptsStatus section.")
 
         case .blockingReason:
-            let cell = tableView.dequeueReusableCell(withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier, for: indexPath) as! UserBlockingReasonCell
-            return cell
+            return tableView.dequeueReusableCell(
+                withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! UserBlockingReasonCell
 
-        case .messageProtocol(let messageProtocol):
+        case let .messageProtocol(messageProtocol):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: messageProtocolCellID
             ) as? UserPropertyCell ?? UserPropertyCell(
                 style: .default,
                 reuseIdentifier: messageProtocolCellID
             )
-            cell.propertyName = "Message protocol"
+            cell.propertyName = L10n.Localizable.GroupDetails.MessageProtocol.title
             cell.propertyValue = messageProtocol.rawValue
             return cell
         }
@@ -311,15 +321,14 @@ final class ProfileDetailsContentController: NSObject,
             footer.accessibilityIdentifier = "GroupAdminStatusFooter"
             return footer
         case .blockingReason:
-           return nil
-
+            return nil
         case .messageProtocol:
             return nil
         }
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -327,7 +336,7 @@ final class ProfileDetailsContentController: NSObject,
     }
 
     private func updateConversationRole() {
-        let groupRoles = self.conversation?.getRoles()
+        let groupRoles = conversation?.getRoles()
         let newParticipantRole = groupRoles?.first {
             $0.name == (self.isAdminState ? ZMConversation.defaultAdminRoleName : ZMConversation.defaultMemberRoleName)
         }
@@ -348,7 +357,7 @@ final class ProfileDetailsContentController: NSObject,
     }
 
     private func updateUI() {
-        self.delegate?.profileGroupRoleDidChange(isAdminRole: self.isAdminState)
-        self.delegate?.profileDetailsContentDidChange()
+        delegate?.profileGroupRoleDidChange(isAdminRole: isAdminState)
+        delegate?.profileDetailsContentDidChange()
     }
 }

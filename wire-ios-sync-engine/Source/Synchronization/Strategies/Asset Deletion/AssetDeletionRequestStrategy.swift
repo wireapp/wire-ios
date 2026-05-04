@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,26 @@
 
 import Foundation
 
-fileprivate extension AssetRequestFactory {
-    static func request(for identifier: String, on queue: ZMSGroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
+private extension AssetRequestFactory {
+    static func request(
+        for identifier: String,
+        on queue: GroupQueue,
+        apiVersion: APIVersion,
+        localDomain: String?,
+        block: @escaping ZMCompletionHandlerBlock
+    ) -> ZMTransportRequest? {
 
         let path: String
 
         switch apiVersion {
         case .v0, .v1:
             path = "/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = BackendInfo.domain else {
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            guard let localDomain else {
                 return nil
             }
 
-            path = "/assets/\(domain)/\(identifier)"
+            path = "/assets/\(localDomain)/\(identifier)"
         }
 
         let request = ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
@@ -44,12 +50,18 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
 
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType
+    private let localDomain: String?
 
-    @objc(initWithManagedObjectContext:applicationStatus:identifierProvider:)
-    required public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus, identifierProvider: AssetDeletionIdentifierProviderType) {
+    public required init(
+        context: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        identifierProvider: AssetDeletionIdentifierProviderType,
+        localDomain: String?
+    ) {
         self.identifierProvider = identifierProvider
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
-        requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
 
     private func handle(response: ZMTransportResponse, for identifier: String) {
@@ -69,9 +81,15 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard sync == requestSync, let identifier = identifierProvider.nextIdentifierToDelete() else { return nil }
-        return AssetRequestFactory.request(for: identifier, on: managedObjectContext, apiVersion: apiVersion) { [weak self] response in
-            self?.handle(response: response, for: identifier)
-        }
+        return AssetRequestFactory
+            .request(
+                for: identifier,
+                on: managedObjectContext,
+                apiVersion: apiVersion,
+                localDomain: localDomain
+            ) { [weak self] response in
+                self?.handle(response: response, for: identifier)
+            }
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

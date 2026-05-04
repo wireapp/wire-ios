@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class SessionManagerConfigurationTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result.wipeOnCookieInvalid, false)
-        XCTAssertEqual(result.blacklistDownloadInterval, 21600)
+        XCTAssertEqual(result.blacklistDownloadInterval, 21_600)
         XCTAssertEqual(result.blockOnJailbreakOrRoot, false)
         XCTAssertEqual(result.wipeOnJailbreakOrRoot, true)
         XCTAssertEqual(result.messageRetentionInterval, 3600)

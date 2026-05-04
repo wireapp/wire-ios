@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,32 +17,56 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 // MARK: - GenericMessage
 
 public extension GenericMessage {
-    init?(withBase64String base64String: String?) {
-        guard
-            let string = base64String,
-            let data = Data(base64Encoded: string),
-            let message = GenericMessage.with({ try? $0.merge(serializedData: data) }).validatingFields()
-        else { return nil }
-        self = message
+
+    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. If
+    /// `true` is passed for the `validate` argument, the initializer fails if `validateFields()` returns false.
+
+    init?(
+        from base64String: String,
+        validate: Bool
+    ) {
+        guard let data = Data(base64Encoded: base64String) else { return nil }
+        self.init(from: data, validate: validate)
     }
 
-    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
+    /// Deserializes a `GenericMessage` instance from the provided data. If `true` is passed for the `validate`
+    /// argument, the initializer fails if `validateFields()` returns false.
+
+    init?(
+        from data: Data,
+        validate: Bool
+    ) {
+        let genericMessage = GenericMessage.with { message in
+            try? message.merge(serializedData: data)
+        }
+        guard !validate || genericMessage.validateFields() else { return nil }
+        self = genericMessage
+    }
+
+    init(
+        content: EphemeralMessageCapable,
+        nonce: UUID = UUID(),
+        expiresAfter timeout: MessageDestructionTimeoutValue? = nil
+    ) {
         self.init(content: content, nonce: nonce, expiresAfterTimeInterval: timeout?.rawValue)
     }
 
-    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
+    init(
+        content: EphemeralMessageCapable,
+        nonce: UUID = UUID(),
+        expiresAfterTimeInterval timeout: TimeInterval? = nil
+    ) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
-            let messageContent: MessageCapable
-            if let timeout, timeout > 0 {
-                messageContent = Ephemeral(content: content, expiresAfter: timeout)
+            let messageContent: MessageCapable = if let timeout, timeout > 0 {
+                Ephemeral(content: content, expiresAfter: timeout)
             } else {
-                messageContent = content
+                content
             }
             messageContent.setContent(on: &$0)
         }
@@ -64,63 +88,69 @@ public extension GenericMessage {
     }
 }
 
-extension GenericMessage {
-    public var messageData: MessageCapable? {
+public extension GenericMessage {
+    var messageData: MessageCapable? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .confirmation(let data):
+        case let .confirmation(data):
             return data
-        case .reaction(let data):
+        case let .reaction(data):
             return data
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .ephemeral(let data):
+        case let .multipart(data):
+            return data
+        case let .ephemeral(data):
             return data.messageData
-        case .clientAction(let data):
+        case let .clientAction(data):
             return data
-        case .cleared(let data):
+        case let .cleared(data):
             return data
-        case .lastRead(let data):
+        case let .lastRead(data):
             return data
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .external(let data):
+        case let .external(data):
             return data
-        case .availability(let data):
+        case let .availability(data):
             return data
-        case .edited(let data):
+        case let .edited(data):
             return data
-        case .deleted(let data):
+        case let .deleted(data):
             return data
-        case .calling(let data):
+        case let .calling(data):
             return data
-        case .hidden(let data):
+        case let .inCallEmoji(data):
             return data
-        case .location(let data):
+        case let .hidden(data):
             return data
-        case .image(let data):
+        case let .location(data):
             return data
-        case .composite(let data):
+        case let .image(data):
             return data
-        case .buttonAction(let data):
+        case let .composite(data):
             return data
-        case .buttonActionConfirmation(let data):
+        case let .buttonAction(data):
             return data
-        case .dataTransfer(let data):
+        case let .buttonActionConfirmation(data):
+            return data
+        case let .dataTransfer(data):
+            return data
+        case let .inCallHandRaise(data):
             return data
         }
     }
 
-    var locationData: Location? {
+    internal var locationData: Location? {
         guard let content else { return nil }
         switch content {
-        case .location(let data):
+        case let .location(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .location(let data)?:
+            case let .location(data)?:
                 return data
             default:
                 return nil
@@ -130,24 +160,28 @@ extension GenericMessage {
         }
     }
 
-    public var compositeData: Composite? {
-        guard let content else { return nil }
+    var compositeData: Composite? {
         switch content {
-        case .composite(let data):
+        case let .composite(data):
             return data
+        case let .edited(messageEdit):
+            if case let .composite(composite)? = messageEdit.content {
+                return composite
+            }
         default:
-            return nil
+            break
         }
+        return nil
     }
 
-    public var imageAssetData: ImageAsset? {
+    var imageAssetData: ImageAsset? {
         guard let content else { return nil }
         switch content {
-        case .image(let data):
+        case let .image(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .image(let data)?:
+            case let .image(data)?:
                 return data
             default:
                 return nil
@@ -157,14 +191,14 @@ extension GenericMessage {
         }
     }
 
-    public var assetData: WireProtos.Asset? {
+    var assetData: GenericMessageProtocol.Asset? {
         guard let content else { return nil }
         switch content {
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .asset(let data)?:
+            case let .asset(data)?:
                 return data
             default:
                 return nil
@@ -174,14 +208,14 @@ extension GenericMessage {
         }
     }
 
-    public var knockData: Knock? {
+    var knockData: Knock? {
         guard let content else { return nil }
         switch content {
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .knock(let data)?:
+            case let .knock(data)?:
                 return data
             default:
                 return nil
@@ -191,19 +225,26 @@ extension GenericMessage {
         }
     }
 
-    public var textData: Text? {
+    var textData: Text? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .edited(let messageEdit):
-            if case .text(let data)? = messageEdit.content {
+        case let .edited(messageEdit):
+            switch messageEdit.content {
+            case let .text(data):
+                return data
+            case let .multipart(data) where data.hasText:
+                return data.text
+            default:
+                return nil
+            }
+        case let .ephemeral(ephemeral):
+            if case let .text(data)? = ephemeral.content {
                 return data
             }
-        case .ephemeral(let ephemeral):
-            if case .text(let data)? = ephemeral.content {
-                return data
-            }
+        case let .multipart(data):
+            return data.text
         default:
             return nil
         }
@@ -213,17 +254,17 @@ extension GenericMessage {
 
 public extension Text {
     func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
-        return quotedMessage?.sender?.isSelfUser ?? false
+        quotedMessage?.sender?.isSelfUser ?? false
     }
 }
 
 extension GenericMessage {
     var v3_isImage: Bool {
-        return assetData?.original.hasRasterImage ?? false
+        assetData?.original.hasRasterImage ?? false
     }
 
     var v3_uploadedAssetId: String? {
@@ -249,17 +290,17 @@ extension GenericMessage {
     }
 }
 
-extension GenericMessage {
-    public var linkPreviews: [LinkPreview] {
+public extension GenericMessage {
+    var linkPreviews: [LinkPreview] {
         guard let content else { return [] }
         switch content {
         case .text:
-            return text.linkPreview.compactMap { $0 }
+            return text.linkPreview.compactMap(\.self)
         case .edited:
-            return edited.text.linkPreview.compactMap { $0 }
-        case .ephemeral(let ephemeral):
+            return edited.text.linkPreview.compactMap(\.self)
+        case let .ephemeral(ephemeral):
             if case .text? = ephemeral.content {
-                return ephemeral.text.linkPreview.compactMap { $0 }
+                return ephemeral.text.linkPreview.compactMap(\.self)
             } else {
                 return []
             }
@@ -271,26 +312,26 @@ extension GenericMessage {
 
 // MARK: - Ephemeral
 
-extension Ephemeral {
-    public init(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) {
+public extension Ephemeral {
+    init(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) {
         self = Ephemeral.with {
             $0.expireAfterMillis = Int64(timeout * 1000)
             content.setEphemeralContent(on: &$0)
         }
     }
 
-    public var messageData: MessageCapable? {
+    var messageData: MessageCapable? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .location(let data):
+        case let .location(data):
             return data
-        case .image(let data):
+        case let .image(data):
             return data
         }
     }
@@ -343,16 +384,27 @@ public extension Proteus_UserEntry {
             $0.clients = clientEntries
         }
     }
+
+    init(withProteusUserId id: Proteus_UserId, clientEntries: [Proteus_ClientEntry]) {
+        self = Proteus_UserEntry.with {
+            $0.user = id
+            $0.clients = clientEntries
+        }
+    }
 }
 
 // MARK: - QualifiedNewOtrMessage
 
 public extension Proteus_QualifiedNewOtrMessage {
-    init(withSender sender: UserClient,
-         nativePush: Bool,
-         recipients: [Proteus_QualifiedUserEntry],
-         missingClientsStrategy: MissingClientsStrategy,
-         blob: Data? = nil ) {
+
+    // TODO: [WPB-11206] remove this
+    init(
+        withSender sender: UserClient,
+        nativePush: Bool,
+        recipients: [Proteus_QualifiedUserEntry],
+        missingClientsStrategy: MissingClientsStrategy,
+        blob: Data? = nil
+    ) {
 
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
@@ -368,19 +420,44 @@ public extension Proteus_QualifiedNewOtrMessage {
                 $0.clientMismatchStrategy = .reportAll(.init())
             case .ignoreAllMissingClients:
                 $0.clientMismatchStrategy = .ignoreAll(.init())
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                $0.clientMismatchStrategy = .reportOnly(.with({
-                    $0.userIds = users.compactMap({
-                        guard
-                            let uuid = $0.remoteIdentifier,
-                            let domain = $0.domain
-                        else {
-                            return nil
-                        }
+            case let .ignoreAllMissingClientsNotFromUsers(userIds: userIds):
+                $0.clientMismatchStrategy = .reportOnly(.with {
+                    $0.userIds = userIds.compactMap {
+                        Proteus_QualifiedUserId(with: $0.uuid, domain: $0.domain)
+                    }
+                })
+            }
+        }
+    }
 
-                        return Proteus_QualifiedUserId(with: uuid, domain: domain)
-                    })
-                }))
+    init(
+        withSenderId userId: UInt64,
+        nativePush: Bool,
+        recipients: [Proteus_QualifiedUserEntry],
+        missingClientsStrategy: MissingClientsStrategy,
+        blob: Data? = nil
+    ) {
+
+        self = Proteus_QualifiedNewOtrMessage.with {
+            $0.nativePush = nativePush
+            $0.sender = Proteus_ClientId.with { $0.client = userId }
+            $0.recipients = recipients
+
+            if let blob {
+                $0.blob = blob
+            }
+
+            switch missingClientsStrategy {
+            case .doNotIgnoreAnyMissingClient:
+                $0.clientMismatchStrategy = .reportAll(.init())
+            case .ignoreAllMissingClients:
+                $0.clientMismatchStrategy = .ignoreAll(.init())
+            case let .ignoreAllMissingClientsNotFromUsers(userIds: userIds):
+                $0.clientMismatchStrategy = .reportOnly(.with {
+                    $0.userIds = userIds.compactMap {
+                        Proteus_QualifiedUserId(with: $0.uuid, domain: $0.domain)
+                    }
+                })
             }
         }
     }
@@ -389,13 +466,29 @@ public extension Proteus_QualifiedNewOtrMessage {
 // MARK: - NewOtrMessage
 
 public extension Proteus_NewOtrMessage {
-    init(withSender sender: UserClient, nativePush: Bool, recipients: [Proteus_UserEntry], blob: Data? = nil) {
+    init(
+        withSenderId senderClientId: UInt64,
+        nativePush: Bool,
+        recipients: [Proteus_UserEntry],
+        missingClientsStrategy: MissingClientsStrategy,
+        blob: Data? = nil
+    ) {
         self = Proteus_NewOtrMessage.with {
             $0.nativePush = nativePush
-            $0.sender = sender.clientId
+            $0.sender = Proteus_ClientId.with { $0.client = senderClientId }
             $0.recipients = recipients
+
             if blob != nil {
                 $0.blob = blob!
+            }
+
+            switch missingClientsStrategy {
+            case let .ignoreAllMissingClientsNotFromUsers(userIds: userIds):
+                $0.reportMissing = userIds.map { qualifiedID in
+                    Proteus_UserId.with { $0.uuid = qualifiedID.uuid.uuidData }
+                }
+            case .ignoreAllMissingClients, .doNotIgnoreAnyMissingClient:
+                break
             }
         }
     }
@@ -416,21 +509,40 @@ extension ButtonAction {
 
 extension Location {
     init(latitude: Float, longitude: Float) {
-        self = WireProtos.Location.with {
+        self = GenericMessageProtocol.Location.with {
             $0.latitude = latitude
             $0.longitude = longitude
         }
     }
 }
 
+// MARK: - Multipart
+
+public extension Multipart {
+    init(
+        text: Text,
+        attachments: [Attachment]
+    ) {
+        self = Multipart.with {
+            $0.text = text
+            $0.attachments = attachments
+        }
+    }
+}
+
 // MARK: - Text
 
-extension Text {
-    public init(content: String, mentions: [Mention] = [], linkPreviews: [LinkMetadata] = [], replyingTo: ZMOTRMessage? = nil) {
+public extension Text {
+    init(
+        content: String,
+        mentions: [Mention] = [],
+        linkPreviews: [LinkMetadata] = [],
+        replyingTo: ZMOTRMessage? = nil
+    ) {
         self = Text.with {
             $0.content = content
-            $0.mentions = mentions.compactMap { WireProtos.Mention.createMention($0) }
-            $0.linkPreview = linkPreviews.map { WireProtos.LinkPreview($0) }
+            $0.mentions = mentions.compactMap { GenericMessageProtocol.Mention.createMention($0) }
+            $0.linkPreview = linkPreviews.map { GenericMessageProtocol.LinkPreview($0) }
 
             if let quotedMessage = replyingTo,
                let quotedMessageNonce = quotedMessage.nonce,
@@ -443,7 +555,7 @@ extension Text {
         }
     }
 
-    public func applyEdit(from text: Text) -> Text {
+    func applyEdit(from text: Text) -> Text {
         var updatedText = text
         // Transfer read receipt expectation
         updatedText.expectsReadConfirmation = expectsReadConfirmation
@@ -457,13 +569,11 @@ extension Text {
         return updatedText
     }
 
-    public func updateLinkPreview(from text: Text) -> Text {
-        guard !text.linkPreview.isEmpty else {
-            return self
-        }
+    func updateLinkPreview(from text: Text) -> Text {
+        guard !text.linkPreview.isEmpty else { return self }
         do {
             let data = try serializedData()
-            var updatedText = try Text(serializedData: data)
+            var updatedText = try Text(serializedBytes: data)
             updatedText.linkPreview = text.linkPreview
             return updatedText
         } catch {
@@ -472,19 +582,28 @@ extension Text {
     }
 }
 
+extension GenericMessageProtocol.InCallHandRaise {
+    init(handUp: Bool) {
+
+        self = InCallHandRaise.with {
+            $0.isHandUp = handUp
+        }
+    }
+}
+
 // MARK: - Reaction
 
-extension WireProtos.Reaction {
+extension GenericMessageProtocol.Reaction {
 
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID
-    ) -> WireProtos.Reaction {
+    ) -> GenericMessageProtocol.Reaction {
         let transportString = emojis
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .joined(separator: ",")
 
-        return WireProtos.Reaction.with {
+        return GenericMessageProtocol.Reaction.with {
             $0.emoji = transportString
             $0.messageID = messageID.transportString()
         }
@@ -507,8 +626,8 @@ public enum ProtosReactionFactory {
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID
-    ) -> WireProtos.Reaction {
-        return WireProtos.Reaction.createReaction(
+    ) -> GenericMessageProtocol.Reaction {
+        GenericMessageProtocol.Reaction.createReaction(
             emojis: emojis,
             messageID: messageID
         )
@@ -518,12 +637,12 @@ public enum ProtosReactionFactory {
 
 // MARK: - LastRead
 
-extension LastRead {
-    public init(conversationID: QualifiedID, lastReadTimestamp: Date) {
+public extension LastRead {
+    init(conversationID: QualifiedID, lastReadTimestamp: Date) {
         self = LastRead.with {
             $0.conversationID = conversationID.uuid.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
-            $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
+            $0.qualifiedConversationID = GenericMessageProtocol.QualifiedConversationId.with {
                 $0.id = conversationID.uuid.transportString()
                 $0.domain = conversationID.domain
             }
@@ -533,8 +652,8 @@ extension LastRead {
 
 // MARK: - Calling
 
-extension Calling {
-    public init(content: String, conversationId: QualifiedID) {
+public extension Calling {
+    init(content: String, conversationId: QualifiedID) {
         self = Calling.with {
             $0.content = content
             $0.qualifiedConversationID = QualifiedConversationId.with {
@@ -547,19 +666,26 @@ extension Calling {
 
 // MARK: - MessageEdit
 
-extension WireProtos.MessageEdit {
-    public init(replacingMessageID: UUID, text: Text) {
+public extension GenericMessageProtocol.MessageEdit {
+    init(replacingMessageID: UUID, text: Text) {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
             $0.text = text
+        }
+    }
+
+    init(replacingMessageID: UUID, multipart: Multipart) {
+        self = MessageEdit.with {
+            $0.replacingMessageID = replacingMessageID.transportString()
+            $0.multipart = multipart
         }
     }
 }
 
 // MARK: - Cleared
 
-extension Cleared {
-    public init(timestamp: Date, conversationID: UUID) {
+public extension Cleared {
+    init(timestamp: Date, conversationID: UUID) {
         self = Cleared.with {
             $0.clearedTimestamp = Int64(timestamp.timeIntervalSince1970 * 1000)
             $0.conversationID = conversationID.transportString()
@@ -569,8 +695,8 @@ extension Cleared {
 
 // MARK: - MessageHide
 
-extension MessageHide {
-    public init(conversationId: UUID, messageId: UUID) {
+public extension MessageHide {
+    init(conversationId: UUID, messageId: UUID) {
         self = MessageHide.with {
             $0.conversationID = conversationId.transportString()
             $0.messageID = messageId.transportString()
@@ -580,8 +706,8 @@ extension MessageHide {
 
 // MARK: - MessageDelete
 
-extension MessageDelete {
-    public init(messageId: UUID) {
+public extension MessageDelete {
+    init(messageId: UUID) {
         self = MessageDelete.with {
             $0.messageID = messageId.transportString()
         }
@@ -590,21 +716,21 @@ extension MessageDelete {
 
 // MARK: - Confirmation
 
-extension WireProtos.Confirmation {
-    public init?(messageIds: [UUID], type: Confirmation.TypeEnum = .delivered) {
+public extension GenericMessageProtocol.Confirmation {
+    init?(messageIds: [UUID], type: Confirmation.TypeEnum = .delivered) {
         guard let firstMessageID = messageIds.first else {
             return nil
         }
         let moreMessageIds = Array(messageIds.dropFirst())
-        self = WireProtos.Confirmation.with({
+        self = GenericMessageProtocol.Confirmation.with {
             $0.firstMessageID = firstMessageID.transportString()
             $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
             $0.type = type
-        })
+        }
     }
 
-    public init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
-        self = WireProtos.Confirmation.with {
+    init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
+        self = GenericMessageProtocol.Confirmation.with {
             $0.firstMessageID = messageId.transportString()
             $0.type = type
         }
@@ -621,30 +747,31 @@ extension External {
         }
     }
 
-    init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
+    public init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
         self = External(withOTRKey: key.aesKey, sha256: key.sha256)
     }
 }
 
 // MARK: - Mention
-public extension WireProtos.Mention {
-    static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
-        return mention.convertToProtosMention()
+
+public extension GenericMessageProtocol.Mention {
+    static func createMention(_ mention: WireDataModel.Mention) -> GenericMessageProtocol.Mention? {
+        mention.convertToProtosMention()
     }
 }
 
 public extension WireDataModel.Mention {
-    func convertToProtosMention() -> WireProtos.Mention? {
+    func convertToProtosMention() -> GenericMessageProtocol.Mention? {
         guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
 
-        return WireProtos.Mention.with {
+        return GenericMessageProtocol.Mention.with {
             $0.start = Int32(range.location)
             $0.length = Int32(range.length)
             $0.userID = userID
 
             guard let domain = user.domain else { return }
 
-            $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
+            $0.qualifiedUserID = GenericMessageProtocol.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
             }
@@ -663,7 +790,8 @@ public extension LinkPreview {
         } else {
             self = LinkPreview.with {
                 $0.url = linkMetadata.originalURLString
-                $0.permanentURL = linkMetadata.permanentURL?.absoluteString ?? linkMetadata.resolvedURL?.absoluteString ?? linkMetadata.originalURLString
+                $0.permanentURL = linkMetadata.permanentURL?.absoluteString ?? linkMetadata.resolvedURL?
+                    .absoluteString ?? linkMetadata.originalURLString
                 $0.urlOffset = Int32(linkMetadata.characterOffsetInText)
             }
         }
@@ -672,12 +800,18 @@ public extension LinkPreview {
     init(articleMetadata: ArticleMetadata) {
         self = LinkPreview.with {
             $0.url = articleMetadata.originalURLString
-            $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?.absoluteString ?? articleMetadata.originalURLString
+            $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?
+                .absoluteString ?? articleMetadata.originalURLString
             $0.urlOffset = Int32(articleMetadata.characterOffsetInText)
             $0.title = articleMetadata.title ?? ""
             $0.summary = articleMetadata.summary ?? ""
             if let imageData = articleMetadata.imageData.first {
-                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+                $0.image = GenericMessageProtocol.Asset(
+                    name: "picture.jpeg",
+                    mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
+                    size: UInt64(imageData.count)
+                )
             }
         }
     }
@@ -685,31 +819,39 @@ public extension LinkPreview {
     init(twitterMetadata: TwitterStatusMetadata) {
         self = LinkPreview.with {
             $0.url = twitterMetadata.originalURLString
-            $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?.absoluteString ?? twitterMetadata.originalURLString
+            $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?
+                .absoluteString ?? twitterMetadata.originalURLString
             $0.urlOffset = Int32(twitterMetadata.characterOffsetInText)
             $0.title = twitterMetadata.message ?? ""
             if let imageData = twitterMetadata.imageData.first {
-                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+                $0.image = GenericMessageProtocol.Asset(
+                    name: "picture.jpeg",
+                    mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
+                    size: UInt64(imageData.count)
+                )
             }
 
             guard let author = twitterMetadata.author,
                   let username = twitterMetadata.username else { return }
 
-            $0.tweet = WireProtos.Tweet.with({
+            $0.tweet = GenericMessageProtocol.Tweet.with {
                 $0.author = author
                 $0.username = username
-            })
+            }
         }
     }
 
-    init(withOriginalURL originalURL: String,
-         permanentURL: String,
-         offset: Int32,
-         title: String?,
-         summary: String?,
-         imageAsset: WireProtos.Asset?,
-         article: Article? = nil,
-         tweet: Tweet? = nil) {
+    init(
+        withOriginalURL originalURL: String,
+        permanentURL: String,
+        offset: Int32,
+        title: String?,
+        summary: String?,
+        imageAsset: GenericMessageProtocol.Asset?,
+        article: Article? = nil,
+        tweet: Tweet? = nil
+    ) {
         self = LinkPreview.with {
             $0.url = originalURL
             $0.permanentURL = permanentURL
@@ -733,8 +875,8 @@ public extension LinkPreview {
         }
     }
 
-    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
-        image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: GenericMessageProtocol.Asset.Original?) {
+        image.uploaded = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         if let original {
             image.original = original
         }
@@ -749,9 +891,9 @@ public extension LinkPreview {
     var hasTweet: Bool {
         switch metaData {
         case .tweet:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -771,15 +913,16 @@ public extension Tweet {
 
 // MARK: - ImageAsset
 
-extension ImageAsset {
-    public func imageFormat() -> ZMImageFormat {
-        return ZMImageFormat(self.tag)
+public extension ImageAsset {
+    func imageFormat() -> ZMImageFormat {
+        ZMImageFormat(tag)
     }
 }
 
 // MARK: - DataTransfer
 
-extension DataTransfer {
+public extension DataTransfer {
+
     init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)

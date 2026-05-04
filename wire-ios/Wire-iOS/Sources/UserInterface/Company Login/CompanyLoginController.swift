@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireTransport
 
@@ -86,7 +87,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             let callbackScheme = Bundle.ssoURLScheme
         else { return nil } // Disable on public builds
 
-        requireInternal(nil != Bundle.ssoURLScheme, "no valid callback scheme")
+        requireInternal(Bundle.ssoURLScheme != nil, "no valid callback scheme")
 
         let requester = CompanyLoginController.createRequester(with: callbackScheme)
 
@@ -97,8 +98,8 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
         )
     }
 
-    static private func createRequester(with scheme: String?) -> CompanyLoginRequester {
-        return CompanyLoginRequester(
+    private static func createRequester(with scheme: String?) -> CompanyLoginRequester {
+        CompanyLoginRequester(
             callbackScheme: scheme ?? CompanyLoginController.fallbackURLScheme
         )
     }
@@ -132,13 +133,14 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
             queue: .main,
-            using: { [internalDetectSSOCode] _ in internalDetectSSOCode(false) }
+            using: { [weak self] _ in self?.internalDetectSSOCode(onlyNew: false) }
         )
     }
 
 }
 
 // MARK: - Company Login
+
 extension CompanyLoginController {
     // MARK: - Login Prompt Presentation
 
@@ -173,7 +175,8 @@ extension CompanyLoginController {
     private func presentCompanyLoginAlert(
         prefilledInput: String? = nil,
         error: UIAlertController.CompanyLoginError? = nil,
-        ssoOnly: Bool = false) {
+        ssoOnly: Bool = false
+    ) {
 
         // Do not repeatly show alert if exist
         guard ssoAlert == nil else { return }
@@ -203,9 +206,9 @@ extension CompanyLoginController {
         let parsingResult = CompanyLoginRequestDetector.parse(input: input)
 
         switch parsingResult {
-        case .ssoCode(let uuid):
+        case let .ssoCode(uuid):
             attemptLoginWithSSOCode(uuid)
-        case .domain(let domain):
+        case let .domain(domain):
             lookup(domain: domain)
         case .unknown:
             presentCompanyLoginAlert(prefilledInput: input, error: .invalidFormat)
@@ -248,7 +251,7 @@ extension CompanyLoginController {
         case .invalidCode:
             presentCompanyLoginAlert(error: .invalidCode, ssoOnly: true)
 
-        case .invalidStatus(let status):
+        case let .invalidStatus(status):
             presentCompanyLoginAlert(error: .invalidStatus(status), ssoOnly: true)
 
         case .unknown:
@@ -268,6 +271,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Automatic SSO flow
+
 extension CompanyLoginController {
 
     /// Fetches SSO code and starts flow automatically if code is returned on completion
@@ -278,7 +282,7 @@ extension CompanyLoginController {
             guard let self else { return }
             delegate?.controller(self, showLoadingView: false)
 
-            guard case .success(let settings) = result, let ssoCode = settings.ssoCode else {
+            guard case let .success(settings) = result, let ssoCode = settings.ssoCode else {
                 guard promptOnError else { return }
                 displayCompanyLoginPrompt(ssoOnly: true)
                 return
@@ -289,6 +293,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Custom Backend Switch
+
 extension CompanyLoginController {
     /// Looks up if the specified domain is registered as custom backend
     ///
@@ -297,13 +302,13 @@ extension CompanyLoginController {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.lookup(domain: domain) { [weak self] result in
             guard let self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
+            delegate?.controller(self, showLoadingView: false)
 
             switch result {
-            case .success(let domainInfo):
-                self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
+            case let .success(domainInfo):
+                delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
             case .failure:
-                self.presentCompanyLoginAlert(error: .domainNotRegistered)
+                presentCompanyLoginAlert(error: .domainNotRegistered)
             }
         }
     }
@@ -320,21 +325,30 @@ extension CompanyLoginController {
 
         sessionManager.fetchBackendEnvironment(at: url) { [weak self] result in
             guard let self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
+            delegate?.controller(self, showLoadingView: false)
 
             switch result {
-            case .success(let backendEnvironment):
-                self.requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
+            case let .success(backendEnvironment):
+                requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
-                    sessionManager.switchBackend(to: backendEnvironment)
-                    BackendEnvironment.shared = backendEnvironment
-                    self.startAutomaticSSOFlow(promptOnError: false)
+                    sessionManager.switchBackend(to: backendEnvironment) { error in
+                        if let error {
+                            WireLogger.authentication.error(
+                                "sso login flow failed due to backend switch error: \(String(describing: error))"
+                            )
+                            self.presentCompanyLoginAlert(error: .unknown)
+                        }
+
+                        BackendEnvironment.shared = backendEnvironment
+                        self.startAutomaticSSOFlow(promptOnError: false)
+                    }
                 }
-            case .failure(let error):
-                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
-                    self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
+            case let .failure(error):
+                // note this code should be removed (not used)
+                if case .maxNumberAccountsReached = error as? SessionManager.SwitchBackendError {
+                    presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
-                    self.presentCompanyLoginAlert(error: .domainNotRegistered)
+                    presentCompanyLoginAlert(error: .domainNotRegistered)
                 }
             }
         }
@@ -342,6 +356,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - SSO code detection
+
 extension CompanyLoginController {
 
     func detectSSOCode() {
@@ -363,6 +378,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Flow
+
 extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         delegate?.controllerDidStartCompanyLoginFlow(self)

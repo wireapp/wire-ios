@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 final class MockVoiceChannel: NSObject, VoiceChannel {
     var conversation: ZMConversation?
-    var mockCallState: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+    var mockCallState: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
     var mockCallDuration: TimeInterval?
     var mockParticipants: [CallParticipant] = []
     var mockIsConstantBitRateAudioActive: Bool = false
@@ -31,56 +31,56 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     var mockIsConferenceCall: Bool = false
     var mockFirstDegradedUser: UserType?
 
-    required init(conversation: ZMConversation) {
+    required init(conversation: ZMConversation?) {
         self.conversation = conversation
     }
 
     func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func addConstantBitRateObserver(_ observer: ConstantBitRateAudioObserver) -> Any {
-        return "token"
+        "token"
     }
 
     static func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
-        return "token"
+        "token"
     }
 
     func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func addMuteStateObserver(_ observer: MuteStateObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func addActiveSpeakersObserver(_ observer: ActiveSpeakersObserver) -> Any {
-        return "token"
+        "token"
     }
 
     var state: CallState {
-        return mockCallState
+        mockCallState
     }
 
     var callStartDate: Date? {
         if let mockCallDuration {
-            return Date(timeIntervalSinceNow: -mockCallDuration)
+            Date(timeIntervalSinceNow: -mockCallDuration)
         } else {
-            return nil
+            nil
         }
     }
 
     var participants: [CallParticipant] {
-        return mockParticipants
+        mockParticipants
     }
 
     var requestedCallParticipantsListKind: CallParticipantsListKind?
@@ -90,20 +90,20 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     }
 
     var isConstantBitRateAudioActive: Bool {
-        return mockIsConstantBitRateAudioActive
+        mockIsConstantBitRateAudioActive
     }
 
     var isVideoCall: Bool {
-        return mockIsVideoCall
+        mockIsVideoCall
     }
 
     var initiator: UserType? {
-        return mockInitiator
+        mockInitiator
     }
 
     var videoState: VideoState {
         get {
-            return mockVideoState
+            mockVideoState
         }
         set {
             mockVideoState = newValue
@@ -112,21 +112,21 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     }
 
     var networkQuality: NetworkQuality {
-        return mockNetworkQuality
+        mockNetworkQuality
     }
 
     var isConferenceCall: Bool {
-        return mockIsConferenceCall
+        mockIsConferenceCall
     }
 
     var firstDegradedUser: UserType? {
-        return mockFirstDegradedUser
+        mockFirstDegradedUser
     }
 
     var mockMuted = false
     var muted: Bool {
         get {
-            return mockMuted
+            mockMuted
         }
         set {
             mockMuted = newValue
@@ -136,7 +136,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     var mockVideoGridPresentationMode: VideoGridPresentationMode = .allVideoStreams
     var videoGridPresentationMode: VideoGridPresentationMode {
         get {
-            return mockVideoGridPresentationMode
+            mockVideoGridPresentationMode
         }
         set {
             mockVideoGridPresentationMode = newValue
@@ -147,18 +147,18 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     func mute(_ muted: Bool, userSession: ZMUserSession) {}
 
-    func join(video: Bool, userSession: ZMUserSession) -> Bool { return true }
+    func join(video: Bool, userSession: ZMUserSession) -> Bool { true }
 
     func leave(userSession: ZMUserSession, completion: (() -> Void)?) {}
 
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {}
 
-    func join(video: Bool) -> Bool { return true }
+    func join(video: Bool) -> Bool { true }
 
     func leave() {}
 
-    var requestedVideoStreams: [AVSClient]?
-    func request(videoStreams: [AVSClient]) {
+    var requestedVideoStreams: [AVSClientVideoStream]?
+    func request(videoStreams: [AVSClientVideoStream]) {
         requestedVideoStreams = videoStreams
     }
 }

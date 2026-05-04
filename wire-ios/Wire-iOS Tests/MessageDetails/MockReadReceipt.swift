@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@ import Wire
 
 final class MockReadReceipt: ReadReceipt {
 
-	var user: ZMUser
-	var userType: UserType
+    var user: ZMUser
+    var userType: UserType
     var serverTimestamp: Date?
 
     init(user: ZMUser) {
         self.user = user
-		userType = user
+        self.userType = user
         self.serverTimestamp = Date(timeIntervalSince1970: 0)
     }
 

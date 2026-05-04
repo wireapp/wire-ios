@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,11 +31,13 @@ final class UserImageViewContainer: UIView {
         }
     }
 
-    init(size: UserImageView.Size,
-         maxSize: CGFloat,
-         yOffset: CGFloat,
-         userSession: UserSession?) {
-        userImageView = UserImageView(size: size)
+    init(
+        size: UserImageView.Size,
+        maxSize: CGFloat,
+        yOffset: CGFloat,
+        userSession: UserSession?
+    ) {
+        self.userImageView = UserImageView(size: size)
         self.maxSize = maxSize
         self.yOffset = yOffset
         super.init(frame: .zero)

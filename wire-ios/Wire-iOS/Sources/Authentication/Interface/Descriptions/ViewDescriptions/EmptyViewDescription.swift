@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A view description for an empty view.
- */
+/// A view description for an empty view.
 
 final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var valueSubmitted: ValueSubmitted?
@@ -29,6 +27,6 @@ final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var constraints: [NSLayoutConstraint] = []
 
     func create() -> UIView {
-        return UIView()
+        UIView()
     }
 }

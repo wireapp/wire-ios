@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@ import Foundation
 
 extension UserDefaults {
     public static var applicationGroup: UserDefaults {
-        return UserDefaults(suiteName: Bundle.main.applicationGroupIdentifier) ?? .standard
+        UserDefaults(suiteName: Bundle.main.applicationGroupIdentifier) ?? .standard
     }
+
     static var applicationGroupCombinedWithStandard: UserDefaults {
         let userDefaults = UserDefaults.standard
         if let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier {

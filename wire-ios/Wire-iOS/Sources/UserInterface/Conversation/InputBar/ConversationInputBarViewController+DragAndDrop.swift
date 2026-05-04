@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,69 +38,70 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
             } else if itemProvider.canLoadObject(ofClass: UIImage.self) {
                 itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { object, error in
 
-                    guard error == nil else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
+                    guard error == nil
+                    else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
                     guard let draggedImage = object as? UIImage else { return }
 
                     DispatchQueue.main.async {
-                        let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: draggedImage),
-                                                                         onConfirm: { [unowned self] _ in
-                            self.dismiss(animated: true) {
-                                if let draggedImageData = draggedImage.pngData() {
-                                    self.sendController.sendMessage(
-                                        withImageData: draggedImageData,
-                                        userSession: self.userSession
-                                    )
+                        let context = ConfirmAssetViewController.Context(
+                            asset: .image(mediaAsset: draggedImage),
+                            onConfirm: { [unowned self] _ in
+                                dismiss(animated: true) {
+                                    if let draggedImageData = draggedImage.pngData() {
+                                        let image = SendableImage(
+                                            name: nil,
+                                            utType: .png,
+                                            data: draggedImageData
+                                        )
+                                        self.sendController.sendMessage(
+                                            image: image,
+                                            userSession: self.userSession
+                                        )
+                                    }
                                 }
+                            },
+                            onCancel: { [unowned self] in
+                                dismiss(animated: true)
                             }
-                        },
-                                                                         onCancel: { [unowned self] in
-                            self.dismiss(animated: true)
-                        }
                         )
 
-                        let confirmImageViewController = ConfirmAssetViewController(context: context)
+                        let confirmImageViewController = ConfirmAssetViewController(
+                            context: context,
+                            userSession: self.userSession
+                        )
                         confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
-                        self.present(confirmImageViewController, animated: true) {
-                        }
+                        self.present(confirmImageViewController, animated: true) {}
                     }
                 })
-                // swiftlint:disable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: it's a temporary solution to drag only one image, while we have no design for multiple images
-                // swiftlint:enable todo_requires_jira_link
                 break
             }
         }
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        return dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()))
+        dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        ))
     }
 
     func dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager) -> UIDropProposal {
-        return mediaShareRestrictionManager.canUseClipboard
-        ? UIDropProposal(operation: .copy)
-        : UIDropProposal(operation: .forbidden)
+        mediaShareRestrictionManager.canUseClipboard
+            ? UIDropProposal(operation: .copy)
+            : UIDropProposal(operation: .forbidden)
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
-        return true
+        true
     }
-}
-
-private extension UIDropSession {
-
-    func hasText() -> Bool {
-        // Image dragged from browser can be both NSString and UIImage
-        return canLoadObjects(ofClass: NSString.self) && !canLoadObjects(ofClass: UIImage.self)
-    }
-
 }
 
 private extension NSItemProvider {
 
     func hasText() -> Bool {
         // Image dragged from browser can be both NSString and UIImage
-        return canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
+        canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
     }
 
 }

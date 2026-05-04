@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 @testable import WireSyncEngineSupport
-import WireUITesting
 
 final class ProfileViewControllerTests: XCTestCase {
 
@@ -30,12 +31,17 @@ final class ProfileViewControllerTests: XCTestCase {
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var mockViewModel: MockProfileViewControllerViewModeling!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         accentColor = .blue
         snapshotHelper = SnapshotHelper()
         let teamIdentifier = UUID()
@@ -56,7 +62,7 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.hasUserClientListTab = false
         mockViewModel.incomingRequestFooterHidden = true
         mockViewModel.hasLegalHoldItem = false
-        mockViewModel.updateActionsList_MockMethod = { }
+        mockViewModel.updateActionsList_MockMethod = {}
         mockViewModel.context = .profileViewer
         mockViewModel.setDelegate_MockMethod = { _ in }
         mockViewModel.setConversationTransitionClosure_MockMethod = { _ in }
@@ -77,7 +83,12 @@ final class ProfileViewControllerTests: XCTestCase {
 
     func test_ProfileInfo() {
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -92,7 +103,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.user = mockUser
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -103,7 +119,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.hasLegalHoldItem = true
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
@@ -113,7 +134,12 @@ final class ProfileViewControllerTests: XCTestCase {
 
     func test_ProfileInfo_BottomAction_OpenOneToOne() {
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.openOneToOne])
 
         // THEN
@@ -125,7 +151,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.user = selfUser
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.openSelfProfile])
 
         // THEN
@@ -134,7 +165,12 @@ final class ProfileViewControllerTests: XCTestCase {
 
     func test_ProfileInfo_BottomAction_RemoveFromGroup() {
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.removeFromGroup])
 
         // THEN
@@ -143,7 +179,12 @@ final class ProfileViewControllerTests: XCTestCase {
 
     func test_ProfileInfo_BottomAction_Multiple() {
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.openOneToOne, .block(isBlocked: false)])
 
         // THEN
@@ -159,7 +200,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.domain = nil
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -175,7 +221,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.domain = nil
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -191,7 +242,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.domain = nil
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -209,7 +265,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.isTeamMember = false
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.connect])
 
         // THEN
@@ -222,7 +283,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.context = .oneToOneConversation
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
         sut.updateFooterActionsViews([.createGroup])
 
         // THEN
@@ -235,7 +301,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.context = .deviceList
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -248,7 +319,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.isTeamMember = true
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         XCTAssertEqual(mockUser.refreshDataCount, 1)
@@ -260,7 +336,12 @@ final class ProfileViewControllerTests: XCTestCase {
         mockUser.isTeamMember = false
 
         // WHEN
-        sut = ProfileViewController(viewModel: mockViewModel, mainCoordinator: .mock)
+        sut = ProfileViewController(
+            viewModel: mockViewModel,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+        )
 
         // THEN
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)

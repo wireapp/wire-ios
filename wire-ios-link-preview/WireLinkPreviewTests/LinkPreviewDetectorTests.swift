@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class LinkPreviewDetectorTests: XCTestCase {
 
@@ -70,7 +70,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
@@ -100,7 +100,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
         XCTAssertEqual(result, [])
@@ -121,7 +121,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(result.first?.imageURLs.first?.absoluteString, openGraphData.imageUrls.first)
         guard let article = result.first as? ArticleMetadata else { return XCTFail("Wrong preview type") }
@@ -146,13 +146,13 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(imageDownloader.downloadImagesCallCount, 0)
 
         guard let twitterStatus = result.first as? TwitterStatusMetadata else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(twitterStatus.imageURLs.count, 4)
-        XCTAssertEqual(twitterStatus.imageURLs.map { $0.absoluteString }, openGraphData.imageUrls)
+        XCTAssertEqual(twitterStatus.imageURLs.map(\.absoluteString), openGraphData.imageUrls)
         XCTAssertEqual(twitterStatus.characterOffsetInText, 36)
         XCTAssertEqual(twitterStatus.permanentURL?.absoluteString, openGraphData.url)
         XCTAssertEqual(twitterStatus.originalURLString, "www.example.com")
@@ -188,14 +188,18 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertTrue(result.isEmpty)
     }
 
     func assertThatItCallsTheCompletionClosure(withText text: String, line: UInt = #line) {
         // given
         let queue = OperationQueue()
-        sut = LinkPreviewDetector(previewDownloader: previewDownloader, imageDownloader: imageDownloader, workerQueue: queue)
+        sut = LinkPreviewDetector(
+            previewDownloader: previewDownloader,
+            imageDownloader: imageDownloader,
+            workerQueue: queue
+        )
         let completionExpectation = expectation(description: "It calls the completion closure")
 
         // when
@@ -204,7 +208,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
 }

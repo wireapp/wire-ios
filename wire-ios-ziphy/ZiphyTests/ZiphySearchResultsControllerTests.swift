@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -96,7 +96,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -136,7 +136,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendDownloadResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -167,7 +167,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         var fetchResult: ZiphyResult<[Ziph]>?
         let nextFetchExpectation = expectation(description: "Next trending images are fetched.")
@@ -178,7 +178,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -221,7 +221,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
 
         request?.cancel()
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
 
         // THEN
         XCTAssertNil(fetchResult)
@@ -258,7 +258,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         let url = Bundle(for: ZiphySearchResultsControllerTests.self).url(forResource: "craig", withExtension: "gif")!
 
         let images: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
         ]
 
         return Ziph(identifier: "000000", images: ZiphyAnimatedImageList(images: images), title: "Craig dot GIF")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import avs
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AVSBridgingTests: MessagingTest {
 
@@ -49,8 +49,18 @@ class AVSBridgingTests: MessagingTest {
 
         userID = AVSIdentifier.stub
         clientID = UUID().uuidString
-        let avsWrapper = MockAVSWrapper(userId: userID, clientId: clientID, observer: nil)
-        callCenter = WireCallCenterV3(userId: userID, clientId: clientID, avsWrapper: avsWrapper, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
+        let avsWrapper = MockAVSWrapper(userId: userID, clientId: clientID, observer: nil, isFederationEnabled: false)
+        callCenter = WireCallCenterV3(
+            userId: userID,
+            clientId: clientID,
+            avsWrapper: avsWrapper,
+            uiMOC: uiMOC,
+            flowManager: FlowManagerMock(),
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         callCenterRef = Unmanaged.passUnretained(callCenter).toOpaque()
     }
 

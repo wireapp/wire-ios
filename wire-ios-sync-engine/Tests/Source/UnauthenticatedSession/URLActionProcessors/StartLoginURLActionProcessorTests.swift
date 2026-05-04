@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,11 +32,15 @@ class StartLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStat
         delegate = MockAuthenticationStatusDelegate()
         let userInfoParser = MockUserInfoParser()
         let groupQueue = DispatchGroupQueue(queue: DispatchQueue.main)
-        authenticationStatus = ZMAuthenticationStatus(delegate: delegate,
-                                                      groupQueue: groupQueue,
-                                                      userInfoParser: userInfoParser)
-        sut = WireSyncEngine.StartLoginURLActionProcessor(delegate: self,
-                                                          authenticationStatus: authenticationStatus)
+        authenticationStatus = ZMAuthenticationStatus(
+            delegate: delegate,
+            groupQueue: groupQueue,
+            userInfoParser: userInfoParser
+        )
+        sut = WireSyncEngine.StartLoginURLActionProcessor(
+            delegate: self,
+            authenticationStatus: authenticationStatus
+        )
     }
 
     override func tearDown() {
@@ -72,7 +76,10 @@ class StartLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStat
         // then
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError, .accountLimitReached)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached
+        )
     }
 
 }

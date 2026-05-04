@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,14 @@ import WireTransport
 
 private let zmsLog = ZMSLog(tag: "backend-environment")
 
-extension BackendEnvironment {
-    public static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
-    public static var shared: BackendEnvironment = {
-        var environmentType: EnvironmentType?
-        if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
-            environmentType = EnvironmentType(stringValue: typeOverride)
+public extension BackendEnvironment {
+    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
+    static var shared: BackendEnvironment = {
+        let environmentType = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
+            EnvironmentType(stringValue: typeOverride)
+        } else {
+            // read from userDefaults first
+            EnvironmentType(userDefaults: .applicationGroup)
         }
 
         guard let environment = BackendEnvironment(type: environmentType) else {
@@ -42,7 +44,7 @@ extension BackendEnvironment {
         }
     }
 
-    public convenience init?(type: EnvironmentType?) {
+    convenience init?(type: EnvironmentType?) {
         self.init(
             userDefaults: .applicationGroupCombinedWithStandard,
             configurationBundle: .backendBundle,

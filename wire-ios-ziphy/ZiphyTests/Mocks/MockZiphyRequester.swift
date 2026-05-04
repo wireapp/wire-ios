@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,10 @@ final class MockZiphyRequester: ZiphyURLRequester {
 
     var response: MockZiphyResponse?
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping MockZiphyRequesterCompletionHandler) -> ZiphyRequestIdentifier {
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping MockZiphyRequesterCompletionHandler
+    ) -> ZiphyRequestIdentifier {
         self.completionHandler = completionHandler
         return NSUUID()
     }
@@ -54,7 +57,7 @@ final class MockZiphyRequester: ZiphyURLRequester {
 
     /// Sends the response for the given request.
     func respond() {
-        guard let response = self.response else {
+        guard let response else {
             self.response = .error(MockZiphyRequesterError.noResponseFound)
             respond()
             return
@@ -64,14 +67,14 @@ final class MockZiphyRequester: ZiphyURLRequester {
             return
         }
 
-        guard let completionHandler = self.completionHandler else {
+        guard let completionHandler else {
             return
         }
 
         switch response {
-        case .success(let data, let urlResponse):
+        case let .success(data, urlResponse):
             completionHandler(data, urlResponse, nil)
-        case .error(let error):
+        case let .error(error):
             completionHandler(nil, nil, error)
         }
 

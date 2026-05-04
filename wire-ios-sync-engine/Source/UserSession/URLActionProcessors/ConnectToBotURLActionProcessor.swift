@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,45 +21,49 @@ import Foundation
 final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
     var transportSession: TransportSessionType
-    var eventProcessor: UpdateEventProcessor
+    var eventProcessor: LegacyConversationEventProcessorProtocol
     var contextProvider: ContextProvider
     var searchUsersCache: SearchUsersCache?
+    let metadata: BackendMetadataProvider
 
     init(
-        contextprovider: ContextProvider,
+        contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        eventProcessor: UpdateEventProcessor,
-        searchUsersCache: SearchUsersCache?
+        eventProcessor: LegacyConversationEventProcessorProtocol,
+        searchUsersCache: SearchUsersCache?,
+        metadata: BackendMetadataProvider
     ) {
-        self.contextProvider = contextprovider
+        self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
+        self.metadata = metadata
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case .connectBot(let serviceUserData) = urlAction else { return }
+        guard case let .connectBot(providerID, serviceID) = urlAction else { return }
 
         let serviceUser = ZMSearchUser(
-            contextProvider: contextProvider,
+            viewContext: contextProvider.viewContext,
             name: "",
             handle: nil,
             accentColor: .blue,
-            remoteIdentifier: serviceUserData.service,
+            remoteIdentifier: serviceID,
             teamIdentifier: nil,
+            providerIdentifier: providerID.transportString(),
             user: nil,
-            contact: nil,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: .bot
         )
-        serviceUser.providerIdentifier = serviceUserData.provider.transportString()
         serviceUser.createConversation(
             transportSession: transportSession,
             eventProcessor: eventProcessor,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak delegate] result in
             switch result {
             case .success:
                 delegate?.completedURLAction(urlAction)
-            case .failure(let error):
+            case let .failure(error):
                 delegate?.failedToPerformAction(urlAction, error: error)
             }
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,76 +18,42 @@
 
 import avs
 import Foundation
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
-    var requestPasswordController: RequestPasswordController?
+    private let userSession: UserSession
 
-    init() {
-        super.init(title: L10n.Localizable.Self.signOut,
-                   isDestructive: true,
-                   presentationStyle: .modal,
-                   identifier: nil,
-                   presentationAction: { return nil },
-                   previewGenerator: nil,
-                   icon: nil,
-                   accessoryViewMode: .default,
-                   copiableText: nil)
+    lazy var logoutHelper: LogOutHelper? = LogOutHelper(userSession: userSession, showLoading: { [weak self] in
+        Task { @MainActor in self?.activityIndicator.start() }
+    }, hideLoading: { [weak self] in
+        Task { @MainActor in self?.activityIndicator.stop() }
+    })
 
-    }
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
+        return BlockingActivityIndicator(view: topMostViewController.view)
+    }()
 
-    private func logout(password: String? = nil) {
-        guard let selfUser = ZMUser.selfUser() else { return }
-
-        if selfUser.usesCompanyLogin || password != nil {
-            weak var topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
-            topMostViewController?.isLoadingViewVisible = true
-            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
-            AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? ""), { result in
-                topMostViewController?.isLoadingViewVisible = false
-                TrackingManager.shared.disableCrashSharing = false
-                TrackingManager.shared.disableAnalyticsSharing = false
-                if case .failure(let error) = result {
-                    topMostViewController?.showAlert(for: error)
-                }
-            })
-        } else {
-            guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
-            SessionManager.shared?.delete(account: account)
-        }
-
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init(
+            title: L10n.Localizable.Self.signOut,
+            isDestructive: true,
+            presentationStyle: .modal,
+            identifier: nil,
+            presentationAction: { nil },
+            previewGenerator: nil,
+            icon: nil,
+            accessoryView: .automatic,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
     }
 
     override func generateViewController() -> UIViewController? {
-        guard let selfUser = ZMUser.selfUser() else { return nil }
-
-        var viewController: UIViewController?
-
-        if selfUser.emailAddress == nil || selfUser.usesCompanyLogin {
-            let alert = UIAlertController(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                                          message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
-                                          preferredStyle: .alert)
-            let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
-            let actionLogout = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: { [weak self] _ in
-                self?.logout()
-            })
-            alert.addAction(actionCancel)
-            alert.addAction(actionLogout)
-
-            viewController = alert
-        } else {
-            requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
-                guard let password else { return }
-
-                self?.logout(password: password)
-            })
-
-            viewController = requestPasswordController?.alertController
-        }
-
-        return viewController
+        logoutHelper?.makeLogOutViewControllerToPresent()
     }
 
 }

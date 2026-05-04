@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public final class CreateGroupConversationAction: EntityAction {
 
@@ -84,10 +85,7 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversationUseCase
-    )
+    private let processor: ConversationEventPayloadProcessor
 
     // This is only needed for the processor to be created but processor needs it only for
     // Conversation deletion
@@ -95,9 +93,16 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
     required init(
         context: NSManagedObjectContext,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.removeLocalConversationUseCase = removeLocalConversationUseCase
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: removeLocalConversationUseCase,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(context: context)
     }
 
@@ -213,9 +218,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
             let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-            let newConversation = await self.processor.updateOrCreateConversation(
+            let newConversation = await processor.updateOrCreateConversation(
                 from: payload,
-                in: self.context
+                in: context
             )
         else {
             Logging.network.warn("Can't process response, aborting.")

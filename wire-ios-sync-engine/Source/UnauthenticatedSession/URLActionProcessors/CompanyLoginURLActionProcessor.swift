@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,12 +35,18 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate presentationDelegate: PresentationDelegate?) {
+        guard !DeveloperFlag.useWireAuthentication.isOn else {
+            return
+        }
         switch urlAction {
-        case .companyLoginSuccess(let userInfo):
+        case let .companyLoginSuccess(userInfo):
             authenticationStatus.loginSucceeded(with: userInfo)
-        case .startCompanyLogin(let code):
+        case let .startCompanyLogin(code):
             guard delegate?.isAllowedToCreateNewAccount == true else {
-                presentationDelegate?.failedToPerformAction(urlAction, error: SessionManager.AccountError.accountLimitReached)
+                presentationDelegate?.failedToPerformAction(
+                    urlAction,
+                    error: SessionManager.AccountError.accountLimitReached
+                )
                 return
             }
             authenticationStatus.notifyCompanyLoginCodeDidBecomeAvailable(code)

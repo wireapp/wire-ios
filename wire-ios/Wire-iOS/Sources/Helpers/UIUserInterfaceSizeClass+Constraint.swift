@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@
 import UIKit
 
 extension UIUserInterfaceSizeClass {
-    func toggle(compactConstraints: [NSLayoutConstraint],
-                regularConstraints: [NSLayoutConstraint]) {
+    func toggle(
+        compactConstraints: [NSLayoutConstraint],
+        regularConstraints: [NSLayoutConstraint]
+    ) {
         switch self {
         case .regular:
             compactConstraints.forEach { $0.isActive = false }

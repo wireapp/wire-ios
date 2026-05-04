@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,90 +17,164 @@
 //
 
 import Foundation
-import WireAPI
+import WireCoreCrypto
 import WireDataModel
-
-// sourcery: AutoMockable
-/// Decrypt the E2EE content within update events.
-protocol UpdateEventDecryptorProtocol {
-
-    /// Decrypt events in the given event envelope.
-    ///
-    /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
-    /// - Returns: A list of decrypted update events.
-
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
-
-}
+import WireLogging
+import WireNetwork
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
-    private let context: NSManagedObjectContext
+    private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
+    private let messageLocalStore: any MessageLocalStoreProtocol
+    private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
 
     init(
         proteusService: any ProteusServiceInterface,
-        context: NSManagedObjectContext
+        mlsService: (any MLSServiceInterface)?,
+        mlsDecryptionService: any MLSDecryptionServiceInterface,
+        userClientsLocalStore: any UserClientsLocalStoreProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
-        proteusMessageDecryptor = ProteusMessageDecryptor(
+        self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
-            managedObjectContext: context
+            userClientsLocalStore: userClientsLocalStore,
+            userLocalStore: userLocalStore
         )
-        self.context = context
+
+        self.mlsMessageDecryptor = MLSMessageDecryptor(
+            mlsDecryptionService: mlsDecryptionService,
+            conversationLocalStore: conversationLocalStore
+        )
+
+        self.mlsService = mlsService
+
+        self.messageLocalStore = messageLocalStore
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
-        context: NSManagedObjectContext
+        mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
+        mlsService: (any MLSServiceInterface)?,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
-        self.context = context
+        self.mlsMessageDecryptor = mlsMessageDecryptor
+        self.messageLocalStore = messageLocalStore
+        self.mlsService = mlsService
     }
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        let logAttributes: LogAttributes = [
+    func decryptEvents(
+        in eventEnvelope: UpdateEventEnvelope,
+        context: CoreCryptoContextProtocol?
+    ) async -> EventDecryptorResult {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
+            return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
+        }
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
+        var brokenMLSGroupIDs = Set<String>()
+
+        if DeveloperFlag.ignoreIncomingEvents.isOn {
+            WireLogger.updateEvent.warn("debugging out of sync - ignore decrypting events")
+            return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
+        }
 
         for event in eventEnvelope.events {
+            logAttributes[.messageType] = event.name
             switch event {
-            case .conversation(.proteusMessageAdd(let eventData)):
+            case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(
                     "decrypting proteus event...",
                     attributes: logAttributes
                 )
 
                 do {
-                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
+                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(
+                        from: eventData,
+                        context: context
+                    )
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
-
-                } catch let error as ProteusError {
+                } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event payload, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
 
                     await appendFailedToDecryptProteusMessage(
                         eventData: eventData,
-                        error: error
+                        error: error.proteusError
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event, dropping: \(String(describing: error))",
+                        attributes: logAttributes
+                    )
+                }
+
+            case let .conversation(.mlsMessageAdd(eventData)):
+
+                WireLogger.updateEvent.info(
+                    "decrypting MLS add message event...",
+                    attributes: logAttributes
+                )
+
+                do {
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
+                        from: eventData,
+                        context: context
+                    )
+                    decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
+
+                } catch let error as MLSMessageDecryptorError {
+                    switch error {
+                    case let .wrongEpoch(mlsGroupID):
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            attributes: logAttributes
+                        )
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
+                    default:
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                            attributes: logAttributes
+                        )
+                    }
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                        attributes: logAttributes
+                    )
+                }
+
+            case let .conversation(.mlsWelcome(eventData)):
+
+                do {
+                    try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
+                        from: eventData,
+                        context: context
+                    )
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS welcome message event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )
                 }
 
             default:
                 // No decryption needed.
+                WireLogger.updateEvent.debug("event without decryption needed", attributes: logAttributes)
                 decryptedEvents.append(event)
             }
         }
 
-        return decryptedEvents
+        return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
     }
 
     private func appendFailedToDecryptProteusMessage(
@@ -108,36 +182,22 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         error: ProteusError
     ) async {
         // Do not notify the user if the error is just "duplicated".
-        if error == .outdatedMessage || error == .duplicateMessage {
+        if error == .DuplicateMessage {
             return
         }
 
-        await context.perform { [context] in
-            guard
-                let conversation = ZMConversation.fetch(
-                    with: eventData.conversationID.uuid,
-                    domain: eventData.conversationID.domain,
-                    in: context
-                ),
-                let sender = ZMUser.fetch(
-                    with: eventData.senderID.uuid,
-                    domain: eventData.senderID.domain,
-                    in: context
-                ),
-                let senderClient = sender.clients.first(where: {
-                    $0.remoteIdentifier == eventData.messageSenderClientID
-                })
-            else {
-                return
-            }
+        let systemMessageType: SystemMessageType = .decryptionFailed(
+            sender: (eventData.senderID.id, eventData.senderID.domain),
+            senderClientID: eventData.messageSenderClientID,
+            remoteIdentityChanged: error == .RemoteIdentityChanged,
+            date: eventData.timestamp
+        )
 
-            conversation.appendDecryptionFailedSystemMessage(
-                at: eventData.timestamp,
-                sender: sender,
-                client: senderClient,
-                errorCode: error.rawValue
-            )
-        }
+        await messageLocalStore.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: eventData.conversationID.id,
+            conversationDomain: eventData.conversationID.domain
+        )
     }
 
 }

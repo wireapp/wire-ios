@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-final class ConversationReactionMessageTests: XCTestCase {
+final class ConversationReactionMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: MessageReactionsCell!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MessageReactionsCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = MessageReactionsCell()
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
@@ -41,6 +43,7 @@ final class ConversationReactionMessageTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -50,12 +53,14 @@ final class ConversationReactionMessageTests: XCTestCase {
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
         let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
-        let configuration = [reaction]
-
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: [reaction],
+            userSession: userSession
+        )
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItConfiguresWithOtherReactions() {
@@ -90,19 +95,22 @@ final class ConversationReactionMessageTests: XCTestCase {
             isSelfUserReacting: false
         )
 
-        let configuration = [
+        let reaction = [
             likeReaction,
             thumbsUpReaction,
             thumbsDownReaction,
             slightlySmilingReaction,
             frowningFaceReaction
         ]
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: reaction,
+            userSession: userSession
+        )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
-
 }

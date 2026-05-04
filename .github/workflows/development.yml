@@ -1,4 +1,4 @@
-name: Development
+name: Edge
 
 on:
   workflow_dispatch:
@@ -13,7 +13,11 @@ jobs:
   development:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      countly_enabled: true
       datadog_enabled: true
       fastlane_action: development
       is_cloud_build: true
+      produce_changelog: false
+      distribute_externals: true # automatically deliver to Wire Employees
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

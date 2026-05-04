@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
 
     override func setUp() {
         super.setUp()
-
+        DeveloperFlag.useWireAuthentication.enable(false, storage: .temporary())
         delegate = MockAuthenticationStatusDelegate()
         let userInfoParser = MockUserInfoParser()
         let groupQueue = DispatchGroupQueue(queue: .main)
@@ -51,8 +51,8 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
     func testThatAuthenticationStatusIsInformed_OnCompanyLoginSuccessAction() {
         // given
         let accountId = UUID()
-        let cookieData = "cookie".data(using: .utf8)!
-        let userInfo = UserInfo(identifier: accountId, cookieData: cookieData)
+        let cookieData = Data("cookie".utf8)
+        let userInfo = UserInfo(identifier: accountId, cookieData: cookieData, cookies: [])
         let action: URLAction = .companyLoginSuccess(userInfo: userInfo)
 
         // when
@@ -75,7 +75,10 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         // then
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError, .accountLimitReached)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached
+        )
     }
 
     func testThatSSOCodeIsPropagatedToAuthenticationStatus_OnStartCompanyLoginAction() {

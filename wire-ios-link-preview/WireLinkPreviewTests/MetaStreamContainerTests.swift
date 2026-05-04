@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class MetaStreamContainerTests: XCTestCase {
 
-    var sut: MetaStreamContainer! = nil
+    var sut: MetaStreamContainer!
 
     override func setUp() {
         super.setUp()
@@ -161,7 +161,13 @@ class MetaStreamContainerTests: XCTestCase {
 
     // MARK: - Helper
 
-    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, file: StaticString = #file, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(
+        _ html: String,
+        expectedHead: String,
+        encoding: String.Encoding = .utf8,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         // when
         sut.addData(html.data(using: encoding)!)
 
@@ -171,7 +177,12 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(head, expectedHead, "Should have expected head", file: file, line: line)
     }
 
-    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, encoding: String.Encoding = .utf8, line: UInt = #line) {
+    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(
+        _ head: String,
+        shouldUpdate: Bool = true,
+        encoding: String.Encoding = .utf8,
+        line: UInt = #line
+    ) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Head".data(using: encoding)!
@@ -194,7 +205,11 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
     }
 
-    func assertThatItAppendsBytes(file: StaticString = #file, line: UInt = #line, encoding: String.Encoding = .utf8) {
+    func assertThatItAppendsBytes(
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        encoding: String.Encoding = .utf8
+    ) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Second".data(using: encoding)!

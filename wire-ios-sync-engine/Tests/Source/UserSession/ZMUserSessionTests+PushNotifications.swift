@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -156,7 +156,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -178,7 +183,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -197,7 +207,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         let userInfo = userInfoWithConversation()
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
 
         // when
         handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
@@ -208,7 +223,8 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
 
-    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
+    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction(
+    ) {
         // given
         syncMOC.performAndWait {
             simulateLoggedInUser()
@@ -230,7 +246,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         await syncMOC.perform {
             self.simulateLoggedInUser()
         }
-        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
 
@@ -257,7 +273,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        self.handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
         await uiMOC.perform {
             // then
             self.assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
@@ -269,10 +285,10 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             self.simulateLoggedInUser()
         }
-        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
-        let conversation = userInfo.conversation(in: self.uiMOC)!
+        let conversation = userInfo.conversation(in: uiMOC)!
 
         let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
         let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
@@ -321,34 +337,77 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
 extension ZMUserSessionTests_PushNotifications {
 
-    func assertHasReadConfirmationForMessage(nonce: UUID, conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
+    func assertHasReadConfirmationForMessage(
+        nonce: UUID,
+        conversation: ZMConversation,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let containsReadConfirmation = conversation.lastMessages().contains { message in
-            if let clientMessage = message as? ZMClientMessage, clientMessage.underlyingMessage?.hasConfirmation == true {
-                return clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
+            if let clientMessage = message as? ZMClientMessage,
+               clientMessage.underlyingMessage?.hasConfirmation == true {
+                clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
             } else {
-                return false
+                false
             }
         }
 
-        XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
+        XCTAssertTrue(
+            containsReadConfirmation,
+            "expected read confirmation for message with nonce = \(nonce)",
+            file: file,
+            line: line
+        )
     }
 
-    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
-        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText, file: file, line: line)
+    func handle(
+        conversationAction: ConversationAction?,
+        category: Category,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        handle(
+            action: conversationAction?.rawValue ?? "",
+            category: category.rawValue,
+            userInfo: userInfo,
+            userText: userText,
+            file: file,
+            line: line
+        )
     }
 
-    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo, file: StaticString = #filePath, line: UInt = #line) {
+    func handle(
+        callAction: CallAction,
+        category: Category,
+        userInfo: NotificationUserInfo,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo, file: file, line: line)
     }
 
-    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+    func handle(
+        action: String,
+        category: String,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         uiMOC.performAndWait {
-            sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
+            sut.handleNotificationResponse(
+                actionIdentifier: action,
+                categoryIdentifier: category,
+                userInfo: userInfo,
+                userText: userText
+            ) {}
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ final class SearchTextView: TokenizedTextView {
                 return
             }
             layer.borderColor = isEditing
-            ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
-            : style.borderColorNotSelected.cgColor
+                ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
+                : style.borderColorNotSelected.cgColor
         }
     }
 
@@ -47,8 +47,18 @@ final class SearchTextView: TokenizedTextView {
     }
 
     private func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidBeginEditing(_:)), name: UITextView.textDidBeginEditingNotification, object: self)
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidEndEditing(_:)), name: UITextView.textDidEndEditingNotification, object: self)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidBeginEditing(_:)),
+            name: UITextView.textDidBeginEditingNotification,
+            object: self
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidEndEditing(_:)),
+            name: UITextView.textDidEndEditingNotification,
+            object: self
+        )
     }
 
     @objc

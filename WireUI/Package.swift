@@ -1,78 +1,155 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+
+let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
 
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireDesign",
-            targets: ["WireDesign"]
-        ),
-        .library(
-            name: "WireReusableUIComponents",
-            targets: ["WireReusableUIComponents"]
-        ),
-        .library(
-            name: "WireUITesting",
-            targets: ["WireUITesting"]
-        )
+        .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
+        .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
+        .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
+        .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
+        .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
+        .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
+        .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
+        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
+        .library(name: "WireReusableUIComponentsSupport", targets: ["WireReusableUIComponentsSupport"]),
+        .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
+        .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
+        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
+        .library(name: "WireMultiBackendUI", targets: ["WireMultiBackendUI"]),
+        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"]),
+        .library(name: "WireLocators", targets: ["WireLocators"])
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        ),
-        .package(
-            url: "https://github.com/pointfreeco/swift-snapshot-testing",
-            from: "1.16.0"
-        )
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(name: "WireDomainPackage", path: "../WireDomain"),
+        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
-            name: "WireDesign"),
-        .testTarget(
-            name: "WireDesignTests",
-            dependencies: [
-                "WireDesign",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
+            name: "WireLocators",
+            dependencies: [],
+            path: "Sources/WireLocators"
+        ),
+        .target(
+            name: "WireAccountImageUI",
+            dependencies: ["WireDesign", "WireFoundation", "WireLocators"]
+        ),
+        .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
+
+        .target(name: "WireConversationListUI"),
+
+        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
+
+        .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents", "WireLocators"]),
+
+        .target(
+            name: "WireMultiBackendUI",
+            dependencies: ["WireDesign", "WireAccountImageUI", "WireReusableUIComponents", "WireLocators"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireMultiBackendUISupport",
+            dependencies: ["WireMultiBackendUI", "WireLocators"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
+        .testTarget(name: "WireMultiBackendUITests", dependencies: ["WireMultiBackendUI"]),
+
+        .target(
+            name: "WireIndividualToTeamMigrationUI",
+            dependencies: [
+                .product(name: "WireDomainPackage", package: "WireDomainPackage"),
+                "WireFoundation",
+                "WireReusableUIComponents"
+            ]
+        ),
+        .testTarget(name: "WireIndividualToTeamMigrationUITests", dependencies: ["WireIndividualToTeamMigrationUI"]),
+
+        .target(
+            name: "WireMainNavigationUI",
+            dependencies: ["WireLocators", "WireDesign"]
+        ),
+        .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
+
+        .target(
+            name: "WireMoveToFolderUI",
+            dependencies: ["WireFoundation", "WireReusableUIComponents", "WireLocators"]
+        ),
+        .target(
+            name: "WireMoveToFolderUISupport",
+            dependencies: ["WireMoveToFolderUI", "WireLocators"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
+        .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
 
         .target(
             name: "WireReusableUIComponents",
-            dependencies: ["WireDesign"]
+            dependencies: ["WireDesign", "WireFoundation", "WireLocators"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
-        .testTarget(
-            name: "WireReusableUIComponentsTests",
-            dependencies: [
-                "WireReusableUIComponents",
-                "WireUITesting",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
-            ]
-        ),
-
-        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
         .target(
-            name: "WireUITesting",
-            dependencies: [
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
+            name: "WireReusableUIComponentsSupport",
+            dependencies: ["WireReusableUIComponents"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
-        )
+        ),
+        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
+
+        .target(
+            name: "WireSettingsUI",
+            dependencies: [
+                "WireDesign",
+                .product(name: "WireDomainPackage", package: "WireDomainPackage"),
+                "WireFoundation",
+                "WireLogging",
+                "WireReusableUIComponents",
+                "WireLocators"
+            ],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireSettingsUISupport",
+            dependencies: ["WireSettingsUI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
+        .testTarget(name: "WireSettingsUITests", dependencies: [
+            .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            "WireSettingsUI",
+            "WireSettingsUISupport"
+        ]),
+
+        .target(
+            name: "WireSidebarUI",
+            dependencies: ["WireDesign", "WireLocators"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )
+
+for target in package.targets {
+    if target.isTest {
+        target.dependencies += [WireTestingPackage]
+    }
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}

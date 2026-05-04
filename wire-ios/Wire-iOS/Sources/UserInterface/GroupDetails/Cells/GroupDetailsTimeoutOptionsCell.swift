@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,16 +34,31 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
-        status = timeout.displayString
+        if conversation.isWireDriveEnabled {
+            setDisabledCell()
+        } else {
+            let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
+            status = timeout.displayString
+        }
     }
 
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
+    }
+
+    private func setDisabledCell() {
+        let disabled = MessageDestructionTimeoutValue.none
+        status = disabled.displayString
+        iconColor = UIColor.systemGray
+        titleColor = UIColor.systemGray
+        statusColor = UIColor.systemGray
+        accessoryColor = UIColor.systemGray
+        isUserInteractionEnabled = false
+        alpha = 0.8
     }
 
 }

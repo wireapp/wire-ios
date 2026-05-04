@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class CompanyLoginRequestDetectorTests: XCTestCase {
 
@@ -50,7 +50,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-46A17D7F-2351-495E-AEDA-E7C96AC74994")
@@ -69,7 +69,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-70488875-13DD-4BA7-9636-A983E1831F5F")
@@ -92,7 +92,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-A6AAA905-E42D-4220-A455-CFE8822DB690")
@@ -122,7 +122,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -141,7 +141,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -160,7 +160,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -180,7 +180,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         do {
@@ -192,7 +192,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // WHEN
@@ -209,7 +209,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
     }
 
@@ -228,7 +228,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // WHEN
@@ -241,7 +241,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // THEN
@@ -254,14 +254,14 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
     }
 
     func testThatParseReturnsSSOCodeCaseIfInputIsSSO() {
         // GIVEN
         let code = "wire-81DD91BA-B3D0-46F0-BC29-E491938F0A54"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: code)
@@ -276,12 +276,12 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsDomainCaseIfInputIsEmail() {
         // GIVEN
         let email = "bob@wire.com"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
         var resultDomain: String?
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: email)
-        if case CompanyLoginRequestDetector.ParserResult.domain(let domain) = result {
+        if case let CompanyLoginRequestDetector.ParserResult.domain(domain) = result {
             resultDomain = domain
             valuesEqual = true
         }
@@ -295,7 +295,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsUnknownCaseIfInputIsInvalid() {
         // GIVEN
         let input = "123pho567"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: input)

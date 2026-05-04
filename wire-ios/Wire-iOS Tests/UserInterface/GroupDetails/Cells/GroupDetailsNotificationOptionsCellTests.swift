@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
-    var cell: GroupDetailsNotificationOptionsCell!
-    var conversation: ZMConversation!
+    private var snapshotHelper: SnapshotHelper!
+    private var cell: GroupDetailsNotificationOptionsCell!
+    private var conversation: ZMConversation!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         selfUserInTeam = true
-        super.setUp()
+        try await super.setUp()
+        snapshotHelper = SnapshotHelper()
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         cell = nil
         conversation = nil
         super.tearDown()
@@ -40,23 +46,23 @@ final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCell_NoMuted() {
         update(.none)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_NonMentionsMuted() {
         update(.regular)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_AllMuted() {
         update(.all)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_Dark() {
         cell.overrideUserInterfaceStyle = .dark
         update(.all)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     private func update(_ newValue: MutedMessageTypes) {

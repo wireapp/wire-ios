@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,15 +19,17 @@
 @import WireTransport;
 @import WireUtilities;
 @import WireSystem;
+@import WireTransportSupport;
 #import "MockTransportSession+registration.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (Registration)
 
 - (MockUser *)userWithEmail:(NSString *)email {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     if(users.count > 0u) {
         return users.firstObject;
     }
@@ -37,7 +39,7 @@
 - (MockUser *)userWithPhone:(NSString *)phone {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"phone == %@", phone];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
     if(users.count > 0u) {
         return users.firstObject;
     }
@@ -120,13 +122,13 @@
             [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
         }
 
-        NSString *cookiesValue = @"fake cookie";
-        
+        NSString *cookiesValue = @"zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure";
+
         if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
+            self.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieDataWithString:cookiesValue];
         }
 
-        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]} apiVersion:request.apiVersion];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": cookiesValue} apiVersion:request.apiVersion];
     }
     
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
@@ -180,7 +182,6 @@
                 if(!dryrun) {
                     [self.phoneNumbersWaitingForVerificationForProfile removeObject:phone];
                     self.selfUser.phone = phone;
-                    [self saveAndCreatePushChannelEventForSelfUser];
                 }
                 return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
                 

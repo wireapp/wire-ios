@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,23 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 extension Collection where Iterator.Element: UserType {
 
     func searchForMentions(withQuery query: String) -> [UserType] {
-        let usersToSearch = filter { !$0.isSelfUser && !$0.isServiceUser }
+        let usersToSearch = filter { !$0.isSelfUser && !$0.isAppOrBot }
 
         guard !query.isEmpty else { return usersToSearch }
 
         let query = query.lowercased().normalizedForMentionSearch() as String
 
         var rules = [(UserType) -> Bool]()
-        rules.append({ $0.name?.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false })
-        rules.append({ $0.nameTokens.first(where: { $0.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false }) != nil })
-        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false })
-        rules.append({ $0.name?.lowercased().normalizedForMentionSearch().contains(query) ?? false })
-        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch()?.contains(query) ?? false })
+        rules.append { $0.name?.lowercased().normalizedForMentionSearch().hasPrefix(query) ?? false }
+        rules.append { $0.nameTokens.first { $0.lowercased().normalizedForMentionSearch().hasPrefix(query) } != nil }
+        rules.append { $0.handle?.lowercased().normalizedForMentionSearch().hasPrefix(query) ?? false }
+        rules.append { $0.name?.lowercased().normalizedForMentionSearch().contains(query) ?? false }
+        rules.append { $0.handle?.lowercased().normalizedForMentionSearch().contains(query) ?? false }
 
         var foundUsers = Set<HashBoxUser>()
         var results: [UserType] = []
@@ -56,7 +57,7 @@ extension Collection where Iterator.Element: UserType {
 private extension UserType {
 
     var nameTokens: [String] {
-        return name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
+        name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,42 +24,53 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
 
     fileprivate static let path: String = "/self"
     public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
-    fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
+    fileprivate(set) var deleteSync: ZMSingleRequestSync!
     let cookieStorage: ZMPersistentCookieStorage
 
-    public init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus, cookieStorage: ZMPersistentCookieStorage) {
+    public init(
+        withManagedObjectContext moc: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        cookieStorage: ZMPersistentCookieStorage
+    ) {
         self.cookieStorage = cookieStorage
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
-        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: self.managedObjectContext)
+        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let shouldBeDeleted: NSNumber = self.managedObjectContext.persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber, shouldBeDeleted.boolValue
+        guard let shouldBeDeleted: NSNumber = managedObjectContext
+            .persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber,
+            shouldBeDeleted.boolValue
         else {
             return nil
         }
 
-        self.deleteSync.readyForNextRequestIfNotBusy()
-        return self.deleteSync.nextRequest(for: apiVersion)
+        deleteSync.readyForNextRequestIfNotBusy()
+        return deleteSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = ZMTransportRequest(path: type(of: self).path, method: .delete, payload: ([:] as ZMTransportData), shouldCompress: true, apiVersion: apiVersion.rawValue)
-        return request
+        ZMTransportRequest(
+            path: type(of: self).path,
+            method: .delete,
+            payload: [:] as ZMTransportData,
+            shouldCompress: true,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success || response.result == .permanentError {
-            self.managedObjectContext.setPersistentStoreMetadata(NSNumber(value: false), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
+            managedObjectContext.setPersistentStoreMetadata(
+                NSNumber(value: false),
+                key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
+            )
 
             guard let context = managedObjectContext.zm_userInterface else {
                 return

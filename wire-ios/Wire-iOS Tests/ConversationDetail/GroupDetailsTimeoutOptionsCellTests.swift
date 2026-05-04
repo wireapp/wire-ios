@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,48 +16,94 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
 
-    var cell: GroupDetailsTimeoutOptionsCell!
-    var conversation: ZMConversation!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var cell: GroupDetailsTimeoutOptionsCell!
+    private var conversation: ZMConversation!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         cell = GroupDetailsTimeoutOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = createGroupConversation()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         cell = nil
         conversation = nil
+
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItDisplaysCell_WithoutTimeout_Light() {
+        // GIVEN & WHEN
         updateTimeout(0)
-        cell.overrideUserInterfaceStyle = .light
-        verify(matching: cell)
+
+        // THEN
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_WithoutTimeout_Dark() {
+        // GIVEN & WHEN
         updateTimeout(0)
-        cell.overrideUserInterfaceStyle = .dark
-        verify(matching: cell)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: cell)
     }
 
     func testThatItDisplaysCell_WithTimeout_Light() {
+        // GIVEN & WHEN
         updateTimeout(300)
-        cell.overrideUserInterfaceStyle = .light
-        verify(matching: cell)
+
+        // THEN
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_WithTimeout_Dark() {
+        // GIVEN & WHEN
         updateTimeout(300)
-        cell.overrideUserInterfaceStyle = .dark
-        verify(matching: cell)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: cell)
+    }
+
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Light() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
+
+        // THEN
+        snapshotHelper.verify(matching: cell)
+    }
+
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Dark() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: cell)
     }
 
     private func updateTimeout(_ newValue: TimeInterval) {

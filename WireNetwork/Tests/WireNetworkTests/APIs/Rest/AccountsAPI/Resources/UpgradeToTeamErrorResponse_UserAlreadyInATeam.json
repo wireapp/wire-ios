@@ -1,0 +1,5 @@
+{
+  "code": 403,
+  "label": "user-already-in-a-team",
+  "message": "Switching teams is not allowed"
+}

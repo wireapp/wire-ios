@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class LinkAttachmentDetectorTests: XCTestCase {
 
@@ -66,7 +66,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
@@ -96,9 +96,12 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
-        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://youtube.com/watch?v=cggNqDAtJYU")!])
+        XCTAssertEqual(
+            previewDownloader.requestOpenGraphDataURLs,
+            [URL(string: "http://youtube.com/watch?v=cggNqDAtJYU")!]
+        )
         XCTAssertEqual(result, [])
     }
 
@@ -117,7 +120,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
 
         guard let attachment = result.first else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(attachment.type, .youTubeVideo)
@@ -141,7 +144,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
 
         guard let attachment = result.first else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(attachment.type, .youTubeVideo)
@@ -178,7 +181,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
 }

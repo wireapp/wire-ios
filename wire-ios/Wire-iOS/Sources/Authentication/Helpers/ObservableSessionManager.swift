@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,8 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * A protocol for session managers that provides a mechanism to observe user
- * session creation.
- */
+/// A protocol for session managers that provides a mechanism to observe user
+/// session creation.
 
 protocol ObservableSessionManager: SessionManagerType {
 
@@ -31,40 +29,32 @@ protocol ObservableSessionManager: SessionManagerType {
     func markNetworkSessionsAsReady(_ ready: Bool)
     func saveProxyCredentials(username: String, password: String)
     func removeProxyCredentials()
-    // swiftlint:disable todo_requires_jira_link
-    // TODO: maybe move this to other protocol
-    // swiftlint:enable todo_requires_jira_link
-    func resolveAPIVersion(completion: @escaping (Error?) -> Void)
 
     var activeUnauthenticatedSession: UnauthenticatedSession { get }
 
-    /**
-     * Registers an observer to monitor unauthenticated session creation.
-     *
-     * - parameter observer: The object that is subscribing to notifications.
-     * - returns: A token object that holds a reference to the observer. Keep a strong
-     * reference to this object as long as the observer is allocated. You should discard it
-     * when the observer is deallocated to remove the observer,
-     */
+    /// Registers an observer to monitor unauthenticated session creation.
+    ///
+    /// - parameter observer: The object that is subscribing to notifications.
+    /// - returns: A token object that holds a reference to the observer. Keep a strong
+    /// reference to this object as long as the observer is allocated. You should discard it
+    /// when the observer is deallocated to remove the observer,
 
     func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any
 
-    /**
-     * Registers an observer to monitor user session creation.
-     *
-     * - parameter observer: The object that is subscribing to notifications.
-     * - returns: A token object that holds a reference to the observer. Keep a strong
-     * reference to this object as long as the observer is allocated. You should discard it
-     * when the observer is deallocated to remove the observer,
-     */
+    /// Registers an observer to monitor user session creation.
+    ///
+    /// - parameter observer: The object that is subscribing to notifications.
+    /// - returns: A token object that holds a reference to the observer. Keep a strong
+    /// reference to this object as long as the observer is allocated. You should discard it
+    /// when the observer is deallocated to remove the observer,
 
     func addSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any
 
     /// Deletes the selected account.
-    func delete(account: Account)
+    func delete(account: Account, eraseData: Bool)
 
     /// Add a new account.
-    func addAccount(userInfo: [String: Any]?)
+    func addAccount(userInfo: [String: Any]?, completion: (() -> Void)?)
 }
 
 extension SessionManager: ObservableSessionManager {}

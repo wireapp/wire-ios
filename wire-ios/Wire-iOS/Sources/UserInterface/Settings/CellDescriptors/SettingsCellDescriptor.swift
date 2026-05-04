@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
+import WireSettingsUI
+import WireSyncEngine
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -31,54 +34,64 @@ import WireCommonComponents
 
 // MARK: - Protocols
 
-/**
- * @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
- * should be updated from the cell.
- */
+/// @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
+/// should be updated from the cell.
 protocol SettingsCellDescriptorType: AnyObject {
-    static var cellType: SettingsTableCellProtocol.Type {get}
-    var visible: Bool {get}
-    var title: String {get}
-    var identifier: String? {get}
-    var group: SettingsGroupCellDescriptorType? {get}
+
+    static var cellType: SettingsTableCellProtocol.Type { get }
+    typealias PresentationStyle = SettingsCellDescriptorPresentationStyle
+    typealias AccessoryView = SettingsCellDescriptorAccessoryView
+
+    var visible: Bool { get }
+    var title: String { get }
+    var identifier: String? { get }
+    var group: (any SettingsGroupCellDescriptorType)? { get }
     var copiableText: String? { get }
 
-    func select(_: SettingsPropertyValue?)
+    /// If non-nil the item is a top-level item of the main settings menu.
+    /// For presenting the content the main coordinator is called.
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { get }
+
+    func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
 }
 
 extension SettingsCellDescriptorType {
     var copiableText: String? {
-        return nil
+        nil
+    }
+
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? {
+        .none
     }
 }
 
 func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {
     if let leftID = left.identifier,
-        let rightID = right.identifier {
-            return leftID == rightID
+       let rightID = right.identifier {
+        leftID == rightID
     } else {
-        return left == right
+        left == right
     }
 }
 
 typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
 
 protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
-    var viewController: UIViewController? {get set}
+    var viewController: UIViewController? { get set }
 }
 
 protocol SettingsSectionDescriptorType: AnyObject {
-    var cellDescriptors: [SettingsCellDescriptorType] {get}
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {get}
-    var header: String? {get}
-    var footer: String? {get}
-    var visible: Bool {get}
+    var cellDescriptors: [SettingsCellDescriptorType] { get }
+    var visibleCellDescriptors: [SettingsCellDescriptorType] { get }
+    var header: String? { get }
+    var footer: String? { get }
+    var visible: Bool { get }
 }
 
 extension SettingsSectionDescriptorType {
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return cellDescriptors
+        cellDescriptors
     }
 }
 
@@ -88,26 +101,23 @@ enum InternalScreenStyle {
 }
 
 protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorType {
-    var items: [SettingsSectionDescriptorType] {get}
-    var visibleItems: [SettingsSectionDescriptorType] {get}
-    var style: InternalScreenStyle {get}
-    var accessibilityBackButtonText: String {get}
+    var items: [SettingsSectionDescriptorType] { get }
+    var visibleItems: [SettingsSectionDescriptorType] { get }
+    var style: InternalScreenStyle { get }
+    var accessibilityBackButtonText: String { get }
 }
 
 extension SettingsInternalGroupCellDescriptorType {
+
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
-            return section.allCellDescriptors()
-        })
+        items.flatMap { section in
+            section.allCellDescriptors()
+        }
     }
 }
 
-protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorType {
-    var presentationAction: () -> (UIViewController?) {get}
-}
-
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
-    var settingsProperty: SettingsProperty {get}
+    var settingsProperty: SettingsProperty { get }
 }
 
 protocol SettingsControllerGeneratorType {
@@ -119,30 +129,46 @@ protocol SettingsControllerGeneratorType {
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
     var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        return self.cellDescriptors.filter {
-            $0.visible
-        }
+        cellDescriptors.filter(\.visible)
     }
+
     var visible: Bool {
-        return visibilityAction?(self) ?? true
+        visibilityAction?(self) ?? true
     }
+
     let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
 
     var header: String? {
-        return headerGenerator()
+        headerGenerator()
     }
+
     var footer: String? {
-        return footerGenerator()
+        footerGenerator()
     }
 
     let headerGenerator: () -> String?
     let footerGenerator: () -> String?
 
-    convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
-        self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer }, visibilityAction: visibilityAction)
+    convenience init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        header: String? = .none,
+        footer: String? = .none,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
+        self.init(
+            cellDescriptors: cellDescriptors,
+            headerGenerator: { header },
+            footerGenerator: { footer },
+            visibilityAction: visibilityAction
+        )
     }
 
-    init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
+    init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        headerGenerator: @escaping () -> String?,
+        footerGenerator: @escaping () -> String?,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
         self.cellDescriptors = cellDescriptors
         self.headerGenerator = headerGenerator
         self.footerGenerator = footerGenerator
@@ -151,7 +177,11 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    typealias Cell = SettingsTableCell
+
     var visible: Bool = true
     let title: String
     let accessibilityBackButtonText: String
@@ -162,17 +192,30 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let previewGenerator: PreviewGeneratorType?
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
 
     var visibleItems: [SettingsSectionDescriptorType] {
-        return self.items.filter {
-            $0.visible
-        }
+        items.filter(\.visible)
     }
+
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+    let settingsCoordinator: AnySettingsCoordinator
+    let userSession: UserSession
 
     weak var viewController: UIViewController?
 
-    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .grouped, identifier: String? = .none, previewGenerator: PreviewGeneratorType? = .none, icon: StyleKitIcon? = nil, accessibilityBackButtonText: String) {
+    init(
+        items: [SettingsSectionDescriptorType],
+        title: String,
+        style: InternalScreenStyle = .grouped,
+        identifier: String? = .none,
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessibilityBackButtonText: String,
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
+    ) {
         self.items = items
         self.title = title
         self.style = style
@@ -180,29 +223,35 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
+        self.settingsCoordinator = settingsCoordinator
+        self.userSession = userSession
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
-        if let previewGenerator = self.previewGenerator {
+        cell.titleText = title
+        if let previewGenerator {
             let preview = previewGenerator(self)
             cell.preview = preview
         }
-        cell.icon = self.icon
+        cell.icon = icon
         if let cell = cell as? SettingsTableCell {
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
+            cell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
+            cell.accessibilityTraits = .button
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
+            controllerToPush.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(controllerToPush, animated: true)
         }
     }
 
     func generateViewController() -> UIViewController? {
-        return SettingsTableViewController(group: self)
+        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator, userSession: userSession)
     }
 }
 
@@ -226,7 +275,6 @@ extension SettingsPropertyName {
             return "Disable Markdown support"
         case .darkMode:
             return Settings.AccountPictureGroup.theme
-
         // Profile
         case .profileName:
             return Account.Name.title
@@ -238,7 +286,6 @@ extension SettingsPropertyName {
             return Account.Team.title
         case .domain:
             return Account.Domain.title
-
         // AVS
         case .soundAlerts:
             return SoundMenu.title
@@ -248,23 +295,20 @@ extension SettingsPropertyName {
             return SoundMenu.Ringtone.title
         case .pingSoundName:
             return SoundMenu.Ping.title
-
         case .accentColor:
             return Settings.AccountPictureGroup.color
+        case .conversationBackground:
+            return Settings.AccountPictureGroup.Background.title
         case .disableSendButton:
             return Settings.PopularDemand.SendButton.title
         case .disableCallKit:
             return Settings.Callkit.caption
         case .muteIncomingCallsWhileInACall:
             return Settings.MuteOtherCall.caption
-        case .tweetOpeningOption:
-            return LinkOptions.Twitter.title
         case .mapsOpeningOption:
             return LinkOptions.Maps.title
         case .browserOpeningOption:
             return LinkOptions.Browser.title
-        case .callingProtocolStrategy:
-            return "Calling protocol"
         case .enableBatchCollections:
             return "Use AssetCollectionBatched"
         case .lockApp:
@@ -273,14 +317,11 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
-
-            // personal information - Analytics
-        case .disableCrashSharing:
-            return Settings.PrivacyCrash.title
+        case .collapseOwnMessages:
+            return Settings.PrivacySecurity.CollapseOwnMessages.title
+        // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
-        case .receiveNewsAndOffers:
-            return Settings.ReceiveNewsAndOffers.title
         case .readReceiptsEnabled:
             return Settings.EnableReadReceipts.title
         case .encryptMessagesAtRest:

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import WireData
 
-enum CoreDataMessagingMigrationVersion: String, CaseIterable {
+enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     private enum Constant {
         static let dataModelPrefix = "zmessaging"
@@ -29,6 +30,22 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case v134 = "zmessaging2.134.0"
+    case v133 = "zmessaging2.133.0"
+    case v132 = "zmessaging2.132.0"
+    case v131 = "zmessaging2.131.0"
+    case v130 = "zmessaging2.130.0"
+    case v129 = "zmessaging2.129.0"
+    case v128 = "zmessaging2.128.0"
+    case v127 = "zmessaging2.127.0"
+    case v126 = "zmessaging2.126.0"
+    case v125 = "zmessaging2.125.0"
+    case v124 = "zmessaging2.124.0"
+    case v123 = "zmessaging2.123.0"
+    case v122 = "zmessaging2.122.0"
+    case v121 = "zmessaging2.121.0"
+    case v120 = "zmessaging2.120.0"
+    case v119 = "zmessaging2.119.0"
     case v118 = "zmessaging2.118.0"
     case v117 = "zmessaging2.117.0"
     case v116 = "zmessaging2.116.0"
@@ -71,52 +88,70 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     var nextVersion: Self? {
         switch self {
-        case .v118:
-            return nil
-        case .v116, .v117:
-            return .v118
+        case .v134:
+            nil
+        case .v133:
+            .v134
+        case .v131, .v132:
+            .v133
+        case .v130:
+            .v131 // destination version runs custom migration actions
+        case .v129:
+            .v130
+        case .v128:
+            .v129
+        case .v127:
+            .v128
+        case .v125, .v126:
+            .v127
+        case .v120, .v121, .v122, .v123, .v124:
+            .v125
+        case .v119:
+            .v120 // destination version runs custom migration actions
+        case .v116, .v117, .v118:
+            .v119
         case .v115,
-                .v114:
-            return .v116 // destination version runs custom migration actions
+             .v114:
+            .v116 // destination version runs custom migration actions
         case .v111,
-                .v112,
-                .v113:
-            return .v114 // destination version runs custom migration actions
+             .v112,
+             .v113:
+            .v114 // destination version runs custom migration actions
         case .v110:
-            return .v111 // destination version runs custom migration actions
+            .v111 // destination version runs custom migration actions
         case .v107,
-                .v108,
-                .v109:
-            return .v110
+             .v108,
+             .v109:
+            .v110
         case .v106:
-            return .v107 // destination version runs custom migration actions
+            .v107 // destination version runs custom migration actions
         case .v80,
-                .v81,
-                .v82,
-                .v83,
-                .v84,
-                .v85,
-                .v86,
-                .v87,
-                .v88,
-                .v89,
-                .v90,
-                .v91,
-                .v92,
-                .v93,
-                .v94,
-                .v95,
-                .v96,
-                .v97,
-                .v98,
-                .v99,
-                .v100,
-                .v101,
-                .v102,
-                .v103,
-                .v104,
-                .v105:
-            return .v106
+             .v81,
+             .v82,
+             .v83,
+             .v84,
+             .v85,
+             .v86,
+             .v87,
+             .v88,
+             .v89,
+             .v90,
+             .v91,
+             .v92,
+             .v93,
+             .v94,
+             .v95,
+             .v96,
+             .v97,
+             .v98,
+             .v99,
+             .v100,
+             .v101,
+             .v102,
+             .v103,
+             .v104,
+             .v105:
+            .v106
         }
     }
 
@@ -137,7 +172,7 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
-        WireDataModelBundle.bundle.url(
+        WireDataBundle.bundle.url(
             forResource: rawValue,
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory

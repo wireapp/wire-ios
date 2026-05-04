@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 @import OCMock;
 @import WireTesting;
 @import WireTransport;
+@import WireTransportSupport;
 @import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE
@@ -35,7 +36,6 @@
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMPersistentCookieStorage.h"
-#import "ZMPushChannelConnection.h"
 #import "ZMReachability.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
@@ -200,113 +200,6 @@ static NSString *JSONContentType = @"application/json";
 
 //////////////////////////////////////////////////
 //
-#pragma mark - Fake Push Channel
-//
-//////////////////////////////////////////////////
-
-@interface FakePushChannel : NSObject <ZMPushChannelType>
-
-@property (nonatomic) ZMTransportRequestScheduler *scheduler;
-@property (nonatomic, copy) NSString *userAgentString;
-@property (nonatomic) NSURL *URL;
-
-@property (nonatomic) ZMAccessToken *lastAccessToken;
-@property (nonatomic) NSString *lastClientID;
-
-@property (nonatomic) NSUInteger createPushChannelCount;
-@property (nonatomic) NSUInteger setConsumerCount;
-@property (nonatomic) NSUInteger closeCount;
-@property (nonatomic) NSUInteger scheduleOpenPushChannelCount;
-@property (nonatomic) NSUInteger reachabilityChangeCount;
-
-@end
-
-static FakePushChannel *currentFakePushChannel;
-
-@implementation FakePushChannel
-
-@synthesize keepOpen;
-
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id<BackendEnvironmentProvider>)environment
-                            queue:(NSOperationQueue * _Nonnull)queue
-{
-    self = [super init];
-    if (self) {
-        self.scheduler = scheduler;
-        self.userAgentString = userAgentString;
-        self.URL = environment.backendWSURL;
-        currentFakePushChannel = self;
-    }
-    return self;
-}
-
-- (instancetype _Nonnull)initWithScheduler:(ZMTransportRequestScheduler * _Nonnull)scheduler
-                           userAgentString:(NSString * _Nonnull)userAgentString
-                               environment:(id<BackendEnvironmentProvider> _Nonnull)environment
-                             proxyUsername:(NSString * _Nullable)proxyUsername
-                             proxyPassword:(NSString * _Nullable)proxyPassword
-                             minTLSVersion:(NSString * _Nullable)minTLSVersion
-                                     queue:(NSOperationQueue *_Nonnull)queue
-{
-    self = [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment queue:queue];
-    return self;
-}
-
-- (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)groupQueue;
-{
-    NOT_USED(consumer);
-    NOT_USED(groupQueue);
-    self.setConsumerCount++;
-}
-
-- (void)open
-{
-    self.createPushChannelCount++;
-}
-
-- (void)setAccessToken:(ZMAccessToken *)accessToken
-{
-    self.lastAccessToken = accessToken;
-}
-
-- (ZMAccessToken *)accessToken
-{
-    return self.lastAccessToken;
-}
-
-- (void)setClientID:(NSString *)clientID
-{
-    self.lastClientID = clientID;
-}
-
-- (NSString *)clientID
-{
-    return self.lastClientID;
-}
-
-- (void)close;
-{
-    self.closeCount++;
-}
-
-- (void)scheduleOpen
-{
-    self.scheduleOpenPushChannelCount++;
-}
-
-
-
-
-- (void)reachabilityDidChange:(ZMReachability *)reachability;
-{
-    NOT_USED(reachability);
-    self.reachabilityChangeCount++;
-}
-
-@end
-
-//////////////////////////////////////////////////
-//
 #pragma mark - Reachability
 //
 //////////////////////////////////////////////////
@@ -421,11 +314,12 @@ static XCTestCase *currentTestCase;
                 environment:self.environment
                 proxyUsername:nil
                 proxyPassword:nil
-                pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
+                minTLSVersion:nil
+                selfClientID:nil
+                isSyncV2Enabled:NO];
 
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -478,7 +372,7 @@ static XCTestCase *currentTestCase;
 - (void)setAuthenticationCookieData;
 {
     NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
-    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL
                                                               statusCode:200
                                                              HTTPVersion:@""
@@ -565,12 +459,13 @@ static XCTestCase *currentTestCase;
                 environment:self.environment
                 proxyUsername:nil
                 proxyPassword:nil
-                pushChannelClass:nil
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
-    
+                minTLSVersion:nil
+                selfClientID: nil
+                isSyncV2Enabled:NO];
+
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
@@ -790,12 +685,13 @@ static XCTestCase *currentTestCase;
                                environment:self.environment
                                proxyUsername:nil
                                proxyPassword:nil
-                               pushChannelClass:nil
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil
                                userAgent:self.userAgent
-                               minTLSVersion:nil];
-    
+                               minTLSVersion:nil
+                               selfClientID: nil
+                               isSyncV2Enabled:NO];
+
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
     
@@ -1473,7 +1369,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItNotifiesTheSchedulerWhenItReceivesAnAccessToken;
 {
     // given
-    self.sut.cookieStorage.authenticationCookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
+    [self setAuthenticationCookieData];
     
     // The access token request:
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
@@ -1531,8 +1427,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    self.sut.cookieStorage.authenticationCookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
     // The request will fail with a 401:
     NSDictionary *dummyPayload = @{@"b": @"B"};
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request, NSData *data ZM_UNUSED) {
@@ -1570,8 +1465,8 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = cookieData;
-    
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
+
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
         testResponse.body = [NSJSONSerialization dataWithJSONObject:@{@"a": @"A"} options:0 error:NULL];
@@ -1596,7 +1491,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = cookieData;
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1648,7 +1543,7 @@ static XCTestCase *currentTestCase;
 - (void)setCookieData;
 {
     // Set cookie on cookie storage:
-    NSDictionary *originalHeaders = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+    NSDictionary *originalHeaders = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:originalHeaders];
     [self.sut.cookieStorage setCookieDataFromResponse:response forURL:URL];
@@ -1656,112 +1551,6 @@ static XCTestCase *currentTestCase;
 
 
 @end
-
-
-@implementation ZMTransportSessionTests (PushChannel)
-
-- (void)testThatItCreatesAPushChannelInstance;
-{
-    XCTAssertNotNil(currentFakePushChannel);
-    XCTAssertEqualObjects(currentFakePushChannel.URL, self.environment.backendWSURL);
-    XCTAssertEqualObjects(currentFakePushChannel.userAgentString, self.userAgent);
-    XCTAssertEqualObjects(currentFakePushChannel.scheduler, self.scheduler);
-}
-
-
-- (void)testThatItDoesNotOpenThePushChannelConnectionWhenItSetsTheAccessTokenToNil
-{
-    // when
-    [self.sut setAccessToken:nil];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.createPushChannelCount, 0u);
-}
-
-- (void)testThatItSchedulesOpeningThePushChannelWhenTHeMaximumNumberOfConcurrentRequestsIncrease
-{
-    // when
-    [self.sut schedulerIncreasedMaximumNumberOfConcurrentRequests:(id)self.scheduler];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.scheduleOpenPushChannelCount, 1u);
-}
-
-- (void)testThatItForwardsReachabilityDidChangeToThePushChannel
-{
-    // when
-    XCTAssertEqual(currentFakePushChannel.reachabilityChangeCount, 0u);
-    [self.sut reachabilityDidChange:[OCMockObject niceMockForClass:ZMReachability.class]];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.reachabilityChangeCount, 1u);
-}
-
-- (void)testThatItForwardsOpenPushChannel
-{
-    // given
-    XCTAssertEqual(currentFakePushChannel.setConsumerCount, 0u);
-
-    // when
-    id consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    [self.sut configurePushChannelWithConsumer:consumer groupQueue:self.fakeUIContext];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.setConsumerCount, 1u);
-}
-
-- (void)testThatItCreatesAPushChannelConnectionWhenWeAreReceivingAnOpenPushChannelItemAndHaveAnAccessToken
-{
-    // given
-    self.sut.accessToken = self.validAccessToken;
-    self.sut.pushChannel.clientID = self.clientID;
-    NSUInteger const originalCount = currentFakePushChannel.createPushChannelCount;
-    
-    // when
-    [self.sut sendSchedulerItem:[[ZMOpenPushChannelRequest alloc] init]];
-    
-    // then
-    XCTAssertEqual(currentFakePushChannel.createPushChannelCount, originalCount + 1u);
-    XCTAssertEqualObjects(currentFakePushChannel.lastAccessToken, self.validAccessToken);
-    XCTAssertEqualObjects(currentFakePushChannel.lastClientID, self.clientID);
-}
-
-- (void)testThatItDoesNotAttemptToOpenThePushChannelWhenLoginFails
-{
-    // given
-    self.sut.cookieStorage.authenticationCookieData = nil;
-    self.sut.accessToken = nil;
-    self.sut.pushChannel.clientID = self.clientID;
-    id consumer = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannelConsumer)];
-    [self verifyMockLater:consumer];
-    
-    // when
-    [self.sut configurePushChannelWithConsumer:consumer groupQueue:self.fakeSyncContext];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.scheduler.addedItems removeAllObjects];
-    
-    NSString *path = @"/activate/send";
-    NSDictionary *payload = @{@"label": @"pending-activation"};
-    [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request, NSData *data ZM_UNUSED) {
-        XCTAssertEqualObjects(request.URL.path, path);
-        TestResponse *testResponse = [TestResponse testResponse];
-        testResponse.statusCode = 403;
-        [testResponse setBodyFromTransportData:payload];
-        return testResponse;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self.sut sendSchedulerItem:[[ZMTransportRequest alloc] initWithPath:path method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // after
-    XCTAssertFalse([self.scheduler.addedItems containsObject:[[ZMOpenPushChannelRequest alloc] init]]);
-}
- 
-
-@end
-
 
 
 @implementation ZMTransportSessionTests (ImageDownload)
@@ -2202,23 +1991,6 @@ static XCTestCase *currentTestCase;
     
     // when
     [self.sut updateNetworkStatusFromDidReadDataFromNetwork];
-    
-    // then
-    [observer verify];
-}
-
-- (void)testThatItCallsDidFailRequestOnTheReachabilityDelegate
-{
-    // given
-    id observer = [OCMockObject mockForProtocol:@protocol(ZMNetworkStateDelegate)];
-    [[observer expect] didReceiveData];
-    self.sut.networkStateDelegate = observer;
-    
-    // expect
-    [[observer expect] didGoOffline];
-    
-    // when
-    [self.sut schedulerWentOffline:currentFakePushChannel.scheduler];
     
     // then
     [observer verify];

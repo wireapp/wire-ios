@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,51 +23,66 @@ import XCTest
 
 final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
 
-    var sut: ConversationListViewController.ViewModel!
-    var mockView: UIView!
+    private var sut: ConversationListViewController.ViewModel!
+    private var mockView: UIView!
     private var mockViewController: MockConversationListContainer!
-    var userSession: UserSessionMock!
+    private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
+    private var window: UIWindow!
 
-    var coreDataFixture: CoreDataFixture!
+    private var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         userSession = UserSessionMock()
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
+
         let account = Account.mockAccount(imageData: Data())
         let selfUser = MockUserType.createSelfUser(name: "Bob")
         sut = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
 
         mockViewController = MockConversationListContainer(viewModel: sut)
+        window = .init()
+        window.rootViewController = mockViewController
+        window.isHidden = false
 
         sut.viewController = mockViewController
     }
 
     override func tearDown() {
+        window.isHidden = true
+        window = nil
         sut = nil
         mockView = nil
         mockViewController = nil
         coreDataFixture = nil
         userSession = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
-
-        super.tearDown()
+        mockGetUserAccountImageSourceUseCase = nil
+        mockMainCoordinator = nil
     }
 
     // MARK: - Action menu
+
     func testForActionMenu() throws {
         try coreDataFixture.teamTest {
             sut.showActionMenu(for: coreDataFixture.otherUserConversation, from: mockViewController.view)

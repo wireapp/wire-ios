@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ extension ZMUserSession: SecurityClassificationProviding {
         }
 
         return classifiedDomainsFeature.config.domains.contains(otherDomain)
-        ? .classified
-        : .notClassified
+            ? .classified
+            : .notClassified
     }
 
     var isSelfClassified: Bool {
@@ -56,10 +56,11 @@ extension ZMUserSession: SecurityClassificationProviding {
     // If other user does not have a domain the conversation will be marked as unclassified
     // We've had a different behaviour on Android & Web on column-1
     // We could not save domain to the database as of now, because of how other features depend on it
-    // If federation is disabled we know that the user is from local backend, so we can fallback to local domain and check if it is classified
+    // If federation is disabled we know that the user is from local backend, so we can fallback to local domain and
+    // check if it is classified
     private func domain(for user: UserType) -> String? {
-        guard BackendInfo.isFederationEnabled else {
-            return user.domain ?? BackendInfo.domain
+        guard resolvedBackendMetadata.isFederationEnabled else {
+            return user.domain ?? resolvedBackendMetadata.domain
         }
         return user.domain
     }
