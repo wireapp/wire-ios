@@ -72,7 +72,7 @@ public protocol CallActions: NSObjectProtocol {
     func join(video: Bool, userSession: ZMUserSession) -> Bool
     func leave(userSession: ZMUserSession, completion: (() -> Void)?)
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession)
-    func request(videoStreams: [AVSClient])
+    func request(videoStreams: [AVSClientVideoStream])
 
 }
 

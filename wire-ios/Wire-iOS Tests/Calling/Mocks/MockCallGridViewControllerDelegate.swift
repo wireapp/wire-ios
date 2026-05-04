@@ -21,7 +21,7 @@ import Foundation
 
 final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
 
-    var requestedClients: [AVSClient]?
+    var requestedClients: [AVSClientVideoStream]?
 
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {
         guard case let .requestVideoStreamsForClients(clients) = action else { return }
