@@ -196,7 +196,7 @@ extension AVSBridgingTests {
     func testParseNetworkQuality_missingQuality_returnsNil() {
         XCTAssertNil(AVSWrapper.parseNetworkQuality(from: #"{"rtt":0,"peer":"User"}"#))
     }
-    
+
     func testParseNetworkQuality_unknownQualityValue_returnsNil() {
         XCTAssertNil(AVSWrapper.parseNetworkQuality(from: #"{"quality":99}"#))
     }
