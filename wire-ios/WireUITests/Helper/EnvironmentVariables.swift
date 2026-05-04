@@ -30,6 +30,7 @@ struct EnvironmentVariables {
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
+        case missingOktaApiKey
     }
 
     private let stagingBackendURL: URL
@@ -51,6 +52,7 @@ struct EnvironmentVariables {
     let callingBackend: String
     let callingInstanceTypeName: String
     let callingInstanceTypeVersion: String
+    let oktaApiKey: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -133,6 +135,11 @@ struct EnvironmentVariables {
             throw Failure.missingCallingInstanceTypeVersion
         }
 
+        guard let oktaApiKey = ProcessInfo.processInfo.environment["OKTA_API_KEY_IOS"],
+              !oktaApiKey.isEmpty else {
+            throw Failure.missingOktaApiKey
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
@@ -149,6 +156,7 @@ struct EnvironmentVariables {
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
+        self.oktaApiKey = oktaApiKey
     }
 
     var inbucketURL: URL {
