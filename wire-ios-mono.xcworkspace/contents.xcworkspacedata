@@ -150,7 +150,7 @@
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireUI/WireUI.xcodeproj">
+      location = "group:WireUI">
    </FileRef>
    <FileRef
       location = "group:wire-ios-canvas/WireCanvas.xcodeproj">
