@@ -124,6 +124,8 @@
 	<string>Allow Wire to store pictures you take in the photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow Wire to access pictures stored in photo library.</string>
+	<key>OpenLinksExternally</key>
+	<string>${OPEN_LINKS_EXTERNALLY}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>RedactedScript-Regular.ttf</string>
@@ -133,8 +135,9 @@
 		<string>audio</string>
 		<string>voip</string>
 		<string>remote-notification</string>
-		<string>fetch</string>
 	</array>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchScreen</key>
@@ -239,9 +242,13 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UseEmbeddedIDPUserAgent</key>
+	<string>${USE_EMBEDDED_IDP_USER_AGENT}</string>
 	<key>Wire SSO URL Scheme</key>
 	<string>${WIRE_SSO_URL_SCHEME}</string>
 	<key>WireGroupId</key>
 	<string>${WIRE_BUNDLE_ID}</string>
+	<key>WireInternalName</key>
+	<string>${WIRE_INTERNAL_NAME}</string>
 </dict>
 </plist>

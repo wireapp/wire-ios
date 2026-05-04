@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import KaliumBackup
 import WireFoundation
+import WireUtilitiesPackage
 
 struct BackupImporter {
 
@@ -41,12 +42,11 @@ struct BackupImporter {
 
 // MARK: -
 
-private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
-    where FileUnarchiver: FileUnarchiverProtocol {
+private final class FileUnarchiverToBackupFileUnzipper: BackupFileUnzipper {
 
-    let fileUnarchiver: FileUnarchiver
+    let fileUnarchiver: any FileUnarchiverProtocol
 
-    init(fileUnarchiver: FileUnarchiver) {
+    init(fileUnarchiver: any FileUnarchiverProtocol) {
         self.fileUnarchiver = fileUnarchiver
     }
 

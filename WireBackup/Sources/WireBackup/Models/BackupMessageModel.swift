@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 public import Foundation
 public import WireFoundation
 
-public struct MessageBackupModel: Encodable, Hashable, Sendable {
+public struct MessageBackupModel: Hashable, Sendable {
 
     public var id: String
     public var conversationID: QualifiedID
@@ -53,7 +53,7 @@ public struct MessageBackupModel: Encodable, Hashable, Sendable {
 
 public extension MessageBackupModel {
 
-    enum Content: Encodable, Hashable, Sendable {
+    enum Content: Hashable, Sendable {
 
         case text(TextContent)
         case location(LocationContent)
@@ -67,39 +67,18 @@ public extension MessageBackupModel {
 
 public extension MessageBackupModel.Content {
 
-    struct TextContent: Encodable, Hashable, Sendable {
-
+    struct TextContent: Hashable, Sendable {
         public var text: String
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "text"
-
-        public init(text: String) {
-            self.text = text
-        }
-
     }
 
-    struct LocationContent: Encodable, Hashable, Sendable {
-
+    struct LocationContent: Hashable, Sendable {
         public var longitude: Float
         public var latitude: Float
         public var name: String?
         public var zoom: Int32?
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "location"
-
-        public init(longitude: Float, latitude: Float, name: String?, zoom: Int32?) {
-            self.longitude = longitude
-            self.latitude = latitude
-            self.name = name?.isEmpty == true ? nil : name
-            self.zoom = zoom
-        }
-
     }
 
-    struct AssetContent: Encodable, Hashable, Sendable {
+    struct AssetContent: Hashable, Sendable {
 
         public var mimeType: String
         public var size: UInt64
@@ -112,40 +91,12 @@ public extension MessageBackupModel.Content {
         public var encryption: EncryptionAlgorithm?
         public var metadata: Metadata?
 
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "asset"
-
-        public init(
-            mimeType: String,
-            size: UInt64,
-            name: String?,
-            otrKey: Data,
-            sha256: Data,
-            assetID: String,
-            assetToken: String?,
-            assetDomain: String?,
-            encryption: EncryptionAlgorithm?,
-            metadata: Metadata?
-        ) {
-            self.mimeType = mimeType
-            self.size = size
-            self.name = name?.isEmpty == true ? nil : name
-            self.otrKey = otrKey
-            self.sha256 = sha256
-            self.assetID = assetID
-            self.assetToken = assetToken
-            self.assetDomain = assetDomain
-            self.encryption = encryption
-            self.metadata = metadata
-        }
-
-        public enum EncryptionAlgorithm: String, Encodable, Hashable, Sendable {
+        public enum EncryptionAlgorithm: String, Hashable, Sendable {
             case aesCBC
             case aesGCM
         }
 
-        public enum Metadata: Encodable, Hashable, Sendable {
-
+        public enum Metadata: Hashable, Sendable {
             case image(ImageMetadata)
             case video(VideoMetadata)
             case audio(AudioMetadata)
@@ -158,66 +109,25 @@ public extension MessageBackupModel.Content {
 
 public extension MessageBackupModel.Content.AssetContent.Metadata {
 
-    struct ImageMetadata: Encodable, Hashable, Sendable {
-
+    struct ImageMetadata: Hashable, Sendable {
         public var width: Int32
         public var height: Int32
         public var tag: String?
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "image"
-
-        public init(width: Int32, height: Int32, tag: String?) {
-            self.width = width
-            self.height = height
-            self.tag = tag?.isEmpty == true ? nil : tag
-        }
-
     }
 
-    struct VideoMetadata: Encodable, Hashable, Sendable {
-
+    struct VideoMetadata: Hashable, Sendable {
         public var width: Int32?
         public var height: Int32?
         public var duration: UInt64?
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "video"
-
-        public init(width: Int32?, height: Int32?, duration: UInt64?) {
-            self.width = width
-            self.height = height
-            self.duration = duration
-        }
-
     }
 
-    struct AudioMetadata: Encodable, Hashable, Sendable {
-
+    struct AudioMetadata: Hashable, Sendable {
         public var normalization: Data?
         public var duration: UInt64?
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "audio"
-
-        public init(normalization: Data?, duration: UInt64?) {
-            self.normalization = normalization
-            self.duration = duration
-        }
-
     }
 
-    struct GenericMetadata: Encodable, Hashable, Sendable {
-
+    struct GenericMetadata: Hashable, Sendable {
         public var name: String?
-
-        // This property is used by the Codable implementation and is not to be used otherwise.
-        private var type = "generic"
-
-        public init(name: String?) {
-            self.name = name?.isEmpty == true ? nil : name
-        }
-
     }
 
 }
@@ -280,6 +190,20 @@ public extension MessageBackupModel.Content {
         )
     }
 
+    var isText: Bool {
+        if case .text = self { return true }
+        return false
+    }
+
+    var isLocation: Bool {
+        if case .location = self { return true }
+        return false
+    }
+
+    var isAsset: Bool {
+        if case .asset = self { return true }
+        return false
+    }
 }
 
 public extension MessageBackupModel.Content.AssetContent.Metadata {

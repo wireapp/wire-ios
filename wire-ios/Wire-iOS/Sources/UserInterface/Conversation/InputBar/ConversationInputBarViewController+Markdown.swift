@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,22 +39,34 @@ extension ConversationInputBarViewController {
 
         if inputBar.isMarkingDown {
             color = SemanticColors.Button.textInputBarItemHighlighted
+                .resolvedColor(with: traitCollection)
             backgroundColor = SemanticColors.Button.backgroundInputBarItemHighlighted
+                .resolvedColor(with: traitCollection)
             borderColor = SemanticColors.Button.borderInputBarItemHighlighted
+                .resolvedColor(with: traitCollection)
         } else {
             color = SemanticColors.Button.textInputBarItemEnabled
+                .resolvedColor(with: traitCollection)
             backgroundColor = SemanticColors.Button.backgroundInputBarItemEnabled
+                .resolvedColor(with: traitCollection)
             borderColor = SemanticColors.Button.borderInputBarItemEnabled
+                .resolvedColor(with: traitCollection)
         }
 
         markdownButton.setIconColor(color, for: .normal)
         markdownButton.setBorderColor(borderColor, for: .normal)
         markdownButton.setBackgroundImageColor(backgroundColor, for: .normal)
 
-        markdownButton.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .highlighted)
-        markdownButton.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .highlighted)
+        markdownButton.setIconColor(
+            SemanticColors.Button.textInputBarItemHighlighted.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
+        markdownButton.setBorderColor(
+            SemanticColors.Button.borderInputBarItemHighlighted.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
         markdownButton.setBackgroundImageColor(
-            SemanticColors.Button.backgroundInputBarItemHighlighted,
+            SemanticColors.Button.backgroundInputBarItemHighlighted.resolvedColor(with: traitCollection),
             for: .highlighted
         )
 
@@ -75,7 +87,7 @@ extension ConversationInputBarViewController {
         }
 
         updateMarkdownButton()
-        updateRightAccessoryView()
+        updateButtonStates()
         inputBar.markdownView.updateAccessibilityElements(isAccessible: inputBar.isMarkingDown)
     }
 }

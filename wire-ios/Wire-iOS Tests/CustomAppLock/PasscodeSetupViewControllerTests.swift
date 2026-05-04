@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,12 +27,14 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     var sut: PasscodeSetupViewController!
     private var snapshotHelper: SnapshotHelper!
+    private var userSession: UserSessionMock!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
+        userSession = UserSessionMock()
         accentColor = .blue
     }
 
@@ -40,6 +42,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
+        userSession = nil
         sut = nil
     }
 
@@ -56,6 +59,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         sut = PasscodeSetupViewController(
             useCompactLayout: false,
             context: .createPasscode,
+            userSession: userSession,
             callback: nil
         )
 
@@ -66,6 +70,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         sut = PasscodeSetupViewController(
             useCompactLayout: false,
             context: .forcedForTeam,
+            userSession: userSession,
             callback: nil
         )
 
@@ -76,6 +81,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         sut = PasscodeSetupViewController(
             useCompactLayout: false,
             context: .createPasscode,
+            userSession: userSession,
             callback: nil
         )
         snapshotHelper
@@ -87,6 +93,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         sut = PasscodeSetupViewController(
             useCompactLayout: false,
             context: .forcedForTeam,
+            userSession: userSession,
             callback: nil
         )
         snapshotHelper
@@ -99,6 +106,7 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         sut = PasscodeSetupViewController(
             useCompactLayout: false,
             context: .createPasscode,
+            userSession: userSession,
             callback: nil
         )
         fillPasscode()

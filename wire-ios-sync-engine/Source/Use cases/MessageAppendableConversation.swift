@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public protocol MessageAppendableConversation {
     func appendKnock(nonce: UUID) throws -> any ZMConversationMessage
 
     @discardableResult
-    func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage
+    func appendImage(_ image: SendableImage, nonce: UUID) throws -> any ZMConversationMessage
 
     @discardableResult
     func appendLocation(with locationData: LocationData, nonce: UUID) throws -> ZMConversationMessage

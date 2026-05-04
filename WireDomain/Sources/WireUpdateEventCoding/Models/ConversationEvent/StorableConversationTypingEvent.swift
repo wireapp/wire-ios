@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationTypingEvent: Equatable, Codable, Sendable {
 
@@ -24,13 +24,13 @@ struct StorableConversationTypingEvent: Equatable, Codable, Sendable {
     private let senderID: StorableQualifiedID
     private let isTyping: Bool
 
-    init(_ value: WireAPI.ConversationTypingEvent) {
+    init(_ value: WireNetwork.ConversationTypingEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.isTyping = value.isTyping
     }
 
-    func toAPIModel() -> WireAPI.ConversationTypingEvent {
+    func toAPIModel() -> WireNetwork.ConversationTypingEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

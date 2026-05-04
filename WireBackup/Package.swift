@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireBackup",
-    platforms: [.iOS("16.4"), .macOS(.v13)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireBackup", targets: ["WireBackup"])
     ],
@@ -21,7 +21,8 @@ let package = Package(
             dependencies: [
                 "KaliumBackup",
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                .product(name: "WireUtilitiesPackage", package: "WireFoundation")
             ]
         ),
         .target(
@@ -29,7 +30,7 @@ let package = Package(
             dependencies: [
                 "WireBackup"
             ],
-            // plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireBackupTests",
@@ -49,11 +50,6 @@ let package = Package(
                 .copy("Resources/web-unencrypted.wbu")
             ]
         ),
-        .executableTarget(
-            name: "WireBackupCLI",
-            dependencies: ["KaliumBackup", "WireBackup", "ZIPFoundation"]
-        ),
-
         .binaryTarget(
             name: "KaliumBackup",
             url: "https://github.com/wireapp/kalium/releases/download/backup%2F0.0.3/KaliumBackup.xcframework.zip",

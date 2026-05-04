@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,29 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class WelcomePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = emailTextField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Welcome page not loaded - can't find email or SSO field")
+    override var pageMainElement: XCUIElement {
+        emailTextField
     }
 
     var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
+        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
     }
 
     var emailTextField: XCUIElement {
-        let elementsQuery = app.textFields
-        return elementsQuery["Email or SSO code"]
+        app.textFields[Locators.WelcomePage.emailTextField.rawValue]
     }
 
-    func typeEmailOrSSO(_ input: String) -> LoginPage {
-        emailTextField.tap()
-        emailTextField.typeText(input)
-        nextButton.tap()
-        return LoginPage()
+    var setBackendLabel: XCUIElement {
+        app.descendants(matching: .any)[Locators.WelcomePage.onPremInfoButton.rawValue]
+    }
+
+    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
+        try typeEmailOrSSO(input)
+        nextButton.waitAndTap()
+        return try LoginPage()
+    }
+
+    func enterSSOCode(_ code: String) throws -> OktaLoginPage {
+        try typeEmailOrSSO(code)
+        nextButton.waitAndTap()
+        return try OktaLoginPage()
+    }
+
+    @discardableResult
+    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
+        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
+        return self
     }
 }

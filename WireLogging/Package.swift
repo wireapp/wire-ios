@@ -1,17 +1,16 @@
-// swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
+import Foundation
 import PackageDescription
 
 let package = Package(
     name: "WireLogging",
-    platforms: [.iOS("16.4"), .macOS(.v13)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireLogging", targets: ["WireLogging"]),
         .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -19,18 +18,26 @@ let package = Package(
         .target(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
-            // plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireLoggingTests",
-            dependencies: ["WireLogging", "WireLoggingSupport"]
+            dependencies: ["WireLogging"]
         )
     ]
 )
 
+// open --env CI wire-ios-mono.xcworkspace
+// or
+// CI= swift build
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
+
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("ExistentialAny")
-    ]
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("StrictMemorySafety"),
+        isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
+    ].compactMap(\.self)
 }

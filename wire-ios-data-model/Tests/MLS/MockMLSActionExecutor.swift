@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { processWelcomeMessageCount_ = newValue } }
     }
 
-    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
+    func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
         guard let mock = mockProcessWelcomeMessage else {
             fatalError("no mock for `processWelcomeMessage`")
         }
@@ -55,18 +55,25 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> Void
+    private var mockAddMembersCount_ = 0
+    var mockAddMembersCount: Int {
+        get { serialQueue.sync { mockAddMembersCount_ } }
+        set { serialQueue.sync { mockAddMembersCount_ = newValue } }
+    }
+
+    typealias AddMembersMock = ([WireDataModel.KeyPackage], MLSGroupID) async throws -> Void
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws {
+    func addMembers(_ keyPackages: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
 
+        mockAddMembersCount_ += 1
         return try await mock(keyPackages, groupID)
     }
 
@@ -174,8 +181,12 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
     }
 
-    func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto
-        .DecryptedMessage {
+    func decryptMessage(
+        _ message: Data,
+        in groupID: WireDataModel.MLSGroupID,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> WireCoreCrypto
+        .DecryptedMessage? {
         guard let mock = mockDecryptMessage else {
             fatalError("no mock for `decryptMessage`")
         }

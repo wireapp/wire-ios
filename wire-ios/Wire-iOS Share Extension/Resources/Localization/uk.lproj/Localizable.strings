@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,3 +77,11 @@
 "share_extension.voiceover.conversation_under_legal_hold" = "Під правовим захистом.";
 "share_extension.voiceover.conversation_secure" = "Всі учасники верифіковані.";
 "share_extension.voiceover.conversation_secure_with_ignored" = "Не всі учасники були верифіковані.";
+
+// Update required
+"share_extension.error.update_required.title" = "Update required";
+"share_extension.error.update_required.obsolete_client" = "You are missing out on new features. Get the latest version of Wire to continue using the app with this account.";
+"share_extension.error.update_required.obsolete_backend" = "Your Wire server needs to be updated. Please notify your system administrator.";
+
+"share_extension.error.open_app.title" = "Open app";
+"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";

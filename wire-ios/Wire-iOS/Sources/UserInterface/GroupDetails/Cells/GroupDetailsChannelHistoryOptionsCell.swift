@@ -1,0 +1,52 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import UIKit
+import WireDesign
+
+final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptionsCell {
+
+    override func setUp() {
+        super.setUp()
+        accessibilityIdentifier = "cell.groupdetails.channelHistory"
+        title = L10n.Localizable.GroupDetails.ChannelHistoryOptionsCell.title
+        accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
+
+        icon = UIImage(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+        iconColor = SemanticColors.Icon.foregroundDefault
+    }
+
+    func configure(with conversation: GroupDetailsConversationType) {
+        let historyDepthValue = mapHistoryDepth(conversation.channelHistoryDepth)
+        status = historyDepthValue
+    }
+
+    private func mapHistoryDepth(_ historyDepth: String?) -> String {
+        // TODO: [WPB-18396] - return correct `historyDepth` value from db
+        "Off"
+    }
+
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
+        }
+    }
+
+}

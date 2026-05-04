@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,43 @@
 import XCTest
 
 class PageModel {
-    let app: XCUIApplication
 
-    init() {
-        self.app = XCUIApplication()
-        hasLoaded()
+    enum Failure: Error {
+        case notLoaded(PageModel)
+
+        var localizedDescription: String {
+            switch self {
+            case let .notLoaded(pageModel):
+                "Page \(String(describing: pageModel)) not loaded"
+            }
+        }
     }
 
-    func hasLoaded() {
-        print("Warning: hasLoaded should be implemented by inheritor")
+    let app: XCUIApplication
+
+    init() throws {
+        self.app = XCUIApplication()
+        try assertHasLoaded()
+    }
+
+    var pageMainElement: XCUIElement {
+        fatalError("override this in subclass \(String(describing: self))")
+    }
+
+    func assertHasLoaded() throws {
+        guard pageMainElement.waitForExistence(timeout: 15) else {
+            throw Failure.notLoaded(self)
+        }
+    }
+
+    @discardableResult
+    func backgroundAndResume(
+        app: XCUIApplication,
+        forDelay duration: TimeInterval
+    ) async throws -> Self {
+        await XCUIDevice.shared.press(.home)
+        try await Task.sleep(for: .seconds(duration))
+        await app.activate()
+        return self
     }
 }

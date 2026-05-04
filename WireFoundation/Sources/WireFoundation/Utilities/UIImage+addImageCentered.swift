@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,41 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(UIKit)
-    public import UIKit
+public import UIKit
 
-    public extension UIImage {
+public extension UIImage {
 
-        func addImageCentered(
-            _ overlayImage: UIImage,
-            overlaySize: CGSize,
-            borderWidth: CGFloat,
-            borderColor: UIColor
-        ) -> UIImage {
-            let renderer = UIGraphicsImageRenderer(size: size)
-            return renderer.image { context in
-                self.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+    func addImageCentered(
+        _ overlayImage: UIImage,
+        overlaySize: CGSize,
+        borderWidth: CGFloat,
+        borderColor: UIColor
+    ) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            self.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
 
-                let xPosition = (size.width - overlaySize.width) / 2
-                let yPosition = (size.height - overlaySize.height) / 2
+            let xPosition = (size.width - overlaySize.width) / 2
+            let yPosition = (size.height - overlaySize.height) / 2
 
-                let borderRect = CGRect(
-                    x: xPosition - borderWidth,
-                    y: yPosition - borderWidth,
-                    width: overlaySize.width + 2 * borderWidth,
-                    height: overlaySize.height + 2 * borderWidth
-                )
-                borderColor.setFill()
-                context.cgContext.fill(borderRect)
+            let borderRect = CGRect(
+                x: xPosition - borderWidth,
+                y: yPosition - borderWidth,
+                width: overlaySize.width + 2 * borderWidth,
+                height: overlaySize.height + 2 * borderWidth
+            )
+            borderColor.setFill()
+            context.cgContext.fill(borderRect)
 
-                overlayImage.draw(in: CGRect(
-                    x: xPosition,
-                    y: yPosition,
-                    width: overlaySize.width,
-                    height: overlaySize.height
-                ))
-            }
+            overlayImage.draw(in: CGRect(
+                x: xPosition,
+                y: yPosition,
+                width: overlaySize.width,
+                height: overlaySize.height
+            ))
         }
-
     }
-#endif
+
+}

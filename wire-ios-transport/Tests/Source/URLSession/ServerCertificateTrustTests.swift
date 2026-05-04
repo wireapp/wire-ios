@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ final class BackendTrustProviderTests: XCTestCase {
 
         guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json")
         else { XCTFail("Could find certificates.json"); return }
-        guard let trustDataURL = backendBundle.url(forResource: "production", withExtension: "json")
+        guard let trustDataURL = backendBundle.url(forResource: "default", withExtension: "json")
         else { XCTFail("Could find trust_data.json"); return }
 
         do {

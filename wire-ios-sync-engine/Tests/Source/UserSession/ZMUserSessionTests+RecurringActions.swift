@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,54 +60,73 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
     }
 
-    func testUpdatesUsersMissingMetadataAction() {
-        syncMOC.performAndWait {
-            // Given
-            let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-            syncMOC.saveOrRollback()
-            let action = sut.refreshUsersMissingMetadataAction
+    func testUpdatesUsersMissingMetadataAction() async {
+        // Given
+        let otherUser = await syncMOC.perform {
+            let user = self.createUserIsPendingMetadataRefresh(
+                moc: self.syncMOC,
+                domain: UUID().uuidString
+            )
+            self.syncMOC.saveOrRollback()
+            return user
+        }
 
-            // When
-            action()
-            syncMOC.refreshAllObjects()
+        let action = sut.refreshUsersMissingMetadataAction
 
-            // Then
+        // When
+        await action()
+
+        // Then
+        await syncMOC.perform {
             XCTAssertEqual(action.interval, 3 * .oneHour)
             XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
         }
     }
 
-    func testThatItUpdatesConversationsMissingMetadata() {
-        syncMOC.performAndWait {
+    func testThatItUpdatesConversationsMissingMetadata() async {
+        let conversation = await syncMOC.perform {
             // Given
-            let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
-            syncMOC.saveOrRollback()
-            let action = sut.refreshConversationsMissingMetadataAction
+            let conversation = self.createConversationIsPendingMetadataRefresh(
+                moc: self.syncMOC,
+                domain: UUID().uuidString
+            )
+            self.syncMOC.saveOrRollback()
+            return conversation
+        }
 
-            // When
-            action()
-            syncMOC.refreshAllObjects()
+        let action = sut.refreshConversationsMissingMetadataAction
 
-            // Then
+        // When
+        await action()
+
+        // Then
+        await syncMOC.perform {
             XCTAssertEqual(action.interval, 3 * .oneHour)
             XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
         }
     }
 
-    func testTeamMetadataIsUpdated() {
+    func testTeamMetadataIsUpdated() async {
         // Given
-        let membership = Member.insertNewObject(in: uiMOC)
-        membership.user = .selfUser(in: uiMOC)
-        membership.team = .init(context: uiMOC)
-        membership.user?.teamIdentifier = membership.team?.remoteIdentifier
+        let membership = await syncMOC.perform {
+            let membership = Member.insertNewObject(in: self.syncMOC)
+            membership.user = .selfUser(in: self.syncMOC)
+            membership.team = .init(context: self.syncMOC)
+            membership.user?.teamIdentifier = membership.team?.remoteIdentifier
+            self.syncMOC.saveOrRollback()
+            return membership
+        }
+
         let action = sut.refreshTeamMetadataAction
 
         // When
-        action()
+        await action()
 
         // Then
-        XCTAssertEqual(action.interval, .oneDay)
-        XCTAssertEqual(membership.team?.needsToBeUpdatedFromBackend, true)
+        await syncMOC.perform {
+            XCTAssertEqual(action.interval, .oneDay)
+            XCTAssertEqual(membership.team?.needsToBeUpdatedFromBackend, true)
+        }
     }
 
     // MARK: - Helpers

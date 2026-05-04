@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConnectionsRepositoryTests: XCTestCase {
 
@@ -56,7 +56,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
-            WireAPI.PayloadPager.Page(
+            WireNetwork.PayloadPager.Page(
                 element: [connection],
                 hasMore: false,
                 nextStart: "first"
@@ -90,17 +90,17 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = WireAPI.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
-        static let member2ID = WireAPI.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
+        static let member1ID = WireNetwork.QualifiedID(id: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireNetwork.QualifiedID(id: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 
-        static let connection = WireAPI.Connection(
-            senderID: Scaffolding.member1ID.uuid,
-            receiverID: Scaffolding.member2ID.uuid,
+        static let connection = WireNetwork.Connection(
+            senderID: Scaffolding.member1ID.id,
+            receiverID: Scaffolding.member2ID.id,
             receiverQualifiedID: Scaffolding.member2ID,
-            conversationID: Scaffolding.conversationID.uuid,
+            conversationID: Scaffolding.conversationID.id,
             qualifiedConversationID: Scaffolding.conversationID,
             lastUpdate: Scaffolding.lastUpdate,
             status: Scaffolding.connectionStatus

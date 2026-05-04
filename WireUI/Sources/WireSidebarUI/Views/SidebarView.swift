@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
@@ -26,6 +26,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
+    public var showUnreadFilters: Bool
+    public var showMeetings: Bool
+    public var showFiles: Bool
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
@@ -42,6 +45,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     public init(
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
+        showUnreadFilters: Bool,
+        showMeetings: Bool,
+        showFiles: Bool,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         supportAction: @escaping () -> Void,
@@ -50,6 +56,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
+        self.showUnreadFilters = showUnreadFilters
+        self.showMeetings = showMeetings
+        self.showFiles = showFiles
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
         self.supportAction = supportAction
@@ -115,17 +124,36 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader(Strings.ConversationFilter.title, addTopPadding: false)
-            let conversationFilters: [SidebarSelectableMenuItem] = [
-                .all,
-                .favorites,
-                .groups,
-                .channels,
-                .oneOnOne,
-                .folders,
-                .archive
-            ]
-            ForEach(conversationFilters, id: \.self) { conversationFilter in
-                selectableMenuItem(conversationFilter)
+
+            // Core filters
+            selectableMenuItem(.all)
+            selectableMenuItem(.favorites)
+            selectableMenuItem(.groups)
+            selectableMenuItem(.channels)
+            selectableMenuItem(.oneOnOne)
+
+            // Conditional unread filters
+            if showUnreadFilters {
+                selectableMenuItem(.unread)
+                selectableMenuItem(.mentions)
+                selectableMenuItem(.replies)
+                selectableMenuItem(.drafts)
+            }
+
+            // Additional filters
+            selectableMenuItem(.folders)
+            selectableMenuItem(.archive)
+
+            // Meetings
+            if showMeetings {
+                menuItemHeader(Strings.Meetings.title, addTopPadding: false)
+                selectableMenuItem(.meetings)
+            }
+
+            // Files
+            if showFiles {
+                menuItemHeader(Strings.Files.title, addTopPadding: false)
+                selectableMenuItem(.files)
             }
         }
         .padding(.horizontal, 16)
@@ -135,7 +163,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private func menuItemHeader(_ title: String, addTopPadding: Bool = true) -> some View {
         let text = Text(title)
             .foregroundStyle(menuHeaderForegroundColor)
-            .wireTextStyle(.h2)
+            .font(for: .h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
             .accessibilityAddTraits(.isHeader)
@@ -166,7 +194,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text.wireTextStyle(.body1) },
+            title: { text.font(for: .body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )
@@ -218,6 +246,30 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "person"
             accessibilityLabel = Text(Labels.ConversationFilter.OneOnOneConversations.description)
 
+        case .unread:
+            text = Text(Strings.ConversationFilter.Unread.title)
+            icon = "1.square"
+            iconHighlighted = "1.square.fill"
+            accessibilityLabel = Text(Labels.ConversationFilter.Unread.description)
+
+        case .mentions:
+            text = Text(Strings.ConversationFilter.Mentions.title)
+            icon = "at"
+            iconHighlighted = "at"
+            accessibilityLabel = Text(Labels.ConversationFilter.Mentions.description)
+
+        case .replies:
+            text = Text(Strings.ConversationFilter.Replies.title)
+            icon = "arrowshape.turn.up.left"
+            iconHighlighted = "arrowshape.turn.up.left"
+            accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
+
+        case .drafts:
+            text = Text(Strings.ConversationFilter.Drafts.title)
+            icon = "pencil.and.ellipsis.rectangle"
+            iconHighlighted = "pencil.and.ellipsis.rectangle.fill"
+            accessibilityLabel = Text(Labels.ConversationFilter.Drafts.description)
+
         case .folders:
             text = Text(Strings.ConversationFilter.Folders.title)
             icon = "folder"
@@ -227,6 +279,16 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.ConversationFilter.Archived.title)
             icon = "archivebox"
             accessibilityLabel = Text(Strings.ConversationFilter.Archived.title)
+
+        case .meetings:
+            text = Text(Strings.Meetings.AllMeetings.title)
+            icon = "video"
+            accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
+
+        case .files:
+            text = Text(Strings.Files.AllFiles.title)
+            icon = "rectangle.stack"
+            accessibilityLabel = Text(Strings.Files.AllFiles.title)
 
         case .settings:
             text = Text(Strings.Settings.title)
@@ -240,7 +302,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
-            title: { text.wireTextStyle(.body1) },
+            title: { text.font(for: .body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )

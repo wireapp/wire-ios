@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 @implementation ZMAbstractRequestStrategy
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext applicationStatus:(id<ZMApplicationStatus>)applicationStatus
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+                           applicationStatus:(id<ZMApplicationStatus>)applicationStatus
 {
     self = [super init];
     
@@ -45,7 +46,9 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 - (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
 {
-    if ([self configuration:self.configuration isSubsetOfPrerequisites:[AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus]]) {
+    ZMStrategyConfigurationOption options = [AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus];
+
+    if ([self configuration:self.configuration isSubsetOfPrerequisites:options]) {
         return [self nextRequestIfAllowedForAPIVersion:apiVersion];
     }
     
@@ -56,7 +59,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 {
     ZMStrategyConfigurationOption option = 0;
     
-    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsDuringQuickSync; index++) {
+    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsWhileOnline; index++) {
         option = 1 << index;
         
         if ((prerequisites & option) == option && (configuration & option) != option) {

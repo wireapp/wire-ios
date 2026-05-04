@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,38 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(UIKit)
-    public import UIKit
+public import UIKit
 
-    /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
-    public struct DeviceWrapper {
+/// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
+public struct DeviceWrapper {
 
-        var device: UIDevice
+    var device: UIDevice
 
-        public init(device: UIDevice) {
-            self.device = device
-        }
+    public init(device: UIDevice) {
+        self.device = device
+    }
+}
+
+extension DeviceWrapper: DeviceAbstraction {
+
+    public var userInterfaceIdiom: UIUserInterfaceIdiom {
+        device.userInterfaceIdiom
     }
 
-    extension DeviceWrapper: DeviceAbstraction {
-
-        public var userInterfaceIdiom: UIUserInterfaceIdiom {
-            device.userInterfaceIdiom
-        }
-
-        public var orientation: UIDeviceOrientation {
-            device.orientation
-        }
-
-        public var model: String {
-            device.model
-        }
+    public var orientation: UIDeviceOrientation {
+        device.orientation
     }
 
-    public extension DeviceAbstraction where Self == DeviceWrapper {
-
-        static var current: Self {
-            .init(device: .current)
-        }
+    public var model: String {
+        device.model
     }
-#endif
+}
+
+public extension DeviceAbstraction where Self == DeviceWrapper {
+
+    static var current: Self {
+        .init(device: .current)
+    }
+}

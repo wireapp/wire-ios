@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,47 +22,46 @@ import WireFoundation
 struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
-        AsyncThrowingStream { continuation in
-            let task = Task<Void, Never>.detached {
-                do {
-                    let steps = 10
+        let (stream, continuation) = AsyncThrowingStream<CreateBackupProgress, any Error>
+            .makeStream(bufferingPolicy: .unbounded)
 
-                    var failAtIndex: Int?
-                    if .random() {
-                        failAtIndex = .random(in: 0 ... steps)
-                    }
+        let task = Task<Void, Never>.detached {
+            do {
+                let steps = 10
 
-                    for i in 0 ... steps {
-
-                        try Task.checkCancellation()
-
-                        if i == failAtIndex {
-                            throw PreviewExportBackupError()
-                        }
-
-                        continuation.yield(.progress(i, steps))
-
-                        try await Task.sleep(for: .milliseconds(.random(in: 50 ... 300)))
-                    }
-
-                    let fileURL = URL(fileURLWithPath: "/path/to/final/backup.zip")
-                    continuation.yield(.done(fileURL))
-                    continuation.finish()
-
-                } catch {
-                    continuation.finish(throwing: error)
+                var failAtIndex: Int?
+                if .random() {
+                    failAtIndex = .random(in: 0 ... steps)
                 }
-            }
-            continuation.onTermination = { _ in
-                task.cancel()
+
+                for i in 0 ... steps {
+
+                    try Task.checkCancellation()
+
+                    if i == failAtIndex {
+                        throw PreviewExportBackupError()
+                    }
+
+                    continuation.yield(.progress(i, steps))
+
+                    try await Task.sleep(for: .milliseconds(.random(in: 50 ... 300)))
+                }
+
+                let fileURL = URL(fileURLWithPath: "/path/to/final/backup.zip")
+                continuation.yield(.done(fileURL))
+                continuation.finish()
+
+            } catch {
+                continuation.finish(throwing: error)
             }
         }
+        continuation.onTermination = { _ in
+            task.cancel()
+        }
+
+        return stream
     }
 
     struct PreviewExportBackupError: Error {}
 
-}
-
-public func PreviewCreateBackupUseCase_() -> any CreateBackupUseCaseProtocol {
-    PreviewCreateBackupUseCase()
 }

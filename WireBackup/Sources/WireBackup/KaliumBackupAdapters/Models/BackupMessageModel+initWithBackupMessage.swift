@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireFoundation
 
 package extension MessageBackupModel {
 
-    package init?(_ backupMessage: BackupMessage) {
+    init?(_ backupMessage: BackupMessage) {
         guard
             let conversationID = QualifiedID(backupMessage.conversationId),
             let senderUserID = QualifiedID(backupMessage.senderUserId),

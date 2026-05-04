@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "Закрыть возможность создания команды";
 
 "conversation.backButton.description" = "Вернуться к списку бесед";
 "conversation.searchButton.description" = "Открыть поиск";
@@ -76,7 +78,7 @@
 "conversationSearch.audioMessage.description" = "Аудиосообщение";
 "conversationSearch.linkMessage.description" = "Ссылка";
 "conversationSearch.sentBy.description" = "Отправлено %@";
-"conversationSearch.fileName.description" = "Имя файла";
+"conversationSearch.fileName.description" = "Название файла";
 "conversationSearch.fileSize.description" = "Размер";
 "conversationSearch.fileType.description" = "Тип";
 
@@ -234,6 +236,10 @@
 "conversationsList.filter_menu_options.groups.description" = "Показать все групповые беседы";
 "conversationsList.filter_menu_options.channels.description" = "Показать все беседы каналов";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Показать все беседы 1:1";
+"conversationsList.filter_menu_options.unread.description" = "Показать все непрочитанные беседы";
+"conversationsList.filter_menu_options.mentions.description" = "Показать все беседы с упоминаниями";
+"conversationsList.filter_menu_options.replies.description" = "Показать все беседы с ответами";
+"conversationsList.filter_menu_options.drafts.description" = "Показать все беседы с черновиками сообщений";
 "conversationsList.filter_menu_options.folders.description" = "Папки";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "Все беседы, выбраны";
@@ -242,6 +248,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Каналы, выбраны";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Беседы один на один, выбраны";
 "conversationsList.filter_menu_options.folders.selected.description" = "Папка, выбрана";
+"conversationsList.filter_menu_options.unread.selected.description" = "Непрочитано, выбрано";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Упоминания, выбрано";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Черновики, выбрано";
+"conversationsList.filter_menu_options.replies.selected.description" = "Ответы, выбрано";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Удалить фильтр бесед";
 
@@ -324,4 +335,10 @@
 "searchGifs.gifItems_loaded.announcement" = "Загружено %@ новых GIF";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Вернуться к обзору новой беседы";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "URL провайдера идентификации";
+"webAuth.urlLabel.hint" = "Нажмите, чтобы открыть полный URL.";

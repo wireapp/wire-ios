@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
     private var sut: ConversationCallingEventNotificationBuilder!
@@ -75,7 +77,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         for callKitTestUsecase in callKitTestUsecases {
             if case .endingCall = callKitTestUsecase {
                 let mockHandle =
-                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.id.uuidString.lowercased())"
                 defaults.set([mockHandle], forKey: "knownCalls")
             }
 
@@ -124,7 +126,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         for callKitTestUsecase in callKitTestUsecases {
             if case .endingCall = callKitTestUsecase {
                 let mockHandle =
-                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.id.uuidString.lowercased())"
                 defaults.set([mockHandle], forKey: "knownCalls")
             }
 
@@ -173,7 +175,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         for callKitTestUsecase in callKitTestUsecases {
             if case .endingCall = callKitTestUsecase {
                 let mockHandle =
-                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                    "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.id.uuidString.lowercased())"
                 defaults.set([mockHandle], forKey: "knownCalls")
             }
 
@@ -264,6 +266,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -307,6 +310,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -351,6 +355,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -369,6 +374,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 accountID: .mockID1
             )
 
+            // When
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -376,6 +382,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 senderID: Scaffolding.userID
             )
 
+            // Then
             try await internalTest_assertNotificationContent(
                 try XCTUnwrap(userNotification),
                 callingTestUsecase: callingTestUsecase,
@@ -384,6 +391,45 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             )
         }
 
+    }
+
+    func testGenerateCallNotification_It_Does_Not_Generate_Notification_When_Timed_Out() async throws {
+
+        // Mock
+
+        let isGroup = false
+        let isTeam = true
+
+        await setupMock(isGroup: isGroup, isTeam: isTeam, isTimeout: true)
+        let callingContent = setupCallingContentMock(type: "SETUP")
+
+        var calling = Calling()
+        calling.content = callingContent
+
+        // When
+
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                userDefaults: defaults
+            ),
+            accountID: .mockID1
+        )
+
+        let userNotification = await sut.buildContent(
+            calling: calling,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        // Then, not display calling notification because timed out
+        XCTAssertNil(userNotification)
     }
 
     func testGenerateCallNotification_IsOneOnOne_Team_Should_Build_Notification_Returns_False() async {
@@ -407,6 +453,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         var calling = Calling()
         calling.content = unhandledCallJson
 
+        // When
+
         sut = ConversationCallingEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
@@ -427,6 +475,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             senderID: Scaffolding.userID
         )
 
+        // Then
         XCTAssertNil(userNotification)
     }
 
@@ -444,7 +493,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         }
 
         XCTAssertEqual(callKitPayload["accountID"] as! String, Scaffolding.accountID.uuidString)
-        XCTAssertEqual(callKitPayload["conversationID"] as! String, Scaffolding.conversationID.uuid.uuidString)
+        XCTAssertEqual(callKitPayload["conversationID"] as! String, Scaffolding.conversationID.id.uuidString)
 
         switch testUsecase {
         case .incomingAudioCall:
@@ -545,14 +594,13 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
-            Scaffolding.conversationID.uuid.uuidString.lowercased()
+            Scaffolding.conversationID.id.uuidString.lowercased()
         )
 
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertNil(notificationContent.userInfo["senderIDString"])
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
-
     }
 
     // MARK: - Tested use cases
@@ -639,12 +687,12 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     private func setupMock(
         isGroup: Bool,
-        isTeam: Bool
+        isTeam: Bool,
+        isTimeout: Bool = false
     ) async {
 
         defaults.set(true, forKey: "isAVSReady")
         defaults.set(true, forKey: "isCallKitAvailable")
-        defaults.set([Scaffolding.accountID.uuidString], forKey: "loadedUserSessions")
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
@@ -668,6 +716,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
         conversationLocalStore.increaseUnreadCountFor_MockMethod = { _ in }
+        conversationLocalStore.fetchServerTimeDelta_MockValue = isTimeout ? .oneHour : .oneSecond
     }
 
     private enum Scaffolding {
@@ -675,8 +724,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let accountID = UUID.mockID10
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class CollectionAudioCell: CollectionCell {
     private var containerView = UIView()
@@ -59,6 +60,10 @@ final class CollectionAudioCell: CollectionCell {
             + ", \(message.serverTimestamp?.formattedDate ?? ""), "
             + ConversationSearch.AudioMessage.description
         accessibilityHint = ConversationSearch.ItemPlay.hint
+    }
+
+    func setUserSession(userSession: UserSession) {
+        audioMessageView.setUserSession(userSession: userSession)
     }
 
     func loadView() {

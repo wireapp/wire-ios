@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,25 +19,30 @@
 public import Foundation
 public import WireLogging
 public import WireFoundation
+public import WireUtilitiesPackage
 
-public struct ImportBackupUseCase<
-    BackupLocalStore: BackupLocalStoreProtocol,
-    FileUnarchiver: FileUnarchiverProtocol
->: ImportBackupUseCaseProtocol {
+@preconcurrency import KaliumBackup
 
+public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
+
+    let url: URL
     let selfUserID: QualifiedID
-    let backupLocalStore: BackupLocalStore
-    let fileUnarchiver: FileUnarchiver
+    let backupLocalStore: any BackupLocalStoreProtocol
+    let fileUnarchiver: any FileUnarchiverProtocol
     let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
+    public let isImportDestructive = false
+
     public init(
+        url: URL,
         selfUserID: QualifiedID,
-        backupLocalStore: BackupLocalStore,
-        fileUnarchiver: FileUnarchiver,
+        backupLocalStore: any BackupLocalStoreProtocol,
+        fileUnarchiver: any FileUnarchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.url = url
         self.selfUserID = selfUserID
         self.backupLocalStore = backupLocalStore
         self.fileUnarchiver = fileUnarchiver
@@ -45,7 +50,7 @@ public struct ImportBackupUseCase<
         self.logger = logger
     }
 
-    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+    public func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { [fileUnarchiver, logger, selfUserID] in
 
@@ -83,9 +88,15 @@ public struct ImportBackupUseCase<
                     var current = 0
                     let total = usersPager.totalPages + messagesPager.totalPages
 
+                    logger.info(
+                        "Starting importing users from backup... Pages: \(usersPager.totalPages)",
+                        attributes: .safePublic
+                    )
+
                     // users
                     let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
                     while usersPager.hasMorePages() {
+                        logger.info("Importing users page \(current)/\(total)", attributes: .safePublic)
                         let backupUsers = usersPager.nextPage()
                         for current in 0 ..< backupUsers.size {
                             guard
@@ -107,26 +118,63 @@ public struct ImportBackupUseCase<
                     // Any conversation that has been left or deleted will not be restored from the backup in the first
                     // version. All other conversations where the self-user is participant will already be available.
 
+                    logger.info(
+                        "Starting importing messages from backup... Pages: \(messagesPager.totalPages)",
+                        attributes: .safePublic
+                    )
+
                     // messages
+                    var totalSuccessCount = 0
+                    var totalFailureCount = 0
                     let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
                     while messagesPager.hasMorePages() {
-                        let backupMessages = messagesPager.nextPage()
-                        for current in 0 ..< backupMessages.size {
-                            guard let backupMessage = backupMessages.get(index: current) else { continue }
+                        logger.info("Importing messages page \(current)/\(total)", attributes: .safePublic)
 
-                            if !storedMessageIDs.contains(backupMessage.id),
-                               let message = MessageBackupModel(backupMessage) {
-                                try await backupLocalStore.addMessage(message)
-                            }
+                        // Map messages from kotlin array to swift array,
+                        // filtering out messages that already exist in DB
+                        let backupMessages = mapBackupMessages(
+                            fromPage: messagesPager.nextPage(),
+                            storedMessageIDs: storedMessageIDs
+                        )
+
+                        do {
+                            let result = try await backupLocalStore.addMessages(backupMessages)
+                            let successCount = result.rehydrationCount.successCount
+                            let failureCount = backupMessages.count - successCount
+                            totalSuccessCount += successCount
+                            totalFailureCount += failureCount
+
+                            logger.info(
+                                "Page (\(current)/\(total)): Imported \(successCount) messages, \(failureCount) failed to import",
+                                attributes: .safePublic
+                            )
+
+                        } catch {
+                            // Catch and log the error but don't stop execution, as we should
+                            // still be able to continue importing the other pages
+                            logger.warn(
+                                "Page (\(current)/\(total)) import error: \(String(describing: error))",
+                                attributes: .safePublic
+                            )
                         }
+
                         try Task.checkCancellation()
                         current += 1
                         reportProgress(current, Int(exactly: total) ?? 1)
                     }
 
+                    logger.info(
+                        "Imported total of \(totalSuccessCount) messages, \(totalFailureCount) failed to import",
+                        attributes: .safePublic
+                    )
+
+                    try await backupLocalStore.refreshViewContext()
+
                     if total > 0 {
                         syncTrigger()
                     }
+
+                    logger.info("Completed backup import", attributes: .safePublic)
 
                     continuation.yield(.done)
                     continuation.finish()
@@ -144,6 +192,27 @@ public struct ImportBackupUseCase<
                 task.cancel()
             }
         }
+    }
+
+    private func mapBackupMessages(
+        fromPage page: KotlinArray<BackupMessage>,
+        storedMessageIDs: Set<UUID>
+    ) -> [MessageBackupModel] {
+        var backupMessages: [MessageBackupModel] = []
+
+        for current in 0 ..< page.size {
+            guard
+                let backupMessage = page.get(index: current),
+                let backupMessageID = UUID(uuidString: backupMessage.id)
+            else { continue }
+
+            if !storedMessageIDs.contains(backupMessageID),
+               let message = MessageBackupModel(backupMessage) {
+                backupMessages.append(message)
+            }
+        }
+
+        return backupMessages
     }
 
 }

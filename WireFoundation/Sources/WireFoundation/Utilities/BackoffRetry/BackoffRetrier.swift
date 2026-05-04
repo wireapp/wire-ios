@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(UIKit)
+import Foundation
 import Network
 import UIKit
 
@@ -25,7 +25,7 @@ public actor BackoffRetrier {
         _ seconds: Double
     ) async throws -> Void
 
-    enum Failure: Error {
+    public enum Failure: Error {
         case exceededMaxAttempts(latestError: any Error)
     }
 
@@ -36,14 +36,16 @@ public actor BackoffRetrier {
 
     public init(
         policy: BackoffRetryPolicy = .init(),
+        monitoringNetwork: Bool = true,
         sleep: @escaping SleepFunction = { delay in
             try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
         }
     ) {
         self.policy = policy
         self.sleep = sleep
-
-        setupObservers()
+        if monitoringNetwork {
+            setupObservers()
+        }
     }
 
     deinit {
@@ -111,4 +113,3 @@ public actor BackoffRetrier {
         attempt = 0
     }
 }
-#endif

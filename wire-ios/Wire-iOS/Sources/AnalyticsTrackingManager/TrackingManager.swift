@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,38 +16,53 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import avs
-import Foundation
-import WireCommonComponents
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
-final class TrackingManager: NSObject, TrackingInterface {
+struct TrackingManager: TrackingInterface {
 
     private let sessionManager: SessionManager
-    private var observerToken: NSObjectProtocol?
+    private let availabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol
 
-    init(sessionManager: SessionManager) {
+    private typealias UserDefaultsKey = AnalyticsTrackingPrivateUserDefaultsKey
+    private var privateUserDefaults: PrivateUserDefaults<UserDefaultsKey>? {
+        sessionManager.accountManager.selectedAccount.map { selectedAccount in
+            PrivateUserDefaults<UserDefaultsKey>(
+                userID: selectedAccount.userIdentifier,
+                storage: UserDefaults.standard
+            )
+        }
+    }
+
+    init(
+        sessionManager: SessionManager,
+        availabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol
+    ) {
         self.sessionManager = sessionManager
-        super.init()
-        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
-        self.observerToken = NotificationCenter.default.addObserver(
-            forName: FlowManager.AVSFlowManagerCreatedNotification,
-            object: nil,
-            queue: OperationQueue.main,
-            using: { [weak self] _ in
-                guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
-            }
-        )
+        self.availabilityChecker = availabilityChecker
     }
 
-    var doesUserConsentPreferenceExist: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing != nil
+    private var doesUserConsentPreferenceExist: Bool {
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool
     }
 
-    var isAnalyticsDisabled: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing ?? true
+    var isAnalyticsTrackingEnabled: Bool {
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool ?? false
+    }
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        availabilityChecker.isAnalyticsTrackingAvailable(for: domain)
+    }
+
+    func migrateAnalyticsSetupIfNeeded() async throws {
+        guard doesUserConsentPreferenceExist else { return }
+
+        if isAnalyticsTrackingEnabled {
+            try await enableAnalytics()
+        } else {
+            try disableAnalytics()
+        }
     }
 
     @MainActor
@@ -70,15 +85,13 @@ final class TrackingManager: NSObject, TrackingInterface {
     }
 
     func enableAnalytics() async throws {
-        try await sessionManager.makeEnableAnalyticsUseCase().invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = false
-        AVSFlowManager.getInstance()?.setEnableMetrics(true)
+        try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
+        privateUserDefaults?.set(true, forKey: .isAnalyticsTrackingEnabled)
     }
 
     func disableAnalytics() throws {
-        try sessionManager.makeDisableAnalyticsUseCase().invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = true
-        AVSFlowManager.getInstance()?.setEnableMetrics(false)
+        try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
+        privateUserDefaults?.set(false, forKey: .isAnalyticsTrackingEnabled)
     }
 
 }

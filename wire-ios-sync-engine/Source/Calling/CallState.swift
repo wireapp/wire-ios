@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,9 @@ public struct CallParticipant: Hashable {
     }
 
     init?(member: AVSCallMember, activeSpeakerState: ActiveSpeakerState = .inactive, context: NSManagedObjectContext) {
-        let userId = member.client.avsIdentifier
+        let userId = member.client.avsIdentifier(
+            isFederationEnabled: context.isFederationEnabled
+        )
 
         guard let user = ZMUser.fetch(with: userId.identifier, domain: userId.domain, in: context) else {
             return nil

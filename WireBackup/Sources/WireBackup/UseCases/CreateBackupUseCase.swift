@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,28 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireUtilitiesPackage
 public import WireFoundation
 public import WireLogging
 
 import Foundation
 @preconcurrency import KaliumBackup
 
-public struct CreateBackupUseCase<
-    BackupLocalStore: BackupLocalStoreProtocol,
-    FileArchiver: FileArchiverProtocol
->: CreateBackupUseCaseProtocol {
+public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     private let selfUserID: QualifiedID
-    private let backupLocalStore: BackupLocalStore
-    private let fileArchiver: FileArchiver
+    private let backupLocalStore: any BackupLocalStoreProtocol
+    private let fileArchiver: any FileArchiverProtocol
     // TODO: [WPB-14297] Try making LoggerProtocol `Sendable` (implementations might be @unchecked Sendable) and
     // then the `logger` can be injected without closure.
     private let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,
-        backupLocalStore: BackupLocalStore,
-        fileArchiver: FileArchiver,
+        backupLocalStore: any BackupLocalStoreProtocol,
+        fileArchiver: any FileArchiverProtocol,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.backupLocalStore = backupLocalStore

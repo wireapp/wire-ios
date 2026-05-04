@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
-import UIKit
-import WireAPI
-import WireConversationsAPI
-import WireConversationsUI
+import WireDesign
 import WireDomain
+import WireLocators
 import WireLogging
+import WireMessagingDomain
+import WireMessagingUI
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -31,8 +32,17 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private let userSession: UserSession
     private var values: ConversationCreationValues
 
-    private lazy var viewModel = WireConversationChannelCreationFormViewModel(
+    private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
+        channelInvitePolicy: .admins,
+        channelHistoryOption: .off,
+        areAppsSupported: values.isAppsFeatureEnabled,
+        appsAllowed: true,
+        guestsAllowed: true,
+        readReceiptsEnabled: true,
+        isUserPremium: userSession.isEnterpriseUser,
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
+        teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
                 self?.onFormValidityUpdate(formIsValid: formIsValid)
@@ -42,23 +52,28 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<WireConversationChannelCreationForm> = {
-        let rootView = WireConversationChannelCreationForm(
+    private lazy var hostingController: UIHostingController<some View> = UIHostingController(
+        rootView: ConversationChannelCreationForm(
             viewModel: viewModel
-        )
-        return UIHostingController(rootView: rootView)
-    }()
+        ).environment(\.wireAccentColor, userSession.selfUser.wireAccentColor)
+    )
 
-    @MainActor var channelCreationSettings: WireConversationChannelCreationSettings? {
+    @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
     }
 
     init(
-        userSession: UserSession
-    ) {
+        userSession: UserSession,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    ) async {
         self.userSession = userSession
+        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+            .isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         self.values = ConversationCreationValues(
             isChannel: true,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -109,7 +124,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
                 attemptToProceedToParticipants()
             }
         )
-        nextButton.accessibilityIdentifier = "button.newchannel.next"
+        nextButton.accessibilityIdentifier = Locators.CreateChannelPage.newChannelNextButton.rawValue
         navigationItem.rightBarButtonItem = nextButton
         nextButton.isEnabled = viewModel.isFormValid
     }
@@ -124,24 +139,28 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     @MainActor
     func attemptToProceedToParticipants() {
-        guard let channelCreationSettings else {
-            return
-        }
-
-        guard !channelCreationSettings.channelName.isEmpty else {
-            return
-        }
+        guard
+            let channelCreationSettings,
+            !channelCreationSettings.channelName.isEmpty
+        else { return }
 
         values.name = channelCreationSettings.channelName
         values.allowGuests = channelCreationSettings.guestsAllowed
-        values.allowServices = channelCreationSettings.servicesAllowed
+        values.allowApps = channelCreationSettings.appsAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
+        values.channelHistoryDepth = channelCreationSettings.historyDepth
+        values.enableFileManagement = channelCreationSettings.fileManagementEnabled
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
-
+        guard let participantsController else {
+            WireLogger.ui.error("failed to proceed to participants, VC is nil", attributes: .safePublic)
+            return
+        }
         participantsController.conversationCreationDelegate = self
         navigationController?.pushViewController(participantsController, animated: true)
     }
@@ -201,30 +220,26 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
+        guard let channelUseCase = session.createChannelUseCase else {
+            return
+        }
 
-        let context = session.syncContext
-
-        let channelUseCase = makeCreateChannelUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
-        )
-
-        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
+            allowApps: values.isAppsFeatureEnabled ? values.allowApps : false
         ).compactMap {
-            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
+            $0.toNetworkModel()
         }
+
+        let channelHistoryDepth = values.channelHistoryDepth
 
         do {
             let conversation = try await channelUseCase.invoke(
                 teamID: teamID,
                 name: values.name,
+                historyDepth: channelHistoryDepth,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
@@ -268,42 +283,6 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
 }
 
 private extension WireConversationChannelCreationFormViewController {
-    func makeCreateChannelUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
-        context: NSManagedObjectContext
-    ) -> any CreateChannelUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(
-            context: context
-        )
-
-        let userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
-
-        let store = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let mlsService = context.performAndWait {
-            context.mlsService
-        }
-
-        return CreateChannelUseCase(
-            api: conversationsAPI,
-            store: store,
-            mlsService: mlsService,
-            context: context,
-            isFederationEnabled: BackendInfo.isFederationEnabled
-        )
-    }
 
     private func showGenericErrorAlert() {
         typealias ConnectionError = L10n.Localizable.Error.Connection

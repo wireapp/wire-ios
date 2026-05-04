@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -39,8 +40,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationImagesViewController! = nil
-    private var navigatorController: UINavigationController! = nil
+    private var sut: ConversationImagesViewController!
+    private var navigatorController: UINavigationController!
     private var userSession: UserSessionMock!
     private var mockMainCoordinator: AnyMainCoordinator!
 
@@ -50,18 +51,16 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     @MainActor
     override func setUp() async throws {
+        try await super.setUp()
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
-    }
-
-    override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
 
-        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
-        let initialMessage = try! otherUserConversation.appendImage(from: image.imageData!)
+        let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").imageData)
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData)
+        let initialMessage = try otherUserConversation.appendImage(image, nonce: UUID())
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
         let collection = MockCollection(messages: [imagesCategoryMatch: [initialMessage]])
         let delegate = AssetCollectionMulticastDelegate()
@@ -79,7 +78,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             inverse: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)

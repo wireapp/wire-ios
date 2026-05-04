@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "2C631B29-3F1D-4D35-B5C6-A01421CB9FA6",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireData",
+        "identifier" : "WireDataTests",
+        "name" : "WireDataTests"
+      }
+    }
+  ],
+  "version" : 1
+}

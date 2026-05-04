@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,9 @@ public enum WireCallCenterV3Factory {
         clientId: String,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) -> WireCallCenterV3 {
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
@@ -56,7 +58,9 @@ public enum WireCallCenterV3Factory {
                 uiMOC: uiMOC,
                 flowManager: flowManager,
                 transport: transport,
-                notificationCenter: notificationCenter
+                notificationCenter: notificationCenter,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

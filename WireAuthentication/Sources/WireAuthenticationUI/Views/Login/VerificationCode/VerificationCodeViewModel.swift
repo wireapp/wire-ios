@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
@@ -107,7 +108,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             if let proxyCredentials {
-                try submitProxyCredentials(proxyCredentials)
+                try await submitProxyCredentials(proxyCredentials)
             }
 
             let verificationCode = code.joined()
@@ -152,7 +153,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             if let proxyCredentials {
-                try submitProxyCredentials(proxyCredentials)
+                try await submitProxyCredentials(proxyCredentials)
             }
 
             try await resendVerificationCode(email: email)
@@ -174,9 +175,9 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) async throws {
         let useCase = factory.submitProxyCredentialsUseCase()
-        try useCase.invoke(proxyCredentials: proxyCredentials)
+        try await useCase.invoke(proxyCredentials: proxyCredentials)
     }
 
     private func logIn(verificationCode: String) async throws -> ([HTTPCookie], AccessToken) {
