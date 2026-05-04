@@ -351,7 +351,7 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
-        guard networkMonitor.currentStatus != nil else { return  }
+        guard networkMonitor.currentStatus != nil else { return }
 
         cancelLoad()
         state = refreshing ? state : .loading

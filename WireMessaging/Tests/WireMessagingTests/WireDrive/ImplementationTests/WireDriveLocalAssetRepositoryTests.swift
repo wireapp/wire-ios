@@ -441,15 +441,3 @@ final class WireDriveLocalAssetRepositoryTests {
     }
 
 }
-
-// MARK: - Helper Extensions
-
-extension Task where Success == (URL, URLResponse), Failure == any Error {
-
-    static func fixture() -> Task {
-        Task {
-            (URL(string: "https://example.com/file")!, URLResponse())
-        }
-    }
-
-}
