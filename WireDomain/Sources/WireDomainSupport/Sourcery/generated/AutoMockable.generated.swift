@@ -135,24 +135,44 @@ public class MockConversationLabelsLocalStoreProtocol: ConversationLabelsLocalSt
     public init() {}
 
 
-    // MARK: - setLabels
+    // MARK: - storeLabel
 
-    public var setLabels_Invocations: [[ConversationLabelInfo]] = []
-    public var setLabels_MockError: Error?
-    public var setLabels_MockMethod: (([ConversationLabelInfo]) async throws -> Void)?
+    public var storeLabel_Invocations: [ConversationLabelInfo] = []
+    public var storeLabel_MockError: Error?
+    public var storeLabel_MockMethod: ((ConversationLabelInfo) async throws -> Void)?
 
-    public func setLabels(_ labels: [ConversationLabelInfo]) async throws {
-        setLabels_Invocations.append(labels)
+    public func storeLabel(_ conversationLabel: ConversationLabelInfo) async throws {
+        storeLabel_Invocations.append(conversationLabel)
 
-        if let error = setLabels_MockError {
+        if let error = storeLabel_MockError {
             throw error
         }
 
-        guard let mock = setLabels_MockMethod else {
-            fatalError("no mock for `setLabels`")
+        guard let mock = storeLabel_MockMethod else {
+            fatalError("no mock for `storeLabel`")
         }
 
-        try await mock(labels)
+        try await mock(conversationLabel)
+    }
+
+    // MARK: - deleteOldLabelsLocally
+
+    public var deleteOldLabelsLocallyExcludedLabels_Invocations: [[ConversationLabelInfo]] = []
+    public var deleteOldLabelsLocallyExcludedLabels_MockError: Error?
+    public var deleteOldLabelsLocallyExcludedLabels_MockMethod: (([ConversationLabelInfo]) async throws -> Void)?
+
+    public func deleteOldLabelsLocally(excludedLabels: [ConversationLabelInfo]) async throws {
+        deleteOldLabelsLocallyExcludedLabels_Invocations.append(excludedLabels)
+
+        if let error = deleteOldLabelsLocallyExcludedLabels_MockError {
+            throw error
+        }
+
+        guard let mock = deleteOldLabelsLocallyExcludedLabels_MockMethod else {
+            fatalError("no mock for `deleteOldLabelsLocallyExcludedLabels`")
+        }
+
+        try await mock(excludedLabels)
     }
 
 }

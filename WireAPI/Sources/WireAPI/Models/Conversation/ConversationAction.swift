@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents the actions that ca be performed in a conversation.
 
-public enum ConversationAction: Hashable, Sendable {
+public enum ConversationAction: Hashable {
 
     /// The action of adding a new member to a conversation.
 

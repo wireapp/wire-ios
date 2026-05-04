@@ -18,30 +18,25 @@
 
 import WireDataModel
 
-public struct Conversation: Equatable {
+public struct Conversation {
 
-    struct Members: Equatable {
+    struct Members {
         let others: [Member]
         let selfMember: Member
 
-        struct Member: Equatable {
+        struct Member {
             let qualifiedID: QualifiedID?
             let id: UUID?
             let qualifiedTarget: QualifiedID?
             let target: UUID?
             let conversationRole: String?
-            let service: Service?
+            let service: (id: UUID, provider: UUID)?
             let archived: Bool?
             let archivedReference: Date?
             let hidden: Bool?
             let hiddenReference: String?
             let mutedStatus: Int?
             let mutedReference: Date?
-
-            struct Service: Equatable {
-                let id: UUID
-                let provider: UUID
-            }
         }
     }
 

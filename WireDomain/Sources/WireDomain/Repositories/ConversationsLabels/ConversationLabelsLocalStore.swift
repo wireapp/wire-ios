@@ -22,16 +22,20 @@ import WireLogging
 // sourcery: AutoMockable
 public protocol ConversationLabelsLocalStoreProtocol {
 
-    /// Stores the label and updates conversation relationships in
-    /// the local storage.
-    ///
-    /// After this method is invoked, only the given labels exist
-    /// in the local storage, i.e all old labels will be deleted.
-    ///
-    /// - Parameter labels: The labels to store.
+    /// Save label and related conversations objects to local storage.
+    /// - Parameter conversationLabel: conversation label info
 
-    func setLabels(_ labels: [ConversationLabelInfo]) async throws
+    func storeLabel(
+        _ conversationLabel: ConversationLabelInfo
+    ) async throws
 
+    /// Delete old `folder` labels and related conversations objects from local storage.
+    /// - Parameter excludedLabels: remote labels that should be excluded from deletion.
+    /// - Only old labels of type `folder` are deleted, `favorite` labels always remain in the local storage.
+
+    func deleteOldLabelsLocally(
+        excludedLabels: [ConversationLabelInfo]
+    ) async throws
 }
 
 public final class ConversationLabelsLocalStore: ConversationLabelsLocalStoreProtocol {
@@ -57,17 +61,10 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
 
     // MARK: - Public
 
-    public func setLabels(
-        _ labels: [ConversationLabelInfo]
-    ) async throws {
-        for label in labels {
-            try await storeLabel(label)
-        }
+    /// Save label and related conversations objects to local storage.
+    /// - Parameter conversationLabel: conversation label
 
-        try await deleteOldLabelsLocally(excludedLabels: labels)
-    }
-
-    private func storeLabel(
+    public func storeLabel(
         _ conversationLabel: ConversationLabelInfo
     ) async throws {
         try await context.perform { [context] in
@@ -106,7 +103,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
         }
     }
 
-    private func deleteOldLabelsLocally(
+    public func deleteOldLabelsLocally(
         excludedLabels: [ConversationLabelInfo]
     ) async throws {
         try await context.perform { [self] in

@@ -171,9 +171,6 @@ public final class UserRepository: UserRepositoryProtocol {
     private let conversationRepository: any ConversationRepositoryProtocol
     private let userLocalStore: any UserLocalStoreProtocol
 
-    private let pullSelfUserSync: PullSelfUserSync
-    private let pullKnownUsersSync: PullKnownUsersSync
-
     // MARK: - Object lifecycle
 
     public init(
@@ -188,20 +185,16 @@ public final class UserRepository: UserRepositoryProtocol {
         self.conversationLabelsRepository = conversationLabelsRepository
         self.conversationRepository = conversationRepository
         self.userLocalStore = userLocalStore
-        self.pullSelfUserSync = PullSelfUserSync(
-            api: selfUserAPI,
-            store: userLocalStore
-        )
-        self.pullKnownUsersSync = PullKnownUsersSync(
-            api: usersAPI,
-            store: userLocalStore
-        )
     }
 
     // MARK: - Public
 
     public func pullSelfUser() async throws {
-        try await pullSelfUserSync.pull()
+        let selfUser = try await selfUserAPI.getSelfUser()
+
+        await userLocalStore.persistUser(
+            userInfo: selfUser.toDomainModel()
+        )
     }
 
     public func fetchSelfUser() async -> ZMUser {
@@ -235,7 +228,15 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func pullKnownUsers() async throws {
-        try await pullKnownUsersSync.pull()
+        let knownUserIDs: [WireDataModel.QualifiedID]
+
+        do {
+            knownUserIDs = try await userLocalStore.fetchUsersQualifiedIDs()
+        } catch {
+            throw UserRepositoryError.failedToCollectKnownUsers(error)
+        }
+
+        try await pullUsers(userIDs: knownUserIDs)
     }
 
     public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {

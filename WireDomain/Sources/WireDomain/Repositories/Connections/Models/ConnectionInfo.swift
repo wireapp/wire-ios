@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct ConnectionInfo: Equatable, Sendable {
+public struct ConnectionInfo: Sendable {
     public let senderID: UUID?
     public let receiverID: UUID?
     public let receiverQualifiedID: WireDataModel.QualifiedID?

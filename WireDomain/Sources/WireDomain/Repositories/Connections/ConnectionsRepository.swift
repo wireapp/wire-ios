@@ -49,8 +49,6 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     private let connectionsAPI: any ConnectionsAPI
     private let connectionsLocalStore: any ConnectionsLocalStoreProtocol
 
-    private let pullUserConnectionsSync: PullUserConnectionsSync
-
     // MARK: - Object lifecycle
 
     init(
@@ -59,10 +57,6 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     ) {
         self.connectionsAPI = connectionsAPI
         self.connectionsLocalStore = connectionsLocalStore
-        self.pullUserConnectionsSync = PullUserConnectionsSync(
-            api: connectionsAPI,
-            store: connectionsLocalStore
-        )
     }
 
     // MARK: - Public
@@ -70,7 +64,17 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     /// Retrieve from backend and store connections locally
 
     public func pullConnections() async throws {
-        try await pullUserConnectionsSync.pull()
+        let connectionsPager = try await connectionsAPI.getConnections()
+
+        for try await connections in connectionsPager {
+            await withThrowingTaskGroup(of: Void.self) { taskGroup in
+                for connection in connections {
+                    taskGroup.addTask {
+                        try await connectionsLocalStore.storeConnection(connection.toDomainModel())
+                    }
+                }
+            }
+        }
     }
 
     public func updateConnection(

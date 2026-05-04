@@ -60,14 +60,14 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testSetLabels_Given_Local_Store_Empty_It_Creates_Label_Locally() async throws {
+    func testStoreLabel_Given_Local_Store_Empty_It_Creates_Label_Locally() async throws {
         // Mock
 
         let conversationLabel = Scaffolding.conversationLabel1
 
         // When
 
-        try await sut.setLabels([conversationLabel])
+        try await sut.storeLabel(conversationLabel)
 
         // Then
 
@@ -79,7 +79,7 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testSetLabels_Given_Label_Exist_Locally_It_Updates_Label_Name() async throws {
+    func testStoreLabel_Given_Label_Exist_Locally_It_Updates_Label_Name() async throws {
         // Mock
 
         let label = await context.perform { [context] in
@@ -99,7 +99,9 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.setLabels([Scaffolding.updatedConversationLabel1])
+        try await sut.storeLabel(
+            Scaffolding.updatedConversationLabel1
+        )
 
         // Then
 
@@ -108,7 +110,7 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testSetLabels_Given_Label_Exist_Locally_It_Updates_Label_Conversations() async throws {
+    func testStoreLabel_Given_Label_Exist_Locally_It_Updates_Label_Conversations() async throws {
         // Mock
 
         _ = await context.perform { [self] in
@@ -134,7 +136,7 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.setLabels([Scaffolding.conversationLabel1])
+        try await sut.storeLabel(Scaffolding.conversationLabel1)
 
         // Then
 
@@ -152,7 +154,7 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testSetLabels_Given_Old_Folder_Label_Exist_Locally_It_Removes_Old_Folder() async throws {
+    func testDeleteOldLabelsLocally_Given_Old_Folder_Label_Exist_Locally_It_Removes_Old_Folder() async throws {
         // Mock
 
         _ = await context.perform { [context] in
@@ -173,24 +175,20 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.setLabels([Scaffolding.conversationLabel2, Scaffolding.conversationLabel3])
+        try await sut.deleteOldLabelsLocally(
+            excludedLabels: [Scaffolding.conversationLabel2, Scaffolding.conversationLabel3]
+        )
 
         // Then
 
         try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let results = try context.fetch(fetchRequest)
-            let storedIDs = results.map(\.remoteIdentifier)
-
-            // Old folder was removed locally
-            XCTAssertEqual(storedIDs, [
-                Scaffolding.conversationLabel2.id,
-                Scaffolding.conversationLabel3.id
-            ])
+            XCTAssertEqual(results.isEmpty, true) // Old folder was removed locally
         }
     }
 
-    func testSetLabels_Given_Favorite_Label_Exists_Locally_It_Doesnt_Remove_Favorite_Label() async throws {
+    func testDeleteOldLabelsLocally_Given_Favorite_Label_Exists_Locally_It_Doesnt_Remove_Favorite_Label() async throws {
         // Mock
 
         let existingFavoriteLabel = await context.perform { [context] in
@@ -216,7 +214,9 @@ final class ConversationLabelsLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.setLabels([Scaffolding.conversationLabel2, Scaffolding.conversationLabel3])
+        try await sut.deleteOldLabelsLocally(
+            excludedLabels: [Scaffolding.conversationLabel2, Scaffolding.conversationLabel3]
+        )
 
         // Then
 
