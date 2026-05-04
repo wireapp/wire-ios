@@ -89,7 +89,8 @@ final class GroupConversationHeaderView: UIView {
             stackView.addArrangedSubview(guestsCell)
         }
 
-        // TODO: check with Jullian if sender is same as conversation.creator
+        // TODO: [WPB-18464] the sender might need to be changed to reflect the user
+        // that changed the depth of the history, maybe it goes back to the conversation cells, not sure.
         if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
             let historyCell = ConversationChannelHistoryDepthSystemMessageCellDescription(
                 sender: conversation.creator,
