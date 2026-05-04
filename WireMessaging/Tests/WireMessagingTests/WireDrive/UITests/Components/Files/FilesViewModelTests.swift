@@ -589,7 +589,7 @@ final class FilesViewModelTests {
 
     @Test
     func testOfflineBarIsHiddenWhenItemsAreEmpty() {
-        NetworkMonitor.shared.currentStatus = .disconnected
+        networkMonitor.currentStatus = .disconnected
         sut.state = .received(items: [])
 
         #expect(sut.shouldShowOfflineBar == false)
