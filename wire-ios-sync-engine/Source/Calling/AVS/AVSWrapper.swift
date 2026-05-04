@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "calling")
 
