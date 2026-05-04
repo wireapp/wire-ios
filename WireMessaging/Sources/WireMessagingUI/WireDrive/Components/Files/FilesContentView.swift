@@ -120,6 +120,9 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                     sheetContent(navigationItem)
                 }
             )
+            .sheet(item: $viewModel.item) { item in
+                FilePreviewView(url: item.url, item: item.item)
+            }
         }
     }
 

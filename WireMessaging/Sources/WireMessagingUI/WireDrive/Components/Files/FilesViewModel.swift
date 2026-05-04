@@ -279,6 +279,16 @@ package final class FilesViewModel: ObservableObject {
     @Published var conversations: [WireDriveConversation] = []
     @Published var connectionState: ConnectionState = .online
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
+    @Published var item: ItemPresentation?
+    
+    struct ItemPresentation: Identifiable {
+        let item: FilesViewItem
+        let url: URL
+        
+        var id: UUID {
+            item.id
+        }
+    }
 
     private var selfUserID: String? {
         conversations
@@ -569,7 +579,7 @@ package final class FilesViewModel: ObservableObject {
                 _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
                 let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
-                viewingURL = url
+                self.item = .init(item: item, url: url)
             case .downloading:
                 await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
             }
