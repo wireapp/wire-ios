@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,10 +64,24 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    private var meetingsUI: TabBarController.MeetingsUI! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.meetingsUI
+        case .expanded: splitViewController.meetingsUI
+        }
+    }
+
     private var settingsUI: TabBarController.SettingsUI! {
         switch mainSplitViewState {
         case .collapsed: tabBarController.settingsUI
         case .expanded: splitViewController.settingsUI
+        }
+    }
+
+    private var filesUI: TabBarController.FilesUI! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.filesUI
+        case .expanded: splitViewController.filesUI
         }
     }
 
@@ -110,6 +124,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .expanded:
             dismissArchiveIfNeeded()
             dismissSettingsIfNeeded()
+            dismissMeetingsIfNeeded()
+            dismissFilesIfNeeded()
 
             // Move the conversation list from the tab bar controller to the split view controller if needed.
             if let conversationListUI = tabBarController.conversationListUI {
@@ -159,6 +175,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
+        dismissMeetingsIfNeeded()
+        dismissFilesIfNeeded()
 
         // move the archive from the tab bar controller to the split view controller
         if let archiveUI = tabBarController.archiveUI {
@@ -180,6 +198,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
+        dismissMeetingsIfNeeded()
+        dismissFilesIfNeeded()
 
         // move the settings from the tab bar controller to the split view controller
         if let settingsUI = tabBarController.settingsUI {
@@ -190,11 +210,58 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
+    public func showMeetings() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+        tabBarController.selectedContent = .meetings
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissFilesIfNeeded()
+
+        if let meetingsUI = tabBarController.meetingsUI {
+            tabBarController.meetingsUI = nil
+            splitViewController.meetingsUI = meetingsUI
+        }
+    }
+
+    public func showFiles() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+        // switch to the files tab
+        tabBarController.selectedContent = .files
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissMeetingsIfNeeded()
+
+        // move the files from the tab bar controller to the split view controller
+        if let filesUI = tabBarController.filesUI {
+            tabBarController.filesUI = nil
+            splitViewController.filesUI = filesUI
+        }
+    }
+
     public func showConversation(
         conversation: ConversationModel,
         message: ConversationMessageModel?
     ) {
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
                 splitViewController.hideSidebar()
             }
@@ -286,9 +353,27 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    private func dismissFilesIfNeeded() {
+        // Move the files back to the tab bar controller if it's visible in the split view controller.
+        if let filesUI = splitViewController.filesUI {
+            splitViewController.filesUI = nil
+            tabBarController.filesUI = filesUI
+        }
+    }
+
     public func dismissPresentedViewController() async {
         await withCheckedContinuation { continuation in
-            splitViewController.dismiss(animated: true, completion: continuation.resume)
+            if splitViewController != nil {
+                splitViewController.dismiss(animated: true, completion: continuation.resume)
+            }
+        }
+    }
+
+    private func dismissMeetingsIfNeeded() {
+        // Move the files back to the tab bar controller if it's visible in the split view controller.
+        if let meetingsUI = splitViewController.meetingsUI {
+            splitViewController.meetingsUI = nil
+            tabBarController.meetingsUI = meetingsUI
         }
     }
 
@@ -403,8 +488,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             let mainMenuItem = MainSidebarMenuItem(conversationListUI.conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
 
+        case .files:
+            sidebar.selectedMenuItem = .init(.files)
+
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
+
+        case .meetings:
+            sidebar.selectedMenuItem = .init(.meetings)
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
@@ -441,6 +532,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.conversationUI != nil
         }
     }
+
+    public func splitViewController(
+        _ svc: UISplitViewController,
+        willChangeTo displayMode: UISplitViewController.DisplayMode
+    ) {
+        guard displayMode == .oneOverSecondary else { return }
+        splitViewController.view.endEditing(true)
+    }
 }
 
 // MARK: - MainSidebarMenuItem + MainConversationFilter
@@ -455,8 +554,18 @@ private extension MainSidebarMenuItem {
             self = .favorites
         case .groups:
             self = .groups
+        case .channels:
+            self = .channels
         case .oneOnOne:
             self = .oneOnOne
+        case .unread:
+            self = .unread
+        case .mentions:
+            self = .mentions
+        case .replies:
+            self = .replies
+        case .drafts:
+            self = .drafts
         case .folder:
             self = .folders
         }

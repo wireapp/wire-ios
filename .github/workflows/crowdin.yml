@@ -14,8 +14,9 @@ concurrency:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-24.04
-    container: swift:5.10.1
-
+    container: swift:6.1.2
+    env:
+      GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,9 +28,11 @@ jobs:
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           token: ${{ secrets.CROWDIN_API_TOKEN }}
           config: crowdin.yml
-
+          command_args: '--verbose'
+          
           upload_sources: true
           download_translations: true
+          download_translations_args: "-l ar -l da -l de -l es-ES -l et -l fi -l fr -l it -l ja -l lt -l nl -l pl -l pt-BR -l ru -l sl -l tr -l uk -l zh-CN -l zh-TW"
           upload_translations: false
           create_pull_request: false
           push_translations: true
@@ -38,11 +41,11 @@ jobs:
           github_user_name: "zenkins"
           github_user_email: "iosx@wire.com"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Trim unused localizations from string catalogs and create PR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
@@ -72,7 +75,8 @@ jobs:
           fi
 
           # abort if the pr already exists
-          apt update && apt install -y gh
+          apt update && apt install -y gh git-lfs
+          git lfs install || git lfs update --force
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
           echo "A PR already exists, aborting."

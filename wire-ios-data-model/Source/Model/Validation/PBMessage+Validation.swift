@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 public extension UUID {
 
@@ -87,32 +87,32 @@ public extension String {
 // MARK: Generic Message
 
 public extension GenericMessage {
-    func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content else { return nil }
+    func validateFields() -> Bool {
+        guard UUID.isValid(object: messageID), let content else { return false }
 
         switch content {
         case .text:
-            guard text.validatingFields() != nil else { return nil }
+            guard text.validatingFields() != nil else { return false }
         case .lastRead:
-            guard lastRead.validatingFields() != nil else { return nil }
+            guard lastRead.validatingFields() != nil else { return false }
         case .cleared:
-            guard cleared.validatingFields() != nil else { return nil }
+            guard cleared.validatingFields() != nil else { return false }
         case .hidden:
-            guard hidden.validatingFields() != nil else { return nil }
+            guard hidden.validatingFields() != nil else { return false }
         case .deleted:
-            guard deleted.validatingFields() != nil else { return nil }
+            guard deleted.validatingFields() != nil else { return false }
         case .edited:
-            guard edited.validatingFields() != nil else { return nil }
+            guard edited.validatingFields() != nil else { return false }
         case .confirmation:
-            guard confirmation.validatingFields() != nil else { return nil }
+            guard confirmation.validatingFields() != nil else { return false }
         case .reaction:
-            guard reaction.validatingFields() != nil else { return nil }
+            guard reaction.validatingFields() != nil else { return false }
         case .asset:
-            guard asset.validatingFields() != nil else { return nil }
+            guard asset.validatingFields() != nil else { return false }
         default:
             break
         }
-        return self
+        return true
     }
 }
 
@@ -136,8 +136,8 @@ public extension Quote {
 
 // MARK: Mention
 
-public extension WireProtos.Mention {
-    func validatingFields() -> WireProtos.Mention? {
+public extension GenericMessageProtocol.Mention {
+    func validatingFields() -> GenericMessageProtocol.Mention? {
         UUID.isValid(object: userID) ? self : nil
     }
 }
@@ -200,24 +200,24 @@ public extension Confirmation {
 
 // MARK: Reaction
 
-public extension WireProtos.Reaction {
-    func validatingFields() -> WireProtos.Reaction? {
+public extension GenericMessageProtocol.Reaction {
+    func validatingFields() -> GenericMessageProtocol.Reaction? {
         UUID.isValid(object: messageID) ? self : nil
     }
 }
 
 // MARK: User ID
 
-public extension WireProtos.Proteus_UserId {
-    func validatingFields() -> WireProtos.Proteus_UserId? {
+public extension GenericMessageProtocol.Proteus_UserId {
+    func validatingFields() -> GenericMessageProtocol.Proteus_UserId? {
         UUID.isValid(bytes: uuid) ? self : nil
     }
 }
 
 // MARK: - Asset
 
-public extension WireProtos.Asset {
-    func validatingFields() -> WireProtos.Asset? {
+public extension GenericMessageProtocol.Asset {
+    func validatingFields() -> GenericMessageProtocol.Asset? {
         if hasPreview, preview.hasRemote {
             guard preview.remote.validatingFields() != nil else { return nil }
         }
@@ -230,8 +230,8 @@ public extension WireProtos.Asset {
     }
 }
 
-public extension WireProtos.Asset.RemoteData {
-    func validatingFields() -> WireProtos.Asset.RemoteData? {
+public extension GenericMessageProtocol.Asset.RemoteData {
+    func validatingFields() -> GenericMessageProtocol.Asset.RemoteData? {
         guard assetID.isValidAssetID else { return nil }
         guard assetToken.isValidBearerToken else { return nil }
         return self

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,24 @@
 //
 
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 final class BackendConfigRepository: BackendConfigRepositoryProtocol {
 
     // MARK: - Properties
 
-    private let backendInfoAPI: any BackendInfoAPI
+    private let mlsAPI: any MLSAPI
     private let backendConfigLocalStore: any BackendConfigLocalStoreProtocol
     private let logger = WireLogger.mls
 
     // MARK: - Object lifecycle
 
     init(
-        backendInfoAPI: any BackendInfoAPI,
+        mlsAPI: any MLSAPI,
         backendConfigLocalStore: any BackendConfigLocalStoreProtocol
     ) {
-        self.backendInfoAPI = backendInfoAPI
+        self.mlsAPI = mlsAPI
         self.backendConfigLocalStore = backendConfigLocalStore
     }
 
@@ -42,7 +42,7 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
 
     func pullMLSBackendStatus() async {
         do {
-            let backendMLSPublicKeys = try await backendInfoAPI.getBackendMLSPublicKeys()
+            let backendMLSPublicKeys = try await mlsAPI.getBackendMLSPublicKeys()
             let hasValidKeys = backendMLSPublicKeys.removal.hasValidKey()
             backendConfigLocalStore.storeIsMLSEnabledStatus(newValue: hasValidKeys)
         } catch {

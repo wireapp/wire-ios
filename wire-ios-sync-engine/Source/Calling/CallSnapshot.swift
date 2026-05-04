@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ struct CallSnapshot {
     var qualifiedID: QualifiedID?
     var groupIDs: (parent: MLSGroupID, subconversation: MLSGroupID)?
 
+    let messageProtocol: MessageProtocol
     let callParticipants: CallParticipantsSnapshot
     let callState: CallState
     let callStarter: AVSIdentifier
@@ -53,6 +54,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -78,6 +80,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -103,6 +106,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -128,6 +132,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -157,6 +162,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -182,6 +188,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -207,6 +214,7 @@ struct CallSnapshot {
         CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
+            messageProtocol: messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,

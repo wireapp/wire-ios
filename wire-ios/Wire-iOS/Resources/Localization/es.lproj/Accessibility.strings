@@ -1,0 +1,344 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+/// Naming convention:
+///
+/// The names of all accessibility strings should follow the format:
+///
+///  "<screen>.<component>.<usage>"
+
+
+"peoplepicker.upgrade_banner.close_button.label" = "Cerrar opción de creación de equipo";
+
+"conversation.backButton.description" = "Volver a la lista de conversaciones";
+"conversation.searchButton.description" = "Abrir búsqueda";
+"conversation.profileImage.description" = "Imagen de perfil";
+"conversation.profileImage.hint" = "Doble toque para abrir el perfil";
+"conversation.titleViewForGroup.hint" = "Doble toque para abrir los detalles de la conversación";
+"conversation.titleViewForOneToOne.hint" = "Doble toque para abrir el perfil";
+"conversation.legalHoldIcon.description" = "Retención legal";
+"conversation.verifiedIcon.description" = "Verificado";
+
+"conversation.sendButton.description" = "Enviar este mensaje";
+"conversation.openFormattingButton.description" = "Abrir opciones de formato";
+"conversation.hideFormattingButton.description" = "Ocultar opciones de formato";
+"conversation.timerButton.description" = "Establecer un temporizador para los mensajes autoborrados";
+"conversation.mentionButton.description" = "Mencionar a alguien";
+"conversation.cameraButton.description" = "Tomar o seleccionar una foto";
+"conversation.sketchButton.description" = "Abrir croquis para dibujar o escribir";
+"conversation.gifButton.description" = "Seleccione un GIF";
+"conversation.audioButton.description" = "Grabar un mensaje de audio";
+"conversation.pingButton.description" = "Enviar un ping";
+"conversation.uploadFileButton.description" = "Compartir un archivo";
+"conversation.locationButton.description" = "Comparte tu ubicación";
+"conversation.videoButton.description" = "Graba un vídeo";
+"conversation.moreButton.description" = "Abrir más opciones de mensajería";
+"conversation.emphemeralButton.description" = "Establecer un temporizador para los mensajes autoborrados";
+"conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ segundos";
+"conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutos";
+"conversation.timerForSelfDeletingMessagesHour.value" = "%@ hora";
+"conversation.timerForSelfDeletingMessagesDay.value" = "%@ día";
+"conversation.timerForSelfDeletingMessagesWeek.value" = "%@ semana";
+"conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ semanas";
+
+"conversation.headerButton.description" = "Usar un encabezado";
+"conversation.boldButton.description" = "Usar texto en negrita";
+"conversation.italicButton.description" = "Usar texto en cursiva";
+"conversation.numberListButton.description" = "Usar lista de números";
+"conversation.bulletListButton.description" = "Usar lista de balas";
+"conversation.codeButton.description" = "Usar formato de código";
+"conversation.messageInfo.hint" = "Doble toque para ocultar o mostrar la información del mensaje";
+"conversation.messageOptions.hint" = "Toca tres veces para abrir opciones de mensajería";
+
+"conversationSearch.closeButton.description" = "Cerrar búsqueda";
+"conversationSearch.backButton.description" = "Volver a la búsqueda";
+"conversationSearch.imagesSection.description" = "Fotos en esta conversación";
+"conversationSearch.filesSection.description" = "Archivos en esta conversación";
+"conversationSearch.videosSection.description" = "Videos en esta conversación";
+"conversationSearch.linksSection.description" = "Enlaces en esta conversación";
+"conversationSearch.section.hint" = "Doble toque para abrir todo";
+"conversationSearch.emptyResult.description" = "Ningún resultado";
+"conversationSearch.noItems.description" = "Sin elementos en la colección";
+"conversationSearch.imageMessage.description" = "Imágen";
+"conversationSearch.videoMessage.description" = "Mensaje de video
+";
+"conversationSearch.audioMessage.description" = "Mensaje de audio";
+"conversationSearch.linkMessage.description" = "Enlace";
+"conversationSearch.sentBy.description" = "Enviado por %@";
+"conversationSearch.fileName.description" = "Nombre del archivo";
+"conversationSearch.fileSize.description" = "Tamaño";
+"conversationSearch.fileType.description" = "Tipo";
+
+"conversationSearch.item.hint" = "Doble toque para abrir";
+"conversationSearch.itemPlay.hint" = "Doble toque para jugar";
+
+"conversation.scrollToBottomButton.description" = "Desplazar hasta la parte inferior de la conversación";
+"conversation.scrollToBottomButton.hint" = "Toca para desplazarte hasta la parte inferior de la conversación";
+
+"sendLocation.address.description" = "Dirección seleccionada %@";
+"sendLocation.address.hint" = "Muestra la dirección seleccionada para el envío.";
+
+"audioRecord.stopButton.description" = "Detener grabación";
+"audioRecord.startButton.description" = "Iniciar grabación";
+"audioRecord.startButton.hint" = "Doble toque para grabar";
+"audioRecord.sendButton.description" = "Enviar";
+"audioRecord.cancelButton.description" = "Eliminar grabación de audio";
+"audioRecord.redoButton.description" = "Rehacer grabación de audio";
+"audioRecord.normalEffectButton.description" = "Normal";
+"audioRecord.heliumEffectButton.description" = "Helio";
+"audioRecord.deepVoiceEffectButton.description" = "Voz profunda";
+"audioRecord.quickEffectButton.description" = "Rápido";
+"audioRecord.hallEffectButton.description" = "Efecto Hall";
+"audioRecord.alienEffectButton.description" = "Alien";
+"audioRecord.roboticEffectButton.description" = "Robótico";
+"audioRecord.highToDeepEffectButton.description" = "De alto a profundo";
+
+"createConversation.backButton.description" = "Volver a la lista de contactos";
+
+"pictureView.closeButton.description" = "Cerrar vista de imagen";
+
+"messageAction.unlikeButton.description" = "No me gusta la imagen";
+"messageAction.likeButton.description" = "Me gusta la imagen";
+"messageAction.shareButton.description" = "Compartir imagen";
+"messageAction.sketchButton.description" = "Dibujar sobre la imagen";
+"messageAction.emojiButton.description" = "Dibujar emoji sobre la imagen";
+"messageAction.copyButton.description" = "Copiar imagen";
+"messageAction.moreButton.description" = "Abrir más opciones de mensajería";
+"messageAction.saveButton.description" = "Guardar imagen";
+"messageAction.revealButton.description" = "Mostrar en la conversación";
+"messageAction.deleteButton.description" = "Eliminar imagen";
+"messageAction.collapseButton.description" = "Contraer";
+
+"audioMessage.pause.value" = "Pausa";
+"audioMessage.play.value" = "Reproducir";
+
+"sketch.selectPictureButton.description" = "Seleccionar imagen";
+"sketch.drawButton.description" = "Dibujar o escribir";
+"sketch.drawButton.hint" = "Doble toque para activar o desactivar";
+"sketch.selectEmojiButton.description" = "Seleccionar emoji";
+"sketch.sendButton.description" = "Enviar";
+"sketch.undoButton.description" = "Deshacer el último paso";
+"sketch.closeButton.description" = "Cerrar croquis";
+
+"conversationDetails.messageTimeoutState.description" = "Seleccionado";
+"selfDeletingMessagesConversationSettings.closeButton.description" = "Cerrar ajustes para los mensajes autoborrados";
+"notificationConversationSettings.closeButton.description" = "Cerrar ajustes de notificaciones";
+"serviceConversationSettings.closeButton.description" = "Cerrar ajustes del servicio";
+"guestConversationSettings.closeButton.description" = "Cerrar configuración de invitado";
+"addParticipantsConversationSettings.closeButton.description" = "Cerrar la opción añadir participantes";
+
+"conversationDetails.optionButton.hint" = "Doble toque para abrir los ajustes";
+"conversationDetails.closeButton.description" = "Cerrar detalles de la conversación";
+"conversationDetails.moreButton.description" = "Abrir opciones de conversación";
+"conversationDetails.showParticipantsButton.hint" = "Doble toque para abrir la lista de participantes";
+"conversationDetails.participantCell.hint" = "Doble toque para abrir el perfil";
+
+"createConversation.selectedUser.hint" = "Doble toque para anular la selección";
+"createConversation.unselectedUser.hint" = "Doble toque para seleccionar";
+
+"settings.deviceCount.hint" = "%@ dispositivos en uso";
+"settings.closeButton.description" = "Cerrar ajustes";
+"settings.backButton.description" = "Volver a Ajustes";
+
+"accountSettings.backButton.description" = "Volver a Cuenta";
+
+"optionsSettings.backButton.description" = "Volver a Opciones";
+
+"advancedSettings.backButton.description" = "Volver a Avanzado";
+
+"supportSettings.backButton.description" = "Volver a Soporte";
+
+"aboutSettings.backButton.description" = "Volver a Acerca de";
+
+"developerOptionsSettings.backButton.description" = "Volver a las opciones del desarrollador";
+
+"clientsList.deviceDetails.hint" = "Doble toque para abrir los detalles del dispositivo";
+"clientsList.deviceId.description" = "ID del dispositivo";
+"clientsList.deviceName.description" = "Nombre del dispositivo";
+"clientsList.keyFingerprint.description" = "Huella digital de clave";
+"clientsList.deviceVerified.description" = "Verificado";
+"clientsList.deviceNotVerified.description" = "No verificado";
+"clientsList.backButton.description" = "Volver a la lista de dispositivos";
+
+"deviceDetails.whyVerifyFingerprint.hint" = "Toque dos veces para aprender más sobre las verificaciones";
+"deviceDetails.howToVerifyFingerprint.hint" = "Más información sobre la verificación de huella dactilar";
+"deviceDetails.verified.description" = "Dispositivo verificado";
+"deviceDetails.backButton.description" = "Volver al resumen del dispositivo";
+
+"profile.backButton.description" = "Volver a los detalles de la conversación";
+"profile.closeButton.description" = "Cerrar perfil";
+"profile.shareProfileButton.description" = "Comparte tu perfil a través de código QR o enlace";
+
+"shareProfile.closeButton.description" = "Cerrar vista de perfil compartido";
+"shareProfile.backButton.description" = "Volver a tu perfil";
+"shareProfile.qrCode.description" = "Código QR";
+
+"accountPage.availabilityStatus.description" = "Estado";
+"accountPage.availabilityStatus.hint" = "Doble toque para cambiar el estado";
+"accountPage.handle.description" = "Nombre de usuario";
+"accountPage.name.description" = "Nombre de perfil";
+"accountPage.teamName.description" = "Nombre del equipo";
+"accountPage.profilePicture.description" = "Imagen de perfil";
+"accountPage.profilePicture.hint" = "Doble toque para cambiar tu imagen";
+"accountPage.closeButton.description" = "Cerrar resumen de cuenta";
+"accountPage.backButton.description" = "Volver al resumen de la cuenta";
+
+"contactsList.guestIcon.description" = "Invitado";
+"contactsList.externalIcon.description" = "Externo";
+"contactsList.federatedIcon.description" = "Federado";
+"contactsList.memberIcon.description" = "Miembro";
+"contactsList.userCell.hint" = "Doble toque para abrir la conversación";
+"contactsList.pendingConnection.hint" = "Doble toque para abrir el perfil";
+"contactsList.cancelButton.description" = "Cerrar nuevo resumen de conversación";
+
+"servicesList.serviceCell.hint" = "Doble toque para abrir los detalles del servicio";
+
+"serviceDetails.closeButton.description" = "Cerrar detalles del servicio";
+"serviceDetails.backButton.description" = "Volver a la lista de servicios";
+
+"searchView.clearButton.description" = "Borrar";
+
+"conversationsListHeader.collapsedButton.description" = "Contraído";
+"conversationsListHeader.expandedButton.description" = "Expandido";
+
+"conversationsList.accountButton.hint" = "Doble toque para abrir perfil y ajustes";
+"conversationsList.silencedStatus.value" = "Silenciado";
+"conversationsList.mentionStatus.value" = "Has sido mencionado";
+"conversationsList.replyStatus.value" = "Responder";
+"conversationsList.badgeView.value" = "Mensajes nuevos: %d";
+"conversationsList.itemCell.hint" = "Doble toque para abrir la conversación";
+"conversationsList.itemCell.avatar.group.label" = "Grupo";
+"conversationsList.itemCell.avatar.channel.label" = "Canal";
+"conversationsList.joinButton.description" = "Entrar";
+"conversationsList.joinButton.hint" = "Toque dos veces para unirse a la llamada";
+"conversationsList.connectionRequest.description" = "Pendiente de aprobación de la solicitud de conexión";
+"conversationsList.connectionRequest.hint" = "Doble toque para abrir el perfil";
+
+"conversationList.startConversationButton.description" = "Crear un grupo o canal, o buscar gente";
+"conversationsList.filterButton.description" = "Filtrar conversaciones";
+
+"conversationsList.filter_menu_options.allConversations.description" = "Mostrar todas las conversaciones";
+"conversationsList.filter_menu_options.favorites.description" = "Mostrar todas las conversaciones favoritas";
+"conversationsList.filter_menu_options.groups.description" = "Mostrar todas las conversaciones de grupo";
+"conversationsList.filter_menu_options.channels.description" = "Mostrar todas las conversaciones de canales";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Mostrar todas las conversaciones individuales";
+"conversationsList.filter_menu_options.unread.description" = "Mostrar todas las conversaciones sin leer";
+"conversationsList.filter_menu_options.mentions.description" = "Mostrar todas las conversaciones con menciones";
+"conversationsList.filter_menu_options.replies.description" = "Mostrar todas las conversaciones con respuestas";
+"conversationsList.filter_menu_options.drafts.description" = "Mostrar todas las conversaciones con mensajes en borrador";
+"conversationsList.filter_menu_options.folders.description" = "Carpetas";
+
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Todas las conversaciones, seleccionadas";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Favoritos, seleccionados";
+"conversationsList.filter_menu_options.groups.selected.description" = "Grupos, seleccionados";
+"conversationsList.filter_menu_options.channels.selected.description" = "Canales, seleccionados";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Conversaciones individuales, seleccionadas";
+"conversationsList.filter_menu_options.folders.selected.description" = "Carpeta, seleccionada";
+"conversationsList.filter_menu_options.unread.selected.description" = "No leído, seleccionado";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Menciones, seleccionadas";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Borradores, seleccionados";
+"conversationsList.filter_menu_options.replies.selected.description" = "Respuestas, seleccionadas";
+
+
+"conversationsList.filter_view.removeButton.descritpion" = "Eliminar filtro de conversación";
+
+"conversationAnnouncement.text.description" = "Mensaje de texto recibido de %@";
+"conversationAnnouncement.picture.description" = "Imagen recibida de %@";
+"conversationAnnouncement.audio.description" = "Mensaje de audio recibido de %@";
+"conversationAnnouncement.video.description" = "Mensaje de vídeo recibido de %@";
+"conversationAnnouncement.location.description" = "%1$@ compartió una ubicación";
+"conversationAnnouncement.ping.description" = "%@ hizo ping";
+"conversationAnnouncement.file.description" = "Archivo %@ recibido de %@";
+"conversationAnnouncement.deletedMessage.description" = "%@ eliminó un mensaje";
+"conversationAnnouncement.editedMessage.description" = "%@ editó un mensaje";
+
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "todos sus dispositivos están verificados (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "todos los dispositivos tienen un certificado de identidad de extremo a extremo válido";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "todos los dispositivos están verificados (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "todos los dispositivos tienen un certificado de identidad de extremo a extremo válido";
+
+"calling.flipCameraBackButton.description" = "Voltear a la cámara trasera";
+"calling.flipCameraFrontButton.description" = "Voltear a la cámara frontal";
+"calling.videoOnButton.description" = "Activar cámara";
+"calling.videoOffButton.description" = "Desactivar cámara";
+"calling.microphoneOnButton.description" = "Activar el micrófono";
+"calling.microphoneOffButton.description" = "Apagar el micrófono";
+"calling.speakerOnButton.description" = "Activar altavoz";
+"calling.speakerOffButton.description" = "Desactivar altavoz";
+"calling.hangUpButton.description" = "Finalizar llamada";
+"calling.acceptButton.description" = "Aceptar";
+"calling.userCellFullscreen.hint" = "Toque cuádruple para pantalla completa";
+"calling.userCellMinimize.hint" = "Toque cuatro veces para minimizar la vista";
+"calling.microphoneOn.description" = "Micrófono activado";
+"calling.microphoneOff.description" = "Micrófono apagado";
+"calling.cameraOn.description" = "Cámara activada";
+"calling.cameraOff.description" = "Cámara apagada";
+"calling.activeSpeaker.description" = "Altavoz activo";
+"calling.sharesScreen.description" = "Compartir pantalla";
+"calling.swipeUpParticipants.hint" = "Doble toque para deslizar hacia arriba y ver los detalles de todos los participantes";
+"calling.swipeDownParticipants.hint" = "Doble toque para deslizar hacia abajo y ocultar los detalles del participante";
+"calling.headerBar.description" = "Minimizar vista de llamada";
+"calling.status.connecting" = "Conectando";
+
+"tabBar.item.value" = "Seleccionado";
+
+"landing.loginEnterpriseButton.description" = "Inicio de sesión con SSO";
+"tabBar.email.description" = "Iniciar sesión vía correo electrónico";
+"tabBar.phone.description" = "Iniciar sesión vía número de teléfono";
+"authentication.forgotPasswordButton.description" = "Cambia tu contraseña";
+"authentication.backButton.description" = "Volver a la pantalla de inicio";
+
+"connection.archiveButton.description" = "Archivar la conexión";
+"connection.cancelButton.description" = "Cancelar conexión";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Descartar teclado emoji";
+"reactionPicker.searchFieldPlaceholder.description" = "Buscar emoji";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Cerrar enlace de invitado seguro";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Generar contraseña";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Toca para generar una contraseña aleatoria";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Contraseña del enlace invitado";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Introduzca una nueva contraseña para el enlace de invitado seguro";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Error de validación de contraseña. Por favor, asegúrese de que la contraseña cumple con los requisitos.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirmar contraseña de enlace de invitado";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Vuelva a introducir la contraseña para la verificación";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Error de validación de contraseña. Por favor, asegúrese de que la contraseña coincide con la anterior";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Crear enlace de invitado";
+"createSecureGuestLink.CreateLinkButton.hint" = "Toca para crear un enlace de invitado seguro";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Introduzca texto para buscar GIFs";
+"searchGifs.norResultsLabel.description" = "No se encontraron GIFs";
+"searchGifs.gifItem.accessibilityHint" = "Pulsa para seleccionar este GIF";
+"searchGifs.gifItems_loaded.announcement" = "Se cargaron %@ nuevos GIFs";
+
+// MARK: - Channel Creation UI - Navigation
+
+"conversation.create.channel.back" = "Volver al nuevo resumen de la conversación";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "URL del proveedor de identidad";
+"webAuth.urlLabel.hint" = "Seleccione para abrir la URL completa.";

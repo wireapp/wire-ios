@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local team roles up to date
-/// with the remote team roles.
+import WireNetwork
 
 struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
 
@@ -34,11 +31,6 @@ struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch the team roles from remote, then create or update
-    /// them locally.
-    ///
-    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws {
         let remoteTeamRoles = try await api.getTeamRoles(for: selfTeamID)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local conversation labels up to date
-/// with the remote conversation labels.
+import WireNetwork
 
 struct PullConversationLabelsSync: PullConversationLabelsSyncProtocol {
 
@@ -34,9 +31,6 @@ struct PullConversationLabelsSync: PullConversationLabelsSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all conversation labels from remote, then create and update
-    /// them locally.
 
     func pull() async throws {
         let labels = try await api.getLabels()

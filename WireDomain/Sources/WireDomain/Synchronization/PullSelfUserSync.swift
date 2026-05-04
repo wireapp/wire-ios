@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local self user up to date
-/// with the remote self user.
+import WireNetwork
 
 struct PullSelfUserSync: PullSelfUserSyncProtocol {
 
@@ -35,14 +32,16 @@ struct PullSelfUserSync: PullSelfUserSyncProtocol {
         self.store = store
     }
 
-    /// Fetch the self user from remote, then create or update
-    /// it locally.
-
-    func pull() async throws {
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?) {
         let remoteSelfUser = try await api.getSelfUser()
+        let localSelfUser = remoteSelfUser.toDomainModel()
+        await store.persistUser(userInfo: localSelfUser)
 
-        await store.persistUser(
-            userInfo: remoteSelfUser.toDomainModel()
+        return (
+            id: localSelfUser.userID.uuid,
+            domain: localSelfUser.userID.domain,
+            teamID: localSelfUser.teamID
         )
     }
 

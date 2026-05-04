@@ -1,0 +1,80 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireTestingPackage
+import XCTest
+
+@testable import Wire
+
+class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,
+    HasQualifiedID {
+
+    var stableRandomParticipants: [UserType] = []
+
+    var qualifiedID: WireDataModel.QualifiedID? = .mockID1
+
+    override required init() {}
+
+    static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
+        SelfUser.setupMockSelfUser()
+        let otherUserConversation = T()
+
+        // avatar
+        otherUserConversation.stableRandomParticipants = [otherUser]
+        otherUserConversation.conversationType = .oneOnOne
+
+        // title
+        otherUserConversation.displayName = otherUser.name!
+
+        // subtitle
+        otherUserConversation.connectedUserType = otherUser
+
+        return otherUserConversation
+    }
+
+    static func createGroupConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType]) -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .group
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
+    }
+
+    static func createChannelConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType])
+        -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .channel
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
+    }
+}

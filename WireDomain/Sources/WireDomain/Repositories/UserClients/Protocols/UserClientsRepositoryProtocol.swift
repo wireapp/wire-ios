@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to user clients related domain objects.
@@ -46,7 +46,7 @@ public protocol UserClientsRepositoryProtocol {
 
     func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
 
     /// Updates the user client informations locally.
     ///
@@ -57,14 +57,18 @@ public protocol UserClientsRepositoryProtocol {
 
     func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws
+    ) async
 
     /// Deletes client locally.
     /// - parameter id: The client id.
 
     func deleteClient(id: String) async
+
+    /// Invalides the self client locally
+
+    func invalidateSelfClient() async
 
     /// Indicates whether self user clients are active MLS clients.
     /// - returns: A flag indicating whether all self user clients are active MLS clients.

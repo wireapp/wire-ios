@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireSystem
 import WireTransport
@@ -53,10 +52,14 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
 
     private let entitySync: EntityActionSync
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
 
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
@@ -83,13 +86,13 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.entitySync = EntityActionSync(actionHandlers: [
             FetchUserClientsActionHandler(context: managedObjectContext)
         ])
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
             .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
         userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
@@ -101,7 +104,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
-                    let apiVersion = BackendInfo.apiVersion,
+                    let apiVersion,
                     let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser,
                     let userID = user.remoteIdentifier
                 else {
@@ -122,8 +125,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3, .v4, .v5, .v6, .v7:
-                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -161,7 +164,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -177,7 +180,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func fetch(userClients: [UserClient]) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { result, userClient in
             switch apiVersion {
@@ -194,7 +197,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     result.1.append(userClientID)
                 }
 
-            case .v2, .v3, .v4, .v5, .v6, .v7:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -228,7 +231,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
-        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { localDomain }
         guard let userID = userClient.user?.remoteIdentifier, let domain else { return nil }
 
         return .init(uuid: userID, domain: domain)
@@ -344,7 +347,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -404,7 +407,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 completionHandler()

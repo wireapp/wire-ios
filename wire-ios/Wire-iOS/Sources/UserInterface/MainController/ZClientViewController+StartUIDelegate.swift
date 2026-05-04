@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,10 +24,14 @@ extension ZClientViewController: StartUIDelegate {
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
         Task {
-            guard let userID = user.qualifiedID else { return }
-
             let userSession = viewController.userSession
             let conversation = user.oneToOneConversation
+
+            guard let userID = user.qualifiedID(
+                localDomain: userSession.resolvedBackendMetadata.domain
+            ) else {
+                return
+            }
 
             do {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
@@ -37,7 +41,7 @@ extension ZClientViewController: StartUIDelegate {
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
-                    await mainCoordinator.showConversation(conversation: conversation, message: nil)
+                    mainCoordinator.showConversation(conversation: conversation, message: nil)
 
                 } else {
 
@@ -57,7 +61,7 @@ extension ZClientViewController: StartUIDelegate {
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         Task {
             await mainCoordinator.showConversationList(conversationFilter: .none)
-            await mainCoordinator.showConversation(conversation: conversation, message: nil)
+            mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

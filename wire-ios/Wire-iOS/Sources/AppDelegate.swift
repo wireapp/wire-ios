@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,10 @@ import UIKit
 import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
+import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -45,7 +48,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private lazy var voIPPushManager: VoIPPushManager = .init(
         application: UIApplication.shared,
-        requiredPushTokenType: requiredPushTokenType,
         pushTokenService: pushTokenService
     )
 
@@ -88,7 +90,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // When running production code, this should always be true to ensure that we set the self user provider
     // on the `SelfUser` helper. The `TestingAppDelegate` subclass should override this with `false` in order
-    // to require explict configuration of the self user.
+    // to require explicit configuration of the self user.
 
     var shouldConfigureSelfUserProvider: Bool {
         true
@@ -100,6 +102,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+
+        #if DEBUG
+            resetApp()
+        #endif
 
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
@@ -117,7 +123,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         ZMSLog.switchCurrentLogToPrevious()
 
         // Set up Datadog and other loggers
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .app)
+        CoreCrypto.registerLogger()
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -130,6 +137,60 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         return true
+    }
+
+    #if DEBUG
+        private func resetApp() {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-resetData") {
+                resetFileSystem()
+                resetUserDefaults()
+                resetKeychain()
+                print("app reset done")
+            }
+        }
+    #endif
+
+    // MARK: - Reset
+
+    private func resetUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    private func resetKeychain() {
+        let secItemClasses = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+        for itemClass in secItemClasses {
+            let query: [String: Any] = [kSecClass as String: itemClass]
+            SecItemDelete(query as CFDictionary)
+        }
+    }
+
+    private func resetFileSystem() {
+        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+        AccountManager.delete(at: rootURL)
+        let fileManager = FileManager.default
+        let directories: [FileManager.SearchPathDirectory] = [
+            .documentDirectory,
+            .cachesDirectory,
+            .applicationSupportDirectory
+        ]
+
+        for dir in directories {
+            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                try? fileManager.removeItem(at: url)
+            }
+        }
     }
 
     private func setNavigationAppearance() {
@@ -150,7 +211,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -159,6 +219,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             .info(
                 "application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
             )
+
+        // set internal name to lower layers like SyncEngine
+        Bundle.mainAppInternalName = Bundle.main.appInternalName
 
         NotificationCenter.default.addObserver(
             self,
@@ -169,6 +232,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.launchOptions = launchOptions ?? [:]
 
+        _ = NSAttributedString.paragraphStyle
+
+        DeveloperOverrides.storage = .shared()
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
@@ -239,17 +305,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func application(
-        _ application: UIApplication,
-        performActionFor shortcutItem: UIApplicationShortcutItem,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        appRootRouter?.performQuickAction(
-            for: shortcutItem,
-            completionHandler: completionHandler
-        )
-    }
-
     @objc
     func userSessionDidBecomeAvailable(_ notification: Notification?) {
         launchType = .direct
@@ -291,17 +346,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
-
-        appRootRouter?.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
@@ -310,7 +354,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler()
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(
                 application,
                 handleEventsForBackgroundURLSession: identifier,
@@ -320,7 +370,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
-        guard appRootRouter == nil else { return }
+        WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
+        guard appRootRouter == nil else {
+            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
+            return
+        }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 }
@@ -342,27 +396,53 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
+        let defaultEnvironment = fetchDefaultEnvironment()
 
-        guard let sessionManager = createSessionManager() else {
+        let sessionManager: SessionManager
+        do {
+            sessionManager = try createSessionManager(defaultEnvironment: defaultEnvironment)
+        } catch {
             fatalError("sessionManager is not created")
         }
 
+        guard mainWindow != nil else {
+            WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
+            assertionFailure("no mainWindow this should not be possible at this point")
+            return
+        }
+
         appRootRouter = AppRootRouter(
+            defaultEnvironment: defaultEnvironment,
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(sessionManager: sessionManager)
+            trackingManager: TrackingManager(
+                sessionManager: sessionManager,
+                availabilityChecker: .default
+            )
         )
     }
 
-    private func createSessionManager() -> SessionManager? {
+    private func createSessionManager(defaultEnvironment: BackendEnvironment2) throws -> SessionManager {
+        let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
+            throw SessionManagerSetupError.missingCurrentAppVersion
+        }
+
+        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingCurrentBuildVersion
+        }
+
         guard
-            let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
-            let configuration = SessionManagerConfiguration.load(from: url),
-            let mediaManager = AVSMediaManager.sharedInstance()
+            let configuration = SessionManagerConfiguration.load(from: url)
         else {
-            return nil
+            throw SessionManagerSetupError.missingConfiguration
+        }
+
+        guard let mediaManager = AVSMediaManager.sharedInstance() else {
+            throw SessionManagerSetupError.missingMediaManager
         }
 
         configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
@@ -372,24 +452,34 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let sessionManager = SessionManager(
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
+        let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
+            defaultEnvironment: defaultEnvironment,
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
-            countlyProvider: { CountlyWrapper() }
+            deleteUserLogs: deleteAllAccountsLogs,
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
         )
 
         voIPPushManager.delegate = sessionManager
@@ -412,9 +502,31 @@ private extension AppDelegate {
         appRootRouter?.start(launchOptions: launchOptions)
     }
 
-    private var requiredPushTokenType: PushToken.TokenType {
-        // Previously VoIP push were available for iOS <15
-        // this forces transition to standard ones.
-        .standard
+    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        let env = ProcessInfo.processInfo.arguments.contains("--useEnvStaging") ? "staging" : "default"
+        guard let path = Bundle.backendBundle.path(
+            forResource: env,
+            ofType: "json"
+        ) else {
+            fatalError("\(env).json missing in Backend.bundle")
+        }
+
+        do {
+            let data = try Data(contentsOf: URL(filePath: path))
+            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
+        } catch {
+            fatalError("unable to fetch default environment: \(error)")
+        }
     }
+
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingCurrentAppVersion
+    case missingCurrentBuildVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
+
 }

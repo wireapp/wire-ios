@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ extension SessionManager.SwitchBackendError: LocalizedError {
         switch self {
         case .invalidBackend:
             UrlActionSwitchBackendErrorLocale.InvalidBackend.title
-        case .loggedInAccounts:
+        case .maxNumberAccountsReached:
             UrlActionSwitchBackendErrorLocale.LoggedIn.title
         }
     }
@@ -59,8 +59,8 @@ extension SessionManager.SwitchBackendError: LocalizedError {
         switch self {
         case .invalidBackend:
             return UrlActionSwitchBackendErrorLocale.invalidBackend
-        case .loggedInAccounts:
-            return UrlActionSwitchBackendErrorLocale.loggedIn
+        case .maxNumberAccountsReached:
+            return L10n.Localizable.Self.Settings.AddAccount.Error.message
         }
     }
 }

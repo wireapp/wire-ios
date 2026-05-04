@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,58 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
 @testable import WireDesign
 
-final class LinkButtonStyleSnapshotTests: XCTestCase {
+final class LinkButtonStyleUITests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor @ViewBuilder static var view: some View {
+        let screenBounds = UIScreen.main.bounds
+
+        Button(
+            action: {},
+            label: { Text("Label") }
+        )
+        .wireButtonStyle(.link)
+        .frame(width: screenBounds.width, height: screenBounds.height)
+    }
+
     @MainActor
-    func test() {
-        // TODO: [WPB-14957] implement snapshot tests
+    func testColorSchemeVariants() {
+        let view = Self.view
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let view = Self.view
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
     }
 }

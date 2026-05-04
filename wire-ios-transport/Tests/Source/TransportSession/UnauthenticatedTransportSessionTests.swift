@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,9 +53,7 @@ private final class MockURLSession: SessionProtocol {
 private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
 
     let mayBeReachable = true
-    let isMobileConnection = true
     let oldMayBeReachable = true
-    let oldIsMobileConnection = true
 
     func tearDown() {}
     func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { NSObject() }
@@ -107,7 +105,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         let environment = BackendEnvironment(
             title: name,
             trustData: [],
-            environmentType: .production,
+            environmentType: .default,
             endpoints: endpoints,
             proxySettings: nil,
             certificateTrust: trust

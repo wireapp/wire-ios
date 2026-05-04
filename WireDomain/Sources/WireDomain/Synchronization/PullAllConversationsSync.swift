@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,57 +17,87 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// An object to keep the local conversations up to date
-/// with the remote conversations.
-
-struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
+public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
 
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
     private let api: any ConversationsAPI
     private let store: any ConversationLocalStoreProtocol
+    private var journal: any JournalProtocol
 
-    init(
+    public init(
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         api: any ConversationsAPI,
-        store: any ConversationLocalStoreProtocol
+        store: any ConversationLocalStoreProtocol,
+        journal: any JournalProtocol
     ) {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.api = api
         self.store = store
+        self.journal = journal
     }
 
-    /// Fetch all conversations from remote, then create and update
-    /// them locally.
-
-    func pull() async throws {
+    public func pull() async throws {
         var conversationIDs = [QualifiedID]()
         do {
-            for try await ids in try await api.getConversationIdentifiers() {
+            for try await ids in try api.getConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids)
             }
         } catch ConversationsAPIError.notImplemented {
             // Fallback
-            for try await ids in try await api.getLegacyConversationIdentifiers() {
+            for try await ids in try api.getLegacyConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids.map {
-                    .init(uuid: $0, domain: localDomain)
+                    .init(id: $0, domain: localDomain)
                 })
             }
         }
 
-        let conversations = try await api.getConversations(for: conversationIDs)
+        guard !conversationIDs.isEmpty else {
+            return
+        }
+
+        // We'll fetch the conversations in chunks and let them run in
+        // parallel.
+        try await withThrowingTaskGroup { group in
+            // Backend allows fetching max 1000 at a time.
+            let chunks = stride(
+                from: conversationIDs.startIndex,
+                to: conversationIDs.endIndex,
+                by: 1000
+            ).map { startIndex in
+                let endIndex = min(startIndex + 1000, conversationIDs.endIndex)
+                return Array(conversationIDs[startIndex ..< endIndex])
+            }
+
+            // Enqueue each task.
+            for chunk in chunks {
+                group.addTask { [weak self] in
+                    try await self?.pullConversations(ids: chunk)
+                }
+            }
+
+            // Wait for all tasks to complete, if any fail the
+            // group will fail.
+            while try await group.next() != nil {}
+        }
+
+        journal[.isConversationSyncRequired] = false
+    }
+
+    private func pullConversations(ids: [QualifiedID]) async throws {
+        let conversations = try await api.getConversations(for: ids)
 
         for conversation in conversations.found {
             await store.storeConversation(
                 conversation.toDomainModel(),
-                timestamp: .now,
+                timestamp: conversation.lastEventTime ?? Date.distantPast,
                 isFederationEnabled: isFederationEnabled,
                 isMLSEnabled: isMLSEnabled
             )
@@ -76,14 +106,14 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
         for id in conversations.notFound {
             await store.storeConversation(
                 needsBackendUpdate: true,
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }
 
         for id in conversations.failed {
             await store.storeFailedConversation(
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
     private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
     }
 
     override func tearDown() {
@@ -98,11 +98,7 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
             reuseIdentifier: nil
         )
         cell.cellDescription = description
-        cell.configure(
-            with: description.configuration,
-            fullWidth: description.isFullWidth,
-            topMargin: description.topMargin
-        )
+        cell.configure(with: description.configuration)
 
         cell.frame = CGRect(origin: .zero, size: CGSize(width: CGSize.iPhoneSize.iPhone4.width, height: 32.5))
 

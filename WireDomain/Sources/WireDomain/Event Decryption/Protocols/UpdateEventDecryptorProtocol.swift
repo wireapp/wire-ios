@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireCoreCrypto
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
-protocol UpdateEventDecryptorProtocol {
+public protocol UpdateEventDecryptorProtocol {
 
     /// Decrypt events in the given event envelope.
     ///
     /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
     /// - Returns: A list of decrypted update events.
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async
+        -> EventDecryptorResult
+
+}
+
+public struct EventDecryptorResult {
+
+    let events: [UpdateEvent]
+    let brokenMLSGroupIDs: Set<String>
 
 }

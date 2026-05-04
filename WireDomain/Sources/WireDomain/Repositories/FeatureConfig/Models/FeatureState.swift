@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@ import WireDataModel
 
 /// The state of the feature
 
-struct FeatureState {
-    let name: Feature.Name
-    let isEnabled: Bool
-    let shouldNotifyUser: Bool
+public struct FeatureState {
+    public let name: Feature.Name
+    public let isEnabled: Bool
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 /// Represents the identifer for an MLS group.
 
-public struct MLSGroupID: Equatable, Hashable {
+public struct MLSGroupID: Equatable, Hashable, Sendable {
 
     // MARK: - Properties
 
@@ -35,6 +36,14 @@ public struct MLSGroupID: Equatable, Hashable {
 
     public init(_ data: Data) {
         self.data = data
+    }
+
+    public init(_ conversationId: WireCoreCryptoUniffi.ConversationId) {
+        self.data = conversationId.copyBytes()
+    }
+
+    public var conversationId: WireCoreCryptoUniffi.ConversationId {
+        .init(bytes: data)
     }
 }
 
@@ -52,6 +61,6 @@ extension MLSGroupID: CustomStringConvertible {
 extension MLSGroupID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        data.readableHash
+        description
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,5 @@ public protocol SidebarViewControllerDelegate: AnyObject {
     func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
     func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect)
     func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem)
-    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController)
     func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
 }

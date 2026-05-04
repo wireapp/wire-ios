@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local self team up to date
-/// with the remote self team.
+import WireNetwork
 
 struct PullSelfTeamSync: PullSelfTeamSyncProtocol {
 
@@ -34,11 +31,6 @@ struct PullSelfTeamSync: PullSelfTeamSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch the team from remote, then create or update
-    /// it locally.
-    ///
-    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws {
         let remoteTeam = try await api.getTeam(for: selfTeamID)

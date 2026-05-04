@@ -1,0 +1,45 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"sidebar.legalHold.title" = "Legal hold";
+
+"sidebar.conversation_filter.title" = "Conversazioni";
+"sidebar.conversation_filter.all.title" = "Tutto";
+"sidebar.conversation_filter.favorites.title" = "Preferiti";
+"sidebar.conversation_filter.groups.title" = "Gruppi";
+"sidebar.conversation_filter.channels.title" = "Canali";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "Conversazioni 1:1";
+"sidebar.conversation_filter.unread.title" = "Non letti";
+"sidebar.conversation_filter.mentions.title" = "Menzioni";
+"sidebar.conversation_filter.replies.title" = "Risposte";
+"sidebar.conversation_filter.drafts.title" = "Bozze";
+"sidebar.conversation_filter.folders.title" = "Cartelle";
+"sidebar.conversation_filter.archived.title" = "Archivia";
+
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
+"sidebar.files.title" = "Allegati";
+"sidebar.files.all_files.title" = "Tutto";
+
+"sidebar.contacts.title" = "Contatti";
+"sidebar.contacts.connect.title" = "Connetti";
+
+"sidebar.settings.title" = "Impostazioni";
+
+"sidebar.support.title" = "Supporto";

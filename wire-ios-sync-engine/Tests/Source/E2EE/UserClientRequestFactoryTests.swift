@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
@@ -65,6 +64,34 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
     // MARK: - Registration request creation
 
+    func testThatItCreatesRegistrationRequestWithConsumableNotificationsCapabitilityCorrectly() throws {
+        // GIVEN
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+        syncMOC.performAndWait {
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
+        }
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true,
+            apiVersion: .v9
+        )
+    }
+
+    func testThatItCreatesRegistrationRequestWithLegalholdCapabitilityCorrectly() throws {
+        // GIVEN
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true,
+            apiVersion: .v0
+        )
+    }
+
     func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
 
@@ -111,13 +138,17 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
     private func testThatItCreatesRegistrationRequestCorrectly(
         credentials: UserEmailCredentials?,
-        usingProteusService: Bool
+        usingProteusService: Bool,
+        apiVersion: APIVersion = .v0
     ) throws {
         let request = try syncMOC.performAndWait {
             // given
             let client = UserClient.insertNewObject(in: self.syncMOC)
             let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
             let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
 
             // when
             return try sut.registerClientRequest(
@@ -126,17 +157,20 @@ final class UserClientRequestFactoryTests: MessagingTest {
                 cookieLabel: "mycookie",
                 prekeys: prekeys,
                 lastRestortPrekey: lastRestortPrekey,
-                apiVersion: .v0
+                apiVersion: apiVersion
             )
 
         }
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(transportRequest, path: "/clients", method: .post)
+        if apiVersion >= .v9 {
+            assertRequest(transportRequest, path: "/v\(apiVersion.rawValue)/clients", method: .post)
+        } else {
+            assertRequest(transportRequest, path: "/clients", method: .post)
+        }
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
-        try assertSigkeys(payload)
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
 
@@ -146,6 +180,16 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         if let emailVerificationCode = credentials?.emailVerificationCode {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
+        }
+
+        let isConsumableNotificationsEnabled = syncMOC.performAndWait {
+            Feature.fetch(name: .consumableNotifications, context: syncMOC)?.status == .enabled
+        } && DeveloperFlag.consumableNotifications.isOn
+
+        if apiVersion >= .v9, isConsumableNotificationsEnabled {
+            XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
+        } else {
+            XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])
         }
     }
 
@@ -349,12 +393,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
         XCTAssertEqual(request.path, path)
         XCTAssertEqual(request.method, method)
     }
-
-    private func assertSigkeys(_ payload: [String: Any]) throws {
-        let sigkeys = try XCTUnwrap(payload.sigkeys)
-        XCTAssertNotNil(sigkeys.enckey)
-        XCTAssertNotNil(sigkeys.mackey)
-    }
 }
 
 private extension [String: Any] {
@@ -367,11 +405,15 @@ private extension [String: Any] {
         case key
         case id
         case prekeys
-        case sigkeys
         case enckey
         case mackey
         case mlsPublicKeys = "mls_public_keys"
         case ed25519
+        case capabilities
+    }
+
+    var capabilities: [String]? {
+        value(forKey: .capabilities)
     }
 
     var type: String? {
@@ -404,10 +446,6 @@ private extension [String: Any] {
 
     var prekeys: [[String: Any]]? {
         value(forKey: .prekeys)
-    }
-
-    var sigkeys: [String: Any]? {
-        value(forKey: .sigkeys)
     }
 
     var enckey: String? {

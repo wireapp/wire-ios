@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,22 @@ public extension UpdateAccessRolesError {
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
 
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    private let eventProcessor: ConversationEventProcessor
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.eventProcessor = ConversationEventProcessor(
+            context: context,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
 
     // MARK: - Methods
 
@@ -60,8 +75,8 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             return ZMTransportRequest(

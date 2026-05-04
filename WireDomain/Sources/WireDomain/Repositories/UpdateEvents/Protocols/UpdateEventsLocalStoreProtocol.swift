@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
+import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
-protocol UpdateEventsLocalStoreProtocol {
+public protocol UpdateEventsLocalStoreProtocol {
 
     /// Get last event ID.
     /// - returns: The last event ID.
@@ -31,6 +33,10 @@ protocol UpdateEventsLocalStoreProtocol {
 
     func storeLastEventID(id: UUID)
 
+    /// Sets last event ID to nil.
+
+    func resetLastEventID()
+
     /// Retrieves the index of the last event envelope.
     /// - returns: The last index event envelope.
 
@@ -38,26 +44,58 @@ protocol UpdateEventsLocalStoreProtocol {
 
     /// Persists an event envelope locally.
     /// - Parameters:
-    ///     - data: The event envelope payload data.
+    ///     - eventEnvelope: The event envelope to persist.
     ///     - index: The event envelope index.
 
     func persistEventEnvelope(
-        _ data: Data,
-        index: Int64
+        _ eventEnvelope: UpdateEventEnvelope,
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
-    /// Fetches stored event envelope payloads.
-    /// - parameter limit: A fetch limit.
-    /// - returns: A list of event payloads.
+    /// Persists an event envelopes locally.
+    /// - Parameters:
+    ///     - eventEnvelopes: The event envelopes to persist.
+    ///     - index: The event envelope start index.
 
-    func fetchStoredEventEnvelopePayloads(
-        limit: UInt
-    ) async throws -> [Data]
+    func persistEventEnvelopes(
+        _ eventEnvelopes: [UpdateEventEnvelope],
+        index: Int64,
+        publicKeys: EARPublicKeys?
+    ) async throws
+
+    /// Fetches stored event envelopes.
+    /// - parameter limit: A fetch limit.
+    /// - parameter privateKeys: The private keys to use for decryption (if needed).
+    /// - returns: A list of decoded event envelopes and their related object IDs.
+
+    func fetchStoredEventEnvelopes(
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.
-    /// - parameter limit: A fetch limit.
+    /// - parameter objectIDs: The `StoredUpdateEventEnvelope` object IDs to delete.
 
     func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws
+
+    /// Delete all stored events matching given indexes
+    /// - Parameter indexes: array of indexes matching the stored events
+    func deleteEventEnvelopes(at indexes: [Int64]) async throws
+
+    /// Delete the event envelope with the given index.
+    /// - parameter index: The index of the envelope to delete
+
+    func deleteEventEnvelope(
+        atIndex index: Int64
+    ) async throws
+
+    func calculateLastUnreadMessages() async
+
+    func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async
 }

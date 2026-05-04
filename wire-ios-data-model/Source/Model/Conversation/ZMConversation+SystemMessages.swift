@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,16 @@ public extension ZMConversation {
         )
     }
 
+    func appendUserRemovedFromTeamSystemMessage(user: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .userRemovedFromTeam,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
     func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
         appendSystemMessage(
             type: .failedToAddParticipants,
@@ -87,7 +97,7 @@ public extension ZMConversation {
            team == selfUserTeam {
 
             let members = selfUserTeam.members.compactMap(\.user)
-            let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
+            let guests = users.filter { !$0.isAppOrBot && $0.membership == nil }
 
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
             systemMessage.numberOfGuestsAdded = Int16(guests.count)
@@ -182,7 +192,34 @@ public extension ZMConversation {
 
     // MARK: - MLS Migration
 
-    func appendMLSMigrationFinalizedSystemMessage(
+    func appendMLSMigrationFinalizedSystemMessageIfNeeded(
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        if !migrationFinalizedSystemMessageExists(in: context) {
+            appendMLSMigrationFinalizedSystemMessage(sender: sender, at: timestamp)
+        }
+    }
+
+    private func migrationFinalizedSystemMessageExists(in context: NSManagedObjectContext) -> Bool {
+        let request: NSFetchRequest<ZMSystemMessage> = NSFetchRequest(entityName: ZMSystemMessage.entityName())
+        request.predicate = NSPredicate(
+            format: "%K == %d AND %K == %@",
+            #keyPath(ZMSystemMessage.systemMessageType),
+            ZMSystemMessageType.mlsMigrationFinalized.rawValue,
+            #keyPath(ZMSystemMessage.visibleInConversation),
+            self
+        )
+        request.fetchLimit = 1
+        let messageCount = context.countOrAssert(request: request)
+        return messageCount == 1
+    }
+
+    private func appendMLSMigrationFinalizedSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {

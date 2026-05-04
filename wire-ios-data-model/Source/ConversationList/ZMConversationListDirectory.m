@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,12 @@ static NSString * const PendingKey = @"Pending";
 @property (nonatomic) ZMConversationList* clearedConversations;
 @property (nonatomic) ZMConversationList* oneToOneConversations;
 @property (nonatomic) ZMConversationList* groupConversations;
+@property (nonatomic) ZMConversationList* channelConversations;
 @property (nonatomic) ZMConversationList* favoriteConversations;
+@property (nonatomic) ZMConversationList* unreadConversations;
+@property (nonatomic) ZMConversationList* mentionedConversations;
+@property (nonatomic) ZMConversationList* repliedConversations;
+@property (nonatomic) ZMConversationList* draftConversations;
 
 @property (nonatomic, readwrite) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic) FolderList *folderList;
@@ -61,7 +66,7 @@ static NSString * const PendingKey = @"Pending";
 
         ZMUser *selfUser = [ZMUser selfUserInContext:managedObjectContext];
         Team *selfTeam = selfUser.team;
-        self.factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:selfTeam];
+        self.factory = [[ConversationPredicateFactory alloc] initWithSelfUser:selfUser selfTeam:selfTeam];
 
         self.folderList = [[FolderList alloc] initWithLabels:allFolders];
         self.listsByFolder = [self createListsFromFolders:allFolders allConversations:allConversations];
@@ -97,10 +102,35 @@ static NSString * const PendingKey = @"Pending";
                                                                        managedObjectContext:managedObjectContext
                                                                                 description:@"groupConversations"];
 
+        self.channelConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                      filteringPredicate:[self.factory predicateForChannelConversations]
+                                                                    managedObjectContext:managedObjectContext
+                                                                            description:@"channelConversations"];
+
         self.favoriteConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
                                                                             filteringPredicate:[self.factory predicateForLabeledConversations:[Label fetchFavoriteLabelIn:managedObjectContext]]
                                                                           managedObjectContext:managedObjectContext
                                                                                    description:@"favorites"];
+        
+        self.unreadConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                         filteringPredicate:[self.factory predicateForUnreadConversations]
+                                                                       managedObjectContext:managedObjectContext
+                                                                                description:@"unreadConversations"];
+        
+        self.mentionedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                            filteringPredicate:[self.factory predicateForMentionedConversations]
+                                                                          managedObjectContext:managedObjectContext
+                                                                                   description:@"mentionedConversations"];
+        
+        self.repliedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                          filteringPredicate:[self.factory predicateForRepliedConversations]
+                                                                        managedObjectContext:managedObjectContext
+                                                                                 description:@"repliedConversations"];
+        
+        self.draftConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                       filteringPredicate:[self.factory predicateForDraftConversations]
+                                                                     managedObjectContext:managedObjectContext
+                                                                              description:@"draftConversations"];
     }
     return self;
 }
@@ -179,7 +209,7 @@ static NSString * const PendingKey = @"Pending";
 
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
     Team *selfTeam = selfUser.team;
-    self.factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:selfTeam];
+    self.factory = [[ConversationPredicateFactory alloc] initWithSelfUser:selfUser selfTeam:selfTeam];
 
     NSArray *allConversations = [self fetchAllConversations:moc];
 
@@ -190,7 +220,12 @@ static NSString * const PendingKey = @"Pending";
     [self.clearedConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForClearedConversations]];
     [self.oneToOneConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForOneToOneConversations]];
     [self.groupConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForGroupConversations]];
+    [self.channelConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForChannelConversations]];
     [self.favoriteConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForLabeledConversations:[Label fetchFavoriteLabelIn:self.managedObjectContext]]];
+    [self.unreadConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForUnreadConversations]];
+    [self.mentionedConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForMentionedConversations]];
+    [self.repliedConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForRepliedConversations]];
+    [self.draftConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForDraftConversations]];
 
     NSArray *allFolders = [self fetchAllFolders:moc];
     self.folderList = [[FolderList alloc] initWithLabels:allFolders];

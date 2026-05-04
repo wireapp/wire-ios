@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,5 +38,5 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
         port: 8080,
         needsAuthentication: true
     )
-    public var environmentType: EnvironmentTypeProvider = .init(environmentType: .production)
+    public var environmentType: EnvironmentTypeProvider = .init(environmentType: .default)
 }

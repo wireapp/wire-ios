@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,45 +18,50 @@
 
 import Foundation
 
-/// Downloads all team members during the slow sync.
+/// Downloads all team members during the slow sync and updating when processing events or when manually requested.
+public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy,
+    ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
 
-public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
+    private var downstreamSync: ZMDownstreamObjectSync!
 
-    let syncStatus: SyncStatus
-    var sync: ZMSingleRequestSync!
-
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
+        applicationStatus: ApplicationStatus
     ) {
-
-        self.syncStatus = syncStatus
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
 
-        configuration = [.allowsRequestsDuringSlowSync]
-        self.sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        configuration = [.allowsRequestsWhileOnline]
+        self.downstreamSync = ZMDownstreamObjectSync(
+            transcoder: self,
+            entityName: Team.entityName(),
+            predicateForObjectsToDownload: Team.predicateForObjectsNeedingToBeUpdated,
+            filter: nil,
+            managedObjectContext: managedObjectContext
+        )
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard syncStatus.currentSyncPhase == .fetchingTeamMembers else { return nil }
-
-        sync.readyForNextRequestIfNotBusy()
-
-        return sync.nextRequest(for: apiVersion)
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
-    // MARK: - ZMSingleRequestTranscoder
+    // MARK: - ZMContextChangeTrackerSource
 
-    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
-            completeSyncPhase() // Skip sync phase if user doesn't belong to a team
-            return nil
-        }
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        [downstreamSync]
+    }
+
+    // MARK: - ZMDownstreamTranscoder
+
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard let teamID = (object as? Team)?.remoteIdentifier else { fatalError() }
 
         let maxResults = 2000
         return ZMTransportRequest(
@@ -65,30 +70,34 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         )
     }
 
-    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
+    public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard
             response.result == .success,
-            let team = ZMUser.selfUser(in: managedObjectContext).team,
+            let team = object as? Team,
             let rawData = response.rawData,
             let payload = MembershipListPayload(rawData)
         else {
-            failSyncPhase()
             return
         }
 
-        // as per WPB-6485 we ignore the hasMore
         payload.members.forEach { membershipPayload in
             membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
         }
 
-        completeSyncPhase()
+        team.needsToRedownloadMembers = false
     }
 
-    func failSyncPhase() {
-        syncStatus.failCurrentSyncPhase(phase: .fetchingTeamMembers)
+    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
+        // No op
     }
+}
 
-    func completeSyncPhase() {
-        syncStatus.finishCurrentSyncPhase(phase: .fetchingTeamMembers)
-    }
+private extension Team {
+
+    static var predicateForObjectsNeedingToBeUpdated: NSPredicate = .init(
+        format: "%K == YES AND %K != NULL",
+        #keyPath(Team.needsToRedownloadMembers),
+        Team.remoteIdentifierDataKey()
+    )
+
 }

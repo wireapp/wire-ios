@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol PullLastUpdateEventIDSyncProtocol {
+// sourcery: AutoMockable
+/// An object to keep the local last update event id up to date
+/// with the remote last update evnt id.
+public protocol PullLastUpdateEventIDSyncProtocol {
+
+    /// Fetch the last update event id from remote, then create
+    /// or update it locally.
 
     func pull() async throws
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         sut = ConversationEventPayloadProcessor(
             mlsEventProcessor: mockMLSEventProcessor,
-            removeLocalConversation: mockRemoveLocalConversation
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: false
         )
 
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
-        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -60,60 +60,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - Process NewConversation Event
 
-    func testProcessPayload_NewConversation_IgnoredWhenConversationAlreadyExists() async throws {
-        // Given
-        let initialName = "foo"
-        let qualifiedID = await syncMOC.perform {
-            BackendInfo.isFederationEnabled = true
-            self.groupConversation.userDefinedName = initialName
-            return self.groupConversation.qualifiedID!
-        }
-        let conversationPayload = Payload.Conversation.stub(
-            qualifiedID: qualifiedID,
-            type: .group,
-            name: "bar"
-        )
-        let eventPayload = Payload.ConversationEvent.stub(
-            data: conversationPayload,
-            qualifiedID: qualifiedID
-        )
-
-        // When
-        await sut.processPayload(eventPayload, in: syncMOC)
-
-        // Then
-        await syncMOC.perform {
-            XCTAssertEqual(self.groupConversation.userDefinedName, initialName)
-        }
-    }
-
-    func testProcessPayload_NewConversation_IgnoredWhenConversationIDIsMissing() async throws {
-        // Given
-        let qualifiedID = QualifiedID.random()
-        let conversationPayload = Payload.Conversation.stub(
-            qualifiedID: qualifiedID,
-            type: .group
-        )
-        let eventPayload = Payload.ConversationEvent.stub(
-            data: conversationPayload,
-            qualifiedID: nil
-        )
-
-        // When
-        disableZMLogError(true)
-        await sut.processPayload(eventPayload, in: syncMOC)
-        disableZMLogError(false)
-
-        // Then
-        await syncMOC.perform {
-            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
-        }
-    }
-
     func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
         // Given
         let qualifiedID = QualifiedID.random()
-        let conversationPayload = Payload.Conversation.stub(
+        let conversationPayload = Payload.CreatedConversation.stub(
             qualifiedID: qualifiedID,
             type: .group
         )
@@ -137,9 +87,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() async throws {
         // Given
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = await syncMOC.perform {
-            BackendInfo.isFederationEnabled = true
-            return self.groupConversation.qualifiedID!
+            self.groupConversation.qualifiedID!
         }
         let payload = Payload.Conversation.stub(
             qualifiedID: qualifiedID,
@@ -756,7 +711,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
-        BackendInfo.isFederationEnabled = true
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
@@ -1112,7 +1072,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             messageProtocol: "mls"
         )
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         // when
@@ -1257,6 +1217,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: self.groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )
@@ -1283,7 +1244,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             wipeGroupExpectation.fulfill()
         }
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         let (payload, updateEvent) = await syncMOC.perform { [self] in
@@ -1296,7 +1257,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .mls
 
             // Create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .userDeleted
@@ -1339,7 +1300,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .mls
 
             // create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .userDeleted
@@ -1379,7 +1340,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .proteus
 
             // create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .userDeleted
@@ -1411,7 +1372,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
         // Given
-        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConversationMemberLeaveTests(
             selfUserLeaves: true
         )
         let expectation = XCTNSNotificationExpectation(
@@ -1444,7 +1405,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
         // Given
-        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConversationMemberLeaveTests(
             selfUserLeaves: false
         )
 
@@ -1469,12 +1430,33 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    private func setupForProcessingConverationMemberLeaveTests(
+    func testAddConversationPermission_Updates_Permission() async throws {
+        // Given
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID }
+        let conversationPayload = Payload.UpdateConversationPermission(addPermission: .admins)
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: qualifiedID,
+            timestamp: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.privateChannelPermission, .admins)
+        }
+    }
+
+    private func setupForProcessingConversationMemberLeaveTests(
         selfUserLeaves: Bool
     ) -> (
         conversation: ZMConversation,
         users: [ZMUser],
-        conversationEvent: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        conversationEvent: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>,
         originalEvent: ZMUpdateEvent
     ) {
         syncMOC.performAndWait {
@@ -1498,9 +1480,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             conversation.conversationType = .group
             conversation.domain = owningDomain
 
-            let memberLeavePayload = Payload.UpdateConverationMemberLeave(
+            let memberLeavePayload = Payload.UpdateConversationMemberLeave(
                 userIDs: .none,
-                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap(\.self),
                 reason: .userDeleted
             )
             let conversationEvent = Payload.ConversationEvent(
@@ -1509,6 +1491,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )

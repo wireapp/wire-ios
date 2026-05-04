@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
@@ -47,13 +47,6 @@ public protocol UserRepositoryProtocol {
         id: UUID,
         domain: String?
     ) async throws -> ZMUser
-
-    /// Push self user supported protocols
-    /// - Parameter supportedProtocols: A list of supported protocols.
-
-    func pushSelfSupportedProtocols(
-        _ supportedProtocols: Set<WireAPI.MessageProtocol>
-    ) async throws
 
     /// Fetch and persist all locally known users
 
@@ -117,7 +110,7 @@ public protocol UserRepositoryProtocol {
     ///     - userProperty: The user property to update.
 
     func updateUserProperty(
-        _ userProperty: WireAPI.UserProperty
+        _ userProperty: WireNetwork.UserProperty
     ) async throws
 
     /// Deletes a user property.

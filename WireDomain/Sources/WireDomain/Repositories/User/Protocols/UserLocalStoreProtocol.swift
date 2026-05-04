@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,12 @@ public protocol UserLocalStoreProtocol {
 
     func deletePushToken()
 
+    func removeUserFromAllConversations(
+        id: UUID,
+        domain: String?,
+        date: Date
+    ) async
+
     /// Adds a legal hold request to self.
     ///
     /// - parameters:
@@ -93,6 +99,10 @@ public protocol UserLocalStoreProtocol {
         isReadReceiptsEnabledChangedRemotely: Bool
     ) async
 
+    /// Persist the supported protocols for the self user.
+
+    func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async
+
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
 
@@ -119,8 +129,8 @@ public protocol UserLocalStoreProtocol {
 
     func markAccountAsDeleted(for user: ZMUser) async
 
-    func updateSelfUserAnalyticsID(
-        analyticsID: String,
+    func updateSelfUserTrackingID(
+        trackingID: UUID,
         conversation: ZMConversation
     ) async
 
@@ -132,4 +142,41 @@ public protocol UserLocalStoreProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
+    /// Fetch the self user Supported Protocols
+
+    func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol>
+
+    /// Fetches self user info : user ID and client ID.
+    /// - returns: the user ID and the client ID.
+
+    func selfUserInfo() async -> (id: UUID, clientId: String?)
+
+    /// The name of a given user.
+    /// - Parameter user: The user to fetch the name for.
+    /// - returns: The user name.
+
+    func name(
+        for user: ZMUser
+    ) async -> String?
+
+    /// The team name of a given user.
+    /// - Parameter user: The user to fetch the team for.
+    /// - returns: The team name if any.
+
+    func teamName(
+        for user: ZMUser
+    ) async -> String?
+
+    /// The identifier for a given user
+    /// - parameter user: The user to get the ID for.
+    /// - returns: The user UUID.
+
+    func id(
+        for user: ZMUser
+    ) async -> UUID
+
+    func fetchSelfUserAvailability() async -> Availability
+
+    func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async
 }

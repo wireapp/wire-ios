@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,11 +25,14 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
+    private let localDomain: String?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsWhileOnline]
@@ -180,10 +183,11 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     self.managedObjectContext.enqueueDelayedSave()
                 }
 
-                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(
-                    assetClientMessage,
-                    apiVersion: apiVersion
-                ) {
+                if let request = ClientMessageRequestFactory(localDomain: localDomain)
+                    .downstreamRequestForEcryptedOriginalFileMessage(
+                        assetClientMessage,
+                        apiVersion: apiVersion
+                    ) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)
@@ -193,7 +197,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
             fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             return nil
         }
 

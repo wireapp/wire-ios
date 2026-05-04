@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@ final class ConversationCallController: NSObject {
 
     private unowned let target: UIViewController
     private let conversation: ZMConversation
+    private let userSession: UserSession
     private let confirmGroupCallParticipantsLimit = 4
 
-    init(conversation: ZMConversation, target: UIViewController) {
+    init(conversation: ZMConversation, target: UIViewController, userSession: UserSession) {
         self.conversation = conversation
         self.target = target
+        self.userSession = userSession
         super.init()
     }
 
@@ -53,27 +55,6 @@ final class ConversationCallController: NSObject {
         }
     }
 
-    func startVideoCall(started: Completion?) {
-        let startVideoCall = { [weak self] in
-            guard let self else { return }
-            conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
-                started?()
-                self.conversation.startVideoCall()
-            }
-        }
-
-        if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
-            startVideoCall()
-        } else {
-            confirmGroupCall { [weak self] accepted in
-                self?.target.setNeedsStatusBarAppearanceUpdate()
-
-                guard accepted else { return }
-                startVideoCall()
-            }
-        }
-    }
-
     func joinCall() {
         guard conversation.canJoinCall else { return }
 
@@ -87,8 +68,8 @@ final class ConversationCallController: NSObject {
                 }
             },
             cancelAction: { [weak self] in
-                guard let userSession = ZMUserSession.shared() else { return }
-                self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+                guard let self, let userSession = userSession as? ZMUserSession else { return }
+                conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
 
             },
             showAlert: { [weak self] in

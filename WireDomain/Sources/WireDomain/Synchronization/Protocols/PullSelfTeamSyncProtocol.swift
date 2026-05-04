@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,15 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+/// An object to keep the local self team up to date
+/// with the remote self team.
 protocol PullSelfTeamSyncProtocol {
+
+    /// Fetch the team from remote, then create or update
+    /// it locally.
+    ///
+    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws
 

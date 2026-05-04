@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,6 +117,10 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 
     public var locationMessageData: LocationMessageData?
 
+    // MARK: - multipartMessageData
+
+    public var multipartMessageData: WireDataModel.MultipartMessageData?
+
     // MARK: - usersReaction
 
     public var usersReaction: [String: [UserType]] = [:]
@@ -209,15 +213,6 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
     }
 
     public var underlyingReplies: Set<ZMMessage>!
-
-    // MARK: - objectIdentifier
-
-    public var objectIdentifier: String {
-        get { return underlyingObjectIdentifier }
-        set(value) { underlyingObjectIdentifier = value }
-    }
-
-    public var underlyingObjectIdentifier: String!
 
     // MARK: - linkAttachments
 

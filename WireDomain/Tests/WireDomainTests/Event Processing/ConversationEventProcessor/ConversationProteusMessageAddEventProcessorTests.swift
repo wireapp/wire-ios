@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
 
@@ -34,6 +36,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
+
+    private var callEventInfo: CallEventInfo?
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -53,7 +57,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore,
-            protobufMessageProcessor: protobufMessageProcessor
+            protobufMessageProcessor: protobufMessageProcessor,
+            onProcessedCallEvent: { self.callEventInfo = $0 }
         )
     }
 
@@ -83,8 +88,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _, _ in }
+            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _ in }
 
         // When
 
@@ -105,19 +110,20 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
+        XCTAssertNil(callEventInfo)
 
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .first
         )
 
         // Ensuring large message payload has been correctly processed by protobuf processor.
-        switch processProtobufMessageInvocation.content {
+        switch processProtobufMessageInvocation.message.content {
         case let .text(text):
             XCTAssertEqual(text.content, Scaffolding.mockDecryptedLargeMessagePayload)
         default:
@@ -138,8 +144,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _, _ in }
+            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _ in }
 
         // When
 
@@ -160,19 +166,21 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
 
+        XCTAssertNil(callEventInfo)
+
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
-                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .first
         )
 
         // Ensuring regular message payload has been correctly processed by protobuf processor.
-        switch processProtobufMessageInvocation.content {
+        switch processProtobufMessageInvocation.message.content {
         case let .text(text):
             let regularMessageText = "Everything"
             XCTAssertEqual(text.content, regularMessageText)
@@ -180,6 +188,24 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         default:
             XCTFail("Should be external message.")
         }
+    }
+
+    func testProcessEvent_Message_Has_Calling_It_Invokes_Handler_With_Call_Event_Info() async throws {
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        messageLocalStore.canAddMessageConversationSenderID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.callingMessageEvent)
+
+        // Then
+
+        XCTAssertNotNil(callEventInfo) // There's a call, we got the call info.
     }
 
     enum Scaffolding {
@@ -190,8 +216,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             "CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx"
 
         static let largeMessageEvent = ConversationProteusMessageAddEvent(
-            conversationID: ConversationID(uuid: .mockID1, domain: domain),
-            senderID: UserID(uuid: .mockID1, domain: domain),
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
             timestamp: .now,
             message: .init(encryptedMessage: "", decryptedMessage: externalMessage),
             // Large message payload -> message is external
@@ -201,14 +227,42 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         )
 
         static let regularMessageEvent = ConversationProteusMessageAddEvent(
-            conversationID: ConversationID(uuid: .mockID1, domain: domain),
-            senderID: UserID(uuid: .mockID1, domain: domain),
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
             timestamp: .now,
             message: .init(encryptedMessage: "", decryptedMessage: regularMessage),
             // Message is regular, no external data payload
             messageSenderClientID: UUID.mockID1.uuidString,
             messageRecipientClientID: UUID.mockID2.uuidString
         )
+
+        static let callingMessageEvent = ConversationProteusMessageAddEvent(
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
+            timestamp: .now,
+            message: .init(encryptedMessage: "", decryptedMessage: text!),
+            // Message has calling
+            messageSenderClientID: UUID.mockID1.uuidString,
+            messageRecipientClientID: UUID.mockID2.uuidString
+        )
+
+        private static let message = GenericMessage(
+            content: Calling(content: content, conversationId: .random())
+        )
+
+        private static let text = try? message.serializedData().base64String()
+
+        private static let content: String = {
+            let json = [
+                "src_userid": UUID.mockID1.uuidString,
+                "src_clientid": "clientID",
+                "resp": false,
+                "type": ""
+            ] as [String: Any]
+
+            let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+            return String(decoding: data, as: UTF8.self)
+        }()
 
     }
 }

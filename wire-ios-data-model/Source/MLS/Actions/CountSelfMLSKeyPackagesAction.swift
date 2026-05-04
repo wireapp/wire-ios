@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
         case malformedResponse
         case invalidClientID
         case endpointUnavailable
+        case ciphersuiteNotProvided
         case unknown(status: Int)
 
         public var errorDescription: String? {
@@ -42,6 +43,8 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
                 "End point not available"
             case .invalidClientID:
                 "Invalid clientID"
+            case .ciphersuiteNotProvided:
+                "Ciphersuite is needed for API v8 and later"
             case let .unknown(status):
                 "Unknown error (response status: \(status))"
             }
@@ -52,14 +55,17 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
 
     public var resultHandler: ResultHandler?
     public var clientID: String
+    public var ciphersuite: MLSCipherSuite?
 
     // MARK: - Life cycle
 
     public init(
         clientID: String,
+        ciphersuite: MLSCipherSuite?,
         resultHandler: ResultHandler? = nil
     ) {
         self.clientID = clientID
+        self.ciphersuite = ciphersuite
         self.resultHandler = resultHandler
     }
 }

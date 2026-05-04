@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 @import UIKit;
-@import WireCryptobox;
 @import WireUtilities;
 
 #import "NSManagedObjectContext+zmessaging-Internal.h"
@@ -32,7 +31,6 @@
 #import <WireDataModel/WireDataModel-Swift.h>
 
 NSString * const IsSyncContextKey = @"ZMIsSyncContext";
-NSString * const IsSearchContextKey = @"ZMIsSearchContext";
 NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
 NSString * const IsEventContextKey = @"ZMIsEventDecoderContext";
 
@@ -47,6 +45,9 @@ static NSString * const FirstEnqueuedSaveKey = @"ZMTimeOfLastSave";
 static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSessionStoreKey";
 static NSString * const DisplayNameGeneratorKey = @"DisplayNameGeneratorKey";
 static NSString * const DelayedSaveActivityKey = @"DelayedSaveActivityKey";
+static NSString * const WireCoreDataErrorDomain = @"ZMCoreDataDomain";
+
+static NSUInteger const CoreDataNoStoreError = 1;
 
 static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
@@ -86,7 +87,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 - (BOOL)zm_isValidContext
 {
-    return self.zm_isSyncContext || self.zm_isUserInterfaceContext || self.zm_isSearchContext;
+    return self.zm_isSyncContext || self.zm_isUserInterfaceContext;
 }
 
 - (id)validUserInfoValueOfClass:(Class)class forKey:(NSString *)key
@@ -124,11 +125,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 - (BOOL)zm_isUserInterfaceContext
 {
     return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
-}
-
-- (BOOL)zm_isSearchContext
-{
-    return [self.userInfo[IsSearchContextKey] boolValue];
 }
 
 - (NSManagedObjectContext*)zm_syncContext
@@ -256,8 +252,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     }
     
     ZMLogDebug(@"%@ <%@: %p>.", NSStringFromSelector(_cmd), self.class, self);
+    NSPersistentStore* store = [self firstPersistentStore];
+    if(store == nil) {
+        NSError* error = [NSError errorWithDomain:WireCoreDataErrorDomain code:CoreDataNoStoreError userInfo:nil];
+        [WireLoggerObjC logSaveCoreDataError:error];
+        return YES;
+    }
     
-    NSDictionary *oldMetadata = [self.persistentStoreCoordinator metadataForPersistentStore:[self firstPersistentStore]];
+    NSDictionary *oldMetadata = [self.persistentStoreCoordinator metadataForPersistentStore:store];
     BOOL hasMetadataChanges = [self makeMetadataPersistent];
     
     if (self.userInfo[IsFailingToSave]) {
@@ -293,7 +295,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 - (void)rollbackWithOldMetadata:(NSDictionary *)oldMetadata;
 {
     [self rollback];
-    [self.persistentStoreCoordinator setMetadata:oldMetadata forPersistentStore:[self firstPersistentStore]];
+    NSPersistentStore* store = [self firstPersistentStore];
+    if(store == nil) {
+        return;
+    }
+    [self.persistentStoreCoordinator setMetadata:oldMetadata forPersistentStore:store];
 }
 
 - (NSDate *)timeOfLastSave;
@@ -486,11 +492,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     }];
 }
 
-- (NSPersistentStore *)firstPersistentStore
+- (nullable NSPersistentStore *)firstPersistentStore
 {
     NSArray *stores = [self.persistentStoreCoordinator persistentStores];
-    NSAssert(stores.count == 1, @"Invalid number of stores");
-    NSPersistentStore *store = stores[0];
+    NSAssert(stores.count <= 1, @"Invalid number of stores");
+    NSPersistentStore *store = stores.firstObject;
     return store;
 }
 
@@ -520,17 +526,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     [self.userInfo removeObjectForKey:IsSaveDisabled];
 }
 
-- (void)markAsSyncContext;
+- (void)markAsSyncContext
 {
-    [self performBlockAndWait:^{
-        self.userInfo[IsSyncContextKey] = @YES;
-    }];
+    self.userInfo[IsSyncContextKey] = @YES;
 }
 
-- (void)markAsSearchContext;
+- (void)performMarkAsSyncContext
 {
     [self performBlockAndWait:^{
-        self.userInfo[IsSearchContextKey] = @YES;
+        [self markAsSyncContext];
     }];
 }
 
@@ -546,7 +550,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     [self performBlockAndWait:^{
         self.userInfo[IsSyncContextKey] = @NO;
         self.userInfo[IsUserInterfaceContextKey] = @NO;
-        self.userInfo[IsSearchContextKey] = @NO;
     }];
 }
 

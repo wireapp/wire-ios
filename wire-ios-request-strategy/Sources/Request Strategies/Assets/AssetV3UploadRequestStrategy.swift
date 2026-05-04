@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireLogging
 
 /// AssetV3UploadRequestStrategy is responsible for uploading all the assets associated with a asset message
@@ -28,13 +29,29 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     var upstreamSync: ZMUpstreamModifiedObjectSync!
     var preprocessor: AssetsPreprocessor
 
-    public var shouldUseBackgroundSession = true
+    private let featureRepository: LegacyFeatureRepository
 
-    public override init(
+    public var shouldUseBackgroundSession = true
+    let localDomain: String?
+    private let isCloudDomain: Bool
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return managedObjectContext.performAndWait {
+            featureRepository.fetchAssetAuditLog().status == .enabled
+        }
+    }
+
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?,
+        isCloudDomain: Bool
     ) {
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
+        self.localDomain = localDomain
+        self.isCloudDomain = isCloudDomain
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
@@ -128,35 +145,79 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? AssetMessage else {
-            fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+        guard let message = managedObject as? ZMAssetClientMessage else {
+            WireLogger.assets.error("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+            return nil
         }
         guard let asset = message.assets.first(where: { !$0.isUploaded }) else { return nil }
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: jacob are we sure we only have one upload per message active?
 
-        return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
+        return requestForUploadingAsset(asset, for: message, apiVersion: apiVersion)
     }
 
     private func requestForUploadingAsset(
         _ asset: AssetType,
         for message: ZMAssetClientMessage,
         apiVersion: APIVersion
-    ) -> ZMUpstreamRequest {
-        guard let data = asset.encrypted else { fatal("Encrypted data not available") }
-        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
-        else { fatal("Trying to send message that doesn't have a conversation") }
+    ) -> ZMUpstreamRequest? {
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"
+        ]
+
+        guard let data = asset.encrypted else {
+            WireLogger.assets.warn(
+                "Encrypted data not available",
+                attributes: logAttributes
+            )
+            return nil
+        }
+
+        guard let conversation = message.conversation else {
+            WireLogger.assets.warn(
+                "Trying to send message that doesn't have a conversation",
+                attributes: logAttributes
+            )
+            return nil
+        }
+
+        let retention = AssetRequestFactory.Retention(conversation: conversation)
+
+        var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+        if shouldUploadExtraMetaData {
+            guard
+                let asset = message.underlyingMessage?.assetData?.original,
+                let domain = conversation.domain ?? localDomain
+            else {
+                WireLogger.assets.warn(
+                    "should include extra metadata but not able to",
+                    attributes: logAttributes
+                )
+                return nil
+            }
+
+            let conversationID = QualifiedID(
+                uuid: conversation.remoteIdentifier,
+                domain: domain
+            )
+
+            extraMetaData = .init(
+                conversationID: conversationID,
+                fileName: asset.name,
+                mimeType: asset.mimeType
+            )
+        }
 
         WireLogger.assets.debug(
             "sending request for asset",
-            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+            attributes: logAttributes
         )
-        var request: ZMTransportRequest? = if shouldUseBackgroundSession {
+        let request: ZMTransportRequest? = if shouldUseBackgroundSession {
             requestFactory.backgroundUpstreamRequestForAsset(
                 message: message,
                 withData: data,
                 shareable: false,
                 retention: retention,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
         } else {
@@ -164,12 +225,13 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
                 withData: data,
                 shareable: false,
                 retention: retention,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
         }
 
         guard let request else {
-            fatal("Could not create asset request")
+            return nil
         }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in

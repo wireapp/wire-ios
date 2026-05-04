@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,16 @@
 //
 
 import UIKit
+import WireDataModel
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
-    case userProfile(UserType)
-    case connectionRequest(UUID)
+    case userProfile(WireDataModel.UserType)
+    case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
 }
 
@@ -41,7 +44,7 @@ final class AuthenticatedRouter {
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
-    private let featureRepositoryProvider: any FeatureRepositoryProvider
+    private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private var featureChangeObserverToken: Any?
@@ -51,7 +54,7 @@ final class AuthenticatedRouter {
 
     private weak var _zClientViewController: ZClientViewController?
 
-    var zClientViewController: ZClientViewController {
+    @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
         _zClientViewController = zClientViewController
         return zClientViewController
@@ -63,9 +66,12 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: BackendEnvironment2?,
+        // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
-        featureRepositoryProvider: any FeatureRepositoryProvider,
+        featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
@@ -77,7 +83,9 @@ final class AuthenticatedRouter {
         self.zClientControllerBuilder = .init(
             account: account,
             userSession: userSession,
-            trackingManager: trackingManager
+            trackingManager: trackingManager,
+            legacyEnvironment: legacyEnvironment,
+            newEnvironment: newEnvironment
         )
 
         self.notificationCenter = notificationCenter
@@ -90,7 +98,7 @@ final class AuthenticatedRouter {
             notificationCenter: notificationCenter,
             analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
             logger: WireLogger.analytics,
-            currentDateProvider: SystemDateProvider()
+            currentDateProvider: .system
         )
 
         self.featureChangeObserverToken = notificationCenter.addObserver(
@@ -122,7 +130,7 @@ final class AuthenticatedRouter {
 
     private func notifyFeatureChange(_ note: Notification) {
         guard
-            let change = note.object as? FeatureRepository.FeatureChange,
+            let change = note.object as? LegacyFeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
             ? UIAlertController.fromFeatureChangeWithActions(
                 change,
@@ -168,10 +176,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case let .conversation(converation, message):
-            _zClientViewController?.showConversation(converation, at: message)
-        case let .connectionRequest(userId):
-            _zClientViewController?.showConnectionRequest(userId: userId)
+        case let .conversation(conversation, message):
+            _zClientViewController?.showConversation(conversation, at: message)
+        case let .connectionRequest(qualifiedID):
+            _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
         case let .userProfile(user):
@@ -182,8 +190,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     }
 }
 
-protocol FeatureRepositoryProvider {
-    var featureRepository: FeatureRepository { get }
+protocol LegacyFeatureRepositoryProvider {
+    var featureRepository: LegacyFeatureRepository { get }
 }
 
-extension ZMUserSession: FeatureRepositoryProvider {}
+extension ZMUserSession: LegacyFeatureRepositoryProvider {}

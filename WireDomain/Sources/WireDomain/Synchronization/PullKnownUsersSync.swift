@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local users up to date
-/// with the remote users.
+import WireNetwork
 
 struct PullKnownUsersSync: PullKnownUsersSyncProtocol {
 
@@ -34,9 +31,6 @@ struct PullKnownUsersSync: PullKnownUsersSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all locally known users from remote, then update
-    /// them locally.
 
     func pull() async throws {
         let knownUserIDs = try await store.fetchUsersQualifiedIDs()

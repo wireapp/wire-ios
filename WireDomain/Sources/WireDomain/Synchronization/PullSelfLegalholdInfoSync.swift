@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 //
 
 import Foundation
-import WireAPI
-
-/// An object to keep the local self legal hold info
-/// up to date with the remote self legal hold info.
+import WireNetwork
 
 struct PullSelfLegalholdInfoSync: PullSelfLegalholdInfoSyncProtocol {
 
@@ -37,12 +34,6 @@ struct PullSelfLegalholdInfoSync: PullSelfLegalholdInfoSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch the self user from remote, then create or update
-    /// it locally.
-    ///
-    /// - Parameters:
-    ///   - selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws {
         let remoteLegalholdInfo = try await api.getLegalholdInfo(

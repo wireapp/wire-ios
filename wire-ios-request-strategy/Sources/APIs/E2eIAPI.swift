@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,8 +78,40 @@ class E2eIAPIV6: E2eIAPIV5 {
     }
 }
 
-final class E2eIAPIV7: E2eIAPIV6 {
+class E2eIAPIV7: E2eIAPIV6 {
     override var apiVersion: APIVersion { .v7 }
+}
+
+class E2eIAPIV8: E2eIAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
+}
+
+class E2eIAPIV9: E2eIAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+class E2eIAPIV10: E2eIAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
+}
+
+class E2eIAPIV11: E2eIAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
+}
+
+class E2eIAPIV12: E2eIAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
+}
+
+class E2eIAPIV13: E2eIAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
+}
+
+class E2eIAPIV14: E2eIAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class E2eIAPIV15: E2eIAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }
 
 private enum Constant {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullSelfUserSyncTests: XCTestCase {
 
@@ -46,7 +46,7 @@ final class PullSelfUserSyncTests: XCTestCase {
         store.persistUserUserInfo_MockMethod = { _ in }
 
         // When
-        try await sut.pull()
+        let result = try await sut.pull()
 
         // Then
         XCTAssertEqual(api.getSelfUser_Invocations.count, 1)
@@ -54,6 +54,10 @@ final class PullSelfUserSyncTests: XCTestCase {
         let storeInvocations = store.persistUserUserInfo_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0], Scaffolding.localSelfUser)
+
+        XCTAssertEqual(result.id, Scaffolding.remoteSelfUser.qualifiedID.id)
+        XCTAssertEqual(result.domain, Scaffolding.remoteSelfUser.qualifiedID.domain)
+        XCTAssertEqual(result.teamID, Scaffolding.remoteSelfUser.teamID)
     }
 
 }
@@ -61,12 +65,12 @@ final class PullSelfUserSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let qualifiedID = UserID(
-        uuid: UUID(),
+        id: UUID(),
         domain: "example.com"
     )
 
     static let remoteSelfUser = SelfUser(
-        id: qualifiedID.uuid,
+        id: qualifiedID.id,
         qualifiedID: qualifiedID,
         ssoID: nil,
         name: "username",
@@ -79,6 +83,7 @@ private enum Scaffolding {
         deleted: false,
         email: "username@wire.com",
         expiresAt: .now,
+        app: nil,
         service: nil,
         supportedProtocols: [.mls]
     )
