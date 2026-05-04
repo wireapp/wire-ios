@@ -109,27 +109,18 @@ final class EditFileViewModelTests {
     // MARK: - Helpers
 
     private func unknownErrorState() -> EditFileViewModel.State {
-        .error(
-            title: AlertModel.unknownError.title,
-            message: AlertModel.unknownError.message
-        )
+        .error(isConnectionError: false)
     }
 }
 
 private extension EditFileViewModel.State {
 
     static var unknownError: Self {
-        .error(
-            title: AlertModel.unknownError.title,
-            message: AlertModel.unknownError.message
-        )
+        .error(isConnectionError: false)
     }
 
     static var noInternetError: Self {
-        .error(
-            title: AlertModel.noInternet.title,
-            message: AlertModel.noInternet.message
-        )
+        .error(isConnectionError: true)
     }
 
 }

@@ -81,9 +81,13 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                             }
                         }
                 case let .error(isConnectionError):
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
+                    FilesInfoView(
+                        scope: .files(conversation: isBrowsing ? .all : .one),
+                        kind: .error(isConnectionError: isConnectionError),
+                        onRetry: {
+                            reloadTask()
+                        }
+                    )
                 }
                 Spacer()
             }
@@ -153,17 +157,24 @@ private extension FilesContentView {
         }
     }
 
+    private func infoViewScope() -> FilesInfoView.Scope {
+        if viewModel.isRecycleBin {
+            .recycleBin(isFolder: viewModel.isInFolder)
+        } else if !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty {
+            .search
+        } else {
+            .files(conversation: isBrowsing ? .all : .one, isFolder: viewModel.isInFolder)
+        }
+    }
+
     @ViewBuilder private var listBackgroundView: some View {
+        let scope = infoViewScope()
+
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(
-                info: .noFilesFound(
-                    scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
-                )
-            )
+            FilesInfoView(scope: scope, kind: .empty)
         case .pending:
-            FilesInfoView(info: .preparingFiles)
+            FilesInfoView(scope: scope, kind: .preparing)
         default:
             EmptyView()
         }

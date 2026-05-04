@@ -38,7 +38,7 @@ final class EditFileViewModel: EditFileViewModelProtocol {
         case idle
         case loading
         case loaded(URL)
-        case error(title: String?, message: String)
+        case error(isConnectionError: Bool)
     }
 
     private let nodeID: UUID
@@ -77,6 +77,6 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     // MARK: - Private helpers
 
     private static func errorState(for alert: AlertModel) -> State {
-        .error(title: alert.title, message: alert.message)
+        .error(isConnectionError: alert == .noInternet)
     }
 }
