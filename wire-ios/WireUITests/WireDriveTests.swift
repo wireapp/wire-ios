@@ -41,7 +41,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     private func verifyDriveEnabledConversation(on activeConversationPage: ActiveConversationPage) {
-        XCTAssertTrue(activeConversationPage.labelSharedDriveIsOn.exists)
+        XCTAssertTrue(activeConversationPage.labelSharedDriveIsOn.waitForExistence(timeout: 2))
         XCTAssertTrue(activeConversationPage.labelSelfDeletingMessageIsOFF.exists)
         XCTAssertFalse(activeConversationPage.selfDeletingMessageButton.isHittable)
 
