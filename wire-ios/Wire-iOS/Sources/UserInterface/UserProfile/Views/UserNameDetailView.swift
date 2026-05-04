@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)
@@ -75,7 +76,7 @@ final class UserNameDetailViewModel: NSObject {
 
     var firstAccessibilityIdentifier: String? {
         if handleText != nil {
-            return "username"
+            return Locators.ConnectionRequestsPage.username.rawValue
         } else if correlationText != nil {
             return "correlation"
         }

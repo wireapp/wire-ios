@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,19 +39,22 @@ extension ZMUser: FederationMigratable {
 
 extension NSManagedObjectContext {
 
-    public func migrateToFederation() throws {
-        try migrateInstancesTowardsFederation(type: ZMUser.self)
-        try migrateInstancesTowardsFederation(type: ZMConversation.self)
+    public func migrateToFederation(localDomain: String) throws {
+        try migrateInstancesTowardsFederation(type: ZMUser.self, localDomain: localDomain)
+        try migrateInstancesTowardsFederation(type: ZMConversation.self, localDomain: localDomain)
     }
 
-    private func migrateInstancesTowardsFederation<T: FederationMigratable>(type: T.Type) throws {
+    private func migrateInstancesTowardsFederation<T: FederationMigratable>(
+        type: T.Type,
+        localDomain: String
+    ) throws {
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName())
         fetchRequest.returnsObjectsAsFaults = false
         fetchRequest.fetchBatchSize = 100
         fetchRequest.predicate = T.predicateForObjectsNeedingFederationMigration
 
         try fetchRequest.execute().modifyAndSaveInBatches { instance in
-            instance.domain = BackendInfo.domain
+            instance.domain = localDomain
         }
     }
 }

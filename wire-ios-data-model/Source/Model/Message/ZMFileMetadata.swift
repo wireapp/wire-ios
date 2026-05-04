@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import MobileCoreServices
 import WireSystem
 import WireUtilities
@@ -37,7 +38,14 @@ open class ZMFileMetadata: NSObject {
         } else {
             nil
         }
-        let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
+
+        let endName: String = if let name {
+            name
+        } else if !fileURL.lastPathComponent.isEmpty {
+            fileURL.lastPathComponent
+        } else {
+            "file"
+        }
 
         self.filename = endName.removingExtremeCombiningCharacters
         super.init()
@@ -47,8 +55,8 @@ open class ZMFileMetadata: NSObject {
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 }
 
@@ -75,8 +83,8 @@ open class ZMAudioMetadata: ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }
@@ -100,8 +108,8 @@ open class ZMVideoMetadata: ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }

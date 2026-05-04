@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
 
 protocol ConversationContentViewControllerDelegate: AnyObject {
@@ -59,4 +60,16 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
     )
 
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)
+
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    )
 }

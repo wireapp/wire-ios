@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,21 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-// MARK: - ConversationSystemMessageCell
-
-final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let icon: UIImage?
         let attributedText: NSAttributedString?
         let showLine: Bool
+
+        /// If `true`, allows to set the link style with the attributes in `attributedText`,
+        /// rather than via `linkTextAttributes`.
+        var resetLinkStyleForOverride: Bool = false
+
+        /// Overrides the background color for the whole cell.
+        var backgroundColor: UIColor?
     }
 
     // MARK: - Configuration
@@ -37,6 +44,14 @@ final class ConversationSystemMessageCell: ConversationIconBasedCell, Conversati
         lineView.isHidden = !object.showLine
         imageView.image = object.icon
         attributedText = object.attributedText
+
+        if object.resetLinkStyleForOverride {
+            textLabel.linkTextAttributes = [:]
+        }
+
+        if let bgColor = object.backgroundColor {
+            backgroundColor = bgColor
+        }
     }
 
 }

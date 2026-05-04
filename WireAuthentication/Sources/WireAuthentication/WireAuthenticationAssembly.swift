@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
+import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+
+public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
 
 public struct WireAuthenticationAssembly {
 
@@ -33,19 +38,37 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        defaultBackendEnvironment: BackendEnvironment,
+        authenticationType: AuthenticationType,
+        environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
-        defaultAPIVersion: APIVersion,
-        accountsURL: URL,
-        passwordValidator: any PasswordValidator
-    ) -> some View {
-        RootComponent(
-            defaultBackendEnvironment: defaultBackendEnvironment,
-            defaultAPIVersion: defaultAPIVersion,
+        preferredAPIVersion: APIVersion?,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
+        passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        appStoreURL: URL,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
+        let rootComponent = RootComponent(
+            authenticationType: authenticationType,
+            environment: environment,
+            preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL, // this is temp
-            passwordValidator: passwordValidator
-        ).rootView
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
+            passwordValidator: passwordValidator,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            appStoreURL: appStoreURL,
+            accountsPublisher: accountsPublisher,
+            registrationAnalyticsTracker: registrationAnalyticsTracker
+        )
+
+        return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
     }
 
 }

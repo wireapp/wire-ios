@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullMLSStatusSyncTests: XCTestCase {
 
     private var sut: PullMLSStatusSync!
-    private var api: MockBackendInfoAPI!
+    private var api: MockMLSAPI!
     private var store: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockBackendInfoAPI()
+        api = MockMLSAPI()
         store = MockBackendConfigLocalStoreProtocol()
         sut = PullMLSStatusSync(
             api: api,
@@ -60,12 +60,12 @@ final class PullMLSStatusSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0], true)
     }
 
-    // Disabled: we have a problem with duplicate linking of WireAPI which means
+    // Disabled: we have a problem with duplicate linking of WireNetwork which means
     // the mock error being thrown isn't caught in the sut even though it looks
     // like the same error.
     func testPull_EndpointUnavailable() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = BackendInfoAPIError.unsupportedEndpointForAPIVersion
+        api.getBackendMLSPublicKeys_MockError = MLSAPIError.unsupportedEndpointForAPIVersion
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
@@ -79,12 +79,12 @@ final class PullMLSStatusSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0], false)
     }
 
-    // Disabled: we have a problem with duplicate linking of WireAPI which means
+    // Disabled: we have a problem with duplicate linking of WireNetwork which means
     // the mock error being thrown isn't caught in the sut even though it looks
     // like the same error.
     func testPull_MLSNotEnabled() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = BackendInfoAPIError.mlsNotEnabled
+        api.getBackendMLSPublicKeys_MockError = MLSAPIError.mlsNotEnabled
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
@@ -104,10 +104,9 @@ private enum Scaffolding {
 
     static let keys = BackendMLSPublicKeys(removal: .init(
         ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-        ed448: nil,
         p256: "BM036midcNiOMgny9m7N",
         p384: "BPSlomkR8K4BcFLGTDOJx",
-        p512: "BAC3OmJi7rAPFAIXjU"
+        p521: "BAC3OmJi7rAPFAIXjU"
     ))
 
 }

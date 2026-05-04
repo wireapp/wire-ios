@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,16 +82,19 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
                 titleLabelToIconInset.isActive = true
+                accessibilityTraits = [.button]
             case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
                 subtitleLabel.text = AccentColor.current.name
                 titleLabelToIconInset.isActive = true
+                accessibilityTraits = [.button]
             default:
                 subtitleLabel.text = nil
                 iconImageView.backgroundColor = UIColor.clear
                 iconImageView.image = .none
                 titleLabelToIconInset.isActive = false
+                accessibilityTraits = []
             }
             layoutIfNeeded()
         }

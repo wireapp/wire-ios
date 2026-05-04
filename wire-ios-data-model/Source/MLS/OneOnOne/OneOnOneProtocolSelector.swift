@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,12 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
 
             guard let otherUser = ZMUser.fetch(with: id, in: context) else {
                 throw OneOnOneProtocolSelectorError.userNotFound
+            }
+
+            // we treat deleted user as no protocols, in reality, the conversations on backend side remove the otherUser
+            // when deleted so we don't end up here
+            if otherUser.isAccountDeleted {
+                return Set<MessageProtocol>()
             }
 
             var otherProtocols = otherUser.supportedProtocols

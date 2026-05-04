@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,10 +39,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
 
         // WHEN && THEN
-        XCTAssertEqual(cellDescription.topMargin, .zero)
-        XCTAssertTrue(cellDescription.isFullWidth)
         XCTAssertFalse(cellDescription.supportsActions)
-        XCTAssertFalse(cellDescription.showEphemeralTimer)
         XCTAssertFalse(cellDescription.containsHighlightableContent)
         XCTAssertNil(cellDescription.message)
         XCTAssertNil(cellDescription.delegate)

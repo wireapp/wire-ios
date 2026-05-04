@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ extension ConversationInputBarViewController {
             if UIDevice.isSimulator {
                 let testFilePath = "/var/tmp/video.mp4"
                 if FileManager.default.fileExists(atPath: testFilePath) {
-                    uploadFile(at: URL(fileURLWithPath: testFilePath))
+                    uploadFiles(at: [URL(fileURLWithPath: testFilePath)])
                 }
             }
             return
@@ -104,7 +104,7 @@ extension ConversationInputBarViewController {
 
         if picker.sourceType == UIImagePickerController.SourceType.camera,
            UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
-           MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+           mediaShareRestrictionManager.hasAccessToCameraRoll {
             UISaveVideoAtPathToSavedPhotosAlbum(
                 videoTempURL.path,
                 self,
@@ -120,7 +120,7 @@ extension ConversationInputBarViewController {
             ) { resultURL, _, error in
                 if error == nil,
                    let resultURL {
-                    self.uploadFile(at: resultURL)
+                    self.uploadFiles(at: [resultURL])
                 }
 
                 self.parent?.dismiss(animated: true)

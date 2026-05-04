@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireLogging
+import WireNetwork
 import WireSystem
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
@@ -25,7 +25,6 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationCreateEvent) async {
-        let conversationID = event.conversationID
         let conversation = event.conversation
         let timestamp = event.timestamp
 

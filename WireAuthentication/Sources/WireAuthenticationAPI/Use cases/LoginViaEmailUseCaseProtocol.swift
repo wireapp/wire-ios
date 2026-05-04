@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
 //
 
 import Foundation
+import WireNetwork
 
-public protocol LoginViaEmailUseCaseProtocol {
-
-    associatedtype AccessToken
+// sourcery: AutoMockable
+public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
     func invoke(
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken)
+    ) async throws -> ([HTTPCookie], AccessToken)
 
 }
 
@@ -37,7 +37,11 @@ public enum LoginViaEmailUseCaseFailure: Error, Equatable {
     case twoFactorAuthenticationFailed
     case accountPendingActivation
     case accountSuspended
-    case noInternet
-    case other
+
+}
+
+public protocol LoginViaEmailUseCaseFactory {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,18 @@ final class DatabaseStatisticsController: UIViewController {
 
     let stackView = UIStackView()
     let spinner = UIActivityIndicatorView()
+
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +91,7 @@ final class DatabaseStatisticsController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Self.Settings.DeveloperOptions.DatabaseStatistics.title.capitalized)
-        guard let session = ZMUserSession.shared() else { return }
+        guard let session = userSession as? ZMUserSession else { return }
         let syncMoc = session.managedObjectContext.zm_sync!
         syncMoc.performGroupedBlock {
             do {

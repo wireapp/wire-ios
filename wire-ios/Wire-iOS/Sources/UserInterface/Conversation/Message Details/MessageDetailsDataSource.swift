@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     weak var observer: MessageDetailsDataSourceObserver?
 
     private let emojiRepository: EmojiRepositoryInterface
+    private let userSession: UserSession
 
     // MARK: - Initialization
 
@@ -81,9 +82,11 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     init(
         message: ZMConversationMessage,
+        userSession: UserSession,
         emojiRepository: EmojiRepositoryInterface = EmojiRepository()
     ) {
         self.message = message
+        self.userSession = userSession
         self.emojiRepository = emojiRepository
         self.conversation = message.conversation!
 
@@ -119,7 +122,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     // MARK: - Interface Properties
 
     private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDate() else {
+        guard let sentDate = message.formattedReceivedDateTime() else {
             return
         }
 
@@ -193,7 +196,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     }
 
     private func setupObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             let messageObserver = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
             let userObserver = UserChangeInfo.add(userObserver: self, in: userSession)
             observationTokens = [messageObserver, userObserver]

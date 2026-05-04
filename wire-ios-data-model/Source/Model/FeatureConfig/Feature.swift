@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "Feature")
-
 @objcMembers
 public class Feature: ZMManagedObject {
 
@@ -32,16 +30,24 @@ public class Feature: ZMManagedObject {
 
     public enum Name: String, Codable, CaseIterable {
 
+        case allowedGlobalOperations
         case appLock
-        case conferenceCalling
-        case fileSharing
-        case selfDeletingMessages
-        case conversationGuestLinks
+        case apps
+        case assetAuditLog
+        case cells
+        case cellsInternal
+        case channels
         case classifiedDomains
+        case conferenceCalling
+        case consumableNotifications
+        case simplifiedUserConnectionRequestQRCode
+        case conversationGuestLinks
         case digitalSignature
-        case mls
         case e2ei = "mlsE2EId"
+        case fileSharing
+        case mls
         case mlsMigration
+        case selfDeletingMessages
 
     }
 
@@ -222,14 +228,22 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling,
-             .fileSharing,
-             .conversationGuestLinks,
+        case .allowedGlobalOperations,
+             .apps,
+             .assetAuditLog,
+             .cells,
+             .cellsInternal,
+             .channels,
              .classifiedDomains,
+             .conferenceCalling,
+             .consumableNotifications,
+             .simplifiedUserConnectionRequestQRCode,
+             .conversationGuestLinks,
              .digitalSignature,
+             .e2ei,
+             .fileSharing,
              .mls,
-             .mlsMigration,
-             .e2ei:
+             .mlsMigration:
             break
         }
     }

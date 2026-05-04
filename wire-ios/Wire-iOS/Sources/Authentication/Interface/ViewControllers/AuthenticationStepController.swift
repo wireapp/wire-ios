@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         configureObservers()
         showKeyboard()
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
@@ -193,7 +194,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             mainView,
             errorLabelContainer,
             secondaryViewsStackView
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         contentStack = CustomSpacingStackView(customSpacedArrangedSubviews: subviews)
         contentStack.axis = .vertical
@@ -422,6 +423,10 @@ extension AuthenticationStepController {
         case .showGuidanceDot:
             break
         }
+    }
+
+    func didRewindToThisView() {
+        // no-op
     }
 
     func valueSubmitted(_ value: Any) {

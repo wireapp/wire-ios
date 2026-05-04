@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     public init(
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
         self.insertedObjectSync = InsertedObjectSync(
@@ -90,7 +89,45 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     typealias Object = ZMClientMessage
 
-    func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+    func insert(
+        object: ZMClientMessage,
+        isFresh: Bool,
+        completion: @escaping () -> Void
+    ) {
+        // Temp fix for avoiding to send a large amount of last read
+        // messages, see: [WPB-17439]
+        if
+            let conversation = object.conversation,
+            conversation.isSelfConversation,
+            conversation.messageProtocol == .mls {
+            completion()
+            return
+        }
+
+        let hasRegisteredMLSClient = context.performAndWait {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
+            return
+        }
+
+        if !isFresh {
+            // This message was not added in this runtime. Rather than send it
+            // which may no longer make sense after such as delay, we will
+            // expire it so the user can retry.
+            WireLogger.messaging.info(
+                "expiring stale client message",
+                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
+                .safePublic
+            )
+            object.expire(withReason: .timeout)
+            context.saveOrRollback()
+            completion()
+            return
+        }
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)
@@ -154,61 +191,5 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             context.delete(message)
         }
     }
-
-}
-
-// MARK: - Event processing
-
-extension ClientMessageRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        events.forEach {
-            self.insertMessage(from: $0, prefetchResult: prefetchResult)
-        }
-    }
-
-    public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        Set(events.compactMap {
-            switch $0.type {
-            case .conversationClientMessageAdd,
-                 .conversationOtrMessageAdd,
-                 .conversationOtrAssetAdd,
-                 .conversationMLSMessageAdd:
-                $0.messageNonce
-
-            default:
-                nil
-            }
-        })
-    }
-
-    func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
-        switch event.type {
-        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd,
-             .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult)
-            else {
-                return
-            }
-            message.markAsSent()
-
-        default:
-            break
-        }
-
-        context.processPendingChanges()
-    }
-}
-
-// MARK: - Helpers
-
-private struct UpdateEventWithNonce {
-
-    let event: ZMUpdateEvent
-    let nonce: UUID
 
 }

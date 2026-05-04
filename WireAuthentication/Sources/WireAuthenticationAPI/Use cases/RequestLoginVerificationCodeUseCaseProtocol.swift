@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,17 +18,21 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol RequestLoginVerificationCodeUseCaseProtocol: Sendable {
 
-    func invoke(
-        email: String
-    ) async throws(RequestLoginVerificationCodeUseCaseFailure)
+    func invoke(email: String) async throws
 
 }
 
 public enum RequestLoginVerificationCodeUseCaseFailure: Error {
 
     case invalidEmail
-    case unexpected(any Error)
+
+}
+
+public protocol RequestLoginVerificationCodeUseCaseFactory {
+
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol
 
 }

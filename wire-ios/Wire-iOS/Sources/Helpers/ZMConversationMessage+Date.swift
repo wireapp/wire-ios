@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,11 @@ extension ZMConversationMessage {
         }
     }
 
-    func formattedReceivedDate() -> String? {
+    func formattedReceivedTime() -> String? {
+        serverTimestamp.map(Message.shortTimeFormatter.string(from:))
+    }
+
+    func formattedReceivedDateTime() -> String? {
         serverTimestamp.map(formattedDate)
     }
 

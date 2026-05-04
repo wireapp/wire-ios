@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireFoundation
 
 public final class SidebarViewController: UIViewController {
@@ -42,16 +43,6 @@ public final class SidebarViewController: UIViewController {
     public var wireAccentColor: WireAccentColor {
         get { model.wireAccentColor }
         set { model.wireAccentColor = newValue }
-    }
-
-    public var wireAccentColorMapping: WireAccentColorMapping? {
-        get { model.wireAccentColorMapping }
-        set { model.wireAccentColorMapping = newValue }
-    }
-
-    public var wireTextStyleMapping: WireTextStyleMapping? {
-        get { model.wireTextStyleMapping }
-        set { model.wireTextStyleMapping = newValue }
     }
 
     public var sidebarBackgroundColor: UIColor {
@@ -89,6 +80,21 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
     }
 
+    public var showUnreadFilters: Bool {
+        get { model.showUnreadFilters }
+        set { model.showUnreadFilters = newValue }
+    }
+
+    public var showMeetings: Bool {
+        get { model.showMeetings }
+        set { model.showMeetings = newValue }
+    }
+
+    public var showFiles: Bool {
+        get { model.showFiles }
+        set { model.showFiles = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -120,8 +126,6 @@ public final class SidebarViewController: UIViewController {
             delegate?.sidebarViewController(self, didSelect: menuItem)
         }, foldersAction: { [weak self] rect in
             self?.delegate?.sidebarViewController(self!, didTapFoldersMenuItem: rect)
-        }, connectAction: { [weak self] in
-            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
@@ -172,9 +176,11 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
         SidebarView(
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
+            showUnreadFilters: model.showUnreadFilters,
+            showMeetings: model.showMeetings,
+            showFiles: model.showFiles,
             accountImageAction: model.accountImageAction,
             foldersAction: model.foldersAction,
-            connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView,
             legalHoldIndicatorView: legalHoldIndicatorView
@@ -190,8 +196,6 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
                 .sidebarMenuItemIsSelectedTitleForegroundColor
         ))
         .environment(\.wireAccentColor, model.wireAccentColor)
-        .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
-        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,11 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 @class UIApplication;
 @class ZMTransportRequest;
 @class ZMPersistentCookieStorage;
+@class ZMAccessTokenHandler;
 @class ZMTransportRequestScheduler;
-@protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
 @protocol ZMKeyValueStore;
-@protocol ZMPushChannel;
 @protocol ReachabilityProvider;
 @protocol BackendEnvironmentProvider;
 @protocol URLSessionsDirectory;
@@ -72,6 +71,7 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic, readonly) ZMAccessTokenHandler *accessTokenHandler;
 @property (nonatomic, readonly) id<URLSessionsDirectory, TearDownCapable> sessionsDirectory;
 @property (nonatomic, copy, nullable) void (^requestLoopDetectionCallback)(NSString*);
 @property (nonatomic, readonly) id<ReachabilityProvider, TearDownCapable> reachability;
@@ -84,7 +84,9 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier
                  applicationVersion:(nonnull NSString *)applicationVersion
-                      minTLSVersion:(nullable NSString *)minTLSVersion;
+                      minTLSVersion:(nullable NSString *)minTLSVersion
+                       selfClientID:(nullable NSString *)selfClientID
+                    isSyncV2Enabled:(bool)isSyncV2Enabled;
 
 - (void)tearDown;
 
@@ -111,16 +113,6 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
  *   background session indeed is, e.g. after the app has been terminated
  */
 - (void)getBackgroundTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
-
-@end
-
-
-
-@interface ZMTransportSession (PushChannel)
-
-@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue NS_SWIFT_NAME(configurePushChannel(consumer:groupQueue:));
 
 @end
 

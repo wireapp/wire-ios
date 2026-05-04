@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -29,292 +27,39 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     private var sut: PushSupportedProtocolsUseCase!
     private var mockPushSupportedProtocolsSync: MockPushSupportedProtocolsSyncProtocol!
-    private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
-
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var stack: CoreDataStack!
-    private var modelHelper: ModelHelper!
-
-    private var context: NSManagedObjectContext {
-        stack.syncContext
-    }
+    private var calculateSupportedProtocolsUseCase: MockCalculateSupportedProtocolsUseCaseProtocol!
 
     // MARK: - Life cycle
 
     override func setUp() async throws {
         try await super.setUp()
-        modelHelper = ModelHelper()
-        coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
-
         mockPushSupportedProtocolsSync = MockPushSupportedProtocolsSyncProtocol()
-        userClientsLocalStore = MockUserClientsLocalStoreProtocol()
+        calculateSupportedProtocolsUseCase = MockCalculateSupportedProtocolsUseCaseProtocol()
 
         sut = PushSupportedProtocolsUseCase(
-            featureConfigRepository: FeatureConfigRepository(
-                featureConfigsAPI: MockFeatureConfigsAPI(),
-                featureConfigLocalStore: FeatureConfigLocalStore(context: context)
-            ),
             pushSupportedProtocolsSync: mockPushSupportedProtocolsSync,
-            userClientsLocalStore: userClientsLocalStore
+            calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase
         )
+
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        sut = nil
-        stack = nil
-        modelHelper = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
-
         mockPushSupportedProtocolsSync = nil
-        userClientsLocalStore = nil
+        calculateSupportedProtocolsUseCase = nil
     }
 
     // MARK: - Tests
 
-    func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() async throws {
+    func test_PushSupportedProtocols_It_Invokes_Sync_Method() async throws {
         // Given
-        await setup(remoteSupportedProtocols: [.proteus])
-
+        let supportedProtocols = Set([WireNetwork.MessageProtocol.mls, .proteus])
+        calculateSupportedProtocolsUseCase.invoke_MockValue = supportedProtocols
         mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.proteus]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus]),
-                (migrationState: .finalised, supportedProtocols: [.proteus])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteusAndMLS() async throws {
-        // Given
-        await setup(remoteSupportedProtocols: [.proteus, .mls])
-
-        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
-
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.proteus, .mls]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
-                (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteMLS() async throws {
-        // Given
-        await setup(remoteSupportedProtocols: [.mls])
-
-        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
-
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.mls]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
-                (migrationState: .finalised, supportedProtocols: [.mls])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteus() async throws {
-        // Given
-        await setup(remoteSupportedProtocols: [.proteus])
-
-        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
-
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.proteus]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus]),
-                (migrationState: .finalised, supportedProtocols: [.proteus])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteusAndMLS() async throws {
-        // Given
-        await setup(remoteSupportedProtocols: [.proteus, .mls])
-
-        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
-
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.proteus]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus]),
-                (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
-        // Given
-        await setup(remoteSupportedProtocols: [.mls])
-
-        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
-
-        let testCases: [
-            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)
-        ] =
-            [
-                (migrationState: .disabled, supportedProtocols: [.mls]),
-                (migrationState: .notStarted, supportedProtocols: [.proteus]),
-                (migrationState: .ongoing, supportedProtocols: [.proteus]),
-                (migrationState: .finalised, supportedProtocols: [.mls])
-            ]
-
-        for testCase in testCases {
-            await setup(migrationState: testCase.migrationState)
-            // When
-            try await sut.invoke()
-            let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
-            // Then
-            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
-        }
-    }
-
-    // MARK: - Setup
-
-    private func randomMLSPublicKeys() -> WireDataModel.UserClient.MLSPublicKeys {
-        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
-    }
-
-    private func setup(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) async {
-        await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .mls,
-                in: context
-            ) {
-                $0.status = .enabled
-                $0.config = try! JSONEncoder().encode(
-                    Feature.MLS.Config(supportedProtocols: remoteSupportedProtocols)
-                )
-            }
-        }
-    }
-
-    private func setup(migrationState: Scaffolding.MigrationState) async {
-        switch migrationState {
-        case .disabled:
-            await context.perform { [context] in
-                Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
-                    $0.status = .disabled
-                    $0.config = try! JSONEncoder().encode(
-                        Feature.MLSMigration.Config()
-                    )
-                }
-            }
-
-        case .notStarted:
-            await context.perform { [context] in
-                Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
-                    $0.status = .enabled
-                    $0.config = try! JSONEncoder().encode(
-                        Feature.MLSMigration.Config(
-                            startTime: Date(timeIntervalSinceNow: .oneDay),
-                            finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
-                        )
-                    )
-                }
-            }
-
-        case .ongoing:
-            await context.perform { [context] in
-                Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
-                    $0.status = .enabled
-                    $0.config = try! JSONEncoder().encode(
-                        Feature.MLSMigration.Config(
-                            startTime: Date(timeIntervalSinceNow: -.oneDay),
-                            finaliseRegardlessAfter: Date(timeIntervalSinceNow: .fourWeeks)
-                        )
-                    )
-                }
-            }
-
-        case .finalised:
-            await context.perform { [context] in
-                Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
-                    $0.status = .enabled
-                    $0.config = try! JSONEncoder().encode(
-                        Feature.MLSMigration.Config(
-                            startTime: Date(timeIntervalSinceNow: -.fourWeeks),
-                            finaliseRegardlessAfter: Date(timeIntervalSinceNow: -.oneDay)
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    private enum Scaffolding {
-        enum MigrationState {
-            case disabled
-            case notStarted
-            case ongoing
-            case finalised
-        }
+        try await sut.invoke()
+        let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
+        // Then
+        XCTAssertEqual(supportedProtocols, pushedProtocols)
     }
 }
