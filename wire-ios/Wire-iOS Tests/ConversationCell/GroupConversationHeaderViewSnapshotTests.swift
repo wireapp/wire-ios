@@ -161,8 +161,8 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
         container.backgroundColor = SemanticColors.View.backgroundConversationList
         container.addSubview(headerView)
         NSLayoutConstraint.activate([
-            headerView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            headerView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            headerView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
             headerView.topAnchor.constraint(equalTo: container.topAnchor),
             headerView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
         ])
