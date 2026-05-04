@@ -396,7 +396,7 @@ public enum Locators {
 
         public enum FilesPage: String {
             case close
-            case createFolder = "Create folder"
+            case createFolder
             case createFile
             case recycleBin
             case sharedDrivePageHeader = "Shared Drive"
