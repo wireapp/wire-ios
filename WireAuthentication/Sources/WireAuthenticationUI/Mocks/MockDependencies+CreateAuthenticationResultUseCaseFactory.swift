@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,24 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: CreateAuthenticationResultUseCaseFactory {
 
     @MainActor
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
-        MockCreateAuthenticationResultUseCase(backendEnvironment: backendEnvironment)
+        MockCreateAuthenticationResultUseCase(
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata
+        )
     }
 
 }
 
 struct MockCreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
 
-    let backendEnvironment: WireAuthenticationBackendEnvironment
+    let backendEnvironment: BackendEnvironment2
+    let backendMetadata: ResolvedBackendMetadata
 
     func invoke(
         userID: UUID,
@@ -43,7 +48,9 @@ struct MockCreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseP
             cookies: cookies,
             accessToken: accessToken,
             emailCredentials: emailCredentials,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata,
+            proxyCredentials: nil
         )
     }
 

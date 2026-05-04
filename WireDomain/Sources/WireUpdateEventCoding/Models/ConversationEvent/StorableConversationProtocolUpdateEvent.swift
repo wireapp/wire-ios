@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
 
@@ -24,13 +24,13 @@ struct StorableConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
     private let senderID: StorableQualifiedID
     private let newProtocol: StorableConversationMessageProtocol
 
-    init(_ value: WireAPI.ConversationProtocolUpdateEvent) {
+    init(_ value: WireNetwork.ConversationProtocolUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.newProtocol = StorableConversationMessageProtocol(value.newProtocol)
     }
 
-    func toAPIModel() -> WireAPI.ConversationProtocolUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationProtocolUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

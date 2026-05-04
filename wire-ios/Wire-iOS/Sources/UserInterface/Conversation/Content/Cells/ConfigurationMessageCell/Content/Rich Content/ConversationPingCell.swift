@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCellDescription>, ConversationMessageCell {
 
@@ -27,6 +28,11 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
+
+    /// Override the base property to identify this as a ping cell.
+    override var shouldRemoveInnerPaddingForBubbles: Bool {
+        true
+    }
 
     struct Configuration: Equatable {
         let pingColor: UIColor
@@ -152,6 +158,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

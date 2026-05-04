@@ -4,37 +4,42 @@ import Foundation
 import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
+// open --env ENABLE_DATADOG=true --env ENABLE_COUNTLY=true wire-ios-mono.xcworkspace
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
 let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
-        .library(name: "WireAnalyticsDynamic", type: .dynamic, targets: ["WireAnalytics"]),
+        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
         .library(name: "WireCountly", targets: ["WireCountly"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: ["WireLogging"]
+            dependencies: [
+                .product(name: "WireFoundation", package: "WireFoundation"),
+                .product(name: "WireLogging", package: "WireLogging"),
+            ]
         ),
         .target(
             name: "WireAnalyticsSupport",
-            dependencies: ["WireAnalytics"],
+            dependencies: ["WireAnalytics", "WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireAnalyticsTests",
-            dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
+            dependencies: ["WireAnalytics", "WireAnalyticsSupport", "WireFoundation"]
         ),
 
         .target(

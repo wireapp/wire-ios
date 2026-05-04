@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import WireAPI
+import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
@@ -46,23 +47,25 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     }
 
     func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent
+        from eventData: ConversationProteusMessageAddEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
 
         let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
-        let context = try await extractContext(from: eventData)
+        let eventContext = try await extractContext(from: eventData)
 
         let (didCreateSession, plaintextData) = try await proteusService.decrypt(
             data: ciphertextData,
-            forSession: context.proteusSessionID
+            forSession: eventContext.proteusSessionID,
+            context: context
         )
 
         if didCreateSession {
             await userClientsLocalStore.clientSessionCreated(
-                selfClient: context.selfClient,
-                newClient: context.senderClient
+                selfClient: eventContext.selfClient,
+                newClient: eventContext.senderClient
             )
         }
 
@@ -92,7 +95,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         }
 
         let senderUser = await userLocalStore.fetchOrCreateUser(
-            id: eventData.senderID.uuid,
+            id: eventData.senderID.id,
             domain: eventData.senderID.domain
         )
 

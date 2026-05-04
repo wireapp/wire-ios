@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableMessageProtocol: String, Codable, Sendable {
 
     case proteus
     case mls
 
-    init(_ value: WireAPI.MessageProtocol) {
+    init(_ value: WireNetwork.MessageProtocol) {
         switch value {
         case .proteus:
             self = .proteus
@@ -33,7 +33,7 @@ enum StorableMessageProtocol: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.MessageProtocol {
+    func toAPIModel() -> WireNetwork.MessageProtocol {
         switch self {
         case .proteus:
             .proteus

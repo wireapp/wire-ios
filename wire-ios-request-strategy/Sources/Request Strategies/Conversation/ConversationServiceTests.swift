@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,13 @@ final class ConversationServiceTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         mockConversationParticipantsService = MockConversationParticipantsServiceInterface()
-        sut = ConversationService(context: uiMOC, participantsServiceBuilder: { _ in
-            self.mockConversationParticipantsService
-        })
+        sut = ConversationService(
+            context: uiMOC,
+            participantsServiceBuilder: { _ in
+                self.mockConversationParticipantsService
+            },
+            localDomain: "wire.com"
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
@@ -71,7 +75,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -96,7 +100,7 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, .allowGuests)
-        XCTAssertEqual(performedAction.accessRoles, [.guest, .service, .nonTeamMember, .teamMember])
+        XCTAssertEqual(performedAction.accessRoles, [.guest, .app, .nonTeamMember, .teamMember])
         XCTAssertEqual(performedAction.legacyAccessRole, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
         XCTAssertEqual(performedAction.isReadReceiptsEnabled, true)
@@ -125,7 +129,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -220,7 +224,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -255,7 +259,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -321,7 +325,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -403,7 +407,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -476,7 +480,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -509,7 +513,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -554,7 +558,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Test",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -599,7 +603,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "New",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {

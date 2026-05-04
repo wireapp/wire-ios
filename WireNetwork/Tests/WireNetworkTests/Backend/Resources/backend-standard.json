@@ -1,0 +1,12 @@
+{
+    "title": "Test Backend",
+    "endpoints": {
+        "backendURL": "https://api.example.com",
+        "backendWSURL": "https://ws.example.com",
+        "blackListURL": "https://blacklist.example.com",
+        "teamsURL": "https://teams.example.com",
+        "accountsURL": "https://accounts.example.com",
+        "websiteURL": "https://example.com",
+        "countlyURL": "https://analytics.example.com"
+    }
+}

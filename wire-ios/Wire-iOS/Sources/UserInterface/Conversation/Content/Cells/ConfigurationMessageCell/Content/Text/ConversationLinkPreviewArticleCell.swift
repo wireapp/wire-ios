@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -68,9 +69,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        articleView.fitIn(view: self, insets: insets)
+        articleView.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -113,7 +112,9 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
         didSet {
             if let message {
                 configuration.message = message
-                configuration.textMessageData = message.textMessageData!
+                if let data = message.textMessageData {
+                    configuration.textMessageData = data
+                }
             }
         }
     }
@@ -126,6 +127,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"

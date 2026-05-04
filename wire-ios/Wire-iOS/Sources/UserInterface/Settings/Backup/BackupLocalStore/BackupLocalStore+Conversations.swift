@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,12 +30,21 @@ extension BackupLocalStore {
         return fetchRequest
     }
 
+    func fetchAllConversationIDs() async throws -> Set<WireFoundation.QualifiedID> {
+        let fetchRequest = ZMConversation.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await backupContext.perform { [backupContext] in
+            let conversations = try backupContext.fetch(fetchRequest) as! [ZMConversation]
+            return Set(conversations.compactMap(\.qualifiedID).map(WireFoundation.QualifiedID.init))
+        }
+    }
+
     func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error> {
         AsyncThrowingStream { continuation in
             Task<Void, Never> {
                 do {
-                    try await context.perform {
-                        let conversations = try context.fetch(conversationFetchRequest) as! [ZMConversation]
+                    try await backupContext.perform {
+                        let conversations = try backupContext.fetch(conversationFetchRequest) as! [ZMConversation]
                         for conversation in conversations {
                             autoreleasepool {
                                 if let backupConversation = ConversationBackupModel(conversation) {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
@@ -27,29 +28,35 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func decryptedWelcomeMessageEventData(
-        from eventData: ConversationMLSWelcomeEvent
+        from eventData: ConversationMLSWelcomeEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
 
+        // Abort if needed.
+        try Task.checkCancellation()
+
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
-            welcomeMessage: welcomeMessage
+            welcomeMessage: welcomeMessage,
+            context: context
         )
 
         await conversationLocalStore.createMLSConversation(
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain,
             mlsGroupID: groupID
         )
     }
 
     func decryptedMessageAddEventData(
-        from eventData: ConversationMLSMessageAddEvent
+        from eventData: ConversationMLSMessageAddEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws -> ConversationMLSMessageAddEvent {
         let conversationID = eventData.conversationID
 
         guard let mlsConversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         ) else {
             throw MLSMessageDecryptorError.conversationNotFound
@@ -66,17 +73,21 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
+        // Abort if needed.
+        try Task.checkCancellation()
+
         do {
             let decryptionResults = try await decryptMLSMessage(
                 message: eventData.message,
                 mlsGroupID: mlsGroupID,
-                subconversation: eventData.subconversation
+                subconversation: eventData.subconversation,
+                context: context
             )
 
             let decryptedMessages = await processMLSMessageDecryptionResults(
                 decryptionResults,
                 mlsConversation: mlsConversation,
-                senderID: eventData.senderID.uuid,
+                senderID: eventData.senderID.id,
                 senderDomain: eventData.senderID.domain,
                 date: eventData.timestamp
             )
@@ -99,14 +110,16 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,
-        subconversation: String?
+        subconversation: String?,
+        context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
         let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
 
         let results = try await mlsDecryptionService.decrypt(
             message: message,
             for: mlsGroupID,
-            subconversationType: subconvType
+            subconversationType: subconvType,
+            context: context
         )
 
         if results.isEmpty {

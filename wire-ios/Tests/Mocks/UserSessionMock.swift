@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ import LocalAuthentication
 import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
+import WireDomain
+import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
 import WireSyncEngineSupport
@@ -28,6 +30,27 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+    func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel
+        .OneOnOneConversationResolution {
+        .noAction
+    }
+
+    var apiVersion: APIVersion = .v0
+    var localDomain = "wire.com"
+    var isFederationEnabled = false
+
+    var resolvedBackendMetadata: BackendMetadataProvider {
+        BackendMetadataProvider(
+            apiVersionOverride: apiVersion,
+            domainOverride: localDomain,
+            isFederationEnabledOverride: isFederationEnabled,
+            isBackendMLSEnabledOverride: isBackendMLSEnabled
+        )
+    }
+
+    var isBackendMLSEnabled = false
+
+    var isBuildBlacklisted = false
 
     var isTornDown = false
 
@@ -85,6 +108,8 @@ final class UserSessionMock: UserSession {
 
     var searchUsersCache: SearchUsersCache
 
+    var fileAssetCache: FileAssetCache = .init(location: URL.temporaryDirectory)
+
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
@@ -133,7 +158,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
-    var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     func openAppLock() throws {
         openApp.append(())
@@ -301,16 +326,20 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    func makeConversationSecureGuestLinkUseCase() -> (any CreateConversationGuestLinkUseCaseProtocol)? {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        MockSetAllowGuestAndServicesUseCaseProtocol()
+    func makeSetConversationGuestsAndAppsUseCase() -> (any SetAllowGuestAndAppsUseCaseProtocol)? {
+        MockSetAllowGuestAndAppsUseCaseProtocol()
     }
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
         AppendTextMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendMultipartMessageUseCase() -> any AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
@@ -321,7 +350,7 @@ final class UserSessionMock: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
@@ -345,7 +374,7 @@ final class UserSessionMock: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         let mock = MockSearchUsersUseCaseProtocol()
         mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
             let payload = ["documents": [
@@ -375,6 +404,12 @@ final class UserSessionMock: UserSession {
         status: .enabled,
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
+
+    var isWireDriveEnabled: Bool = false
+
+    var wireDriveBackendURL: URL?
+
+    var isEnterpriseUser: Bool = false
 
     func fetchAllClients() {}
 
@@ -407,8 +442,10 @@ final class UserSessionMock: UserSession {
 
     // MARK: - Notifications
 
+    private var commonObject = MockNotificationContext()
+
     var notificationContext: any NotificationContext {
-        viewContext.notificationContext
+        commonObject
     }
 
     // MARK: - Context Provider
@@ -418,6 +455,10 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
+
+    // MARK: - ClientSessionComponent?
+
+    var clientSessionComponent: WireDomain.ClientSessionComponent?
 }
 
 // MARK: - UserSessionMock + ContextProvider
@@ -431,6 +472,8 @@ extension UserSessionMock: ContextProvider {
     }
 
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
-    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
+
 }
+
+class MockNotificationContext: NSObject, NotificationContext {}

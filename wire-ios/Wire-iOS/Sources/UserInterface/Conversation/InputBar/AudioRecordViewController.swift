@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         self.recorder = audioRecorder ?? AudioRecorder(
             format: .wav,
             maxRecordingDuration: maxAudioLength,
-            maxFileSize: maxUploadSize
+            maxFileSize: maxUploadSize,
+            userSession: userSession
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -155,7 +156,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureViews(userSession: UserSession) {
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 if let color {
                     audioPreviewView.color = color.accentColor.uiColor
                 }

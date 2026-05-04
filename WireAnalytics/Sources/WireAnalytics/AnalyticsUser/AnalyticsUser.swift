@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 /// The subject of analytics tracking.
 
 public struct AnalyticsUser: Equatable, Sendable {
 
     /// A unique id.
 
-    public let analyticsIdentifier: String
+    public let trackingID: UUID
 
     /// The user's team information.
 
@@ -31,14 +33,14 @@ public struct AnalyticsUser: Equatable, Sendable {
     /// Create a new `AnalyticsUser`.
     ///
     /// - Parameters:
-    ///   - analyticsIdentifier: A uniqe id.
+    ///   - trackingID: A uniqe id.
     ///   - teamInfo: The user's team information.
 
     public init(
-        analyticsIdentifier: String,
+        trackingID: UUID,
         teamInfo: TeamInfo? = nil
     ) {
-        self.analyticsIdentifier = analyticsIdentifier
+        self.trackingID = trackingID
         self.teamInfo = teamInfo
     }
 

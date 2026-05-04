@@ -308,7 +308,7 @@
 			<key>one</key>
 			<string>Missed call</string>
 			<key>other</key>
-			<string>Missed calls</string>
+			<string>Missed calls (%d)</string>
 		</dict>
 	</dict>
 	<key>content.system.federation_termination.participants_removed</key>
@@ -340,7 +340,7 @@
 			<key>one</key>
 			<string>Missed call from %2$@</string>
 			<key>other</key>
-			<string>Missed calls from %2$@</string>
+			<string>Missed calls from %2$@ (%d)</string>
 		</dict>
 	</dict>
 	<key>registration.password.rules.min_length</key>
@@ -421,6 +421,22 @@
 			<string>a special character</string>
 			<key>other</key>
 			<string>%d special characters</string>
+		</dict>
+	</dict>
+	<key>conversation.message.multipart_attachments.link</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@attachment_count@</string>
+		<key>attachment_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>1 attached file</string>
+			<key>other</key>
+			<string>%d attached files</string>
 		</dict>
 	</dict>
 </dict>

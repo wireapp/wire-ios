@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
@@ -78,6 +79,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         )
 
         saveButtonItem.tintColor = UIColor.accent()
+        saveButtonItem.accessibilityIdentifier = Locators.EmailUpdatePage.save.rawValue
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
 
@@ -104,7 +106,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         emailCell.textField.showConfirmButton = false
         emailCell.textField.backgroundColor = .clear
         emailCell.textField.textColor = SemanticColors.Label.textDefault
-        emailCell.textField.accessibilityIdentifier = "EmailField"
+        emailCell.textField.accessibilityIdentifier = Locators.EmailUpdatePage.emailField.rawValue
         emailCell.textField.textFieldValidationDelegate = self
         emailCell.textField.addTarget(self, action: #selector(emailTextFieldEditingChanged), for: .editingChanged)
 

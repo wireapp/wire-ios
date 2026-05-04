@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
-
-    private static let resetSessionURL: URL = .init(string: "action://reset-session")!
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -89,7 +87,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     ) -> NSAttributedString {
 
         let messageString = messageString(systemMessage.systemMessageType, sender: sender)
-        let resetSessionString = resetSessionString(accentColor: accentColor)
         let errorDetailsString = errorDetailsString(
             errorCode: systemMessage.decryptionErrorCode?.intValue ?? 0,
             clientIdentifier: systemMessage.senderClientID ?? "N/A"
@@ -100,10 +97,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         switch systemMessage.systemMessageType {
         case .decryptionFailed:
             components = [messageString]
-
-            if systemMessage.isDecryptionErrorRecoverable {
-                components.append(resetSessionString)
-            }
         case .decryptionFailedResolved:
             components = [
                 messageString,
@@ -151,19 +144,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         }
 
         return NSMutableAttributedString.markdown(from: localizationKey.localized(args: name), style: .systemMessage)
-    }
-
-    private static func resetSessionString(accentColor: UIColor) -> NSAttributedString {
-        let string = L10n.Localizable.Content.System.CannotDecrypt.resetSession
-
-        return NSAttributedString(
-            string: string.localizedUppercase,
-            attributes: [
-                .link: resetSessionURL,
-                .foregroundColor: accentColor,
-                .font: UIFont.mediumSemiboldFont
-            ]
-        )
     }
 
     private static func errorDetailsString(errorCode: Int, clientIdentifier: String) -> NSAttributedString {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ extension ConversationInputBarViewController {
 
         if picker.sourceType == UIImagePickerController.SourceType.camera,
            UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
-           MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+           mediaShareRestrictionManager.hasAccessToCameraRoll {
             UISaveVideoAtPathToSavedPhotosAlbum(
                 videoTempURL.path,
                 self,

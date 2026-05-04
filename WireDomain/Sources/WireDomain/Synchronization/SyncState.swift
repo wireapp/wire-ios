@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /// Describes the current syncing state of the app.
 
-public enum SyncState: Equatable {
+public enum SyncState: Equatable, Sendable {
 
     /// The app is not syncing.
 
@@ -34,9 +34,13 @@ public enum SyncState: Equatable {
 
     /// App is up to date and processing live events.
 
-    case liveSyncing
+    case liveSyncing(LiveSyncState)
 
-    public enum InitialSyncState: Equatable {
+    /// Sync was suspended
+
+    case suspended
+
+    public enum InitialSyncState: Equatable, Sendable {
 
         case pullLastEventID
         case pullResources
@@ -45,13 +49,21 @@ public enum SyncState: Equatable {
 
     }
 
-    public enum IncrementalSyncState: Equatable {
+    public enum IncrementalSyncState: Equatable, Sendable {
 
         case createPushChannel
         case openPushChannel
         case pullPendingEvents
         case processPendingEvents
+        case receivingLiveEvents // with consumable-notifications sync system (IncrementalSyncV2), we don't do
+        // pullPendingEvents, the pushChannel is open
+        // and events are received until we're up to date come from the websocket.
 
+    }
+
+    public enum LiveSyncState: Equatable, Sendable {
+        case ongoing
+        case finished
     }
 
 }

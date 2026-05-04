@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class BackendEnvironmentTests: XCTestCase {
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
         defaultsCustom = UserDefaults(suiteName: "custom")
-        EnvironmentType.production.save(in: defaultsProd)
+        EnvironmentType.default.save(in: defaultsProd)
         EnvironmentType.custom(url: URL(string: "https://custom.backend.com")!).save(in: defaultsCustom)
 
         continueAfterFailure = true

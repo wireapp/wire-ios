@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,6 +98,10 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: LocationMessageData? { get }
+
+    /// The multipart message data associated with the message. If the message is not a multipart message, it will be
+    /// nil
+    var multipartMessageData: MultipartMessageData? { get }
 
     var usersReaction: [String: [UserType]] { get }
     var reactionData: Set<ReactionData> { get }
@@ -298,7 +302,7 @@ extension ZMMessage: ZMConversationMessage {
             let managedObjectContext
         else { return false }
 
-        let featureRepository = FeatureRepository(context: managedObjectContext)
+        let featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         let fileSharingFeature = featureRepository.fetchFileSharing()
 
         return fileSharingFeature.status == .disabled
@@ -332,6 +336,10 @@ public extension ZMMessage {
     }
 
     @objc var locationMessageData: LocationMessageData? {
+        nil
+    }
+
+    @objc var multipartMessageData: MultipartMessageData? {
         nil
     }
 

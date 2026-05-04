@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireBackup
-import WireProtos
 
-extension MessageContent {
+extension MessageBackupModel.Content {
 
     init?(_ content: GenericMessage.OneOf_Content) {
         switch content {
         case let .text(text):
             self.init(text)
-        case let .image(imageAsset):
-            self.init(imageAsset)
         case let .asset(asset):
             self.init(asset)
         case let .location(location):
@@ -35,10 +33,11 @@ extension MessageContent {
             self.init(messageEdit)
         case let .ephemeral(ephemeral):
             self.init(ephemeral)
+        case let .multipart(multipart):
+            self.init(multipart)
         case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation,
-             .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer,
-             .inCallEmoji,
-             .inCallHandRaise:
+             .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .image,
+             .inCallEmoji, .inCallHandRaise:
             return nil
         }
     }
@@ -47,11 +46,9 @@ extension MessageContent {
         switch ephemeral.content {
         case let .text(text):
             self.init(text)
-        case let .image(imageAsset):
-            self.init(imageAsset)
         case let .location(location):
             self.init(location)
-        case .knock, .asset, .none:
+        case .knock, .asset, .image, .none:
             return nil
         }
     }
@@ -73,7 +70,11 @@ extension MessageContent {
         switch messageEdit.content {
         case let .text(text):
             self.init(text)
-        case .composite, .none:
+        case .composite:
+            fallthrough // composite messages are not supported in backups yet
+        case .multipart:
+            fallthrough // TODO: [WPB-17971] Support multipart messages in backup
+        case .none:
             return nil
         }
     }
@@ -94,28 +95,13 @@ extension MessageContent {
             assetToken: uploaded.hasAssetToken ? uploaded.assetToken : nil,
             assetDomain: uploaded.hasAssetDomain ? uploaded.assetDomain : nil,
             encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
-            metadata: original.metaData.flatMap(MessageContent.AssetContent.Metadata.init) ??
+            metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init) ??
                 .generic(name: original.hasName ? original.name : nil)
         )
     }
 
-    private init?(_ imageAsset: ImageAsset) {
-        self = .asset(
-            mimeType: imageAsset.hasMimeType ? imageAsset.mimeType : "application/octet-stream",
-            size: UInt64(imageAsset.size),
-            name: .none,
-            otrKey: imageAsset.otrKey,
-            sha256: imageAsset.sha256,
-            assetID: "",
-            assetToken: .none,
-            assetDomain: .none,
-            encryption: .none,
-            metadata: .image(
-                width: imageAsset.width,
-                height: imageAsset.height,
-                tag: imageAsset.hasTag ? imageAsset.tag : ""
-            )
-        )
+    private init?(_ multipart: Multipart) {
+        // TODO: [WPB-17971] Support multipart messages in backup
+        nil
     }
-
 }
