@@ -40,6 +40,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
+    case shakeToReport
 
     public var description: String {
         switch self {
@@ -96,6 +97,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"
+
+        case .shakeToReport:
+            "When on, shaking the device presents the debug report share sheet instead of developer tools."
         }
     }
 
@@ -110,6 +114,7 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
+        if self == .shakeToReport { return true }
         guard let bundleKey else {
             return false
         }
