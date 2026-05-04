@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 /// Handles client registration errors related to the lack of a username
 
@@ -26,9 +27,9 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let (error, _) = context
+        let (_, error, _) = context
 
         // Only handle errors on start
         guard case .start = currentStep else {

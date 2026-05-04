@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 //
 
 import SwiftUI
-import UIKit
 import WireCommonComponents
-import WireConversationsAPI
 import WireDesign
+import WireFoundation
 import WireMainNavigationUI
+import WireMessagingAssembly
+import WireMessagingDomain
+import WireMessagingUI
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities
@@ -37,17 +39,25 @@ final class StartUIViewController: UIViewController {
     weak var delegate: StartUIDelegate?
 
     let searchController = UISearchController(searchResultsController: nil)
+    private var clipboardDelegate: ClipboardRestrictedTextFieldDelegate?
 
-    let groupSelector = SearchGroupSelector()
+    let groupSelector: SearchGroupSelector
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel {
+        let canCreateChannels = userSession.channelsFeature.canCreateChannels(
+            role: userSession.selfUser.teamRole
+        )
+
+        let isTeamUser = userSession.selfUser.hasTeam
+
+        let availableConversationTypes: Set<MultiParticipantConversationType>
+        availableConversationTypes = if areChannelsSupported, canCreateChannels {
             [.channel, .group]
         } else {
             [.group]
         }
 
-        let view = WireConversationTypePickerFactory().create(
+        let view = ConversationTypePickerFactory().create(
             availableConversationTypes: availableConversationTypes,
             onConversationTypeSelected: { [weak self] selectedConversationType in
                 guard let self else { return }
@@ -58,7 +68,12 @@ final class StartUIViewController: UIViewController {
                     }
                 case .channel:
                     Task { @MainActor [weak self] in
-                        self?.navigateToChannelCreation()
+                        guard let self else { return }
+                        if canCreateChannels {
+                            navigateToChannelCreation()
+                        } else {
+                            presentCreateTeamBanner()
+                        }
                     }
                 }
             }
@@ -71,11 +86,18 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
+    let isAppsFeatureEnabled: Bool
+
+    /// Teams cannot add old-style services (bots) anymore, but teams which have been using bots in the past, they
+    /// should still be able to start 1:1 conversations with bots. (only if the team's default protocol is Proteus)
+    let areLegacyBotsAvailable: Bool
+
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
 
@@ -86,14 +108,26 @@ final class StartUIViewController: UIViewController {
 
     let backgroundColor = SemanticColors.View.backgroundDefault
 
-    var searchResults: SearchResultsViewController {
-        searchResultsViewController
-    }
-
+    /// Whether there is a switch control for either listing/searching for users/people or apps/bots.
+    ///
+    /// The people/apps switch control will only be visible if
+    /// - apps/bots are not disabled for this build (restricted clients),
+    /// - the team's default protocol is Proteus the team has been using bots
+    /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        SearchGroup.all.count > 1 &&
-            userSession.selfUser.canSeeServices &&
-            userSession.defaultProtocol != .mls
+        guard
+            SearchGroup.all(for: userSession.defaultProtocol).count > 1,
+            userSession.selfUser.canSeeServices
+        else { return false }
+
+        switch userSession.defaultProtocol {
+        case .mls:
+            return isAppsFeatureEnabled
+        case .proteus:
+            return areLegacyBotsAvailable
+        case .mixed:
+            return false
+        }
     }
 
     // MARK: - Init
@@ -102,30 +136,40 @@ final class StartUIViewController: UIViewController {
         L10n.Localizable.Peoplepicker.NavigationHeader.title
     }
 
-    init(
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
+    init?(
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        self.isFederationEnabled = isFederationEnabled
-        self.searchResultsViewController = SearchResultsViewController(
+        let isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
+        guard let searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
             isAddingParticipants: false,
             shouldIncludeGuests: true,
             isFederationEnabled: isFederationEnabled
-        )
+        ) else { return nil }
+
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.isFederationEnabled = isFederationEnabled
+        self.searchResultsViewController = searchResultsViewController
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
+        self.groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -171,12 +215,9 @@ final class StartUIViewController: UIViewController {
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
         )
-
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
-        searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         setupSearchController()
 
@@ -185,13 +226,13 @@ final class StartUIViewController: UIViewController {
         }
         view.addSubview(conversationTypePicker.view)
 
-        searchResults.delegate = self
-        addToSelf(searchResults)
-        searchResults.searchResultsView.emptyResultView = emptyResultView
-        searchResults.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
+        searchResultsViewController.delegate = self
+        addToSelf(searchResultsViewController)
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+        searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         createConstraints()
-        searchResults.searchContactList()
+        searchResultsViewController.searchContactList()
 
         view.accessibilityViewIsModal = true
     }
@@ -203,16 +244,21 @@ final class StartUIViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        clipboardDelegate = ClipboardRestrictedTextFieldDelegate.restrictSearchBarIfNeeded(
+            searchController.searchBar,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
     private func configGroupSelector() {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if group == .services {
+            if group == .bots || group == .apps {
                 self?.searchController.searchBar.text = ""
             }
-            self?.searchResults.searchGroup = group
+            self?.searchResultsViewController.searchGroup = group
             self?.performSearch()
         }
     }
@@ -277,31 +323,42 @@ final class StartUIViewController: UIViewController {
 
         if groupSelector.group == .people {
             if searchString.isEmpty {
-                searchResults.mode = .list
-                searchResults.searchContactList()
+                searchResultsViewController.mode = .list
+                searchResultsViewController.searchContactList()
             } else {
-                searchResults.mode = .search
-                searchResults.searchForUsers(withQuery: searchString)
+                searchResultsViewController.mode = .search
+                searchResultsViewController.searchForUsers(withQuery: searchString)
             }
+        } else if groupSelector.group == .apps {
+            searchResultsViewController.searchForApps(withQuery: searchString)
         } else {
-            searchResults.searchForServices(withQuery: searchString)
+            searchResultsViewController.searchForBots(withQuery: searchString)
         }
         emptyResultView.updateStatus(
-            searchingForServices: groupSelector.group == .services,
+            searchingForBots: [.apps, .bots].contains(groupSelector.group),
             hasFilter: !searchString.isEmpty
         )
+        if groupSelector.group == .apps, searchString.isEmpty {
+            showEmptyAppsSearchResultView()
+        } else {
+            hideEmptyAppsSearchResultView()
+        }
     }
 
     // MARK: - Navigation methods
 
     private func navigateToConversationCreation() {
-        let conversationCreationController = createGroupConversationUIBuilder.build()
-        navigationController?.pushViewController(conversationCreationController, animated: true)
+        Task {
+            let conversationCreationController = await createGroupConversationUIBuilder.build()
+            navigationController?.pushViewController(conversationCreationController, animated: true)
+        }
     }
 
     private func navigateToChannelCreation() {
-        let vc = channelConversationFormFactory.create(userSession: userSession)
-        navigationController?.pushViewController(vc, animated: true)
+        Task {
+            let vc = await channelConversationFormFactory.create(userSession: userSession)
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 
     /// Checks whether a channel can be created, conditions are:
@@ -311,21 +368,75 @@ final class StartUIViewController: UIViewController {
     /// - API >= v8
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
-    private var canCreateChannel: Bool {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
+    private var areChannelsSupported: Bool {
+        guard let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return false
         }
-        guard userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) else {
-            return false
-        }
-        guard BackendInfo.isMLSEnabled else {
+        guard userSession.isBackendMLSEnabled else {
             return false
         }
         guard backendInfoApiVersion >= .v8 else {
             return false
         }
+
         return true
     }
+
+    private func presentCreateTeamBanner() {
+
+        typealias Localizable = L10n.Localizable.Peoplepicker
+        typealias Accessibility = L10n.Accessibility.Peoplepicker
+
+        let configuration = ChannelBannerView.Configuration(
+            title: Localizable.UpgradeBanner.headline,
+            message: Localizable.UpgradeBanner.subheadline,
+            mainButtonTitle: Localizable.UpgradeBanner.Button.title,
+            mainButtonAction: { [weak self] in
+                self?.dismiss(animated: true) { [weak self] in self?.presentPersonalToTeamMigration() }
+            },
+            closeButton: .init(
+                accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
+                action: { [weak self] in self?.dismiss(animated: true) }
+            )
+        )
+        let banner = ChannelBannerView(configuration: configuration)
+        // Dimmer that covers entire screen and intercepts taps
+        let rootView = ZStack {
+            Color.black.opacity(0.5)
+                .edgesIgnoringSafeArea(.all)
+            banner
+        }
+
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .overFullScreen
+        hostingController.modalTransitionStyle   = .crossDissolve
+        hostingController.overrideUserInterfaceStyle = .dark
+        present(hostingController, animated: true)
+    }
+
+    private func presentPersonalToTeamMigration() {
+        Task {
+            let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.presentationController?.delegate = rootViewController
+            await mainCoordinator.presentViewController(navigationController)
+            if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                selfProfileViewController.triggerCreateTeamFlow()
+            }
+        }
+    }
+
+    private func showEmptyAppsSearchResultView() {
+        let emptyAppsSearchResultView = EmptyAppsSearchResultView(canManageTeam: userSession.selfUser.canManageTeam)
+        searchResultsViewController.searchResultsView.emptyResultView = emptyAppsSearchResultView
+    }
+
+    private func hideEmptyAppsSearchResultView() {
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
+    }
+
 }
 
 // MARK: - UISearchResultsUpdating, UISearchBarDelegate
@@ -340,7 +451,7 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
             object: nil
         )
 
-        perform(#selector(performSearch), with: nil, afterDelay: 0.2)
+        perform(#selector(performSearch), with: nil, afterDelay: 0.25)
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

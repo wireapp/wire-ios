@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
+"peoplepicker.upgrade_banner.close_button.label" = "Team-Erstellungsoption schließen";
 
 "conversation.backButton.description" = "Zurück zur Unterhaltungsliste";
 "conversation.searchButton.description" = "Suche öffnen";
@@ -233,6 +235,10 @@
 "conversationsList.filter_menu_options.groups.description" = "Alle Gruppenunterhaltungen anzeigen";
 "conversationsList.filter_menu_options.channels.description" = "Alle Channels anzeigen";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Alle eins zu eins Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.unread.description" = "Alle ungelesenen Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.mentions.description" = "Alle Unterhaltungen mit Erwähnungen anzeigen";
+"conversationsList.filter_menu_options.replies.description" = "Alle Unterhaltungen mit Antworten anzeigen";
+"conversationsList.filter_menu_options.drafts.description" = "Alle Unterhaltungen mit Nachrichtenentwürfen anzeigen";
 "conversationsList.filter_menu_options.folders.description" = "Ordner";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "Alle Unterhaltungen, ausgewählt";
@@ -241,6 +247,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Channels, ausgewählt";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Ein-zu-eins-Unterhaltungen, ausgewählt";
 "conversationsList.filter_menu_options.folders.selected.description" = "Ordner, ausgewählt";
+"conversationsList.filter_menu_options.unread.selected.description" = "Ungelesen, ausgewählt";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Erwähnungen, ausgewählt";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Entwürfe, ausgewählt";
+"conversationsList.filter_menu_options.replies.selected.description" = "Antworten, ausgewählt";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Unterhaltungsfilter entfernen";
 
@@ -323,4 +334,10 @@
 "searchGifs.gifItems_loaded.announcement" = "%@ neue GIFs geladen";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity-Provider-URL";
+"webAuth.urlLabel.hint" = "Auswählen, um die vollständige URL zu öffnen.";

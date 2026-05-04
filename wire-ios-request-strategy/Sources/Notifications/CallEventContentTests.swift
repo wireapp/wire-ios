@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -153,8 +153,14 @@ class CallEventContentTests: XCTestCase {
         let uuidString = "550e8400-e29b-41d4-a716-446655440000"
         let testCases: [(callerUserID: String, expectedCallerID: AVSIdentifier?)] = [
             ("invalid", nil),
-            (uuidString, AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: nil)),
-            ("\(uuidString)@wire.com", AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: "wire.com"))
+            (
+                uuidString,
+                AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: nil, isFederationEnabled: true)
+            ),
+            (
+                "\(uuidString)@wire.com",
+                AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: "wire.com", isFederationEnabled: true)
+            )
         ]
 
         for testCase in testCases {
@@ -168,7 +174,11 @@ class CallEventContentTests: XCTestCase {
             )
 
             // Then
-            XCTAssertEqual(sut.callerID, testCase.expectedCallerID, "Test case: \(testCase) failed")
+            XCTAssertEqual(
+                sut.callerID(isFederationEnabled: true),
+                testCase.expectedCallerID,
+                "Test case: \(testCase) failed"
+            )
         }
     }
 

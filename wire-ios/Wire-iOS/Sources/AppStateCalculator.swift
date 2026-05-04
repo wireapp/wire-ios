@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum AppState: Equatable {
@@ -25,7 +26,7 @@ enum AppState: Equatable {
     case headless
     case locked(UserSession)
     case authenticated(UserSession)
-    case unauthenticated(error: NSError?)
+    case unauthenticated(accountID: UUID?, environment: BackendEnvironment2?, error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
     case certificateEnrollmentRequired
@@ -42,8 +43,10 @@ enum AppState: Equatable {
             true
         case (.authenticated, .authenticated):
             true
-        case let (.unauthenticated(error1), .unauthenticated(error2)):
-            error1 === error2
+        case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
+            id1 == id2 &&
+                env1 == env2 &&
+                error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             reason1 == reason2
         case (jailbroken, jailbroken):
@@ -76,7 +79,7 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(error: error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated: \(error.debugDescription)"
         case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
@@ -107,7 +110,7 @@ extension AppState: SafeForLoggingStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated \(error?.localizedDescription ?? "<nil>")"
         case let .blacklisted(reason):
             "blacklisted \(reason)"
@@ -176,6 +179,8 @@ final class AppStateCalculator {
         to appState: AppState,
         completion: (() -> Void)? = nil
     ) {
+        let appState = validAppState(from: appState)
+
         guard hasEnteredForeground  else {
             pendingAppState = appState
             completion?()
@@ -187,20 +192,24 @@ final class AppStateCalculator {
             return
         }
 
-        if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            completion?()
-            return
-        }
-
         self.appState = appState
         pendingAppState = nil
 
-        WireLogger.appState.debug(
+        WireLogger.appState.info(
             "transitioning to app state \(appState.safeForLoggingDescription)",
             attributes: .safePublic
         )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
+        }
+    }
+
+    private func validAppState(from appState: AppState) -> AppState {
+        switch appState {
+        case let .authenticated(session) where session.isBuildBlacklisted:
+            .blacklisted(reason: .appVersionBlacklisted)
+        default:
+            appState
         }
     }
 }
@@ -244,17 +253,39 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerWillLogout(
+        accountID: UUID?,
+        environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
         transition(
-            to: .unauthenticated(error: error as NSError?),
+            to: .unauthenticated(
+                accountID: accountID,
+                environment: environment,
+                error: error as NSError?
+            ),
             completion: userSessionCanBeTornDown
         )
     }
 
-    func sessionManagerDidFailToLogin(error: Error?) {
-        transition(to: .unauthenticated(error: error as NSError?))
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    ) {
+        switch error {
+        case .buildIsBlacklisted:
+            transition(to: .blacklisted(reason: .appVersionBlacklisted))
+        case .backendIsObsolete:
+            transition(to: .blacklisted(reason: .backendAPIVersionObsolete))
+        case .clientIsObsolete:
+            transition(to: .blacklisted(reason: .clientAPIVersionObsolete))
+        case let .networkError(code):
+            transition(to: .blacklisted(reason: .networkError(code: code)))
+        case .genericError:
+            transition(to: .blacklisted(reason: .genericError))
+        case let .databaseError(error):
+            transition(to: .databaseFailure(reason: error))
+        }
     }
 
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {
@@ -315,7 +346,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -324,7 +355,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -344,6 +375,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     ) {
         transition(to: .syncFailure(error: error, onRetry: retryHandler))
     }
+
 }
 
 // MARK: - AuthenticationCoordinatorDelegate

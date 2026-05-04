@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
+public import Foundation
+
+import WireFoundation
+import WireLogging
+import WireUtilitiesPackage
 
 public extension SessionManager {
 
-    var importLegacyBackupUseCase: ImportBackupUseCaseProtocol? {
+    func importLegacyBackupUseCase(url: URL) -> ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
 
             ImportLegacyBackupUseCase(
+                url: url,
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportLegacyBackupStreamDecryptor(),
@@ -56,8 +61,14 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
             sessionManager.select(account, completion: { continuation.resume(returning: $0) })
         }
         guard let userSession else { return }
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            userSession.syncStatus.forceSlowSync()
+        do {
+            try await userSession.syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error(
+                "error performing slow sync: \(String(describing: error))",
+                attributes: .initialSync,
+                .safePublic
+            )
         }
     }
 }

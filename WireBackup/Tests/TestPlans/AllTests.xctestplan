@@ -15,6 +15,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : false,
       "target" : {
         "containerPath" : "container:WireBackup",
         "identifier" : "WireBackupTests",

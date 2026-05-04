@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 import avs
 import Combine
 import Foundation
-import WireAnalytics
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -105,6 +104,9 @@ public class WireCallCenterV3: NSObject {
 
     private(set) var isEnabled = true
 
+    let localDomain: String?
+    let isFederationEnabled: Bool
+
     // MARK: - Initialization
 
     deinit {
@@ -128,18 +130,27 @@ public class WireCallCenterV3: NSObject {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
         self.notificationCenter = notificationCenter
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
 
         super.init()
 
         let observer = Unmanaged.passUnretained(self).toOpaque()
-        self.avsWrapper = avsWrapper ?? AVSWrapper(userId: userId, clientId: clientId, observer: observer)
+        self.avsWrapper = avsWrapper ?? AVSWrapper(
+            userId: userId,
+            clientId: clientId,
+            observer: observer,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     func tearDown() {
@@ -193,6 +204,7 @@ extension WireCallCenterV3 {
         let group = conversation.conversationType == .group
 
         callSnapshots[conversationId] = CallSnapshot(
+            messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -482,46 +494,13 @@ extension WireCallCenterV3 {
                   in: context
               ),
               conversation.conversationType == .oneOnOne,
+              isSFTEnabledForOneToOneCalls(context: context),
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
         }
 
-        switch conversation.messageProtocol {
-        case .mls:
-            return shouldEndCallForMLS(
-                previousParticipants: previousParticipants,
-                newParticipants: newParticipants
-            )
-        case .mixed, .proteus:
-            return shouldEndCallForProteus(
-                previousParticipants: previousParticipants,
-                newParticipants: newParticipants
-            )
-        }
-    }
-
-    private func shouldEndCallForMLS(
-        previousParticipants: [AVSCallMember],
-        newParticipants: [AVSCallMember]
-    ) -> Bool {
-        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the
-        /// call should end.
-        guard
-            previousParticipants.count == 2,
-            newParticipants.count == 2,
-            newParticipants[1].audioState == .connecting
-        else {
-            return false
-        }
-        return true
-    }
-
-    private func shouldEndCallForProteus(
-        previousParticipants: [AVSCallMember],
-        newParticipants: [AVSCallMember]
-    ) -> Bool {
-        previousParticipants.count == 2 && newParticipants.count == 1
+        return previousParticipants.count == 2 && newParticipants.count == 1
     }
 
 }
@@ -712,7 +691,7 @@ public extension WireCallCenterV3 {
             return true
         }
         guard let context = uiMOC else { return false }
-        let conferenceCalling = FeatureRepository(context: context).fetchConferenceCalling()
+        let conferenceCalling = LegacyFeatureRepository(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
     }
 
@@ -737,6 +716,10 @@ public extension WireCallCenterV3 {
             let parentGroupID = conversation.mlsGroupID,
             let syncContext = conversation.managedObjectContext?.zm_sync
         else {
+            WireLogger.calling.error(
+                "MLS conference setup failed: missing required data",
+                attributes: .safePublic
+            )
             onMLSConferenceFailure(id: conversationID)
             throw Failure.failedToSetupMLSConference
         }
@@ -746,6 +729,10 @@ public extension WireCallCenterV3 {
                 let self,
                 let mlsService = syncContext.mlsService
             else {
+                WireLogger.calling.error(
+                    "MLS conference setup failed: service unavailable",
+                    attributes: .safePublic
+                )
                 self?.onMLSConferenceFailure(id: conversationID)
                 return
             }
@@ -757,6 +744,10 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
+                    WireLogger.calling.info(
+                        "MLS conference: subgroup joined successfully",
+                        attributes: .safePublic
+                    )
 
                     try avsCallHandler()
 
@@ -764,6 +755,10 @@ public extension WireCallCenterV3 {
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
+                    )
+                    WireLogger.calling.info(
+                        "MLS conference: conference info generated successfully",
+                        attributes: .safePublic
                     )
 
                     self.avsWrapper.setMLSConferenceInfo(
@@ -789,7 +784,11 @@ public extension WireCallCenterV3 {
                                 )
                             }
                         } catch {
-                            WireLogger.calling.error("Error updating conference info: \(error)")
+                            let nsError = error as NSError
+                            WireLogger.calling.error(
+                                "Error updating conference info: \(nsError.safeForLoggingDescription)",
+                                attributes: .safePublic
+                            )
                         }
                     }
 
@@ -813,9 +812,12 @@ public extension WireCallCenterV3 {
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
-                    Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
+                    let nsError = error as NSError
+                    WireLogger.calling.error(
+                        "failed to set up MLS conference: \(nsError.safeForLoggingDescription)",
+                        attributes: .safePublic
+                    )
                     self.onMLSConferenceFailure(id: conversationID)
-                    assertionFailure(String(reflecting: error))
                 }
             }
         }
@@ -823,6 +825,11 @@ public extension WireCallCenterV3 {
 
     private func onMLSConferenceFailure(id: AVSIdentifier) {
         uiMOC?.perform { [weak self] in
+            // Notify to close calling UI
+            self?.handle(
+                callState: .terminating(reason: .unknown),
+                conversationId: id
+            )
             self?.closeCall(conversationId: id, reason: .unknown)
         }
     }
@@ -842,7 +849,7 @@ public extension WireCallCenterV3 {
                     shouldRing: false,
                     degraded: isDegraded(conversationId: conversationId)
                 )
-                callSnapshots[conversationId] = previousSnapshot.update(with: callState)
+                callSnapshots[conversationId] = previousSnapshot.update(with: callState).updateVideoState(.stopped)
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
             }
@@ -1183,8 +1190,7 @@ extension WireCallCenterV3 {
     private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
         guard
             let context = conversation.managedObjectContext,
-            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
-            featureConfig.useSFTForOneToOneCalls
+            isSFTEnabledForOneToOneCalls(context: context)
         else {
             return .oneToOne
         }
@@ -1195,6 +1201,16 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             return .conference
         }
+    }
+
+    private func isSFTEnabledForOneToOneCalls(context: NSManagedObjectContext) -> Bool {
+        guard let config = LegacyFeatureRepository(context: context)
+            .fetchConferenceCalling()
+            .config
+        else {
+            return false
+        }
+        return config.useSFTForOneToOneCalls
     }
 
 }

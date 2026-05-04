@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationProteusMessageAddEvent: Equatable, Codable, Sendable {
 
@@ -29,7 +29,7 @@ struct StorableConversationProteusMessageAddEvent: Equatable, Codable, Sendable 
     private let messageSenderClientID: String
     private let messageRecipientClientID: String
 
-    init(_ value: WireAPI.ConversationProteusMessageAddEvent) {
+    init(_ value: WireNetwork.ConversationProteusMessageAddEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
@@ -39,7 +39,7 @@ struct StorableConversationProteusMessageAddEvent: Equatable, Codable, Sendable 
         self.messageRecipientClientID = value.messageRecipientClientID
     }
 
-    func toAPIModel() -> WireAPI.ConversationProteusMessageAddEvent {
+    func toAPIModel() -> WireNetwork.ConversationProteusMessageAddEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
@@ -58,12 +58,12 @@ private struct StorableMessageContent: Equatable, Codable, Sendable {
     let encryptedMessage: String
     let decryptedMessage: String?
 
-    init(_ value: WireAPI.MessageContent) {
+    init(_ value: WireNetwork.MessageContent) {
         self.encryptedMessage = value.encryptedMessage
         self.decryptedMessage = value.decryptedMessage
     }
 
-    func toAPIModel() -> WireAPI.MessageContent {
+    func toAPIModel() -> WireNetwork.MessageContent {
         .init(
             encryptedMessage: encryptedMessage,
             decryptedMessage: decryptedMessage

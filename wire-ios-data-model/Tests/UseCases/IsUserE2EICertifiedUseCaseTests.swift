@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockSafeCoreCrypto: MockSafeCoreCrypto!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var selfUser: ZMUser!
     private var otherUser: ZMUser!
     private var mlsSelfConversation: ZMConversation!
@@ -43,17 +44,19 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupMLSSelfConversations(in: context)
         setupOneOnOneConversations(in: context)
         setupClientIDs(in: context)
-        let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        mockFeatureRepository = .init()
-        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockLegacyFeatureRepository = .init()
+        mockLegacyFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
         sut = .init(
             schedule: .immediate,
             coreCryptoProvider: mockCoreCryptoProvider,
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             featureRepositoryContext: context
         )
     }
@@ -61,8 +64,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     override func tearDown() {
         sut = nil
         mockCoreCryptoProvider = nil
-        mockSafeCoreCrypto = nil
-        mockFeatureRepository = nil
+        mockCoreCrypto = nil
+        mockLegacyFeatureRepository = nil
         clientIDs = nil
         selfUser = nil
         otherUser = nil
@@ -76,9 +79,12 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testExpiredCertificateForSelfUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
-                XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
+                XCTAssertEqual(
+                    conversationID,
+                    MLSGroupID(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")?.conversationId
+                )
                 // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
                 XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
                 return [
@@ -101,7 +107,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testRevokedCertificateForSelfUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -123,7 +129,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testValidCertificatesForSelfUserResultsInTrue() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -145,8 +151,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testEmptyResultEvaluatesToFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = []
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { _, _ in
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = []
+        mockCoreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { _, _ in
             [:]
         }
 
@@ -162,8 +168,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testEmptyIdentitiesEvaluatesToFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = []
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = []
+        mockCoreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { _, userIDs in
             [userIDs[0]: []]
         }
 
@@ -181,7 +187,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testRevokedCertificateOfOtherUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -203,7 +209,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testValidCertificatesForOtherUserResultsInTrue() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -228,7 +234,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     func testPassingSelfConversationFromViewContext() async throws {
         // Given
         setupMLSSelfConversations(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -252,8 +258,9 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
-        mockSafeCoreCrypto.coreCryptoContext
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -276,7 +283,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     func testPassingOneOnOneConversationFromViewContext() async throws {
         // Given
         setupMLSSelfConversations(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -300,8 +307,9 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
-        mockSafeCoreCrypto.coreCryptoContext
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
+        mockCoreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
                     userIDs[0]: [
@@ -394,8 +402,8 @@ private extension WireIdentity {
                 domain: "D",
                 certificate: "E",
                 serialNumber: "G",
-                notBefore: 0,
-                notAfter: 0
+                notBefore: Date(),
+                notAfter: Date()
             )
         )
     }

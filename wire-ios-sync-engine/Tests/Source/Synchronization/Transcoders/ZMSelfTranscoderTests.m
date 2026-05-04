@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 @property (nonatomic) ZMUpstreamModifiedObjectSync *upstreamObjectSync;
 @property (nonatomic) id mockClientRegistrationStatus;
 @property (nonatomic) id requestSync;
-@property (nonatomic) id syncStatus;
 
 @property (nonatomic) ZMClientRegistrationStatus *realClientRegistrationStatus;
 @property (nonatomic) NSTimeInterval originalRequestInterval;
@@ -48,7 +47,6 @@
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     self.mockClientRegistrationStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
-    self.syncStatus = [OCMockObject niceMockForClass:[SyncStatus class]];
     
     self.mockApplicationStatus.mockSynchronizationState = ZMSynchronizationStateOnline;
     self.upstreamObjectSync = [OCMockObject niceMockForClass:ZMUpstreamModifiedObjectSync.class];
@@ -59,7 +57,6 @@
     self.sut = (id) [[ZMSelfStrategy alloc] initWithManagedObjectContext:self.syncMOC
                                                        applicationStatus:self.mockApplicationStatus
                                                 clientRegistrationStatus:self.mockClientRegistrationStatus
-                                                              syncStatus:self.syncStatus
                                                             upstreamObjectSync:self.upstreamObjectSync];
     
     WaitForAllGroupsToBeEmpty(0.5);
@@ -67,7 +64,6 @@
 
 - (void)tearDown
 {
-    self.syncStatus = nil;
     self.requestSync = nil;
     [self.mockClientRegistrationStatus stopMocking];
     self.mockClientRegistrationStatus = nil;

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension ZMMessage {
 
@@ -77,7 +78,7 @@ public extension ZMMessage {
             return nil
         }
 
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: reactions,
             messageID: messageID
         ))

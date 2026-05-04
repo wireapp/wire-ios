@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import CallKit
 import UserNotifications
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol GenerateNotificationUseCaseProtocol {
@@ -31,40 +31,70 @@ protocol GenerateNotificationUseCaseProtocol {
 
 struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
-    let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
-    let userEventBuilder: any UserEventNotificationBuilderProtocol
-    let eventID: UUID
+    private let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
+    private let userEventBuilder: any UserEventNotificationBuilderProtocol
+    private let eventID: UUID
+    private let logger = WireLogger.notifications
+
+    init(
+        conversationEventBuilder: any ConversationEventNotificationBuilderProtocol,
+        userEventBuilder: any UserEventNotificationBuilderProtocol,
+        eventID: UUID
+    ) {
+        self.conversationEventBuilder = conversationEventBuilder
+        self.userEventBuilder = userEventBuilder
+        self.eventID = eventID
+    }
 
     /// Processes the events stream.
-    func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
-        var notifications = [UserNotification]()
+    func invoke(
+        updateEvents: AsyncStream<[UpdateEvent]>
+    ) async throws -> [UserNotification] {
+
+        var allNotifications = [UserNotification]()
 
         for await events in updateEvents {
+            logger.info(
+                "Processing \(events.count) pending events...",
+                attributes: .newNSE, .safePublic
+            )
+
             for event in events {
-                if let notification = await generateNotification(for: event) {
-                    notifications.append(notification)
+                // Abort if needed.
+                try Task.checkCancellation()
+
+                if let notifications = await generateNotification(for: event) {
+                    logger.info(
+                        "Generated \(notifications.count) notifications from an event",
+                        attributes: .newNSE, .safePublic
+                    )
+                    allNotifications.append(contentsOf: notifications)
                 }
             }
         }
 
-        return notifications
+        return allNotifications
     }
 
     private func generateNotification(
         for event: UpdateEvent
-    ) async -> UserNotification? {
+    ) async -> [UserNotification]? {
         switch event {
         case let .conversation(conversationEvent):
             do {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
+            } catch ProtobufMessageDecoder.Failure.unknownMessageContent {
+                // Can't show notifications for unknown message types,
+                // so just ignore.
+                return nil
             } catch {
-                var attributes = LogAttributes.newNSE
+                var attributes = LogAttributes.newNSE + .safePublic
                 attributes[.eventId] = eventID.safeForLoggingDescription
 
-                WireLogger.notifications.error(
-                    "An error occured when building the conversation notification content \(error)",
+                logger.error(
+                    "Failed generating notification: \(String(describing: error))",
                     attributes: attributes
                 )
 
@@ -72,11 +102,20 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             }
 
         case let .user(userEvent):
-            return await userEventBuilder.buildContent(
+            let notification = await userEventBuilder.buildContent(
                 event: userEvent
             )
+            return notification.flatMap { [$0] }
 
         default:
+            var attributes = LogAttributes.newNSE
+            attributes[.eventId] = eventID.safeForLoggingDescription
+
+            logger.info(
+                "Ignoring event",
+                attributes: attributes
+            )
+
             return nil
         }
     }

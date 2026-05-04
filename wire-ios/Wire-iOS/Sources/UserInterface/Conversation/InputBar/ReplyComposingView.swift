@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 private typealias ConversationInputBarMessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
@@ -69,19 +70,27 @@ final class ReplyComposingView: UIView {
 
     let message: ZMConversationMessage
     let closeButton = IconButton()
+    private let userSession: UserSession
     private let leftSideView = UIView(frame: .zero)
     private var messagePreviewContainer: ReplyRoundCornersView!
     private var previewView: UIView!
     weak var delegate: ReplyComposingViewDelegate?
     private var observerToken: Any?
+    private let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
 
     // MARK: - Init
 
-    init(message: ZMConversationMessage) {
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) {
         require(message.canBeQuoted)
         require(message.conversationLike != nil)
 
         self.message = message
+        self.userSession = userSession
+        self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
         super.init(frame: .zero)
 
         setupMessageObserver()
@@ -97,7 +106,7 @@ final class ReplyComposingView: UIView {
     // MARK: - Setup Message Observer
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         }
     }
@@ -107,7 +116,10 @@ final class ReplyComposingView: UIView {
     private func setupSubviews() {
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
 
-        previewView = message.replyPreview()!
+        previewView = message.replyPreview(
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         previewView.isUserInteractionEnabled = false
         previewView.accessibilityIdentifier = "replyView"
         previewView.accessibilityLabel = buildAccessibilityLabel()

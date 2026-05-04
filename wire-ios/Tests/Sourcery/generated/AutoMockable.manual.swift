@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import CoreLocation
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireMessagingDomain
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -50,7 +51,6 @@ class MockGetUserByIdUseCaseProtocol: GetUserByIDUseCaseProtocol {
     }
 
 }
-
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length

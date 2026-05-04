@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,11 +21,18 @@ import XCTest
 
 extension XCUIApplication {
 
-    func useWireAuthentication(_ enabled: Bool = true) {
-        developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
+    func setDeveloperFlags(_ flags: [DeveloperFlag: Bool]) {
+        let flagsString = flags.map {
+            "\($0.key.rawValue):\($0.value ? "true" : "false")"
+        }.joined(separator: " ")
+
+        launchArguments.append("--developer-flag=\(flagsString)")
     }
 
-    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
-        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
+    func loginUser(email: String, password: String) throws -> FirstTimePage {
+        try WelcomePage()
+            .enterEmailOrSSO(email)
+            .enterPassword(password)
+            .acceptFirstTimeAlert()
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,13 +76,15 @@ extension ZMConversation {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
 
         guard let request = ConversationJoinRequestFactory.requestForJoinConversation(
             key: key,
             code: code,
-            password: password
+            password: password,
+            metadata: metadata
         ) else {
             return completion(.failure(ConversationJoinError.unknown))
         }
@@ -148,13 +150,18 @@ extension ZMConversation {
         code: String,
         transportSession: TransportSessionType,
         contextProvider: ContextProvider,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<
             (conversationId: UUID, conversationName: String, hasPassword: Bool),
             Error
         >) -> Void
     ) {
 
-        guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
+        guard let request = ConversationJoinRequestFactory.requestForGetConversation(
+            key: key,
+            code: code,
+            metadata: metadata
+        ) else {
             completion(.failure(ConversationFetchError.unknown))
             return
         }
@@ -193,9 +200,10 @@ enum ConversationJoinRequestFactory {
     static func requestForJoinConversation(
         key: String,
         code: String,
-        password: String? = nil
+        password: String? = nil,
+        metadata: BackendMetadataProvider
     ) -> ZMTransportRequest? {
-        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+        guard let apiVersion = metadata.apiVersion else { return nil }
 
         let path = joinConversationsPath
 
@@ -216,8 +224,12 @@ enum ConversationJoinRequestFactory {
         )
     }
 
-    static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
-        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+    static func requestForGetConversation(
+        key: String,
+        code: String,
+        metadata: BackendMetadataProvider
+    ) -> ZMTransportRequest? {
+        guard let apiVersion = metadata.apiVersion else { return nil }
 
         var url = URLComponents()
         url.path = joinConversationsPath

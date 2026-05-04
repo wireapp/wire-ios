@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ extension SessionManager {
         WireLogger.push.info("syncLocalTokenWithRemote")
 
         guard let clientID = session.selfUserClient?.remoteIdentifier else {
-            WireLogger.push.info("syncLocalTokenWithRemote: failed: no self client id")
+            WireLogger.push.info("syncLocalTokenWithRemote: failed: no self client id", attributes: .safePublic)
             return
         }
 
@@ -72,11 +72,14 @@ extension SessionManager {
                     in: notificationContext
                 )
 
-                WireLogger.push.info("syncLocalTokenWithRemote: success")
+                WireLogger.push.info("syncLocalTokenWithRemote: success", attributes: .safePublic)
 
             } catch {
                 WireLogger.push
-                    .error("syncLocalTokenWithRemote: failed: pushTokenService failed: \(error.localizedDescription)")
+                    .error(
+                        "syncLocalTokenWithRemote: failed: pushTokenService failed: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
             }
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }

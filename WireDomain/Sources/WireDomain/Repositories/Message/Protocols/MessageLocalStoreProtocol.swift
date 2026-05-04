@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 public import Foundation
 public import WireDataModel
 
+import GenericMessageProtocol
+
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
@@ -34,6 +36,11 @@ public protocol MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
+
+    /// Adds a system message (to all conversations) that inform that there are potential lost messages
+    /// and that some users were added to the conversation
+
+    func addPotentialGapSystemMessage() async throws
 
     /// Fetches or creates a `ZMClientMessage` locally.
     /// - Parameters:
@@ -99,6 +106,27 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String
     ) async
 
+    /// Adds a placeholder for an unknown message to the conversation.
+    /// This allows the message to be processed later when the app is updated with support for new message types.
+    /// - Parameters:
+    ///   - messageID: The unique identifier of the message
+    ///   - conversationID: The ID of the conversation the message belongs to
+    ///   - conversationDomain: The domain of the conversation (nil for local conversations)
+    ///   - senderID: The ID of the user who sent the message
+    ///   - senderDomain: The domain of the sender
+    ///   - payload: The raw protobuf data that couldn't be decoded
+    ///   - date: The timestamp when the message was received
+
+    func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data,
+        date: Date
+    ) async
+
     /// Checks whether a message can be added to the conversation.
     /// - Parameters:
     ///     - conversation: The conversation to add the message to.
@@ -150,22 +178,45 @@ public protocol MessageLocalStoreProtocol {
     /// For instance, like or unlike a message.
 
     func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
     ) async
 
+    /// Adds a message confirmation to a message. This is used for read receipts.
+    /// - Parameters:
+    ///    - confirmation: The confirmation protobuf object.
+    ///    - conversation: The related conversation.
+    ///    - senderID: The message sender id.
+    ///    - senderDomain: The message sender domain.
+    ///    - date: The date the confirmation was added.
+
+    func addMessageConfirmation(
+        _ confirmation: GenericMessageProtocol.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async
+
     /// Updates button states.
     /// - Parameters:
-    ///     - buttonActionConfirmation: The button action confirmation protobuf object.
+    ///     - buttonID: The id of the button.
+    ///     - referenceMessageID: The id of the parent message.
     ///     - conversation: The related conversation.
+    ///     - senderID: The message sender id.
+    ///     - ensureSenderIsSelfUser: If `true` `senderID` is compared to the self user's id and if they don't match,
+    /// the update is skipped.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
 
     func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async
 
     /// Edits a previously sent message.

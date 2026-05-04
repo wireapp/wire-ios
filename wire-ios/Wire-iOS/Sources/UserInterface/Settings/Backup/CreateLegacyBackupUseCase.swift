@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,13 +41,7 @@ struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
                     let sessionManager = sessionManager()
 
                     continuation.yield(.progress(current: 1, total: 2))
-
-                    let url = try await withCheckedThrowingContinuation { continuation in
-                        sessionManager.backupActiveAccount(password: password) { result in
-                            continuation.resume(with: result)
-                        }
-                    }
-
+                    let url = try await sessionManager.backupActiveAccount(password: password)
                     continuation.yield(.done(url))
                     continuation.finish()
 

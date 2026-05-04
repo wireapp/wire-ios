@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
@@ -56,9 +57,11 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        containerView.shape = .rounded(radius: 12)
+        let cornerRadius: CGFloat = ConversationMessageContainerView.bubbleCornerRadius
+
+        containerView.shape = .rounded(radius: cornerRadius)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true
@@ -71,13 +74,11 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-
         NSLayoutConstraint.activate([
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
@@ -147,6 +148,8 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
+    let isBubbleHasMaximumWidth: Bool = true
 
     weak var message: ZMConversationMessage? {
         didSet {

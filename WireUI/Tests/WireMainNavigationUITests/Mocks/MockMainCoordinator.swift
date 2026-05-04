@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,16 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     var showSettings_Invocations: [Void] = []
     func showSettings() async {
         showSettings_Invocations.append(())
+    }
+
+    var showMeetings_Invocations: [Void] = []
+    func showMeetings() async {
+        showMeetings_Invocations.append(())
+    }
+
+    var showFiles_Invocations: [Void] = []
+    func showFiles() async {
+        showFiles_Invocations.append(())
     }
 
     var showConversation_Invocations: [(conversation: ConversationModel, message: ConversationMessageModel?)] = []

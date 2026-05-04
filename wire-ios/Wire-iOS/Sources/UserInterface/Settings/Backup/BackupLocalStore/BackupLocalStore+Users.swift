@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,12 +30,21 @@ extension BackupLocalStore {
         return fetchRequest
     }
 
+    func fetchAllUserIDs() async throws -> Set<WireFoundation.QualifiedID> {
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await backupContext.perform { [backupContext] in
+            let users = try backupContext.fetch(fetchRequest) as! [ZMUser]
+            return Set(users.compactMap(\.qualifiedID).map(WireFoundation.QualifiedID.init))
+        }
+    }
+
     func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
         AsyncThrowingStream { continuation in
             Task<Void, Never> {
                 do {
-                    try await context.perform {
-                        let users = try context.fetch(userFetchRequest) as! [ZMUser]
+                    try await backupContext.perform {
+                        let users = try backupContext.fetch(userFetchRequest) as! [ZMUser]
                         for user in users {
                             autoreleasepool {
                                 if let backupUser = UserBackupModel(user) {
@@ -49,6 +58,24 @@ extension BackupLocalStore {
                     continuation.finish(throwing: error)
                 }
             }
+        }
+    }
+
+    func addUser(_ backupUser: UserBackupModel) async throws {
+        // Adding users needs to be done on the sync context. See more in `ZMUser.fetchOrCreate`
+        let syncContext = contextProvider.syncContext
+
+        await syncContext.perform { [syncContext] in
+            let user = ZMUser.fetchOrCreate(
+                with: backupUser.qualifiedID.id,
+                domain: backupUser.qualifiedID.domain,
+                in: syncContext
+            )
+            if user.handle?.isEmpty != false {
+                user.handle = backupUser.handle
+            }
+            user.isPendingMetadataRefresh = true
+            user.needsToBeUpdatedFromBackend = true
         }
     }
 

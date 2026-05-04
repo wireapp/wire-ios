@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireCryptobox
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 
@@ -39,6 +39,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
+    let assetTransferStateResolver: AssetTransferStateResolverProtocol
 
     // MARK: - Object lifecycle
 
@@ -46,6 +47,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         context: NSManagedObjectContext
     ) {
         self.context = context
+        self.assetTransferStateResolver = AssetTransferStateResolver()
     }
 
     // MARK: - Public
@@ -116,11 +118,27 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             from: messageType,
             conversation: conversation
         )
-
         await addSystemMessages(
             systemMessages,
             to: conversation
         )
+    }
+
+    public func addPotentialGapSystemMessage() async throws {
+        try await context.perform { [context] in
+            guard let conversations = try context.fetch(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
+                return
+            }
+            for conversation in conversations {
+                let offset = 0.1
+                let timestamp = conversation.lastModifiedDate?.addingTimeInterval(offset) ?? Date()
+
+                conversation.appendNewPotentialGapSystemMessage(
+                    users: conversation.localParticipants,
+                    timestamp: timestamp
+                )
+            }
+        }
     }
 
     public func canAddMessage(
@@ -185,6 +203,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     try clientMessage.setUnderlyingMessage(genericMessage)
                     clientMessage.updateNormalizedText()
                 } catch {
+                    WireLogger.messaging.error("Failed to set generic message: \(error.localizedDescription)")
                     assertionFailure("Failed to set generic message: \(error.localizedDescription)")
                 }
             } else {
@@ -196,7 +215,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             finalizeMessageUpdate(
-                clientMessage: clientMessage,
+                message: clientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -224,32 +243,46 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             // We assume received assets are V3 since backend no longer supports sending V2 assets.
             assetClientMessage.version = 3
 
-            if let assetData = genericMessage.assetData, let status = assetData.status {
-                switch status {
-                case let .uploaded(data) where data.hasAssetID:
-                    assetClientMessage.updateTransferState(
-                        .uploaded,
-                        synchronize: false
-                    )
-
-                case .notUploaded where assetClientMessage.transferState != .uploaded:
-                    switch assetData.notUploaded {
-                    case .cancelled:
-                        context.delete(assetClientMessage)
-                    case .failed:
-                        assetClientMessage.updateTransferState(
-                            .uploadingFailed,
-                            synchronize: false
-                        )
-                    }
-
-                default:
-                    break
-                }
-            }
+            assetTransferStateResolver.resolveTransferState(
+                assetMessage: assetClientMessage,
+                genericMessage: genericMessage,
+                context: context
+            )
 
             finalizeMessageUpdate(
-                clientMessage: assetClientMessage,
+                message: assetClientMessage,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                conversation: conversation
+            )
+        }
+    }
+
+    public func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data,
+        date: Date
+    ) async {
+        await context.perform { [self] in
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            ) else { return }
+
+            let unknownMessage = UnknownMessage(
+                nonce: messageID,
+                managedObjectContext: context
+            )
+            unknownMessage.nonce = messageID
+            unknownMessage.payload = payload
+            unknownMessage.serverTimestamp = date
+            finalizeMessageUpdate(
+                message: unknownMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -289,7 +322,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
@@ -305,15 +338,43 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
+    public func addMessageConfirmation(
+        _ confirmation: GenericMessageProtocol.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async {
+        await context.perform {
+            _ = ZMMessageConfirmation.createMessageConfirmations(
+                confirmation,
+                conversation: conversation,
+                senderUUID: senderID,
+                senderDomain: senderDomain,
+                timestamp: date
+            )
+        }
+    }
+
     public func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async {
         await context.perform { [context] in
+
+            if ensureSenderIsSelfUser {
+                let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+                guard senderID == selfUserID else { return }
+            }
+
             ZMClientMessage.updateButtonStates(
-                withConfirmation: buttonActionConfirmation,
-                forConversation: conversation,
-                inContext: context
+                buttonID: buttonID,
+                referenceMessageID: referenceMessageID,
+                for: conversation,
+                in: context
             )
         }
     }
@@ -434,7 +495,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     private func finalizeMessageUpdate(
-        clientMessage: ZMOTRMessage,
+        message: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
         conversation: ZMConversation
@@ -445,13 +506,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             in: context
         )
 
-        clientMessage.visibleInConversation = conversation
-        clientMessage.sender = sender
-        updateQuoteRelationships(message: clientMessage)
-        conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
-        clientMessage.unarchiveIfNeeded(conversation)
-        clientMessage.updateCategoryCache()
-        clientMessage.markAsSent()
+        message.visibleInConversation = conversation
+        message.sender = sender
+        updateQuoteRelationships(message: message)
+        conversation.updateTimestampsAfterUpdatingMessage(message)
+        message.unarchiveIfNeeded(conversation)
+        message.updateCategoryCache()
+        message.markAsSent()
     }
 
     private func createSystemMessages(
@@ -523,7 +584,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .participantsAdded(participants, sender, _):
+        case let .participantsAdded(participants, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -544,7 +605,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
-                users: Set(newUsers)
+                users: Set(newUsers),
+                timestamp: date
             )
 
             return [systemMessage]
@@ -621,7 +683,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
                 let members = selfUserTeam.members.compactMap(\.user)
                 let guests = localParticipants.filter {
-                    !$0.isServiceUser && $0.membership == nil
+                    !$0.isAppOrBot && $0.membership == nil
                 }
 
                 newConversationMessage.allTeamUsersAdded = localParticipants.isSuperset(of: members)
@@ -723,6 +785,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .readReceiptsOn,
                 sender: creator,
+                timestamp: date
+            )
+
+            return [systemMessage]
+
+        case let .unknownMessageContentTypeReceived(sender, date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .unknownMessageContentTypeReceived,
+                sender: sender,
                 timestamp: date
             )
 
@@ -867,6 +945,36 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             return [systemMessage]
+
+        case let .channelHistoryDepthModified(sender):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .channelHistoryDepthModified,
+                sender: sender,
+            )
+
+            return [systemMessage]
+
+        case let .userDeleted(sender: (id, domain)):
+            guard let sender = await fetchUser(
+                id: id,
+                domain: domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .userRemovedFromTeam,
+                sender: sender,
+            )
+
+            return [systemMessage]
         }
     }
 
@@ -876,6 +984,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,
+        text: String? = nil,
         timestamp: Date = .now,
         duration: TimeInterval? = nil,
         messageTimer: Double? = nil,
@@ -891,6 +1000,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.addedUsers = addedUsers
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
+            systemMessage.text = text
 
             if let duration {
                 systemMessage.duration = duration
@@ -947,18 +1057,35 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) -> Bool {
         guard
             let messageNonce = UUID(uuidString: genericMessage.messageID),
-            let originalText = clientMessage.underlyingMessage?.textData,
-            case .text? = messageEdit.content,
+            let messageEditContent = messageEdit.content,
             senderID == clientMessage.sender?.remoteIdentifier
-        else {
-            return false
+        else { return false }
+
+        let genericMessage: GenericMessage
+        switch messageEditContent {
+
+        case let .text(newText):
+            guard let originalText = clientMessage.underlyingMessage?.textData else { return false }
+            genericMessage = GenericMessage(
+                content: originalText.applyEdit(from: newText),
+                nonce: messageNonce
+            )
+
+        case let .composite(newComposite):
+            guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
+            genericMessage = GenericMessage(
+                content: newComposite,
+                nonce: messageNonce
+            )
+
+        case let .multipart(multipart):
+            genericMessage = GenericMessage(
+                content: multipart,
+                nonce: messageNonce
+            )
         }
 
         do {
-            let genericMessage = GenericMessage(
-                content: originalText.applyEdit(from: messageEdit.text),
-                nonce: messageNonce
-            )
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             WireLogger.messageProcessing.warn(

@@ -1,8 +1,0 @@
-sources:
-  - ../..
-templates:
-  - ./AutoMockable.stencil
-output:
-  ./generated
-args:
-  autoMockablePublicImports: ["UIKit", "WireConversationsImplementation", "WireConversationsAPI"]

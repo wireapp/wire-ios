@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
+import WireDomain
 
 enum UserClientRequestError: Error {
     case noPreKeys
@@ -48,7 +48,16 @@ extension UserClientRequestFactory {
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
+
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+
+        if isConsumableNotificationsEnabled, apiVersion >= .v9 {
             capabilities.append("consumable-notifications")
         }
 
@@ -177,8 +186,16 @@ extension UserClientRequestFactory {
         }
         // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
 
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
+        if isConsumableNotificationsEnabled {
             capabilities.append("consumable-notifications")
         }
 

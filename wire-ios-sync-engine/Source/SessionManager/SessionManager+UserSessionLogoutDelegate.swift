@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,7 +67,15 @@ extension SessionManager: UserSessionLogoutDelegate {
 
             let account = accountManager.account(with: accountId)
             guard account == accountManager.selectedAccount else { return }
-            delegate?.sessionManagerDidFailToLogin(error: error)
+
+            let environment = try? environmentStore.fetchBackendEnvironment(accountID: accountId)
+
+            delegate?.sessionManagerWillLogout(
+                accountID: accountId,
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 }

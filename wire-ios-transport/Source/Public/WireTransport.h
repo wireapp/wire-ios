@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,9 +44,7 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/NSData+Multipart.h>
 #import <WireTransport/ZMTaskIdentifier.h>
 #import <WireTransport/ZMRequestCancellation.h>
-#import <WireTransport/ZMPushChannel.h>
 
 // Private
 
 #import <WireTransport/ZMTransportRequest+Internal.h>
-#import <WireTransport/ZMPushChannelType.h>

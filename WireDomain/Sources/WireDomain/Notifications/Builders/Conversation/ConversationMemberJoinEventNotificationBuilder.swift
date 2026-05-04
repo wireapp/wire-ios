@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireLogging
+import WireNetwork
 
 struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilderProtocol {
 
@@ -30,7 +31,8 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
         let addedUserIDs = Set(event.members.compactMap(\.id))
 
         let canBuildNotification = await validator.validate(
-            addedUserIDs: addedUserIDs
+            addedUserIDs: addedUserIDs,
+            conversationID: event.conversationID
         )
 
         guard canBuildNotification else {
@@ -56,7 +58,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
             conversationName: conversationName,
             senderName: senderName,
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
     }
@@ -97,7 +99,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
             senderID: senderID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         return .text(content)
     }
@@ -153,7 +155,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -163,15 +165,69 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
 extension ConversationMemberJoinEventNotificationBuilder {
     struct Validator {
         let userLocalStore: any UserLocalStoreProtocol
+        let conversationLocalStore: any ConversationLocalStoreProtocol
 
         func validate(
-            addedUserIDs: Set<UUID>
+            addedUserIDs: Set<UUID>,
+            conversationID: ConversationID
         ) async -> Bool {
+
+            var logAttributes: LogAttributes = [
+                LogAttributesKey.conversationId: conversationID.toDomainModel().safeForLoggingDescription
+            ]
 
             let selfUser = await userLocalStore.fetchSelfUser()
             let selfUserID = await userLocalStore.id(for: selfUser)
 
-            return addedUserIDs.contains(selfUserID)
+            // Check if self user is in the added members list
+            guard addedUserIDs.contains(selfUserID) else {
+                logSkippingNotification(
+                    reason: "user isn't in the added members list",
+                    attributes: logAttributes
+                )
+                return false
+            }
+
+            // Check if the conversation exists
+            guard let conversation = await conversationLocalStore.fetchConversation(
+                id: conversationID.id,
+                domain: conversationID.domain
+            ) else {
+                logSkippingNotification(
+                    reason: "conversation doesn't exist",
+                    attributes: logAttributes
+                )
+                return false
+            }
+
+            // Check if self user is already a participant
+            let participants = await conversationLocalStore.localParticipants(in: conversation)
+
+            guard !participants.contains(selfUser) else {
+                logSkippingNotification(
+                    reason: "self user is already a participant",
+                    attributes: logAttributes
+                )
+                return false
+            }
+
+            WireLogger.notifications.info(
+                "Creating memberJoin notification: self user is being added",
+                attributes: logAttributes,
+                .safePublic
+            )
+            return true
+        }
+
+        private func logSkippingNotification(
+            reason: String,
+            attributes: LogAttributes
+        ) {
+            WireLogger.notifications.info(
+                "Skipping memberJoin notification: \(reason)",
+                attributes: attributes,
+                .safePublic
+            )
         }
     }
 
@@ -183,7 +239,7 @@ extension ConversationMemberJoinEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -196,7 +252,7 @@ extension ConversationMemberJoinEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

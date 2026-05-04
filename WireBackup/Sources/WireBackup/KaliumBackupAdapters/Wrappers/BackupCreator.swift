@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 import Foundation
 import KaliumBackup
 import WireFoundation
+import WireUtilitiesPackage
 
-/// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift
+/// Abstraction of the multi-platform framework, attempting to improve the interface by using proper types and Swift
 /// concurrency and hide the NSObject API.
 struct BackupCreator {
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireUtilities
 
 @objc
@@ -117,6 +118,12 @@ public class UnauthenticatedSession: NSObject {
             )
         )
     }
+
+    public func removeAuthenticationModuleURLActionProcessors() {
+        urlActionProcessors.removeAll { processor in
+            processor is AuthenticationModuleURLActionProcessor
+        }
+    }
 }
 
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
@@ -157,7 +164,26 @@ extension UnauthenticatedSession: UserInfoParser {
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         cookieStorage.authenticationCookieData = userInfo.cookieData
         authenticationStatus.authenticationCookieData = userInfo.cookieData
-        delegate?.session(session: self, createdAccount: account)
+        delegate?.session(
+            session: self,
+            createdAccount: account,
+            newEnvironment: nil
+        )
+    }
+
+    public func upgradeToAuthenticatedSession(
+        with userInfo: UserInfo,
+        newEnvironment: NewEnvironment
+    ) {
+        let account = Account(userName: "", userIdentifier: userInfo.identifier)
+        let cookieStorage = transportSession.environment.cookieStorage(for: account)
+        cookieStorage.authenticationCookieData = userInfo.cookieData
+        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        delegate?.session(
+            session: self,
+            createdAccount: account,
+            newEnvironment: newEnvironment
+        )
     }
 
     public func reportBackupImportDidSucceed(_ didSucceed: Bool) {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserConnectionEvent: Equatable, Codable, Sendable {
 
     private let userName: String?
     private let connection: StorableConnection
 
-    init(_ value: WireAPI.UserConnectionEvent) {
+    init(_ value: WireNetwork.UserConnectionEvent) {
         self.userName = value.userName
         self.connection = StorableConnection(
             senderID: value.connection.senderID,
@@ -37,7 +37,7 @@ struct StorableUserConnectionEvent: Equatable, Codable, Sendable {
         )
     }
 
-    func toAPIModel() -> WireAPI.UserConnectionEvent {
+    func toAPIModel() -> WireNetwork.UserConnectionEvent {
         .init(
             userName: userName,
             connection: .init(
@@ -76,7 +76,7 @@ private enum StorableConnectionStatus: String, Codable, Equatable, Sendable {
     case cancelled
     case missingLegalholdConsent
 
-    init(_ value: WireAPI.ConnectionStatus) {
+    init(_ value: WireNetwork.ConnectionStatus) {
         switch value {
         case .accepted:
             self = .accepted
@@ -95,7 +95,7 @@ private enum StorableConnectionStatus: String, Codable, Equatable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConnectionStatus {
+    func toAPIModel() -> WireNetwork.ConnectionStatus {
         switch self {
         case .accepted:
             .accepted

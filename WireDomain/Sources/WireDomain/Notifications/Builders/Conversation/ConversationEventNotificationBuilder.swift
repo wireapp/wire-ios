@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 //
 
 import UserNotifications
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol ConversationEventNotificationBuilderProtocol {
     func buildContent(
         event: ConversationEvent
-    ) async throws -> UserNotification?
+    ) async throws -> [UserNotification]?
 }
 
 struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
@@ -39,7 +39,7 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
 
     func buildContent(
         event: ConversationEvent
-    ) async throws -> UserNotification? {
+    ) async throws -> [UserNotification]? {
         let canDisplayNotification = await validator.validate(
             conversationID: event.conversationID,
             senderID: event.senderID,
@@ -65,33 +65,38 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
 
         case let .memberLeave(memberLeaveEvent):
 
-            return await conversationMemberLeaveEventNotificationBuilder.buildContent(
+            let notification = await conversationMemberLeaveEventNotificationBuilder.buildContent(
                 event: memberLeaveEvent
             )
+            return notification.flatMap { [$0] }
 
         case let .memberJoin(memberJoinEvent):
 
-            return await conversationMemberJoinEventNotificationBuilder.buildContent(
+            let notification = await conversationMemberJoinEventNotificationBuilder.buildContent(
                 event: memberJoinEvent
             )
+            return notification.flatMap { [$0] }
 
         case let .create(conversationCreateEvent):
 
-            return await conversationCreateEventNotificationBuilder.buildContent(
+            let notification = await conversationCreateEventNotificationBuilder.buildContent(
                 event: conversationCreateEvent
             )
+            return notification.flatMap { [$0] }
 
         case let .delete(conversationDeleteEvent):
 
-            return await conversationDeleteEventNotificationBuilder.buildContent(
+            let notification = await conversationDeleteEventNotificationBuilder.buildContent(
                 event: conversationDeleteEvent
             )
+            return notification.flatMap { [$0] }
 
         case let .messageTimerUpdate(messageTimerUpdateEvent):
 
-            return await conversationMessageTimerUpdateEventNotificationBuilder.buildContent(
+            let notification = await conversationMessageTimerUpdateEventNotificationBuilder.buildContent(
                 event: messageTimerUpdateEvent
             )
+            return notification.flatMap { [$0] }
 
         default:
             return nil
@@ -111,7 +116,7 @@ extension ConversationEventNotificationBuilder {
             time: Date?
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -120,17 +125,21 @@ extension ConversationEventNotificationBuilder {
                     conversation
                 )
 
-            let isConversationMuted = conversationMutedMessages != .none
+            let isConversationMuted = conversationMutedMessages == .all
 
             let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             ).isSelfUser) ?? false
+
+            let isSelfConversation = await conversationLocalStore.isSelfConversation(conversation)
+            // Reject events from self user, except in self-conversation (e.g., calling "answered elsewhere")
+            let shouldAllowSender = isSenderSelfUser ? isSelfConversation : true
 
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
-            guard !isSenderSelfUser,
+            guard shouldAllowSender,
                   !isConversationMuted else {
                 return false
             }

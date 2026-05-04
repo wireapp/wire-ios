@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
+import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
@@ -93,7 +95,17 @@ final class ConversationContentViewController: UIViewController {
         actionResponder: self,
         cellDelegate: self,
         userSession: userSession,
-        getUserByIDUseCase: GetUserByIdUseCase()
+        getUserByIDUseCase: GetUserByIdUseCase(),
+        wireMessagingFactory: wireMessagingFactory,
+        conversationCellProvider: wireMessagingFactory.makeConversationCellProvider(
+            insetsProvider: {
+                let margins = HorizontalMargins.conversationHorizontalMargins()
+                return ConversationCellInsets(
+                    leadingBubble: .init(leading: margins.left, trailing: margins.chatBubbleMinimumTrailing),
+                    trailingBubble: .init(leading: margins.chatBubbleMinimumLeading, trailing: margins.right)
+                )
+            }
+        )
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
@@ -105,9 +117,9 @@ final class ConversationContentViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
-    var userClientToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
     private var mediaPlaybackManager: MediaPlaybackManager?
@@ -118,9 +130,11 @@ final class ConversationContentViewController: UIViewController {
     private var token: NSObjectProtocol?
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    let linkDetector = NSDataDetector.linkDetector
 
     private let logger: WireLogger
     private var accentColorChangeHandler: AccentColorChangeHandler?
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     init(
         conversation: ZMConversation,
@@ -129,12 +143,15 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
-        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
@@ -142,6 +159,7 @@ final class ConversationContentViewController: UIViewController {
             userID: userSession.selfUser.remoteIdentifier,
             storage: userDefaults
         )
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
 
@@ -163,7 +181,7 @@ final class ConversationContentViewController: UIViewController {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -178,11 +196,8 @@ final class ConversationContentViewController: UIViewController {
 
     deinit {
         DeveloperToolsViewModel.context.currentConversation = nil
-        NotificationCenter.default.removeObserver(
-            self,
-            name: ZMConversation.failedToSendMessageNotificationName,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
@@ -256,12 +271,24 @@ final class ConversationContentViewController: UIViewController {
             object: .none
         )
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(clearedContent),
+            name: .clearContentNotification,
+            object: userSession.notificationContext
+        )
+
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 updateBackgroundColor(color: color)
             }
+    }
+
+    @objc
+    private func clearedContent() {
+        dataSource.resetSectionControllers()
     }
 
     private func updateBackgroundColor(color: ZMAccentColor?) {
@@ -596,19 +623,42 @@ extension ConversationContentViewController: UITableViewDelegate {
         willSelectRow(at: indexPath, tableView: tableView)
     }
 
+    private func actionControllerToSwipe(
+        indexPath: IndexPath,
+        isLeading: Bool
+    ) -> ConversationMessageActionController? {
+
+        let section = dataSource.currentSections[ifExists: indexPath.section]?.elements[ifExists: indexPath.row]
+        let actionController = section?.actionController
+        let cellDescription = section?.instance
+        // There were a bug with no able to swipe https://wearezeta.atlassian.net/browse/WPB-17839
+        // Happened because action controller of a section controller was nil and
+        // different to actionControllers[<message.nonce>], so it was out of sync
+        // it was fixed but for extra safety backup action controller if not found
+        var backupActionController: ConversationMessageActionController?
+
+        if let message = cellDescription?.message, let cacheIdentifier = MessageCacheIdentifier(message: message) {
+            backupActionController = dataSource.sectionControllers.get(for: cacheIdentifier)?.actionController
+        }
+
+        if cellDescription?.supportsActions ?? false,
+           let actionController = actionController ?? backupActionController,
+           isLeading ? actionController.message.canAddReaction : actionController
+           .canPerformAction(action: .react("❤️")) {
+            return actionController
+        }
+
+        return nil
+    }
+
     func tableView(
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.message.canAddReaction
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // setting an empty title string since it would be displayed upside down
         // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
@@ -633,14 +683,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.canPerformAction(action: .react("❤️"))
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // since the table view is flipped vertically we also render the image flipped
         // TODO: [WPB-16341] use the real image, remove the upsideDownImage
@@ -697,8 +742,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
-            topmostViewController?.present(browserViewController, animated: true)
+            WireURLs.shared.legalHoldInfo.open(from: topmostViewController)
         }
 
         let alertController = UIAlertController(

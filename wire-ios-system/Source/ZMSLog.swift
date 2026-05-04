@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import os.log
 import WireLogging
-import ZipArchive
+import ZIPFoundation
 
 /// Represents an entry to be logged.
 @objcMembers
@@ -287,10 +287,6 @@ public extension ZMSLog {
 
     @objc static let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
-    @objc static var currentZipLog: Data? {
-        FileManager.default.zipData(from: currentLogURL)
-    }
-
     @objc static let previousZipLogURLs: [URL] = [0 ..< Constant.maxNumberOfLogFiles]
         .joined()
         .compactMap { index in
@@ -350,7 +346,12 @@ public extension ZMSLog {
                 try? manager.moveItem(at: currentLogURL, to: tmpURL)
 
                 // zip to position 0 logs
-                SSZipArchive.createZipFile(atPath: previousZipLogURLs[0].path, withFilesAtPaths: [tmpURL.path])
+                try? manager.zipItem(
+                    at: tmpURL,
+                    to: previousZipLogURLs[0],
+                    shouldKeepParent: false,
+                    compressionMethod: .deflate
+                )
 
                 // remove tmp file
                 try? manager.removeItem(at: tmpURL)
@@ -410,25 +411,3 @@ public extension ZMSLog {
 
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
-
-public extension FileManager {
-    func zipData(from url: URL?) -> Data? {
-        guard
-            let url,
-            fileExists(atPath: url.path)
-        else {
-            return nil
-        }
-
-        var tmpURL = url.deletingLastPathComponent()
-        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
-
-        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [url.path])
-        defer {
-            // clean up
-            try? self.removeItem(at: tmpURL)
-        }
-
-        return try? Data(contentsOf: tmpURL, options: [.uncached])
-    }
-}

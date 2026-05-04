@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -280,5 +280,20 @@ public enum SemanticColors {
         public static let amber = UIColor(light: .amber500Light, dark: .amber500Dark)
         public static let turquoise = UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
+    }
+
+    public enum ChatBubble {
+        public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray100)
+        public static let foregroundOwnMessage = UIColor(light: .white, dark: .black)
+        public static let foregroundOtherMessage = UIColor(light: .black, dark: .white)
+    }
+}
+
+private extension UIColor {
+
+    convenience init(light: ColorResource, dark: ColorResource) {
+        self.init { traits in
+            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
+        }
     }
 }

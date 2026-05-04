@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private let isChannel: Bool
 
     private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
-        .footer(ZMConversation.getMaxParticipants(isChannel: isChannel))
+        .footer(ZMConversation.getMaxParticipants(isChannel: isChannel).formatted(.number))
 
     init(
         selfUser: UserType,
