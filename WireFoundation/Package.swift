@@ -12,14 +12,11 @@ let package = Package(
         .library(name: "WireCrypto", targets: ["WireCrypto"]),
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireSystem", targets: ["WireSystem"]),
-        .library(name: "WireSystemSupport", targets: ["WireSystemSupport"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
-        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -55,27 +52,15 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        ),
-
-            .target(name: "WireSystem", dependencies: ["WireLogging", "ZipArchive"]),
-            .testTarget(
-                name: "WireSystemTests",
-                dependencies: ["WireSystem", "WireSystemSupport", "WireTestingPackage"]
-            ),
-            .target(
-                name: "WireSystemSupport",
-                dependencies: ["WireSystem"],
-                plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-            ),
-
-            .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework")
+        )
     ],
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where (!["Clibsodium", "WireSystem"].contains(target.name) && target.type != .binary ) {
+for target in package.targets where target.name != "Clibsodium" {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }

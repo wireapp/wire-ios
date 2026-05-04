@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
+import XCTest
 @testable import WireSystem
 
 struct Item {
@@ -26,7 +27,7 @@ struct Item {
 }
 
 extension Item: SafeForLoggingStringConvertible {
-    static let redacted = "<redacted>"
+    static var redacted = "<redacted>"
 
     var safeForLoggingDescription: String {
         Item.redacted

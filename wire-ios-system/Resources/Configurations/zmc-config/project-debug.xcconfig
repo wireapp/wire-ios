@@ -16,4 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: remove?
+#include "warnings.xcconfig"
+#include "project-common.xcconfig"
+
+// Deployment
+//
+COPY_PHASE_STRIP = NO
+
+
+// LLVM - Code Generation
+//
+GCC_OPTIMIZATION_LEVEL = 0
+
+
+// Swift Compiler - Code Generation
+//
+SWIFT_OPTIMIZATION_LEVEL = -Onone
+OTHER_SWIFT_FLAGS = -D DEBUG
+ENABLE_TESTABILITY = YES
+
+
+
+// LLVM - Preprocessing
+//
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 ZM_MAJOR_VERSION=$(MAJOR_VERSION) $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_shared)
