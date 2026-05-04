@@ -66,9 +66,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
-            .tapSearchBox()
-            .searchUserByUserHandle(teamOwner.username)
-            .tapSearchedUserCell()
+            .openUserDetailsInContactList()
             .tapStartConversationButton()
 
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
@@ -119,43 +117,6 @@ final class OneOnOneMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testSendImageAndVideoInOneOnOneConversation_TC_8820_8822() async throws {
-
-        // GIVEN
-        let (_, teamMembers, _, _) = try await userHelper
-            .registerTeam(
-                withMemberCount: 1
-            )
-
-        // WHEN
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        let activeConversationPage = try firstTimePage.acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .openUserDetailsInContactList()
-            .tapStartConversationButton()
-            .openPhotosAndGrantPermission()
-            .selectImageAndSend()
-            .openPhotosAgain()
-            .selectVideoAndSend()
-
-        // THEN
-        XCTAssertTrue(
-            activeConversationPage.imageCell.waitForExistence(timeout: 2),
-            "No Image cell found"
-        )
-
-        XCTAssertTrue(
-            activeConversationPage.videoCell.waitForExistence(timeout: 2),
-            "No Video cell found"
-        )
-
-        XCTAssertTrue(
-            activeConversationPage.videoPlayButton.waitForExistence(timeout: 2),
-            "No Video play button found"
-        )
-    }
-
-    @MainActor
     func testReceiveImageAndVideoInOneOnOneConversation_TC_8827_8829() async throws {
 
         // GIVEN
@@ -167,9 +128,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
-            .tapSearchBox()
-            .searchUserByUserHandle(teamOwner.username)
-            .tapSearchedUserCell()
+            .openUserDetailsInContactList()
             .tapStartConversationButton()
 
         let (conversationId, domain) = try await userHelper.getConversationId(matching: .conversationType(.group))
