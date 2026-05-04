@@ -18,11 +18,27 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol BackendMetadataAPI: Sendable {
+public extension Worker {
 
-    /// Fetch the info of the local backend.
+    /// Creates a `Worker` that checks if the current build is blacklisted and executes `onIsBuildBlacklisted` callback
+    /// if it is.
+    static func checkBlacklist(
+        useCase: any IsBuildBlacklistedUseCase,
+        onIsBuildBlacklisted: @escaping @Sendable () -> Void
+    ) -> Worker {
+        Worker(
+            work: {
+                let (isBuildBlacklisted, error) = await useCase.invoke()
 
-    func getBackendMetadata() async throws -> BackendMetadata
+                if isBuildBlacklisted {
+                    onIsBuildBlacklisted()
+                }
+
+                return error == nil
+            },
+            interval: .oneHour * 6,
+            trigger: Worker.defaultTrigger()
+        )
+    }
 
 }
