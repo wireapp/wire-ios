@@ -26,11 +26,11 @@ public struct TeamMemberJoinNotification: Equatable, Sendable {
 
     public let teamID: UUID
 
-    /// The id of the member who left.
+    /// The id of the member who joined.
 
     public let userID: UUID
 
-    /// The time at which the member left.
+    /// The time at which the member joined.
 
     public let time: Date
 

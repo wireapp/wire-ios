@@ -185,7 +185,7 @@ class TeamsAPIV5: TeamsAPIV4 {
             )
 
             return try ResponseParser()
-                .success(code: .ok, type: TeamNotificationsResponseV5.self)
+                .success(code: .ok, type: PaginatedTeamNotificationsResponseV5.self)
                 .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
                 .failure(code: .notFound, error: TeamsAPIError.selfUserIsNotTeamMember)
                 .parse(code: response.statusCode, data: data)

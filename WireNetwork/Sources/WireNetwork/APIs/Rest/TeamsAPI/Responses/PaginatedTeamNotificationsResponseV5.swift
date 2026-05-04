@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct TeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
+struct PaginatedTeamNotificationsResponseV5: Decodable, ToAPIModelConvertible {
 
     let notifications: [TeamNotificationV5]
     let time: UTCTime?

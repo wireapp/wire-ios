@@ -26,7 +26,7 @@ struct TeamNotificationDecodingProxy: Decodable {
         self.notification = notification
     }
 
-    public init(from decoder: any Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: TeamNotificationCodingKeys.self)
         let notificationType = try container.decode(String.self, forKey: .notificationType)
 

@@ -111,7 +111,7 @@ public protocol TeamsAPI {
 
 public extension TeamsAPI {
 
-    /// Calls `getNotifications(sinceEventID:maxResults:)` with `maxResults` set to 1000.
+    /// Calls `getNotifications(sinceNotificationID:maxResults:)` with `maxResults` set to 1000.
     func getNotifications(
         sinceNotificationID: UUID?
     ) throws -> PayloadPager<[TeamNotification]> {

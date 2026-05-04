@@ -18,7 +18,7 @@
 
 public struct TeamNotificationDecodingProxyError: Error, CustomStringConvertible {
 
-    /// The type of the notification being decoding.
+    /// The type of the notification being decoded.
 
     public let notificationType: String
 
