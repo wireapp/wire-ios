@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,4 +50,7 @@ public protocol TextMessageData: NSObjectProtocol {
 
     /// Edit the text content
     func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool)
+
+    /// The multipart message data associated with this message for use with the Wire Drive feature.
+    var multipartMessageData: MultipartMessageData? { get }
 }

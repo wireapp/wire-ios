@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,5 +45,36 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
         otherUserConversation.connectedUserType = otherUser
 
         return otherUserConversation
+    }
+
+    static func createGroupConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType]) -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .group
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
+    }
+
+    static func createChannelConversation<T: MockStableRandomParticipantsConversation>(otherUsers: [MockUserType])
+        -> T {
+        SelfUser.setupMockSelfUser()
+        let conversation = T()
+
+        // avatar
+        conversation.stableRandomParticipants = otherUsers
+        conversation.conversationType = .group
+        conversation.groupType = .channel
+
+        // title
+        conversation.displayName = "test"
+
+        return conversation
     }
 }

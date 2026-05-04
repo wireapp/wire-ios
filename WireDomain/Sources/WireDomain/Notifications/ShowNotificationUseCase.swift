@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,17 +34,20 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let selectedAccount: Account
     private let accountManager: AccountManager
+    private let databaseSaver: any DatabaseSaverProtocol
 
     init(
         contentHandler: @escaping (UNNotificationContent) -> Void,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         selectedAccount: Account,
-        accountManager: AccountManager
+        accountManager: AccountManager,
+        databaseSaver: any DatabaseSaverProtocol
     ) {
         self.contentHandler = contentHandler
         self.conversationLocalStore = conversationLocalStore
         self.selectedAccount = selectedAccount
         self.accountManager = accountManager
+        self.databaseSaver = databaseSaver
     }
 
     func invoke(
@@ -58,22 +61,28 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                 notifications.append(notificationContent)
             case let .callKit(callKitContent):
                 do {
+
+                    WireLogger.calling.info(
+                        "Detected a call event",
+                        attributes: .newNSE, .safePublic
+                    )
+
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
-                        "failed to wake up main app: \(error.localizedDescription)",
-                        attributes: .newNSE
+                        "failed to wake up main app: \(String(describing: error))",
+                        attributes: .newNSE, .safePublic
                     )
                 }
             }
         }
 
-        await showNotifications(notifications)
+        try await showNotifications(notifications)
     }
 
     private func showNotifications(
         _ notifications: [UNMutableNotificationContent]
-    ) async {
+    ) async throws {
         var notification: UNMutableNotificationContent
 
         switch notifications.count {
@@ -89,23 +98,28 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         }
 
         notification.interruptionLevel = .timeSensitive
-        notification.badge = await getNotificationBadge()
+        notification.badge = try await getNotificationBadge()
 
         WireLogger.notifications.info(
-            "Displaying push notification",
-            attributes: .newNSE
+            "Showing notification to the user",
+            attributes: .newNSE, .safePublic
         )
 
         // Displays the notification to the user
         contentHandler(notification)
     }
 
-    private func getNotificationBadge() async -> NSNumber {
+    private func getNotificationBadge() async throws -> NSNumber {
+        // Ensures unread conversations count is up-to-date.
+        try await databaseSaver.save()
+
         let unreadConversationCount = await Int(
             conversationLocalStore.unreadConversationCount()
         )
 
         selectedAccount.unreadConversationCount = unreadConversationCount
+        accountManager.addOrUpdate(selectedAccount)
+
         let totalUnreadCount = accountManager.totalUnreadCount
 
         return NSNumber(value: totalUnreadCount)

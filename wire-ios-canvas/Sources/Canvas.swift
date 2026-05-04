@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ public final class Canvas: UIView {
     public weak var delegate: CanvasDelegate?
 
     /// Defines the apperance of the brush strokes when drawing
-    public var brush = Brush(size: 2, color: .black)
+    public var brush = Brush(size: 8, color: .black)
 
     /// Active mode of the canvas. See `EditingMode` for possible values.
     public var mode: EditingMode = .draw {

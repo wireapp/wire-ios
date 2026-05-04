@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireAnalytics
 import WireDesign
 import WireDomainPackage
 import WireFoundation
@@ -112,8 +111,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCaseProtocol
     let userProfileName: String
-    private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
-    private let analyticsEventTracker: (any AnalyticsEventTracker)?
+    private var analyticsFlowCompletionAction: PostAccountMigrationAction?
+    private let analyticsEventTracker: (any AccountMigrationAnalyticsTrackerProtocol)?
 
     public init(
         features: [TeamPlanFeature],
@@ -121,7 +120,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsEventTracker: (any AccountMigrationAnalyticsTrackerProtocol)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.analyticsEventTracker = analyticsEventTracker
@@ -141,7 +140,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsEventTracker: (any AccountMigrationAnalyticsTrackerProtocol)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.init(
@@ -172,8 +171,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         if isBeingDismissed {
-            analyticsEventTracker?
-                .trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
+            analyticsEventTracker?.trackMigrationCompleted(postAction: analyticsFlowCompletionAction)
         }
     }
 
@@ -183,10 +181,10 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCancellationAlert:
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
-                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(action: .leave))
+                    self?.analyticsEventTracker?.trackMigrationCancelAttempt(choice: .confirm)
                     self?.actionCallback(.cancel)
-                }, onContinue: { [weak analyticsEventTracker] in
-                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(action: .continue))
+                }, onContinue: { [weak self] in
+                    self?.analyticsEventTracker?.trackMigrationCancelAttempt(choice: .backOut)
                 }
             )
             childController.present(alert, animated: true)
@@ -201,7 +199,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))
+                analyticsEventTracker?.trackMigrationReachedDisclaimerStep()
             }
             isModalInPresentation = true
         case .toLearnMoreAboutPlans:
@@ -216,7 +214,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .teamName))
+                analyticsEventTracker?.trackMigrationReachedTeamNameStep()
             }
             isModalInPresentation = true
         case let .toConfirmation(teamName):
@@ -233,7 +231,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .confirmation))
+                analyticsEventTracker?.trackMigrationReachedConfirmationStep()
             }
             isModalInPresentation = true
         case let .toTeamCreation(teamName: teamName):
@@ -257,7 +255,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             analyticsFlowCompletionAction = nil
             actionCallback(.completionDismiss)
         case .toConversations:
-            analyticsFlowCompletionAction = .backToWire
+            analyticsFlowCompletionAction = .returnToApp
             actionCallback(.completionGoToConversations)
         case .toTeamManagement:
             analyticsFlowCompletionAction = .openTeamManagement
@@ -313,11 +311,11 @@ extension IndividualToTeamMigrationViewController: UIAdaptivePresentationControl
 
         switch currentStep {
         case .teamPlanSelection:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .disclaimer))
+            analyticsEventTracker?.trackMigrationDroppedAtDisclaimerStep()
         case .teamName:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .teamName))
+            analyticsEventTracker?.trackMigrationDroppedAtTeamNameStep()
         case .confirmation:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .confirmation))
+            analyticsEventTracker?.trackMigrationDroppedAtConfirmationStep()
         case .completion:
             // the flow-completed event will handle this case
             break
@@ -348,7 +346,6 @@ private func hostedView(
             stepCount: stepCount,
             stepTitle: step.title
         )
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     )
     vc.title = step.title
     if case .completion = step {

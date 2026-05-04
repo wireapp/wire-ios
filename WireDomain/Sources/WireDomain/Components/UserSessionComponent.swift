@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,133 +17,112 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 public final class UserSessionComponent {
 
+    private let currentBuildNumber: String
     private let selfUserID: UUID
 
-    private let backendEnvironment: WireAPI.BackendEnvironment
-    private let minTLSVersion: WireAPI.TLSVersion
-    private let apiVersion: WireAPI.APIVersion
+    private let restNetworkService: NetworkService
+    private let websocketNetworkService: NetworkService
+    private let blacklistNetworkService: NetworkService
+    public let backendMetadata: ResolvedBackendMetadata
 
-    private let localDomain: String
-    private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
 
     private let sharedUserDefaults: UserDefaults
+    private let sharedContainerURL: URL?
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
+    private let earService: any EARServiceInterface
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
+
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     public init(
+        currentBuildNumber: String,
         selfUserID: UUID,
-        backendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
-        localDomain: String,
-        isFederationEnabled: Bool,
+        cookieStorage: any CookieStorageProtocol,
+        restNetworkService: NetworkService,
+        websocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
+        backendMetaData: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
         sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL?,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
+        earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface
+        proteusService: any ProteusServiceInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
+        self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
-        self.backendEnvironment = backendEnvironment
-        self.minTLSVersion = minTLSVersion
-        self.apiVersion = apiVersion
-        self.localDomain = localDomain
-        self.isFederationEnabled = isFederationEnabled
+        self.cookieStorage = cookieStorage
+        self.restNetworkService = restNetworkService
+        self.websocketNetworkService = websocketNetworkService
+        self.blacklistNetworkService = blacklistNetworkService
+        self.backendMetadata = backendMetaData
         self.isMLSEnabled = isMLSEnabled
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
+        self.earService = earService
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
+        self.coreCryptoProvider = coreCryptoProvider
+        self.sharedContainerURL = sharedContainerURL
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
-    private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
-
-    private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(
-        userID: selfUserID,
-        cookieEncryptionKey: UserDefaults.cookiesKey(),
-        keychain: keychain
-    )
-
-    private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys,
-        currentDateProvider: .system
-    )
-
-    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
-        minTLSVersion: minTLSVersion,
-        proxySettings: backendEnvironment.proxySettings
-    )
-
-    private lazy var networkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.url,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
-
-    private lazy var pushChannelNetworkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
+    private let cookieStorage: any CookieStorageProtocol
 
     // MARK: - Children
 
     public func clientSessionComponent(
         clientID: String,
-        processorHandlers: ClientSessionComponent.ProcessorHandlers,
-        onAuthenticationFailure: @escaping @Sendable () -> Void
+        completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
             selfClientID: clientID,
-            networkService: networkService,
-            pushChannelNetworkService: pushChannelNetworkService,
-            apiVersion: apiVersion,
-            localDomain: localDomain,
-            isFederationEnabled: isFederationEnabled,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: websocketNetworkService,
+            backendMetadata: backendMetadata,
             isMLSEnabled: isMLSEnabled,
             cookieStorage: cookieStorage,
+            sharedContainerURL: sharedContainerURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: syncContext,
             eventContext: eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            processorHandlers: processorHandlers,
-            onAuthenticationFailure: onAuthenticationFailure
+            coreCryptoProvider: coreCryptoProvider,
+            completionHandlers: completionHandlers,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+        )
+    }
+
+    // MARK: - Factory
+
+    public func makeIsBuildBlacklistedUseCase() -> some IsBuildBlacklistedUseCase {
+        let api = BlacklistAPIBuilder(networkService: blacklistNetworkService).makeAPI()
+        return IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: currentBuildNumber,
+            api: api
         )
     }
 

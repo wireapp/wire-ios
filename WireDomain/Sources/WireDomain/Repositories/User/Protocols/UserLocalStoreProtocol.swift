@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ public protocol UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws
+    ) async
 
     /// Adds a legal hold request to self.
     ///
@@ -129,8 +129,8 @@ public protocol UserLocalStoreProtocol {
 
     func markAccountAsDeleted(for user: ZMUser) async
 
-    func updateSelfUserAnalyticsID(
-        analyticsID: String,
+    func updateSelfUserTrackingID(
+        trackingID: UUID,
         conversation: ZMConversation
     ) async
 
@@ -178,4 +178,5 @@ public protocol UserLocalStoreProtocol {
 
     func fetchSelfUserAvailability() async -> Availability
 
+    func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,10 +48,10 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let context: NSManagedObjectContext
     private let newKeyPackageCount: UInt32 = 100
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -63,7 +63,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
@@ -85,7 +85,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        let crlNewDistributionPoints = try await coreCrypto.perform { context in
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
@@ -117,10 +117,10 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             return mlsGroupIDs
         }
 
-        try await coreCrypto.perform { context in
+        try await coreCrypto.transaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
-                    try await context.e2eiRotate(conversationId: groupID.data)
+                    try await context.e2eiRotate(conversationId: groupID.conversationId)
                 } catch {
                     WireLogger.e2ei
                         .warn(
@@ -144,23 +144,23 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        try await coreCrypto.perform { coreCryptoContext in
-            let rawCiphersuite = UInt16(ciphersuite.rawValue)
+        try await coreCrypto.transaction { coreCryptoContext in
+            try await coreCryptoContext.deleteStaleKeyPackages(
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
+            )
+
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
-                ciphersuite: rawCiphersuite,
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
                 amountRequested: self.newKeyPackageCount
-            ).map { $0.base64String() }
+            )
 
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
-                keyPackages: newKeyPackages,
+                keyPackages: newKeyPackages.map { $0.copyBytes().base64EncodedString() },
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
-            try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: rawCiphersuite
-            )
         }
     }
 

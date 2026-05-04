@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,10 @@ import Foundation
 import WireDataModel
 import WireLogging
 import WireSystem
+
+public extension Bundle {
+    static var mainAppInternalName: String?
+}
 
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
@@ -121,14 +125,21 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
+    private let localDomain: String?
+    private let isBackendMLSEnabled: Bool
+
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
         self.coreCryptoProvider = coreCryptoProvider
+        self.localDomain = localDomain
+        self.isBackendMLSEnabled = isBackendMLSEnabled
 
         super.init()
 
@@ -249,6 +260,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
 
         return .unregistered
+
     }
 
     public var clientIsReadyForRequests: Bool {
@@ -264,7 +276,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var needsToRegisterMLSClient: Bool {
-        Self.needsToRegisterMLSClient(in: managedObjectContext)
+        needsToRegisterMLSClient(in: managedObjectContext)
     }
 
     @objc(needsToRegisterClientInContext:)
@@ -415,10 +427,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     private func insertNewClient(for selfUser: ZMUser) {
+        var model = UIDevice.current.zm_model()
+        if let appInternalName = Bundle.mainAppInternalName {
+            model += " (\(appInternalName))"
+        }
+
         UserClient.insertNewSelfClient(
             in: managedObjectContext,
             selfUser: selfUser,
-            model: UIDevice.current.zm_model(),
+            model: model,
             label: UIDevice.current.name
         )
 
@@ -510,7 +527,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             isWaitingForE2EIEnrollment = true
             notifyE2EIEnrollmentNecessary()
         } else {
-            guard let mlsClientID = MLSClientID(userClient: client) else {
+            guard let mlsClientID = MLSClientID(userClient: client, localDomain: localDomain) else {
                 fatalError("Needs to register MLS client but can't retrieve qualified client ID")
             }
 
@@ -667,23 +684,22 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc public var needsToEnrollE2EI: Bool {
-        FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
     private var isMLSEnabled: Bool {
-        FeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
     }
 
-    @objc(needsToRegisterMLSClientInContext:)
-    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
-        guard !needsToRegisterClient(in: context) else {
+    public func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+        guard !Self.needsToRegisterClient(in: context) else {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        let canRegisterMLSCLient = BackendInfo.isMLSEnabled
+        let canRegisterMLSCLient = isBackendMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }

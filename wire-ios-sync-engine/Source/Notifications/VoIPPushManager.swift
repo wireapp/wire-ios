@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,22 +87,30 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         // do nothing
     }
 
+    // Don't use the async version, it's broken
+    // It doesn't properly get called when waking up the app from the background and ends up crashing
+    // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didReceiveIncomingPushWith payload: PKPushPayload,
-        for type: PKPushType
-    ) async {
-        Self.logger.debug("did receive incoming push")
+        for type: PKPushType,
+        completion: @escaping () -> Void
+    ) {
+        Self.logger.debug("did receive incoming push: \(payload.safeForLoggingDescription)")
 
         // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
+        guard type == .voIP else { return completion() }
 
-        await processNSEPush(payload: payload.dictionaryPayload)
+        processNSEPush(
+            payload: payload.dictionaryPayload,
+            completion: completion
+        )
     }
 
-    private func processNSEPush(payload: [AnyHashable: Any]) async {
-        Self.logger.debug("process NSE push, payload: \(payload)")
-
+    private func processNSEPush(
+        payload: [AnyHashable: Any],
+        completion: @escaping () -> Void
+    ) {
         guard
             let accountIDString = payload["accountID"] as? String,
             let accountID = UUID(uuidString: accountIDString),
@@ -112,7 +120,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload")
+            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
+            completion()
             return
         }
 
@@ -125,7 +134,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         // See https://developer.apple.com/documentation/callkit/sending_end-to-end_encrypted_voip_calls
         if shouldRing {
             Self.logger.info("will report new incoming call")
-            await callKitManager.reportIncomingCallPreemptively(
+            callKitManager.reportIncomingCallPreemptively(
                 handle: handle,
                 callerName: callerName,
                 hasVideo: hasVideo
@@ -138,6 +147,11 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
 
-        await delegate?.processPendingCallEvents(accountID: accountID)
+        Task {
+            Self.logger.debug("processPendingCallEvents")
+            await delegate?.processPendingCallEvents(accountID: accountID)
+            // Note that here we don't guarantee the sync was finished, only that it was triggered
+            completion()
+        }
     }
 }

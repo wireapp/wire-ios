@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,16 @@ public extension ZMConversation {
         )
     }
 
+    func appendUserRemovedFromTeamSystemMessage(user: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .userRemovedFromTeam,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
     func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
         appendSystemMessage(
             type: .failedToAddParticipants,
@@ -87,7 +97,7 @@ public extension ZMConversation {
            team == selfUserTeam {
 
             let members = selfUserTeam.members.compactMap(\.user)
-            let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
+            let guests = users.filter { !$0.isAppOrBot && $0.membership == nil }
 
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
             systemMessage.numberOfGuestsAdded = Int16(guests.count)

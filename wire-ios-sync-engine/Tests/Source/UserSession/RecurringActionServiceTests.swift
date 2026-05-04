@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ final class RecurringActionServiceTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItPerformsActionInitially() {
+    func testThatItPerformsActionInitially() async {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 1) {
@@ -57,13 +57,13 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        sut.performActionsIfNeeded()
+        await sut.performActionsIfNeeded()
 
         // Then
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItDoesNotPerformActionTooEarly() {
+    func testThatItDoesNotPerformActionTooEarly() async {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
@@ -71,16 +71,16 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        sut.performActionsIfNeeded()
+        await sut.performActionsIfNeeded()
         actionPerformed = false
         dateProvider.now += .oneSecond
-        sut.performActionsIfNeeded()
+        await sut.performActionsIfNeeded()
 
         // Then
         XCTAssertFalse(actionPerformed)
     }
 
-    func testThatItForcePerformsAction() {
+    func testThatItForcePerformsAction() async {
         // given
         var actionPerformed = false
         let actionID = String.randomAlphanumerical(length: 5)
@@ -93,13 +93,13 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertFalse(actionPerformed)
 
         // when
-        sut.forcePerformAction(id: actionID)
+        await sut.forcePerformAction(id: actionID)
 
         // then
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItPerformsActionAgain() {
+    func testThatItPerformsActionAgain() async {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
@@ -107,10 +107,10 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        sut.performActionsIfNeeded()
+        await sut.performActionsIfNeeded()
         actionPerformed = false
         dateProvider.now += .tenSeconds
-        sut.performActionsIfNeeded()
+        await sut.performActionsIfNeeded()
 
         // Then
         XCTAssertTrue(actionPerformed)

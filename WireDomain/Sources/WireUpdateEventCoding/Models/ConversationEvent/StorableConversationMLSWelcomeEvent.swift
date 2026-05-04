@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMLSWelcomeEvent: Equatable, Codable, Sendable {
 
@@ -25,13 +25,13 @@ struct StorableConversationMLSWelcomeEvent: Equatable, Codable, Sendable {
     private let senderID: StorableQualifiedID
     private let welcomeMessage: String
 
-    init(_ value: WireAPI.ConversationMLSWelcomeEvent) {
+    init(_ value: WireNetwork.ConversationMLSWelcomeEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.welcomeMessage = value.welcomeMessage
     }
 
-    func toAPIModel() -> WireAPI.ConversationMLSWelcomeEvent {
+    func toAPIModel() -> WireNetwork.ConversationMLSWelcomeEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

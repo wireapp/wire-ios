@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ extension ZMConversation: Conversation {
         }
     }
 
-    public func appendImage(_ data: Data) -> Sendable? {
+    public func appendImage(_ image: SendableImage) -> Sendable? {
         do {
-            return try appendImage(from: data) as? Sendable
+            return try appendImage(image, nonce: UUID()) as? Sendable
         } catch {
             WireLogger.messageProcessing
                 .warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ class IconButton: ButtonWithLargerHitArea {
 
     private var iconColorsByState: [UIControl.State.RawValue: UIColor] = [:]
     private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
+    private var backgroundColorByState: [UIControl.State.RawValue: UIColor] = [:]
     private var iconDefinitionsByState: [UIControl.State.RawValue: IconDefinition] = [:]
     private var priorState: UIControl.State?
 
@@ -195,11 +196,8 @@ class IconButton: ButtonWithLargerHitArea {
         _ color: UIColor,
         for state: UIControl.State
     ) {
-        setBackgroundImage(UIImage.singlePixelImage(with: color), for: state)
-
-        if adjustBackgroundImageWhenHighlighted, state.contains(.normal) {
-            setBackgroundImage(UIImage.singlePixelImage(with: color.mix(UIColor.black, amount: 0.4)), for: .highlighted)
-        }
+        backgroundColorByState[state.rawValue] = color
+        updateBackgroundImageColor()
     }
 
     func setIcon(
@@ -221,7 +219,7 @@ class IconButton: ButtonWithLargerHitArea {
     ///   - state: UIControl state
     ///   - renderingMode: Default rendering mode is AlwaysTemplate
     ///   - force: force update
-    func setIcon(
+    private func setIcon(
         _ iconType: StyleKitIcon?,
         iconSize: CGFloat,
         for state: UIControl.State,
@@ -294,12 +292,29 @@ class IconButton: ButtonWithLargerHitArea {
         borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
+    func backgroundColor(for state: UIControl.State) -> UIColor? {
+        backgroundColorByState[state.rawValue] ?? backgroundColorByState[UIControl.State.normal.rawValue]
+    }
+
     private func updateBorderColor() {
         layer.borderColor = borderColor(for: state)?.cgColor
     }
 
     func updateTintColor() {
         tintColor = iconColor(for: state)
+    }
+
+    private func updateBackgroundImageColor() {
+        if let color = backgroundColor(for: state)?.resolvedColor(with: traitCollection) {
+            setBackgroundImage(UIImage.singlePixelImage(with: color), for: state)
+
+            if adjustBackgroundImageWhenHighlighted, state.contains(.normal) {
+                setBackgroundImage(
+                    UIImage.singlePixelImage(with: color.mix(UIColor.black, amount: 0.4)),
+                    for: .highlighted
+                )
+            }
+        }
     }
 
     private func updateCircularCornerRadius() {
@@ -331,6 +346,7 @@ class IconButton: ButtonWithLargerHitArea {
         // Update for new state (selected, highlighted, disabled) here if needed
         updateTintColor()
         updateBorderColor()
+        updateBackgroundImageColor()
     }
 
     func icon(for state: UIControl.State) -> StyleKitIcon? {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
 
@@ -28,7 +28,7 @@ struct StorableConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
     private let timestamp: Date?
     private let decryptedMessages: [StorableDecryptedMessage]
 
-    init(_ value: WireAPI.ConversationMLSMessageAddEvent) {
+    init(_ value: WireNetwork.ConversationMLSMessageAddEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.subconversation = value.subconversation
@@ -37,7 +37,7 @@ struct StorableConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
         self.decryptedMessages = value.decryptedMessages.map(StorableDecryptedMessage.init)
     }
 
-    func toAPIModel() -> WireAPI.ConversationMLSMessageAddEvent {
+    func toAPIModel() -> WireNetwork.ConversationMLSMessageAddEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
@@ -55,12 +55,12 @@ private struct StorableDecryptedMessage: Equatable, Codable, Sendable {
     let message: String
     let senderClientID: String?
 
-    init(_ value: WireAPI.ConversationMLSMessageAddEvent.DecryptedMessage) {
+    init(_ value: WireNetwork.ConversationMLSMessageAddEvent.DecryptedMessage) {
         self.message = value.message
         self.senderClientID = value.senderClientID
     }
 
-    func toAPIModel() -> WireAPI.ConversationMLSMessageAddEvent.DecryptedMessage {
+    func toAPIModel() -> WireNetwork.ConversationMLSMessageAddEvent.DecryptedMessage {
         .init(
             message: message,
             senderClientID: senderClientID

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
-    var coreCrypto: SafeCoreCryptoProtocol {
+    var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -75,8 +75,8 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ) async throws -> Data {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try await coreCrypto.perform { try await $0.encryptMessage(
-                conversationId: groupID.data,
+            return try await coreCrypto.transaction { try await $0.encryptMessage(
+                conversationId: groupID.conversationId,
                 message: message
             ) }
         } catch {

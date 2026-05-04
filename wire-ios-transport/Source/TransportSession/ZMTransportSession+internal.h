@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                            pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent

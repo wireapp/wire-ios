@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireUtilities
 
 /// Handles requests to add a new user account.
@@ -31,7 +32,7 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
         if DeveloperFlag.useWireAuthentication.isOn {
             [.transition(.wireAuthenticationModule, mode: .reset)]

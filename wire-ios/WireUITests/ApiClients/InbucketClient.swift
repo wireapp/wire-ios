@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,43 @@
 //
 
 import Foundation
+import WireNetwork
 
 enum InbucketClient {
 
     static func getVerificationCode(email: String) async throws -> String {
-        let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
-        let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
-        let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"]!
+        let envVariables = try EnvironmentVariables()
+
         var verificationCode = ""
-        let url = URL(string: "\(inbucketURL)api/v1/mailbox/\(email)/latest")
-        guard let requestUrl = url else { fatalError() }
+        let baseURL: URL = envVariables.inbucketURL
+        let requestUrl = baseURL.appending(path: "api/v1/mailbox/\(email)/latest")
+
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "GET"
-        let loginString = String(format: "%@:%@", inbucketUsername, inbucketPassword)
+        let loginString = String(format: "%@:%@", envVariables.inbucketUsername, envVariables.inbucketPassword)
         let loginData = loginString.data(using: String.Encoding.utf8)!
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
+        enum EmailFetchError: Error {
+            case unableToRetrieveLatestMessage(email: String, statusCode: Int)
+        }
         var (inbucketData, response) = try await URLSession.shared.data(for: request)
         var pureResponse = response as! HTTPURLResponse
         var timeout = 0
         while pureResponse.statusCode != 200, timeout < 100 {
             (inbucketData, response) = try await URLSession.shared.data(for: request)
-            pureResponse = response as! HTTPURLResponse
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw EmailFetchError.unableToRetrieveLatestMessage(email: email, statusCode: -1)
+            }
+            pureResponse = httpResponse
             timeout += 1
+            if timeout == 100, pureResponse.statusCode != 200 {
+
+                throw EmailFetchError.unableToRetrieveLatestMessage(email: email, statusCode: pureResponse.statusCode)
+
+            }
         }
 
         // Convert HTTP Response Data to a simple String

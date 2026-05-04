@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
     let userClientsRepository: any UserClientsRepositoryProtocol
@@ -68,7 +68,7 @@ struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
         }
     }
 
-    private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+    private func calculateSupportedProtocols() async -> Set<WireNetwork.MessageProtocol> {
         do {
             // we need the self clients to be up to date before calculating supported protocols.
             try await userClientsRepository.pullSelfClients()

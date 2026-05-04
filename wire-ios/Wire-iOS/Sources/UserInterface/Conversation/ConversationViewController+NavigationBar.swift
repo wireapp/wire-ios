@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
@@ -36,9 +37,9 @@ extension ConversationViewController {
     private var videoCallButton: UIButton {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .videoCall), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
+        button.tintColor = IconColors.foregroundDefault.resolvedColor(with: traitCollection)
 
-        button.accessibilityIdentifier = "videoCallBarButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.videoCallBarButton.rawValue
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
@@ -47,9 +48,9 @@ extension ConversationViewController {
         }
         button.addAction(videoCallAction, for: .touchUpInside)
 
-        button.backgroundColor = ButtonColors.backgroundBarItem
+        button.backgroundColor = ButtonColors.backgroundBarItem.resolvedColor(with: traitCollection)
         button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
+        button.layer.borderColor = ButtonColors.borderBarItem.resolvedColor(with: traitCollection).cgColor
         button.layer.cornerRadius = 12
 
         // Enable large content viewer
@@ -74,7 +75,7 @@ extension ConversationViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
         button.titleLabel?.font = .font(for: .body2)
-        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        button.setTitleColor(SemanticColors.Label.textDefaultWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.adjustsFontForContentSizeCategory = false
 
@@ -108,7 +109,7 @@ extension ConversationViewController {
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
-        button.accessibilityIdentifier = "ConversationBackButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
@@ -238,21 +239,27 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { _ in
-                    self.contentViewController.highlight(message)
+                self.contentViewController?.scroll(to: message) { _ in
+                    self.contentViewController?.highlight(message)
                 }
             }
 
         case .reply:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
-                    self.contentViewController.perform(action: .reply, for: message, view: cell)
+                self.contentViewController?.scroll(to: message) { cell in
+                    self.contentViewController?.perform(action: .reply, for: message, view: cell)
                 }
             }
 
         default:
-            contentViewController.perform(action: action, for: message, view: view)
+            contentViewController?.perform(action: action, for: message, view: view)
         }
+    }
+
+    func collectionsViewControllerDidRequestOpenSearchFiles(
+        _ viewController: CollectionsViewController
+    ) {
+        onFilesButtonPressed(nil)
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
 import XCTest
 @testable import WireDomain
 
@@ -56,7 +56,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         try await context.perform { [self] in
 
-            let conversation = makeGroupConversation()
+            _ = makeGroupConversation()
             let otherUser = try XCTUnwrap(ZMUser.fetch(
                 with: Scaffolding.otherUserID,
                 in: context
@@ -69,7 +69,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -107,7 +107,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -142,7 +142,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -175,7 +175,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -213,7 +213,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -276,7 +276,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -347,7 +347,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 

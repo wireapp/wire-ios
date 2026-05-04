@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import GenericMessageProtocol
 import WireLogging
-import WireProtos
 
 struct CallContent: Decodable {
 
@@ -66,19 +67,18 @@ extension CallContent {
         let decoder = JSONDecoder()
 
         guard let data = calling.content.data(using: .utf8) else {
-            WireLogger.notifications.info(
-                "No calling payload found - this is not a call",
-                attributes: .newNSE
-            )
-
             return nil
         }
 
         do {
+            WireLogger.notifications.debug(
+                "Checking if a call needs to be handled..",
+                attributes: .newNSE
+            )
             return try decoder.decode(Self.self, from: data)
         } catch {
-            WireLogger.notifications.error(
-                "Error decoding the notification calling payload: \(error.localizedDescription)",
+            WireLogger.notifications.debug(
+                "No call to handle",
                 attributes: .newNSE
             )
 

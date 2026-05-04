@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,8 @@ import Foundation
 import WireFoundation
 
 public enum EnvironmentType: Equatable {
-    case production
+    case `default`
     case staging
-    case qaDemo
-    case qaDemo2
     case anta
     case bella
     case chala
@@ -34,14 +32,10 @@ public enum EnvironmentType: Equatable {
 
     var stringValue: String {
         switch self {
-        case .production:
-            "production"
+        case .default:
+            "default"
         case .staging:
             "staging"
-        case .qaDemo:
-            "qa-demo"
-        case .qaDemo2:
-            "qa-demo-2"
         case .anta:
             "anta"
         case .bella:
@@ -63,10 +57,6 @@ public enum EnvironmentType: Equatable {
         switch stringValue {
         case EnvironmentType.staging.stringValue:
             self = .staging
-        case EnvironmentType.qaDemo.stringValue:
-            self = .qaDemo
-        case EnvironmentType.qaDemo2.stringValue:
-            self = .qaDemo2
         case EnvironmentType.anta.stringValue:
             self = .anta
         case EnvironmentType.bella.stringValue:
@@ -84,10 +74,10 @@ public enum EnvironmentType: Equatable {
             if let url = URL(string: String(urlString)) {
                 self = .custom(url: url)
             } else {
-                self = .production
+                self = .default
             }
         default:
-            self = .production
+            self = .default
         }
     }
 }
@@ -100,8 +90,8 @@ public extension EnvironmentType {
             self.init(stringValue: value)
         } else {
             Logging.backendEnvironment
-                .error("Could not load environment type from user defaults, falling back to production")
-            self = .production
+                .error("Could not load environment type from user defaults, falling back to default")
+            self = .default
         }
     }
 

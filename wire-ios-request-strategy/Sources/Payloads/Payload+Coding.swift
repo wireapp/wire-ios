@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,8 +72,15 @@ extension Decodable {
     ///
     /// - parameter payloadData: JSON data as raw bytes
 
-    init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
+    init?(
+        _ payloadData: Data,
+        decoder: JSONDecoder = .defaultDecoder,
+        apiVersion: APIVersion? = nil
+    ) {
         do {
+            if let apiVersion {
+                decoder.setAPIVersion(apiVersion)
+            }
             self = try decoder.decode(Self.self, from: payloadData)
         } catch {
             WireLogger.network.warn("Failed to decode \(Self.self) from payload: \(error)")
@@ -140,7 +147,13 @@ extension Encodable {
         }
     }
 
-    func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
+    func encodeToJSONString(
+        encoder: JSONEncoder = .defaultEncoder,
+        apiVersion: APIVersion? = nil
+    ) throws -> String {
+        if let apiVersion {
+            encoder.setAPIVersion(apiVersion)
+        }
         let data = try encodeToJSON(encoder: encoder)
         return String(decoding: data, as: UTF8.self)
     }
@@ -176,7 +189,7 @@ protocol CodableAPIVersionAware: EncodableAPIVersionAware & DecodableAPIVersionA
 extension DecodableAPIVersionAware {
 
     init(from decoder: Decoder) throws {
-        guard let apiVersion = decoder.apiVersion ?? BackendInfo.apiVersion else {
+        guard let apiVersion = decoder.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion
         }
 
@@ -188,7 +201,7 @@ extension DecodableAPIVersionAware {
 extension EncodableAPIVersionAware {
 
     func encode(to encoder: Encoder) throws {
-        guard let apiVersion = encoder.apiVersion ?? BackendInfo.apiVersion else {
+        guard let apiVersion = encoder.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion
         }
 

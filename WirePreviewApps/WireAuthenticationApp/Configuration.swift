@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
+import WireAuthentication
+import WireNetwork
+import WireNetworkSupport
 import WireReusableUIComponents
 
 struct Configuration {
 
-    let defaultBackendEnvironment: BackendEnvironment
+    let defaultBackendEnvironment: BackendEnvironmentType
     let minTLSVersion: TLSVersion
     let defaultAPIVersion: APIVersion
     let accountsURL: URL

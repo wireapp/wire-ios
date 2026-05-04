@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -106,47 +106,51 @@ public extension ZMUserSession {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-// Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
-// it should not actually be assigned as the delegate of UNUserNotificationCenter.
-// Instead, the delegate should be the SessionManager, whose repsonsibility it is
-// to forward the method calls to the appropriate user session.
-extension ZMUserSession: UNUserNotificationCenterDelegate {
+// The `SessionManager` forwards `UNUserNotificationCenterDelegate` calls to a suitable `ZMUserSession` instance.
+extension ZMUserSession {
 
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
-    public func userNotificationCenter(
+    @MainActor
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
-            -> Void
-    ) {
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
         WireLogger.notifications.info("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
-        handleInAppNotification(
-            with: notification.userInfo,
-            categoryIdentifier: categoryIdentifier,
-            completionHandler: completionHandler
-        )
+        return await withCheckedContinuation { continuation in
+            handleInAppNotification(
+                with: notification.userInfo,
+                categoryIdentifier: categoryIdentifier,
+                completionHandler: { options in
+                    continuation.resume(returning: options)
+                }
+            )
+        }
     }
 
     // Called by the SessionManager when the user engages a notification action.
-    public func userNotificationCenter(
+    @MainActor
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
+        didReceive response: UNNotificationResponse
+    ) async {
         WireLogger.notifications.info("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 
-        handleNotificationResponse(
-            actionIdentifier: response.actionIdentifier,
-            categoryIdentifier: note.request.content.categoryIdentifier,
-            userInfo: note.userInfo,
-            userText: userText,
-            completionHandler: completionHandler
-        )
+        await withCheckedContinuation { continuation in
+            handleNotificationResponse(
+                actionIdentifier: response.actionIdentifier,
+                categoryIdentifier: note.request.content.categoryIdentifier,
+                userInfo: note.userInfo,
+                userText: userText,
+                completionHandler: {
+                    continuation.resume()
+                }
+            )
+        }
     }
 
     // MARK: Abstractions
